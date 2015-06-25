@@ -1,57 +1,54 @@
-<?php
-/////////////////
-// This is version 0.1 of browse0.php
-// Search this document for "New Book Add:" to find sections which may need customization when adding a new book to the database
-// Search this document for "Fix:" to find items to fix for better coding.
-// Remove the values from the following for open-source version!
-////////////////
-$host = "localhost"; // Change this if your SQL host is not onsite$dbuser = ""; // Fill in your MYSQL user here$passw = ""; // Fill in your password here$hardcodeddb = ""; // Fill in the database with the books; Delete this if fix hard-coding problem/////////////// Intended significant future features of this browse system:///////////
-// 1) Searching
-// 2) Go to previous/next results (allow customization of size on the fly as well as in preferences)
-// 3) Hide advanced formatting options (make savable in preferences)
-// 4) Give tooltips to tell how to use the elements
-// 5) Make full preferences system for saved/favorite, recent searches/browses, etc.
-// 6) Baha'i texts: Coordination with official Baha'i World Centre XML (using TEI) if full XML is released to automatically (and periodically) parse their texts into SQL here to ensure we have the most up-to-date and corrected translations
-// 7) Automated word-by-word translations, auto-links to Google, Amazon, etc.
-// 8) Auto-links by verse to relevant forums, wikis, blogs, or personal notes pertaining to a given verse...
-// 9) Allow tables to be resortable via a Javascript which allows sorting by multiple columns with various data, etc.
-// 10) Figure out how to get rowspans (or even colspans) for additional columns (e.g., a field spanning by whole pages of the Iqan and another field spanning only by paragraphs)--use some kind of counter and don't display the HTML until finished cycling??; also figure out how to reassemble if the minute fields are not needed (e.g., if the user only wants to see the text by paragraph and not anything related to by page)
-// 11) Allow data to be displayed interlinearly if desired or horizontally
-// 12) Localization of the interface (including column aliases, etc.)
-// 13) Allow combined fields for browsing (Collins)
-// 14) Move to strict XHTML (e.g., move align elements to CSS, etc.)
+<!--
+
+/////////////// Intended significant future features of this browse system:///////////
+// 1. Searching
+// 2. Go to previous/next results (allow customization of size on the fly as well as in preferences)
+// 3. Hide advanced formatting options (make savable in preferences)
+// 4. Give tooltips to tell how to use the elements
+// 5. Make full preferences system for saved/favorite, recent searches/browses, etc.
+// 6. Baha'i texts: Coordination with official Baha'i World Centre XML (using TEI) if full XML is released to automatically (and periodically) parse their texts into SQL here to ensure we have the most up-to-date and corrected translations
+// 7. Automated word-by-word translations, auto-links to Google, Amazon, etc.
+// 8. Auto-links by verse to relevant forums, wikis, blogs, or personal notes pertaining to a given verse...
+// 9. Allow tables to be resortable via a Javascript which allows sorting by multiple columns with various data, etc.
+// 10. Figure out how to get rowspans (or even colspans) for additional columns (e.g., a field spanning by whole pages of the Iqan and another field spanning only by paragraphs) - use some kind of counter and don't display the HTML until finished cycling??; also figure out how to reassemble if the minute fields are not needed (e.g., if the user only wants to see the text by paragraph and not anything related to by page)
+// 11. Allow data to be displayed interlinearly if desired or horizontally
+// 12. Localization of the interface (including column aliases, etc.)
+// 13. Allow combined fields for browsing (Collins)
+// 14. Separate formatting
 ///////////////// Intended minor features /////////////////
 // 1) Add link color (browse.php and browse9.php) as option to advanced formatting
 /////////////////
 ///////////////// Intended tweaks //////////////////
-// Fix: //
+// Todo: //
 // 1) Especially those variables that will be accessed by other scripts, it would make more sense (and take less space) to use an SQL database to store them rather than pass them between forms via hidden elements, etc. (there are a number of these)
-// 2) Add Password, etc. into transcluded inc file to avoid duplication between files in the coding here--if truly duplicated)
+// 2) Add Password, etc. into transcluded inc file to avoid duplication between files in the coding here - if truly duplicated)
 // 3) Upload newer Collins and fix any bugs in formatting.
 // 4) The base code of browse0.php, browse.php, browse9.php are all XHTML compliant, but there are a good number of invalid XHTML in the SQL databases Qur'an and Bible (links w/o quotes) that need to be replaced as well as the XHTML and link locations in the Iqan copy
 
-
-
-///////////////// Opening tags.../////////////////
-
-// The following messes up the Javascript
-// header('content-type: application/xhtml+xml'); // could add e.g.: "; charset=UTF-8'"
-
-
-?>
+-->
 <!DOCTYPE html>
-<?php
-// Add xml:lang="en", etc. to the following?
-?>
 <html xmlns="http://www.w3.org/1999/xhtml">
-
-<head><title><?php print "Sacred Writings Browser"; ?></title></head>
+<head></head>
 <body>
 
-<table border="0" align="center"><tr>
-<td align="center"><form action="browse.php" method="get" name="browse">
-<div align="center">Choose the Writings you wish to browse</div><br />
-<select name="file" id="file" size="1" onchange="javascript:document.browse.submit();">
+<script src="jml.js"></script>
+<script>
+document.title = "Sacred Writings Browser";
+
+jml('div', {style: 'text-align:center'}, [
+    ['div', ["Choose the Writings you wish to browse"]],
+    ['br'],
+    ['select', {id: 'file', {$on: {change: function () {
+        // Submit
+    }}}} [
+        // Todo
+    ]],
+    ['p', [
+        ['input', {value: "Go"}]
+    ]]
+]);
+
+</script>
 
 <?php
 
@@ -104,7 +101,7 @@ HERE;
 
 	} // end while (of all the tables being added to the drop-down menu)
 
-/// Fix: Need to move (to end of document?) to allow the Writings database not to need to be hard-coded...
+/// Todo: Need to move (to end of document?) to allow the Writings database not to need to be hard-coded...
 
 } // end while (of all the databases)
 
@@ -130,7 +127,7 @@ HERE;
 ///////////////// Second drop-down menu (here hard-coded for the specific database I am using/////////////////
 
 
-/// Fix: See previous fix-- should be FROM $dbname instead?
+/// Todo: See previous fix-- should be FROM $dbname instead?
 $sql2 = "SHOW TABLES FROM $hardcodeddb";
 $result2 = mysql_query($sql2);
 
@@ -163,9 +160,6 @@ HERE;
 
 ?>
 
-</select>
-<p align="center"><input type="submit" value="Go" /></p>
-</form></td></tr></table>
 
 </body>
 </html>
