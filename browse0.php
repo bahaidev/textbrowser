@@ -37,21 +37,12 @@ $host = "localhost"; // Change this if your SQL host is not onsite$dbuser = "";
 // The following messes up the Javascript
 // header('content-type: application/xhtml+xml'); // could add e.g.: "; charset=UTF-8'"
 
-$pagecharset = "iso-8859-1";
-
-print <<<HERE
-<?xml version="1.0" encoding="$pagecharset" standalone="no"?>
-HERE;
 
 ?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
+<!DOCTYPE html>
 <?php
 // Add xml:lang="en", etc. to the following?
 ?>
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head><title><?php print "Sacred Writings Browser"; ?></title></head>
@@ -175,12 +166,6 @@ HERE;
 </select>
 <p align="center"><input type="submit" value="Go" /></p>
 </form></td></tr></table>
-
-<p align="center">
-	<a href="http://validator.w3.org/check?uri=referer"><img
-		src="http://www.w3.org/Icons/valid-xhtml10"
-		alt="Valid XHTML 1.0 Transitional" height="31" width="88" /></a>
-</p>
 
 </body>
 </html>

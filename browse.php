@@ -14,20 +14,11 @@ $hardcodeddb = ""; // Fill in the database with the books; Delete this if fix ha
 
 //////////////// XHTML Headings ///////////////////
 
-$pagecharset = "iso-8859-1";
-
-print <<<HERE
-<?xml version="1.0" encoding="$pagecharset" standalone="no"?>
-HERE;
 ?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
+<!DOCTYPE html>
 <?php
 // Add xml:lang="en", etc. to the following?
 ?>
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <?php

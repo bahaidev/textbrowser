@@ -135,14 +135,7 @@ if ($file=="peace") {
 	print "<?xml version=\"1.0\" encoding=\"GB2312\" ?>\n"; // UTF-8 didn't work
 }
 
-///Fix: Is it better to go with UTF-8 for the rest (including Arabic, etc.)?
 
-else {
-	$pagecharset = "iso-8859-1";
-	print <<<HERE
-<?xml version="1.0" encoding="$pagecharset" standalone="no"?>
-HERE;
-}
 
 /*
 // Don't need this section; I thought I needed to set the encoding to iso-8859-6 for a fix for Mac Safari browser for Arabic (the letters appear disconnected), but the actual solution is simply to remove Times New Roman and Arial fonts from each user's ~/Library/Fonts directory (installed by Entourage 2004); manually setting the encoding here doesn't solve the problem (nor is it necessary).
@@ -155,14 +148,10 @@ elseif ($file=="aqdas" || $file=="Hidden Words") {
 <?php
 // XHTML declaration
 ?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
+<!DOCTYPE html>
 <?php
 // Fix: Add xml:lang="en", etc. to the following?
 ?>
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <?php
