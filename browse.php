@@ -100,16 +100,9 @@ switch ($file) {
 ?>
 
 
-
-<?php
-///////////// Do page header title, etc.////////////
-?>
-
-<head><meta charset="utf-8" /><title><?php print "Sacred Writings Browser: $heading"; ?></title></head>
 <body>
-<br />
-<form action="browse9.php" method="get" name="browse">
 
+<form action="browse9.php" method="get" name="browse">
 
 <?php
 ///////////// Connect to database and get results to obtain field names (if default column and value exists, will only return these results (since only need the fieldnames in this script)//////////////
@@ -343,82 +336,87 @@ HERE;
 </table></td><td><h3>Advanced Formatting Options</h3>
 
 
-Text color: <select name="color2" size="1">
-	<option value="aqua">Aqua</option>
-	<option value="black" selected="selected">Black</option>
-	<option value="blue">Blue</option>
-	<option value="fuchsia">Fuchsia</option>
-	<option value="gray">Gray</option>
-	<option value="green">Green</option>
-	<option value="lime">Lime</option>
-	<option value="maroon">Maroon</option>
-	<option value="navy">Navy</option>
-	<option value="olive">Olive</option>
-	<option value="purple">Purple</option>
-	<option value="red">Red</option>
-	<option value="silver">Silver</option>
-	<option value="teal">Teal</option>
-	<option value="white">White</option>
-	<option value="yellow">Yellow</option>
-</select>
+Text color:
+
+['select', {id: 'color2'}, [
+	['option', {value: 'aqua'}, ['Aqua']],
+	['option', {value: 'black', selected: 'selected'}, ['Black']],
+	['option', {value: 'blue'}, ['Blue']],
+	['option', {value: 'fuchsia'}, ['Fuchsia']],
+	['option', {value: 'gray'}, ['Gray']],
+	['option', {value: 'green'}, ['Green']],
+	['option', {value: 'lime'}, ['Lime']],
+	['option', {value: 'maroon'}, ['Maroon']],
+	['option', {value: 'navy'}, ['Navy']],
+	['option', {value: 'olive'}, ['Olive']],
+	['option', {value: 'purple'}, ['Purple']],
+	['option', {value: 'red'}, ['Red']],
+	['option', {value: 'silver'}, ['Silver']],
+	['option', {value: 'teal'}, ['Teal']],
+	['option', {value: 'white'}, ['White']],
+	['option', {value: 'yellow'}, ['Yellow']],
+]],
 
 
 Or enter a color code here: <input name="color" type="text" value="#" size="7" maxlength="7" />
 <br /><br />
 
-Background color: <select name="bgcolor2" size="1">
-	<option value="aqua">Aqua</option>
-	<option value="black">Black</option>
-	<option value="blue">Blue</option>
-	<option value="fuchsia">Fuchsia</option>
-	<option value="gray">Gray</option>
-	<option value="green">Green</option>
-	<option value="lime">Lime</option>
-	<option value="maroon">Maroon</option>
-	<option value="navy">Navy</option>
-	<option value="olive">Olive</option>
-	<option value="purple">Purple</option>
-	<option value="red">Red</option>
-	<option value="silver">Silver</option>
-	<option value="teal">Teal</option>
-	<option value="white" selected="selected">White</option>
-	<option value="yellow">Yellow</option>
-</select>
+Background color:
+
+['select', {id: 'bgcolor2'}, [
+	['option', {value: 'aqua'}, ['Aqua']],
+	['option', {value: 'black'}, ['Black']],
+	['option', {value: 'blue'}, ['Blue']],
+	['option', {value: 'fuchsia'}, ['Fuchsia']],
+	['option', {value: 'gray'}, ['Gray']],
+	['option', {value: 'green'}, ['Green']],
+	['option', {value: 'lime'}, ['Lime']],
+	['option', {value: 'maroon'}, ['Maroon']],
+	['option', {value: 'navy'}, ['Navy']],
+	['option', {value: 'olive'}, ['Olive']],
+	['option', {value: 'purple'}, ['Purple']],
+	['option', {value: 'red'}, ['Red']],
+	['option', {value: 'silver'}, ['Silver']],
+	['option', {value: 'teal'}, ['Teal']],
+	['option', {value: 'white', selected: 'selected'}, ['White']],
+	['option', {value: 'yellow'}, ['Yellow']],
+]]
 Or enter a color code here: <input name="bgcolor" type="text" value="#" size="7" maxlength="7" />
 <br /><br />
 
-Text font: <select name="font" size="1">
-	<option value="Helvetica, sans-serif">Helvetica, sans-serif</option>
-	<option value="Verdana, sans-serif">Verdana, sans-serif</option>
-	<option value="Gill Sans, sans-serif">Gill Sans, sans-serif</option>
-	<option value="Avantgarde, sans-serif">Avantgarde, sans-serif</option>
-	<option value="Helvetica Narrow, sans-serif">Helvetica Narrow, sans-serif</option>
-	<option value="sans-serif">sans-serif</option>
-	<option value="Times, serif">Times, serif</option>
-	<option value="Times New Roman, serif" selected="selected">Times New Roman, serif</option>
-	<option value="Palatino, serif">Palatino, serif</option>
-	<option value="Bookman, serif">Bookman, serif</option>
-	<option value="New Century Schoolbook, serif">New Century Schoolbook, serif</option>
-	<option value="serif">serif</option>
-	<option value="Andale Mono, monospace">Andale Mono, monospace</option>
-	<option value="Courier New, monospace">Courier New, monospace</option>
-	<option value="Courier, monospace">Courier, monospace</option>
-	<option value="Lucidatypewriter, monospace">Lucidatypewriter, monospace</option>
-	<option value="Fixed, monospace">Fixed, monospace</option>
-	<option value="monospace">monospace</option>
-	<option value="Comic Sans, 'Comic Sans MS, cursive">Comic Sans, Comic Sans MS, cursive</option>
-	<option value="Zapf Chancery, cursive">Zapf Chancery, cursive</option>
-	<option value="Coronetscript, cursive">Coronetscript, cursive</option>
-	<option value="Florence, cursive">Florence, cursive</option>
-	<option value="Parkavenue, cursive">Parkavenue, cursive</option>
-	<option value="cursive">cursive</option>
-	<option value="Impact, fantasy">Impact, fantasy</option>
-	<option value="Arnoldboecklin, fantasy">Arnoldboecklin, fantasy</option>
-	<option value="Oldtown, fantasy">Oldtown, fantasy</option>
-	<option value="Blippo, fantasy">Blippo, fantasy</option>
-	<option value="Brushstroke, fantasy">Brushstroke, fantasy</option>
-	<option value="fantasy">fantasy</option>
-</select><br /><br />
+Text font: ['select', {id: 'font'}, [
+	['option', ['Helvetica, sans-serif']],
+	['option', ['Verdana, sans-serif']],
+	['option', ['Gill Sans, sans-serif']],
+	['option', ['Avantgarde, sans-serif']],
+	['option', ['Helvetica Narrow, sans-serif']],
+	['option', ['sans-serif']],
+	['option', ['Times, serif']],
+	['option', {selected: 'selected'}, ['Times New Roman, serif']],
+	['option', ['Palatino, serif']],
+	['option', ['Bookman, serif']],
+	['option', ['New Century Schoolbook, serif']],
+	['option', ['serif']],
+	['option', ['Andale Mono, monospace']],
+	['option', ['Courier New, monospace']],
+	['option', ['Courier, monospace']],
+	['option', ['Lucidatypewriter, monospace']],
+	['option', ['Fixed, monospace']],
+	['option', ['monospace']],
+	['option', ['Comic Sans, Comic Sans MS, cursive']],
+	['option', ['Zapf Chancery, cursive']],
+	['option', ['Coronetscript, cursive']],
+	['option', ['Florence, cursive']],
+	['option', ['Parkavenue, cursive']],
+	['option', ['cursive']],
+	['option', ['Impact, fantasy']],
+	['option', ['Arnoldboecklin, fantasy']],
+	['option', ['Oldtown, fantasy']],
+	['option', ['Blippo, fantasy']],
+	['option', ['Brushstroke, fantasy']],
+	['option', ['fantasy']]
+],
+['br', 'br']
 
 
 Font style (normal, italic, oblique):  <input name="fontstyle" type="text" value="normal" size="7" maxlength="12" /><br />
