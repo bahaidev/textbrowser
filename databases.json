@@ -1,0 +1,12 @@
+[
+    {"name": "Writings", "files": [
+        {"file": "aqdas.json", "name": "Kitáb-i-Aqdas"},
+        {"file": "iqan.json", "name": "Kitáb-i-Íqán"},
+        {"file": "quran.json", "name": "Qur'án"},
+        {"file": "peace.json", "name": "Promise of World Peace"}
+    ]},
+    {"name": "Other Writings", "files": [
+        {"file": "Collins.json", "name": "Collins bibliography"},
+        {"file": "Leiden.json", "name": "Leiden"}
+    ]}	
+]
