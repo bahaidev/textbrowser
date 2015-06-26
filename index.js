@@ -15,10 +15,13 @@ getJSON('databases.json', function (json) {
                 ['select', {'class': 'file', dataset: {name: db.name}, $on: {change: function (e) {
                     // Submit
                     // alert(e.target.dataset.name);
-                    alert(e.target.selectedOptions[0].dataset.file);
+                    
+                    getJSON(e.target.selectedOptions[0].dataset.file, function (fileJSON) {
+                        alert(JSON.stringify(fileJSON));
+                    });
                 }}}, 
                     db.files.map(function (file) {
-                        return ['option', {dataset: {file: file.file}}, [file.name]];
+                        return ['option', {dataset: {file: db.baseDirectory + '/' + file.file}}, [file.name]];
                     })
                 ],
                 ['p', [
