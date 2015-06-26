@@ -1,39 +1,9 @@
 <?php
-/////////////////
-// This is version 0.1 of browse.php
-// Search this document for "New Book Add:" to find sections which may need customization when adding a new book to the database
-// Search this document for "Fix:" to find items to fix for better coding.
-// Remove the values from the following for open-source version!
-////////////////
-$host = "localhost"; // Change this if your SQL host is not onsite
-$dbuser = ""; // Fill in your MYSQL user here
-$passw = ""; // Fill in your password here
-$hardcodeddb = ""; // Fill in the database with the books; Delete this if fix hard-coding problem
-////////////////
-// Fix: Does the fact that I have conditional (indented) functions need to be corrected?
 
-//////////////// XHTML Headings ///////////////////
-
-?>
-<!DOCTYPE html>
-<?php
-// Add xml:lang="en", etc. to the following?
-?>
-<html xmlns="http://www.w3.org/1999/xhtml">
-
-<?php
+// Todo: Add back interlinear columns, search, transposing table options!!!
+// Todo: Create metadata file for column headers?
 
 $file = $_GET['file'];
-// If no file is set, refer the user back to the main page.
-if (!$file) {
-/*
-// Fix: When I used the following, sleep() did seem to delay the execution, but it did not provide the output printed before hand. Find a way to show the redirect information but also run the header.
-	print "You haven't specified a file yet.<br /><br />You will be redirected in a few seconds or you may visit <a href='browse0.php'>here</a> if you do not wish to wait.";
-	sleep(10);
-*/
-	header('Location: browse0.php');
-	exit();
-}
 
 /////////////////// This section sets (in some cases):
 ////// 1) The aliased heading (also used as the title of the page)
@@ -505,5 +475,3 @@ HERE;
 
 <p align="center"><input type="submit" value="Go" /></p>
 </form>
-</body>
-</html>
