@@ -16,14 +16,14 @@ function paramChange () {
     
     document.body.parentNode.replaceChild(document.createElement('body'), document.body);
     
-    var params = new URLSearchParams(window.location.hash.slice(1));
+    var params = new URLSearchParams(location.hash.slice(1));
     var language = params.get('lang');
 
     if (!language) {
         jml('div', {'class': 'focus'},
             [['select', {size: langs.length, $on: {change: function (e) {
                 params.set('lang', e.target.selectedOptions[0].value);
-                window.location.hash = '#' + params.toString();
+                location.hash = '#' + params.toString();
             }}}, langs.map(function (lang) {
                 return ['option', {value: lang[0]}, [lang[2]]];
             })]], document.body
