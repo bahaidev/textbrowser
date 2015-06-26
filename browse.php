@@ -1,6 +1,7 @@
 <?php
 
 // Todo: Add back interlinear columns, search, transposing table options!!!
+// Todo: Reverse engineer missing work by using bahai_locales database (which contains more than localization info: automated column data, alternative field names, etc.)
 // Todo: Create metadata file for column headers?
 
 $file = $_GET['file'];
