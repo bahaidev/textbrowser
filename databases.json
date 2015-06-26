@@ -1,11 +1,11 @@
 [
-    {"name": "Writings", "files": [
+    {"name": "Writings", "directions": "Choose the Writings you wish to browse:", "files": [
         {"file": "aqdas.json", "name": "Kitáb-i-Aqdas"},
         {"file": "iqan.json", "name": "Kitáb-i-Íqán"},
         {"file": "quran.json", "name": "Qur'án"},
         {"file": "peace.json", "name": "Promise of World Peace"}
     ]},
-    {"name": "Other Writings", "files": [
+    {"name": "Other Writings", "directions": "Or, choose one of the following:", "files": [
         {"file": "Collins.json", "name": "Collins bibliography"},
         {"file": "Leiden.json", "name": "Leiden"}
     ]}	

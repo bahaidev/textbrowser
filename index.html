@@ -32,35 +32,7 @@
 <body>
 
 <script src="bower_components/jamilih/jml.js"></script>
-<script>
-document.title = "Sacred Writings Browser";
-
-jml('div', {style: 'text-align:center'}, [
-    ['div', ["Choose the Writings you wish to browse:"]],
-    ['br'],
-    ['select', {id: 'file', $on: {change: function () {
-        // Submit
-    }}}, [
-        // Todo
-        
-    ]],
-    ['p', [
-        ['input', {type: 'button', value: "Go"}]
-    ]],
-    ['br'],['br'],['br'],
-    "Or, choose one of the following:",
-    ['br'],['br'],
-    ['select', {id: 'file2', $on: {change: function () {
-        // Submit
-    }}}, [
-        // Todo
-        
-    ]],
-    ['p', [
-        ['input', {type: 'button', value: "Go"}]
-    ]]
-], document.body);
-
-</script>
+<script src="bower_components/get-json/index.js"></script>
+<script src="index.js"></script>
 </body>
 </html>
