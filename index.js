@@ -33,4 +33,13 @@ getJSON('databases.json', function (json) {
     );
 });
 
+/*
+Add back to databases.json when overcome memory issue
+,
+    {"name": "Other Writings", "directions": "Or, choose one of the following:", "baseDirectory": "other-works", "files": [
+        {"file": "Collins.json", "name": "Collins bibliography"},
+        {"file": "lights.json", "name": "Lights of Guidance"}
+    ]}
+*/
+
 }());
