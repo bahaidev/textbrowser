@@ -12,12 +12,12 @@ getJSON('databases.json', function (json) {
                 (i > 0 ? ['br', 'br', 'br'] : ''),
                 ['div', [db.directions]],
                 ['br'],
-                ['select', {'class': 'file', $dataset: {name: db.name}, $on: {change: function (e) {
+                ['select', {'class': 'file', dataset: {name: db.name}, $on: {change: function (e) {
                     // Submit
                     alert(e.target.dataset.name);
                 }}}, 
                     db.files.map(function (file) {
-                        return ['option', {$dataset: {file: file.file}}, [file.name]];
+                        return ['option', {dataset: {file: file.file}}, [file.name]];
                     })
                 ],
                 ['p', [
