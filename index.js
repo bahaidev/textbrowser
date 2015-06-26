@@ -14,7 +14,8 @@ getJSON('databases.json', function (json) {
                 ['br'],
                 ['select', {'class': 'file', dataset: {name: db.name}, $on: {change: function (e) {
                     // Submit
-                    alert(e.target.dataset.name);
+                    // alert(e.target.dataset.name);
+                    alert(e.target.selectedOptions[0].dataset.file);
                 }}}, 
                     db.files.map(function (file) {
                         return ['option', {dataset: {file: file.file}}, [file.name]];
