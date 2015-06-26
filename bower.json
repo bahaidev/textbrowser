@@ -1,0 +1,17 @@
+{
+  "name": "textbrowser",
+  "version": "0.1.0",
+  "main": "index.html",
+  "dependencies": {
+      "jamilih": "0.x"
+  },
+  "ignore": [],
+  "authors": [
+    "Brett Zamir <brettz9@yahoo.com>"
+  ],
+  "description": "Multilinear text browser",
+  "keywords": [
+    "text"
+  ],
+  "license": "MIT"
+}

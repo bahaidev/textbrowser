@@ -28,10 +28,10 @@
 -->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head></head>
+<head><meta charset="utf-8" /></head>
 <body>
 
-<script src="jml.js"></script>
+<script src="bower_components/jamilih/jml.js"></script>
 <script>
 document.title = "Sacred Writings Browser";
 
@@ -40,13 +40,13 @@ jml('div', {style: 'text-align:center'}, [
     ['br'],
     ['select', {id: 'file', {$on: {change: function () {
         // Submit
-    }}}} [
+    }}}}, [
         // Todo
     ]],
     ['p', [
         ['input', {value: "Go"}]
     ]]
-]);
+], document.body);
 
 </script>
 

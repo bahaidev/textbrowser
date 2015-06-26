@@ -134,7 +134,7 @@ switch ($file) {
 ///////////// Do page header title, etc.////////////
 ?>
 
-<head><title><?php print "Sacred Writings Browser: $heading"; ?></title></head>
+<head><meta charset="utf-8" /><title><?php print "Sacred Writings Browser: $heading"; ?></title></head>
 <body>
 <br />
 <form action="browse9.php" method="get" name="browse">

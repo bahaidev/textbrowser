@@ -295,7 +295,7 @@ if ($bgcolor == "" || $bgcolor == "#") {
 //////////////// Set styles according to user selections
 
 print <<<HERE
-<head>
+<head><meta charset="utf-8" />
 <style type="text/css">
 <!--
 HERE;
