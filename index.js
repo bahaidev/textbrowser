@@ -39,49 +39,60 @@ function paramChange () {
         return;
     }
     
-    var direction = getDirectionForLanguage(language);
+    var lang = language.split('.');
     
-    getJSON('databases.json', function (dbs) {
-        jml(
-            'div',
-            {'class': 'focus ' + direction},
-            dbs.map(function (db, i) {
-                return ['div', [
-                    (i > 0 ? ['br', 'br', 'br'] : ''),
-                    ['div', [db.directions]],
-                    ['br'],
-                    ['select', {'class': 'file', dataset: {name: db.name}, $on: {change: function (e) {
-                        // Submit
-                        // alert(e.target.dataset.name);
-                        
-                        
-                        getJSON(e.target.selectedOptions[0].dataset.file, function (fileJSON) {
-                            alert(JSON.stringify(fileJSON));
-                        });
-                        
-                        
-                    }}},
-                        db.files.map(function (file) {
-                            return ['option', {dataset: {file: db.baseDirectory + '/' + file.file}}, [file.name]];
-                        })
-                    ],
-                    ['p', [
-                        ['input', {type: 'button', value: "Go"}]
-                    ]]
-                ]];
-            }),
-            document.body
-        );
-    });
+    IMF({
+        languages: lang,
+        callback: function (l, defineFormatter) {
 
-    /*
-    Add back to databases.json when overcome memory issue
-    ,
-        {"name": "Other Writings", "directions": "Or, choose one of the following:", "baseDirectory": "other-works", "files": [
-            {"file": "Collins.json", "name": "Collins bibliography"},
-            {"file": "lights.json", "name": "Lights of Guidance"}
-        ]}
-    */
+            var direction = getDirectionForLanguage(lang[0]);
+
+            getJSON('databases.json', function (dbs) {
+                jml(
+                    'div',
+                    {'class': 'focus ' + direction},
+                    dbs.map(function (db, i) {
+                        return ['div', [
+                            (i > 0 ? ['br', 'br', 'br'] : ''),
+                            ['div', [l(db.directions)]],
+                            ['br'],
+                            ['select', {'class': 'file', dataset: {name: db.name}, $on: {change: function (e) {
+                                // Submit
+                                // alert(e.target.dataset.name);
+                                
+                                
+                                getJSON(e.target.selectedOptions[0].dataset.file, function (fileJSON) {
+                                    alert(JSON.stringify(fileJSON));
+                                });
+                                
+                                
+                            }}},
+                                db.files.map(function (file) {
+                                    return ['option', {dataset: {file: db.baseDirectory + '/' + file.file}}, [file.name]];
+                                })
+                            ],
+                            ['p', [
+                                ['input', {type: 'button', value: "Go"}]
+                            ]]
+                        ]];
+                    }),
+                    document.body
+                );
+            });
+
+            /*
+            Add back to databases.json when overcome memory issue
+            ,
+                {"name": "Other Writings", "directions": "choosewritings_bahai_writingsotherdb", "baseDirectory": "other-works", "files": [
+                    {"file": "Collins.json", "name": "Collins bibliography"},
+                    {"file": "lights.json", "name": "Lights of Guidance"}
+                ]}
+            */
+            
+        }
+    });
+    
+    
 }
 
 // INIT/ADD EVENTS

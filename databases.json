@@ -1,5 +1,5 @@
 [
-    {"name": "Writings", "directions": "Choose the Writings you wish to browse:", "baseDirectory": "writings", "files": [
+    {"name": "Writings", "directions": "choosewritings_bahai_writingsdb", "baseDirectory": "writings", "files": [
         {"file": "aqdas.json", "name": "Kitáb-i-Aqdas"},
         {"file": "Epistle to the Son of the Wolf.json", "name": "Epistle to the Son of the Wolf"},
         {"file": "Gems of Divine Mysteries.json", "name": "Gems of Divine Mysteries"},

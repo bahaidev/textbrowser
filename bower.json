@@ -4,7 +4,8 @@
   "main": "index.html",
   "dependencies": {
       "jamilih": "0.x",
-      "get-json": "1.x"
+      "get-json": "1.x",
+      "imf": "0.x"
   },
   "ignore": [],
   "authors": [
