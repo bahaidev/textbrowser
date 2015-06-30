@@ -1,0 +1,24 @@
+{
+    "$schema": "../../table-schema.json",
+    "type": "array",
+    "items": {
+        "type": "array",
+        "items": [
+            {
+                "type": "integer",
+                "minimum": 0,
+                "title": "Section"
+            },
+            {
+                "type": "integer",
+                "minimum": 0,
+                "title": "Paragraph"
+            },
+            {
+                "type": "string",
+                "format": "html",
+                "title": "Chinese"
+            }
+        ]
+    }
+}

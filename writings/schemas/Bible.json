@@ -1,0 +1,64 @@
+{
+    "$schema": "../../table-schema.json",
+    "type": "array",
+    "items": {
+        "type": "array",
+        "items": [
+            {
+                "type": "integer",
+                "minimum": 1,
+                "title": "Book #"
+            },
+            {
+                "type": "integer",
+                "minimum": 0,
+                "title": "Chapter #"
+            },
+            {
+                "type": "integer",
+                "minimum": 0,
+                "title": "Verse #"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "King James Translation"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Bahá'í Translation"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Bahá'í Central Figures References"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Bahá'í Special References"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Pilgrim's Notes References"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Cross-Bible References"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Individual Bahá'í Scholars"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Qur'ánic References"
+            }
+        ]
+    }
+}

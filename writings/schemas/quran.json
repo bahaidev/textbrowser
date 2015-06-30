@@ -1,0 +1,59 @@
+{
+    "$schema": "../../table-schema.json",
+    "type": "array",
+    "items": {
+        "type": "array",
+        "items": [
+            {
+                "type": "integer",
+                "minimum": 1,
+                "title": "Rodwell Suráh #"
+            },
+            {
+                "type": "integer",
+                "minimum": 0,
+                "title": "Verse #"
+            },
+            {
+                "type": "integer",
+                "minimum": 1,
+                "title": "Traditional Suráh #"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Sale Translation"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Sale's Notes"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Bahá'í References (Central Figures)"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Bahá'í Translation (Shoghi Effendi unless otherwise noted)"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Bahá'í References (Special)"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Rodwell Translation"
+            },
+            {
+                "type": "string",
+				"format": "html",
+                "title": "Rodwell's Notes"
+            }
+        ]
+    }
+}

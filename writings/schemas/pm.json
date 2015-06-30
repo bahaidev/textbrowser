@@ -1,0 +1,19 @@
+{
+    "$schema": "../../table-schema.json",
+    "type": "array",
+    "items": {
+        "type": "array",
+        "items": [
+            {
+                "type": "integer",
+                "minimum": 1,
+                "title": "Number"
+            },
+            {
+                "type": "string",
+                "format": "html",
+                "title": "English"
+            }
+        ]
+    }
+}
