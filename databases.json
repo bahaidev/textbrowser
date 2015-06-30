@@ -1,12 +1,12 @@
 [
     {"name": "Writings", "directions": "choosewritings_bahai_writingsdb", "baseDirectory": "writings", "files": [
-        {"file": "aqdas.json", "name": "Kitáb-i-Aqdas"},
-        {"file": "Epistle to the Son of the Wolf.json", "name": "Epistle to the Son of the Wolf"},
-        {"file": "Gems of Divine Mysteries.json", "name": "Gems of Divine Mysteries"},
-        {"file": "gleanings.json", "name": "Gleanings from the Writings of Bahá'u'lláh"},
-        {"file": "Hidden Words.json", "name": "Hidden Words"},
-        {"file": "peace.json", "name": "Promise of World Peace (Chinese and English)"},
-        {"file": "pm.json", "name": "Prayers and Meditations of Bahá'u'lláh"},
-        {"file": "wwtf.json", "name": "Who's Writing the Future? (Chinese)"}
+        {"file": "aqdas.json", "name": "aqdas"},
+        {"file": "Epistle to the Son of the Wolf.json", "name": "epistle to the son of the wolf"},
+        {"file": "Gems of Divine Mysteries.json", "name": "gems of divine mysteries"},
+        {"file": "gleanings.json", "name": "gleanings"},
+        {"file": "Hidden Words.json", "name": "hidden words"},
+        {"file": "peace.json", "name": "peace"},
+        {"file": "pm.json", "name": "pm"},
+        {"file": "wwtf.json", "name": "wwtf"}
     ]}
 ]

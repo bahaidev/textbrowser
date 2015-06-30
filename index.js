@@ -45,6 +45,8 @@ function paramChange () {
         languages: lang,
         callback: function (l, defineFormatter) {
 
+            var ta = defineFormatter('tablealias');
+            
             var direction = getDirectionForLanguage(lang[0]);
 
             getJSON('databases.json', function (dbs) {
@@ -68,7 +70,7 @@ function paramChange () {
                                 
                             }}},
                                 db.files.map(function (file) {
-                                    return ['option', {dataset: {file: db.baseDirectory + '/' + file.file}}, [file.name]];
+                                    return ['option', {value: file.name, dataset: {file: db.baseDirectory + '/' + file.file}}, [ta(file.name)]];
                                 })
                             ],
                             ['p', [
