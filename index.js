@@ -48,7 +48,7 @@ function paramChange () {
         localeFileResolver: function (code) {
             return langData.localeFileBasePath + langs.find(function (lang) {
                 return lang.code === code;
-            }).localeFile;
+            }).locale.$ref;
         },
         callback: function (l, defineFormatter) {
 

@@ -5,25 +5,25 @@
             "name": "English",
             "code": "en-US",
             "direction": "ltr",
-            "localeFile": "en-US.json"
+            "locale": {"$ref": "en-US.json"}
         },
         {
             "name": "فارسي",
             "code": "fa",
             "direction": "rtl",
-            "localeFile": "fa.json"
+            "locale": {"$ref": "fa.json"}
         },
         {
             "name": "عربي",
             "code": "ar",
             "direction": "rtl",
-            "localeFile": "ar.json"
+            "locale": {"$ref": "ar.json"}
         },
         {
             "name": "русский",
             "code": "ru",
             "direction": "ltr",
-            "localeFile": "ru.json"
+            "locale": {"$ref": "ru.json"}
         }
     ]
 }
