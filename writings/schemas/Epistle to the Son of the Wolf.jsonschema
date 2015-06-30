@@ -1,5 +1,5 @@
 {
-    "$schema": "../../table-schema.json",
+    "$schema": "../../table.jsonschema",
     "type": "array",
     "items": {
         "type": "array",
@@ -7,11 +7,10 @@
             {
                 "type": "integer",
                 "minimum": 0,
-                "title": "Number"
+                "title": "Paragraph"
             },
             {
                 "type": "string",
-                "format": "html",
                 "title": "English"
             }
         ]

@@ -1,5 +1,5 @@
 {
-    "$schema": "../../table-schema.json",
+    "$schema": "../../table.jsonschema",
     "type": "array",
     "items": {
         "type": "array",
@@ -7,12 +7,7 @@
             {
                 "type": "integer",
                 "minimum": 1,
-                "title": "Book #"
-            },
-            {
-                "type": "integer",
-                "minimum": 0,
-                "title": "Chapter #"
+                "title": "Rodwell Sur√°h #"
             },
             {
                 "type": "integer",
@@ -20,44 +15,44 @@
                 "title": "Verse #"
             },
             {
-                "type": "string",
-				"format": "html",
-                "title": "King James Translation"
+                "type": "integer",
+                "minimum": 1,
+                "title": "Traditional Sur√°h #"
             },
             {
                 "type": "string",
 				"format": "html",
-                "title": "Bah·'Ì Translation"
+                "title": "Sale Translation"
             },
             {
                 "type": "string",
 				"format": "html",
-                "title": "Bah·'Ì Central Figures References"
+                "title": "Sale's Notes"
             },
             {
                 "type": "string",
 				"format": "html",
-                "title": "Bah·'Ì Special References"
+                "title": "Bah√°'√≠ References (Central Figures)"
             },
             {
                 "type": "string",
 				"format": "html",
-                "title": "Pilgrim's Notes References"
+                "title": "Bah√°'√≠ Translation (Shoghi Effendi unless otherwise noted)"
             },
             {
                 "type": "string",
 				"format": "html",
-                "title": "Cross-Bible References"
+                "title": "Bah√°'√≠ References (Special)"
             },
             {
                 "type": "string",
 				"format": "html",
-                "title": "Individual Bah·'Ì Scholars"
+                "title": "Rodwell Translation"
             },
             {
                 "type": "string",
 				"format": "html",
-                "title": "Qur'·nic References"
+                "title": "Rodwell's Notes"
             }
         ]
     }

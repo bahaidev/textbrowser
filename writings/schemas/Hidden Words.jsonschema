@@ -1,5 +1,5 @@
 {
-    "$schema": "../../table-schema.json",
+    "$schema": "../../table.jsonschema",
     "type": "array",
     "items": {
         "type": "array",
@@ -7,19 +7,25 @@
             {
                 "type": "integer",
                 "minimum": 0,
-                "title": "Paragraph"
+                "title": "Number"
             },
             {
                 "type": "string",
+                "enum": ["Persian", "Arabic"],
+                "title": "Original Language"
+            },
+            {
+                "type": "string",
+                "format": "html",
                 "title": "English"
             },
             {
                 "type": "string",
-                "title": "German"
+                "title": "Arabic"
             },
             {
                 "type": "string",
-                "title": "Arabic"
+                "title": "Persian"
             }
         ]
     }

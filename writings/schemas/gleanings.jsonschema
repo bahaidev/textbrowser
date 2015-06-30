@@ -1,13 +1,13 @@
 {
-    "$schema": "../../table-schema.json",
+    "$schema": "../../table.jsonschema",
     "type": "array",
     "items": {
         "type": "array",
         "items": [
             {
                 "type": "integer",
-                "minimum": 1,
-                "title": "Number"
+                "minimum": 0,
+                "title": "Section"
             },
             {
                 "type": "string",
