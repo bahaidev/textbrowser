@@ -6,10 +6,10 @@ document.title = "Sacred Writings Browser";
 // Need for directionality even if language specified (and we don't want to require it as a param)
 getJSON('langs.json', function (langs) {
 
-function getDirectionForLanguageCode (language) {
-    return langs[langs.findIndex(function (lang) {
-        return lang.code === language;
-    })].direction;
+function getDirectionForLanguageCode (code) {
+    return langs.find(function (lang) {
+        return lang.code === code;
+    }).direction;
 }
 
 function paramChange () {
