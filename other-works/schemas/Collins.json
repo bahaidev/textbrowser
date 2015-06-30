@@ -1,0 +1,198 @@
+{
+    "$schema": "../../table-schema.json",
+    "type": "array",
+    "items": {
+        "type": "array",
+        "items": [
+            {
+                "type": "integer",
+                "minimum": 1,
+                "title": "Record ID"
+            },
+            {
+                "type": "string",
+                "title": "Workform"
+            },
+            {
+                "type": "string",
+                "title": "Author, Analytic"
+            },
+            {
+                "type": "string",
+                "title": "Author Role"
+            },
+            {
+                "type": "string",
+                "title": "Author Affiliation"
+            },
+            {
+                "type": "string",
+                "title": "Title, Analytic"
+            },
+            {
+                "type": "string",
+                "title": "Medium Designator"
+            },
+            {
+                "type": "string",
+                "title": "Connective Phrase"
+            },
+            {
+                "type": "string",
+                "title": "Author, Monographic"
+            },
+            {
+                "type": "string",
+                "title": "Author Role (2)"
+            },
+            {
+                "type": "string",
+                "title": "Title, Monographic"
+            },
+            {
+                "type": "string",
+                "title": "Journal Title"
+            },
+            {
+                "type": "string",
+                "title": "Title"
+            },
+            {
+                "type": "string",
+                "title": "Reprint Status"
+            },
+            {
+                "type": "string",
+                "title": "Place of Meeting"
+            },
+            {
+                "type": "string",
+                "title": "Medium Designator (2)"
+            },
+            {
+                "type": "string",
+                "title": "Edition"
+            },
+            {
+                "type": "string",
+                "title": "Author, Subsidiary"
+            },
+            {
+                "type": "string",
+                "title": "Author Role (3)"
+            },
+            {
+                "type": "string",
+                "title": "Place of Publication"
+            },
+            {
+                "type": "string",
+                "title": "Publisher Name"
+            },
+            {
+                "type": "string",
+                "title": "Date of Publication"
+            },
+            {
+                "type": "string",
+                "title": "Date of Copyright"
+            },
+            {
+                "type": "string",
+                "title": "Volume ID"
+            },
+            {
+                "type": "string",
+                "title": "Report ID"
+            },
+            {
+                "type": "string",
+                "title": "Issue ID"
+            },
+            {
+                "type": "string",
+                "title": "Location in Work"
+            },
+            {
+                "type": "string",
+                "title": "Extent of Work"
+            },
+            {
+                "type": "string",
+                "title": "Packaging Method"
+            },
+            {
+                "type": "string",
+                "title": "Size"
+            },
+            {
+                "type": "string",
+                "title": "Reproduction Ration"
+            },
+            {
+                "type": "string",
+                "title": "Series Editor"
+            },
+            {
+                "type": "string",
+                "title": "Series Editor Role"
+            },
+            {
+                "type": "string",
+                "title": "Series Title"
+            },
+            {
+                "type": "string",
+                "title": "Series Volume ID"
+            },
+            {
+                "type": "string",
+                "title": "Series Issue ID"
+            },
+            {
+                "type": "string",
+                "title": "Document Type"
+            },
+            {
+                "type": "string",
+                "title": "Connective Phrase (2)"
+            },
+            {
+                "type": "string",
+                "title": "Availability"
+            },
+            {
+                "type": "string",
+                "title": "Location/URL"
+            },
+            {
+                "type": "string",
+                "title": "CODEN"
+            },
+            {
+                "type": "string",
+                "title": "ISSN"
+            },
+            {
+                "type": "string",
+                "title": "ISBN"
+            },
+            {
+                "type": "string",
+                "title": "Notes"
+            },
+            {
+                "type": "string",
+                "title": "Abstract"
+            },
+            {
+                "type": "string",
+                "title": "Call Number"
+            },
+            {
+                "type": "string",
+                "title": "Keywords"
+            }
+        ]
+    }
+}
