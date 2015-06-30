@@ -6,10 +6,10 @@ document.title = "Sacred Writings Browser";
 // Need for directionality even if language specified (and we don't want to require it as a param)
 getJSON('langs.json', function (langs) {
 
-function getDirectionForLanguage (language) {
+function getDirectionForLanguageCode (language) {
     return langs[langs.findIndex(function (lang) {
-        return lang[0] === language;
-    })][1];
+        return lang.code === language;
+    })].direction;
 }
 
 function paramChange () {
@@ -25,13 +25,13 @@ function paramChange () {
                 params.set('lang', e.target.selectedOptions[0].value);
                 location.hash = '#' + params.toString();
             }}}, langs.map(function (lang) {
-                return ['option', {value: lang[0]}, [lang[2]]];
+                return ['option', {value: lang.code}, [lang.name]];
             })]], document.body
             
             /* Works too:
             langs.map(function (lang) {
                 return ['div', [
-                    ['a', {href: '#', dataset: {code: lang[0]}}, [lang[2]]]
+                    ['a', {href: '#', dataset: {code: lang.code}}, [lang.name]]
                 ]];
             }), document.body
             */
@@ -47,7 +47,7 @@ function paramChange () {
 
             var ta = defineFormatter('tablealias');
             
-            var direction = getDirectionForLanguage(lang[0]);
+            var direction = getDirectionForLanguageCode(lang[0]);
 
             getJSON('databases.json', function (dbs) {
                 jml(

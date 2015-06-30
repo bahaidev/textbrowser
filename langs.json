@@ -1,7 +1,22 @@
 [
-    ["en-US","ltr","English"],
-    ["fa","rtl","فارسي"],
-    ["ar","rtl","عربي"],
-    ["ru","ltr","русский"],
-    ["zh-CN","ltr","中文"]
+    {
+        "name": "English",
+        "code": "en-US",
+        "direction": "ltr"
+    },
+    {
+        "name": "فارسي",
+        "code": "fa",
+        "direction": "rtl"
+    },
+    {
+        "name": "عربي",
+        "code": "ar",
+        "direction": "rtl"
+    },
+    {
+        "name": "русский",
+        "code": "ru",
+        "direction": "ltr"
+    }
 ]
