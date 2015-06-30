@@ -48,7 +48,7 @@ function paramChange () {
         localeFileResolver: function (code) {
             return langData.localeFileBasePath + langs.find(function (lang) {
                 return lang.code === code;
-            }).locale.$ref;
+            }).locale.$ref; // Todo: We might instead resolve all $ref (as with https://github.com/whitlockjc/json-refs ) and replace IMF() loadLocales behavior with our own now resolved locales
         },
         callback: function (l, defineFormatter) {
 
