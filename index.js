@@ -4,7 +4,9 @@
 document.title = "Sacred Writings Browser";
 
 // Need for directionality even if language specified (and we don't want to require it as a param)
-getJSON('langs.json', function (langs) {
+getJSON('langs.json', function (langData) {
+
+var langs = langData.languages;
 
 function getDirectionForLanguageCode (code) {
     return langs.find(function (lang) {
@@ -43,6 +45,11 @@ function paramChange () {
     
     IMF({
         languages: lang,
+        localeFileResolver: function (code) {
+            return langData.localeFileBasePath + langs.find(function (lang) {
+                return lang.code === code;
+            }).localeFile;
+        },
         callback: function (l, defineFormatter) {
 
             var ta = defineFormatter('tablealias');
