@@ -15,5 +15,5 @@
                 {"file": {"$ref": "wwtf.json"}, "name": "wwtf"}
             ]
         }
-]
+    ]
 }
