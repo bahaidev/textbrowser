@@ -1,37 +1,5 @@
 [
-    {
-        "table_name": "Bible",
-        "browse_fields": ["Book #", "Chapter #", "Verse #"],
-        "default_field": "Book #",
-        "default_value": 1,
-        "text_fields": ["King James Translation"],
-        "alias_field": "Book #",
-    },
-    {
-        "table_name": "Hidden Words",
-        "browse_fields": ["Number"],
-        "default_value": 0,
-        "text_fields": ["Text"],
-    },
-    {
-        "table_name": "aqdas",
-        "browse_fields": ["Paragraph"],
-        "default_field": "Paragraph",
-        "default_value": 1,
-        "text_fields": ["Text"],
-        "orig_lang_code": "ar",
-    },
-    {
-        "table_name": "iqan",
-        "browse_field": ["Paragraph","Page"]
-        "browse_fields2": ["Page", "Paragraph"],
-        "default_field": "Paragraph",
-        "default_value": 1,
-        "text_fields": ["Text"],
-        "outputhtml": 1,
-        "orig_lang_code": "fa",
-    },
-    {
+     {
         "table_name": "peace",
         "browse_fields": ["Par."],
         "browse_fields2": ["Section"],
@@ -66,15 +34,6 @@
         "default_field2": "Paragraph",
         "text_fields": ["Text (Chinese)"],
         "orig_lang_code": "en",
-    },
-    {
-        "table_name": "alvah_va_Saya-yi_Mubarikih",
-        "browse_field_A": ["Page"],
-        "default_field": "Page",
-        "default_value": 1,
-        "text_fields": ["Text"],
-        "orig_lang_code": "fa",
-        "orig_edit_lang": "fa"
     },
     {
         "table_name": "gleanings",

@@ -78,7 +78,9 @@ function paramChange () {
                                     function (schema) {
                                         alert(JSON.stringify(schema));
                                     }
-                                )
+                                );
+                                
+                                // todo: alias fields
                                 
                                 /*
                                 getJSON(e.target.selectedOptions[0].dataset.file, function (fileJSON) {

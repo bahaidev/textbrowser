@@ -1,6 +1,10 @@
 {
     "$schema": "../../general-schemas/table.jsonschema",
     "type": "array",
+    "TEXTBROWSER-meta": {
+        "browse_fields": [{"name": "Book-Chapter-Verse", "set": ["Book #", "Chapter #", "Verse #"]}],
+        "default_view": {"Book-Chapter-Verse": [1]}
+    },
     "items": {
         "type": "array",
         "items": [
@@ -22,12 +26,14 @@
             {
                 "type": "string",
 				"format": "html",
-                "title": "King James Translation"
+                "title": "King James Translation",
+                "TEXTBROWSER-primary_text_field": true
             },
             {
                 "type": "string",
 				"format": "html",
-                "title": "Bahá'í Translation"
+                "title": "Bahá'í Translation",
+                "TEXTBROWSER-primary_text_field": true
             },
             {
                 "type": "string",
