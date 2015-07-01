@@ -70,7 +70,8 @@ function paramChange () {
                                 // Submit
                                 // alert(e.target.dataset.name);
                                 
-                                // json.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
+                                // Use the following to dynamically add specific file schema in place of generic table schema
+                                // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
                                 
                                 
                                 getJSON(e.target.selectedOptions[0].dataset.file, function (fileJSON) {
