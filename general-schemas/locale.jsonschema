@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "required": true,
+    "definitions": {
+        "localeObject": {
+            "type": "object",
+            "patternProperties": {
+                ".*": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "$ref": "#/definitions/localeObject"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "$ref": "#/definitions/localeObject"
+}
