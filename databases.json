@@ -1,12 +1,17 @@
 [
-    {"name": "Writings", "directions": "choosewritings_bahai_writingsdb", "baseDirectory": "writings", "files": [
-        {"file": "aqdas.json", "name": "aqdas"},
-        {"file": "Epistle to the Son of the Wolf.json", "name": "epistle to the son of the wolf"},
-        {"file": "Gems of Divine Mysteries.json", "name": "gems of divine mysteries"},
-        {"file": "gleanings.json", "name": "gleanings"},
-        {"file": "Hidden Words.json", "name": "hidden words"},
-        {"file": "peace.json", "name": "peace"},
-        {"file": "pm.json", "name": "pm"},
-        {"file": "wwtf.json", "name": "wwtf"}
-    ]}
+    {
+        "name": "Writings",
+        "directions": "choosewritings_bahai_writingsdb",
+        "baseDirectory": "writings",
+        "files": [
+            {"file": "aqdas.json", "name": "aqdas"},
+            {"file": "Epistle to the Son of the Wolf.json", "name": "epistle to the son of the wolf"},
+            {"file": "Gems of Divine Mysteries.json", "name": "gems of divine mysteries"},
+            {"file": "gleanings.json", "name": "gleanings"},
+            {"file": "Hidden Words.json", "name": "hidden words"},
+            {"file": "peace.json", "name": "peace"},
+            {"file": "pm.json", "name": "pm"},
+            {"file": "wwtf.json", "name": "wwtf"}
+        ]
+    }
 ]

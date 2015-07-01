@@ -92,10 +92,15 @@ function paramChange () {
             /*
             Add back to databases.json when overcome memory issue
             ,
-            {"name": "Other Writings", "directions": "choosewritings_bahai_writingsotherdb", "baseDirectory": "other-works", "files": [
-                {"file": "Collins.json", "name": "collins"},
-                {"file": "lights.json", "name": "lights"}
-            ]}
+            {
+                "name": "Other Writings",
+                "directions": "choosewritings_bahai_writingsotherdb",
+                "baseDirectory": "other-works",
+                "files": [
+                    {"file": "Collins.json", "name": "collins"},
+                    {"file": "lights.json", "name": "lights"}
+                ]
+            }
             */
             
         }
