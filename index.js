@@ -78,7 +78,7 @@ function paramChange () {
                                 
                             }}},
                                 fileGroup.files.map(function (file) {
-                                    return ['option', {value: file.name, dataset: {file: (dbs.baseDirectory || fileGroup.baseDirectory) + '/' + file.file}}, [ta(file.name)]];
+                                    return ['option', {value: file.name, dataset: {file: (dbs.baseDirectory || fileGroup.baseDirectory) + '/' + file.file.$ref}}, [ta(file.name)]];
                                 })
                             ],
                             ['p', [
