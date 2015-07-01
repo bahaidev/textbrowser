@@ -57,15 +57,16 @@ function paramChange () {
             var direction = getDirectionForLanguageCode(lang[0]);
 
             getJSON('files.json', function (dbs) {
+                var fileGroups = dbs.groups;
                 jml(
                     'div',
                     {'class': 'focus ' + direction},
-                    dbs.map(function (db, i) {
+                    fileGroups.map(function (fileGroup, i) {
                         return ['div', [
                             (i > 0 ? ['br', 'br', 'br'] : ''),
-                            ['div', [l(db.directions)]],
+                            ['div', [l(fileGroup.directions)]],
                             ['br'],
-                            ['select', {'class': 'file', dataset: {name: db.name}, $on: {change: function (e) {
+                            ['select', {'class': 'file', dataset: {name: fileGroup.name}, $on: {change: function (e) {
                                 // Submit
                                 // alert(e.target.dataset.name);
                                 
@@ -76,8 +77,8 @@ function paramChange () {
                                 
                                 
                             }}},
-                                db.files.map(function (file) {
-                                    return ['option', {value: file.name, dataset: {file: db.baseDirectory + '/' + file.file}}, [ta(file.name)]];
+                                fileGroup.files.map(function (file) {
+                                    return ['option', {value: file.name, dataset: {file: (dbs.baseDirectory || fileGroup.baseDirectory) + '/' + file.file}}, [ta(file.name)]];
                                 })
                             ],
                             ['p', [
