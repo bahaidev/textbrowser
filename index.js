@@ -73,15 +73,21 @@ function paramChange () {
                                 // Use the following to dynamically add specific file schema in place of generic table schema
                                 // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
                                 
+                                getJSON(
+                                    e.target.selectedOptions[0].dataset.fileSchema, // Change fileSchema to JSON refs?
+                                    function (schema) {
+                                        alert(JSON.stringify(schema));
+                                    }
+                                )
                                 
+                                /*
                                 getJSON(e.target.selectedOptions[0].dataset.file, function (fileJSON) {
                                     alert(JSON.stringify(fileJSON));
                                 });
-                                
-                                
+                                */
                             }}},
                                 fileGroup.files.map(function (file) {
-                                    return ['option', {value: file.name, dataset: {file: (dbs.baseDirectory || fileGroup.baseDirectory) + '/' + file.file.$ref}}, [ta(file.name)]];
+                                    return ['option', {value: file.name, dataset: {fileSchema: (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/' + file.fileSchema, file: (dbs.baseDirectory || fileGroup.baseDirectory) + '/' + file.file.$ref}}, [ta(file.name)]];
                                 })
                             ],
                             ['p', [
