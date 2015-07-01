@@ -70,7 +70,7 @@ function paramChange () {
                                 // Submit
                                 // alert(e.target.dataset.name);
                                 
-                                // Use the following to dynamically add specific file schema in place of generic table schema
+                                // Use the following to dynamically add specific file schema in place of generic table schema if validating against files.jsonschema
                                 // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
                                 
                                 getJSON(
