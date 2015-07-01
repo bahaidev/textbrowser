@@ -27,12 +27,17 @@
                         "required": true
                     },
                     "locale": {
-                        "type": "object",
-                        "properties": {
-                            "$ref": {
-                                "type": "string"
-                            }
-                        }
+                        "anyOf": [
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "$ref": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            {"$ref": "locale.jsonschema#"}
+                        ]
                     }
                 }
             }
