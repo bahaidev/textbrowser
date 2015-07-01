@@ -4,10 +4,10 @@
     "TEXTBROWSER-meta": {
         "browse_fields": ["Paragraph"],
         "default_view": {"Paragraph": 0},
-        "orig_lang": {
+        "orig_langs": [{
             "code": "ar",
-            "fields": "Arabic",
-        }
+            "fields": ["Arabic"],
+        }]
     },
     "items": {
         "type": "array",
