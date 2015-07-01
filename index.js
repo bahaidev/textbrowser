@@ -70,6 +70,8 @@ function paramChange () {
                                 // Submit
                                 // alert(e.target.dataset.name);
                                 
+                                // json.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
+                                
                                 
                                 getJSON(e.target.selectedOptions[0].dataset.file, function (fileJSON) {
                                     alert(JSON.stringify(fileJSON));
