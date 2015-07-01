@@ -7,6 +7,7 @@
         },
         "groups": {
             "type": "array",
+            "required": true,
             "items": {
                 "type": "object",
                 "properties": {
@@ -21,14 +22,17 @@
                     },
                     "files": {
                         "type": "array",
+                        "required": true,
                         "items": {
                             "type": "object",
                             "properties": {
                                 "file": {
                                     "type": "object",
+                                    "required": true,
                                     "properties": {
                                         "$ref": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "required": true
                                         }
                                     }
                                 },

@@ -1,24 +1,30 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
+    "required": true,
     "properties": {
         "localeFileBasePath": {
             "type": "string"
         },
         "languages": {
             "type": "array",
+            "required": true,
             "items": {
                 "type": "object",
+                "required": true,
                 "properties": {
                     "name": {
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     },
                     "code": {
-                        "type": "string"
+                        "type": "string",
+                        "required": true
                     },
                     "direction": {
                         "type": "string",
-                        "enum": ["ltr", "rtl"]
+                        "enum": ["ltr", "rtl"],
+                        "required": true
                     },
                     "locale": {
                         "type": "object",
