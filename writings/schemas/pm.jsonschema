@@ -1,5 +1,5 @@
 {
-    "$schema": "../../table.jsonschema",
+    "$schema": "../../general-schemas/table.jsonschema",
     "type": "array",
     "items": {
         "type": "array",
