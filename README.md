@@ -1,6 +1,6 @@
 Due to changes in PHP, the code is no longer working and needs a rewrite.
 
-However, I am hoping to rewrite this in client-side JavaScript so that
+However, I have begun to rewrite in client-side JavaScript so that
 it can work offline.
 
 ----
