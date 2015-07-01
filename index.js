@@ -56,7 +56,7 @@ function paramChange () {
             
             var direction = getDirectionForLanguageCode(lang[0]);
 
-            getJSON('databases.json', function (dbs) {
+            getJSON('files.json', function (dbs) {
                 jml(
                     'div',
                     {'class': 'focus ' + direction},
@@ -90,7 +90,7 @@ function paramChange () {
             });
 
             /*
-            Add back to databases.json when overcome memory issue
+            Add back to files.json when overcome memory issue when exporting to JSON from BL
             ,
             {
                 "name": "Other Writings",
