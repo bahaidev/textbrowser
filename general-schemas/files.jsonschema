@@ -5,6 +5,9 @@
         "baseDirectory": {
             "type": "string"
         },
+        "schemaBaseDirectory": {
+            "type": "string"
+        },
         "groups": {
             "type": "array",
             "required": true,
@@ -18,6 +21,9 @@
                         "type": "string"
                     },
                     "baseDirectory": {
+                        "type": "string"
+                    },
+                    "schemaBaseDirectory": {
                         "type": "string"
                     },
                     "files": {
