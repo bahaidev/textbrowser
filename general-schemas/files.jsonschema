@@ -27,14 +27,19 @@
                             "type": "object",
                             "properties": {
                                 "file": {
-                                    "type": "object",
-                                    "required": true,
-                                    "properties": {
-                                        "$ref": {
-                                            "type": "string",
-                                            "required": true
-                                        }
-                                    }
+                                    "anyOf": [
+                                        {
+                                            "type": "object",
+                                            "required": true,
+                                            "properties": {
+                                                "$ref": {
+                                                    "type": "string",
+                                                    "required": true
+                                                }
+                                            }
+                                        },
+                                        {"$ref": "table.jsonschema#"}
+                                    ]
                                 },
                                 "name": {
                                     "type": "string"
