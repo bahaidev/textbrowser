@@ -40,16 +40,19 @@
                             "type": "object",
                             "patternProperties": {
                                 ".*": {
-                                    "type": "array",
-                                    "items": {
-                                        "anyOf": [
+                                    "type": "object",
+                                    "patternProperties": {
+                                        ".*": {
                                             {
-                                                "type": "array"
+                                                "type": "string"
                                             },
                                             {
-                                                "type": "object"
+                                                "type": "array",
+                                                "properties": {
+                                                    "type": "string"
+                                                }
                                             }
-                                        ]
+                                        }
                                     }
                                 }
                             }
