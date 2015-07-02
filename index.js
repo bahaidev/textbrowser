@@ -1,6 +1,8 @@
 /*globals getJSON, jml*/
 (function () {'use strict';
 
+// Todo: change $ref usages to utilize JSON Reference + JSON Pointer-aware library ( https://github.com/manuelstofer/json-pointer ?)
+
 document.title = "Sacred Writings Browser";
 
 // Need for directionality even if language specified (and we don't want to require it as a param)
