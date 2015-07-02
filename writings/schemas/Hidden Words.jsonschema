@@ -1,10 +1,6 @@
 {
     "$schema": "../../general-schemas/table.jsonschema",
     "type": "array",
-    "TEXTBROWSER-meta": {
-        "browse_fields": ["Number"],
-        "default_view": {"Number": 0}
-    },
     "items": {
         "type": "array",
         "items": [
@@ -21,18 +17,15 @@
             {
                 "type": "string",
                 "format": "html",
-                "title": "English",
-                "TEXTBROWSER-primary_text_field": true
+                "title": "English"
             },
             {
                 "type": "string",
-                "title": "Arabic",
-                "TEXTBROWSER-primary_text_field": true
+                "title": "Arabic"
             },
             {
                 "type": "string",
-                "title": "Persian",
-                "TEXTBROWSER-primary_text_field": true
+                "title": "Persian"
             }
         ]
     }

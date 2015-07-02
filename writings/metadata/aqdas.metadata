@@ -1,0 +1,21 @@
+{
+    "table": {
+        "browse_fields": ["Paragraph"],
+        "default_view": {"Paragraph": 0},
+        "orig_langs": [{
+            "code": "ar",
+            "fields": ["Arabic"],
+        }]
+    },
+    "fields": {
+        "English": {
+            "primary_text_field": true
+        },
+        "German": {
+            "primary_text_field": true
+        },
+        "Arabic": {
+            "primary_text_field": true
+        }
+    }
+}

@@ -14,37 +14,6 @@
             "type": "string"
         },
         "type": {"$ref": "#/definitions/typeArray"},
-        "TEXTBROWSER-meta": {
-            "type": "object",
-            "properties": {
-                "browse_fields": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "default_view": {
-                    "type": "object"
-                },
-                "orig_lang": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "code": {
-                                "type": "string"
-                            },
-                            "fields": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "items": {
             "type": "object",
             "properties": {

@@ -1,0 +1,14 @@
+{
+    "table": {
+        "browse_fields": [{"name": "Book-Chapter-Verse", "set": ["Book #", "Chapter #", "Verse #"]}],
+        "default_view": {"Book-Chapter-Verse": [1]}
+    },
+    "fields": {
+        "King James Translation": {
+            "primary_text_field": true
+        },
+        "Bahá'í Translation": {
+            "primary_text_field": true
+        }
+    }
+}

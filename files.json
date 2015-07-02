@@ -6,14 +6,14 @@
             "baseDirectory": "writings",
             "schemaBaseDirectory": "writings/schemas",
             "files": [
-                {"file": {"$ref": "aqdas.json"}, "fileSchema": "aqdas.jsonschema", "name": "aqdas"},
-                {"file": {"$ref": "Epistle to the Son of the Wolf.json"}, "fileSchema": "Epistle to the Son of the Wolf.jsonschema", "name": "epistle to the son of the wolf"},
-                {"file": {"$ref": "Gems of Divine Mysteries.json"}, "fileSchema": "Gems of Divine Mysteries.jsonschema", "name": "gems of divine mysteries"},
-                {"file": {"$ref": "gleanings.json"}, "fileSchema": "gleanings.jsonschema", "name": "gleanings"},
-                {"file": {"$ref": "Hidden Words.json"}, "fileSchema": "Hidden Words.jsonschema", "name": "hidden words"},
-                {"file": {"$ref": "peace.json"}, "fileSchema": "peace.jsonschema", "name": "peace"},
-                {"file": {"$ref": "pm.json"}, "fileSchema": "pm.jsonschema", "name": "pm"},
-                {"file": {"$ref": "wwtf.json"}, "fileSchema": "wwtf.jsonschema", "name": "wwtf"}
+                {"file": {"$ref": "aqdas.json"}, "name": "aqdas"},
+                {"file": {"$ref": "Epistle to the Son of the Wolf.json"}, "name": "epistle to the son of the wolf"},
+                {"file": {"$ref": "Gems of Divine Mysteries.json"}, "name": "gems of divine mysteries"},
+                {"file": {"$ref": "gleanings.json"}, "name": "gleanings"},
+                {"file": {"$ref": "Hidden Words.json"}, "name": "hidden words"},
+                {"file": {"$ref": "peace.json"}, "name": "peace"},
+                {"file": {"$ref": "pm.json"}, "name": "pm"},
+                {"file": {"$ref": "wwtf.json"}, "name": "wwtf"}
             ]
         }
     ]
