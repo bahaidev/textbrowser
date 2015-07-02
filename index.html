@@ -1,31 +1,3 @@
-<!--
-
-/////////////// Intended significant future features of this browse system:///////////
-// 1. Searching
-// 2. Go to previous/next results (allow customization of size on the fly as well as in preferences)
-// 3. Hide advanced formatting options (make savable in preferences)
-// 4. Give tooltips to tell how to use the elements
-// 5. Make full preferences system for saved/favorite, recent searches/browses, etc.
-// 6. Baha'i texts: Coordination with official Baha'i World Centre XML (using TEI) if full XML is released to automatically (and periodically) parse their texts into SQL here to ensure we have the most up-to-date and corrected translations
-// 7. Automated word-by-word translations, auto-links to Google, Amazon, etc.
-// 8. Auto-links by verse to relevant forums, wikis, blogs, or personal notes pertaining to a given verse...
-// 9. Allow tables to be resortable via a Javascript which allows sorting by multiple columns with various data, etc.
-// 10. Figure out how to get rowspans (or even colspans) for additional columns (e.g., a field spanning by whole pages of the Iqan and another field spanning only by paragraphs) - use some kind of counter and don't display the HTML until finished cycling??; also figure out how to reassemble if the minute fields are not needed (e.g., if the user only wants to see the text by paragraph and not anything related to by page)
-// 11. Allow data to be displayed interlinearly if desired or horizontally
-// 12. Localization of the interface (including column aliases, etc.)
-// 13. Allow combined fields for browsing (Collins)
-// 14. Separate formatting
-///////////////// Intended minor features /////////////////
-// 1) Add link color (browse.php and browse9.php) as option to advanced formatting
-/////////////////
-///////////////// Intended tweaks //////////////////
-// Todo: //
-// 1) Especially those variables that will be accessed by other scripts, it would make more sense (and take less space) to use an SQL database to store them rather than pass them between forms via hidden elements, etc. (there are a number of these)
-// 2) Add Password, etc. into transcluded inc file to avoid duplication between files in the coding here - if truly duplicated)
-// 3) Upload newer Collins and fix any bugs in formatting.
-// 4) The base code of browse0.php, browse.php, browse9.php are all XHTML compliant, but there are a good number of invalid XHTML in the SQL databases Qur'an and Bible (links w/o quotes) that need to be replaced as well as the XHTML and link locations in the Iqan copy
-
--->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -48,6 +20,7 @@
 <script src="bower_components/traverse/traverse.js"></script>
 <script src="bower_components/json-refs/browser/json-refs.js"></script>
 
+<!-- Main textbrowser script -->
 <script src="index.js"></script>
 
 </body>
