@@ -3,19 +3,21 @@
         "browse_fields": ["Paragraph"],
         "default_view": {"Paragraph": 0},
         "orig_langs": [{
-            "code": "ar",
             "fields": ["Arabic"],
         }]
     },
     "fields": {
         "English": {
-            "primary_text_field": true
+            "primary_text_field": true,
+            "lang": "en"
         },
         "German": {
-            "primary_text_field": true
+            "primary_text_field": true,
+            "lang": "de"
         },
         "Arabic": {
-            "primary_text_field": true
+            "primary_text_field": true,
+            "lang": "ar"
         }
     }
 }
