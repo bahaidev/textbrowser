@@ -1,37 +1,69 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
+    "definitions": {
+        "stringOrIntegerType": {
+            "anyOf": [
+                {"type": "string"},
+                {"type": "integer"}
+            ]
+        }
+    },
     "properties": {
-        "browse_fields": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            }
+        "table": {
+            "type": "object",
+            "properties": {
+                "browse_fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "default_view": {
+                    "type": "object",
+                    "patternProperties": {
+                        ".*": {
+                            "anyOf": [
+                                {"$ref": "#/definitions/stringOrIntegerType"},
+                                {
+                                    "type": "array",
+                                    "items": {"$ref": "#/definitions/stringOrIntegerType"}
+                                }
+                            ]
+                        }
+                    }
+                },
+                "orig_lang": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "fields": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }            
         },
-        "default_view": {
+        "fields": {
             "type": "object",
             "patternProperties": {
                 ".*": {
-                    
-                }
-            }
-        },
-        "orig_lang": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "code": {
-                        "type": "string"
-                    },
-                    "fields": {
-                        "type": "array",
-                        "items": {
+                    "type": "object",
+                    "properties": {
+                        "primary_text_field": {
+                            "type": "boolean"
+                        },
+                        "lang": {
                             "type": "string"
                         }
                     }
                 }
-            }
+            }                
         }
     }
 }
