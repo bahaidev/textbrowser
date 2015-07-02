@@ -3,8 +3,8 @@
         {
             "name": "Writings",
             "directions": "choosewritings_bahai_writingsdb",
-            "baseDirectory": "writings",
-            "schemaBaseDirectory": "writings/schemas",
+            "baseDirectory": "data/writings",
+            "schemaBaseDirectory": "data/writings/schemas",
             "files": [
                 {"file": {"$ref": "aqdas.json"}, "name": "aqdas"},
                 {"file": {"$ref": "Epistle to the Son of the Wolf.json"}, "name": "epistle to the son of the wolf"},
