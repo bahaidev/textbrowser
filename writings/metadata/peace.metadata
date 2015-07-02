@@ -1,8 +1,13 @@
 {
     "table": {
-
+        "browse_fields": ["Par.", "Section"],
+        "default_view": {"Par.": 0}
     },
     "fields": {
-
+        "English": {
+            "primary_text_field": true,
+            "orig_lang_field": true,
+            "lang": "en"
+        }
     }
 }

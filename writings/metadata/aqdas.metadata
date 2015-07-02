@@ -1,8 +1,7 @@
 {
     "table": {
         "browse_fields": ["Paragraph"],
-        "default_view": {"Paragraph": 0},
-        "orig_langs": ["Arabic"]
+        "default_view": {"Paragraph": 0}
     },
     "fields": {
         "English": {
@@ -15,6 +14,7 @@
         },
         "Arabic": {
             "primary_text_field": true,
+            "orig_lang_field": true,
             "lang": "ar"
         }
     }

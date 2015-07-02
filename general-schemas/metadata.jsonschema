@@ -32,12 +32,6 @@
                             ]
                         }
                     }
-                },
-                "orig_langs": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }            
         },
@@ -50,7 +44,13 @@
                         "primary_text_field": {
                             "type": "boolean"
                         },
+                        "orig_lang_field": {
+                            "type": "boolean"
+                        },
                         "lang": {
+                            "type": "string"
+                        },
+                        "orig_lang": {
                             "type": "string"
                         }
                     }

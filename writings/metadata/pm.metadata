@@ -1,8 +1,11 @@
 {
     "table": {
-
+        "browse_fields": ["Number"],
+        "default_view": {"Number": 1}
     },
     "fields": {
-
+        "Text": {
+            "primary_text_field": true
+        }
     }
 }

@@ -1,8 +1,13 @@
 {
     "table": {
-
+        "browse_fields": ["Paragraph"],
+        "default_view": {"Paragraph": 0}
     },
     "fields": {
-
+        "Text": {
+            "primary_text_field": true,
+            "lang": "en",
+            "orig_lang": "ar"
+        }
     }
 }

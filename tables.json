@@ -1,12 +1,4 @@
 [
-     {
-        "table_name": "peace",
-        "browse_fields": ["Par."],
-        "browse_fields2": ["Section"],
-        "default_value": 0,
-        "text_fields": ["Text (English)"],
-        "orig_lang_code": "en",
-    },
     {
         "table_name": "quran",
         "browse_fields": ["Traditional Suráh #", "Verse #"],
@@ -49,20 +41,5 @@
         "default_value": 0,
         "text_fields": ["Text"],
         "orig_lang_code": "ar",
-    },
-    {
-        "table_name": "Gems of Divine Mysteries",
-        "browse_fields": ["Paragraph"],
-        "default_field": "Paragraph",
-        "default_value": 0,
-        "text_fields": ["Text"],
-        "orig_lang_code": "ar",
-    },
-    {
-        "table_name": "pm",
-        "browse_fields": ["Number"],
-        "default_field": "Number",
-        "default_value": 1,
-        "text_fields": ["Text"],
     }
 ]
