@@ -7,7 +7,7 @@
         "Text": {
             "primary_text_field": true,
             "lang": "en",
-            "orig_lang": "ar"
+            "orig_langs": ["ar"]
         }
     }
 }

@@ -50,8 +50,11 @@
                         "lang": {
                             "type": "string"
                         },
-                        "orig_lang": {
-                            "type": "string"
+                        "orig_langs": {
+                            "type": "array",
+                            "properties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }

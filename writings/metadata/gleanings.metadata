@@ -1,8 +1,12 @@
 {
     "table": {
-
+        "browse_fields": ["Section"],
+        "default_view": {"Section": 1}
     },
     "fields": {
-
+        "Text": {
+            "primary_text_field": true,
+            "lang": "en"
+        }
     }
 }

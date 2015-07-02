@@ -28,13 +28,6 @@
         "orig_lang_code": "en",
     },
     {
-        "table_name": "gleanings",
-        "browse_fields": ["Section"],
-        "default_field": "Section",
-        "default_value": 1,
-        "text_fields": ["Text"],
-    },
-    {
         "table_name": "Epistle to the Son of the Wolf",
         "browse_fields": ["Paragraph"],
         "default_field": "Paragraph",
