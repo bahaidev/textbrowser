@@ -33,18 +33,10 @@
                         }
                     }
                 },
-                "orig_lang": {
+                "orig_langs": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "properties": {
-                            "fields": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
-                            }
-                        }
+                        "type": "string"
                     }
                 }
             }            

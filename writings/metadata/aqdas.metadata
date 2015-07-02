@@ -2,9 +2,7 @@
     "table": {
         "browse_fields": ["Paragraph"],
         "default_view": {"Paragraph": 0},
-        "orig_langs": [{
-            "fields": ["Arabic"],
-        }]
+        "orig_langs": ["Arabic"]
     },
     "fields": {
         "English": {
