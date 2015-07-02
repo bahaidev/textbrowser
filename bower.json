@@ -5,7 +5,8 @@
   "dependencies": {
       "jamilih": "0.x",
       "get-json": "1.x",
-      "imf": "0.x"
+      "imf": "0.x",
+      "json-refs": "0.x"
   },
   "ignore": [],
   "authors": [

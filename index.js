@@ -1,7 +1,7 @@
 /*globals getJSON, jml*/
 (function () {'use strict';
 
-// Todo: change $ref usages to utilize JSON Reference + JSON Pointer-aware library ( https://github.com/manuelstofer/json-pointer ?)
+// Todo: change $ref usages to utilize JSON Reference ( https://github.com/whitlockjc/json-refs ) + JSON Pointer-aware library ( https://github.com/manuelstofer/json-pointer ?)
 
 document.title = "Sacred Writings Browser";
 
