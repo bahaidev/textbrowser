@@ -1,8 +1,12 @@
 {
     "table": {
-
+        "browse_fields": ["Section","Paragraph"],
+        "default_view": {"Section": 0}
     },
     "fields": {
-
+        "Text (Chinese)": {
+            "lang": "zh-CN",
+            "orig_langs": ["en"]
+        }
     }
 }

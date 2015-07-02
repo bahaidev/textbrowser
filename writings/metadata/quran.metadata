@@ -1,0 +1,29 @@
+{
+    "table": {
+        "fieldvalues": {
+            "alias": {
+                "Traditional Suráh #": [
+                    {
+                        
+                    }
+                ]
+            }
+        },
+        "browse_fields": [
+            {"name": "Traditional", "set": ["Traditional Suráh #", "Verse #"]},
+            {"name": "Rodwell", "set": ["Rodwell Suráh #", "Verse #"]}
+        ],
+        "default_view": {"Traditional Suráh #": 1}
+    },
+    "fields": {
+        "Rodwell Translation": {
+            "primary_text_field": true,
+            "orig_langs": ["ar"]
+        },
+        "Sale Translation": {
+            "primary_text_field": true,
+            "orig_langs": ["ar"]
+        }
+    }
+}
+        

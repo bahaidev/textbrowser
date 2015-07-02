@@ -1,0 +1,12 @@
+{
+    "table": {
+        "browse_fields": ["Record ID", "Date of Publication"],
+        "default_view": {"Record ID": 1}        
+    },
+    "fields": {
+        "Abstract": {
+            "primary_text_field": true,
+            "lang": "en"
+        }
+    }
+}
