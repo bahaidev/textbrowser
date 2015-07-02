@@ -32,6 +32,29 @@
                             ]
                         }
                     }
+                },
+                "fieldvalues": {
+                    "type": "object",
+                    "properties": {
+                        "aliases": {
+                            "type": "object",
+                            "patternProperties": {
+                                ".*": {
+                                    "type": "array",
+                                    "items": {
+                                        "anyOf": [
+                                            {
+                                                "type": "array"
+                                            },
+                                            {
+                                                "type": "object"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }            
         },

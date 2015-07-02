@@ -3,7 +3,7 @@
         "browse_fields": [{"name": "Book-Chapter-Verse", "set": ["Book #", "Chapter #", "Verse #"]}],
         "default_view": {"Book-Chapter-Verse": [1]},
         "fieldvalues": {
-            "alias": {
+            "aliases": {
                 "Book #": [
                     {
                         
