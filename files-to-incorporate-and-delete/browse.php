@@ -339,23 +339,25 @@ HERE;
 Text color:
 
 ['select', {id: 'color2'}, [
-	['option', {value: 'aqua'}, ['Aqua']],
-	['option', {value: 'black', selected: 'selected'}, ['Black']],
-	['option', {value: 'blue'}, ['Blue']],
-	['option', {value: 'fuchsia'}, ['Fuchsia']],
-	['option', {value: 'gray'}, ['Gray']],
-	['option', {value: 'green'}, ['Green']],
-	['option', {value: 'lime'}, ['Lime']],
-	['option', {value: 'maroon'}, ['Maroon']],
-	['option', {value: 'navy'}, ['Navy']],
-	['option', {value: 'olive'}, ['Olive']],
-	['option', {value: 'purple'}, ['Purple']],
-	['option', {value: 'red'}, ['Red']],
-	['option', {value: 'silver'}, ['Silver']],
-	['option', {value: 'teal'}, ['Teal']],
-	['option', {value: 'white'}, ['White']],
-	['option', {value: 'yellow'}, ['Yellow']],
-]],
+    'Aqua',
+    'Black',
+    'Blue',
+    'Fuchsia',
+    'Gray',
+    'Green',
+    'Lime',
+    'Maroon',
+    'Navy',
+    'Olive',
+    'Purple',
+    'Red',
+    'Silver',
+    'Teal',
+    'White',
+    'Yellow'
+].map(function (color, i) {
+    return i === 1 ? ['option', {selected: 'selected', value: color.toLowerCase()}, [color]] : ['option', {value: color.toLowerCase()}, [color]];
+}),
 
 
 Or enter a color code here: <input name="color" type="text" value="#" size="7" maxlength="7" />
@@ -364,60 +366,64 @@ Or enter a color code here: <input name="color" type="text" value="#" size="7" m
 Background color:
 
 ['select', {id: 'bgcolor2'}, [
-	['option', {value: 'aqua'}, ['Aqua']],
-	['option', {value: 'black'}, ['Black']],
-	['option', {value: 'blue'}, ['Blue']],
-	['option', {value: 'fuchsia'}, ['Fuchsia']],
-	['option', {value: 'gray'}, ['Gray']],
-	['option', {value: 'green'}, ['Green']],
-	['option', {value: 'lime'}, ['Lime']],
-	['option', {value: 'maroon'}, ['Maroon']],
-	['option', {value: 'navy'}, ['Navy']],
-	['option', {value: 'olive'}, ['Olive']],
-	['option', {value: 'purple'}, ['Purple']],
-	['option', {value: 'red'}, ['Red']],
-	['option', {value: 'silver'}, ['Silver']],
-	['option', {value: 'teal'}, ['Teal']],
-	['option', {value: 'white', selected: 'selected'}, ['White']],
-	['option', {value: 'yellow'}, ['Yellow']],
-]]
+    'Aqua',
+    'Black',
+    'Blue',
+    'Fuchsia',
+    'Gray',
+    'Green',
+    'Lime',
+    'Maroon',
+    'Navy',
+    'Olive',
+    'Purple',
+    'Red',
+    'Silver',
+    'Teal',
+    'White',
+    'Yellow'
+].map(function (color, i) {
+    return i === 14 ? ['option', {selected: 'selected', value: color.toLowerCase()}, [color]] : ['option', {value: color.toLowerCase()}, [color]];
+}),
+
 Or enter a color code here: <input name="bgcolor" type="text" value="#" size="7" maxlength="7" />
 <br /><br />
 
 Text font: ['select', {id: 'font'}, [
-	['option', ['Helvetica, sans-serif']],
-	['option', ['Verdana, sans-serif']],
-	['option', ['Gill Sans, sans-serif']],
-	['option', ['Avantgarde, sans-serif']],
-	['option', ['Helvetica Narrow, sans-serif']],
-	['option', ['sans-serif']],
-	['option', ['Times, serif']],
-	['option', {selected: 'selected'}, ['Times New Roman, serif']],
-	['option', ['Palatino, serif']],
-	['option', ['Bookman, serif']],
-	['option', ['New Century Schoolbook, serif']],
-	['option', ['serif']],
-	['option', ['Andale Mono, monospace']],
-	['option', ['Courier New, monospace']],
-	['option', ['Courier, monospace']],
-	['option', ['Lucidatypewriter, monospace']],
-	['option', ['Fixed, monospace']],
-	['option', ['monospace']],
-	['option', ['Comic Sans, Comic Sans MS, cursive']],
-	['option', ['Zapf Chancery, cursive']],
-	['option', ['Coronetscript, cursive']],
-	['option', ['Florence, cursive']],
-	['option', ['Parkavenue, cursive']],
-	['option', ['cursive']],
-	['option', ['Impact, fantasy']],
-	['option', ['Arnoldboecklin, fantasy']],
-	['option', ['Oldtown, fantasy']],
-	['option', ['Blippo, fantasy']],
-	['option', ['Brushstroke, fantasy']],
-	['option', ['fantasy']]
-],
+    ['Helvetica, sans-serif'],
+	['Verdana, sans-serif'],
+	['Gill Sans, sans-serif'],
+	['Avantgarde, sans-serif'],
+	['Helvetica Narrow, sans-serif'],
+	['sans-serif'],
+	['Times, serif'],
+	['Times New Roman, serif'],
+	['Palatino, serif'],
+	['Bookman, serif'],
+	['New Century Schoolbook, serif'],
+	['serif'],
+	['Andale Mono, monospace'],
+	['Courier New, monospace'],
+	['Courier, monospace'],
+	['Lucidatypewriter, monospace'],
+	['Fixed, monospace'],
+	['monospace'],
+	['Comic Sans, Comic Sans MS, cursive'],
+	['Zapf Chancery, cursive'],
+	['Coronetscript, cursive'],
+	['Florence, cursive'],
+	['Parkavenue, cursive'],
+	['cursive'],
+	['Impact, fantasy'],
+	['Arnoldboecklin, fantasy'],
+	['Oldtown, fantasy'],
+	['Blippo, fantasy'],
+	['Brushstroke, fantasy'],
+	['fantasy']]
+].map(function (fonts, i) {
+    return (i === 7) ? ['option', {selected: 'selected'}, fonts] : ['option', fonts];
+}),
 ['br', 'br']
-
 
 Font style (normal, italic, oblique):  <input name="fontstyle" type="text" value="normal" size="7" maxlength="12" /><br />
 
