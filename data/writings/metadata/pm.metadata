@@ -5,7 +5,8 @@
     },
     "fields": {
         "Text": {
-            "primary_text_field": true
+            "primary_text_field": true,
+            "lang": "en"
         },
         "Number": {
             "roman": true

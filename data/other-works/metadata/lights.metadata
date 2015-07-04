@@ -1,8 +1,10 @@
 {
     "table": {
-        
+        "browse_fields": ["Number"]
     },
     "fields": {
-        
+        "Quotation": {
+            "lang": "en"
+        }
     }
 }

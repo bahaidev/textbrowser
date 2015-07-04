@@ -129,10 +129,12 @@
     "fields": {
         "Rodwell Translation": {
             "primary_text_field": true,
+            "lang": "en",
             "orig_langs": ["ar"]
         },
         "Sale Translation": {
             "primary_text_field": true,
+            "lang": "en",
             "orig_langs": ["ar"]
         }
     }
