@@ -1,4 +1,4 @@
-/*globals JsonRefs, getJSON, jml*/
+/*globals formSerialize, JsonRefs, getJSON, jml*/
 (function () {'use strict';
 
 // Todo: change $ref usages to utilize JSON Reference ( https://github.com/whitlockjc/json-refs ) + JSON Pointer-aware library ( https://github.com/manuelstofer/json-pointer ?)
