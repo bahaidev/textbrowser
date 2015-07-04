@@ -6,6 +6,9 @@
     "fields": {
         "Text": {
             "primary_text_field": true
+        },
+        "Number": {
+            "roman": true
         }
     }
 }

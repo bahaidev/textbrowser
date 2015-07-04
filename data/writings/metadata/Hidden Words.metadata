@@ -5,13 +5,16 @@
     },
     "fields": {
         "English": {
-            "primary_text_field": true
+            "primary_text_field": true,
+            "lang": "en"
         },
         "Arabic": {
-            "primary_text_field": true
+            "primary_text_field": true,
+            "lang": "ar"
         },
         "Persian": {
-            "primary_text_field": true
+            "primary_text_field": true,
+            "lang": "fa"
         }
     }
 }

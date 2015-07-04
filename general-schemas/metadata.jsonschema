@@ -91,6 +91,12 @@
                             "properties": {
                                 "type": "string"
                             }
+                        },
+                        "roman": {
+                            "type": "boolean"
+                        },
+                        "prefer_alias": {
+                            "type": "boolean"
                         }
                     }
                 }

@@ -8,6 +8,10 @@
             "primary_text_field": true,
             "orig_lang_field": true,
             "lang": "en"
+        },
+        "Chinese": {
+            "primary_text_field": true,
+            "lang": "zh-CN"
         }
     }
 }

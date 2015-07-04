@@ -77,10 +77,15 @@
     },
     "fields": {
         "King James Translation": {
-            "primary_text_field": true
+            "primary_text_field": true,
+            "lang": "en"
         },
         "Bahá'í Translation": {
-            "primary_text_field": true
+            "primary_text_field": true,
+            "lang": "en"
+        },
+        "Book #": {
+            "prefer_alias": true
         }
     }
 }

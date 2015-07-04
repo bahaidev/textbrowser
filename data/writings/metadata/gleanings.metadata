@@ -7,6 +7,9 @@
         "Text": {
             "primary_text_field": true,
             "lang": "en"
+        },
+        "Section": {
+            "roman": true
         }
     }
 }

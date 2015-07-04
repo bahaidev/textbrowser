@@ -22,6 +22,7 @@ The above developer holds the copyright to this work, and it is licensed under t
 
 ## Intended significant future features of this browse system
 
+1. Add/Add back automated: Synopsis, Roman numerals (pm, gwb), Chinese numbers, word-by-word translation (Persian/Arabic/German/English), auto-romanized Persian, Persian with English tooltips, English with Persian tooltips
 1. Searching
 1. Go to previous/next results (allow customization of size on the fly as well as in preferences)
 1. Hide advanced formatting options (make savable in preferences)
