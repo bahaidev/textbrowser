@@ -43,15 +43,25 @@
                                     "type": "object",
                                     "patternProperties": {
                                         ".*": {
-                                            {
-                                                "type": "string"
-                                            },
-                                            {
-                                                "type": "array",
-                                                "properties": {
+                                            "anyOf": [
+                                                {
                                                     "type": "string"
+                                                },
+                                                {
+                                                    "type": "array",
+                                                    "properties": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "patternProperties": {
+                                                        ".*": {
+                                                            "type": "string"
+                                                        }
+                                                    }
                                                 }
-                                            }
+                                            ]
                                         }
                                     }
                                 }
