@@ -7,7 +7,7 @@
             "schemaBaseDirectory": "data/writings/schemas",
             "files": [
                 {"file": {"$ref": "aqdas.json"}, "name": "aqdas"},
-                {"file": {"$ref": "Epistle to the Son of the Wolf.json"}, "name": "epistle to the son of the wolf"},
+                {"file": {"$ref": "Epistle to the Son of the Wolf.json"}, "name": "epistle_to_the_son_of_the_wolf"},
                 {"file": {"$ref": "Gems of Divine Mysteries.json"}, "name": "gems of divine mysteries"},
                 {"file": {"$ref": "gleanings.json"}, "name": "gleanings"},
                 {"file": {"$ref": "Hidden Words.json"}, "name": "hidden words"},
