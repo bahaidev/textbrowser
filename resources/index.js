@@ -75,23 +75,41 @@ function paramChange () {
                                 // Use the following to dynamically add specific file schema in place of generic table schema if validating against files.jsonschema
                                 // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
                                 
-                                getJSON(
-                                    e.target.selectedOptions[0].dataset.fileSchema, // Change fileSchema to JSON refs?
-                                    function (schema) {
-                                        alert(JSON.stringify(schema));
-                                    }
-                                );
+                                var dataset = e.target.selectedOptions[0].dataset;
+                                
+                                if (dataset.fileSchema) {
+                                    getJSON(
+                                        dataset.fileSchema, // Change fileSchema to JSON refs?
+                                        function (schema) {
+                                            alert(JSON.stringify(schema));
+                                        }
+                                    );
+                                }
+                                else {
+                                    JsonRefs.resolveRefs({$ref: window.location.href.replace(/(index\.html)?#.*$/, '') + '' + dataset.file + '#/metadata' },
+                                    {
+                                        processContent: function (content) {
+                                            return JSON.parse(content.replace(/"\$ref":\s*"/g, '"$ref": "http://127.0.0.1/textbrowser/data/writings/'));
+                                        }
+                                    },
+                                    function (err, rJson, metadata) {
+                                        if (err) {throw err;}
+
+                                        alert('done:'+JSON.stringify(rJson));
+                                        alert('meta:'+JSON.stringify(metadata));
+                                    });
+                                }
                                 
                                 // todo: alias fields
                                 
                                 /*
-                                getJSON(e.target.selectedOptions[0].dataset.file, function (fileJSON) {
+                                getJSON(dataset.file, function (fileJSON) {
                                     alert(JSON.stringify(fileJSON));
                                 });
                                 */
                             }}},
                                 fileGroup.files.map(function (file) {
-                                    return ['option', {value: file.name, dataset: {fileSchema: (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/' + file.fileSchema, file: (dbs.baseDirectory || fileGroup.baseDirectory) + '/' + file.file.$ref}}, [ta(file.name)]];
+                                    return ['option', {value: file.name, dataset: {fileSchema: file.fileSchema ? ((dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/' + file.fileSchema) : '', file: (dbs.baseDirectory || fileGroup.baseDirectory) + '/' + file.file.$ref}}, [ta(file.name)]];
                                 })
                             ],
                             ['p', [
