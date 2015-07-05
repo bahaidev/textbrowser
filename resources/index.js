@@ -107,7 +107,16 @@ function paramChange () {
         */
     }
     
-    function displayWork (l, defineFormatter) {
+    function displayWork (l, defineFormatter, schema, metadata) {
+        // todo: alias fields
+        
+        var direction = getDirectionForLanguageCode(lang[0]);
+        
+        alert('1:'+JSON.stringify(schema));
+        alert('2:'+JSON.stringify(metadata));
+    }
+    
+    function workDisplay (l, defineFormatter) {
         getJSON('appdata/files.json', function (dbs) {
             
             // Use the following to dynamically add specific file schema in place of generic table schema if validating against files.jsonschema
@@ -166,13 +175,7 @@ function paramChange () {
             
             getMetadata(schemaFile, schemaProperty, function (schema) {
                 getMetadata(metadataFile, metadataProperty, function (metadata) {
-                    
-                    // todo: alias fields
-                    
-                    alert('1:'+JSON.stringify(schema));
-                    alert('2:'+JSON.stringify(metadata));
-                    
-                    
+                    displayWork(l, defineFormatter, schema, metadata);
                 });
             });
         
@@ -192,7 +195,7 @@ function paramChange () {
             return;
         }
         if (!result) {
-            displayWork.apply(null, arguments);
+            workDisplay.apply(null, arguments);
             return;
         }
         
