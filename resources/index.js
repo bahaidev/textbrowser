@@ -6,6 +6,7 @@
 
 document.title = "Sacred Writings Browser";
 
+var nbsp = '\u00a0';
 
 // We use getJSON instead of JsonRefs as we do not need to resolve the locales here
 // Need for directionality even if language specified (and we don't want to require it as a param)
@@ -113,35 +114,49 @@ function paramChange () {
         // todo: alias fields
         var ta = defineFormatter('tablealias');
         var th = defineFormatter('tableheading');
-        var $fields_name1 = '$fields_name1';
-        jml(
-            'div',
-            {'class': 'focus ' + direction}, [
-                ['h2', [th(work)]],
-                ['br'],
+
+        var content = [
+            ['h2', [th(work)]],
+            ['br']
+        ];
+        metadata.table.browse_fields.forEach(function (browse_field, i) {
+            if (browse_field && typeof browse_field === 'object') {
+                // Todo: Could use browse_field.name for a fieldset around the field set
+                browse_field = browse_field.set;
+            }
+
+            content.push(
+                i > 0 ? ['br'] : '',
                 ['table', {align: 'center'}, [ // Todo: Fix formatting and make the following dynamic
                     ['tr', [
-                        ['td', [$fields_name1, ': ']],
+                        ['td', [browse_field, ': ']],
                         ['td', [
-                            ['input', {name: "$a$option_no", type: 'text', size: '7'}],
-                            '\u00a0'.repeat(3)
+                            ['input', {name: "$a" + i, type: 'text', size: '7'}],
+                            nbsp.repeat(3)
                         ]],
                         ['td', [
                             ['b', ['TO']],
-                            ':' + '\u00a0'.repeat(3)
+                            ':' + nbsp.repeat(3)
                         ]],
-                        ['td', [$fields_name1, ': ']],
+                        ['td', [browse_field, ': ']],
                         ['td', [
-                            ['input', {name: "$c$option_no", type: 'text', size: '7'}],
-                            '\u00a0'.repeat(2)
+                            ['input', {name: "$c" + i, type: 'text', size: '7'}],
+                            nbsp.repeat(2)
                         ]],
                         ['td', ['(numbers only)']]
                     ]]
                 ]]
-            ],
+            );
+            
+        });
+        jml(
+            'div',
+            {'class': 'focus ' + direction},
+            content,
             document.body
         );
-        // alert('1:'+JSON.stringify(schema));
+        
+        // alert('1:'+JSON.stringify(schema.items.items));
         // alert('2:'+JSON.stringify(metadata));
     }
     
