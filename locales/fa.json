@@ -171,7 +171,7 @@
         "Leiden": " لیست Leiden ",
         "bible": "انجیل",
         "hidden words": "كلمات مكنونه",
-        "epistle to the son of the wolf": "Epistle to the Son of the Wolf",
+        "epistle_to_the_son_of_the_wolf": "Epistle to the Son of the Wolf",
         "lights": null,
         "gems of divine mysteries": null,
         "gleanings": null,
@@ -188,7 +188,7 @@
         "Leiden": "لیست Leiden",
         "bible": "انجیل",
         "hidden words": "کلمات مکنونه",
-        "epistle to the son of the wolf": "Epistle to the Son of the Wolf",
+        "epistle_to_the_son_of_the_wolf": "Epistle to the Son of the Wolf",
         "gems of divine mysteries": null,
         "lights": null,
         "gleanings": null,
@@ -274,7 +274,7 @@
             "Individual Bahá'í Scholars": "دانشپژوهان بهایی",
             "Qur'ánic References": "مراجع قرانی"
         },
-        "epistle to the son of the wolf": {
+        "epistle_to_the_son_of_the_wolf": {
             "Paragraph": "پاراگراف",
             "Text": "نوشتجات"
         },
