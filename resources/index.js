@@ -6,6 +6,8 @@
 
 document.title = "Sacred Writings Browser";
 
+
+// We use getJSON instead of JsonRefs as we do not need to resolve the locales here
 // Need for directionality even if language specified (and we don't want to require it as a param)
 getJSON('appdata/languages.json', function (langData) {
 
@@ -58,34 +60,13 @@ function paramChange () {
 
     function workSelect (l, defineFormatter) {
 
-        var ta = defineFormatter('tablealias');
-        
         var direction = getDirectionForLanguageCode(lang[0]);
 
+        // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
         getJSON('appdata/files.json', function (dbs) {
             var fileGroups = dbs.groups;
-            function getMetadata (file, property, cb) {
-                var currDir = window.location.href.replace(/(index\.html)?#.*$/, '');
-                JsonRefs.resolveRefs({$ref: currDir + file + (property ? '#/' + property : '') }, {
-                    // Temporary fix for lack of resolution of relative references: https://github.com/whitlockjc/json-refs/issues/11
-                    processContent: function (content) {
-                        var json = JSON.parse(content);
-                        Object.keys(JsonRefs.findRefs(json)).forEach(function (path) {
-                            var lastParent;
-                            var value = JsonRefs.pathFromPointer(path).reduce(function (json, pathSeg) {
-                                lastParent = json;
-                                return json[pathSeg];
-                            }, json);
-                            lastParent.$ref = currDir + file.slice(0, file.lastIndexOf('/') + 1) + value;
-                        });
-                        return json;
-                    }
-                },
-                function (err, rJson, metadata) {
-                    if (err) {throw err;}
-                    cb(rJson, metadata);
-                });
-            }
+            
+            var ta = defineFormatter('tablealias');
             jml(
                 'div',
                 {'class': 'focus ' + direction},
@@ -95,61 +76,11 @@ function paramChange () {
                         ['div', [l(fileGroup.directions)]],
                         ['br'],
                         ['select', {'class': 'file', dataset: {name: fileGroup.name}, $on: {change: function (e) {
-                            // Submit
-                            // alert(e.target.dataset.name);
-                            
-                            // Use the following to dynamically add specific file schema in place of generic table schema if validating against files.jsonschema
-                            // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
-                            
-                            var dataset = e.target.selectedOptions[0].dataset;
-                            var schemaFile = dataset.schemaFile;
-                            var metadataFile = dataset.metadataFile;
-                            
-                            /*
-                            params.set('file', dataset.file);
-                            params.set();
-                            params.set();
+                            params.set('work', e.target.value);
                             followParams();
-                            */
-                            
-                            var schemaProperty = '', metadataProperty = '';
-                            
-                            if (!dataset.schemaFile) {
-                                schemaFile = dataset.file;
-                                schemaProperty = 'schema';
-                            }
-                            if (!dataset.metadataFile) {
-                                metadataFile = dataset.file;
-                                metadataProperty = 'metadata';
-                            }
-                            
-                            getMetadata(schemaFile, schemaProperty, function (schema) {
-                                getMetadata(metadataFile, metadataProperty, function (metadata) {
-                                    
-                                    // todo: alias fields
-                                    
-                                    alert('1:'+JSON.stringify(schema));
-                                    alert('2:'+JSON.stringify(metadata));
-                                    
-                                    
-                                });
-                            });
-                        }}},
-                            fileGroup.files.map(function (file) {
-                                // Todo: Allow use of dbs and fileGroup together in base directories?
-                                var baseDir = (dbs.baseDirectory || fileGroup.baseDirectory) + '/';
-                                var schemaBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
-                                var metadataBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
-                                return ['option', {
-                                    value: file.name,
-                                    dataset: {
-                                        file: baseDir + file.file.$ref,
-                                        schemaFile: file.schemaFile ? (schemaBaseDir + file.schemaFile) : '',
-                                        metadataFile: file.metadataFile ? (metadataBaseDir + file.metadataFile) : ''
-                                    }
-                                }, [ta(file.name)]];
-                            })
-                        ],
+                        }}}, fileGroup.files.map(function (file) {
+                            return ['option', {value: file.name}, [ta(file.name)]];
+                        })],
                         ['p', [
                             ['input', {type: 'button', value: "Go"}]
                         ]]
@@ -177,7 +108,78 @@ function paramChange () {
     }
     
     function displayWork (l, defineFormatter) {
+        getJSON('appdata/files.json', function (dbs) {
+            
+            // Use the following to dynamically add specific file schema in place of generic table schema if validating against files.jsonschema
+            // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
+            // Todo: Allow use of dbs and fileGroup together in base directories?
+            function getMetadata (file, property, cb) {
+                var currDir = window.location.href.replace(/(index\.html)?#.*$/, '');
+                JsonRefs.resolveRefs({$ref: currDir + file + (property ? '#/' + property : '') }, {
+                    // Temporary fix for lack of resolution of relative references: https://github.com/whitlockjc/json-refs/issues/11
+                    processContent: function (content) {
+                        var json = JSON.parse(content);
+                        Object.keys(JsonRefs.findRefs(json)).forEach(function (path) {
+                            var lastParent;
+                            var value = JsonRefs.pathFromPointer(path).reduce(function (json, pathSeg) {
+                                lastParent = json;
+                                return json[pathSeg];
+                            }, json);
+                            lastParent.$ref = currDir + file.slice(0, file.lastIndexOf('/') + 1) + value;
+                        });
+                        return json;
+                    }
+                },
+                function (err, rJson, metadata) {
+                    if (err) {throw err;}
+                    cb(rJson, metadata);
+                });
+            }
+
+            var fileData;
+            var fileGroup = dbs.groups.find(function (fileGroup) {
+                fileData = fileGroup.files.find(function (file) {
+                    return work === file.name;
+                });
+                return !!fileData;
+            });
+            
+            
+            var baseDir = (dbs.baseDirectory || fileGroup.baseDirectory) + '/';
+            var schemaBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
+            var metadataBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
+            
+            var file = baseDir + fileData.file.$ref;
+            var schemaFile = fileData.schemaFile ? (schemaBaseDir + fileData.schemaFile) : '';
+            var metadataFile = fileData.metadataFile ? (metadataBaseDir + fileData.metadataFile) : '';
+
+            var schemaProperty = '', metadataProperty = '';
+            
+            if (!schemaFile) {
+                schemaFile = file;
+                schemaProperty = 'schema';
+            }
+            if (!metadataFile) {
+                metadataFile = file;
+                metadataProperty = 'metadata';
+            }
+            
+            getMetadata(schemaFile, schemaProperty, function (schema) {
+                getMetadata(metadataFile, metadataProperty, function (metadata) {
+                    
+                    // todo: alias fields
+                    
+                    alert('1:'+JSON.stringify(schema));
+                    alert('2:'+JSON.stringify(metadata));
+                    
+                    
+                });
+            });
         
+            
+        }, function (err) {
+            alert(err);
+        });
     }
     
     function displayResults (l, defineFormatter) {
