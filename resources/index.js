@@ -98,7 +98,7 @@ function paramChange () {
                                                     lastParent = json;
                                                     return json[pathSeg];
                                                 }, json);
-                                                lastParent.$ref = currDir + 'data/writings/' + value;
+                                                lastParent.$ref = currDir + dataset.file.slice(0, dataset.file.lastIndexOf('/') + 1) + value;
                                             });
                                             return json;
                                         }
