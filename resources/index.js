@@ -88,8 +88,18 @@ function paramChange () {
                                 else {
                                     JsonRefs.resolveRefs({$ref: window.location.href.replace(/(index\.html)?#.*$/, '') + '' + dataset.file + '#/metadata' },
                                     {
+                                        // Temporary fix for lack of resolution of relative references: https://github.com/whitlockjc/json-refs/issues/11
                                         processContent: function (content) {
-                                            return JSON.parse(content.replace(/"\$ref":\s*"/g, '"$ref": "http://127.0.0.1/textbrowser/data/writings/'));
+                                            var json = JSON.parse(content);
+                                            Object.keys(JsonRefs.findRefs(json)).forEach(function (path) {
+                                                var lastParent;
+                                                var value = JsonRefs.pathFromPointer(path).reduce(function (json, pathSeg) {
+                                                    lastParent = json;
+                                                    return json[pathSeg];
+                                                }, json);
+                                                lastParent.$ref = 'http://127.0.0.1/textbrowser/data/writings/' + value;
+                                            });
+                                            return json;
                                         }
                                     },
                                     function (err, rJson, metadata) {
