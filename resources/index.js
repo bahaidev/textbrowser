@@ -86,7 +86,8 @@ function paramChange () {
                                     );
                                 }
                                 else {
-                                    JsonRefs.resolveRefs({$ref: window.location.href.replace(/(index\.html)?#.*$/, '') + '' + dataset.file + '#/metadata' },
+                                    var currDir = window.location.href.replace(/(index\.html)?#.*$/, '');
+                                    JsonRefs.resolveRefs({$ref: currDir + dataset.file + '#/metadata' },
                                     {
                                         // Temporary fix for lack of resolution of relative references: https://github.com/whitlockjc/json-refs/issues/11
                                         processContent: function (content) {
@@ -97,7 +98,7 @@ function paramChange () {
                                                     lastParent = json;
                                                     return json[pathSeg];
                                                 }, json);
-                                                lastParent.$ref = 'http://127.0.0.1/textbrowser/data/writings/' + value;
+                                                lastParent.$ref = currDir + 'data/writings/' + value;
                                             });
                                             return json;
                                         }
@@ -106,7 +107,7 @@ function paramChange () {
                                         if (err) {throw err;}
 
                                         alert('done:'+JSON.stringify(rJson));
-                                        alert('meta:'+JSON.stringify(metadata));
+                                        // alert('meta:'+JSON.stringify(metadata));
                                     });
                                 }
                                 
