@@ -83,10 +83,7 @@ function paramChange () {
                             }, true]
                         }}, fileGroup.files.map(function (file) {
                             return ['option', {value: file.name}, [ta(file.name)]];
-                        })],
-                        ['p', [
-                            ['input', {type: 'button', value: "Go"}]
-                        ]]
+                        })]
                     ]];
                 }),
                 document.body
