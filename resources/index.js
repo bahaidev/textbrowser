@@ -60,6 +60,28 @@ function paramChange () {
 
             getJSON('appdata/files.json', function (dbs) {
                 var fileGroups = dbs.groups;
+                function getMetadata (file, property, cb) {
+                    var currDir = window.location.href.replace(/(index\.html)?#.*$/, '');
+                    JsonRefs.resolveRefs({$ref: currDir + file + (property ? '#/' + property : '') }, {
+                        // Temporary fix for lack of resolution of relative references: https://github.com/whitlockjc/json-refs/issues/11
+                        processContent: function (content) {
+                            var json = JSON.parse(content);
+                            Object.keys(JsonRefs.findRefs(json)).forEach(function (path) {
+                                var lastParent;
+                                var value = JsonRefs.pathFromPointer(path).reduce(function (json, pathSeg) {
+                                    lastParent = json;
+                                    return json[pathSeg];
+                                }, json);
+                                lastParent.$ref = currDir + file.slice(0, file.lastIndexOf('/') + 1) + value;
+                            });
+                            return json;
+                        }
+                    },
+                    function (err, rJson, metadata) {
+                        if (err) {throw err;}
+                        cb(rJson, metadata);
+                    });
+                }
                 jml(
                     'div',
                     {'class': 'focus ' + direction},
@@ -76,51 +98,44 @@ function paramChange () {
                                 // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
                                 
                                 var dataset = e.target.selectedOptions[0].dataset;
+                                var schemaFile = dataset.schemaFile;
+                                var metadataFile = dataset.metadataFile;
+                                var schemaProperty = '', metadataProperty = '';
                                 
-                                if (dataset.fileSchema) {
-                                    getJSON(
-                                        dataset.fileSchema, // Change fileSchema to JSON refs?
-                                        function (schema) {
-                                            alert(JSON.stringify(schema));
-                                        }
-                                    );
+                                if (!dataset.schemaFile) {
+                                    schemaFile = dataset.file;
+                                    schemaProperty = 'schema';
                                 }
-                                else {
-                                    var currDir = window.location.href.replace(/(index\.html)?#.*$/, '');
-                                    JsonRefs.resolveRefs({$ref: currDir + dataset.file + '#/schema' },
-                                    {
-                                        // Temporary fix for lack of resolution of relative references: https://github.com/whitlockjc/json-refs/issues/11
-                                        processContent: function (content) {
-                                            var json = JSON.parse(content);
-                                            Object.keys(JsonRefs.findRefs(json)).forEach(function (path) {
-                                                var lastParent;
-                                                var value = JsonRefs.pathFromPointer(path).reduce(function (json, pathSeg) {
-                                                    lastParent = json;
-                                                    return json[pathSeg];
-                                                }, json);
-                                                lastParent.$ref = currDir + dataset.file.slice(0, dataset.file.lastIndexOf('/') + 1) + value;
-                                            });
-                                            return json;
-                                        }
-                                    },
-                                    function (err, rJson, metadata) {
-                                        if (err) {throw err;}
-
-                                        alert('done:'+JSON.stringify(rJson));
-                                        // alert('meta:'+JSON.stringify(metadata));
+                                if (!dataset.metadataFile) {
+                                    metadataFile = dataset.file;
+                                    metadataProperty = 'metadata';
+                                }
+                                
+                                getMetadata(schemaFile, schemaProperty, function (schema) {
+                                    getMetadata(metadataFile, metadataProperty, function (metadata) {
+                                        
+                                        // todo: alias fields
+                                        
+                                        alert('1:'+JSON.stringify(schema));
+                                        alert('2:'+JSON.stringify(metadata));
+                                        
+                                        
                                     });
-                                }
-                                
-                                // todo: alias fields
-                                
-                                /*
-                                getJSON(dataset.file, function (fileJSON) {
-                                    alert(JSON.stringify(fileJSON));
                                 });
-                                */
                             }}},
                                 fileGroup.files.map(function (file) {
-                                    return ['option', {value: file.name, dataset: {fileSchema: file.fileSchema ? ((dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/' + file.fileSchema) : '', file: (dbs.baseDirectory || fileGroup.baseDirectory) + '/' + file.file.$ref}}, [ta(file.name)]];
+                                    // Todo: Allow use of dbs and fileGroup together in base directories?
+                                    var baseDir = (dbs.baseDirectory || fileGroup.baseDirectory) + '/';
+                                    var schemaBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
+                                    var metadataBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
+                                    return ['option', {
+                                        value: file.name,
+                                        dataset: {
+                                            file: baseDir + file.file.$ref,
+                                            schemaFile: file.schemaFile ? (schemaBaseDir + file.schemaFile) : '',
+                                            metadataFile: file.metadataFile ? (metadataBaseDir + file.metadataFile) : ''
+                                        }
+                                    }, [ta(file.name)]];
                                 })
                             ],
                             ['p', [
