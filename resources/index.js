@@ -113,11 +113,31 @@ function paramChange () {
         // todo: alias fields
         var ta = defineFormatter('tablealias');
         var th = defineFormatter('tableheading');
-        
+        var $fields_name1 = '$fields_name1';
         jml(
             'div',
             {'class': 'focus ' + direction}, [
-                ['h2', [th(work)]]
+                ['h2', [th(work)]],
+                ['br'],
+                ['table', {align: 'center'}, [ // Todo: Fix formatting and make the following dynamic
+                    ['tr', [
+                        ['td', [$fields_name1, ': ']],
+                        ['td', [
+                            ['input', {name: "$a$option_no", type: 'text', size: '7'}],
+                            '\u00a0'.repeat(3)
+                        ]],
+                        ['td', [
+                            ['b', ['TO']],
+                            ':' + '\u00a0'.repeat(3)
+                        ]],
+                        ['td', [$fields_name1, ': ']],
+                        ['td', [
+                            ['input', {name: "$c$option_no", type: 'text', size: '7'}],
+                            '\u00a0'.repeat(2)
+                        ]],
+                        ['td', ['(numbers only)']]
+                    ]]
+                ]]
             ],
             document.body
         );

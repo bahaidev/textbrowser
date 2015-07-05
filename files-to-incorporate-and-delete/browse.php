@@ -107,17 +107,6 @@ switch ($file) {
 <?php
 ///////////// Connect to database and get results to obtain field names (if default column and value exists, will only return these results (since only need the fieldnames in this script)//////////////
 
-mysql_select_db($hardcodeddb, mysql_connect($host, $dbuser, $passw));
-
-if ($defcolumn == "") {
-	$result = mysql_query("SELECT * FROM `$file`");
-} // end if (no default column is defined for the file)
-
-else {
-	$result = mysql_query("SELECT * FROM `$file` WHERE `$defcolumn` = $defvalue");
-} // end else (if there is a default column specified)
-
-print "<div align=\"center\"><h2>$heading</h2></div><br />";
 
 if ($levels == 1) {
 	print <<<HERE
