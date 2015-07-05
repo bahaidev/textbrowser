@@ -24,6 +24,7 @@ The above developer holds the copyright to this work, and it is licensed under t
 
 1. Add/Add back automated: Synopsis, Roman numerals (pm, gwb), Chinese numbers, word-by-word translation (Persian/Arabic/German/English), auto-romanized Persian (Baha'i-style with help link to http://bahai9.com/wiki/Pronunciation ), Persian with English tooltips, English with Persian tooltips, text-to-(Google search, Google define, Wikipedia, bahai9.com edit pages); add Word-by-word/phrase mapping
     1. Metadata for default field column placement and table/field applicability
+1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)
 1. Searching
 1. Go to previous/next results (allow customization of size on the fly as well as in preferences)
 1. Hide advanced formatting options (make savable in preferences)
