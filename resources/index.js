@@ -87,7 +87,7 @@ function paramChange () {
                                 }
                                 else {
                                     var currDir = window.location.href.replace(/(index\.html)?#.*$/, '');
-                                    JsonRefs.resolveRefs({$ref: currDir + dataset.file + '#/metadata' },
+                                    JsonRefs.resolveRefs({$ref: currDir + dataset.file + '#/schema' },
                                     {
                                         // Temporary fix for lack of resolution of relative references: https://github.com/whitlockjc/json-refs/issues/11
                                         processContent: function (content) {
