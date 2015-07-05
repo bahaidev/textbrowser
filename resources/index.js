@@ -54,23 +54,20 @@ function paramChange () {
     }
     
     var lang = language.split('.');
+    var direction = getDirectionForLanguageCode(lang[0]);
     
     var work = $p('work');
     var result = $p('result');
 
     function workSelect (l, defineFormatter) {
 
-        var direction = getDirectionForLanguageCode(lang[0]);
-
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
         getJSON('appdata/files.json', function (dbs) {
-            var fileGroups = dbs.groups;
-            
             var ta = defineFormatter('tablealias');
             jml(
                 'div',
                 {'class': 'focus ' + direction},
-                fileGroups.map(function (fileGroup, i) {
+                dbs.groups.map(function (fileGroup, i) {
                     return ['div', [
                         (i > 0 ? ['br', 'br', 'br'] : ''),
                         ['div', [l(fileGroup.directions)]],
@@ -109,8 +106,6 @@ function paramChange () {
     
     function displayWork (l, defineFormatter, schema, metadata) {
         // todo: alias fields
-        
-        var direction = getDirectionForLanguageCode(lang[0]);
         
         alert('1:'+JSON.stringify(schema));
         alert('2:'+JSON.stringify(metadata));
