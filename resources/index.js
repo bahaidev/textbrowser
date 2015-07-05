@@ -72,10 +72,15 @@ function paramChange () {
                         (i > 0 ? ['br', 'br', 'br'] : ''),
                         ['div', [l(fileGroup.directions)]],
                         ['br'],
-                        ['select', {'class': 'file', dataset: {name: fileGroup.name}, $on: {change: function (e) {
-                            params.set('work', e.target.value);
-                            followParams();
-                        }}}, fileGroup.files.map(function (file) {
+                        ['select', {'class': 'file', dataset: {name: fileGroup.name}, $on: {
+                            click: [function (e) {
+                                if (e.target.nodeName.toLowerCase() === 'select') {
+                                    return;
+                                }
+                                params.set('work', e.target.value);
+                                followParams();
+                            }, true]
+                        }}, fileGroup.files.map(function (file) {
                             return ['option', {value: file.name}, [ta(file.name)]];
                         })],
                         ['p', [
@@ -106,9 +111,18 @@ function paramChange () {
     
     function displayWork (l, defineFormatter, schema, metadata) {
         // todo: alias fields
+        var ta = defineFormatter('tablealias');
+        var th = defineFormatter('tableheading');
         
-        alert('1:'+JSON.stringify(schema));
-        alert('2:'+JSON.stringify(metadata));
+        jml(
+            'div',
+            {'class': 'focus ' + direction}, [
+                ['h2', [th(work)]]
+            ],
+            document.body
+        );
+        // alert('1:'+JSON.stringify(schema));
+        // alert('2:'+JSON.stringify(metadata));
     }
     
     function workDisplay (l, defineFormatter) {
