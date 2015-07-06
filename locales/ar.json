@@ -209,9 +209,11 @@
         "hidden words": "Group according to the above?"
     },
     "fieldalias": {
-        "aqdas": "نوشتجات"
+        "aqdas": {
+            "Text": "نوشتجات"
+        }
     },
-    "fieldshortcut": {
+    "fieldname": {
         "collins": {
             "Record ID": "رقم",
             "Date of Publication": "سنة الاصدار",

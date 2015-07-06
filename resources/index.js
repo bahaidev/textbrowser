@@ -111,7 +111,7 @@ function paramChange () {
         // todo: alias fields
         var ta = defineFormatter('tablealias');
         var th = defineFormatter('tableheading');
-        var fs = defineFormatter(['fieldshortcut', work]);
+        var fs = defineFormatter(['fieldname', work]);
 
         var content = [
             ['h2', [th(work)]],
@@ -122,7 +122,15 @@ function paramChange () {
                 // Todo: Could use browse_field.name for a fieldset around the field set
                 browse_field = browse_field.set;
             }
-            var browseField = fs(browse_field);
+            
+            var browseField;
+            if (metadata.fields && metadata.fields[browse_field] && metadata.fields[browse_field].alias) {
+                var fa = defineFormatter(['fieldalias', work]);
+                browseField = fa(metadata.fields[browse_field].alias);
+            }
+            else {
+                browseField = fs(browse_field);
+            }
 
             content.push(
                 i > 0 ? ['br'] : '',

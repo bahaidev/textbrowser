@@ -209,9 +209,11 @@
         "hidden words": null
     },
     "fieldalias": {
-        "aqdas": "Text"
+        "aqdas": {
+            "Text": "Text"
+        }
     },
-    "fieldshortcut": {
+    "fieldname": {
         "collins": {
             "Record ID": "شماره",
             "Date of Publication": "سال چاپ",

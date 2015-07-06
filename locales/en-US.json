@@ -209,9 +209,11 @@
         "hidden words": "Group according to the above?"
     },
     "fieldalias": {
-        "aqdas": "Text"
+        "aqdas": {
+            "Text": "Text"
+        }
     },
-    "fieldshortcut": {
+    "fieldname": {
         "collins": {
             "Record ID": "Record ID",
             "Date of Publication": "Date of Publication",

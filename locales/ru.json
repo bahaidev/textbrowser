@@ -209,9 +209,11 @@
         "hidden words": null
     },
     "fieldalias": {
-        "aqdas": "نص"
+        "aqdas": {
+            "Text": "نص"
+        }
     },
-    "fieldshortcut": {
+    "fieldname": {
         "collins": {
             "Record ID": null,
             "Date of Publication": null,
