@@ -105,18 +105,6 @@ switch ($file) {
 <form action="browse9.php" method="get" name="browse">
 
 <?php
-///////////// Connect to database and get results to obtain field names (if default column and value exists, will only return these results (since only need the fieldnames in this script)//////////////
-
-// New Book Add: Tweaks could be added here (as for the Hidden Words) to allow browsing for a major subset of the content (esp. if there would otherwise be duplicate numbers)
-
-	if ($file == "Hidden Words") {
-		print <<<HERE
-		<br />
-		<table align="center"><tr><td>
-		Persian: <input type="radio" name="toggle" value="Persian" /> &nbsp; Arabic: <input type="radio" name="toggle" value="Arabic" /> &nbsp;&nbsp; Both: <input type="radio" name="toggle" value="" />
-		</td></tr></table>
-HERE;
-	}
 
 if ($levels == 2) {
 

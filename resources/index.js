@@ -115,6 +115,8 @@ function paramChange () {
 
         var content = [];
         metadata.table.browse_fields.forEach(function (browse_field, i) {
+            // Todo: Handle where browse_field is an object of form: {name:, set:}
+            
             if (browse_field && typeof browse_field === 'object') {
                 // Todo: Could use browse_field.name for a fieldset around the field set
                 browse_field = browse_field.set;
@@ -128,8 +130,13 @@ function paramChange () {
             else {
                 browseField = fs(browse_field);
             }
+
+            var fieldSchema = schema.items.items.find(function (item) {
+                return item.title === browse_field;
+            });
             
-            var enumerated = 0; // Todo: Make dynamic
+            // Todo: Check fieldSchema for integer or string?
+            var enumerated = fieldSchema['enum'];
 
             [
                 // Todo: Fix formatting
@@ -140,21 +147,32 @@ function paramChange () {
                     '',
                 (enumerated ?
                     [
-                        ['td', [
-                            ['label', [
-                                "Persian: ",
-                                ['input', {type: 'radio', name: 'toggle' + i, value: "Persian"}]
-                            ]],
-                            nbsp.repeat(3),
-                            ['label', [
-                                "Arabic: ",
-                                ['input', {type: 'radio', name: 'toggle' + i, value: "Arabic"}]
-                            ]],
-                            nbsp.repeat(4),
-                            ['label', [
-                                "Both: ",
-                                ['input', {type: 'radio', name: 'toggle' + i, value: ""}]
-                            ]]
+                        ['td', {colspan: 12}, [
+                            ['table', {align: 'center'}, [['tr', [['td',
+                                (enumerated.length > 2) ? [
+                                    ['select', {name: 'toggle' + i}, enumerated.map(function (choice) {
+                                        return ['option', {value: choice}, [choice]];
+                                    })]
+                                ] :
+                                enumerated.map(function (choice, j, arr) {
+                                    return {'#': [
+                                        j > 0 ? nbsp.repeat(3) : '',
+                                        ['label', [
+                                            choice,
+                                            ['input', {type: 'radio', name: 'toggle' + i, value: choice}]
+                                        ]],
+                                        j === arr.length - 1 ?
+                                            {'#': [
+                                                nbsp.repeat(4),
+                                                ['label', [
+                                                    l("both"),
+                                                    ['input', {type: 'radio', name: 'toggle' + i, value: ""}]
+                                                ]]
+                                            ]} :
+                                            ''
+                                    ]};
+                                })
+                            ]]]]]
                         ]]
                     ] :
                     [
