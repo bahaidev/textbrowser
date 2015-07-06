@@ -1,7 +1,7 @@
 {
     "table": {
-        "browse_fields": ["Number"],
-        "default_view": {"Number": 0}
+        "browse_fields": [{"set": ["Number", "Original Language"]}],
+        "default_view": {"Number": 0, "Original Language": "Arabic"}
     },
     "fields": {
         "English": {

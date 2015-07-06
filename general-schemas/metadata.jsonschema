@@ -14,10 +14,28 @@
             "type": "object",
             "properties": {
                 "browse_fields": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "set": {
+                                    "type": "array",
+                                    "properties": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    ]
                 },
                 "default_view": {
                     "type": "object",
