@@ -36,6 +36,25 @@ function paramChange () {
     var work = $p('work');
     var result = $p('result');
 
+    function languageSelect (l, defineFormatter) {
+        jml('div', {'class': 'focus'},
+            [['select', {size: langs.length, $on: {change: function (e) {
+                params.set('lang', e.target.selectedOptions[0].value);
+                followParams();
+            }}}, langs.map(function (lang) {
+                return ['option', {value: lang.code}, [lang.name]];
+            })]], document.body
+            
+            /* Works too:
+            langs.map(function (lang) {
+                return ['div', [
+                    ['a', {href: '#', dataset: {code: lang.code}}, [lang.name]]
+                ]];
+            }), document.body
+            */
+        );
+    }
+    
     function workSelect (l, defineFormatter) {
 
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
@@ -259,34 +278,15 @@ function paramChange () {
         });
     }
     
-    function displayResults (l, defineFormatter) {
+    function resultsDisplay (l, defineFormatter) {
         
     }
 
-    function languageDisplay (l, defineFormatter) {
-        jml('div', {'class': 'focus'},
-            [['select', {size: langs.length, $on: {change: function (e) {
-                params.set('lang', e.target.selectedOptions[0].value);
-                followParams();
-            }}}, langs.map(function (lang) {
-                return ['option', {value: lang.code}, [lang.name]];
-            })]], document.body
-            
-            /* Works too:
-            langs.map(function (lang) {
-                return ['div', [
-                    ['a', {href: '#', dataset: {code: lang.code}}, [lang.name]]
-                ]];
-            }), document.body
-            */
-        );
-    }
-    
     function localeCallback (l) {
         document.title = l("browserfile");
 
         if (!languageParam) {
-            languageDisplay.apply(null, arguments);
+            languageSelect.apply(null, arguments);
             return;
         }
         if (!work) {
@@ -298,7 +298,7 @@ function paramChange () {
             return;
         }
         
-        displayResults.apply(null, arguments);
+        resultsDisplay.apply(null, arguments);
     }
     
     IMF({
