@@ -261,6 +261,15 @@ function paramChange () {
                 ]],
                 ['th', [
                     l("field_title")
+                ]],
+                ['th', [
+                    l("fieldinterlin")
+                ]],
+                ['th', [
+                    l("fieldcss")
+                ]],
+                ['th', [
+                    l("fieldsearch")
                 ]]
             ]],
             {'#': fields.map(function (fieldName, i) {
@@ -276,6 +285,15 @@ function paramChange () {
                                     ['option', {value: j, selected: 'selected'}, [field]];
                             })
                         ]
+                    ]],
+                    ['td', [ // Todo: Make as tag selector with fields as options
+                        ['input', {name: 'interlin' + i}]
+                    ]],
+                    ['td', [ // Todo: Make as CodeMirror-highlighted CSS
+                        ['input', {name: 'css' + i}]
+                    ]],
+                    ['td', [ // Todo: Allow plain or regexp searching
+                        ['input', {name: 'search' + i}]
                     ]]
                 ]];
             })},
