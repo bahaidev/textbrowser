@@ -213,8 +213,8 @@
     },
     "fieldshortcut": {
         "collins": {
-            "Record ID": "Number",
-            "Date of Publication": "Year Published",
+            "Record ID": "Record ID",
+            "Date of Publication": "Date of Publication",
             "Workform": "Workform",
             "Author, Analytic": "Author, Analytic",
             "Author Role": "Author Role",

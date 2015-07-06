@@ -32,11 +32,37 @@
                             ]
                         }
                     }
-                },
-                "fieldvalues": {
+                }
+            }
+        },
+        "fields": {
+            "type": "object",
+            "patternProperties": {
+                ".*": {
                     "type": "object",
                     "properties": {
-                        "aliases": {
+                        "primary_text_field": {
+                            "type": "boolean"
+                        },
+                        "orig_lang_field": {
+                            "type": "boolean"
+                        },
+                        "lang": {
+                            "type": "string"
+                        },
+                        "orig_langs": {
+                            "type": "array",
+                            "properties": {
+                                "type": "string"
+                            }
+                        },
+                        "roman": {
+                            "type": "boolean"
+                        },
+                        "prefer_alias": {
+                            "type": "boolean"
+                        },
+                        "fieldvalue-aliases": {
                             "type": "object",
                             "patternProperties": {
                                 ".*": {
@@ -66,37 +92,6 @@
                                     }
                                 }
                             }
-                        }
-                    }
-                }
-            }            
-        },
-        "fields": {
-            "type": "object",
-            "patternProperties": {
-                ".*": {
-                    "type": "object",
-                    "properties": {
-                        "primary_text_field": {
-                            "type": "boolean"
-                        },
-                        "orig_lang_field": {
-                            "type": "boolean"
-                        },
-                        "lang": {
-                            "type": "string"
-                        },
-                        "orig_langs": {
-                            "type": "array",
-                            "properties": {
-                                "type": "string"
-                            }
-                        },
-                        "roman": {
-                            "type": "boolean"
-                        },
-                        "prefer_alias": {
-                            "type": "boolean"
                         }
                     }
                 }

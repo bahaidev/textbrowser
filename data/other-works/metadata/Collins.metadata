@@ -7,6 +7,12 @@
         "Abstract": {
             "primary_text_field": true,
             "lang": "en"
+        },
+        "Record ID": {
+            "alias": "Number"
+        },
+        "Date of Publication": {
+            "alias": "Year Published"
         }
     }
 }

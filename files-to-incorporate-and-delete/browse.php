@@ -119,14 +119,8 @@ HERE;
 
 //////////////New Book Add: Allow aliased columns to be hard-coded here if desired////////
 
-	if ($file == "Collins") {
-		$aliasedfield = "Number";
-		$aliasedfield2 = "Year";
-	} // end if (file is Collins)
-	else {
-		$aliasedfield = $fields_name1;
-		$aliasedfield2 = $fields_name7;
-	} // end else (file is not Collins--the field name in SQL is the field name in the HTML here)
+    $aliasedfield = $fields_name1;
+    $aliasedfield2 = $fields_name7;
 
 /////////////////Conditionally define the function to display the input boxes for which range of verses one wishes to browse////////////////////
 
