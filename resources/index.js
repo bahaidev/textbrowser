@@ -107,8 +107,8 @@ function paramChange () {
     function _displayWork (l, defineFormatter, schema, metadata) {
         var ta = defineFormatter('tablealias');
         var th = defineFormatter('tableheading');
-        var fs = defineFormatter(['fieldname', work]);
-
+        var fn = defineFormatter(['fieldname', work]);
+        var schemaItems = schema.items.items;
         var content = [];
         metadata.table.browse_fields.forEach(function (browse_field, i) {
             // Todo: Handle where browse_field is an object of form: {name:, set:}
@@ -124,10 +124,10 @@ function paramChange () {
                 browseField = fa(metadata.fields[browse_field].alias);
             }
             else {
-                browseField = fs(browse_field);
+                browseField = fn(browse_field);
             }
 
-            var fieldSchema = schema.items.items.find(function (item) {
+            var fieldSchema = schemaItems.find(function (item) {
                 return item.title === browse_field;
             });
             
@@ -247,6 +247,55 @@ function paramChange () {
             ['fantasy']
         ];
         
+        // Todo: Get the automated fields listed in drop-down menus
+        // Todo: Add later option to "Search for any text you wish to find in that column:"
+        
+        var fields = schemaItems.map(function (schemaItem) {
+            return fn(schemaItem.title);
+        });
+
+        var columnsTable = ['table', {border: '1', cellpadding: '5', align: 'center'}, [
+            ['tr', [
+                ['th', {align: 'left', width: '20'}, [
+                    l("field_enabled")
+                ]],
+                ['th', [
+                    l("field_title")
+                ]]
+            ]],
+            {'#': fields.map(function (fieldName, i) {
+                return ['tr', [
+                    ['td', {title: "Check the columns you wish to browse"}, [
+                        ['input', {'class': 'fieldSelector', name: 'option' + i, type: 'checkbox', value: l("yes"), checked: 'checked'}]
+                    ]],
+                    ['td', {title: "Check the sequence (you can choose the same field twice if you wish)"}, [
+                        ['select', {name: 'field' + i, id: 'field' + i, size: '1'},
+                            fields.map(function (field, j) {
+                                return (j !== i) ?
+                                    ['option', {value: j}, [field]] :
+                                    ['option', {value: j, selected: 'selected'}, [field]];
+                            })
+                        ]
+                    ]]
+                ]];
+            })},
+            ['tr', [
+                ['td', {colspan: 2}, [
+                    ['input', {value: l("check_all"), type: 'button', $on: {click: function () {
+                        Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) {
+                            checkbox.checked = true;
+                        });
+                    }}}],
+                    ['input', {value: l("uncheck_all"), type: 'button', $on: {click: function () {
+                        Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) {
+                            checkbox.checked = false;
+                        });
+                    }}}]
+                ]]
+            ]]
+        ]];
+
+        
         var arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
         
         jml(
@@ -262,9 +311,7 @@ function paramChange () {
                         ['br'], ['br'],
                         ['table', {border: '1', align: 'center', cellpadding: '5'}, [
                             ['tr', {valign: 'top'}, [
-                                ['td', [
-                                    'Columns table goes here' // Todo: add Columns table
-                                ]],
+                                ['td', [columnsTable]],
                                 ['td', [
                                     ['h3', ["Advanced Formatting Options"]],
                                     ['label', [

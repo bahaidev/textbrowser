@@ -126,38 +126,3 @@ HERE;
 
 print "</table>";
 ?>
-
-
-<table border="1" cellpadding="5" align="center"><tr><th align="left" width="20">Enabled?</th><th>Column Title</th></tr>
-<?php
-
-//Fix: Add the following explanatory text?:  <u>Check the columns you wish to browse:</u>&nbsp;&nbsp;, Select the sequence (you can choose the same field twice if you wish)
-//Fix: Add Javascript to check/uncheck all columns at once
-//Fix: Add later option to <u>Search for any text you wish to find in that column:</u><br /><br />
-
-/////////////Get the (optional) fields listed in drop-down menus; although all options are available in each menu, one is chosen (by its sequence) to be initially selected/////////////
-
-for ($i = 0; $i < mysql_num_fields($result); $i++) {
-	print <<<HERE
-	<tr>
-	<td><input name="option$i" type="checkbox" value="yes" checked="checked" /></td>
-	<td><select name="field$i" id="field$i" size="1">
-HERE;
-
-	for ($j = 0; $j < mysql_num_fields($result); $j++) {
-		$columnface = mysql_field_name($result, $j);
-		if ($j !== $i) {
-			print <<<HERE
-			<option value="$j">$columnface</option>
-HERE;
-		} // end if (if current option is not (yet) in line to be selected)
-		else {
-			print <<<HERE
-			<option value="$j" selected="selected">$columnface</option>
-HERE;
-		} // end else (if current option is in line to be selected)
-	} //end for (going through all the fields to be listed in the drop-down menu of field choices--used for seeing if the item is to be checked by default or not)
-	print "</select></td></tr>";
-} //end for (going through all the fields to be listed in the drop-down menu of field choices--used for seeing if the item is to be checked by default or not)
-?>
-</table>
