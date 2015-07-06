@@ -3,9 +3,7 @@
 
 /*
 Todos
-1. User-configured (and/or locale-based) hiding of content languages
-1. Transpose columns (trnsps)
-1. Random selection (and allow copying the URL before visiting) (rnd)
+
 1. Header options:
     "headings_wstyles": "Headings (with Styles?)",
     "yes": "Yes",
@@ -14,14 +12,18 @@ Todos
     "none": "None",
     "table_wborder": "Table (with border?)",
     "wishtoscroll": "Table header fixed (if possible)",
-1. Incorporate and modify usage of alias_fielding1, alias_fielding2
+
 1.  "pageformatting": "Page Formatting Options",
 "pageformatting_tips": "These options alter the formatting of the browse results page.",
 "outputmode": "Output mode",
 "outputmode_tips": "Choose another option if your browser doesn't support tables.",
+
 1."tableformatting": "Table Formatting Options",
 "tableformatting_tips": "These options alter formatting of the browse results table.",
 "wishcaption": "Show caption with book name, etc.?",
+1. Transpose columns (trnsps)
+
+1. User-configured (and/or locale-based) hiding of content languages
 
 Todos (lower priority)
 1. Update "about" text in locales and utilize on popup or something?
@@ -140,8 +142,9 @@ function paramChange () {
         var fn = defineFormatter(['fieldname', work]);
         var schemaItems = schema.items.items;
         var content = [];
-        metadata.table.browse_fields.forEach(function (browse_field, i) {
-            // Todo: Handle where browse_field is an object of form: {name:, set:}
+        metadata.table.browse_fields.forEach(function (browse_field, i, arr) {
+// Todo: 1. Handle where browse_field is an object of form: {name:, set:}
+// Todo: 1. Incorporate and modify usage of alias_fielding1, alias_fielding2
             
             if (browse_field && typeof browse_field === 'object') {
                 // Todo: Could use browse_field.name for a fieldset around the field set
@@ -220,6 +223,39 @@ function paramChange () {
                         ]],
                         ['td', [l("numbers-only")]]
                     ]
+                ),
+                (i === arr.length -1 ?
+                    [
+                        ['td', {colspan: 12, align: 'center'}, [['br'], l("or"), ['br'], ['br']]]
+                    ] :
+                    ''
+                ),
+                (i === arr.length -1 ?
+                    [
+                        ['td', {colspan: 12, align: 'center'}, [
+                            ['label', [
+                                ['input', {type: 'checkbox', name: 'random'}],
+                                l("rnd") + nbsp.repeat(3)
+                            ]],
+                            ['label', [
+                                l("verses-context") + nbsp,
+                                ['input', {type: 'text', name: 'context', size: 4}]
+                            ]],
+                            nbsp.repeat(3),
+                            ['input', {type: 'button', value: l("view-random-URL"), $on: {click: function () {
+                                var paramsCopy = new URLSearchParams(params);
+                                var formParamsHash = formSerialize(document.querySelector('form[name=browse]'), {hash:true});
+                                Object.keys(formParamsHash).forEach(function (key) {
+                                    paramsCopy.set(key, formParamsHash[key]);
+                                });
+                                paramsCopy.set('random', 'on');
+                                paramsCopy.set('result', 'true');
+                                document.querySelector('#randomURL').value = window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
+                            }}}],
+                            ['input', {type: 'text', id: 'randomURL'}]
+                        ]]
+                    ] :
+                    ''
                 )
             ].forEach(function (rowContent) {
                 if (!rowContent) {return;}
@@ -352,7 +388,7 @@ function paramChange () {
             [
                 ['h2', [th(work)]],
                 ['br'],
-                ['div', [ // Todo: Change to form name=browse?
+                ['form', {name: 'browse'}, [
                     ['table', {align: 'center'}, content],
                     ['br'],
                     ['div', {style: 'margin-left: 20px'}, [ // Todo: ok as blockquote?

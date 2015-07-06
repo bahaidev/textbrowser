@@ -150,6 +150,8 @@
     "normal": null,
     "trnsps": "Расположить горизонтально?",
     "rnd": "В случайном порядке?",
+    "verses-context": null,
+    "view-random-URL": null,
     "fieldno": "Количество",
     "fieldinterlin": "Межлинейные поля",
     "fieldcss": "CSS - каскадные таблицы стилей",

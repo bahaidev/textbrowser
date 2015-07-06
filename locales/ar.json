@@ -150,6 +150,8 @@
     "normal": "Normal",
     "trnsps": "Transpose horizontally?",
     "rnd": "Random?",
+    "verses-context": "Number of verses of context",
+    "view-random-URL": "View random URL",
     "fieldno": "Number",
     "fieldinterlin": "Interlinear Fields",
     "fieldcss": "CSS",
