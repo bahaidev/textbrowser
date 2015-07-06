@@ -262,27 +262,31 @@ function paramChange () {
     function displayResults (l, defineFormatter) {
         
     }
+
+    function languageDisplay (l, defineFormatter) {
+        jml('div', {'class': 'focus'},
+            [['select', {size: langs.length, $on: {change: function (e) {
+                params.set('lang', e.target.selectedOptions[0].value);
+                followParams();
+            }}}, langs.map(function (lang) {
+                return ['option', {value: lang.code}, [lang.name]];
+            })]], document.body
+            
+            /* Works too:
+            langs.map(function (lang) {
+                return ['div', [
+                    ['a', {href: '#', dataset: {code: lang.code}}, [lang.name]]
+                ]];
+            }), document.body
+            */
+        );
+    }
     
     function localeCallback (l) {
         document.title = l("browserfile");
 
         if (!languageParam) {
-            jml('div', {'class': 'focus'},
-                [['select', {size: langs.length, $on: {change: function (e) {
-                    params.set('lang', e.target.selectedOptions[0].value);
-                    followParams();
-                }}}, langs.map(function (lang) {
-                    return ['option', {value: lang.code}, [lang.name]];
-                })]], document.body
-                
-                /* Works too:
-                langs.map(function (lang) {
-                    return ['div', [
-                        ['a', {href: '#', dataset: {code: lang.code}}, [lang.name]]
-                    ]];
-                }), document.body
-                */
-            );
+            languageDisplay.apply(null, arguments);
             return;
         }
         if (!work) {
