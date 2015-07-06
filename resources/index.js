@@ -196,6 +196,59 @@ function paramChange () {
                 content.push(['tr', rowContent]);
             });
         });
+        var colors = [
+            'aqua',
+            'black',
+            'blue',
+            'fuchsia',
+            'gray',
+            'green',
+            'lime',
+            'maroon',
+            'navy',
+            'olive',
+            'purple',
+            'red',
+            'silver',
+            'teal',
+            'white',
+            'yellow'
+        ];
+        var fonts = [
+            ['Helvetica, sans-serif'],
+            ['Verdana, sans-serif'],
+            ['Gill Sans, sans-serif'],
+            ['Avantgarde, sans-serif'],
+            ['Helvetica Narrow, sans-serif'],
+            ['sans-serif'],
+            ['Times, serif'],
+            ['Times New Roman, serif'],
+            ['Palatino, serif'],
+            ['Bookman, serif'],
+            ['New Century Schoolbook, serif'],
+            ['serif'],
+            ['Andale Mono, monospace'],
+            ['Courier New, monospace'],
+            ['Courier, monospace'],
+            ['Lucidatypewriter, monospace'],
+            ['Fixed, monospace'],
+            ['monospace'],
+            ['Comic Sans, Comic Sans MS, cursive'],
+            ['Zapf Chancery, cursive'],
+            ['Coronetscript, cursive'],
+            ['Florence, cursive'],
+            ['Parkavenue, cursive'],
+            ['cursive'],
+            ['Impact, fantasy'],
+            ['Arnoldboecklin, fantasy'],
+            ['Oldtown, fantasy'],
+            ['Blippo, fantasy'],
+            ['Brushstroke, fantasy'],
+            ['fantasy']
+        ];
+        
+        var arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
+        
         jml(
             'div',
             {'class': 'focus ' + direction},
@@ -204,14 +257,134 @@ function paramChange () {
                 ['br'],
                 ['div', [ // Todo: Change to form name=browse?
                     ['table', {align: 'center'}, content],
+                    ['br'],
+                    ['div', {style: 'margin-left: 20px'}, [ // Todo: ok as blockquote?
+                        ['br'], ['br'],
+                        ['table', {border: '1', align: 'center', cellpadding: '5'}, [
+                            ['tr', {valign: 'top'}, [
+                                ['td', [
+                                    'Columns table goes here' // Todo: add Columns table
+                                ]],
+                                ['td', [
+                                    ['h3', ["Advanced Formatting Options"]],
+                                    ['label', [
+                                        "Text color:",
+                                        ['select', {id: 'color2'}, colors.map(function (color, i) {
+                                            return i === 1 ? ['option', {selected: 'selected', value: color}, [l(color)]] : ['option', {value: color}, [l(color)]];
+                                        })]
+                                    ]],
+                                    
+                                    ['label', [
+                                        nbsp + "Or enter a color code here: ",
+                                        ['input', {name: 'color', type: 'text', value: '#', size: '7', maxlength: '7'}]
+                                    ]],
+                                    ['br'], ['br'],
+                                    ['label', [
+                                        "Background color: ",
+                                        ['select', {id: 'bgcolor2'}, colors.map(function (color, i) {
+                                            return i === 14 ? ['option', {selected: 'selected', value: color}, [l(color)]] : ['option', {value: color}, [l(color)]];
+                                        })]
+                                    ]],
+                                    ['label', [
+                                        nbsp + "Or enter a color code here: ",
+                                        ['input', {name: 'bgcolor', type: 'text', value: '#', size: '7', maxlength: '7'}]
+                                    ]],
+                                    ['br'], ['br'],
+                                    ['label', [
+                                        "Text font: ",
+                                        ['select', {id: 'font'}, fonts.map(function (fonts, i) {
+                                            return (i === 7) ? ['option', {selected: 'selected'}, fonts] : ['option', fonts];
+                                        })]
+                                    ]],
+                                    ['br'], ['br'],
+                                    ['label', [
+                                        "Font style (normal, italic, oblique): ",
+                                        ['input', {name: 'fontstyle', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
+                                    ]],
+                                    ['br'],
+                                    ['label', [
+                                        "Font variant (normal, small-caps): ",
+                                        ['input', {name: 'fontvariant', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
+                                    ]],
+                                    ['br'],
+                                    ['label', [
+                                        "Font weight (normal, bold, 100-900, etc.): ",
+                                        ['input', {name: 'fontweight', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
+                                    ]],
+                                    ['br'],
+                                    ['label', [
+                                        "Font size (14pt, 14px, small, 75%, etc.): ",
+                                        ['input', {name: 'fontsize', type: 'text', value: '', size: '7', maxlength: '12'}]
+                                    ]],
+                                    ['br'],
+                                    /*
+                                    This CSS attribute didn't work so it was removed in favor of letter-spacing (see the following) which can do the trick:
+                                    */
+                                    ['label', {title: "wider, narrower, semi-expanded, ultra-condensed, extra-expanded, etc."}, [
+                                        "Font stretch: ",
+                                        ['input', {name: 'fontstretch', type: 'text', value: 'normal', size: '12', maxlength: '16'}]
+                                    ]],
+                                    /**/
+                                    ['br'],['br'],
+                                    ['label', [
+                                        "Letter-spacing (normal, .9em, -.05cm): ",
+                                        ['input', {name: 'letterspacing', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
+                                    ]],
+                                    ['br'],
+                                    ['label', [
+                                        "Line height (normal, 1.5, 22px, 150%): ",
+                                        ['input', {name: 'lineheight', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
+                                    ]],
+                                    ['br'],['br'],
+                                    ['label', [
+                                        "Headings (with Styles?): " + nbsp.repeat(2),
+                                        ['label', [
+                                            ['input', {name: 'headings', type: 'radio', value: 'y'}],
+                                            "Yes" + nbsp.repeat(3)
+                                        ]],
+                                        ['label', [
+                                            ['input', {name: 'headings', type: 'radio', value: 'n', checked: 'checked'}],
+                                            "No" + nbsp.repeat(3)
+                                        ]],
+                                        ['label', [
+                                            ['input', {name: 'headings', type: 'radio', value: '0'}],
+                                            "None"
+                                        ]]
+                                    ]],
+                                    ['br'],['br'],
+                                    ['label', [
+                                        "Table (with border?): " + nbsp.repeat(2),
+                                        ['label', [
+                                            ['input', {name: 'border', type: 'radio', value: '1', checked: 'checked'}],
+                                            "Yes" + nbsp.repeat(3)
+                                        ]],
+                                        ['label', [
+                                            ['input', {name: 'border', type: 'radio', value: '0'}],
+                                            "No"
+                                        ]]
+                                    ]],
+                                    ['br'],['br']
+                                ]]
+                                /*
+                                ,arabicContent ?
+                                    // If there is Arabic content, a text box will be created for each field with such content to allow the user to choose how wide the field should be (since the Arabic is smaller).
+                                    // Todo: Allow naming of the field differently for Persian? Allowing any column to be resized would probably be most consistent with this project's aim to not make arbitrary decisions on what should be customizable, but rather make as much as possible customizable. It may also be helpful for Chinese, etc.
+                                    {'#': arabicContent.map(function (item, i) {
+                                        return {'#': [
+                                            "Width of Arabic column: ",
+                                            ['input', {name: "arw" + i, type: 'text', value: '', size: '7', maxlength: '12'}]
+                                        ]};
+                                    })} :
+                                    ''
+                                */
+                            ]]
+                        ]]
+                    ]],
                     ['p', {align: 'center'}, [['input', {type: 'button', value: l("Go")}]]]
                 ]]
             ],
             document.body
         );
-        
-        // alert('1:'+JSON.stringify(schema.items.items));
-        // alert('2:'+JSON.stringify(metadata));
     }
     
     function workDisplay (l, defineFormatter) {
