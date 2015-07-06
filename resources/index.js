@@ -113,10 +113,7 @@ function paramChange () {
         var th = defineFormatter('tableheading');
         var fs = defineFormatter(['fieldname', work]);
 
-        var content = [
-            ['h2', [th(work)]],
-            ['br']
-        ];
+        var content = [];
         metadata.table.browse_fields.forEach(function (browse_field, i) {
             if (browse_field && typeof browse_field === 'object') {
                 // Todo: Could use browse_field.name for a fieldset around the field set
@@ -131,12 +128,40 @@ function paramChange () {
             else {
                 browseField = fs(browse_field);
             }
+            
+            var enumerated = 0; // Todo: Make dynamic
 
-            content.push(
-                i > 0 ? ['br'] : '',
-                ['table', {align: 'center'}, [ // Todo: Fix formatting and make the following dynamic
-                    ['tr', [
-                        ['td', [browseField, ': ']],
+            [
+                // Todo: Fix formatting
+                i > 0 ?
+                    [
+                        ['td', {colspan: 12, align: 'center'}, [['br'], 'OR:', ['br'], ['br']]]
+                    ] :
+                    '',
+                (enumerated ?
+                    [
+                        ['td', [
+                            ['label', [
+                                "Persian: ",
+                                ['input', {type: 'radio', name: 'toggle' + i, value: "Persian"}]
+                            ]],
+                            nbsp.repeat(3),
+                            ['label', [
+                                "Arabic: ",
+                                ['input', {type: 'radio', name: 'toggle' + i, value: "Arabic"}]
+                            ]],
+                            nbsp.repeat(4),
+                            ['label', [
+                                "Both: ",
+                                ['input', {type: 'radio', name: 'toggle' + i, value: ""}]
+                            ]]
+                        ]]
+                    ] :
+                    [
+                        // Todo: Make the following dynamic
+                        ['td', [
+                            ['label', [browseField, ': ']]
+                        ]],
                         ['td', [
                             ['input', {name: "$a" + i, type: 'text', size: '7'}],
                             nbsp.repeat(3)
@@ -151,15 +176,21 @@ function paramChange () {
                             nbsp.repeat(2)
                         ]],
                         ['td', ['(numbers only)']]
-                    ]]
-                ]]
-            );
-            
+                    ]
+                )
+            ].forEach(function (rowContent) {
+                if (!rowContent) {return;}
+                content.push(['tr', rowContent]);
+            });
         });
         jml(
             'div',
             {'class': 'focus ' + direction},
-            content,
+            [
+                ['h2', [th(work)]],
+                ['br'],
+                ['table', {align: 'center'}, content]
+            ],
             document.body
         );
         

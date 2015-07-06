@@ -107,46 +107,6 @@ switch ($file) {
 <?php
 ///////////// Connect to database and get results to obtain field names (if default column and value exists, will only return these results (since only need the fieldnames in this script)//////////////
 
-
-if ($levels == 1) {
-	print <<<HERE
-<table align="center">
-HERE;
-
-	$fields_name1 = mysql_field_name($result, $columnof1);
-	$fields_name7 = mysql_field_name($result, $columnof3);
-
-
-//////////////New Book Add: Allow aliased columns to be hard-coded here if desired////////
-
-    $aliasedfield = $fields_name1;
-    $aliasedfield2 = $fields_name7;
-
-/////////////////Conditionally define the function to display the input boxes for which range of verses one wishes to browse////////////////////
-
-	function verse_selection ($a, $c, $fields_name1, $option_no) {
-		print <<<HERE
-		<tr>
-		<td>$fields_name1: </td><td><input name="$a$option_no" type="text" size="7" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><b>TO</b>:&nbsp; &nbsp; &nbsp; </td><td>$fields_name1: </td><td><input name="$c$option_no" type="text" size="7" />&nbsp;&nbsp;&nbsp;&nbsp;</td><td>(numbers only)</td></tr>
-HERE;
-	}
-
-
-//////////////////// Call the function to display the input boxes for which range of verses one wishes to browse ////////////////////
-	verse_selection ("blevela", "elevela", $aliasedfield, 1);
-
-	if ($options > 1) {
-		/// Fix: This could be designed to add an indefinite number of "or" options if one were to give the option to browse by more than 2 fields (this is not urgent at the moment, though perhaps the Collins database could use this). If this is expanded, browse9.php also should be fixed when testing to see if these blevela2+ items exist already or not. Do this also for levels 2 and 3 or if any more levels are ever needed (dynamically added?!?--I hope they are not necessary since it is rather complicated to delineate all the possibilities!!!)
-		//for ($i = 2; $i < $options+1; $i++) {
-		print <<<HERE
-		<tr><td colspan="12" align="center"><br />OR:<br /><br /></td></tr> 
-HERE;
-		verse_selection ("blevela", "elevela", $aliasedfield2, 2);
-		//} //end for
-	} //end if (if there are more than 1 options for browsing (e.g., Rodwell or Traditional))
-
-	print "</table>";
-
 // New Book Add: Tweaks could be added here (as for the Hidden Words) to allow browsing for a major subset of the content (esp. if there would otherwise be duplicate numbers)
 
 	if ($file == "Hidden Words") {
@@ -158,12 +118,7 @@ HERE;
 HERE;
 	}
 
-} // end if (there is only one level--e.g., not like book/chapter/verse of the Bible)
-
-/////////Fix: Levels 2 and 3 could probably be combined above in some manner (would reduce code--as well as the need to repeat comments so much!)
-
-
-elseif ($levels == 2) {
+if ($levels == 2) {
 
 
 	print <<<HERE
