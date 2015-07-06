@@ -111,6 +111,7 @@ function paramChange () {
         // todo: alias fields
         var ta = defineFormatter('tablealias');
         var th = defineFormatter('tableheading');
+        var fs = defineFormatter(['fieldshortcut', work]);
 
         var content = [
             ['h2', [th(work)]],
@@ -121,12 +122,13 @@ function paramChange () {
                 // Todo: Could use browse_field.name for a fieldset around the field set
                 browse_field = browse_field.set;
             }
+            var browseField = fs(browse_field);
 
             content.push(
                 i > 0 ? ['br'] : '',
                 ['table', {align: 'center'}, [ // Todo: Fix formatting and make the following dynamic
                     ['tr', [
-                        ['td', [browse_field, ': ']],
+                        ['td', [browseField, ': ']],
                         ['td', [
                             ['input', {name: "$a" + i, type: 'text', size: '7'}],
                             nbsp.repeat(3)
@@ -135,7 +137,7 @@ function paramChange () {
                             ['b', ['TO']],
                             ':' + nbsp.repeat(3)
                         ]],
-                        ['td', [browse_field, ': ']],
+                        ['td', [browseField, ': ']],
                         ['td', [
                             ['input', {name: "$c" + i, type: 'text', size: '7'}],
                             nbsp.repeat(2)
