@@ -4,10 +4,29 @@
 /*
 Todos
 1. User-configured (and/or locale-based) hiding of content languages
-1. Transpose columns
-1. Random selection (and allow copying the URL)
-1. Update about text in locales and utilize on popup or something?
+1. Transpose columns (trnsps)
+1. Random selection (and allow copying the URL before visiting) (rnd)
+1. Header options:
+    "headings_wstyles": "Headings (with Styles?)",
+    "yes": "Yes",
+    "no": "No",
+    "both": "Both",
+    "none": "None",
+    "table_wborder": "Table (with border?)",
+    "wishtoscroll": "Table header fixed (if possible)",
+1. Incorporate and modify usage of alias_fielding1, alias_fielding2
+1.  "pageformatting": "Page Formatting Options",
+"pageformatting_tips": "These options alter the formatting of the browse results page.",
+"outputmode": "Output mode",
+"outputmode_tips": "Choose another option if your browser doesn't support tables.",
+1."tableformatting": "Table Formatting Options",
+"tableformatting_tips": "These options alter formatting of the browse results table.",
+"wishcaption": "Show caption with book name, etc.?",
+
+Todos (lower priority)
+1. Update "about" text in locales and utilize on popup or something?
 1. Assistant file (for translating; needs server for password)
+1. Add tooltips and table summaries, etc. back (see locale file for these and reapply any other unused)
 
 */
 
@@ -374,22 +393,33 @@ function paramChange () {
                                     ]],
                                     ['br'], ['br'],
                                     ['label', [
-                                        l("font_style") + "(normal, italic, oblique): ",
-                                        ['input', {name: 'fontstyle', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
+                                        l("font_style") + nbsp,
+                                        ['select', {name: 'fontstyle'}, [
+                                            ['option', {value: 'italic'}, [l("italic")]],
+                                            ['option', {value: 'normal', selected: 'selected'}, [l("fontstyle_normal")]],
+                                            ['option', {value: 'oblique'}, [l("oblique")]]
+                                        ]]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        "Font variant (normal, small-caps): ",
-                                        ['input', {name: 'fontvariant', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
+                                        l("font_variant") + nbsp.repeat(3),
+                                        ['label', [
+                                            ['input', {name: 'fontvariant', type: 'radio', value: 'normal'}],
+                                            l("fontvariant_normal") + nbsp
+                                        ]],
+                                        ['label', [
+                                            ['input', {name: 'fontvariant', type: 'radio', value: 'small-caps'}],
+                                            l("smallcaps") + nbsp
+                                        ]]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        "Font weight (normal, bold, 100-900, etc.): ",
+                                        l("font_weight") + " (normal, bold, 100-900, etc.): ", // Todo: i18n and allow for normal/bold pulldown and float input?
                                         ['input', {name: 'fontweight', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        "Font size (14pt, 14px, small, 75%, etc.): ",
+                                        l("font_size") + " (14pt, 14px, small, 75%, etc.): ",
                                         ['input', {name: 'fontsize', type: 'text', value: '', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
@@ -398,17 +428,25 @@ function paramChange () {
                                     */
                                     ['label', {title: "wider, narrower, semi-expanded, ultra-condensed, extra-expanded, etc."}, [
                                         "Font stretch: ",
-                                        ['input', {name: 'fontstretch', type: 'text', value: 'normal', size: '12', maxlength: '16'}]
+                                        ['select', {name: 'fontstretch'},
+                                            ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(function (stretch) {
+                                                var atts = {value: stretch};
+                                                if (stretch === 'normal') {
+                                                    atts.selected = 'selected';
+                                                }
+                                                return ['option', atts, [stretch]]; // Todo: i18nize?
+                                            })
+                                        ]
                                     ]],
                                     /**/
                                     ['br'],['br'],
                                     ['label', [
-                                        "Letter-spacing (normal, .9em, -.05cm): ",
+                                        l("letter_spacing") + " (normal, .9em, -.05cm): ",
                                         ['input', {name: 'letterspacing', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        "Line height (normal, 1.5, 22px, 150%): ",
+                                        l("line_height") + " (normal, 1.5, 22px, 150%): ",
                                         ['input', {name: 'lineheight', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],['br'],
