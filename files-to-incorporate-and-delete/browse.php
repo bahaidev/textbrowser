@@ -99,122 +99,32 @@ switch ($file) {
 } //end switch (of file-specific header and field heading defaults)
 ?>
 
-
-<body>
-
-<form action="browse9.php" method="get" name="browse">
-
 <?php
+
+print '<table align="center">';
 
 if ($levels == 2) {
 
-
-	print <<<HERE
-
-	<table align="center">
-HERE;
-
-	$fields_name1 = mysql_field_name($result, $columnof1);
-	$fields_name2 = mysql_field_name($result, $columnof2);
-	$fields_name7 = mysql_field_name($result, $columnof3);
-	$fields_name8 = mysql_field_name($result, $columnof4);
-
-
-
-//Add options into the following if, if there are two level files needing aliased columns as with Collins biblio for level one
-	if ($file == "") {
-	}
-	else {
-	$aliasedfield = $fields_name1;
-	$aliasedfield2 = $fields_name2;
-	$aliasedfield3 = $fields_name7;
-	$aliasedfield4 = $fields_name8;
-	}
-
-
 	function verse_selection ($a, $b, $c, $d, $fields_name1, $fields_name2, $option_no) {
-
 		print <<<HERE
 		<tr>
 		<td>$fields_name1: </td><td><input name="$a$option_no" type="text" size="7" /></td><td>$fields_name2: </td><td><input name="$b$option_no" type="text" size="7" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><b>TO</b>:&nbsp; &nbsp; &nbsp; </td><td>$fields_name1: </td><td><input name="$c$option_no" type="text" size="7" /></td><td>$fields_name2: </td><td><input name="$d$option_no" type="text" size="7" />&nbsp;&nbsp;&nbsp;&nbsp;</td><td>(numbers only; verses and<br /> &nbsp; ending data optional)</td></tr>
-
 HERE;
 	}
-
 	verse_selection ("blevela", "blevelb", "elevela", "elevelb", $aliasedfield, $aliasedfield2, 1);
-
-	if ($options > 1) {
-//for ($i = 2; $i < $options+1; $i++) {
-		print <<<HERE
-			<tr><td colspan="12" align="center"><br />OR:<br /><br /></td></tr> 
-HERE;
-		verse_selection ("blevela", "blevelb", "elevela", "elevelb", $aliasedfield3, $aliasedfield4, 2);
-//} //end for
-	} //end if
-	print "</table>";
 } //end levels2
-
-
 elseif ($levels == 3) {
-
-
-	print <<<HERE
-	<table align="center">
-HERE;
-
-	$fields_name1 = mysql_field_name($result, $columnof1);
-	$fields_name2 = mysql_field_name($result, $columnof2);
-	$fields_name3 = mysql_field_name($result, $columnof3);
-
-	$fields_name7 = mysql_field_name($result, $columnof4);
-	$fields_name8 = mysql_field_name($result, $columnof5);
-	$fields_name9 = mysql_field_name($result, $columnof6);
-
-
 //New Book Add: Add options into the following if, if there are three level files needing aliased columns as with Collins biblio for level one
-	if ($file == "") {
-	}
-	else {
-		$aliasedfield = $fields_name1;
-		$aliasedfield2 = $fields_name2;
-		$aliasedfield3 = $fields_name3;
-		$aliasedfield4 = $fields_name7;
-		$aliasedfield5 = $fields_name8;
-		$aliasedfield6 = $fields_name9;
-	}
-
-
 	function verse_selection ($a, $b, $c, $d, $e, $f, $fields_name1, $fields_name2, $fields_name3, $option_no) {
-
 		print <<<HERE
 		<tr>
 		<td>$fields_name1: </td><td><input name="$a$option_no" type="text" size="7" /></td><td>$fields_name2: </td><td><input name="$b$option_no" type="text" size="7" /></td><td>$fields_name3: </td><td><input name="$c$option_no" type="text" size="7" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><b>TO</b>:&nbsp; &nbsp; &nbsp; </td><td>$fields_name1: </td><td><input name="$d$option_no" type="text" size="7" /></td><td>$fields_name2: </td><td><input name="$e$option_no" type="text" size="7" /></td><td>$fields_name3: </td><td><input name="$f$option_no" type="text" size="7" />&nbsp;&nbsp;&nbsp;&nbsp;</td><td>(numbers only; verses and<br /> &nbsp; ending data optional)</td></tr>
 HERE;
 	}
-
 	verse_selection ("blevela", "blevelb", "blevelc", "elevela", "elevelb", "elevelc", $aliasedfield, $aliasedfield2, $aliasedfield3, 1);
-
-	if ($options > 1) {
-
-	//for ($i = 2; $i < $options+1; $i++) { // (add i to the parameter call?)
-
-		print <<<HERE
-		<tr><td colspan="12" align="center"><br />OR:<br /><br /></td></tr> 
-HERE;
-
-	verse_selection ("blevela", "blevelb", "blevelc", "elevela", "elevelb", "elevelc", $aliasedfield4, $aliasedfield5, $aliasedfield6, 2);
-
-	//} //end for
-	} //end if options > 1
-
-	print "</table>";
-
 } //end elseif (levels3)
 
-?>
-
-<?php
-/////////////Start tables////////////////
+print "</table>";
 ?>
 
 <br /><blockquote><p></p><p></p>
@@ -387,6 +297,3 @@ HERE;
 ?>
 
 </td></tr></table></blockquote>
-
-<p align="center"><input type="submit" value="Go" /></p>
-</form>

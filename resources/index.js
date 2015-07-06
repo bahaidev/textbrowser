@@ -202,7 +202,10 @@ function paramChange () {
             [
                 ['h2', [th(work)]],
                 ['br'],
-                ['table', {align: 'center'}, content]
+                ['div', [ // Todo: Change to form name=browse?
+                    ['table', {align: 'center'}, content],
+                    ['p', {align: 'center'}, [['input', {type: 'button', value: l("Go")}]]]
+                ]]
             ],
             document.body
         );
