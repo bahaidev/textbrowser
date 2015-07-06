@@ -2,8 +2,6 @@
 /*jslint vars:true, todo:true*/
 (function () {'use strict';
 
-document.title = "Sacred Writings Browser";
-
 var nbsp = '\u00a0';
 
 // We use getJSON instead of JsonRefs as we do not need to resolve the locales here
@@ -30,28 +28,8 @@ function paramChange () {
         location.hash = '#' + params.toString();
     }
 
-    var language = $p('lang');
-    
-    if (!language) {
-        jml('div', {'class': 'focus'},
-            [['select', {size: langs.length, $on: {change: function (e) {
-                params.set('lang', e.target.selectedOptions[0].value);
-                followParams();
-            }}}, langs.map(function (lang) {
-                return ['option', {value: lang.code}, [lang.name]];
-            })]], document.body
-            
-            /* Works too:
-            langs.map(function (lang) {
-                return ['div', [
-                    ['a', {href: '#', dataset: {code: lang.code}}, [lang.name]]
-                ]];
-            }), document.body
-            */
-        );
-        return;
-    }
-    
+    var languageParam = $p('lang');
+    var language = languageParam || 'en-US'; // We need a default to display a default title
     var lang = language.split('.');
     var direction = getDirectionForLanguageCode(lang[0]);
     
@@ -139,7 +117,7 @@ function paramChange () {
                 // Todo: Fix formatting
                 i > 0 ?
                     [
-                        ['td', {colspan: 12, align: 'center'}, [['br'], 'OR:', ['br'], ['br']]]
+                        ['td', {colspan: 12, align: 'center'}, [['br'], l("or"), ['br'], ['br']]]
                     ] :
                     '',
                 (enumerated ?
@@ -181,7 +159,7 @@ function paramChange () {
                             nbsp.repeat(3)
                         ]],
                         ['td', [
-                            ['b', ['TO']],
+                            ['b', [l("to")]],
                             ':' + nbsp.repeat(3)
                         ]],
                         ['td', [browseField, ': ']],
@@ -189,7 +167,7 @@ function paramChange () {
                             ['input', {name: 'end' + i, type: 'text', size: '7'}],
                             nbsp.repeat(2)
                         ]],
-                        ['td', ['(numbers only)']]
+                        ['td', [l("numbers-only")]]
                     ]
                 )
             ].forEach(function (rowContent) {
@@ -285,7 +263,28 @@ function paramChange () {
         
     }
     
-    function localeCallback () {
+    function localeCallback (l) {
+        document.title = l("browserfile");
+
+        if (!languageParam) {
+            jml('div', {'class': 'focus'},
+                [['select', {size: langs.length, $on: {change: function (e) {
+                    params.set('lang', e.target.selectedOptions[0].value);
+                    followParams();
+                }}}, langs.map(function (lang) {
+                    return ['option', {value: lang.code}, [lang.name]];
+                })]], document.body
+                
+                /* Works too:
+                langs.map(function (lang) {
+                    return ['div', [
+                        ['a', {href: '#', dataset: {code: lang.code}}, [lang.name]]
+                    ]];
+                }), document.body
+                */
+            );
+            return;
+        }
         if (!work) {
             workSelect.apply(null, arguments);
             return;
