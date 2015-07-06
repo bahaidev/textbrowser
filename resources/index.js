@@ -1,5 +1,16 @@
 /*globals formSerialize, JsonRefs, IMF, getJSON, jml, URLSearchParams*/
 /*jslint vars:true, todo:true*/
+
+/*
+Todos
+1. User-configured (and/or locale-based) hiding of content languages
+1. Transpose columns
+1. Random selection (and allow copying the URL)
+1. Update about text in locales and utilize on popup or something?
+1. Assistant file (for translating; needs server for password)
+
+*/
+
 (function () {'use strict';
 
 var nbsp = '\u00a0';
@@ -331,39 +342,39 @@ function paramChange () {
                             ['tr', {valign: 'top'}, [
                                 ['td', [columnsTable]],
                                 ['td', [
-                                    ['h3', ["Advanced Formatting Options"]],
+                                    ['h3', [l("advancedformatting")]],
                                     ['label', [
-                                        "Text color:",
+                                        l("textcolor"),
                                         ['select', {id: 'color2'}, colors.map(function (color, i) {
                                             return i === 1 ? ['option', {selected: 'selected', value: color}, [l(color)]] : ['option', {value: color}, [l(color)]];
                                         })]
                                     ]],
                                     
                                     ['label', [
-                                        nbsp + "Or enter a color code here: ",
+                                        nbsp + l("or_entercolor"),
                                         ['input', {name: 'color', type: 'text', value: '#', size: '7', maxlength: '7'}]
                                     ]],
                                     ['br'], ['br'],
                                     ['label', [
-                                        "Background color: ",
+                                        l("backgroundcolor"),
                                         ['select', {id: 'bgcolor2'}, colors.map(function (color, i) {
                                             return i === 14 ? ['option', {selected: 'selected', value: color}, [l(color)]] : ['option', {value: color}, [l(color)]];
                                         })]
                                     ]],
                                     ['label', [
-                                        nbsp + "Or enter a color code here: ",
+                                        nbsp + l("or_entercolor"),
                                         ['input', {name: 'bgcolor', type: 'text', value: '#', size: '7', maxlength: '7'}]
                                     ]],
                                     ['br'], ['br'],
                                     ['label', [
-                                        "Text font: ",
+                                        l("text_font"),
                                         ['select', {id: 'font'}, fonts.map(function (fonts, i) {
                                             return (i === 7) ? ['option', {selected: 'selected'}, fonts] : ['option', fonts];
                                         })]
                                     ]],
                                     ['br'], ['br'],
                                     ['label', [
-                                        "Font style (normal, italic, oblique): ",
+                                        l("font_style") + "(normal, italic, oblique): ",
                                         ['input', {name: 'fontstyle', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
