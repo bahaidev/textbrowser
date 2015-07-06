@@ -2,8 +2,6 @@
 /*jslint vars:true, todo:true*/
 (function () {'use strict';
 
-// Todo: change $ref usages to utilize JSON Reference ( https://github.com/whitlockjc/json-refs ) + JSON Pointer-aware library ( https://github.com/manuelstofer/json-pointer ?)
-
 document.title = "Sacred Writings Browser";
 
 var nbsp = '\u00a0';
@@ -108,7 +106,6 @@ function paramChange () {
     }
     
     function displayWork (l, defineFormatter, schema, metadata) {
-        // todo: alias fields
         var ta = defineFormatter('tablealias');
         var th = defineFormatter('tableheading');
         var fs = defineFormatter(['fieldname', work]);
@@ -176,7 +173,6 @@ function paramChange () {
                         ]]
                     ] :
                     [
-                        // Todo: Make the following dynamic
                         ['td', [
                             ['label', [browseField, ': ']]
                         ]],
@@ -307,7 +303,7 @@ function paramChange () {
         localeFileResolver: function (code) {
             return langData.localeFileBasePath + langs.find(function (lang) {
                 return lang.code === code;
-            }).locale.$ref; // Todo: We might instead resolve all $ref (as with https://github.com/whitlockjc/json-refs ) and replace IMF() loadLocales behavior with our own now resolved locales; see https://github.com/jdorn/json-editor/issues/132
+            }).locale.$ref; // Todo: For editing of locales, we might instead resolve all $ref (as with https://github.com/whitlockjc/json-refs ) and replace IMF() loadLocales behavior with our own now resolved locales; see https://github.com/jdorn/json-editor/issues/132
         },
         callback: localeCallback
     });
