@@ -386,22 +386,6 @@ HERE;
 } // end if (if there is any Arabic content at all)
 ?>
 
-<?php
-//////////// Add hidden fields and finish the table and page //////////////////
-?>
-
-<input name="levels" type="hidden" value="<?php echo $levels; ?>" />
-<input name="file" type="hidden" value="<?php echo $file; ?>" />
-
-<input name="fields_name1" type="hidden" value="<?php echo $fields_name1; ?>" />
-<input name="fields_name2" type="hidden" value="<?php echo $fields_name2; ?>" />
-<input name="fields_name3" type="hidden" value="<?php echo $fields_name3; ?>" />
-
-<input name="fields_name7" type="hidden" value="<?php echo $fields_name7; ?>" />
-<input name="fields_name8" type="hidden" value="<?php echo $fields_name8; ?>" />
-<input name="fields_name9" type="hidden" value="<?php echo $fields_name9; ?>" />
-<input name="heading" type="hidden" value="<?php echo $heading; ?>" />
-
 </td></tr></table></blockquote>
 
 <p align="center"><input type="submit" value="Go" /></p>
