@@ -102,7 +102,7 @@ function paramChange () {
         */
     }
     
-    function displayWork (l, defineFormatter, schema, metadata) {
+    function _displayWork (l, defineFormatter, schema, metadata) {
         var ta = defineFormatter('tablealias');
         var th = defineFormatter('tableheading');
         var fs = defineFormatter(['fieldname', work]);
@@ -268,7 +268,7 @@ function paramChange () {
             
             getMetadata(schemaFile, schemaProperty, function (schema) {
                 getMetadata(metadataFile, metadataProperty, function (metadata) {
-                    displayWork(l, defineFormatter, schema, metadata);
+                    _displayWork(l, defineFormatter, schema, metadata);
                 });
             });
         
