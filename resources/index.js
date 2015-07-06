@@ -37,6 +37,7 @@ function paramChange () {
     var result = $p('result');
 
     function languageSelect (l, defineFormatter) {
+        document.title = l("browserfile");
         jml('div', {'class': 'focus'},
             [['select', {size: langs.length, $on: {change: function (e) {
                 params.set('lang', e.target.selectedOptions[0].value);
@@ -56,6 +57,7 @@ function paramChange () {
     }
     
     function workSelect (l, defineFormatter) {
+        document.title = l("browserfile-workselect");
 
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
         getJSON('appdata/files.json', function (dbs) {
@@ -210,6 +212,7 @@ function paramChange () {
     }
     
     function workDisplay (l, defineFormatter) {
+        var ta = defineFormatter('tablealias');
         getJSON('appdata/files.json', function (dbs) {
             
             // Use the following to dynamically add specific file schema in place of generic table schema if validating against files.jsonschema
@@ -246,6 +249,7 @@ function paramChange () {
                 return !!fileData;
             });
             
+            document.title = l("browserfile-workdisplay", {work: fileData ? ta(work) : ''});
             
             var baseDir = (dbs.baseDirectory || fileGroup.baseDirectory) + '/';
             var schemaBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
@@ -279,12 +283,13 @@ function paramChange () {
     }
     
     function resultsDisplay (l, defineFormatter) {
+        // Will need to retrieve fileData as above (abstract?)
+        // var ta = defineFormatter('tablealias');
+        // document.title = l("browserfile-resultsdisplay", {work: fileData ? ta(work) : ''});
         
     }
 
     function localeCallback (l) {
-        document.title = l("browserfile");
-
         if (!languageParam) {
             languageSelect.apply(null, arguments);
             return;
@@ -297,7 +302,6 @@ function paramChange () {
             workDisplay.apply(null, arguments);
             return;
         }
-        
         resultsDisplay.apply(null, arguments);
     }
     
