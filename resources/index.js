@@ -166,7 +166,7 @@ function paramChange () {
                                                 nbsp.repeat(4),
                                                 ['label', [
                                                     l("both"),
-                                                    ['input', {type: 'radio', name: 'toggle' + i, value: ""}]
+                                                    ['input', {type: 'radio', name: 'toggle' + i, value: ''}]
                                                 ]]
                                             ]} :
                                             ''
@@ -181,7 +181,7 @@ function paramChange () {
                             ['label', [browseField, ': ']]
                         ]],
                         ['td', [
-                            ['input', {name: "$a" + i, type: 'text', size: '7'}],
+                            ['input', {name: 'start' + i, type: 'text', size: '7'}],
                             nbsp.repeat(3)
                         ]],
                         ['td', [
@@ -190,7 +190,7 @@ function paramChange () {
                         ]],
                         ['td', [browseField, ': ']],
                         ['td', [
-                            ['input', {name: "$c" + i, type: 'text', size: '7'}],
+                            ['input', {name: 'end' + i, type: 'text', size: '7'}],
                             nbsp.repeat(2)
                         ]],
                         ['td', ['(numbers only)']]
