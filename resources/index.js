@@ -10,7 +10,6 @@ Todos
     "no": "No",
     "both": "Both",
     "none": "None",
-    "table_wborder": "Table (with border?)",
     "wishtoscroll": "Table header fixed (if possible)",
 
 1.  "pageformatting": "Page Formatting Options",
@@ -490,27 +489,27 @@ function paramChange () {
                                         "Headings (with Styles?): " + nbsp.repeat(2),
                                         ['label', [
                                             ['input', {name: 'headings', type: 'radio', value: 'y'}],
-                                            "Yes" + nbsp.repeat(3)
+                                            l("yes") + nbsp.repeat(3)
                                         ]],
                                         ['label', [
                                             ['input', {name: 'headings', type: 'radio', value: 'n', checked: 'checked'}],
-                                            "No" + nbsp.repeat(3)
+                                            l("no") + nbsp.repeat(3)
                                         ]],
                                         ['label', [
                                             ['input', {name: 'headings', type: 'radio', value: '0'}],
-                                            "None"
+                                            l("none")
                                         ]]
                                     ]],
                                     ['br'],['br'],
                                     ['label', [
-                                        "Table (with border?): " + nbsp.repeat(2),
+                                        l("table_wborder") + nbsp.repeat(2),
                                         ['label', [
                                             ['input', {name: 'border', type: 'radio', value: '1', checked: 'checked'}],
-                                            "Yes" + nbsp.repeat(3)
+                                            l("yes") + nbsp.repeat(3)
                                         ]],
                                         ['label', [
                                             ['input', {name: 'border', type: 'radio', value: '0'}],
-                                            "No"
+                                            l("no")
                                         ]]
                                     ]],
                                     ['br'],['br']
