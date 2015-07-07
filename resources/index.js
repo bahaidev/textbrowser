@@ -89,7 +89,7 @@ function paramChange () {
     }
     
     function workSelect (l, defineFormatter) {
-        document.title = l("browserfile-workselect");
+        document.title = l({key: "browserfile-workselect", fallback: true});
 
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
         getJSON('appdata/files.json', function (dbs) {
