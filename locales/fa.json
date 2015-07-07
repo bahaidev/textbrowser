@@ -311,11 +311,10 @@
             "Text": "نوشتجات"
         },
         "peace": {
-            "Par.": "پاراگراف",
-            "Section (Ch.)": "قسمت بخش",
-            "Text (Chinese)": "چینی",
-            "Section": "قسمت",
-            "Text (English)": "انگلیسی"
+            "Paragraph": "پاراگراف",
+            "Chinese": "چینی",
+            "Section Number": "قسمت",
+            "English": "انگلیسی"
         },
         "quran": {
             "Rodwell Suráh #": "سوره شماره  در Rodwell",

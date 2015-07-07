@@ -1,7 +1,7 @@
 {
     "table": {
-        "browse_fields": ["Par.", "Section"],
-        "default_view": {"Par.": 0}
+        "browse_fields": ["Paragraph", "Section Number"],
+        "default_view": {"Paragraph": 0}
     },
     "fields": {
         "English": {

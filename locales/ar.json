@@ -311,11 +311,10 @@
             "Text": null
         },
         "peace": {
-            "Par.": null,
-            "Section (Ch.)": null,
-            "Text (Chinese)": null,
-            "Section": null,
-            "Text (English)": null
+            "Paragraph": null,
+            "Chinese": null,
+            "Section Number": null,
+            "English": null
         },
         "quran": {
             "Rodwell Suráh #": null,

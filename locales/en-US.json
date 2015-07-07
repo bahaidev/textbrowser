@@ -311,11 +311,10 @@
             "Text": "Text"
         },
         "peace": {
-            "Par.": "Par.",
-            "Section (Ch.)": "Section (Ch.)",
-            "Text (Chinese)": "Text (Chinese)",
-            "Section": "Section",
-            "Text (English)": "Text (English)"
+            "Paragraph": "Paragraph",
+            "Chinese": "Chinese",
+            "Section Number": "Section Number",
+            "English": "English"
         },
         "quran": {
             "Rodwell Suráh #": "Rodwell Suráh #",
