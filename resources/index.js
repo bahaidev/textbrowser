@@ -4,7 +4,7 @@
 /*
 Todos (higher priority)
 1. Incorporate and modify usage of alias_fielding1, alias_fielding2
-1. Handle where browse_field is an object of form: {name:, set:} (line 126)
+1. Handle where browse_field is an object of form: {name:, set:} (line 126) then delete browse.php
 1. Get the automated fields listed in drop-down menus
 
 Todos (lower priority)
