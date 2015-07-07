@@ -4,11 +4,13 @@
 /*
 Todos (higher priority)
 
+1. schemaFile to files.json to optimize
+1. Test all locales and works and combos
+1. Start appcache manifest
 1. Incorporate and modify usage of alias_fielding1, alias_fielding2
 1. Handle where browse_field is an object of form: {name:, set:} (line 126) then delete browse.php
 1. Option to bookmark view (and utilize this for defaults before search)
 1. Choose clearer naming/structure for locale table/field keys
-1. Test all locales
 
 1. Get the automated fields listed in drop-down menus (See README)
 
@@ -557,7 +559,8 @@ function paramChange () {
                                         ['select', [
                                             'table',
                                             'div',
-                                            'json'
+                                            'json-array',
+                                            'json-object'
                                         ].map(function (mode) {
                                             return ['option', {value: mode}, [l("outputmode_" + mode)]];
                                         })]
