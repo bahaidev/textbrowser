@@ -22,23 +22,23 @@ The above developer holds the copyright to this work, and it is licensed under t
 
 ## Intended significant future features of this browse system
 
+1. See also todos inside index.js
 1. Add/Add back automated: Synopsis, Roman numerals (pm, gwb), Chinese numbers, word-by-word translation (Persian/Arabic/German/English), auto-romanized Persian (Baha'i-style with help link to http://bahai9.com/wiki/Pronunciation ), Persian with English tooltips, English with Persian tooltips, text-to-(Google search, Google define, Wikipedia, bahai9.com edit pages); add Word-by-word/phrase mapping
+    1. Reverse engineer missing work by using bahai_locales database (which contains more than localization info: automated column data, alternative field names, etc.)
     1. Metadata for default field column placement and table/field applicability
+    1. Automated word-by-word translations, auto-links to Google, Amazon, etc.
+    1. Auto-links by verse to relevant forums, wikis, blogs, or personal notes pertaining to a given verse...
+1. Baha'i texts: Suggest API to Baha'i World Centre to automatically (and periodically) parse their texts into JSON here to ensure we have the most up-to-date and corrected translations; also split these texts into a separate repo
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)
-1. Searching
 1. Go to previous/next results (allow customization of size on the fly as well as in preferences)
 1. Hide advanced formatting options (make savable in preferences)
 1. Give tooltips to tell how to use the elements
 1. Make full preferences system for saved/favorite, recent searches/browses, etc.
-1. Baha'i texts: Coordination with official Baha'i World Centre XML (using TEI) if full XML is released to automatically (and periodically) parse their texts into SQL here to ensure we have the most up-to-date and corrected translations
-1. Automated word-by-word translations, auto-links to Google, Amazon, etc.
-1. Auto-links by verse to relevant forums, wikis, blogs, or personal notes pertaining to a given verse...
 1. Allow tables to be resortable via a Javascript which allows sorting by multiple columns with various data, etc.
 1. Figure out how to get rowspans (or even colspans) for additional columns (e.g., a field spanning by whole pages of the Iqan and another field spanning only by paragraphs) - use some kind of counter and don't display the HTML until finished cycling??; also figure out how to reassemble if the minute fields are not needed (e.g., if the user only wants to see the text by paragraph and not anything related to by page)
-1. Allow data to be displayed interlinearly if desired or horizontally
-1. Localization of the interface (including column aliases, etc.)
+1. Further localization of the interface (including column aliases, etc.)
 1. Allow combined fields for browsing (Collins)
-1. Separate formatting
+1. Separate formatting within Jamilih code
 
 ## Intended minor features
 
