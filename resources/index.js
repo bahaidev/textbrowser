@@ -2,14 +2,10 @@
 /*jslint vars:true, todo:true*/
 
 /*
-Todos
-1. User-configured (and/or locale-based) hiding of content languages (checkbox?)
-
 Todos (lower priority)
 1. Update "about" text in locales and utilize on popup or something?
 1. Assistant file (for translating; needs server for password)
 1. Add tooltips and table summaries, etc. back (see locale file for these and reapply any other unused)
-
 */
 
 (function () {'use strict';
@@ -43,7 +39,8 @@ function paramChange () {
     var languageParam = $p('lang');
     var language = languageParam || 'en-US'; // We need a default to display a default title
     var lang = language.split('.');
-    var direction = getDirectionForLanguageCode(lang[0]);
+    var preferredLocale = lang[0];
+    var direction = getDirectionForLanguageCode(preferredLocale);
     
     var work = $p('work');
     var result = $p('result');
@@ -120,6 +117,7 @@ function paramChange () {
         var ta = defineFormatter('tablealias');
         var th = defineFormatter('tableheading');
         var fn = defineFormatter(['fieldname', work]);
+        
         var schemaItems = schema.items.items;
         var content = [];
         metadata.table.browse_fields.forEach(function (browse_field, i, arr) {
@@ -147,6 +145,11 @@ function paramChange () {
             // Todo: Check fieldSchema for integer or string?
             var enumerated = fieldSchema['enum'];
 
+            var fv;
+            if (enumerated) {
+                fv = defineFormatter(['fieldvalue', work, browse_field]);
+            }
+
             [
                 // Todo: Fix formatting
                 i > 0 ?
@@ -159,15 +162,18 @@ function paramChange () {
                         ['td', {colspan: 12}, [
                             ['table', {align: 'center'}, [['tr', [['td',
                                 (enumerated.length > 2) ? [
-                                    ['select', {name: 'toggle' + i}, enumerated.map(function (choice) {
-                                        return ['option', {value: choice}, [choice]];
+                                    ['select', {name: 'toggle' + i}, enumerated.concat('All').map(function (choice) {
+                                        if (choice === 'All') {
+                                            return ['option', {value: ''}, [l("enum-all")]];
+                                        }
+                                        return ['option', {value: choice}, [fv(choice)]];
                                     })]
                                 ] :
                                 enumerated.map(function (choice, j, arr) {
                                     return {'#': [
                                         j > 0 ? nbsp.repeat(3) : '',
                                         ['label', [
-                                            choice,
+                                            fv(choice),
                                             ['input', {name: 'toggle' + i, type: 'radio', value: choice}]
                                         ]],
                                         j === arr.length - 1 ?
@@ -297,7 +303,7 @@ function paramChange () {
         // Todo: Add later option to "Search for any text you wish to find in that column:"
         
         var fields = schemaItems.map(function (schemaItem) {
-            return fn(schemaItem.title);
+            return schemaItem.title;
         });
 
         var columnsTable = ['table', {border: '1', cellpadding: '5', align: 'center'}, [
@@ -321,14 +327,14 @@ function paramChange () {
             {'#': fields.map(function (fieldName, i) {
                 return ['tr', [
                     ['td', {title: "Check the columns you wish to browse"}, [
-                        ['input', {'class': 'fieldSelector', name: 'option' + i, type: 'checkbox', value: l("yes"), checked: 'checked'}]
+                        ['input', {'class': 'fieldSelector', id: 'option' + i, name: 'option' + i, type: 'checkbox', value: l("yes"), checked: 'checked'}]
                     ]],
                     ['td', {title: "Check the sequence (you can choose the same field twice if you wish)"}, [
                         ['select', {name: 'field' + i, id: 'field' + i, size: '1'},
                             fields.map(function (field, j) {
                                 return (j !== i) ?
-                                    ['option', {value: j}, [field]] :
-                                    ['option', {value: j, selected: 'selected'}, [field]];
+                                    ['option', {value: j}, [fn(field)]] :
+                                    ['option', {value: j, selected: 'selected'}, [fn(field)]];
                             })
                         ]
                     ]],
@@ -353,6 +359,23 @@ function paramChange () {
                     ['input', {value: l("uncheck_all"), type: 'button', $on: {click: function () {
                         Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) {
                             checkbox.checked = false;
+                        });
+                    }}}],
+                    ['input', {value: l("checkmark_locale_fields_only"), type: 'button', $on: {click: function () {
+                        // Todo: remember this locales choice by cookie?
+                        fields.forEach(function (field, i) {
+                            var currFieldValue = fields[document.querySelector('#field' + i).value];
+                            var metaLang = metadata && metadata.fields && metadata.fields[currFieldValue] && metadata.fields[currFieldValue].lang;
+                            var higherLocale = preferredLocale.replace(/\-.*$/, '');
+
+                            if ([preferredLocale, higherLocale].indexOf(metaLang) > -1) {
+                                document.querySelector('#option' + i).checked = true;
+                            }
+                            else if (!schemaItems.some(function (item) {
+                                return item.title === currFieldValue && item.type !== 'string';
+                            })) {
+                                document.querySelector('#option' + i).checked = false;
+                            }
                         });
                     }}}]
                 ]]

@@ -79,6 +79,7 @@
     "results_for": "results for",
     "field_title_tips": "You can alter the sequence of the fields in your browsing view by changing any fields below (you can even choose the same field twice if you wish).",
     "uncheck_all": "Uncheck",
+    "checkmark_locale_fields_only": "Check fields whose content matches current locale",
     "headerfixed-wishtoscroll": "Table header fixed (if possible)",
     "atonce": "at once",
     "set": "Set",
@@ -95,8 +96,6 @@
     "nofileyet": "You haven't specified a file yet.",
     "willberedirected": "You will be redirected in a few seconds, or, ",
     "notwait": "if you do not wish to wait, click here",
-    "noscriptuncheck": "There is one nonessential Javascript in this page to allow the user to be able to check or uncheck all checkboxes at once. Another nonessential Javascript allows the user to be able to hide (or show) the advanced formatting options.",
-    "noscriptonchange": "There is one nonessential Javascript in this page to automatically load a page as soon as it is chosen in the menu (without needing to hit a button). There are two Javascripts to fix a problem in Internet Explorer with handling the above script.",
     "paypal": "Make payments with PayPal - it's fast, free and secure!",
     "max": "Maximum",
     "min": "Minimum",
@@ -203,12 +202,21 @@
         "alvah_va_saya-yi_mubarikih": "Alváh va Sáyá-yí Mubárikih-yi-Hadrat-i-'Abdu'l-Bahá",
         "pm": "Prayers and Meditations"
     },
+    "enum-all": "All",
     "groupbytoggle": {
         "hidden words": "Group according to the above?"
     },
     "fieldalias": {
         "aqdas": {
             "Text": "Text"
+        }
+    },
+    "fieldvalue": {
+        "hidden words": {
+            "Original Language": {
+                "Persian": "Persian",
+                "Arabic": "Arabic"
+            }
         }
     },
     "fieldname": {
@@ -282,7 +290,7 @@
             "Original Language": "Original Language",
             "Number": "Number",
             "Synopsis": "Synopsis",
-            "Text": "Text",
+            "English": "English",
             "Arabic": "Arabic",
             "Persian": "Persian",
             "hidden words": "Word-by-word \"Auto-translation\" (from Persian)",

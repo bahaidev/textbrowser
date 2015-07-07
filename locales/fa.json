@@ -79,6 +79,7 @@
     "results_for": "نتایج",
     "field_title_tips": "ترتیب فیلدهای برازر را بوسیله تغییر فیلدهای زیر عوض کنید (فیلدها میتوانند مکررآ استفاده شوند)",
     "uncheck_all": "باز کنید",
+    "checkmark_locale_fields_only": null,
     "headerfixed-wishtoscroll": "تیتر جدول غیرقابل تغییر است (اگر امکان دارد)",
     "atonce": "فورآ",
     "set": "اماده",
@@ -95,8 +96,6 @@
     "nofileyet": null,
     "willberedirected": null,
     "notwait": null,
-    "noscriptuncheck": null,
-    "noscriptonchange": null,
     "paypal": null,
     "max": null,
     "min": null,
@@ -203,12 +202,21 @@
         "alvah_va_saya-yi_mubarikih": null,
         "pm": null
     },
+    "enum-all": "All",
     "groupbytoggle": {
         "hidden words": null
     },
     "fieldalias": {
         "aqdas": {
             "Text": "Text"
+        }
+    },
+    "fieldvalue": {
+        "hidden words": {
+            "Original Language": {
+                "Persian": "فارسي",
+                "Arabic": "عربی"
+            }
         }
     },
     "fieldname": {
@@ -282,7 +290,7 @@
             "Original Language": "زبان اصلی",
             "Number": "شماره",
             "Synopsis": "خلاصه",
-            "Text": "نوشتجات",
+            "English": "نوشتجات",
             "Arabic": "عربی",
             "Persian": "فارسي",
             "hidden words": "Word-by-word \"Auto-translation\" (from Persian)",
