@@ -3,11 +3,13 @@
 
 /*
 Todos (higher priority)
+
 1. Incorporate and modify usage of alias_fielding1, alias_fielding2
 1. Handle where browse_field is an object of form: {name:, set:} (line 126) then delete browse.php
+1. Option to bookmark view (and utilize this for defaults before search)
+
 1. Get the automated fields listed in drop-down menus
     1. Reverse engineer missing work by using bahai_locales database (which contains more than localization info: automated column data, alternative field names, etc.)
-1. Option to bookmark view (and utilize this for defaults before search)
 
 Todos (for browse9.php)
 1. Handle defaults for empty boxes if not already
