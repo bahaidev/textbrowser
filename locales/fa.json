@@ -7,7 +7,7 @@
     "abouttext3": "اگر مایل به اصلاح و پخش مکررید از  قوانین جواز عمومی استفاده نمائید.  ",
     "abouttext4": "میتوانید",
     "abouttext5": "در اینجا کد نا پایدار را پیدا کنید.",
-    "abouttext6": "This wiki also allows edits to be made, so you can suggest changes to the code (or code commenting) directly at the relevant wiki subpage",
+    "abouttext6": null,
     "abouttext8": "مئتوانئد نظری به فید Really Simple Syndication بیندازید",
     "abouttext9": "با جدیدترین اطلاعیه در مورد پخش تازهترین سافتورهای استفاده شده (stable version همیشه در این صفحه استفاده شده)و اطلاعیههای دیگر درخور این پرزٌه.",
     "abouttext10": "برای اهدا در جهت این پروزٌه کلید زیر را کلک کنئد",
@@ -16,9 +16,9 @@
     "abouttext13": "در هر جایی کی این پرزٌه در حل حاضر موجود است",
     "removecookies": "زبان دیگری را انتخاب فرمایید",
     "browserfile": "برازر اثار و الواح",
-    "browserfile-workselect": "Sacred Writings Browser: Work Selection",
-    "browserfile-workdisplay": "Sacred Writings Browser: {work}",
-    "browserfile-resultsdisplay": "Sacred Writings Browser: {work} results",
+    "browserfile-workselect": null,
+    "browserfile-workdisplay": null,
+    "browserfile-resultsdisplay": null,
     "chooselanguage": "زبان انتخاب شده",
     "assistantfile": "برازر مترجم",
     "assistantlanguagetranslate": "زبان ترجمه را انتخاب فرمایید",
@@ -129,8 +129,8 @@
     "outputmode_tips": null,
     "outputmode_table": null,
     "outputmode_div": null,
-    "outputmode_json-array": "JSON (Array table)",
-    "outputmode_json-object": "JSON (Object)",
+    "outputmode_json-array": null,
+    "outputmode_json-object": null,
     "Hide": null,
     "navbar": null,
     "Breadcrumbs": null,
@@ -178,7 +178,7 @@
         "Leiden": " لیست Leiden ",
         "bible": "انجیل",
         "hidden words": "كلمات مكنونه",
-        "epistle_to_the_son_of_the_wolf": "Epistle to the Son of the Wolf",
+        "epistle_to_the_son_of_the_wolf": null,
         "lights": null,
         "gems of divine mysteries": null,
         "gleanings": null,
@@ -195,7 +195,7 @@
         "Leiden": "لیست Leiden",
         "bible": "انجیل",
         "hidden words": "کلمات مکنونه",
-        "epistle_to_the_son_of_the_wolf": "Epistle to the Son of the Wolf",
+        "epistle_to_the_son_of_the_wolf": null,
         "gems of divine mysteries": null,
         "lights": null,
         "gleanings": null,
@@ -203,13 +203,13 @@
         "alvah_va_saya-yi_mubarikih": null,
         "pm": null
     },
-    "enum-all": "All",
+    "enum-all": null,
     "groupbytoggle": {
         "hidden words": null
     },
     "fieldalias": {
         "aqdas": {
-            "Text": "Text"
+            "Text": null
         }
     },
     "fieldvalue": {
@@ -294,7 +294,7 @@
             "English": "نوشتجات",
             "Arabic": "عربی",
             "Persian": "فارسي",
-            "hidden words": "Word-by-word \"Auto-translation\" (from Persian)",
+            "hidden words": null,
             "unique_id": null,
             "Auto-Romanized Persian (from Persian)": null,
             "Persian with English tooltips (from Persian)": null
@@ -306,7 +306,7 @@
             "Arabic": "عربی"
         },
         "iqan": {
-            "Page": "Page",
+            "Page": null,
             "Paragraph": "پاراگراف",
             "Text": "نوشتجات"
         },
@@ -320,7 +320,7 @@
         "quran": {
             "Rodwell Suráh #": "سوره شماره  در Rodwell",
             "Verse #": "سوره شماره",
-            "Traditional Suráh #": "Traditional Suráh #",
+            "Traditional Suráh #": null,
             "Sale Translation": "ترجمه صالح",
             "Sale's Notes": null,
             "Bahá'í References (Central Figures)": null,
@@ -352,7 +352,7 @@
             "unique_id": null,
             "Persian with English tooltips (from Text)": null,
             "Auto-Romanized Persian (from Text)": null,
-            "alvah_va_saya-yi_mubarikih": "Word-by-word \"Auto-translation\" (from Text)"
+            "alvah_va_saya-yi_mubarikih": null
         },
         "pm": {
             "Number": null,

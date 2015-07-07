@@ -17,8 +17,8 @@
     "removecookies": null,
     "browserfile": null,
     "browserfile-workselect": null,
-    "browserfile-workdisplay": "{work}",
-    "browserfile-resultsdisplay": "{work}",
+    "browserfile-workdisplay": null,
+    "browserfile-resultsdisplay": null,
     "chooselanguage": null,
     "assistantfile": null,
     "assistantlanguagetranslate": null,
@@ -129,8 +129,8 @@
     "outputmode_tips": null,
     "outputmode_table": null,
     "outputmode_div": null,
-    "outputmode_json-array": "JSON (Array table)",
-    "outputmode_json-object": "JSON (Object)",
+    "outputmode_json-array": null,
+    "outputmode_json-object": null,
     "Hide": null,
     "navbar": null,
     "Breadcrumbs": null,
@@ -203,7 +203,7 @@
         "alvah_va_saya-yi_mubarikih": null,
         "pm": null
     },
-    "enum-all": "All",
+    "enum-all": null,
     "groupbytoggle": {
         "hidden words": null
     },
@@ -215,8 +215,8 @@
     "fieldvalue": {
         "hidden words": {
             "Original Language": {
-                "Persian": "Persian",
-                "Arabic": "Arabic"
+                "Persian": null,
+                "Arabic": null
             }
         }
     },
@@ -352,7 +352,7 @@
             "unique_id": null,
             "Persian with English tooltips (from Text)": null,
             "Auto-Romanized Persian (from Text)": null,
-            "alvah_va_saya-yi_mubarikih": "Word-by-word \"Auto-translation\" (from Text)"
+            "alvah_va_saya-yi_mubarikih": null
         },
         "pm": {
             "Number": null,
