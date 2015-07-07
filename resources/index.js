@@ -3,26 +3,7 @@
 
 /*
 Todos
-
-1. Header options:
-    "headings_wstyles": "Headings (with Styles?)",
-    "yes": "Yes",
-    "no": "No",
-    "both": "Both",
-    "none": "None",
-    "wishtoscroll": "Table header fixed (if possible)",
-
-1.  "pageformatting": "Page Formatting Options",
-"pageformatting_tips": "These options alter the formatting of the browse results page.",
-"outputmode": "Output mode",
-"outputmode_tips": "Choose another option if your browser doesn't support tables.",
-
-1."tableformatting": "Table Formatting Options",
-"tableformatting_tips": "These options alter formatting of the browse results table.",
-"wishcaption": "Show caption with book name, etc.?",
-1. Transpose columns (trnsps)
-
-1. User-configured (and/or locale-based) hiding of content languages
+1. User-configured (and/or locale-based) hiding of content languages (checkbox?)
 
 Todos (lower priority)
 1. Update "about" text in locales and utilize on popup or something?
@@ -187,14 +168,14 @@ function paramChange () {
                                         j > 0 ? nbsp.repeat(3) : '',
                                         ['label', [
                                             choice,
-                                            ['input', {type: 'radio', name: 'toggle' + i, value: choice}]
+                                            ['input', {name: 'toggle' + i, type: 'radio', value: choice}]
                                         ]],
                                         j === arr.length - 1 ?
                                             {'#': [
                                                 nbsp.repeat(4),
                                                 ['label', [
                                                     l("both"),
-                                                    ['input', {type: 'radio', name: 'toggle' + i, value: ''}]
+                                                    ['input', {name: 'toggle' + i, type: 'radio', value: ''}]
                                                 ]]
                                             ]} :
                                             ''
@@ -233,12 +214,12 @@ function paramChange () {
                     [
                         ['td', {colspan: 12, align: 'center'}, [
                             ['label', [
-                                ['input', {type: 'checkbox', name: 'random'}],
+                                ['input', {name: 'random', type: 'checkbox'}],
                                 l("rnd") + nbsp.repeat(3)
                             ]],
                             ['label', [
                                 l("verses-context") + nbsp,
-                                ['input', {type: 'text', name: 'context', size: 4}]
+                                ['input', {name: 'context', type: 'text', size: 4}]
                             ]],
                             nbsp.repeat(3),
                             ['input', {type: 'button', value: l("view-random-URL"), $on: {click: function () {
@@ -251,7 +232,7 @@ function paramChange () {
                                 paramsCopy.set('result', 'true');
                                 document.querySelector('#randomURL').value = window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
                             }}}],
-                            ['input', {type: 'text', id: 'randomURL'}]
+                            ['input', {id: 'randomURL', type: 'text'}]
                         ]]
                     ] :
                     ''
@@ -399,7 +380,7 @@ function paramChange () {
                                     ['h3', [l("advancedformatting")]],
                                     ['label', [
                                         l("textcolor"),
-                                        ['select', {id: 'color2'}, colors.map(function (color, i) {
+                                        ['select', {name: 'color2'}, colors.map(function (color, i) {
                                             return i === 1 ? ['option', {selected: 'selected', value: color}, [l(color)]] : ['option', {value: color}, [l(color)]];
                                         })]
                                     ]],
@@ -411,7 +392,7 @@ function paramChange () {
                                     ['br'], ['br'],
                                     ['label', [
                                         l("backgroundcolor"),
-                                        ['select', {id: 'bgcolor2'}, colors.map(function (color, i) {
+                                        ['select', {name: 'bgcolor'}, colors.map(function (color, i) {
                                             return i === 14 ? ['option', {selected: 'selected', value: color}, [l(color)]] : ['option', {value: color}, [l(color)]];
                                         })]
                                     ]],
@@ -422,7 +403,7 @@ function paramChange () {
                                     ['br'], ['br'],
                                     ['label', [
                                         l("text_font"),
-                                        ['select', {id: 'font'}, fonts.map(function (fonts, i) {
+                                        ['select', {name: 'font'}, fonts.map(function (fonts, i) {
                                             return (i === 7) ? ['option', {selected: 'selected'}, fonts] : ['option', fonts];
                                         })]
                                     ]],
@@ -485,7 +466,10 @@ function paramChange () {
                                         ['input', {name: 'lineheight', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],['br'],
-                                    ['label', [
+                                    ['h3', {title: l("tableformatting_tips")}, [
+                                        l("tableformatting")
+                                    ]],
+                                    ['div', [
                                         l("header_wstyles") + nbsp.repeat(2),
                                         ['label', [
                                             ['input', {name: 'headings', type: 'radio', value: 'y'}],
@@ -500,7 +484,16 @@ function paramChange () {
                                             l("none")
                                         ]]
                                     ]],
-                                    ['br'],['br'],
+                                    ['label', [
+                                        ['input', {name: 'wishcaption', type: 'checkbox'}],
+                                        nbsp.repeat(2) + l("wishcaption")
+                                    ]],
+                                    ['br'],
+                                    ['label', [
+                                        ['input', {name: 'headerfixed', type: 'checkbox'}],
+                                        nbsp.repeat(2) + l("headerfixed-wishtoscroll")
+                                    ]],
+                                    ['br'],
                                     ['label', [
                                         l("table_wborder") + nbsp.repeat(2),
                                         ['label', [
@@ -512,7 +505,25 @@ function paramChange () {
                                             l("no")
                                         ]]
                                     ]],
-                                    ['br'],['br']
+                                    ['br'],
+                                    ['label', [
+                                        ['input', {name: 'trnsps', type: 'checkbox', value: '1'}],
+                                        nbsp.repeat(2) + l("trnsps")
+                                    ]],
+                                    ['br'],['br'],
+                                    ['h3', {title: l("pageformatting_tips")}, [
+                                        l("pageformatting")
+                                    ]],
+                                    ['label', {title: "outputmode_tips"}, [
+                                        l("outputmode"),
+                                        ['select', [
+                                            'table',
+                                            'div',
+                                            'json'
+                                        ].map(function (mode) {
+                                            return ['option', {value: mode}, [l("outputmode_" + mode)]];
+                                        })]
+                                    ]]
                                 ]]
                                 /*
                                 ,arabicContent ?
