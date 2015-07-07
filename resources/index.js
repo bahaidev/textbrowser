@@ -6,8 +6,20 @@ Todos (higher priority)
 1. Incorporate and modify usage of alias_fielding1, alias_fielding2
 1. Handle where browse_field is an object of form: {name:, set:} (line 126) then delete browse.php
 1. Get the automated fields listed in drop-down menus
+    1. Reverse engineer missing work by using bahai_locales database (which contains more than localization info: automated column data, alternative field names, etc.)
+1. Option to bookmark view (and utilize this for defaults before search)
+
+Todos (for browse9.php)
+1. Handle defaults for empty boxes if not already
+
 
 Todos (lower priority)
+1. filetypes.json for app and schema association? (files.json for permitted files - a file which could be auto-created, e.g., if server permits all in a directory); especially potentially useful with JSONEditor to allow editing of these files, app types:
+    1. langs + locale / locale only
+    1. files/dbs->file (supply language choice)->file contents
+    1. schemas
+1. Note-taking (local/remote and wiki WYSIWYG with Git version control?)
+1. Node.js (or PHP) for serving JSON files immediately and then injecting config for index.js to avoid reloading
 1. Update "about" text in locales and utilize on popup or something?
 1. Assistant file (for translating; needs server for password)
 1. Add tooltips and table summaries, etc. back (see locale file for these and reapply any other unused)
