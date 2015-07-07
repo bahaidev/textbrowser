@@ -146,7 +146,23 @@ function paramChange () {
         var ta = defineFormatter('tablealias');
         var th = defineFormatter('tableheading');
         var fn = defineFormatter(['fieldname', work]);
-        
+        var ld = function (key, values, formats) {
+            return l({key: key, values: values, formats: formats, fallback: function (obj) {
+                // Displaying as div with inline display instead of span since Firefox puts punctuation at left otherwise
+                return ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [obj.message]];
+            }});
+        };
+        var lo = function (key, atts) {
+            return ['option', atts, [
+                l({key: key, fallback: function (obj) {
+                    atts.style = (atts.style ? atts.style + ';' : '') + 'direction: ' + fallbackDirection;
+                    return obj.message;
+                }})
+            ]];
+        };
+        var lnd = function (key, values, formats) {
+            return l({key: key, values: values, formats: formats, fallback:true});
+        };
         var schemaItems = schema.items.items;
         var content = [];
         metadata.table.browse_fields.forEach(function (browse_field, i, arr) {
@@ -181,7 +197,7 @@ function paramChange () {
                 // Todo: Fix formatting
                 i > 0 ?
                     [
-                        ['td', {colspan: 12, align: 'center'}, [['br'], l("or"), ['br'], ['br']]]
+                        ['td', {colspan: 12, align: 'center'}, [['br'], ld("or"), ['br'], ['br']]]
                     ] :
                     '',
                 (enumerated ?
@@ -191,7 +207,7 @@ function paramChange () {
                                 (enumerated.length > 2) ? [
                                     ['select', {name: 'toggle' + i}, enumerated.concat('All').map(function (choice) {
                                         if (choice === 'All') {
-                                            return ['option', {value: ''}, [l("enum-all")]];
+                                            return ['option', {value: ''}, [ld("enum-all")]];
                                         }
                                         return ['option', {value: choice}, [fv(choice)]];
                                     })]
@@ -207,7 +223,7 @@ function paramChange () {
                                             {'#': [
                                                 nbsp.repeat(4),
                                                 ['label', [
-                                                    l("both"),
+                                                    ld("both"),
                                                     ['input', {name: 'toggle' + i, type: 'radio', value: ''}]
                                                 ]]
                                             ]} :
@@ -226,7 +242,7 @@ function paramChange () {
                             nbsp.repeat(3)
                         ]],
                         ['td', [
-                            ['b', [l("to")]],
+                            ['b', [ld("to")]],
                             ':' + nbsp.repeat(3)
                         ]],
                         ['td', [browseField, ': ']],
@@ -234,12 +250,12 @@ function paramChange () {
                             ['input', {name: 'end' + i, type: 'text', size: '7'}],
                             nbsp.repeat(2)
                         ]],
-                        ['td', [l("numbers-only")]]
+                        ['td', [ld("numbers-only")]]
                     ]
                 ),
                 (i === arr.length -1 ?
                     [
-                        ['td', {colspan: 12, align: 'center'}, [['br'], l("or"), ['br'], ['br']]]
+                        ['td', {colspan: 12, align: 'center'}, [['br'], ld("or"), ['br'], ['br']]]
                     ] :
                     ''
                 ),
@@ -248,14 +264,14 @@ function paramChange () {
                         ['td', {colspan: 12, align: 'center'}, [
                             ['label', [
                                 ['input', {name: 'random', type: 'checkbox'}],
-                                l("rnd") + nbsp.repeat(3)
+                                ld("rnd"), nbsp.repeat(3)
                             ]],
                             ['label', [
-                                l("verses-context") + nbsp,
+                                ld("verses-context"), nbsp,
                                 ['input', {name: 'context', type: 'text', size: 4}]
                             ]],
                             nbsp.repeat(3),
-                            ['input', {type: 'button', value: l("view-random-URL"), $on: {click: function () {
+                            ['input', {type: 'button', value: lnd("view-random-URL"), $on: {click: function () {
                                 var paramsCopy = new URLSearchParams(params);
                                 var formParamsHash = formSerialize(document.querySelector('form[name=browse]'), {hash:true});
                                 Object.keys(formParamsHash).forEach(function (key) {
@@ -333,27 +349,27 @@ function paramChange () {
         var columnsTable = ['table', {border: '1', cellpadding: '5', align: 'center'}, [
             ['tr', [
                 ['th', {align: 'left', width: '20'}, [
-                    l("field_enabled")
+                    ld("field_enabled")
                 ]],
                 ['th', [
-                    l("field_title")
+                    ld("field_title")
                 ]],
                 ['th', [
-                    l("fieldinterlin")
+                    ld("fieldinterlin")
                 ]],
                 ['th', [
-                    l("fieldcss")
+                    ld("fieldcss")
                 ]],
                 ['th', [
-                    l("fieldsearch")
+                    ld("fieldsearch")
                 ]]
             ]],
             {'#': fields.map(function (fieldName, i) {
                 return ['tr', [
-                    ['td', {title: "Check the columns you wish to browse"}, [
-                        ['input', {'class': 'fieldSelector', id: 'option' + i, name: 'option' + i, type: 'checkbox', value: l("yes"), checked: 'checked'}]
+                    ['td', {title: lnd("check-columns-to-browse")}, [
+                        ['input', {'class': 'fieldSelector', id: 'option' + i, name: 'option' + i, type: 'checkbox', value: lnd("yes"), checked: 'checked'}]
                     ]],
-                    ['td', {title: "Check the sequence (you can choose the same field twice if you wish)"}, [
+                    ['td', {title: lnd("check-sequence")}, [
                         ['select', {name: 'field' + i, id: 'field' + i, size: '1'},
                             fields.map(function (field, j) {
                                 return (j !== i) ?
@@ -375,17 +391,17 @@ function paramChange () {
             })},
             ['tr', [
                 ['td', {colspan: 2}, [
-                    ['input', {value: l("check_all"), type: 'button', $on: {click: function () {
+                    ['input', {value: lnd("check_all"), type: 'button', $on: {click: function () {
                         Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) {
                             checkbox.checked = true;
                         });
                     }}}],
-                    ['input', {value: l("uncheck_all"), type: 'button', $on: {click: function () {
+                    ['input', {value: lnd("uncheck_all"), type: 'button', $on: {click: function () {
                         Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) {
                             checkbox.checked = false;
                         });
                     }}}],
-                    ['input', {value: l("checkmark_locale_fields_only"), type: 'button', $on: {click: function () {
+                    ['input', {value: lnd("checkmark_locale_fields_only"), type: 'button', $on: {click: function () {
                         // Todo: remember this locales choice by cookie?
                         fields.forEach(function (field, i) {
                             var currFieldValue = fields[document.querySelector('#field' + i).value];
@@ -424,152 +440,155 @@ function paramChange () {
                             ['tr', {valign: 'top'}, [
                                 ['td', [columnsTable]],
                                 ['td', [
-                                    ['h3', [l("advancedformatting")]],
+                                    ['h3', [ld("advancedformatting")]],
                                     ['label', [
-                                        l("textcolor"),
+                                        ld("textcolor"),
                                         ['select', {name: 'color2'}, colors.map(function (color, i) {
-                                            return i === 1 ? ['option', {selected: 'selected', value: color}, [l(color)]] : ['option', {value: color}, [l(color)]];
+                                            return i === 1 ? lo(color, {selected: 'selected', value: color}) : lo(color, {value: color});
                                         })]
                                     ]],
                                     
                                     ['label', [
-                                        nbsp + l("or_entercolor"),
+                                        nbsp, ld("or_entercolor"),
                                         ['input', {name: 'color', type: 'text', value: '#', size: '7', maxlength: '7'}]
                                     ]],
                                     ['br'], ['br'],
                                     ['label', [
-                                        l("backgroundcolor"),
+                                        ld("backgroundcolor"),
                                         ['select', {name: 'bgcolor'}, colors.map(function (color, i) {
-                                            return i === 14 ? ['option', {selected: 'selected', value: color}, [l(color)]] : ['option', {value: color}, [l(color)]];
+                                            return i === 14 ? lo(color, {selected: 'selected', value: color}) : lo(color, {value: color});
                                         })]
                                     ]],
                                     ['label', [
-                                        nbsp + l("or_entercolor"),
+                                        nbsp, ld("or_entercolor"),
                                         ['input', {name: 'bgcolor', type: 'text', value: '#', size: '7', maxlength: '7'}]
                                     ]],
                                     ['br'], ['br'],
                                     ['label', [
-                                        l("text_font"),
-                                        ['select', {name: 'font'}, fonts.map(function (fonts, i) {
+                                        ld("text_font"),
+                                        // Todo: remove hard-coded direction if i81nizing
+                                        ['select', {name: 'font', style: 'direction: ltr'}, fonts.map(function (fonts, i) {
                                             return (i === 7) ? ['option', {selected: 'selected'}, fonts] : ['option', fonts];
                                         })]
                                     ]],
                                     ['br'], ['br'],
                                     ['label', [
-                                        l("font_style") + nbsp,
+                                        ld("font_style"), nbsp,
                                         ['select', {name: 'fontstyle'}, [
-                                            ['option', {value: 'italic'}, [l("italic")]],
-                                            ['option', {value: 'normal', selected: 'selected'}, [l("fontstyle_normal")]],
-                                            ['option', {value: 'oblique'}, [l("oblique")]]
+                                            lo("italic", {value: 'italic'}),
+                                            lo("fontstyle_normal", {value: 'normal', selected: 'selected'}),
+                                            lo("oblique", {value: 'oblique'})
                                         ]]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        l("font_variant") + nbsp.repeat(3),
+                                        ld("font_variant"), nbsp.repeat(3),
                                         ['label', [
                                             ['input', {name: 'fontvariant', type: 'radio', value: 'normal'}],
-                                            l("fontvariant_normal") + nbsp
+                                            ld("fontvariant_normal"), nbsp
                                         ]],
                                         ['label', [
                                             ['input', {name: 'fontvariant', type: 'radio', value: 'small-caps'}],
-                                            l("smallcaps") + nbsp
+                                            ld("smallcaps"), nbsp
                                         ]]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        l("font_weight") + " (normal, bold, 100-900, etc.): ", // Todo: i18n and allow for normal/bold pulldown and float input?
+                                        ld("font_weight"), " (normal, bold, 100-900, etc.): ", // Todo: i18n and allow for normal/bold pulldown and float input?
                                         ['input', {name: 'fontweight', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        l("font_size") + " (14pt, 14px, small, 75%, etc.): ",
+                                        ld("font_size"), " (14pt, 14px, small, 75%, etc.): ",
                                         ['input', {name: 'fontsize', type: 'text', value: '', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
                                     /*
                                     This CSS attribute didn't work so it was removed in favor of letter-spacing (see the following) which can do the trick:
                                     */
-                                    ['label', {title: "wider, narrower, semi-expanded, ultra-condensed, extra-expanded, etc."}, [
-                                        "Font stretch: ",
+                                    // Todo: i18nize title and values?
+                                    // Todo: remove hard-coded direction if i81nizing
+                                    ['label', {style: 'direction: ltr', title: "wider, narrower, semi-expanded, ultra-condensed, extra-expanded, etc."}, [
+                                        ld("font_stretch"), nbsp,
                                         ['select', {name: 'fontstretch'},
                                             ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(function (stretch) {
                                                 var atts = {value: stretch};
                                                 if (stretch === 'normal') {
                                                     atts.selected = 'selected';
                                                 }
-                                                return ['option', atts, [stretch]]; // Todo: i18nize?
+                                                return ['option', atts, [stretch]];
                                             })
                                         ]
                                     ]],
                                     /**/
                                     ['br'],['br'],
                                     ['label', [
-                                        l("letter_spacing") + " (normal, .9em, -.05cm): ",
+                                        ld("letter_spacing"), " (normal, .9em, -.05cm): ",
                                         ['input', {name: 'letterspacing', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        l("line_height") + " (normal, 1.5, 22px, 150%): ",
+                                        ld("line_height"), " (normal, 1.5, 22px, 150%): ",
                                         ['input', {name: 'lineheight', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],['br'],
-                                    ['h3', {title: l("tableformatting_tips")}, [
-                                        l("tableformatting")
+                                    ['h3', {title: lnd("tableformatting_tips")}, [
+                                        ld("tableformatting")
                                     ]],
                                     ['div', [
-                                        l("header_wstyles") + nbsp.repeat(2),
+                                        ld("header_wstyles"), nbsp.repeat(2),
                                         ['label', [
                                             ['input', {name: 'headings', type: 'radio', value: 'y'}],
-                                            l("yes") + nbsp.repeat(3)
+                                            ld("yes"), nbsp.repeat(3)
                                         ]],
                                         ['label', [
                                             ['input', {name: 'headings', type: 'radio', value: 'n', checked: 'checked'}],
-                                            l("no") + nbsp.repeat(3)
+                                            ld("no"), nbsp.repeat(3)
                                         ]],
                                         ['label', [
                                             ['input', {name: 'headings', type: 'radio', value: '0'}],
-                                            l("none")
+                                            ld("none")
                                         ]]
                                     ]],
                                     ['label', [
                                         ['input', {name: 'wishcaption', type: 'checkbox'}],
-                                        nbsp.repeat(2) + l("wishcaption")
+                                        nbsp.repeat(2), ld("wishcaption")
                                     ]],
                                     ['br'],
                                     ['label', [
                                         ['input', {name: 'headerfixed', type: 'checkbox'}],
-                                        nbsp.repeat(2) + l("headerfixed-wishtoscroll")
+                                        nbsp.repeat(2), ld("headerfixed-wishtoscroll")
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        l("table_wborder") + nbsp.repeat(2),
+                                        ld("table_wborder"), nbsp.repeat(2),
                                         ['label', [
                                             ['input', {name: 'border', type: 'radio', value: '1', checked: 'checked'}],
-                                            l("yes") + nbsp.repeat(3)
+                                            ld("yes"), nbsp.repeat(3)
                                         ]],
                                         ['label', [
                                             ['input', {name: 'border', type: 'radio', value: '0'}],
-                                            l("no")
+                                            ld("no")
                                         ]]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        ['input', {name: 'trnsps', type: 'checkbox', value: '1'}],
-                                        nbsp.repeat(2) + l("trnsps")
+                                        ['input', {name: 'transpose', type: 'checkbox', value: '1'}],
+                                        nbsp.repeat(2), ld("transpose")
                                     ]],
                                     ['br'],['br'],
-                                    ['h3', {title: l("pageformatting_tips")}, [
-                                        l("pageformatting")
+                                    ['h3', {title: lnd("pageformatting_tips")}, [
+                                        ld("pageformatting")
                                     ]],
-                                    ['label', {title: "outputmode_tips"}, [
-                                        l("outputmode"),
+                                    ['label', {title: lnd("outputmode_tips")}, [
+                                        ld("outputmode"),
                                         ['select', [
                                             'table',
                                             'div',
                                             'json-array',
                                             'json-object'
                                         ].map(function (mode) {
-                                            return ['option', {value: mode}, [l("outputmode_" + mode)]];
+                                            return lo("outputmode_" + mode, {value: mode});
                                         })]
                                     ]]
                                 ]]
@@ -579,7 +598,7 @@ function paramChange () {
                                     // Todo: Allow naming of the field differently for Persian? Allowing any column to be resized would probably be most consistent with this project's aim to not make arbitrary decisions on what should be customizable, but rather make as much as possible customizable. It may also be helpful for Chinese, etc.
                                     {'#': arabicContent.map(function (item, i) {
                                         return {'#': [
-                                            "Width of Arabic column: ",
+                                            "Width of Arabic column: ", // Todo: i18n
                                             ['input', {name: "arw" + i, type: 'text', value: '', size: '7', maxlength: '12'}]
                                         ]};
                                     })} :
@@ -588,7 +607,7 @@ function paramChange () {
                             ]]
                         ]]
                     ]],
-                    ['p', {align: 'center'}, [['input', {type: 'button', value: l("Go")}]]]
+                    ['p', {align: 'center'}, [['input', {type: 'button', value: lnd("Go")}]]]
                 ]]
             ],
             document.body
@@ -633,7 +652,7 @@ function paramChange () {
                 return !!fileData;
             });
             
-            document.title = l("browserfile-workdisplay", {work: fileData ? ta(work) : ''});
+            document.title = l({key: "browserfile-workdisplay", values: {work: fileData ? ta(work) : ''}, fallback: true});
             
             var baseDir = (dbs.baseDirectory || fileGroup.baseDirectory) + '/';
             var schemaBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
@@ -669,8 +688,8 @@ function paramChange () {
     function resultsDisplay (l, defineFormatter) {
         // Will need to retrieve fileData as above (abstract?)
         // var ta = defineFormatter('tablealias');
-        // document.title = l("browserfile-resultsdisplay", {work: fileData ? ta(work) : ''});
-        
+        // document.title = l({key: "browserfile-resultsdisplay", values: {work: fileData ? ta(work) : ''}, fallback: true});
+
     }
 
     function localeCallback (l) {
