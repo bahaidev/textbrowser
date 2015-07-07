@@ -5,15 +5,16 @@
             "directions": "choosewritings_bahai_writingsdb",
             "baseDirectory": "data/writings",
             "schemaBaseDirectory": "data/writings/schemas",
+            "metadataBaseDir": "data/writings/metadata",
             "files": [
-                {"file": {"$ref": "aqdas.json"}, "name": "aqdas"},
-                {"file": {"$ref": "Epistle to the Son of the Wolf.json"}, "name": "epistle_to_the_son_of_the_wolf"},
-                {"file": {"$ref": "Gems of Divine Mysteries.json"}, "name": "gems of divine mysteries"},
-                {"file": {"$ref": "gleanings.json"}, "name": "gleanings"},
-                {"file": {"$ref": "Hidden Words.json"}, "name": "hidden words"},
-                {"file": {"$ref": "peace.json"}, "name": "peace"},
-                {"file": {"$ref": "pm.json"}, "name": "pm"},
-                {"file": {"$ref": "wwtf.json"}, "name": "wwtf"}
+                {"name": "aqdas", "file": {"$ref": "aqdas.json"}, "schemaFile": "aqdas.jsonschema", "metadataFile": "aqdas.metadata"},
+                {"name": "epistle_to_the_son_of_the_wolf", "file": {"$ref": "Epistle to the Son of the Wolf.json"}, "schemaFile": "Epistle to the Son of the Wolf.jsonschema", "metadataFile": "Epistle to the Son of the Wolf.metadata"},
+                {"name": "gems of divine mysteries", "file": {"$ref": "Gems of Divine Mysteries.json"}, "schemaFile": "Gems of Divine Mysteries.jsonschema", "metadataFile": "Gems of Divine Mysteries.metadata"},
+                {"name": "gleanings", "file": {"$ref": "gleanings.json"}, "schemaFile": "gleanings.jsonschema", "metadataFile": "gleanings.metadata"},
+                {"name": "hidden words", "file": {"$ref": "Hidden Words.json"}, "schemaFile": "Hidden Words.jsonschema", "metadataFile": "Hidden Words.metadata"},
+                {"name": "peace", "file": {"$ref": "peace.json"}, "schemaFile": "peace.jsonschema", "metadataFile": "peace.metadata"},
+                {"name": "pm", "file": {"$ref": "pm.json"}, "schemaFile": "pm.jsonschema", "metadataFile": "pm.metadata"},
+                {"name": "wwtf", "file": {"$ref": "wwtf.json"}, "schemaFile": "wwtf.jsonschema", "metadataFile": "wwtf.metadata"}
             ]
         }
     ]
