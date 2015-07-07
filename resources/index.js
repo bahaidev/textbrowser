@@ -58,10 +58,12 @@ function paramChange () {
     }
 
     var languageParam = $p('lang');
-    var language = languageParam || 'en-US'; // We need a default to display a default title
+    var fallbackLanguages = ['en-US'];
+    var language = languageParam || fallbackLanguages[0]; // We need a default to display a default title
     var lang = language.split('.');
     var preferredLocale = lang[0];
     var direction = getDirectionForLanguageCode(preferredLocale);
+    var fallbackDirection = getDirectionForLanguageCode(fallbackLanguages[0]);
     
     var work = $p('work');
     var result = $p('result');
@@ -109,7 +111,13 @@ function paramChange () {
                                 followParams();
                             }, true]
                         }}, fileGroup.files.map(function (file) {
-                            return ['option', {value: file.name}, [ta(file.name)]];
+                            var atts = {value: file.name};
+                            return ['option', atts, [
+                                ta({key: file.name, fallback: function (obj) {
+                                    atts.style = 'direction: ' + fallbackDirection;
+                                    return obj.message;
+                                }})]
+                            ];
                         })]
                     ]];
                 }),
@@ -683,6 +691,7 @@ function paramChange () {
     
     IMF({
         languages: lang,
+        fallbackLanguages: fallbackLanguages,
         localeFileResolver: function (code) {
             return langData.localeFileBasePath + langs.find(function (lang) {
                 return lang.code === code;
