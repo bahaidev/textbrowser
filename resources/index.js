@@ -2,6 +2,11 @@
 /*jslint vars:true, todo:true*/
 
 /*
+Todos (higher priority)
+1. Get the automated fields listed in drop-down menus
+1. Handle where browse_field is an object of form: {name:, set:} (line 126)
+1. Incorporate and modify usage of alias_fielding1, alias_fielding2
+
 Todos (lower priority)
 1. Update "about" text in locales and utilize on popup or something?
 1. Assistant file (for translating; needs server for password)
@@ -121,8 +126,6 @@ function paramChange () {
         var schemaItems = schema.items.items;
         var content = [];
         metadata.table.browse_fields.forEach(function (browse_field, i, arr) {
-// Todo: 1. Handle where browse_field is an object of form: {name:, set:}
-// Todo: 1. Incorporate and modify usage of alias_fielding1, alias_fielding2
             
             if (browse_field && typeof browse_field === 'object') {
                 // Todo: Could use browse_field.name for a fieldset around the field set
@@ -298,10 +301,7 @@ function paramChange () {
             ['Brushstroke, fantasy'],
             ['fantasy']
         ];
-        
-        // Todo: Get the automated fields listed in drop-down menus
-        // Todo: Add later option to "Search for any text you wish to find in that column:"
-        
+                
         var fields = schemaItems.map(function (schemaItem) {
             return schemaItem.title;
         });
@@ -394,7 +394,7 @@ function paramChange () {
                 ['form', {name: 'browse'}, [
                     ['table', {align: 'center'}, content],
                     ['br'],
-                    ['div', {style: 'margin-left: 20px'}, [ // Todo: ok as blockquote?
+                    ['div', {style: 'margin-left: 20px'}, [
                         ['br'], ['br'],
                         ['table', {border: '1', align: 'center', cellpadding: '5'}, [
                             ['tr', {valign: 'top'}, [
