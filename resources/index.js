@@ -486,7 +486,7 @@ function paramChange () {
                                     ]],
                                     ['br'],['br'],
                                     ['label', [
-                                        "Headings (with Styles?): " + nbsp.repeat(2),
+                                        l("header_wstyles") + nbsp.repeat(2),
                                         ['label', [
                                             ['input', {name: 'headings', type: 'radio', value: 'y'}],
                                             l("yes") + nbsp.repeat(3)
