@@ -4,12 +4,12 @@
 /*
 Todos (higher priority)
 
+1. Add other Writings piecemeal (e.g., Qur'an/Bible)
 1. Test all locales and works and combos
 1. Incorporate and modify usage of alias_fielding1, alias_fielding2
 1. Handle where browse_field is an object of form: {name:, set:} (line 126) then delete browse.php
 1. Option to bookmark view (and utilize this for defaults before search)
 1. Choose clearer naming/structure for locale table/field keys
-1. Add other Writings piecemeal (e.g., Qur'an/Bible)
 
 1. Get the automated fields listed in drop-down menus (See README)
 
