@@ -301,7 +301,7 @@
         },
         "aqdas": {
             "Paragraph": "Paragraph",
-            "Text": "Text",
+            "English": "English",
             "German": "German",
             "Arabic": "Arabic"
         },
@@ -331,7 +331,7 @@
         },
         "gems of divine mysteries": {
             "Paragraph": "Paragraph",
-            "Text": "Text"
+            "English": "English"
         },
         "lights": {
             "Number": "Number",
@@ -339,12 +339,12 @@
         },
         "gleanings": {
             "Section": "Section",
-            "Text": "Text"
+            "English": "English"
         },
         "wwtf": {
             "Section": "Section",
             "Paragraph": "Paragraph",
-            "Text (Chinese)": "Text (Chinese)"
+            "Chinese": "Chinese"
         },
         "alvah_va_saya-yi_mubarikih": {
             "Text": "Text",
@@ -358,7 +358,7 @@
             "Number": "Number",
             "Roman #": "Roman #",
             "Synopsis": "Synopsis",
-            "Text": "Text"
+            "English": "English"
         }
     }
 }

@@ -301,7 +301,7 @@
         },
         "aqdas": {
             "Paragraph": "پاراگراف",
-            "Text": "نوشتجات",
+            "English": "نوشتجات",
             "German": "المانی",
             "Arabic": "عربی"
         },
@@ -331,7 +331,7 @@
         },
         "gems of divine mysteries": {
             "Paragraph": null,
-            "Text": null
+            "English": null
         },
         "lights": {
             "Number": null,
@@ -339,12 +339,12 @@
         },
         "gleanings": {
             "Section": null,
-            "Text": null
+            "English": null
         },
         "wwtf": {
             "Section": null,
             "Paragraph": null,
-            "Text (Chinese)": null
+            "Chinese": null
         },
         "alvah_va_saya-yi_mubarikih": {
             "Text": null,
@@ -358,7 +358,7 @@
             "Number": null,
             "Roman #": null,
             "Synopsis": null,
-            "Text": null
+            "English": null
         }
     }
 }
