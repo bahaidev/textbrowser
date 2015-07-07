@@ -11,6 +11,7 @@ Todos (higher priority)
 1. Handle where browse_field is an object of form: {name:, set:} (line 126) then delete browse.php
 1. Option to bookmark view (and utilize this for defaults before search)
 1. Choose clearer naming/structure for locale table/field keys
+1. Add other Writings piecemeal (e.g., Qur'an/Bible)
 
 1. Get the automated fields listed in drop-down menus (See README)
 
@@ -630,7 +631,7 @@ function paramChange () {
             
             var baseDir = (dbs.baseDirectory || fileGroup.baseDirectory) + '/';
             var schemaBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
-            var metadataBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
+            var metadataBaseDir = (dbs.metadataBaseDir || fileGroup.metadataBaseDir) + '/';
             
             var file = baseDir + fileData.file.$ref;
             var schemaFile = fileData.schemaFile ? (schemaBaseDir + fileData.schemaFile) : '';
