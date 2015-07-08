@@ -28,7 +28,6 @@ The above developer holds the copyright to this work, and it is licensed under t
     1. Metadata for default field column placement and table/field applicability
     1. Automated word-by-word translations, auto-links to Google, Amazon, etc.
     1. Auto-links by verse to relevant forums, wikis, blogs, or personal notes pertaining to a given verse...
-1. Baha'i texts: Suggest API to Baha'i World Centre to automatically (and periodically) parse their texts into JSON here to ensure we have the most up-to-date and corrected translations; also split these texts into a separate repo
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)
 1. Go to previous/next results (allow customization of size on the fly as well as in preferences)
 1. Hide advanced formatting options (make savable in preferences)

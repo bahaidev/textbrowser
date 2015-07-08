@@ -4,15 +4,19 @@
 /*
 Todos (higher priority)
 
-1. Add other Writings piecemeal (e.g., Qur'an/Bible)
 1. Handle where browse_field is an object of form: {name:, set:} (line 126) then delete browse.php
+1. Add other Writings piecemeal (e.g., Qur'an/Bible)
+1. Split Baha'i texts into a separate repo and add todo there: Suggest API to Baha'i World Centre to automatically (and periodically) parse their texts into JSON here to ensure we have the most up-to-date and corrected translations
+
 1. Option to bookmark view (and utilize this for defaults before search)
+
 1. Choose clearer naming/structure for locale table/field keys
     1. Consider tablealias and default to table or something (as fieldalias defaults to fieldname)
     1. Consider using prefer_alias for field alias use and optionally show both?
 1. Once updated, add and make use of updated json-refs to make single resolveRef call.
 
-1. Get the automated fields listed in drop-down menus (See README)
+
+1. Get the automated fields listed in drop-down menus (See README todos)
 
 Todos (for browse9.php)
 1. Handle defaults for empty boxes if not already
