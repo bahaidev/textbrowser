@@ -228,13 +228,13 @@ function paramChange () {
                     '',
                 [
                     browseFields.reduce(function (rowContent, browseField, j) {
-                        var name = 'start' + i + '-' + fieldSets[j];
+                        var name = 'start' + (i + 1) + '-' + fieldSets[j];
                         rowContent['#'].push(
                             ['td', [
                                 ['label', {'for': name}, [browseField]]
                             ]],
                             ['td', [
-                                ['input', {id: name, name: name, type: 'text', size: '7'}],
+                                ['input', {id: name, name: name, type: 'text', size: '7', value: $p(name)}],
                                 nbsp.repeat(3)
                             ]]
                         );
@@ -245,13 +245,13 @@ function paramChange () {
                         nbsp.repeat(3)
                     ]],
                     browseFields.reduce(function (rowContent, browseField, j) {
-                        var name = 'end' + i + '-' + fieldSets[j];
+                        var name = 'end' + (i + 1) + '-' + fieldSets[j];
                         rowContent['#'].push(
                             ['td', [
                                 ['label', {'for': name}, [browseField]]
                             ]],
                             ['td', [
-                                ['input', {id: name, name: name, type: 'text', size: '7'}],
+                                ['input', {id: name, name: name, type: 'text', size: '7', value: $p(name)}],
                                 nbsp.repeat(2)
                             ]]
                         );
@@ -267,31 +267,45 @@ function paramChange () {
                 var fv = enumFvs[enumFv];
                 var enumerated = enumerateds[enumFv];
                 
+                var name = 'toggle' + (i + 1);
                 arr.push(
                     ['td', {colspan: 12}, [
                         ['br'],
                         ['table', {align: 'center'}, [['tr', [['td',
                             (enumerated.length > 2) ? [
-                                ['select', {name: 'toggle' + i}, enumerated.concat('All').map(function (choice) {
-                                    if (choice === 'All') {
-                                        return ['option', {value: ''}, [ld("enum-all")]];
+                                ['select', {name: name}, enumerated.concat('All').map(function (choice) {
+                                    var atts = {value: choice};
+                                    if ($p(name) === choice) {
+                                        atts.selected = 'selected';
                                     }
-                                    return ['option', {value: choice}, [fv({key: choice, fallback: true})]];
+                                    if (choice === 'All') {
+                                        atts.value = '';
+                                        return ['option', atts, [ld("enum-all")]];
+                                    }
+                                    return ['option', atts, [fv({key: choice, fallback: true})]];
                                 })]
                             ] :
                             enumerated.map(function (choice, j, arr) {
+                                var atts = {name: name, type: 'radio', value: choice};
+                                var allAtts = {name: name, type: 'radio', value: ''};
+                                if ($p(name) === choice) {
+                                    atts.checked = 'checked';
+                                }
+                                else if (params.has(name) && $p(name) === '') {
+                                    allAtts.checked = 'checked';
+                                }
                                 return {'#': [
                                     j > 0 ? nbsp.repeat(3) : '',
                                     ['label', [
                                         fv({key: choice, fallback: true}),
-                                        ['input', {name: 'toggle' + i, type: 'radio', value: choice}]
+                                        ['input', atts]
                                     ]],
                                     j === arr.length - 1 ?
                                         {'#': [
                                             nbsp.repeat(4),
                                             ['label', [
                                                 ld("both"),
-                                                ['input', {name: 'toggle' + i, type: 'radio', value: ''}]
+                                                ['input', allAtts]
                                             ]]
                                         ]} :
                                         ''
