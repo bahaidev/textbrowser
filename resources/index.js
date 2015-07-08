@@ -4,12 +4,13 @@
 /*
 Todos (higher priority)
 
-1. Add other Writings piecemeal (e.g., Qur'an/Bible)
 1. Test all locales and works and combos
+1. Add other Writings piecemeal (e.g., Qur'an/Bible)
 1. Incorporate and modify usage of alias_fielding1, alias_fielding2
 1. Handle where browse_field is an object of form: {name:, set:} (line 126) then delete browse.php
 1. Option to bookmark view (and utilize this for defaults before search)
 1. Choose clearer naming/structure for locale table/field keys
+1. Once updated, add and make use of updated json-refs to make single resolveRef call.
 
 1. Get the automated fields listed in drop-down menus (See README)
 
@@ -64,6 +65,7 @@ function paramChange () {
     var preferredLocale = lang[0];
     var direction = getDirectionForLanguageCode(preferredLocale);
     var fallbackDirection = getDirectionForLanguageCode(fallbackLanguages[0]);
+    document.dir = direction;
     
     var work = $p('work');
     var result = $p('result');
@@ -94,13 +96,19 @@ function paramChange () {
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
         getJSON('appdata/files.json', function (dbs) {
             var ta = defineFormatter('tablealias');
+            var ld = function (key, values, formats) {
+                return l({key: key, values: values, formats: formats, fallback: function (obj) {
+                    // Displaying as div with inline display instead of span since Firefox puts punctuation at left otherwise
+                    return ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [obj.message]];
+                }});
+            };
             jml(
                 'div',
                 {'class': 'focus ' + direction},
                 dbs.groups.map(function (fileGroup, i) {
                     return ['div', [
                         (i > 0 ? ['br', 'br', 'br'] : ''),
-                        ['div', [l(fileGroup.directions)]],
+                        ['div', [ld(fileGroup.directions)]],
                         ['br'],
                         ['select', {'class': 'file', dataset: {name: fileGroup.name}, $on: {
                             click: [function (e) {
@@ -114,7 +122,7 @@ function paramChange () {
                             var atts = {value: file.name};
                             return ['option', atts, [
                                 ta({key: file.name, fallback: function (obj) {
-                                    atts.style = 'direction: ' + fallbackDirection;
+                                    atts.dir = fallbackDirection;
                                     return obj.message;
                                 }})]
                             ];
@@ -146,23 +154,32 @@ function paramChange () {
         var ta = defineFormatter('tablealias');
         var th = defineFormatter('tableheading');
         var fn = defineFormatter(['fieldname', work]);
+        
+        // Returns plain text node or bdo element (as Jamilih) with fallback direction
         var ld = function (key, values, formats) {
             return l({key: key, values: values, formats: formats, fallback: function (obj) {
-                // Displaying as div with inline display instead of span since Firefox puts punctuation at left otherwise
+                // Displaying as div with inline display instead of span since Firefox puts punctuation at left otherwise (bdo dir seemed to have issues in Firefox)
                 return ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [obj.message]];
             }});
         };
+        // Returns option element with localized option text (as Jamilih), with optional fallback direction
         var lo = function (key, atts) {
             return ['option', atts, [
                 l({key: key, fallback: function (obj) {
-                    atts.style = (atts.style ? atts.style + ';' : '') + 'direction: ' + fallbackDirection;
+                    atts.dir = fallbackDirection;
                     return obj.message;
                 }})
             ]];
         };
-        var lnd = function (key, values, formats) {
-            return l({key: key, values: values, formats: formats, fallback:true});
+        // Returns element with localized or fallback attribute value (as Jamilih); also adds direction
+        var le = function (key, el, attToLocalize, atts, children) {
+            atts[attToLocalize] = l({key: key, fallback: function (obj) {
+                atts.dir = fallbackDirection;
+                return obj.message;
+            }});
+            return [el, atts, children];
         };
+
         var schemaItems = schema.items.items;
         var content = [];
         metadata.table.browse_fields.forEach(function (browse_field, i, arr) {
@@ -271,7 +288,7 @@ function paramChange () {
                                 ['input', {name: 'context', type: 'text', size: 4}]
                             ]],
                             nbsp.repeat(3),
-                            ['input', {type: 'button', value: lnd("view-random-URL"), $on: {click: function () {
+                            le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
                                 var paramsCopy = new URLSearchParams(params);
                                 var formParamsHash = formSerialize(document.querySelector('form[name=browse]'), {hash:true});
                                 Object.keys(formParamsHash).forEach(function (key) {
@@ -280,7 +297,7 @@ function paramChange () {
                                 paramsCopy.set('random', 'on');
                                 paramsCopy.set('result', 'true');
                                 document.querySelector('#randomURL').value = window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
-                            }}}],
+                            }}}),
                             ['input', {id: 'randomURL', type: 'text'}]
                         ]]
                     ] :
@@ -366,10 +383,10 @@ function paramChange () {
             ]],
             {'#': fields.map(function (fieldName, i) {
                 return ['tr', [
-                    ['td', {title: lnd("check-columns-to-browse")}, [
-                        ['input', {'class': 'fieldSelector', id: 'option' + i, name: 'option' + i, type: 'checkbox', value: lnd("yes"), checked: 'checked'}]
-                    ]],
-                    ['td', {title: lnd("check-sequence")}, [
+                    le("check-columns-to-browse", 'td', 'title', {}, [
+                        le("yes", 'input', 'value', {'class': 'fieldSelector', id: 'option' + i, name: 'option' + i, type: 'checkbox', checked: 'checked'})
+                    ]),
+                    le("check-sequence", 'td', 'title', {}, [
                         ['select', {name: 'field' + i, id: 'field' + i, size: '1'},
                             fields.map(function (field, j) {
                                 return (j !== i) ?
@@ -377,7 +394,7 @@ function paramChange () {
                                     ['option', {value: j, selected: 'selected'}, [fn(field)]];
                             })
                         ]
-                    ]],
+                    ]),
                     ['td', [ // Todo: Make as tag selector with fields as options
                         ['input', {name: 'interlin' + i}]
                     ]],
@@ -391,17 +408,17 @@ function paramChange () {
             })},
             ['tr', [
                 ['td', {colspan: 2}, [
-                    ['input', {value: lnd("check_all"), type: 'button', $on: {click: function () {
+                    le("check_all", 'input', 'value', {type: 'button', $on: {click: function () {
                         Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) {
                             checkbox.checked = true;
                         });
-                    }}}],
-                    ['input', {value: lnd("uncheck_all"), type: 'button', $on: {click: function () {
+                    }}}),
+                    le("uncheck_all", 'input', 'value', {type: 'button', $on: {click: function () {
                         Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) {
                             checkbox.checked = false;
                         });
-                    }}}],
-                    ['input', {value: lnd("checkmark_locale_fields_only"), type: 'button', $on: {click: function () {
+                    }}}),
+                    le("checkmark_locale_fields_only", 'input', 'value', {type: 'button', $on: {click: function () {
                         // Todo: remember this locales choice by cookie?
                         fields.forEach(function (field, i) {
                             var currFieldValue = fields[document.querySelector('#field' + i).value];
@@ -417,7 +434,7 @@ function paramChange () {
                                 document.querySelector('#option' + i).checked = false;
                             }
                         });
-                    }}}]
+                    }}})
                 ]]
             ]]
         ]];
@@ -467,7 +484,7 @@ function paramChange () {
                                     ['label', [
                                         ld("text_font"),
                                         // Todo: remove hard-coded direction if i81nizing
-                                        ['select', {name: 'font', style: 'direction: ltr'}, fonts.map(function (fonts, i) {
+                                        ['select', {name: 'font', dir: 'ltr'}, fonts.map(function (fonts, i) {
                                             return (i === 7) ? ['option', {selected: 'selected'}, fonts] : ['option', fonts];
                                         })]
                                     ]],
@@ -508,7 +525,7 @@ function paramChange () {
                                     */
                                     // Todo: i18nize title and values?
                                     // Todo: remove hard-coded direction if i81nizing
-                                    ['label', {style: 'direction: ltr', title: "wider, narrower, semi-expanded, ultra-condensed, extra-expanded, etc."}, [
+                                    ['label', {dir: 'ltr', title: "wider, narrower, semi-expanded, ultra-condensed, extra-expanded, etc."}, [
                                         ld("font_stretch"), nbsp,
                                         ['select', {name: 'fontstretch'},
                                             ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(function (stretch) {
@@ -532,9 +549,9 @@ function paramChange () {
                                         ['input', {name: 'lineheight', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],['br'],
-                                    ['h3', {title: lnd("tableformatting_tips")}, [
+                                    le("tableformatting_tips", 'h3', 'title', {}, [
                                         ld("tableformatting")
-                                    ]],
+                                    ]),
                                     ['div', [
                                         ld("header_wstyles"), nbsp.repeat(2),
                                         ['label', [
@@ -577,10 +594,10 @@ function paramChange () {
                                         nbsp.repeat(2), ld("transpose")
                                     ]],
                                     ['br'],['br'],
-                                    ['h3', {title: lnd("pageformatting_tips")}, [
+                                    le("pageformatting_tips", 'h3', 'title', {}, [
                                         ld("pageformatting")
-                                    ]],
-                                    ['label', {title: lnd("outputmode_tips")}, [
+                                    ]),
+                                    le("outputmode_tips", 'label', 'title', {}, [
                                         ld("outputmode"),
                                         ['select', [
                                             'table',
@@ -590,7 +607,7 @@ function paramChange () {
                                         ].map(function (mode) {
                                             return lo("outputmode_" + mode, {value: mode});
                                         })]
-                                    ]]
+                                    ])
                                 ]]
                                 /*
                                 ,arabicContent ?
@@ -607,7 +624,9 @@ function paramChange () {
                             ]]
                         ]]
                     ]],
-                    ['p', {align: 'center'}, [['input', {type: 'button', value: lnd("Go")}]]]
+                    ['p', {align: 'center'}, [
+                        le("Go", 'input', 'value', {type: 'button'})
+                    ]]
                 ]]
             ],
             document.body
