@@ -14,7 +14,7 @@ Todos (higher priority)
     1. Consider tablealias and default to table or something (as fieldalias defaults to fieldname)
     1. Consider using prefer_alias for field alias use and optionally show both?
 1. Once updated, add and make use of updated json-refs to make single resolveRef call and try relative refs.
-
+1. Review code for readability
 
 1. Get the automated fields listed in drop-down menus (See README todos)
 
