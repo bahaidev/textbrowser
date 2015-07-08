@@ -8,6 +8,7 @@ Todos (higher priority)
 
 1. Option to bookmark view (and utilize this for defaults before search)
 
+1. Avoid committing appcache into memory except as sample file (to allow users to indicate their own files therein (and HTML currently only allows one cache file apparently)
 1. Split Baha'i texts into a separate repo and add todo there: Suggest API to Baha'i World Centre to automatically (and periodically) parse their texts into JSON here to ensure we have the most up-to-date and corrected translations
 1. Choose clearer naming/structure for locale table/field keys
     1. Consider tablealias and default to table or something (as fieldalias defaults to fieldname); aliased heading (also used as the title of the page)
@@ -16,6 +17,7 @@ Todos (higher priority)
 1. Remove "numbers only" strings (including from locale files?) if allowing for aliased searches (e.g., "Gen")
 1. Once updated, add and make use of updated json-refs to make single resolveRef call and try relative refs.
 1. Review code for readability
+1. Sort file selection listing per locale?
 
 1. Get the automated fields listed in drop-down menus; also new overlay type (See README todos)
 
