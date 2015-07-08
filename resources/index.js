@@ -230,14 +230,14 @@ function paramChange () {
                                         if (choice === 'All') {
                                             return ['option', {value: ''}, [ld("enum-all")]];
                                         }
-                                        return ['option', {value: choice}, [fv(choice)]];
+                                        return ['option', {value: choice}, [fv({key: choice, fallback: true})]];
                                     })]
                                 ] :
                                 enumerated.map(function (choice, j, arr) {
                                     return {'#': [
                                         j > 0 ? nbsp.repeat(3) : '',
                                         ['label', [
-                                            fv(choice),
+                                            fv({key: choice, fallback: true}),
                                             ['input', {name: 'toggle' + i, type: 'radio', value: choice}]
                                         ]],
                                         j === arr.length - 1 ?
