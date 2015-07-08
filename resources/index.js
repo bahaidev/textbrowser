@@ -274,11 +274,12 @@ function paramChange () {
                         ['table', {align: 'center'}, [['tr', [['td',
                             (enumerated.length > 2) ? [
                                 ['select', {name: name}, enumerated.concat('All').map(function (choice) {
+                                    choice = choice === 'All' ? '' : choice;
                                     var atts = {value: choice};
                                     if ($p(name) === choice) {
                                         atts.selected = 'selected';
                                     }
-                                    if (choice === 'All') {
+                                    if (choice === '') {
                                         atts.value = '';
                                         return ['option', atts, [ld("enum-all")]];
                                     }
@@ -323,12 +324,12 @@ function paramChange () {
                 ['td', {colspan: 12, align: 'center'}, [
                     // Todo: Could allow random with fixed starting and/or ending range
                     ['label', [
-                        ['input', {name: 'random', type: 'checkbox'}],
+                        ['input', {name: 'random', type: 'checkbox', checked: $p('random')}],
                         ld("rnd"), nbsp.repeat(3)
                     ]],
                     ['label', [
                         ld("verses-context"), nbsp,
-                        ['input', {name: 'context', type: 'text', size: 4}]
+                        ['input', {name: 'context', type: 'text', size: 4, value: $p('context')}]
                     ]],
                     nbsp.repeat(3),
                     le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
@@ -420,28 +421,33 @@ function paramChange () {
                 ]]
             ]],
             {'#': fields.map(function (fieldName, i) {
+                var idx = i + 1;
+                var checkedIndex = 'checked' + idx;
+                var fieldIndex = 'field' + idx;
+                var fieldParam = $p(fieldIndex);
                 return ['tr', [
                     le("check-columns-to-browse", 'td', 'title', {}, [
-                        le("yes", 'input', 'value', {'class': 'fieldSelector', id: 'option' + i, name: 'option' + i, type: 'checkbox', checked: 'checked'})
+                        le("yes", 'input', 'value', {'class': 'fieldSelector', id: checkedIndex, name: checkedIndex, checked: $p(checkedIndex) === '0' ? undefined : 'checked', type: 'checkbox'})
                     ]),
                     le("check-sequence", 'td', 'title', {}, [
-                        ['select', {name: 'field' + i, id: 'field' + i, size: '1'},
+                        ['select', {name: fieldIndex, id: fieldIndex, size: '1'},
                             fields.map(function (field, j) {
                                 var fn = getFieldAliasOrName(field);
-                                return (j !== i) ?
-                                    ['option', {value: j}, [fn]] :
-                                    ['option', {value: j, selected: 'selected'}, [fn]];
+                                var matchedFieldParam = fieldParam && fieldParam === field;
+                                return (matchedFieldParam || (!params.has(fieldIndex) && j === i)) ? // Todo: Localize field names in params too?
+                                    ['option', {value: j, selected: 'selected'}, [fn]] :
+                                    ['option', {value: j}, [fn]];
                             })
                         ]
                     ]),
                     ['td', [ // Todo: Make as tag selector with fields as options
-                        ['input', {name: 'interlin' + i}]
+                        ['input', {name: 'interlin' + idx, value: $p('interlin' + idx)}]
                     ]],
                     ['td', [ // Todo: Make as CodeMirror-highlighted CSS
-                        ['input', {name: 'css' + i}]
+                        ['input', {name: 'css' + idx, value: $p('css' + idx)}]
                     ]],
                     ['td', [ // Todo: Allow plain or regexp searching
-                        ['input', {name: 'search' + i}]
+                        ['input', {name: 'search' + idx, value: $p('search' + idx)}]
                     ]]
                 ]];
             })},
@@ -471,12 +477,12 @@ function paramChange () {
                             if ((metaFieldInfo && metaFieldInfo.hasFieldvalue) || // If this is a localized field (e.g., enum), we don't want to avoid as may be translated (should check though)
                                 [preferredLocale, higherLocale].indexOf(metaLang) > -1
                             ) {
-                                document.querySelector('#option' + i).checked = true;
+                                document.querySelector('#checked' + i).checked = true;
                             }
                             else if (!schemaItems.some(function (item) {
                                 return item.title === currFieldValue && item.type !== 'string';
                             })) {
-                                document.querySelector('#option' + i).checked = false;
+                                document.querySelector('#checked' + i).checked = false;
                             }
                         });
                     }}})
