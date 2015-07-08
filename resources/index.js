@@ -11,7 +11,7 @@ Todos (higher priority)
 1. Option to bookmark view (and utilize this for defaults before search)
 
 1. Choose clearer naming/structure for locale table/field keys
-    1. Consider tablealias and default to table or something (as fieldalias defaults to fieldname)
+    1. Consider tablealias and default to table or something (as fieldalias defaults to fieldname); aliased heading (also used as the title of the page)
     1. Consider using prefer_alias for field alias use and optionally show both?
 1. Once updated, add and make use of updated json-refs to make single resolveRef call and try relative refs.
 1. Review code for readability
@@ -33,6 +33,8 @@ Todos (lower priority)
 1. Update "about" text in locales and utilize on popup or something?
 1. Assistant file (for translating; needs server for password)
 1. Add tooltips and table summaries, etc. back (see locale file for these and reapply any other unused)
+1. Add any other reasonable browse_options (e.g., to Collins esp.)
+1. Add "By page" for the Aqdas (once parsed by page)
 */
 
 (function () {'use strict';
