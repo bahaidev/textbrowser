@@ -32,12 +32,14 @@ data/other-works/schemas/Collins.jsonschema
 data/other-works/schemas/lights.jsonschema
 
 data/writings/aqdas.json
+data/writings/Bible.json
 data/writings/Epistle to the Son of the Wolf.json
 data/writings/Gems of Divine Mysteries.json
 data/writings/gleanings.json
 data/writings/Hidden Words.json
 data/writings/peace.json
 data/writings/pm.json
+data/writings/quran.json
 data/writings/wwtf.json
 data/writings/metadata/aqdas.metadata
 data/writings/metadata/Bible.metadata
