@@ -28,6 +28,7 @@ The above developer holds the copyright to this work, and it is licensed under t
     1. Metadata for default field column placement and table/field applicability
     1. Automated word-by-word translations, auto-links to Google, Amazon, etc.
     1. Auto-links by verse to relevant forums, wikis, blogs, or personal notes pertaining to a given verse...
+    1. Add an "overlay" column like interlinear, but which overlays by tooltip if any data is present; can also use metadata if the overlay is within-cell (and this metadata can also be used for putting overlay data in its own column too, albeit with only partial mapping to the other columns, e.g., if the "Baha'i translation" had not already been put into its own column, a metadata mapping may only have been for two discontinuous sentences out of a paragraph, but could still show such sentences reassembled (with some kind of separator) in a paragraph-based cell)
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)
 1. Go to previous/next results (allow customization of size on the fly as well as in preferences)
 1. Hide advanced formatting options (make savable in preferences)
