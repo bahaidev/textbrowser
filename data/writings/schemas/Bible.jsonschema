@@ -27,17 +27,17 @@
             {
                 "type": "string",
 				"format": "html",
-                "title": "Bah·'Ì Translation"
+                "title": "Bah√°'√≠ Translation"
             },
             {
                 "type": "string",
 				"format": "html",
-                "title": "Bah·'Ì Central Figures References"
+                "title": "Bah√°'√≠ Central Figures References"
             },
             {
                 "type": "string",
 				"format": "html",
-                "title": "Bah·'Ì Special References"
+                "title": "Bah√°'√≠ Special References"
             },
             {
                 "type": "string",
@@ -52,12 +52,12 @@
             {
                 "type": "string",
 				"format": "html",
-                "title": "Individual Bah·'Ì Scholars"
+                "title": "Individual Bah√°'√≠ Scholars"
             },
             {
                 "type": "string",
 				"format": "html",
-                "title": "Qur'·nic References"
+                "title": "Qur'√°nic References"
             }
         ]
     }
