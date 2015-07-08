@@ -5,10 +5,10 @@
 Todos (higher priority)
 
 1. Add other Writings piecemeal (e.g., Qur'an/Bible)
-1. Split Baha'i texts into a separate repo and add todo there: Suggest API to Baha'i World Centre to automatically (and periodically) parse their texts into JSON here to ensure we have the most up-to-date and corrected translations
 
 1. Option to bookmark view (and utilize this for defaults before search)
 
+1. Split Baha'i texts into a separate repo and add todo there: Suggest API to Baha'i World Centre to automatically (and periodically) parse their texts into JSON here to ensure we have the most up-to-date and corrected translations
 1. Choose clearer naming/structure for locale table/field keys
     1. Consider tablealias and default to table or something (as fieldalias defaults to fieldname); aliased heading (also used as the title of the page)
     1. Consider using prefer_alias for field alias use and optionally show both?
