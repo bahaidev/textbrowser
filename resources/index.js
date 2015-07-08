@@ -435,8 +435,8 @@ function paramChange () {
                                 var fn = getFieldAliasOrName(field);
                                 var matchedFieldParam = fieldParam && fieldParam === field;
                                 return (matchedFieldParam || (!params.has(fieldIndex) && j === i)) ? // Todo: Localize field names in params too?
-                                    ['option', {value: j, selected: 'selected'}, [fn]] :
-                                    ['option', {value: j}, [fn]];
+                                    ['option', {value: fn, selected: 'selected'}, [fn]] :
+                                    ['option', {value: fn}, [fn]];
                             })
                         ]
                     ]),
