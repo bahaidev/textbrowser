@@ -511,7 +511,7 @@ function paramChange () {
                                     ['h3', [ld("advancedformatting")]],
                                     ['label', [
                                         ld("textcolor"),
-                                        ['select', {name: 'color2'}, colors.map(function (color, i) {
+                                        ['select', {name: 'colorName'}, colors.map(function (color, i) {
                                             return i === 1 ? lo(color, {selected: 'selected', value: color}) : lo(color, {value: color});
                                         })]
                                     ]],
@@ -523,7 +523,7 @@ function paramChange () {
                                     ['br'], ['br'],
                                     ['label', [
                                         ld("backgroundcolor"),
-                                        ['select', {name: 'bgcolor'}, colors.map(function (color, i) {
+                                        ['select', {name: 'bgcolorName'}, colors.map(function (color, i) {
                                             return i === 14 ? lo(color, {selected: 'selected', value: color}) : lo(color, {value: color});
                                         })]
                                     ]],

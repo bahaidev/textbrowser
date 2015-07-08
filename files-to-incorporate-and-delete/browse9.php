@@ -21,7 +21,7 @@ function make_table ($result) {
 	while ($row = mysql_fetch_array($result)) { // get all the records based on the selection statement determined in the range_type function
 		print ("<tr>");
 		for ($k = 0; $k < mysql_num_fields($result); $k++) { // Go through all the fields
-			$option = "option".$k;
+			$option = "checked".$k;
 			global $$option;
 			if ($$option == "yes") { // If the user opted to see that field
 				$field = "field".$k;
@@ -163,9 +163,9 @@ elseif ($file=="aqdas" || $file=="Hidden Words") {
 // The following are mostly in the order they appear in browse.php (dynamically generated ones have been moved out of order into a separate section below)
 
 $toggle = $_GET['toggle'];
-$color2 = $_GET['color2'];
+$colorName = $_GET['colorName'];
 $color = $_GET['color'];
-$bgcolor2 = $_GET['bgcolor2'];
+$bgcolorName = $_GET['bgcolorName'];
 $bgcolor = $_GET['bgcolor'];
 $font = $_GET['font'];
 $fontstyle = $_GET['fontstyle'];
@@ -225,7 +225,7 @@ semidynamic_variable ('elevelc', 1, 3);
 mysql_select_db($hardcodeddb, mysql_connect($host, $dbuser, $passw));
 $result0 = mysql_query("SELECT * FROM `$file`");
 $field_and_option_no = mysql_num_fields($result0);
-semidynamic_variable ('option', 0, $field_and_option_no);
+semidynamic_variable ('checked', 0, $field_and_option_no);
 semidynamic_variable ('field', 0, $field_and_option_no);
 
 
@@ -284,11 +284,11 @@ if ($file == "Hidden Words") {
 ///////////// Go with the pull-down menu of colors if the color field is blank or only includes the hash mark ///////////////
 
 if ($color == "" || $color == "#") {
-	$color = $color2;
+	$color = $colorName;
 }
 
 if ($bgcolor == "" || $bgcolor == "#") {
-	$bgcolor = $bgcolor2;
+	$bgcolor = $bgcolorName;
 }
 
 
@@ -425,7 +425,7 @@ if ($headings !== "0") {
 // Fix: / New Book Add: Introduce the ability to add field aliases here.
 
 	for ($m = 0; $m < mysql_num_fields($resulta1); $m++) {
-		$optiona = "option".$m;
+		$optiona = "checked".$m;
 		if ($$optiona == "yes") {
 			$fielda = "field".$m;
 			print "<th valign='top'>".mysql_field_name($resulta1, $$fielda)."</th>";
@@ -439,7 +439,7 @@ if ($headings !== "0") {
 /*
 	print "</tr></thead><tfoot><tr>";
 	for ($m = 0; $m < mysql_num_fields($resulta1); $m++) {
-	$optiona = "option".$m;
+	$optiona = "checked".$m;
 	if ($$optiona == "yes") {
 	$fielda = "field".$m;
 	print "<th valign='top'>".mysql_field_name($resulta1, $$fielda)."</th>";
