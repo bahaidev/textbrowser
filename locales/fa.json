@@ -144,12 +144,10 @@
     "from": null,
     "wikilinks": null,
     "auto": null,
-    "alias_fielding2": null,
     "fullinput": null,
     "fullinputbox": null,
     "check_all": null,
     "switch_all": null,
-    "alias_fielding1": null,
     "normal": null,
     "transpose": null,
     "rnd": null,
@@ -178,7 +176,7 @@
         "peace": "وعده صلح جهانى",
         "collins": "کتابنامه Collins",
         "Leiden": " لیست Leiden ",
-        "bible": "انجیل",
+        "Bible": "انجیل",
         "hidden words": "كلمات مكنونه",
         "epistle_to_the_son_of_the_wolf": null,
         "lights": null,
@@ -195,7 +193,7 @@
         "peace": "وعده صلح جهانی",
         "collins": "کتابنامه Collins",
         "Leiden": "لیست Leiden",
-        "bible": "انجیل",
+        "Bible": "انجیل",
         "hidden words": "کلمات مکنونه",
         "epistle_to_the_son_of_the_wolf": null,
         "gems of divine mysteries": null,
@@ -210,8 +208,11 @@
         "hidden words": null
     },
     "fieldalias": {
-        "aqdas": {
-            "Text": null
+        "quran": {
+            "surah-name": null
+        },
+        "Bible": {
+            "book-name": null
         }
     },
     "fieldvalue": {
@@ -272,7 +273,7 @@
             "Call Number": null,
             "Keywords": null
         },
-        "bible": {
+        "Bible": {
             "Book #": "کتاب شماره",
             "Chapter #": "قسمت  شماره",
             "Verse #": "جمله شماره",

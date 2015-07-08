@@ -144,12 +144,10 @@
     "from": "from",
     "wikilinks": "Links to Wiki",
     "auto": "Auto-field",
-    "alias_fielding2": "Suráh Name",
     "fullinput": "Choose a range of verses by number or, if applicable, by name",
     "fullinputbox": "Choose range",
     "check_all": "Check",
     "switch_all": "Switch",
-    "alias_fielding1": "Book Name",
     "normal": "Normal",
     "transpose": "Transpose horizontally?",
     "rnd": "Random?",
@@ -178,7 +176,7 @@
         "peace": "Promise of World Peace",
         "collins": "Collins Bibliography",
         "Leiden": "Leiden List",
-        "bible": "Bible",
+        "Bible": "Bible",
         "hidden words": "Hidden Words",
         "epistle_to_the_son_of_the_wolf": "Epistle to the Son of the Wolf",
         "lights": "Lights of Guidance",
@@ -195,7 +193,7 @@
         "peace": "The Promise of World Peace",
         "collins": "The Collins Bibliography",
         "Leiden": "The Leiden List",
-        "bible": "The Bible",
+        "Bible": "The Bible",
         "hidden words": "The Hidden Words",
         "epistle_to_the_son_of_the_wolf": "Epistle to the Son of the Wolf",
         "gems of divine mysteries": "Gems of Divine Mysteries",
@@ -210,8 +208,11 @@
         "hidden words": "Group according to the above?"
     },
     "fieldalias": {
-        "aqdas": {
-            "Text": "Text"
+        "quran": {
+            "surah-name": "Suráh Name"
+        },
+        "Bible": {
+            "book-name": "Book Name"
         }
     },
     "fieldvalue": {
@@ -272,7 +273,7 @@
             "Call Number": "Call Number",
             "Keywords": "Keywords"
         },
-        "bible": {
+        "Bible": {
             "Book #": "Book #",
             "Chapter #": "Chapter #",
             "Verse #": "Verse #",

@@ -6,10 +6,11 @@ Todos (higher priority)
 
 1. Test all locales and works and combos
 1. Add other Writings piecemeal (e.g., Qur'an/Bible)
-1. Incorporate and modify usage of alias_fielding1, alias_fielding2
+1. Incorporate and modify usage of alias_fielding1, alias_fielding2 (prefer_alias?)
 1. Handle where browse_field is an object of form: {name:, set:} (line 126) then delete browse.php
 1. Option to bookmark view (and utilize this for defaults before search)
 1. Choose clearer naming/structure for locale table/field keys
+    1. Consider tablealias and default to table or something (as fieldalias defaults to fieldname)
 1. Once updated, add and make use of updated json-refs to make single resolveRef call.
 
 1. Get the automated fields listed in drop-down menus (See README)
@@ -95,7 +96,14 @@ function paramChange () {
 
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
         getJSON('appdata/files.json', function (dbs) {
-            var ta = defineFormatter('tablealias');
+            var lo = function (key, atts) {
+                return ['option', atts, [
+                    l({key: key, fallback: function (obj) {
+                        atts.dir = fallbackDirection;
+                        return obj.message;
+                    }})
+                ]];
+            };
             var ld = function (key, values, formats) {
                 return l({key: key, values: values, formats: formats, fallback: function (obj) {
                     // Displaying as div with inline display instead of span since Firefox puts punctuation at left otherwise
@@ -119,13 +127,7 @@ function paramChange () {
                                 followParams();
                             }, true]
                         }}, fileGroup.files.map(function (file) {
-                            var atts = {value: file.name};
-                            return ['option', atts, [
-                                ta({key: file.name, fallback: function (obj) {
-                                    atts.dir = fallbackDirection;
-                                    return obj.message;
-                                }})]
-                            ];
+                            return lo(['tablealias', file.name], {value: file.name});
                         })]
                     ]];
                 }),
@@ -151,10 +153,9 @@ function paramChange () {
     }
     
     function _displayWork (l, defineFormatter, schema, metadata) {
-        var ta = defineFormatter('tablealias');
         var fn = defineFormatter(['fieldname', work]);
 
-        // Returns plain text node or bdo element (as Jamilih) with fallback direction
+        // Returns plain text node or element (as Jamilih) with fallback direction
         var ld = function (key, values, formats) {
             return l({key: key, values: values, formats: formats, fallback: function (obj) {
                 // Displaying as div with inline display instead of span since Firefox puts punctuation at left otherwise (bdo dir seemed to have issues in Firefox)
@@ -181,6 +182,18 @@ function paramChange () {
 
         var schemaItems = schema.items.items;
         var content = [];
+        
+        function getFieldAliasOrName (field) {
+            var fieldName;
+            var fieldAlias = metadata.fields && metadata.fields[field] && metadata.fields[field].alias;
+            if (fieldAlias) {
+                fieldName = ld(['fieldalias', work, fieldAlias]);
+            }
+            if (!fieldAlias || !fieldName[2][0]) { // No alias
+                fieldName = ld(['fieldname', work, field]);
+            }
+            return fieldName;
+        }
         metadata.table.browse_fields.forEach(function (browse_field, i, arr) {
             
             if (browse_field && typeof browse_field === 'object') {
@@ -188,14 +201,7 @@ function paramChange () {
                 browse_field = browse_field.set;
             }
             
-            var browseField;
-            if (metadata.fields && metadata.fields[browse_field] && metadata.fields[browse_field].alias) {
-                var fa = defineFormatter(['fieldalias', work]);
-                browseField = fa(metadata.fields[browse_field].alias);
-            }
-            else {
-                browseField = fn(browse_field);
-            }
+            var browseField = getFieldAliasOrName(browse_field);
 
             var fieldSchema = schemaItems.find(function (item) {
                 return item.title === browse_field;
@@ -388,9 +394,10 @@ function paramChange () {
                     le("check-sequence", 'td', 'title', {}, [
                         ['select', {name: 'field' + i, id: 'field' + i, size: '1'},
                             fields.map(function (field, j) {
+                                var fn = getFieldAliasOrName(field);
                                 return (j !== i) ?
-                                    ['option', {value: j}, [fn(field)]] :
-                                    ['option', {value: j, selected: 'selected'}, [fn(field)]];
+                                    ['option', {value: j}, [fn]] :
+                                    ['option', {value: j, selected: 'selected'}, [fn]]
                             })
                         ]
                     ]),
@@ -633,7 +640,6 @@ function paramChange () {
     }
     
     function workDisplay (l, defineFormatter) {
-        var ta = defineFormatter('tablealias');
         getJSON('appdata/files.json', function (dbs) {
             
             // Use the following to dynamically add specific file schema in place of generic table schema if validating against files.jsonschema
@@ -670,7 +676,9 @@ function paramChange () {
                 return !!fileData;
             });
             
-            document.title = l({key: "browserfile-workdisplay", values: {work: fileData ? ta(work) : ''}, fallback: true});
+            document.title = l({key: "browserfile-workdisplay", values: {work: fileData ?
+                l({key: ["tablealias", work], fallback: true}) : ''
+            }, fallback: true});
             
             var baseDir = (dbs.baseDirectory || fileGroup.baseDirectory) + '/';
             var schemaBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
@@ -705,9 +713,9 @@ function paramChange () {
     
     function resultsDisplay (l, defineFormatter) {
         // Will need to retrieve fileData as above (abstract?)
-        // var ta = defineFormatter('tablealias');
-        // document.title = l({key: "browserfile-resultsdisplay", values: {work: fileData ? ta(work) : ''}, fallback: true});
-
+        // document.title = l({key: "browserfile-resultsdisplay", values: {work: fileData ?
+        //    l({key: ["tablealias", work], fallback: true}) : ''
+        //}, fallback: true});
     }
 
     function localeCallback (l) {
