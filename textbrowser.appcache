@@ -26,6 +26,8 @@ bower_components/lodash-compat/lodash.min.js
 bower_components/path-loader/browser/path-loader-min.js
 bower_components/traverse/traverse.js
 
+data/other-works/Collins.json
+data/other-works/lights.json
 data/other-works/metadata/Collins.metadata
 data/other-works/metadata/lights.metadata
 data/other-works/schemas/Collins.jsonschema

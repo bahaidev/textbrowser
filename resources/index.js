@@ -146,20 +146,6 @@ function paramChange () {
         }, function (err) {
             alert(err);
         });
-
-        /*
-        Add back to files.json when overcome memory issue when exporting to JSON from BL
-        ,
-        {
-            "name": "Other Writings",
-            "directions": "choosewritings_bahai_writingsotherdb",
-            "baseDirectory": "other-works",
-            "files": [
-                {"file": "Collins.json", "name": "collins"},
-                {"file": "lights.json", "name": "lights"}
-            ]
-        }
-        */
     }
     
     function _displayWork (l, defineFormatter, schema, metadata) {

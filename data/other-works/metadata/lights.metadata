@@ -3,7 +3,7 @@
         "browse_fields": ["Number"]
     },
     "fields": {
-        "Quotation": {
+        "English": {
             "lang": "en"
         }
     }

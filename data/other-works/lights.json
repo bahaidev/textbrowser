@@ -1,0 +1,7 @@
+{
+    "schema": {"$ref": "schemas/lights.jsonschema"},
+    "metadata": {"$ref": "metadata/lights.metadata"},
+    "data": [
+
+    ]
+}

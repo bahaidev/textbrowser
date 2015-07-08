@@ -1,0 +1,7 @@
+{
+    "schema": {"$ref": "schemas/Collins.jsonschema"},
+    "metadata": {"$ref": "metadata/Collins.metadata"},
+    "data": [
+
+    ]
+}

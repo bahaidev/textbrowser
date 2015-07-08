@@ -18,6 +18,17 @@
                 {"name": "quran", "file": {"$ref": "quran.json"}, "schemaFile": "quran.jsonschema", "metadataFile": "quran.metadata"},
                 {"name": "wwtf", "file": {"$ref": "wwtf.json"}, "schemaFile": "wwtf.jsonschema", "metadataFile": "wwtf.metadata"}
             ]
+        },
+        {
+            "name": "Other Writings",
+            "directions": "choosewritings_bahai_writingsotherdb",
+            "baseDirectory": "data/other-works",
+            "schemaBaseDirectory": "data/other-works/schemas",
+            "metadataBaseDir": "data/other-works/metadata",
+            "files": [
+                {"name": "collins", "file": {"$ref": "Collins.json"}, "schemaFile": "Collins.jsonschema", "metadataFile": "Collins.metadata"},
+                {"name": "lights", "file": {"$ref": "lights.json"}, "schemaFile": "lights.jsonschema", "metadataFile": "lights.metadata"}
+            ]
         }
     ]
 }
