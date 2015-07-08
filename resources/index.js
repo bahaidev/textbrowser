@@ -23,6 +23,7 @@ Todos (for browse9.php)
 1. Utilize prefer_alias
 
 Todos (lower priority)
+1. Might support arbitary JSON and JSON Reference querying (if files.json configured to indicate "*" or something)
 1. filetypes.json for app and schema association? (files.json for permitted files - a file which could be auto-created, e.g., if server permits all in a directory); especially potentially useful with JSONEditor to allow editing of these files, app types:
     1. langs + locale / locale only
     1. files/dbs->file (supply language choice)->file contents
