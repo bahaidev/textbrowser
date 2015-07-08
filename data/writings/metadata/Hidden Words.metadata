@@ -4,6 +4,9 @@
         "default_view": {"Number": 0, "Original Language": "Arabic"}
     },
     "fields": {
+        "Original Language": {
+            "sequentialEnum": true
+        },
         "English": {
             "primary_text_field": true,
             "lang": "en"

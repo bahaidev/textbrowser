@@ -4,7 +4,6 @@
 /*
 Todos (higher priority)
 
-1. Handle where browse_field is an object of form: {name:, set:} (line 126) then delete browse.php
 1. Add other Writings piecemeal (e.g., Qur'an/Bible)
 1. Split Baha'i texts into a separate repo and add todo there: Suggest API to Baha'i World Centre to automatically (and periodically) parse their texts into JSON here to ensure we have the most up-to-date and corrected translations
 
@@ -199,27 +198,38 @@ function paramChange () {
             }
             return fieldName;
         }
-        metadata.table.browse_fields.forEach(function (browse_field, i, arr) {
+        function addRowContent (rowContent) {
+            if (!rowContent || !rowContent.length) {return;}
+            content.push(['tr', rowContent]);
+        }
+        var enumFvs = {};
+        var enumerateds = {};
+        metadata.table.browse_fields.forEach(function (browseFieldObject, i) {
             
-            if (browse_field && typeof browse_field === 'object') {
-                // Todo: Could use browse_field.name for a fieldset around the field set
-                browse_field = browse_field.set;
+            if (typeof browseFieldObject === 'string') {
+                browseFieldObject = {set: [browseFieldObject]};
             }
             
-            var browseField = getFieldAliasOrName(browse_field);
+            
+            var fieldSets = browseFieldObject.set;
+            // Todo: Deal with ['td', [['h3', [ld(browseFieldObject.name)]]]] as kind of fieldset
 
-            var fieldSchema = schemaItems.find(function (item) {
-                return item.title === browse_field;
+            var browseFields = fieldSets.map(function (browse_field, j) {
+                var fieldSchema = schemaItems.find(function (item) {
+                    return item.title === browse_field;
+                });
+                
+                // Todo: Check fieldSchema for integer or string?
+                
+                var enumerated = metadata.fields && metadata.fields[browse_field] && metadata.fields[browse_field].sequentialEnum && fieldSchema['enum'];
+                if (enumerated) {
+                    enumerateds[j] = enumerated;
+                    enumFvs[j] = defineFormatter(['fieldvalue', work, browse_field]);
+                }
+                
+                return getFieldAliasOrName(browse_field);
             });
             
-            // Todo: Check fieldSchema for integer or string?
-            var enumerated = fieldSchema['enum'];
-
-            var fv;
-            if (enumerated) {
-                fv = defineFormatter(['fieldvalue', work, browse_field]);
-            }
-
             [
                 // Todo: Separate formatting to CSS
                 i > 0 ?
@@ -227,97 +237,107 @@ function paramChange () {
                         ['td', {colspan: 12, align: 'center'}, [['br'], ld("or"), ['br'], ['br']]]
                     ] :
                     '',
-                (enumerated ?
-                    [
-                        ['td', {colspan: 12}, [
-                            ['table', {align: 'center'}, [['tr', [['td',
-                                (enumerated.length > 2) ? [
-                                    ['select', {name: 'toggle' + i}, enumerated.concat('All').map(function (choice) {
-                                        if (choice === 'All') {
-                                            return ['option', {value: ''}, [ld("enum-all")]];
-                                        }
-                                        return ['option', {value: choice}, [fv({key: choice, fallback: true})]];
-                                    })]
-                                ] :
-                                enumerated.map(function (choice, j, arr) {
-                                    return {'#': [
-                                        j > 0 ? nbsp.repeat(3) : '',
-                                        ['label', [
-                                            fv({key: choice, fallback: true}),
-                                            ['input', {name: 'toggle' + i, type: 'radio', value: choice}]
-                                        ]],
-                                        j === arr.length - 1 ?
-                                            {'#': [
-                                                nbsp.repeat(4),
-                                                ['label', [
-                                                    ld("both"),
-                                                    ['input', {name: 'toggle' + i, type: 'radio', value: ''}]
-                                                ]]
-                                            ]} :
-                                            ''
-                                    ]};
-                                })
-                            ]]]]]
-                        ]]
-                    ] :
-                    [
-                        ['td', [
-                            ['label', [browseField, ': ']]
-                        ]],
-                        ['td', [
-                            ['input', {name: 'start' + i, type: 'text', size: '7'}],
-                            nbsp.repeat(3)
-                        ]],
-                        ['td', [
-                            ['b', [ld("to")]],
-                            ':' + nbsp.repeat(3)
-                        ]],
-                        ['td', [browseField, ': ']],
-                        ['td', [
-                            ['input', {name: 'end' + i, type: 'text', size: '7'}],
-                            nbsp.repeat(2)
-                        ]],
-                        ['td', [ld("numbers-only")]]
-                    ]
-                ),
-                (i === arr.length -1 ?
-                    [
-                        ['td', {colspan: 12, align: 'center'}, [['br'], ld("or"), ['br'], ['br']]]
-                    ] :
-                    ''
-                ),
-                (i === arr.length -1 ?
-                    [
-                        ['td', {colspan: 12, align: 'center'}, [
-                            ['label', [
-                                ['input', {name: 'random', type: 'checkbox'}],
-                                ld("rnd"), nbsp.repeat(3)
+                [
+                    browseFields.reduce(function (rowContent, browseField, j) {
+                        rowContent['#'].push(
+                            ['td', [
+                                ['label', [browseField]]
                             ]],
-                            ['label', [
-                                ld("verses-context"), nbsp,
-                                ['input', {name: 'context', type: 'text', size: 4}]
-                            ]],
-                            nbsp.repeat(3),
-                            le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
-                                var paramsCopy = new URLSearchParams(params);
-                                var formParamsHash = formSerialize(document.querySelector('form[name=browse]'), {hash:true});
-                                Object.keys(formParamsHash).forEach(function (key) {
-                                    paramsCopy.set(key, formParamsHash[key]);
-                                });
-                                paramsCopy.set('random', 'on');
-                                paramsCopy.set('result', 'true');
-                                document.querySelector('#randomURL').value = window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
-                            }}}),
-                            ['input', {id: 'randomURL', type: 'text'}]
-                        ]]
-                    ] :
-                    ''
-                )
-            ].forEach(function (rowContent) {
-                if (!rowContent) {return;}
-                content.push(['tr', rowContent]);
-            });
+                            ['td', [
+                                ['input', {name: 'start' + i + '-' + fieldSets[j], type: 'text', size: '7'}],
+                                nbsp.repeat(3)
+                            ]]
+                        );
+                        return rowContent;
+                    }, {'#': []}),
+                    ['td', [
+                        ['b', [ld("to")]],
+                        nbsp.repeat(3)
+                    ]],
+                    browseFields.reduce(function (rowContent, browseField, j) {
+                        rowContent['#'].push(
+                            ['td', [browseField]],
+                            ['td', [
+                                ['input', {name: 'end' + i + '-' + fieldSets[j], type: 'text', size: '7'}],
+                                nbsp.repeat(2)
+                            ]]
+                        );
+                        return rowContent;
+                    }, {'#': []}),
+                    ['td', [ld("numbers-only"), ' ', browseFields > 1 ? ld("versesendingdataoptional") : '']]
+                ]
+            ].forEach(addRowContent);
         });
+        
+        [
+            [
+                ['td', {colspan: 12, align: 'center'}, [['br'], ld("or"), ['br'], ['br']]]
+            ],
+            [
+                ['td', {colspan: 12, align: 'center'}, [
+                    // Todo: Could allow random with fixed starting and/or ending range
+                    ['label', [
+                        ['input', {name: 'random', type: 'checkbox'}],
+                        ld("rnd"), nbsp.repeat(3)
+                    ]],
+                    ['label', [
+                        ld("verses-context"), nbsp,
+                        ['input', {name: 'context', type: 'text', size: 4}]
+                    ]],
+                    nbsp.repeat(3),
+                    le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
+                        var paramsCopy = new URLSearchParams(params);
+                        var formParamsHash = formSerialize(document.querySelector('form[name=browse]'), {hash:true});
+                        Object.keys(formParamsHash).forEach(function (key) {
+                            paramsCopy.set(key, formParamsHash[key]);
+                        });
+                        paramsCopy.set('random', 'on');
+                        paramsCopy.set('result', 'true');
+                        document.querySelector('#randomURL').value = window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
+                    }}}),
+                    ['input', {id: 'randomURL', type: 'text'}]
+                ]]
+            ],
+            Object.keys(enumFvs).reduce(function (arr, enumFv, i) {
+                var fv = enumFvs[enumFv];
+                var enumerated = enumerateds[enumFv];
+                
+                arr.push(
+                    ['td', {colspan: 12}, [
+                        ['table', {align: 'center'}, [['tr', [['td',
+                            (enumerated.length > 2) ? [
+                                ['select', {name: 'toggle' + i}, enumerated.concat('All').map(function (choice) {
+                                    if (choice === 'All') {
+                                        return ['option', {value: ''}, [ld("enum-all")]];
+                                    }
+                                    return ['option', {value: choice}, [fv({key: choice, fallback: true})]];
+                                })]
+                            ] :
+                            enumerated.map(function (choice, j, arr) {
+                                return {'#': [
+                                    j > 0 ? nbsp.repeat(3) : '',
+                                    ['label', [
+                                        fv({key: choice, fallback: true}),
+                                        ['input', {name: 'toggle' + i, type: 'radio', value: choice}]
+                                    ]],
+                                    j === arr.length - 1 ?
+                                        {'#': [
+                                            nbsp.repeat(4),
+                                            ['label', [
+                                                ld("both"),
+                                                ['input', {name: 'toggle' + i, type: 'radio', value: ''}]
+                                            ]]
+                                        ]} :
+                                        ''
+                                ]};
+                            })
+                        ]]]]]
+                    ]]
+                );
+                return arr;
+            }, [])
+        ].forEach(addRowContent);
+        
         var colors = [
             'aqua',
             'black',

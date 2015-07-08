@@ -74,6 +74,9 @@
                                 "type": "string"
                             }
                         },
+                        "sequentialEnum": {
+                            "type": "boolean"
+                        },
                         "roman": {
                             "type": "boolean"
                         },
