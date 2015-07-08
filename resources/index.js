@@ -221,7 +221,7 @@ function paramChange () {
             }
 
             [
-                // Todo: Fix formatting
+                // Todo: Separate formatting to CSS
                 i > 0 ?
                     [
                         ['td', {colspan: 12, align: 'center'}, [['br'], ld("or"), ['br'], ['br']]]
