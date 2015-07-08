@@ -4,20 +4,20 @@
 /*
 Todos (higher priority)
 
-1. Test all locales and works and combos
 1. Add other Writings piecemeal (e.g., Qur'an/Bible)
-1. Incorporate and modify usage of alias_fielding1, alias_fielding2 (prefer_alias?)
 1. Handle where browse_field is an object of form: {name:, set:} (line 126) then delete browse.php
 1. Option to bookmark view (and utilize this for defaults before search)
 1. Choose clearer naming/structure for locale table/field keys
     1. Consider tablealias and default to table or something (as fieldalias defaults to fieldname)
+    1. Consider using prefer_alias for field alias use and optionally show both?
 1. Once updated, add and make use of updated json-refs to make single resolveRef call.
 
 1. Get the automated fields listed in drop-down menus (See README)
 
 Todos (for browse9.php)
 1. Handle defaults for empty boxes if not already
-
+1. Test all locales and works and combos
+1. Utilize prefer_alias
 
 Todos (lower priority)
 1. filetypes.json for app and schema association? (files.json for permitted files - a file which could be auto-created, e.g., if server permits all in a directory); especially potentially useful with JSONEditor to allow editing of these files, app types:
