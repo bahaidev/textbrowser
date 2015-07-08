@@ -16,7 +16,7 @@ Todos (higher priority)
 1. Once updated, add and make use of updated json-refs to make single resolveRef call and try relative refs.
 1. Review code for readability
 
-1. Get the automated fields listed in drop-down menus (See README todos)
+1. Get the automated fields listed in drop-down menus; also new overlay type (See README todos)
 
 Todos (for browse9.php)
 1. Handle defaults for empty boxes if not already
