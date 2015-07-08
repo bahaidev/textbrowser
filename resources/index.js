@@ -242,12 +242,13 @@ function paramChange () {
                     '',
                 [
                     browseFields.reduce(function (rowContent, browseField, j) {
+                        var name = 'start' + i + '-' + fieldSets[j];
                         rowContent['#'].push(
                             ['td', [
-                                ['label', [browseField]]
+                                ['label', {'for': name}, [browseField]]
                             ]],
                             ['td', [
-                                ['input', {name: 'start' + i + '-' + fieldSets[j], type: 'text', size: '7'}],
+                                ['input', {id: name, name: name, type: 'text', size: '7'}],
                                 nbsp.repeat(3)
                             ]]
                         );
@@ -258,10 +259,13 @@ function paramChange () {
                         nbsp.repeat(3)
                     ]],
                     browseFields.reduce(function (rowContent, browseField, j) {
+                        var name = 'end' + i + '-' + fieldSets[j];
                         rowContent['#'].push(
-                            ['td', [browseField]],
                             ['td', [
-                                ['input', {name: 'end' + i + '-' + fieldSets[j], type: 'text', size: '7'}],
+                                ['label', {'for': name}, [browseField]]
+                            ]],
+                            ['td', [
+                                ['input', {id: name, name: name, type: 'text', size: '7'}],
                                 nbsp.repeat(2)
                             ]]
                         );
@@ -273,40 +277,13 @@ function paramChange () {
         });
         
         [
-            [
-                ['td', {colspan: 12, align: 'center'}, [['br'], ld("or"), ['br'], ['br']]]
-            ],
-            [
-                ['td', {colspan: 12, align: 'center'}, [
-                    // Todo: Could allow random with fixed starting and/or ending range
-                    ['label', [
-                        ['input', {name: 'random', type: 'checkbox'}],
-                        ld("rnd"), nbsp.repeat(3)
-                    ]],
-                    ['label', [
-                        ld("verses-context"), nbsp,
-                        ['input', {name: 'context', type: 'text', size: 4}]
-                    ]],
-                    nbsp.repeat(3),
-                    le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
-                        var paramsCopy = new URLSearchParams(params);
-                        var formParamsHash = formSerialize(document.querySelector('form[name=browse]'), {hash:true});
-                        Object.keys(formParamsHash).forEach(function (key) {
-                            paramsCopy.set(key, formParamsHash[key]);
-                        });
-                        paramsCopy.set('random', 'on');
-                        paramsCopy.set('result', 'true');
-                        document.querySelector('#randomURL').value = window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
-                    }}}),
-                    ['input', {id: 'randomURL', type: 'text'}]
-                ]]
-            ],
             Object.keys(enumFvs).reduce(function (arr, enumFv, i) {
                 var fv = enumFvs[enumFv];
                 var enumerated = enumerateds[enumFv];
                 
                 arr.push(
                     ['td', {colspan: 12}, [
+                        ['br'],
                         ['table', {align: 'center'}, [['tr', [['td',
                             (enumerated.length > 2) ? [
                                 ['select', {name: 'toggle' + i}, enumerated.concat('All').map(function (choice) {
@@ -338,7 +315,35 @@ function paramChange () {
                     ]]
                 );
                 return arr;
-            }, [])
+            }, []),
+            [
+                ['td', {colspan: 12, align: 'center'}, [['br'], ld("or"), ['br'], ['br']]]
+            ],
+            [
+                ['td', {colspan: 12, align: 'center'}, [
+                    // Todo: Could allow random with fixed starting and/or ending range
+                    ['label', [
+                        ['input', {name: 'random', type: 'checkbox'}],
+                        ld("rnd"), nbsp.repeat(3)
+                    ]],
+                    ['label', [
+                        ld("verses-context"), nbsp,
+                        ['input', {name: 'context', type: 'text', size: 4}]
+                    ]],
+                    nbsp.repeat(3),
+                    le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
+                        var paramsCopy = new URLSearchParams(params);
+                        var formParamsHash = formSerialize(document.querySelector('form[name=browse]'), {hash:true});
+                        Object.keys(formParamsHash).forEach(function (key) {
+                            paramsCopy.set(key, formParamsHash[key]);
+                        });
+                        paramsCopy.set('random', 'on');
+                        paramsCopy.set('result', 'true');
+                        document.querySelector('#randomURL').value = window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
+                    }}}),
+                    ['input', {id: 'randomURL', type: 'text'}]
+                ]]
+            ]
         ].forEach(addRowContent);
         
         var colors = [
