@@ -5,7 +5,8 @@
     },
     "fields": {
         "Original Language": {
-            "sequentialEnum": true
+            "sequentialEnum": true,
+            "hasFieldvalue": true
         },
         "English": {
             "primary_text_field": true,

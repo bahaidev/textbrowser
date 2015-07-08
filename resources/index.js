@@ -12,6 +12,7 @@ Todos (higher priority)
 1. Choose clearer naming/structure for locale table/field keys
     1. Consider tablealias and default to table or something (as fieldalias defaults to fieldname); aliased heading (also used as the title of the page)
     1. Consider using prefer_alias for field alias use and optionally show both?
+    1. Consider moving table-specific/field-specific locale data to metadata file for modularity; then avoid unchecking when clicking button re: matching current locale if fieldvalue is present (i.e., replace hasFieldvalue functionality)
 1. Remove "numbers only" strings (including from locale files?) if allowing for aliased searches (e.g., "Gen")
 1. Once updated, add and make use of updated json-refs to make single resolveRef call and try relative refs.
 1. Review code for readability
@@ -455,10 +456,16 @@ function paramChange () {
                         // Todo: remember this locales choice by cookie?
                         fields.forEach(function (field, i) {
                             var currFieldValue = fields[document.querySelector('#field' + i).value];
-                            var metaLang = metadata && metadata.fields && metadata.fields[currFieldValue] && metadata.fields[currFieldValue].lang;
+                            var metaFieldInfo = metadata && metadata.fields && metadata.fields[currFieldValue];
+                            var metaLang;
+                            if (metaFieldInfo) {
+                                metaLang = metadata.fields[currFieldValue].lang;
+                            }
                             var higherLocale = preferredLocale.replace(/\-.*$/, '');
 
-                            if ([preferredLocale, higherLocale].indexOf(metaLang) > -1) {
+                            if ((metaFieldInfo && metaFieldInfo.hasFieldvalue) || // If this is a localized field (e.g., enum), we don't want to avoid as may be translated (should check though)
+                                [preferredLocale, higherLocale].indexOf(metaLang) > -1
+                            ) {
                                 document.querySelector('#option' + i).checked = true;
                             }
                             else if (!schemaItems.some(function (item) {
