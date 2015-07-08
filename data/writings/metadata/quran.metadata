@@ -8,6 +8,8 @@
     },
     "fields": {
         "Traditional Suráh #": {
+            "prefer_alias": false,
+            "alias": "surah-name",
             "fieldvalue-aliases": {
                 "1": ["The Opening"],
                 "2": ["The Cow"],

@@ -5,6 +5,8 @@
     },
     "fields": {
         "Book #": {
+            "prefer_alias": true,
+            "alias": "book-name",
             "fieldvalue-aliases": {
                 "1": {"long1": "Genesis","abbrev1": "GEN","abbrev2": "genes","abbrev3": "Ge","abbrev4": "Gn"},
                 "2": {"long1": "Exodus","abbrev1": "EXOD","abbrev2": "exo","abbrev3": "Ex"},
@@ -81,9 +83,6 @@
         "Bahá'í Translation": {
             "primary_text_field": true,
             "lang": "en"
-        },
-        "Book #": {
-            "prefer_alias": true
         }
     }
 }
