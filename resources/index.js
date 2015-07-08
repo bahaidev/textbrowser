@@ -104,7 +104,7 @@ function paramChange () {
             };
             jml(
                 'div',
-                {'class': 'focus ' + direction},
+                {'class': 'focus'},
                 dbs.groups.map(function (fileGroup, i) {
                     return ['div', [
                         (i > 0 ? ['br', 'br', 'br'] : ''),
@@ -444,7 +444,7 @@ function paramChange () {
         
         jml(
             'div',
-            {'class': 'focus ' + direction},
+            {'class': 'focus'},
             [
                 ['h2', [th(work)]],
                 ['br'],
