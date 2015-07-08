@@ -152,9 +152,8 @@ function paramChange () {
     
     function _displayWork (l, defineFormatter, schema, metadata) {
         var ta = defineFormatter('tablealias');
-        var th = defineFormatter('tableheading');
         var fn = defineFormatter(['fieldname', work]);
-        
+
         // Returns plain text node or bdo element (as Jamilih) with fallback direction
         var ld = function (key, values, formats) {
             return l({key: key, values: values, formats: formats, fallback: function (obj) {
@@ -446,7 +445,7 @@ function paramChange () {
             'div',
             {'class': 'focus'},
             [
-                ['h2', [th(work)]],
+                ['h2', [ld(['tableheading', work])]],
                 ['br'],
                 ['form', {name: 'browse'}, [
                     ['table', {align: 'center'}, content],
