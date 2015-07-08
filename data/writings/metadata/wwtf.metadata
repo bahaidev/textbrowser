@@ -4,7 +4,7 @@
         "default_view": {"Section": 0}
     },
     "fields": {
-        "Text (Chinese)": {
+        "Chinese": {
             "lang": "zh-CN",
             "orig_langs": ["en"]
         }
