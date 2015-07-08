@@ -153,7 +153,6 @@ function paramChange () {
     }
     
     function _displayWork (l, defineFormatter, schema, metadata) {
-        var fn = defineFormatter(['fieldname', work]);
 
         // Returns plain text node or element (as Jamilih) with fallback direction
         var ld = function (key, values, formats) {
@@ -397,7 +396,7 @@ function paramChange () {
                                 var fn = getFieldAliasOrName(field);
                                 return (j !== i) ?
                                     ['option', {value: j}, [fn]] :
-                                    ['option', {value: j, selected: 'selected'}, [fn]]
+                                    ['option', {value: j, selected: 'selected'}, [fn]];
                             })
                         ]
                     ]),
