@@ -6,7 +6,6 @@ Todos (higher priority)
 
 1. Waiting version update: Add and make use of updated json-refs to make single resolveRemoteRef call and try new relative refs feature.
 
-1. Add numbers for columns (for the sake of the user adding the numbers in the comma-separated interlinear field)
 1. Consider moving table-specific/field-specific locale data to metadata file for modularity; then avoid unchecking when clicking button re: matching current locale if fieldvalue is present (i.e., replace hasFieldvalue functionality)
 1. Split Baha'i texts into a separate repo and add todo there: Suggest API to Baha'i World Centre to automatically (and periodically) parse their texts into JSON here to ensure we have the most up-to-date and corrected translations
     1. The base code of browse0.php, browse.php, browse9.php are all XHTML compliant, but there are a good number of invalid XHTML in the JSON databases Qur'an and Bible (links w/o quotes) that would ideally be replaced as well as the XHTML and link locations in the Iqan copy (just to be nice and clean)
@@ -409,6 +408,9 @@ function paramChange () {
 
         var columnsTable = ['table', {border: '1', cellpadding: '5', align: 'center'}, [
             ['tr', [
+                ['th', [
+                    ld("fieldno")
+                ]],
                 ['th', {align: 'left', width: '20'}, [
                     ld("field_enabled")
                 ]],
@@ -431,6 +433,7 @@ function paramChange () {
                 var fieldIndex = 'field' + idx;
                 var fieldParam = $p(fieldIndex);
                 return ['tr', [
+                    ['td', [String(idx)]],
                     le("check-columns-to-browse", 'td', 'title', {}, [
                         le("yes", 'input', 'value', {'class': 'fieldSelector', id: checkedIndex, name: checkedIndex, checked: $p(checkedIndex) === 'No' ? undefined : 'checked', type: 'checkbox'})
                     ]),
@@ -446,7 +449,7 @@ function paramChange () {
                         ]
                     ]),
                     ['td', [ // Todo: Make as tag selector with fields as options
-                        ['input', {name: 'interlin' + idx, value: $p('interlin' + idx)}]
+                        le("interlinear-tips", 'input', 'title', {name: 'interlin' + idx, value: $p('interlin' + idx)})
                     ]],
                     ['td', [ // Todo: Make as CodeMirror-highlighted CSS
                         ['input', {name: 'css' + idx, value: $p('css' + idx)}]
@@ -457,7 +460,7 @@ function paramChange () {
                 ]];
             })},
             ['tr', [
-                ['td', {colspan: 2}, [
+                ['td', {colspan: 3}, [
                     le("check_all", 'input', 'value', {type: 'button', $on: {click: function () {
                         Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) {
                             checkbox.checked = true;

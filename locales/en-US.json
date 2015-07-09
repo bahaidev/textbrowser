@@ -160,6 +160,7 @@
     "fieldsearch": "Search",
     "check-columns-to-browse": "Check the columns you wish to browse",
     "check-sequence": "Check the sequence (you can choose the same field twice if you wish)",
+    "interlinear-tips": "Add a comma-separated list of column numbers to be added to the current column interlinearly",
     "all_langs": "All languages",
     "lang_en": "English",
     "lang_fr": "French",
