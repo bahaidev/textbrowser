@@ -475,7 +475,8 @@ function paramChange () {
                     le("checkmark_locale_fields_only", 'input', 'value', {type: 'button', $on: {click: function () {
                         // Todo: remember this locales choice by cookie?
                         fields.forEach(function (field, i) {
-                            var currFieldValue = fields[document.querySelector('#field' + i).value];
+                            var idx = i + 1;
+                            var currFieldValue = fields[document.querySelector('#field' + idx).value];
                             var metaFieldInfo = metadata && metadata.fields && metadata.fields[currFieldValue];
                             var metaLang;
                             if (metaFieldInfo) {
@@ -486,12 +487,12 @@ function paramChange () {
                             if ((metaFieldInfo && metaFieldInfo.hasFieldvalue) || // If this is a localized field (e.g., enum), we don't want to avoid as may be translated (should check though)
                                 [preferredLocale, higherLocale].indexOf(metaLang) > -1
                             ) {
-                                document.querySelector('#checked' + i).checked = true;
+                                document.querySelector('#checked' + idx).checked = true;
                             }
                             else if (!schemaItems.some(function (item) {
                                 return item.title === currFieldValue && item.type !== 'string';
                             })) {
-                                document.querySelector('#checked' + i).checked = false;
+                                document.querySelector('#checked' + idx).checked = false;
                             }
                         });
                     }}})
