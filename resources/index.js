@@ -338,6 +338,10 @@ function paramChange () {
                         Object.keys(formParamsHash).forEach(function (key) {
                             paramsCopy.set(key, formParamsHash[key]);
                         });
+                        Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) { // We want checkboxes to typically show by default, so we cannot use the standard serialization
+                            paramsCopy['delete'](checkbox.name); // Let's ensure the checked items are all together (at the end)
+                            paramsCopy.set(checkbox.name, checkbox.checked ? 'Yes' : 'No');
+                        });
                         paramsCopy.set('random', 'on');
                         paramsCopy.set('result', 'true');
                         document.querySelector('#randomURL').value = window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
@@ -427,7 +431,7 @@ function paramChange () {
                 var fieldParam = $p(fieldIndex);
                 return ['tr', [
                     le("check-columns-to-browse", 'td', 'title', {}, [
-                        le("yes", 'input', 'value', {'class': 'fieldSelector', id: checkedIndex, name: checkedIndex, checked: $p(checkedIndex) === '0' ? undefined : 'checked', type: 'checkbox'})
+                        le("yes", 'input', 'value', {'class': 'fieldSelector', id: checkedIndex, name: checkedIndex, checked: $p(checkedIndex) === 'No' ? undefined : 'checked', type: 'checkbox'})
                     ]),
                     le("check-sequence", 'td', 'title', {}, [
                         ['select', {name: fieldIndex, id: fieldIndex, size: '1'},
