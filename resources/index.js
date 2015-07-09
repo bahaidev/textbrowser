@@ -1,5 +1,5 @@
 /*globals formSerialize, JsonRefs, IMF, getJSON, jml, URLSearchParams*/
-/*jslint vars:true, todo:true*/
+/*jslint vars:true, regexp:true, todo:true*/
 
 /*
 Todos (higher priority)
@@ -68,7 +68,7 @@ function paramChange () {
     var work = $p('work');
     var result = $p('result');
 
-    function languageSelect (l, defineFormatter) {
+    function languageSelect (l/*, defineFormatter*/) {
         document.title = l("browserfile");
         jml('div', {'class': 'focus'},
             [['select', {size: langs.length, $on: {change: function (e) {
@@ -88,7 +88,7 @@ function paramChange () {
         );
     }
     
-    function workSelect (l, defineFormatter) {
+    function workSelect (l/*, defineFormatter*/) {
         document.title = l({key: "browserfile-workselect", fallback: true});
 
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
@@ -505,7 +505,7 @@ function paramChange () {
         ]];
 
         
-        var arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
+        // var arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
         
         jml(
             'div',
@@ -799,14 +799,14 @@ function paramChange () {
         });
     }
     
-    function resultsDisplay (l, defineFormatter) {
+    function resultsDisplay (l/*, defineFormatter*/) {
         // Will need to retrieve fileData as above (abstract?)
         // document.title = l({key: "browserfile-resultsdisplay", values: {work: fileData ?
         //    l({key: ["tablealias", work], fallback: true}) : ''
         //}, fallback: true});
     }
 
-    function localeCallback (l) {
+    function localeCallback (/*l, defineFormatter*/) {
         if (!languageParam) {
             languageSelect.apply(null, arguments);
             return;
