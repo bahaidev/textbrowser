@@ -80,6 +80,7 @@
     "field_title_tips": "You can alter the sequence of the fields in your browsing view by changing any fields below (you can even choose the same field twice if you wish).",
     "uncheck_all": "Uncheck",
     "checkmark_locale_fields_only": "Check fields whose content matches current locale",
+    "save-settings-URL": "Save settings as URL",
     "headerfixed-wishtoscroll": "Table header fixed (if possible)",
     "atonce": "at once",
     "set": "Set",

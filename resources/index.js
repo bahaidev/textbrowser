@@ -176,6 +176,26 @@ function paramChange () {
         var schemaItems = schema.items.items;
         var content = [];
         
+        function serializeParamsAsURL (cb) {
+            var paramsCopy = new URLSearchParams(params);
+            var formParamsHash = formSerialize(document.querySelector('form[name=browse]'), {hash:true});
+            
+            Object.keys(formParamsHash).forEach(function (key) {
+                paramsCopy.set(key, formParamsHash[key]);
+            });
+            
+            // Follow the same style (and order) for checkboxes
+            paramsCopy['delete']('rand');
+            paramsCopy.set('rand', document.querySelector('#rand').checked ? 'Yes' : 'No');
+
+            Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) { // We want checkboxes to typically show by default, so we cannot use the standard serialization
+                paramsCopy['delete'](checkbox.name); // Let's ensure the checked items are all together (at the end)
+                paramsCopy.set(checkbox.name, checkbox.checked ? 'Yes' : 'No');
+            });
+            
+            cb(paramsCopy);
+            return window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
+        }
         function getFieldAliasOrName (field) {
             var fieldName;
             var fieldAlias = metadata.fields && metadata.fields[field] && metadata.fields[field].alias;
@@ -324,7 +344,7 @@ function paramChange () {
                 ['td', {colspan: 12, align: 'center'}, [
                     // Todo: Could allow random with fixed starting and/or ending range
                     ['label', [
-                        ['input', {name: 'random', type: 'checkbox', checked: $p('random')}],
+                        ['input', {id: 'rand', name: 'rand', type: 'checkbox', value: 'Yes', checked: ($p('rand') === 'Yes' ? 'checked' : undefined)}],
                         ld("rnd"), nbsp.repeat(3)
                     ]],
                     ['label', [
@@ -333,22 +353,12 @@ function paramChange () {
                     ]],
                     nbsp.repeat(3),
                     le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
-                        var paramsCopy = new URLSearchParams(params);
-                        var formParamsHash = formSerialize(document.querySelector('form[name=browse]'), {hash:true});
-                        
-                        Object.keys(formParamsHash).forEach(function (key) {
-                            paramsCopy.set(key, formParamsHash[key]);
+                        var url = serializeParamsAsURL(function (paramsCopy) {
+                            paramsCopy['delete']('random'); // In case it was added previously on this page, let's put random again toward the end
+                            paramsCopy.set('random', 'Yes');
+                            paramsCopy.set('result', 'Yes');
                         });
-                        Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) { // We want checkboxes to typically show by default, so we cannot use the standard serialization
-                            paramsCopy['delete'](checkbox.name); // Let's ensure the checked items are all together (at the end)
-                            paramsCopy.set(checkbox.name, checkbox.checked ? 'Yes' : 'No');
-                        });
-                        
-                        paramsCopy['delete']('random'); // In case it was added previously on this page, let's put random again toward the end
-                        paramsCopy.set('random', 'Yes');
-                        paramsCopy.set('result', 'Yes');
-                        
-                        document.querySelector('#randomURL').value = window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
+                        document.querySelector('#randomURL').value = url;
                     }}}),
                     ['input', {id: 'randomURL', type: 'text'}]
                 ]]
@@ -514,7 +524,16 @@ function paramChange () {
                         ['br'], ['br'],
                         ['table', {border: '1', align: 'center', cellpadding: '5'}, [
                             ['tr', {valign: 'top'}, [
-                                ['td', [columnsTable]],
+                                ['td', [
+                                    columnsTable,
+                                    le("save-settings-URL", 'input', 'value', {type: 'button', $on: {click: function () {
+                                        var url = serializeParamsAsURL(function (paramsCopy) {
+                                            paramsCopy['delete']('random'); // In case it was added previously on this page, let's remove it
+                                        });
+                                        document.querySelector('#settings-URL').value = url;
+                                    }}}),
+                                    ['input', {id: 'settings-URL'}]
+                                ]],
                                 ['td', [
                                     ['h3', [ld("advancedformatting")]],
                                     ['label', [
