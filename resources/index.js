@@ -582,10 +582,16 @@ function paramChange () {
                                     ['label', [
                                         ld("font_style"), nbsp,
                                         ['select', {name: 'fontstyle'}, [
-                                            lo("italic", {value: 'italic'}),
-                                            lo("fontstyle_normal", {value: 'normal', selected: 'selected'}),
-                                            lo("oblique", {value: 'oblique'})
-                                        ]]
+                                            'italic',
+                                            'normal',
+                                            'oblique'
+                                        ].map(function (fontstyle, i) {
+                                            var atts = {value: fontstyle};
+                                            if ($p('fontstyle') === fontstyle || (i === 1 && !params.has('fontstyle'))) {
+                                                atts.selected = 'selected';
+                                            }
+                                            return lo("fontstyle_" + fontstyle, atts);
+                                        })]
                                     ]],
                                     ['br'],
                                     ['label', [
