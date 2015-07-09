@@ -14,6 +14,7 @@ Todos (higher priority)
     1. Consider using prefer_alias for field alias use and optionally show both?
 1. Remove "numbers only" strings (including from locale files?) if allowing for aliased searches (e.g., "Gen")
 1. Review code for readability
+1. Schema-aware and metadata-aware column sorting with user customizability (i.e., presorting along with dynamic client-side after-load sorting, with or without search filtering)
 1. Get the automated fields listed in drop-down menus; also new overlay type (See README todos)
 
 Todos (for browse9.php)
