@@ -11,16 +11,16 @@ Todos (higher priority)
     1. The base code of browse0.php, browse.php, browse9.php are all XHTML compliant, but there are a good number of invalid XHTML in the JSON databases Qur'an and Bible (links w/o quotes) that would ideally be replaced as well as the XHTML and link locations in the Iqan copy (just to be nice and clean)
     1. Upload newer Collins and fix any bugs in formatting.
     1. Add Collins langauge metadata for each field
-
 1. Choose clearer naming/structure for locale table/field keys
     1. Consider tablealias and default to table or something (as fieldalias defaults to fieldname); aliased heading (also used as the title of the page)
-1. Options to have range of context and range for highlighting (with own styles) and anchoring
+1. Review code for readability, refactoring opportunities
+
 1. Aliases
     1. Consider using prefer_alias for field alias use and optionally show both if not given (e.g., for Bible books with prefer_alias, show only the pull-down of books whereas with the Qur'an link a pull-down of Surah names to a textbox allowing numbers)?
     1. Remove locale info for "numbers only" string key (including from locale files?) if allowing for aliased searches (e.g., "Gen")
-1. Review code for readability, refactoring opportunities
-1. Get the automated fields listed in drop-down menus; also new overlay type (See README todos)
+1. Options to have range of context and range for highlighting (with own styles) and anchoring
 1. Schema-aware and metadata-aware column sorting options (e.g., sort by order and asc/desc) with user customizability (i.e., presorting along with dynamic client-side after-load sorting, with or without search filtering)
+1. Get the automated fields listed in drop-down menus; also new overlay type (See README todos)
 
 Todos (for browse9.php)
 1. Handle defaults for empty boxes if not already
