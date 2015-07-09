@@ -167,7 +167,7 @@ $colorName = $_GET['colorName'];
 $color = $_GET['color'];
 $bgcolorName = $_GET['bgcolorName'];
 $bgcolor = $_GET['bgcolor'];
-$font = $_GET['font'];
+$fontSeq = $_GET['fontSeq'];
 $fontstyle = $_GET['fontstyle'];
 $fontvariant = $_GET['fontvariant'];
 $fontweight = $_GET['fontweight'];
@@ -336,7 +336,7 @@ print $fontsize;
 print ";
 
 font-family: ";
-print $font;
+print $fontSeq;
 
 
 //Removed following as aren't supported in browsers; did letter-spacing instead

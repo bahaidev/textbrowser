@@ -384,36 +384,36 @@ function paramChange () {
             'yellow'
         ];
         var fonts = [
-            ['Helvetica, sans-serif'],
-            ['Verdana, sans-serif'],
-            ['Gill Sans, sans-serif'],
-            ['Avantgarde, sans-serif'],
-            ['Helvetica Narrow, sans-serif'],
-            ['sans-serif'],
-            ['Times, serif'],
-            ['Times New Roman, serif'],
-            ['Palatino, serif'],
-            ['Bookman, serif'],
-            ['New Century Schoolbook, serif'],
-            ['serif'],
-            ['Andale Mono, monospace'],
-            ['Courier New, monospace'],
-            ['Courier, monospace'],
-            ['Lucidatypewriter, monospace'],
-            ['Fixed, monospace'],
-            ['monospace'],
-            ['Comic Sans, Comic Sans MS, cursive'],
-            ['Zapf Chancery, cursive'],
-            ['Coronetscript, cursive'],
-            ['Florence, cursive'],
-            ['Parkavenue, cursive'],
-            ['cursive'],
-            ['Impact, fantasy'],
-            ['Arnoldboecklin, fantasy'],
-            ['Oldtown, fantasy'],
-            ['Blippo, fantasy'],
-            ['Brushstroke, fantasy'],
-            ['fantasy']
+            'Helvetica, sans-serif',
+            'Verdana, sans-serif',
+            'Gill Sans, sans-serif',
+            'Avantgarde, sans-serif',
+            'Helvetica Narrow, sans-serif',
+            'sans-serif',
+            'Times, serif',
+            'Times New Roman, serif',
+            'Palatino, serif',
+            'Bookman, serif',
+            'New Century Schoolbook, serif',
+            'serif',
+            'Andale Mono, monospace',
+            'Courier New, monospace',
+            'Courier, monospace',
+            'Lucidatypewriter, monospace',
+            'Fixed, monospace',
+            'monospace',
+            'Comic Sans, Comic Sans MS, cursive',
+            'Zapf Chancery, cursive',
+            'Coronetscript, cursive',
+            'Florence, cursive',
+            'Parkavenue, cursive',
+            'cursive',
+            'Impact, fantasy',
+            'Arnoldboecklin, fantasy',
+            'Oldtown, fantasy',
+            'Blippo, fantasy',
+            'Brushstroke, fantasy',
+            'fantasy'
         ];
                 
         var fields = schemaItems.map(function (schemaItem) {
@@ -570,8 +570,12 @@ function paramChange () {
                                     ['label', [
                                         ld("text_font"),
                                         // Todo: remove hard-coded direction if i81nizing
-                                        ['select', {name: 'font', dir: 'ltr'}, fonts.map(function (fonts, i) {
-                                            return (i === 7) ? ['option', {selected: 'selected'}, fonts] : ['option', fonts];
+                                        ['select', {name: 'fontSeq', dir: 'ltr'}, fonts.map(function (fontSeq, i) {
+                                            var atts = {value: fontSeq};
+                                            if ($p('fontSeq') === fontSeq || (i === 7 && !params.has('fontSeq'))) {
+                                                atts.selected = 'selected';
+                                            }
+                                            return ['option', atts, [fontSeq]];
                                         })]
                                     ]],
                                     ['br'], ['br'],
