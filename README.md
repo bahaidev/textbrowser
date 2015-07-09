@@ -67,6 +67,7 @@ Be sure to add any new files to the AppCache manifest file (see the "Usage" sect
 
 1. Add link color (browse.php and browse9.php) as option to advanced formatting
 1. Sort file selection listing per locale?
+1. Node.js synchronization of locale files?
 1. Might support arbitary JSON and JSON Reference querying (if files.json configured to indicate a wildcard or something)
 1. Update "about" text in locales and utilize on popup or something?
 1. Assistant file (for translating; needs server for password)
