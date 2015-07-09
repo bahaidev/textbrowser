@@ -47,6 +47,8 @@ Be sure to add any new files to the AppCache manifest file (see the "Usage" sect
         1. Deal with other metadata/automated (besides overlays) which is intended to allow collapsing of ranges (above paragraph cells, but may overlap); do as multiple tbodies but needs to be done dynamically since may wish alternate (and nestable) collapsing (e.g., collection->book->chapter, user-contributed metadata sections, etc.); allow collapsing/expanding of all fields by one click button outside table (or by level); allow automated collapsing based on sequentially exact values (e.g., until rows stop having a column with value "1")
         1. Allow collapsing even within cells (as with overlays) like Baha'i Translation could have been. Also make non-metadata regions collapsible so can hide them from view.
         1. Allow something to be prefixed to interlinear number to indicate the field should be treated as an overlay (tooltip); if so, may need tooltip to be in blocks in case multiple columns added. But also need to have section for automated fields separate  from the regular fields for those fields which do not map exclusively by cell boundaries (or relatively within them).
+        1. Allow types of overlays (or "mashes") such as underlays (adding invisible metadata), onlays/"mash ons" (replacing text in place), as well as regular overlays (adding text via mouseover)
+        1. Allow for dynamic addition of JSON overlay sources or metadata to work selection/work display files?
     1. Note-taking (local/remote and wiki WYSIWYG with Git version control?)
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)
 1. Go to previous/next results (allow customization of size on the fly as well as in preferences)
