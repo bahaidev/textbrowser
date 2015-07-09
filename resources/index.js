@@ -187,8 +187,8 @@ function paramChange () {
             // Follow the same style (and order) for checkboxes
             paramsCopy['delete']('rand');
             paramsCopy.set('rand', document.querySelector('#rand').checked ? 'Yes' : 'No');
-
-            Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) { // We want checkboxes to typically show by default, so we cannot use the standard serialization
+            
+            Array.from(document.querySelectorAll('input[type=checkbox]')).forEach(function (checkbox) { // We want checkboxes to typically show by default, so we cannot use the standard serialization
                 paramsCopy['delete'](checkbox.name); // Let's ensure the checked items are all together (at the end)
                 paramsCopy.set(checkbox.name, checkbox.checked ? 'Yes' : 'No');
             });
@@ -637,12 +637,12 @@ function paramChange () {
                                     ['br'],['br'],
                                     ['label', [
                                         ld("letter_spacing"), " (normal, .9em, -.05cm): ",
-                                        ['input', {name: 'letterspacing', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
+                                        ['input', {name: 'letterspacing', type: 'text', value: params.has('letterspacing') ? $p('letterspacing') : 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
                                     ['label', [
                                         ld("line_height"), " (normal, 1.5, 22px, 150%): ",
-                                        ['input', {name: 'lineheight', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
+                                        ['input', {name: 'lineheight', type: 'text', value: params.has('lineheight') ? $p('lineheight') : 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],['br'],
                                     le("tableformatting_tips", 'h3', 'title', {}, [
@@ -650,26 +650,24 @@ function paramChange () {
                                     ]),
                                     ['div', [
                                         ld("header_wstyles"), nbsp.repeat(2),
-                                        ['label', [
-                                            ['input', {name: 'headings', type: 'radio', value: 'y'}],
-                                            ld("yes"), nbsp.repeat(3)
-                                        ]],
-                                        ['label', [
-                                            ['input', {name: 'headings', type: 'radio', value: 'n', checked: 'checked'}],
-                                            ld("no"), nbsp.repeat(3)
-                                        ]],
-                                        ['label', [
-                                            ['input', {name: 'headings', type: 'radio', value: '0'}],
-                                            ld("none")
-                                        ]]
+                                        {'#': [
+                                            ['yes', 'y'],
+                                            ['no', 'n'],
+                                            ['none', '0']
+                                        ].map(function (headings, i, arr) {
+                                            return ['label', [
+                                                ['input', {name: 'headings', type: 'radio', value: headings[1], checked: $p('headings') === headings[1] || (!params.has('headings') && i === 1) ? 'checked' : undefined}],
+                                                ld(headings[0]), (i === arr.length - 1 ? '' : nbsp.repeat(3))
+                                            ]];
+                                        })}
                                     ]],
                                     ['label', [
-                                        ['input', {name: 'wishcaption', type: 'checkbox'}],
+                                        ['input', {name: 'wishcaption', type: 'checkbox', value: 'Yes', checked: $p('wishcaption') === 'Yes' ? 'checked' : undefined}],
                                         nbsp.repeat(2), ld("wishcaption")
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        ['input', {name: 'headerfixed', type: 'checkbox'}],
+                                        ['input', {name: 'headerfixed', type: 'checkbox', value: 'Yes', checked: $p('headerfixed') === 'Yes' ? 'checked' : undefined}],
                                         nbsp.repeat(2), ld("headerfixed-wishtoscroll")
                                     ]],
                                     ['br'],
@@ -686,7 +684,7 @@ function paramChange () {
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        ['input', {name: 'transpose', type: 'checkbox', value: '1'}],
+                                        ['input', {name: 'transpose', type: 'checkbox', value: 'Yes', checked: $p('transpose') === 'Yes' ? 'checked' : undefined}],
                                         nbsp.repeat(2), ld("transpose")
                                     ]],
                                     ['br'],['br'],
