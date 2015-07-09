@@ -539,24 +539,32 @@ function paramChange () {
                                     ['label', [
                                         ld("textcolor"),
                                         ['select', {name: 'colorName'}, colors.map(function (color, i) {
-                                            return i === 1 ? lo(color, {selected: 'selected', value: color}) : lo(color, {value: color});
+                                            var atts = {value: color};
+                                            if ($p('colorName') === color || (i === 1 && !params.has('colorName'))) {
+                                                atts.selected = 'selected';
+                                            }
+                                            return lo(color, atts);
                                         })]
                                     ]],
                                     
                                     ['label', [
                                         nbsp, ld("or_entercolor"),
-                                        ['input', {name: 'color', type: 'text', value: '#', size: '7', maxlength: '7'}]
+                                        ['input', {name: 'color', type: 'text', value: ($p('color') || '#'), size: '7', maxlength: '7'}]
                                     ]],
                                     ['br'], ['br'],
                                     ['label', [
                                         ld("backgroundcolor"),
                                         ['select', {name: 'bgcolorName'}, colors.map(function (color, i) {
-                                            return i === 14 ? lo(color, {selected: 'selected', value: color}) : lo(color, {value: color});
+                                            var atts = {value: color};
+                                            if ($p('bgcolorName') === color || (i === 14 && !params.has('bgcolorName'))) {
+                                                atts.selected = 'selected';
+                                            }
+                                            return lo(color, atts);
                                         })]
                                     ]],
                                     ['label', [
                                         nbsp, ld("or_entercolor"),
-                                        ['input', {name: 'bgcolor', type: 'text', value: '#', size: '7', maxlength: '7'}]
+                                        ['input', {name: 'bgcolor', type: 'text', value: ($p('bgcolor') || '#'), size: '7', maxlength: '7'}]
                                     ]],
                                     ['br'], ['br'],
                                     ['label', [
