@@ -35,7 +35,7 @@ Be sure to add any new files to the AppCache manifest file (see the "Usage" sect
 # Todos
 
 1. See also todos inside index.js
-1. Separate formatting within Jamilih code
+1. Separate formatting within Jamilih code to CSS
 1. Node.js (or PHP) for serving JSON files immediately and then injecting config for index.js to avoid reloading
 1. Make Node.js/PHP tools to build languages.json based on available locale files, and build appdata/files.json based on a target directory.
 1. Add/Add back automated: Synopsis, Roman numerals (pm, gwb), Chinese numbers, word-by-word translation (Persian/Arabic/German/English), auto-romanized Persian (Baha'i-style with help link to http://bahai9.com/wiki/Pronunciation ), Persian with English tooltips, English with Persian tooltips, text-to-(Google search, Google define, Wikipedia, bahai9.com edit pages); add Word-by-word/phrase mapping
