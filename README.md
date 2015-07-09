@@ -72,6 +72,7 @@ Be sure to add any new files to the AppCache manifest file (see the "Usage" sect
 1. Add tooltips and table summaries, etc. back (see locale file for these and reapply any other unused)
 1. Add any other reasonable browse_options (e.g., to Collins esp.)
 1. Add "By page" for the Aqdas (once parsed by page)
+1. Change "Saving settings as URL" to a redirect if faithfully copying everything?
 
 # History
 
