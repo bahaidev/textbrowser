@@ -18,6 +18,7 @@ Todos (higher priority)
     1. Remove locale info for "numbers only" string key (including from locale files?) if allowing for aliased searches (e.g., "Gen")
 1. Review code for readability, refactoring opportunities
 1. Get the automated fields listed in drop-down menus; also new overlay type (See README todos)
+1. Schema-aware and metadata-aware column sorting options (e.g., sort by order and asc/desc) with user customizability (i.e., presorting along with dynamic client-side after-load sorting, with or without search filtering)
 
 Todos (for browse9.php)
 1. Handle defaults for empty boxes if not already
