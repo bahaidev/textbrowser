@@ -674,11 +674,11 @@ function paramChange () {
                                     ['label', [
                                         ld("table_wborder"), nbsp.repeat(2),
                                         ['label', [
-                                            ['input', {name: 'border', type: 'radio', value: '1', checked: 'checked'}],
+                                            ['input', {name: 'border', type: 'radio', value: '1', checked: $p('border') !== '0' ? 'checked' : undefined}],
                                             ld("yes"), nbsp.repeat(3)
                                         ]],
                                         ['label', [
-                                            ['input', {name: 'border', type: 'radio', value: '0'}],
+                                            ['input', {name: 'border', type: 'radio', value: '0', checked: $p('border') === '0' ? 'checked' : undefined}],
                                             ld("no")
                                         ]]
                                     ]],
@@ -693,13 +693,17 @@ function paramChange () {
                                     ]),
                                     le("outputmode_tips", 'label', 'title', {}, [
                                         ld("outputmode"),
-                                        ['select', [
+                                        ['select', {name: 'outputmode'}, [
                                             'table',
                                             'div',
                                             'json-array',
                                             'json-object'
                                         ].map(function (mode) {
-                                            return lo("outputmode_" + mode, {value: mode});
+                                            var atts = {value: mode};
+                                            if ($p('outputmode') === mode) {
+                                                atts.selected = 'selected';
+                                            }
+                                            return lo("outputmode_" + mode, atts);
                                         })]
                                     ])
                                 ]]
