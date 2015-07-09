@@ -476,11 +476,10 @@ function paramChange () {
                         // Todo: remember this locales choice by cookie?
                         fields.forEach(function (field, i) {
                             var idx = i + 1;
-                            var currFieldValue = fields[document.querySelector('#field' + idx).value];
-                            var metaFieldInfo = metadata && metadata.fields && metadata.fields[currFieldValue];
+                            var metaFieldInfo = metadata && metadata.fields && metadata.fields[field];
                             var metaLang;
                             if (metaFieldInfo) {
-                                metaLang = metadata.fields[currFieldValue].lang;
+                                metaLang = metadata.fields[field].lang;
                             }
                             var higherLocale = preferredLocale.replace(/\-.*$/, '');
 
@@ -490,9 +489,12 @@ function paramChange () {
                                 document.querySelector('#checked' + idx).checked = true;
                             }
                             else if (!schemaItems.some(function (item) {
-                                return item.title === currFieldValue && item.type !== 'string';
+                                return item.title === field && item.type !== 'string';
                             })) {
                                 document.querySelector('#checked' + idx).checked = false;
+                            }
+                            else {
+                                document.querySelector('#checked' + idx).checked = true;
                             }
                         });
                     }}})

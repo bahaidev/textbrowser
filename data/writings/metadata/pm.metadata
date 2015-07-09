@@ -4,7 +4,7 @@
         "default_view": {"Number": 1}
     },
     "fields": {
-        "Text": {
+        "English": {
             "primary_text_field": true,
             "lang": "en"
         },
