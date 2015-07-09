@@ -16,6 +16,7 @@ Todos (higher priority)
 1. Review code for readability
 1. Schema-aware and metadata-aware column sorting with user customizability (i.e., presorting along with dynamic client-side after-load sorting, with or without search filtering)
 1. Get the automated fields listed in drop-down menus; also new overlay type (See README todos)
+1. Add numbers for columns (for the sake of the user adding the numbers in the comma-separated interlinear field)
 
 Todos (for browse9.php)
 1. Handle defaults for empty boxes if not already
