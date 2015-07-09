@@ -8,6 +8,8 @@ Todos (higher priority)
 
 1. Consider moving table-specific/field-specific locale data to metadata file for modularity; then avoid unchecking when clicking button re: matching current locale if fieldvalue is present (i.e., replace hasFieldvalue functionality)
 1. Split Baha'i texts into a separate repo and add todo there: Suggest API to Baha'i World Centre to automatically (and periodically) parse their texts into JSON here to ensure we have the most up-to-date and corrected translations
+    1. The base code of browse0.php, browse.php, browse9.php are all XHTML compliant, but there are a good number of invalid XHTML in the JSON databases Qur'an and Bible (links w/o quotes) that would ideally be replaced as well as the XHTML and link locations in the Iqan copy (just to be nice and clean)
+    1. Upload newer Collins and fix any bugs in formatting.
 
 1. Choose clearer naming/structure for locale table/field keys
     1. Consider tablealias and default to table or something (as fieldalias defaults to fieldname); aliased heading (also used as the title of the page)
@@ -22,21 +24,6 @@ Todos (for browse9.php)
 1. Handle defaults for empty boxes if not already
 1. Test all locales and works and combos
 1. Utilize prefer_alias
-
-Todos (lower priority)
-1. Sort file selection listing per locale?
-1. Might support arbitary JSON and JSON Reference querying (if files.json configured to indicate "*" or something)
-1. filetypes.json for app and schema association? (files.json for permitted files - a file which could be auto-created, e.g., if server permits all in a directory); especially potentially useful with JSONEditor to allow editing of these files, app types:
-    1. langs + locale / locale only
-    1. files/dbs->file (supply language choice)->file contents
-    1. schemas
-1. Note-taking (local/remote and wiki WYSIWYG with Git version control?)
-1. Node.js (or PHP) for serving JSON files immediately and then injecting config for index.js to avoid reloading
-1. Update "about" text in locales and utilize on popup or something?
-1. Assistant file (for translating; needs server for password)
-1. Add tooltips and table summaries, etc. back (see locale file for these and reapply any other unused)
-1. Add any other reasonable browse_options (e.g., to Collins esp.)
-1. Add "By page" for the Aqdas (once parsed by page)
 */
 
 (function () {'use strict';
