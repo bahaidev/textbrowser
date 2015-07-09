@@ -83,6 +83,24 @@
         "Bahá'í Translation": {
             "primary_text_field": true,
             "lang": "en"
+        },
+        "Bahá'í Central Figures References": {
+            "lang": "en"
+        },
+        "Bahá'í Special References": {
+            "lang": "en"
+        },
+        "Pilgrim's Notes References": {
+            "lang": "en"
+        },
+        "Cross-Bible References": {
+            "lang": "en"
+        },
+        "Individual Bahá'í Scholars": {
+            "lang": "en"
+        },
+        "Qur'ánic References": {
+            "lang": "en"
         }
     }
 }

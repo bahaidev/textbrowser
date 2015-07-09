@@ -136,6 +136,21 @@
             "primary_text_field": true,
             "lang": "en",
             "orig_langs": ["ar"]
+        },
+        "Sale's Notes": {
+            "lang": "en"
+        },
+        "Bahá'í References (Central Figures)": {
+            "lang": "en"
+        },
+        "Bahá'í Translation (Shoghi Effendi unless otherwise noted)": {
+            "lang": "en"
+        },
+        "Bahá'í References (Special)": {
+            "lang": "en"
+        },
+        "Rodwell's Notes": {
+            "lang": "en"
         }
     }
 }
