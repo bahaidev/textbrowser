@@ -335,6 +335,7 @@ function paramChange () {
                     le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
                         var paramsCopy = new URLSearchParams(params);
                         var formParamsHash = formSerialize(document.querySelector('form[name=browse]'), {hash:true});
+                        
                         Object.keys(formParamsHash).forEach(function (key) {
                             paramsCopy.set(key, formParamsHash[key]);
                         });
@@ -342,8 +343,11 @@ function paramChange () {
                             paramsCopy['delete'](checkbox.name); // Let's ensure the checked items are all together (at the end)
                             paramsCopy.set(checkbox.name, checkbox.checked ? 'Yes' : 'No');
                         });
-                        paramsCopy.set('random', 'on');
-                        paramsCopy.set('result', 'true');
+                        
+                        paramsCopy['delete']('random'); // In case it was added previously on this page, let's put random again toward the end
+                        paramsCopy.set('random', 'Yes');
+                        paramsCopy.set('result', 'Yes');
+                        
                         document.querySelector('#randomURL').value = window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
                     }}}),
                     ['input', {id: 'randomURL', type: 'text'}]
