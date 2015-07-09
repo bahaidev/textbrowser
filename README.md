@@ -3,6 +3,10 @@ Due to changes in PHP, the code is no longer working and needs a rewrite.
 However, I have begun to rewrite in client-side JavaScript so that
 it can work offline.
 
+# Usage
+
+Copy the file `textbrowser-sample.appcache` as `textbrowser.appcache` and add any other files required by your application that you wish to be accessible in offline mode. (HTML currently only allows one cache file apparently as per <https://html.spec.whatwg.org/multipage/semantics.html#attr-html-manifest>.)
+
 ----
 2005-12-22
 
