@@ -597,23 +597,23 @@ function paramChange () {
                                     ['label', [
                                         ld("font_variant"), nbsp.repeat(3),
                                         ['label', [
-                                            ['input', {name: 'fontvariant', type: 'radio', value: 'normal'}],
+                                            ['input', {name: 'fontvariant', type: 'radio', value: 'normal', checked: $p('font_variant') !== 'small-caps' ? 'checked' : undefined}],
                                             ld("fontvariant_normal"), nbsp
                                         ]],
                                         ['label', [
-                                            ['input', {name: 'fontvariant', type: 'radio', value: 'small-caps'}],
+                                            ['input', {name: 'fontvariant', type: 'radio', value: 'small-caps', checked: $p('fontvariant') === 'small-caps' ? 'checked' : undefined}],
                                             ld("smallcaps"), nbsp
                                         ]]
                                     ]],
                                     ['br'],
                                     ['label', [
                                         ld("font_weight"), " (normal, bold, 100-900, etc.): ", // Todo: i18n and allow for normal/bold pulldown and float input?
-                                        ['input', {name: 'fontweight', type: 'text', value: 'normal', size: '7', maxlength: '12'}]
+                                        ['input', {name: 'fontweight', type: 'text', value: params.has('fontweight') ? $p('fontweight') : 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
                                     ['label', [
                                         ld("font_size"), " (14pt, 14px, small, 75%, etc.): ",
-                                        ['input', {name: 'fontsize', type: 'text', value: '', size: '7', maxlength: '12'}]
+                                        ['input', {name: 'fontsize', type: 'text', value: $p('fontsize'), size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
                                     /*
@@ -626,7 +626,7 @@ function paramChange () {
                                         ['select', {name: 'fontstretch'},
                                             ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(function (stretch) {
                                                 var atts = {value: stretch};
-                                                if (stretch === 'normal') {
+                                                if ($p('fontstretch') === stretch || (!params.has('fontstretch') && stretch === 'normal')) {
                                                     atts.selected = 'selected';
                                                 }
                                                 return ['option', atts, [stretch]];
