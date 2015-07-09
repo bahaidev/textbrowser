@@ -4,16 +4,16 @@
 /*
 Todos (higher priority)
 
+1. Waiting version update: Add and make use of updated json-refs to make single resolveRemoteRef call and try new relative refs feature.
+
+1. Consider moving table-specific/field-specific locale data to metadata file for modularity; then avoid unchecking when clicking button re: matching current locale if fieldvalue is present (i.e., replace hasFieldvalue functionality)
 1. Split Baha'i texts into a separate repo and add todo there: Suggest API to Baha'i World Centre to automatically (and periodically) parse their texts into JSON here to ensure we have the most up-to-date and corrected translations
+
 1. Choose clearer naming/structure for locale table/field keys
     1. Consider tablealias and default to table or something (as fieldalias defaults to fieldname); aliased heading (also used as the title of the page)
     1. Consider using prefer_alias for field alias use and optionally show both?
-    1. Consider moving table-specific/field-specific locale data to metadata file for modularity; then avoid unchecking when clicking button re: matching current locale if fieldvalue is present (i.e., replace hasFieldvalue functionality)
 1. Remove "numbers only" strings (including from locale files?) if allowing for aliased searches (e.g., "Gen")
-1. Once updated, add and make use of updated json-refs to make single resolveRef call and try relative refs.
 1. Review code for readability
-1. Sort file selection listing per locale?
-
 1. Get the automated fields listed in drop-down menus; also new overlay type (See README todos)
 
 Todos (for browse9.php)
@@ -22,6 +22,7 @@ Todos (for browse9.php)
 1. Utilize prefer_alias
 
 Todos (lower priority)
+1. Sort file selection listing per locale?
 1. Might support arbitary JSON and JSON Reference querying (if files.json configured to indicate "*" or something)
 1. filetypes.json for app and schema association? (files.json for permitted files - a file which could be auto-created, e.g., if server permits all in a directory); especially potentially useful with JSONEditor to allow editing of these files, app types:
     1. langs + locale / locale only
