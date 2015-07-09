@@ -702,7 +702,7 @@ function paramChange () {
                                 /*
                                 ,arabicContent ?
                                     // If there is Arabic content, a text box will be created for each field with such content to allow the user to choose how wide the field should be (since the Arabic is smaller).
-                                    // Todo: Allow naming of the field differently for Persian? Allowing any column to be resized would probably be most consistent with this project's aim to not make arbitrary decisions on what should be customizable, but rather make as much as possible customizable. It may also be helpful for Chinese, etc.
+                                    // Todo: Allow naming of the field differently for Persian? Allowing any column to be resized would probably be most consistent with this project's aim to not make arbitrary decisions on what should be customizable, but rather make as much as possible customizable. It may also be helpful for Chinese, etc. If adding, also need $p() for defaulting behavior
                                     {'#': arabicContent.map(function (item, i) {
                                         return {'#': [
                                             "Width of Arabic column: ", // Todo: i18n
