@@ -33,10 +33,13 @@ The above developer holds the copyright to this work, and it is licensed under t
     1. Automated word-by-word translations, auto-links to Google, Amazon, etc.
     1. Auto-links by verse to relevant forums, wikis, blogs, or personal notes pertaining to a given verse...
     1. Add an "overlay" column like interlinear, but which overlays by tooltip if any data is present; can also use metadata if the overlay is within-cell (and this metadata can also be used for putting overlay data in its own column too, albeit with only partial mapping to the other columns, e.g., if the "Baha'i translation" had not already been put into its own column, a metadata mapping may only have been for two discontinuous sentences out of a paragraph, but could still show such sentences reassembled (with some kind of separator) in a paragraph-based cell)
+        1. Deal with other metadata/automated (besides overlays) which is intended to allow collapsing of ranges (above paragraph cells, but may overlap); do as multiple tbodies but needs to be done dynamically since may wish alternate (and nestable) collapsing (e.g., collection->book->chapter, user-contributed metadata sections, etc.); allow collapsing/expanding of all fields by one click button outside table (or by level); allow automated collapsing based on sequentially exact values (e.g., until rows stop having a column with value "1")
+        1. Allow collapsing even within cells (as with overlays) like Baha'i Translation could have been. Also make non-metadata regions collapsible so can hide them from view.
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)
 1. Go to previous/next results (allow customization of size on the fly as well as in preferences)
 1. Hide advanced formatting options (make savable in preferences)
 1. Give tooltips to tell how to use the elements
+1. Need for implementing tfoot?
 1. Make full preferences system for saved/favorite, recent searches/browses, etc.
 1. Allow tables to be resortable via a Javascript which allows sorting by multiple columns with various data, etc.
 1. Figure out how to get rowspans (or even colspans) for additional columns (e.g., a field spanning by whole pages of the Iqan and another field spanning only by paragraphs) - use some kind of counter and don't display the HTML until finished cycling??; also figure out how to reassemble if the minute fields are not needed (e.g., if the user only wants to see the text by paragraph and not anything related to by page)
