@@ -56,7 +56,7 @@ Be sure to add any new files to the AppCache manifest file (see the "Usage" sect
 1. Give tooltips to tell how to use the elements
 1. Need for implementing tfoot?
 1. Make full preferences system for saved/favorite, recent searches/browses, etc.
-1. Allow tables to be resortable via a Javascript which allows sorting by multiple columns with various data, etc.
+1. Allow tables to be resortable via a JavaScript which allows sorting by multiple columns with various data, etc.
 1. Figure out how to get rowspans (or even colspans) for additional columns (e.g., a field spanning by whole pages of the Iqan and another field spanning only by paragraphs) - use some kind of counter and don't display the HTML until finished cycling??; also figure out how to reassemble if the minute fields are not needed (e.g., if the user only wants to see the text by paragraph and not anything related to by page)
 1. Further localization of the interface (including column aliases, etc.)
 1. Allow combined fields for browsing (Collins)
@@ -70,7 +70,7 @@ Be sure to add any new files to the AppCache manifest file (see the "Usage" sect
 1. Add link color (browse.php and browse9.php) as option to advanced formatting
 1. Sort file selection listing per locale?
 1. Node.js synchronization of locale files?
-1. Might support arbitary JSON and JSON Reference querying (if files.json configured to indicate a wildcard or something)
+1. Might support arbitrary JSON and JSON Reference querying (if files.json configured to indicate a wildcard or something)
 1. Update "about" text in locales and utilize on popup or something?
 1. Assistant file (for translating; needs server for password)
 1. Add tooltips and table summaries, etc. back (see locale file for these and reapply any other unused)
