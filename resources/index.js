@@ -4,7 +4,7 @@
 /*
 Todos (higher priority)
 
-1. Option to bookmark view (and utilize this for defaults before search)
+1. Utilize params for defaults in config page
 
 1. Avoid committing appcache into memory except as sample file (to allow users to indicate their own files therein (and HTML currently only allows one cache file apparently as per https://html.spec.whatwg.org/multipage/semantics.html#attr-html-manifest )
 1. Split Baha'i texts into a separate repo and add todo there: Suggest API to Baha'i World Centre to automatically (and periodically) parse their texts into JSON here to ensure we have the most up-to-date and corrected translations
