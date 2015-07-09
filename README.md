@@ -47,6 +47,7 @@ Be sure to add any new files to the AppCache manifest file (see the "Usage" sect
         1. Deal with other metadata/automated (besides overlays) which is intended to allow collapsing of ranges (above paragraph cells, but may overlap); do as multiple tbodies but needs to be done dynamically since may wish alternate (and nestable) collapsing (e.g., collection->book->chapter, user-contributed metadata sections, etc.); allow collapsing/expanding of all fields by one click button outside table (or by level); allow automated collapsing based on sequentially exact values (e.g., until rows stop having a column with value "1")
         1. Allow collapsing even within cells (as with overlays) like Baha'i Translation could have been. Also make non-metadata regions collapsible so can hide them from view.
 1. Note-taking (local/remote and wiki WYSIWYG with Git version control?)
+1. Schema-aware and metadata-aware column sorting options (e.g., sort by order and asc/desc) with user customizability (i.e., presorting along with dynamic client-side after-load sorting, with or without search filtering)
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)
 1. Go to previous/next results (allow customization of size on the fly as well as in preferences)
 1. Hide advanced formatting options (make savable in preferences)
