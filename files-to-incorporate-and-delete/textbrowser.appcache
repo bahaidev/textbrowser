@@ -1,0 +1,88 @@
+CACHE MANIFEST
+# Version 0.1.0
+CACHE:
+
+index.html
+
+appdata/files.json
+appdata/languages.json
+
+# Uncomment these if using:
+# resources/user.js
+# resources/user.css
+
+bower_components/form-serialize/index.js
+bower_components/get-json/index.js
+bower_components/imf/index.js
+
+# Might want to change to uncomment these instead of the following line:
+# 1. bower_components/intl-messageformat/dist/intl-messageformat.min.js
+# 2. individual locale files: bower_components/intl-messageformat/dist/locale-data/en.js, etc.
+bower_components/intl-messageformat/dist/intl-messageformat-with-locales.min.js
+
+bower_components/jamilih/jml.js
+
+# Uncomment the next line and comment out the following in production
+# bower_components/json-refs/browser/json-refs-min.js
+bower_components/json-refs/browser/json-refs.js
+
+bower_components/lodash-compat/lodash.min.js
+bower_components/path-loader/browser/path-loader-min.js
+bower_components/traverse/traverse.js
+
+data/other-works/Collins.json
+data/other-works/lights.json
+data/other-works/metadata/Collins.metadata
+data/other-works/metadata/lights.metadata
+data/other-works/schemas/Collins.jsonschema
+data/other-works/schemas/lights.jsonschema
+
+data/writings/aqdas.json
+data/writings/Bible.json
+data/writings/Epistle to the Son of the Wolf.json
+data/writings/Gems of Divine Mysteries.json
+data/writings/gleanings.json
+data/writings/Hidden Words.json
+data/writings/peace.json
+data/writings/pm.json
+data/writings/quran.json
+data/writings/wwtf.json
+data/writings/metadata/aqdas.metadata
+data/writings/metadata/Bible.metadata
+data/writings/metadata/Epistle to the Son of the Wolf.metadata
+data/writings/metadata/Gems of Divine Mysteries.metadata
+data/writings/metadata/gleanings.metadata
+data/writings/metadata/Hidden Words.metadata
+data/writings/metadata/peace.metadata
+data/writings/metadata/pm.metadata
+data/writings/metadata/quran.metadata
+data/writings/metadata/wwtf.metadata
+data/writings/schemas/aqdas.jsonschema
+data/writings/schemas/Bible.jsonschema
+data/writings/schemas/Epistle to the Son of the Wolf.jsonschema
+data/writings/schemas/Gems of Divine Mysteries.jsonschema
+data/writings/schemas/gleanings.jsonschema
+data/writings/schemas/Hidden Words.jsonschema
+data/writings/schemas/peace.jsonschema
+data/writings/schemas/pm.jsonschema
+data/writings/schemas/quran.jsonschema
+data/writings/schemas/wwtf.jsonschema
+
+general-schemas/files.jsonschema
+general-schemas/languages.jsonschema
+general-schemas/locale.jsonschema
+general-schemas/metadata.jsonschema
+# general-schemas/table.jsonschema # Not currently using for validation
+
+locales/ar.json
+locales/en-US.json
+locales/fa.json
+locales/ru.json
+
+resources/index.css
+resources/index.js
+
+
+NETWORK:
+
+FALLBACK:
