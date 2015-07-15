@@ -4,7 +4,7 @@
 /*
 Todos (higher priority)
 
-1. Waiting version update: Add and make use of updated json-refs to make single `resolveRemoteRef` call (or whatever the new API may become) and try new relative refs feature.
+1. WAITING (version update): Add and make use of updated json-refs to make single `resolveRemoteRef` call (or whatever the new API may become) and try new relative refs feature.
 
 1. Invoke this file from `index.html` with locations for `files.json` (and modify the README to indicate usage; also get rid of files-sample.json as will need to reference metadata and schema samples inside the Baha'i repo too)
 1. Move table-specific/field-specific locale data to schema or metadata file for modularity; then avoid unchecking when clicking button re: matching current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue` functionality)
