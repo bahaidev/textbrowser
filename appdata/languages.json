@@ -1,5 +1,5 @@
 {
-    "localeFileBasePath": "locales/",
+    "localeFileBasePath": "bower_components/textbrowser/locales/",
     "languages": [
         {
             "name": "English",
