@@ -3,9 +3,9 @@ CACHE MANIFEST
 CACHE:
 
 index.html
-files.json
 
 bower_components/textbrowser/appdata/languages.json
+files.json
 
 # Uncomment these if using in index.html:
 # resources/user.js
