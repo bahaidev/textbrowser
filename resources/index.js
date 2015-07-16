@@ -6,7 +6,6 @@ Todos (higher priority)
 
 1. WAITING (version update): Add and make use of updated json-refs to make single `resolveRemoteRef` call (or whatever the new API may become) and try new relative refs feature.
 
-1. Modify samples, etc. to assume another project will be using textbrowser as a dependency instead of the other way around?
 1. Modify the README to indicate usage and need to invoke this file from `index.html` with locations for `files.json` and optionally `languages.json`; also get rid of references to files-sample.json as including it there; reference metadata and schema samples inside the Baha'i repo too)
     1. Location: https://bitbucket.org/brettz9/bahaiwritings/overview
 1. Move table-specific/field-specific locale data to schema or metadata file for modularity; then avoid unchecking when clicking button re: matching current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue` functionality)
