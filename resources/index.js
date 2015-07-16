@@ -789,7 +789,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                 l({key: ["tablealias", work], fallback: true}) : ''
             }, fallback: true});
             
-            var baseDir = (dbs.baseDirectory || '') + (fileGroup.baseDirectory || '')) + '/';
+            var baseDir = (dbs.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
             var schemaBaseDir = (dbs.schemaBaseDirectory || '') + (fileGroup.schemaBaseDirectory || '') + '/';
             var metadataBaseDir = (dbs.metadataBaseDirectory || '') + (fileGroup.metadataBaseDirectory || '') + '/';
             
@@ -843,7 +843,6 @@ TextBrowser.prototype.paramChange = function paramChange () {
         resultsDisplay.apply(null, arguments);
     }
     
-    var that = this;
     IMF({
         languages: lang,
         fallbackLanguages: fallbackLanguages,
