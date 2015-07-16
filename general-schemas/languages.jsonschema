@@ -6,6 +6,19 @@
         "localeFileBasePath": {
             "type": "string"
         },
+        "localization-strings": {
+            "type": "object",
+            "patternProperties": {
+                ".*": {
+                    "type": "object",
+                    "patternProperties": {
+                        ".*": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
         "languages": {
             "type": "array",
             "required": true,
