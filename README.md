@@ -24,6 +24,10 @@ Add the following to your `bower.json`:
 
 # Usage
 
+NOTE: The following needs to be modified according to new usage, invoke this file from `index.html` with locations for `files.json` and optionally `languages.json`; also get rid of references to files-sample.json as including it there; reference metadata and schema samples inside the Baha'i repo too)
+    1. Location: https://bitbucket.org/brettz9/bahaiwritings/overview
+
+
 1. Copy the file `index-sample.html` as `index.html` and customize if required (this may not be required if the next step is followed).
 1. Add `resources/user.js` and `resources/user.css` and customize as desired (one may just wish to add blank files for these or remove reference to them in `index.html`). For `user.js`, you may wish to follow the pattern at `resources/user-sample.js`.
 1. Add any new JSON data files to your own subfolder of `/bower_components` (along with JSON Schema and metadata files; see the "JSON Schema and metadata files and fields in use" section). If this data is contained within a Bower repository, you can naturally load this via Bower (e.g., `bower install git@bitbucket.org:brettz9/bahaiwritings.git`).
@@ -33,7 +37,7 @@ Add the following to your `bower.json`:
 
 # JSON Schema and metadata files and fields in use
 
-- (To document; for now, see the `/general-schemas` directory and for usage examples, as well as the subdirectories within `/data`)
+- (To document; for now, see the `/general-schemas` directory and for usage examples, as well as the subdirectories within <https://bitbucket.org/brettz9/bahaiwritings>)
 
 # Todos
 
@@ -42,7 +46,7 @@ Add the following to your `bower.json`:
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)!
 1. Separate formatting within Jamilih code to CSS
 1. Node.js (or PHP) for serving JSON files immediately and then injecting config for index.js to avoid reloading
-1. Make Node.js/PHP tools to build `languages.json` based on available locale files, and build `appdata/files.json` based on a target directory.
+1. Make Node.js/PHP tools to build `languages.json` based on available locale files, and build `files.json` based on a target directory.
 1. Add/Add back automated: Synopsis, Roman numerals, Chinese numbers, word-by-word translation, auto-romanized Persian/Arabic, Persian with English tooltips, English with Persian/Arabic tooltips, text-to-(Google search, Google define, Wikipedia, etc. edit pages); add Word-by-word/phrase mapping
     1. Reverse engineer missing work by using `bahai_locales` database (which contains more than localization info: automated column data, alternative field names, etc.)
     1. Metadata for default field column placement and table/field applicability
