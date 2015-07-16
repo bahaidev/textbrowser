@@ -1,0 +1,15 @@
+{
+    "name": "my-project-name",
+    "version": "0.1.0",
+    "description": "My project utilizes TextBrowser to allow browsing of content files.",
+    "ignore": [
+        "bower_components"
+    ],
+    "keywords": [
+        "textbrowser"
+    ],
+    "dependencies": {
+        "textbrowser": "git@github.com:brettz9/textbrowser.git#master"
+    },
+    "main": "files.json"
+}
