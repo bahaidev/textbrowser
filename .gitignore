@@ -1,5 +1,6 @@
 /bower_components
 
+/.htaccess
 /index.html
 /appdata/files.json
 
