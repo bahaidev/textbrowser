@@ -12,7 +12,15 @@ This software currently allows for multilinear texts (represented in user-custom
 
 # Installation
 
-`bower install`
+The approach of this repository is intended to be used as a dependency.
+
+Add the following to your `bower.json`:
+
+```json
+"dependencies": {
+    "textbrowser": "git@github.com:brettz9/textbrowser.git#master"
+}
+```
 
 # Usage
 
@@ -30,6 +38,7 @@ This software currently allows for multilinear texts (represented in user-custom
 # Todos
 
 1. See also todos inside `index.js`
+1. Once stabilized, target textbrowser dependency mentioned above by tagged version instead of `master`.
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)!
 1. Separate formatting within Jamilih code to CSS
 1. Node.js (or PHP) for serving JSON files immediately and then injecting config for index.js to avoid reloading
