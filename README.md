@@ -79,7 +79,7 @@ The API can be adapted as needed. The file in `resources/user-sample.js` shows i
 1. Use validators with all JSON Schemas and instances to confirm schemas are defined properly
 1. Once stabilized, target "textbrowser" dependency mentioned above by tagged version instead of `master`.
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)!
-1. Separate formatting within Jamilih code to CSS
+1. Separate formatting within Jamilih code to CSS; separate business and design logic for own sake and also for unit testing and performance by being able to use a natively stringifying version of Jamilih (once complete)
 1. Node.js (or PHP) for serving JSON files immediately and then injecting config for index.js to avoid reloading
 1. Make Node.js/PHP tools to build `languages.json` based on available locale files, and build `files.json` based on a target directory.
 1. Add/Add back automated: Synopsis, Roman numerals, Chinese numbers, word-by-word translation, auto-romanized Persian/Arabic, Persian with English tooltips, English with Persian/Arabic tooltips, text-to-(Google search, Google define, Wikipedia, etc. edit pages); add Word-by-word/phrase mapping
