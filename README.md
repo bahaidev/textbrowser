@@ -76,6 +76,7 @@ The API can be adapted as needed. The file in `resources/user-sample.js` shows i
 # Todos
 
 1. See also todos inside `index.js`
+1. Use validators with all JSON Schemas and instances to confirm schemas are defined properly
 1. Once stabilized, target "textbrowser" dependency mentioned above by tagged version instead of `master`.
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)!
 1. Separate formatting within Jamilih code to CSS
