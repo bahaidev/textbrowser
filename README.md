@@ -17,11 +17,11 @@ This software currently allows for multilinear texts (represented in user-custom
 # Usage
 
 1. Copy the file `index-sample.html` as `index.html` and customize if required (this may not be required if the next step is followed).
-1. Add `resources/user.js` and `resources/user.css` and customize as desired (one may just wish to add blank files for these or remove reference to them in `index.html`).
-1. Add any new JSON data files to your own subfolder of `/bower_components` (along with JSON Schema and metadata files; see the "JSON Schema and metadata files and fields in use" section). If this data is contained within a Bower repository, you can naturally load this via Bower.
+1. Add `resources/user.js` and `resources/user.css` and customize as desired (one may just wish to add blank files for these or remove reference to them in `index.html`). For `user.js`, you may wish to follow the pattern at `resources/user-sample.js`.
+1. Add any new JSON data files to your own subfolder of `/bower_components` (along with JSON Schema and metadata files; see the "JSON Schema and metadata files and fields in use" section). If this data is contained within a Bower repository, you can naturally load this via Bower (e.g., `bower install git@bitbucket.org:brettz9/bahaiwritings.git`).
 1. Add references to the JSON data files added in the previous step in a new file `appdata/files.json` (a sample can be copied from `appdata/files-sample.json`).
 1. Copy the file `textbrowser-sample.appcache` as `textbrowser.appcache` and add any other files required by your application that you wish to be accessible in offline mode (including the user files added in the previous steps). (HTML currently only allows one cache file apparently as per <https://html.spec.whatwg.org/multipage/semantics.html#attr-html-manifest>.) In order to keep all of your content together, you may instead wish to add an AppCache file within your `bower_components` repository subfolder and modify `index.html` to point to it so that you can maintain all files needed for caching in that file.
-1. New language information should be added to `/appdata/languages.json` and new translations to a new file in `/locales`. This information should be generic to the application, so please contribute back through pull requests if you have new locales to offer.
+1. New language information should be added to `/appdata/languages.json` and new translations to a new file in `/locales`. This information should be generic to the application, so please contribute back through pull requests if you have new locales to offer though you may also supply a `languages` property pointing to a file of your own choosing.
 
 # JSON Schema and metadata files and fields in use
 

@@ -6,7 +6,8 @@ Todos (higher priority)
 
 1. WAITING (version update): Add and make use of updated json-refs to make single `resolveRemoteRef` call (or whatever the new API may become) and try new relative refs feature.
 
-1. Invoke this file from `index.html` with locations for `files.json` at https://bitbucket.org/brettz9/bahaiwritings/overview (and modify the README to indicate usage; also get rid of files-sample.json as will need to reference metadata and schema samples inside the Baha'i repo too)
+1. Modify the README to indicate usage and need to invoke this file from `index.html` with locations for `files.json` and optionally `languages.json`; also get rid of references to files-sample.json as including it there; reference metadata and schema samples inside the Baha'i repo too)
+    1. Location: https://bitbucket.org/brettz9/bahaiwritings/overview
 1. Move table-specific/field-specific locale data to schema or metadata file for modularity; then avoid unchecking when clicking button re: matching current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue` functionality)
 1. Choose clearer naming/structure for locale table/field keys
     1. Consider `tablealias` and default to `table` or something (as `fieldalias` defaults to `fieldname`); aliased heading (also used as the title of the page)
@@ -25,23 +26,48 @@ Todos (for browse9.php equivalent)
 1. Utilize `prefer_alias`
 */
 
-(function () {'use strict';
+var TextBrowser = (function () {'use strict';
 
 var nbsp = '\u00a0';
 
-// We use getJSON instead of JsonRefs as we do not need to resolve the locales here
+function TextBrowser (options) {
+    if (!(this instanceof TextBrowser)) {
+        return new TextBrowser(options);
+    }
+    this.languages = options.languages || 'appdata/languages.json';
+    this.files = options.files || 'appdata/files.json';
+}
+
+TextBrowser.prototype.init = function () {
+    this.displayLanguages();
+};
+
+TextBrowser.prototype.displayLanguages = function () {
+    var that = this;
+    // We use getJSON instead of JsonRefs as we do not need to resolve the locales here
+    getJSON(this.languages, function (langData) {
+        that.langData = langData;
+        that.paramChange();
+        
+        // INIT/ADD EVENTS
+        window.addEventListener('hashchange', that.paramChange.bind(that), false);
+    }, function (err) {
+        alert(err);
+    });
+};
+
 // Need for directionality even if language specified (and we don't want to require it as a param)
-getJSON('appdata/languages.json', function (langData) {
-
-var langs = langData.languages;
-
-function getDirectionForLanguageCode (code) {
+TextBrowser.prototype.getDirectionForLanguageCode = function getDirectionForLanguageCode (code) {
+    var langs = this.langData.languages;
     return langs.find(function (lang) {
         return lang.code === code;
     }).direction;
-}
+};
 
-function paramChange () {
+// Todo: Break this up further
+TextBrowser.prototype.paramChange = function paramChange () {
+    var that = this;
+    var langs = this.langData.languages;
     
     document.body.parentNode.replaceChild(document.createElement('body'), document.body);
     
@@ -58,8 +84,8 @@ function paramChange () {
     var language = languageParam || fallbackLanguages[0]; // We need a default to display a default title
     var lang = language.split('.');
     var preferredLocale = lang[0];
-    var direction = getDirectionForLanguageCode(preferredLocale);
-    var fallbackDirection = getDirectionForLanguageCode(fallbackLanguages[0]);
+    var direction = this.getDirectionForLanguageCode(preferredLocale);
+    var fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
     document.dir = direction;
     
     var work = $p('work');
@@ -89,7 +115,7 @@ function paramChange () {
         document.title = l({key: "browserfile-workselect", fallback: true});
 
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
-        getJSON('appdata/files.json', function (dbs) {
+        getJSON(that.files, function (dbs) {
             var lo = function (key, atts) {
                 return ['option', atts, [
                     l({key: key, fallback: function (obj) {
@@ -725,7 +751,7 @@ function paramChange () {
     }
     
     function workDisplay (l, defineFormatter) {
-        getJSON('appdata/files.json', function (dbs) {
+        getJSON(that.files, function (dbs) {
             
             // Use the following to dynamically add specific file schema in place of generic table schema if validating against files.jsonschema
             // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
@@ -819,11 +845,12 @@ function paramChange () {
         resultsDisplay.apply(null, arguments);
     }
     
+    var that = this;
     IMF({
         languages: lang,
         fallbackLanguages: fallbackLanguages,
         localeFileResolver: function (code) {
-            return langData.localeFileBasePath + langs.find(function (lang) {
+            return that.langData.localeFileBasePath + langs.find(function (lang) {
                 return lang.code === code;
             }).locale.$ref; // Todo: For editing of locales, we might instead resolve all $ref (as with https://github.com/whitlockjc/json-refs ) and replace IMF() loadLocales behavior with our own now resolved locales; see https://github.com/jdorn/json-editor/issues/132
         },
@@ -831,19 +858,9 @@ function paramChange () {
     });
     
     
-}
+};
 
-// INIT/ADD EVENTS
-
-paramChange();
-window.addEventListener('hashchange', paramChange, false);
-
-
-}, function (err) {
-    alert(err);
-});
-
-
+return TextBrowser;
 
 
 }());
