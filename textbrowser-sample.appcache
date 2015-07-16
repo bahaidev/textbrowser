@@ -7,7 +7,7 @@ index.html
 appdata/files.json
 appdata/languages.json
 
-# Uncomment these if using:
+# Uncomment these if using in index.html:
 # resources/user.js
 # resources/user.css
 
