@@ -1,15 +1,16 @@
 {
-    "all_langs": "All languages",
     "lang_en": "English",
     "lang_fr": "French",
     "lang_es": "Spanish",
-    "Go": "Go!",
-    "search": "search",
     "lang_zh": "Chinese",
     "lang_ar": "Arabic",
     "lang_fa": "Persian",
     "lang_ru": "Russian",
 
+    "all_langs": "All languages",
+    "Go": "Go!",
+    "search": "search",
+    
     "choosewritings_bahai_writingsdb": "Choose the Writings you wish to browse",
     "choosewritings_bahai_writingsotherdb": "Or, choose from the following (non-Scriptural) works",
     "submitgo": "Go",
