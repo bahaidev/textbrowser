@@ -6,6 +6,7 @@ Todos (higher priority)
 
 1. WAITING (version update): Add and make use of updated json-refs to make single `resolveRemoteRef` call (or whatever the new API may become) and try new relative refs feature.
 
+1. Move languages.json-specific locale data to languages.json file itself?
 1. Move files.json-specific locale data to files.json at bahaiwritings repo and i18nize to grab files.json locale info from within that file
     1. Move "about" text in textbrowser locales to `files.json`
     1. Update README and files.jsonschema to reflect new changes
