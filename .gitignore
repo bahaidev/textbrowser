@@ -2,6 +2,7 @@
 
 /.htaccess
 /index.html
+/data
 /appdata/files.json
 
 /resources/user.js

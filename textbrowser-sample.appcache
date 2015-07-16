@@ -4,12 +4,30 @@ CACHE:
 
 index.html
 
-bower_components/textbrowser/appdata/languages.json
 files.json
 
 # Uncomment these if using in index.html:
 # resources/user.js
 # resources/user.css
+
+# Textbrowser files
+bower_components/textbrowser/appdata/languages.json
+
+bower_components/textbrowser/general-schemas/files.jsonschema
+bower_components/textbrowser/general-schemas/languages.jsonschema
+bower_components/textbrowser/general-schemas/locale.jsonschema
+bower_components/textbrowser/general-schemas/metadata.jsonschema
+# bower_components/textbrowser/general-schemas/table.jsonschema # Not currently using for validation or meta-data
+
+bower_components/textbrowser/locales/ar.json
+bower_components/textbrowser/locales/en-US.json
+bower_components/textbrowser/locales/fa.json
+bower_components/textbrowser/locales/ru.json
+
+bower_components/textbrowser/resources/index.css
+bower_components/textbrowser/resources/index.js
+
+# Textbrowser dependency files
 
 bower_components/form-serialize/index.js
 bower_components/get-json/index.js
@@ -29,21 +47,6 @@ bower_components/json-refs/browser/json-refs.js
 bower_components/lodash-compat/lodash.min.js
 bower_components/path-loader/browser/path-loader-min.js
 bower_components/traverse/traverse.js
-
-bower_components/textbrowser/general-schemas/files.jsonschema
-bower_components/textbrowser/general-schemas/languages.jsonschema
-bower_components/textbrowser/general-schemas/locale.jsonschema
-bower_components/textbrowser/general-schemas/metadata.jsonschema
-# general-schemas/table.jsonschema # Not currently using for validation or meta-data
-
-bower_components/textbrowser/locales/ar.json
-bower_components/textbrowser/locales/en-US.json
-bower_components/textbrowser/locales/fa.json
-bower_components/textbrowser/locales/ru.json
-
-bower_components/textbrowser/resources/index.css
-bower_components/textbrowser/resources/index.js
-
 
 NETWORK:
 
