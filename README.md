@@ -55,7 +55,7 @@ New language information should be added to TextBrowser's `/appdata/languages.js
 For those wishing to test files within the TextBrowser project itself (not generally recommended), you can follow the follow tweaks to the above instructions:
 
 1. You should not need to alter `bower.json` though you may install Bower dependencies (e.g., `bower install git@bitbucket.org:brettz9/bahaiwritings.git`) if you update paths accordingly. You may alternatively add data files to the reserved `data` directory at the root of TextBrowser.
-1. Change paths. The path prefix `bower_components/textbrowser` in `textbrowser.appcache` will need to be stripped in this environment. You will also wish to change the `languages` property in the `resources/user.js` call to the *TextBrowser* constructor to point to `languages-tb.json` instead of `languages.json`).
+1. Change paths. The path prefix `bower_components/textbrowser` in your `index.html` and `textbrowser.appcache` will need to be stripped in this environment. You will also need to change the `languages` property in the `resources/user.js` call to the *TextBrowser* constructor to point to `languages-tb.json` instead of `languages.json` or otherwise supply a languages file which resolves to the correct path).
 
 # API
 
@@ -118,6 +118,7 @@ The API can be adapted as needed. The file in `resources/user-sample.js` shows i
 1. Add tooltips and table summaries, etc. back (see locale file for these and reapply any other unused) and add any missing ones describing how to use the elements
 1. Change "Saving settings as URL" to a redirect if faithfully copying everything?
 1. Provide option to skip over `langs.json` with a default language (though discourage since the UI translations may help some people).
+1. ES6 Modules import of JavaScript in place of script tags; dynamic or hierarchical loading of CSS too?
 
 # History
 
