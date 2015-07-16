@@ -1,8 +1,7 @@
 {
-    "localeFileBasePath": "bower_components/textbrowser/locales/",
+    "localeFileBasePath": "locales/",
     "localization-strings": {
         "en-US": {
-            "browser-title": "Sacred Writings Browser",
             "chooselanguage": "Your interface language",
             "all-langs": "All languages",
             "languages": {
@@ -13,14 +12,12 @@
             }
         },
         "fa": {
-            "browser-title": "برازر اثار و الواح",
             "chooselanguage": "زبان انتخاب شده",
             "languages": {
                 "fa": "فارسي"
             }
         },
         "ar": {
-            "browser-title": "باحث الآثار المقدسة",
             "chooselanguage": "لغتك",
             "languages": {
                 "ar": "عربي"
@@ -36,25 +33,21 @@
     },
     "languages": [
         {
-            "name": "English",
             "code": "en-US",
             "direction": "ltr",
             "locale": {"$ref": "en-US.json"}
         },
         {
-            "name": "فارسي",
             "code": "fa",
             "direction": "rtl",
             "locale": {"$ref": "fa.json"}
         },
         {
-            "name": "عربي",
             "code": "ar",
             "direction": "rtl",
             "locale": {"$ref": "ar.json"}
         },
         {
-            "name": "русский",
             "code": "ru",
             "direction": "ltr",
             "locale": {"$ref": "ru.json"}

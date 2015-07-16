@@ -1,0 +1,72 @@
+{
+    "site": [
+        ["Langs", "Books", "Book", "Results"],
+        "Download", "Accessibility", "Vision", "News", "Help", "About", "Goals", "RSS", "Main pages", "Readme", "Sitemap", "Administrator Documentation"
+    ],
+    "navigation": [
+        ["Langs", "Books", "Book", "Results"],
+        
+        "Download", "Accessibility", "Vision", "News", "Help", "About", "Goals", "RSS", "Main pages", "Readme", "Sitemap", "Administrator Documentation"
+        
+    ],
+    "localization-strings": {
+        "en-US": {
+            "browser-title": "Sacred Writings Browser",
+            "about": [
+                "The manager for this specific project to which you may direct any questions or comments is {manager}. You can browse the code in an <a href=\"{repo}\">unstable form</a> or download the <a href=\"{stable}\">latest stable release</a> of the code and modify/redistribute it, if you wish, under the terms of the open source MIT license.",
+                "You can view an RSS (Really Simple Syndication) feed with update announcements for newly released versions of the software used here (the newest stable version should always be implemented here at this page) or other updates related to this project.",
+                "To donate to this specific project, click on the following <a href=\"{buttonLink}\"><button>{button}</button></a>. You can also donate to the Bahá'í Library Online site where this project is being generously hosted."
+            ],
+            "removecookies": "Choose a different interface language",
+            "sitemap": {
+                "alphabetical": "alphabetical",
+                "hierarchical": "hierarchical",
+                "chooseapage": "Choose a page"
+            },
+            "pages": {
+                "Langs": "Langs",
+                "Books": "Books",
+                "Book": "Book",
+                "Results": "Results",
+                "Download": "Download",
+                "Accessibility": "Accessibility",
+                "Vision": "Vision",
+                "News": "News",
+                "Help": "Help",
+                "About": "About",
+                "Goals": "Goals",
+                "RSS": "RSS",
+                "Main pages": "Main pages",
+                "Readme": "Readme",
+                "Sitemap": "Site Map",
+                "Administrator Documentation": "Administrator Documentation"
+            }
+        },
+        "ar": {
+            "browser-title": "باحث الآثار المقدسة",
+            "removecookies": "أختر لغة اخرى",
+            "sitemap": {
+                "alphabetical": "ابجدي",
+                "hierarchical": "تصاعدي"
+            },
+            "pages": {
+                "Langs": "لغات",
+                "Books": "كتب",
+                "Book": "كتاب",
+                "Results": "نتائج",
+                "Download": "تنزيل",
+                "News": "اخبار",
+                "Help": "مساعدة",
+                "About": "عن",
+                "Goals": "الاهداف",
+                "Main pages": "الصفحات الرئيسية",
+                "Readme": "اقرأ",
+                "Sitemap": "خارطة الموقع"
+            }
+        },
+        "fa": {
+            "browser-title": "برازر اثار و الواح",
+            "removecookies": "زبان دیگری را انتخاب فرمایید",
+        }
+    }
+}

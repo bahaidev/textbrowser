@@ -1,28 +1,15 @@
 {
     "choosewritings_bahai_writingsdb": "آثار و الواح مورد دلخواه را انتخاب فرمائید",
     "choosewritings_bahai_writingsotherdb": "یا از فهرست نوشتجات دیگر انتخاب فرمائید",
-    "submitgo": "بروید",
-    "abouttext1": "مدیر ویژه توسعه این برنامه که میتواند جوا بگوی سئوالات و پیشنهادات شما باشد:  ",
-    "abouttext2": "دانلود جدیدترین کد منتشر شده",
-    "abouttext3": "اگر مایل به اصلاح و پخش مکررید از  قوانین جواز عمومی استفاده نمائید.  ",
-    "abouttext4": "میتوانید",
-    "abouttext5": "در اینجا کد نا پایدار را پیدا کنید.",
-    "abouttext6": null,
-    "abouttext8": "مئتوانئد نظری به فید Really Simple Syndication بیندازید",
-    "abouttext9": "با جدیدترین اطلاعیه در مورد پخش تازهترین سافتورهای استفاده شده (stable version همیشه در این صفحه استفاده شده)و اطلاعیههای دیگر درخور این پرزٌه.",
-    "abouttext10": "برای اهدا در جهت این پروزٌه کلید زیر را کلک کنئد",
-    "abouttext11": "همینطور میتوانئد ",
-    "abouttext12": "به کتابخانه خط کامپئوتری بهائئ اهدا فرمایید",
-    "abouttext13": "در هر جایی کی این پرزٌه در حل حاضر موجود است",
-    "removecookies": "زبان دیگری را انتخاب فرمایید",
+
     "browserfile-workselect": null,
     "browserfile-workdisplay": null,
     "browserfile-resultsdisplay": null,
     
+    "save": "حفظ کنید",
     "assistantfile": "برازر مترجم",
     "assistantlanguagetranslate": "زبان ترجمه را انتخاب فرمایید",
     "assistantpassword": "رمز عبور",
-    "save": "حفظ کنید",
     "assistantwrongpassword": "رمز عبور وارد شده قبول نیست ",
     "assistantredirecting": "راهنمایی شدید به جهت",
     "assistant_original": "اصلی",
@@ -32,6 +19,8 @@
     "assistant_changesignored": "اگر اینجا کلک کنید تغییرات حفظ نشده این صفحه نادیده انگاشته میشود",
     "assistant_returnediting": "تا ادامه به استفاده از زبان ترجمه قبلی خود دهید اینجا کلک کنید",
     "assistant_ransqlcommand": "SQL command اجرا کنید",
+
+    "submitgo": "بروید",
     "field_enabled": "قابل انجام",
     "field_title": "تیتر فیلد",
     "advancedformatting": "فرمت مختلف نوشتجات",
@@ -100,26 +89,8 @@
     "max": null,
     "min": null,
     "mainboxsummary": null,
-    "Langs": null,
-    "Books": null,
-    "Book": null,
-    "Results": null,
-    "resetinterfacelang": null,
-    "Download": null,
-    "Accessibility": null,
-    "Vision": null,
-    "News": null,
-    "Help": null,
-    "About": null,
-    "Goals": null,
-    "RSS": null,
-    "Main pages": null,
-    "Readme": null,
-    "Administrator Documentation": null,
-    "alphabetical": null,
-    "hierarchical": null,
-    "sitemap": null,
-    "chooseapage": null,
+    
+    
     "tableformatting": null,
     "tableformatting_tips": null,
     "wishcaption": null,
@@ -160,8 +131,9 @@
     "check-columns-to-browse": null,
     "check-sequence": null,
     "interlinear-tips": null,
-    "Go": null,
-    "search": null,
+    "enum-all": null,
+    
+    
     "tablealias": {
         "aqdas": "كتاب اقدس",
         "iqan": "كتاب ايقان",
@@ -196,7 +168,6 @@
         "alvah_va_saya-yi_mubarikih": null,
         "pm": null
     },
-    "enum-all": null,
     "groupbytoggle": {
         "hidden words": null
     },
