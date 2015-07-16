@@ -838,8 +838,9 @@ TextBrowser.prototype.paramChange = function paramChange () {
         return that.langData['localization-strings'][lang];
     }
     if (!languageParam) {
-        var imf = IMF({locales: langs.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)});
+        var imf = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)});
         languageSelect(imf.getFormatter());
+        return;
     }
 
     function localeCallback (/*l, defineFormatter*/) {
