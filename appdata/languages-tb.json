@@ -2,20 +2,34 @@
     "localeFileBasePath": "locales/",
     "localization-strings": {
         "en-US": {
-            "en-US": "English",
-            "ar": "Arabic",
-            "fa": "Persian",
-            "ru": "Russian"
+            "browser-title": "Sacred Writings Browser",
+            "chooselanguage": "Your interface language",
+            "languages": {
+                "en-US": "English",
+                "ar": "Arabic",
+                "fa": "Persian",
+                "ru": "Russian"
+            }
         },
         "fa": {
-            "fa": "فارسي"
+            "browser-title": "برازر اثار و الواح",
+            "chooselanguage": "زبان انتخاب شده",
+            "languages": {
+                "fa": "فارسي"
+            }
         },
         "ar": {
-            "ar": "عربي"
+            "browser-title": "باحث الآثار المقدسة",
+            "chooselanguage": "لغتك",
+            "languages": {
+                "ar": "عربي"
+            }
         },
         "ru": {
-            "en-US": "Английский",
-            "ru": "русский"
+            "languages": {
+                "en-US": "Английский",
+                "ru": "русский"
+            }
         }
     },
     "languages": [
