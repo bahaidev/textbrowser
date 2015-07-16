@@ -835,7 +835,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
     }
     
     function localeFromLangData (lang) {
-        return this.langData['localization-strings'][lang];
+        return that.langData['localization-strings'][lang];
     }
     if (!languageParam) {
         var imf = IMF({locales: langs.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)});
