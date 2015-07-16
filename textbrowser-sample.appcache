@@ -48,6 +48,9 @@ bower_components/lodash-compat/lodash.min.js
 bower_components/path-loader/browser/path-loader-min.js
 bower_components/traverse/traverse.js
 
+# Add user data files here:
+
+
 NETWORK:
 
 FALLBACK:
