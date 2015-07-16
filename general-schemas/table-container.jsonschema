@@ -1,0 +1,39 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "schema": {
+            "anyOf": [
+                {
+                    "$ref": "table.jsonschema"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    }
+                }
+            ]
+        },
+        "metadata": {
+            "anyOf": [
+                {
+                    "$ref": "metadata.jsonschema"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "$ref": {
+                            "type": "string"
+                        }
+                    }
+                }
+            ]
+        },
+        "data": {
+            "$ref": "array-of-arrays.jsonschema"
+        }
+    }
+}
