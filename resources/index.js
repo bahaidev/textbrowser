@@ -791,7 +791,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
             
             var baseDir = (dbs.baseDirectory || fileGroup.baseDirectory) + '/';
             var schemaBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
-            var metadataBaseDir = (dbs.metadataBaseDir || fileGroup.metadataBaseDir) + '/';
+            var metadataBaseDir = (dbs.metadataBaseDirectory || fileGroup.metadataBaseDirectory) + '/';
             
             var file = baseDir + fileData.file.$ref;
             var schemaFile = fileData.schemaFile ? (schemaBaseDir + fileData.schemaFile) : '';
