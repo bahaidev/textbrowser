@@ -2,8 +2,8 @@
 window.addEventListener('DOMContentLoaded', function () {'use strict';
 
     var tb = new TextBrowser({
-        // languages: 'appdata/languages.json', // Default
-        files: 'appdata/files.json' // Change to your files.json location
+        // languages: 'bower_components/bahaiwritings/appdata/languages.json', // Default
+        files: 'files.json' // Change as needed to your files.json location
     });
     tb.init();
 

@@ -35,8 +35,8 @@ function TextBrowser (options) {
     if (!(this instanceof TextBrowser)) {
         return new TextBrowser(options);
     }
-    this.languages = options.languages || 'appdata/languages.json';
-    this.files = options.files || 'appdata/files.json';
+    this.languages = options.languages || 'bower_components/bahaiwritings/appdata/languages.json';
+    this.files = options.files || 'files.json';
 }
 
 TextBrowser.prototype.init = function () {
