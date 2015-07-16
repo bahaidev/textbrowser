@@ -789,9 +789,9 @@ TextBrowser.prototype.paramChange = function paramChange () {
                 l({key: ["tablealias", work], fallback: true}) : ''
             }, fallback: true});
             
-            var baseDir = (dbs.baseDirectory || fileGroup.baseDirectory) + '/';
-            var schemaBaseDir = (dbs.schemaBaseDirectory || fileGroup.schemaBaseDirectory) + '/';
-            var metadataBaseDir = (dbs.metadataBaseDirectory || fileGroup.metadataBaseDirectory) + '/';
+            var baseDir = (dbs.baseDirectory || '') + (fileGroup.baseDirectory || '')) + '/';
+            var schemaBaseDir = (dbs.schemaBaseDirectory || '') + (fileGroup.schemaBaseDirectory || '') + '/';
+            var metadataBaseDir = (dbs.metadataBaseDirectory || '') + (fileGroup.metadataBaseDirectory || '') + '/';
             
             var file = baseDir + fileData.file.$ref;
             var schemaFile = fileData.schemaFile ? (schemaBaseDir + fileData.schemaFile) : '';
