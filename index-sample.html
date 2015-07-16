@@ -1,20 +1,19 @@
 <!DOCTYPE html>
-<!--Remove "1" at end of manifest file reference when finished with testing -->
 <html
     xmlns="http://www.w3.org/1999/xhtml"
-    manifest="textbrowser.appcache1"
+    manifest="bower_components/bahaiwritings/textbrowser.appcache"
 ><head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="resources/index.css" />
-    <link rel="stylesheet" href="resources/user.css" />
-    <script src="resources/user.js"></script>
+    <link rel="stylesheet" href="bower_components/textbrowser/resources/index.css" />
+    <link rel="stylesheet" href="bower_components/textbrowser/resources/user.css" />
+    <script src="bower_components/textbrowser/resources/user.js"></script>
 </head><body>
 
 <!-- jamilih -->
 <script src="bower_components/jamilih/jml.js"></script>
 
 <!-- imf (also using getJSON directly in textbrowser) -->
-<script src="bower_components/intl-messageformat/dist/intl-messageformat-with-locales.min.js"></script><!-- Once added to Bower, add instead as own bower dependency (of imf localization function) -->
+<script src="bower_components/intl-messageformat/dist/intl-messageformat-with-locales.min.js"></script>
 <script src="bower_components/get-json/index.js"></script>
 <script src="bower_components/imf/index.js"></script>
 
@@ -29,7 +28,7 @@
 <script src="bower_components/form-serialize/index.js"></script>
 
 <!-- Main textbrowser script -->
-<script src="resources/index.js"></script>
+<script src="bower_components/textbrowser/resources/index.js"></script>
 
 </body>
 </html>
