@@ -4,6 +4,7 @@
         "en-US": {
             "browser-title": "Sacred Writings Browser",
             "chooselanguage": "Your interface language",
+            "all-langs": "All languages",
             "languages": {
                 "en-US": "English",
                 "ar": "Arabic",
@@ -26,6 +27,7 @@
             }
         },
         "ru": {
+            "all-langs": "Все языки",
             "languages": {
                 "en-US": "Английский",
                 "ru": "русский"
