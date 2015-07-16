@@ -12,9 +12,9 @@ This software currently allows for multilinear texts (represented in user-custom
 
 # Installation
 
-The approach of this repository is intended to be used as a dependency.
+The intent of this repository is for it to be used as a dependency.
 
-Add the following to your `bower.json`:
+Add the following to your application's `bower.json`:
 
 ```json
 "dependencies": {
@@ -22,10 +22,35 @@ Add the following to your `bower.json`:
 }
 ```
 
+If you instead merely wish to test the current repository, adding your
+own data files within it, you can install its dependencies via:
+
+```
+bower install
+```
+
 # Usage
 
 NOTE: The following needs to be modified according to new usage, invoke this file from `index.html` with locations for `files.json` and optionally `languages.json`; also get rid of references to files-sample.json as including it there; reference metadata and schema samples inside the Baha'i repo too)
-    1. Location: https://bitbucket.org/brettz9/bahaiwritings/overview
+    1. Location: https://bitbucket.org/brettz9/bahaiwritings
+
+The following instructions are aimed at those adding *TextBrowser* as a bower dependency of their own project. Notes follow for those seeking to add their files within this repository.
+
+If you would like to see a sample package implementing the following, see the [bahaiwritings](https://bitbucket.org/brettz9/bahaiwritings) project.
+
+The recommended project directory structure (which works with the default paths) is as follows:
+
+- ***bower.json*** - Should indicate `textbrowser` as a dependency as per the "Installation" section above. See `bower-sample.json` for an example.
+- ***files.json*** - Points to your data files (e.g., any kept in `data/`). Is an object with a `groups` property set to an array of file groups where each group has the property `name` for a file group display name as a string or localization key; an optional `directions` string or localization key; an optional `baseDirectory`, `schemaBaseDirectory`, and `metadataBaseDirectory` for base paths; and a `files` array property with each file containing the properties, `name` for the file name as a string or localization key; `file` for file contents (recommended as a [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) object which will be resolved relative to any `baseDirectory` properties); and `schemaFile`, and `metadataFile` file paths (relative to the respective base paths). The same base directory properties are also available at the root of the file and if present will be prefixed to any file-group-specific base paths and the file. You may wish to validate your `files.json` with `general-schemas/files.jsonschema`, but this is not required.
+- ***index.html*** - The main application code. One can use `index-sample.html` as is or modified as desired. Note that it may be sufficient to modify `resources/user.css` and `resources/user.js`.
+- ***textbrowser.appcache*** - Offline AppCache manifest.
+- ***.htaccess*** - If using Apache, you may wish to have this file copied from TextBrowser's `.htaccess-sample` in order to serve the proper Content Type for the AppCache file.
+- ***resources/user.css*** - Add any custom CSS you wish to apply for `index.html`.
+- ***resources/user.js*** - Add any JavaScript you wish to use. Unless already invoked in `index.html`, you should call the `TextBrowser` constructor here. See TextBrowser's `resources/user-sample.js` for a pattern you can copy and optionally adapt.
+- ***bower_components*** - *TextBrowser* and its dependencies will be added here via bower install as well as any dependencies you indicate within `bower.json`.
+- ***data/*** - Directory recommended as a convention for holding data files. It is also recommended that child directories be named for each file group, and within each file group, have the JSON data files (adhering to `general-schemas/table-container.jsonschema` and its subschema `array-of-arrays.jsonschema`) as well as "schema" and "metadata" directories containing the specific JSON schemas for each data file (adhering to `general-schemas/table.jsonschema`) and the TextBrowser-specific meta-data files (adhering to `general-schemas/metadata.jsonschema`).
+
+New language information should be added to TextBrowser's `/appdata/languages.json` and new translations to a new file in TextBrowser's `/locales`. This information should be generic to the application, so please contribute back through pull requests if you have new locales to offer. However, you may also supply a `languages` property pointing to a languages file of your own choosing. See `general-schemas/languages.jsonschema` and `general-schemas/locale.jsonschema` for the composition of these file(s).
 
 
 1. Copy the file `index-sample.html` as `index.html` and customize if required (this may not be required if the next step is followed).
@@ -33,7 +58,18 @@ NOTE: The following needs to be modified according to new usage, invoke this fil
 1. Add any new JSON data files to your own subfolder of `/bower_components` (along with JSON Schema and metadata files; see the "JSON Schema and metadata files and fields in use" section). If this data is contained within a Bower repository, you can naturally load this via Bower (e.g., `bower install git@bitbucket.org:brettz9/bahaiwritings.git`).
 1. Add references to the JSON data files added in the previous step in a new file `appdata/files.json` (a sample can be copied from `appdata/files-sample.json`).
 1. Copy the file `textbrowser-sample.appcache` as `textbrowser.appcache` and add any other files required by your application that you wish to be accessible in offline mode (including the user files added in the previous steps). (HTML currently only allows one cache file apparently as per <https://html.spec.whatwg.org/multipage/semantics.html#attr-html-manifest>.) In order to keep all of your content together, you may instead wish to add an AppCache file within your `bower_components` repository subfolder and modify `index.html` to point to it so that you can maintain all files needed for caching in that file.
-1. New language information should be added to `/appdata/languages.json` and new translations to a new file in `/locales`. This information should be generic to the application, so please contribute back through pull requests if you have new locales to offer though you may also supply a `languages` property pointing to a file of your own choosing.
+
+# API
+
+The API can be adapted as needed. The file in `resources/user-sample.js` shows its usage (assuming paths relative to a package containing *TextBrowser* as a dependency).
+
+- ***TextBrowser(options)*** - Constructor which takes an options object with the optional properties, `files` and `languages`.
+    - `files` - Path for the `files.json` containing meta-data on the files to be made available via the interface. file Defaults to 'files.json'.
+    - `languages` - Path for the `languages.json` file containing meta-data on the languages to be displayed in the interface. Defaults to 'bower_components/textbrowser/appdata/languages.json'.
+- ***init*** - Default implementation merely invokes `displayLanguages`.
+- ***displayLanguages*** - Retrieves the `options.language` JSON file of languages and set the `langData` property with the JSON retrieved. Also invokes `paramChange` and sets up an `onhashchange` listener to invoke `paramChange`.
+- ***getDirectionForLanguageCode*** - Utility for getting the directionality of a language code utilizing information in the JSON file supplied as `options.languages`. Utilized by `paramChange`.
+- ***paramChange*** - Contains the main code for handling display of languages, works, or results. Will probably be broken up further in the future.
 
 # JSON Schema and metadata files and fields in use
 
@@ -42,7 +78,7 @@ NOTE: The following needs to be modified according to new usage, invoke this fil
 # Todos
 
 1. See also todos inside `index.js`
-1. Once stabilized, target textbrowser dependency mentioned above by tagged version instead of `master`.
+1. Once stabilized, target "textbrowser" dependency mentioned above by tagged version instead of `master`.
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)!
 1. Separate formatting within Jamilih code to CSS
 1. Node.js (or PHP) for serving JSON files immediately and then injecting config for index.js to avoid reloading
