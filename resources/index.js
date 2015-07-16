@@ -7,6 +7,7 @@ Todos (higher priority)
 1. WAITING (version update): Add and make use of updated json-refs to make single `resolveRemoteRef` call (or whatever the new API may become) and try new relative refs feature.
 
 1. Move files.json-specific locale data to files.json at bahaiwritings repo and i18nize to grab files.json locale info from within that file
+    1. Move "about" text in textbrowser locales to `files.json`
 1. Move table-specific/field-specific locale data to schema or metadata file for modularity; then avoid unchecking when clicking button re: matching current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue` functionality)
 1. Choose clearer naming/structure for locale table/field keys
     1. Consider `tablealias` and default to `table` or something (as `fieldalias` defaults to `fieldname`); aliased heading (also used as the title of the page)
