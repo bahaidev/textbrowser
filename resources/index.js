@@ -7,6 +7,7 @@ Todos (higher priority)
 1. WAITING (version update): Add and make use of updated json-refs to make single `resolveRemoteRef` call (or whatever the new API may become) and try new relative refs feature.
 
 1. Update schemas to reflect new localization-related file changes (languages.json, files.json, metadata files) and make one for site-sample.json (and move to bahaiwritings as site.json)
+1. Code to populate locale files with missing localization strings and report the missing ones (and sort as such in assistant file)
 1. Build library (for browser or Node) to utilize site.json file to add site-wide navigation bar headers, breadcrumbs, link rel=next/prev/contents/etc., sitemap, and page title (supplied argument of the current page)? Also about text and removecookies.
 1. Move files.json-specific locale data to files.json at bahaiwritings repo and i18nize to grab files.json locale info from within that file (also rename localization strings, esp. auto-field ones; consider making some reusable, pointing to scripts, or how else to designate auto-field plugins?)
     1. Move "about" text in textbrowser locales to `files.json`

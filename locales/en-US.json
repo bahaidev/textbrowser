@@ -122,7 +122,6 @@
     
 
     "tablealias": {
-        "aqdas": "Kitáb-i-Aqdas",
         "iqan": "Kitáb-i-Íqán",
         "quran": "Qur'án",
         "peace": "Promise of World Peace",
@@ -139,7 +138,6 @@
         "pm": "Prayers and Meditations"
     },
     "tableheading": {
-        "aqdas": "The Kitáb-i-Aqdas",
         "iqan": "The Kitáb-i-Íqán",
         "quran": "The Holy Qur'án",
         "peace": "The Promise of World Peace",
@@ -155,9 +153,7 @@
         "alvah_va_saya-yi_mubarikih": "Alváh va Sáyá-yí Mubárikih-yi-Hadrat-i-'Abdu'l-Bahá",
         "pm": "Prayers and Meditations"
     },
-    "groupbytoggle": {
-        "hidden words": "Group according to the above?"
-    },
+    
     "fieldalias": {
         "quran": {
             "surah-name": "Suráh Name"
