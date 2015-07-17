@@ -6,21 +6,20 @@ Todos (higher priority)
 
 1. WAITING (version update): Add and make use of updated json-refs to make single `resolveRemoteRef` call (or whatever the new API may become) and try new relative refs feature.
 
-1. Update schemas to reflect new localization-related file changes (languages.json, files.json, metadata files) and make one for site-sample.json (and move to bahaiwritings as site.json)
-1. Code to populate locale files with missing localization strings and report the missing ones (and sort as such in assistant file); put assistant localization keys in own file?
-1. Build library (for browser or Node) to utilize site.json file to add site-wide navigation bar headers, breadcrumbs, link rel=next/prev/contents/etc., sitemap, and page title (supplied argument of the current page)? Also about text and removecookies.
-1. Move files.json-specific locale data to files.json at bahaiwritings repo and i18nize to grab files.json locale info from within that file (also rename localization strings, esp. auto-field ones; consider making some reusable, pointing to scripts, or how else to designate auto-field plugins?)
-    1. Move "about" text in textbrowser locales to `files.json`
-    1. Update README and files.jsonschema to reflect new changes
-1. Move table-specific/field-specific locale data to schema or metadata file for modularity; then avoid unchecking when clicking button re: matching current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue` functionality)
+1. Fix code to work with table-specific/field-specific locale data that has been moved to files.json (and languages.json) and metadata files for modularity; then avoid unchecking when clicking button re: matching current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue` functionality)
     1. Update README and metadata.jsonschema (or table.jsonschema?) to reflect new changes
+1. Rename localization strings, esp. auto-field ones; consider making some reusable, pointing to scripts, or how else to designate auto-field plugins?
+    1. Update README and files.jsonschema to reflect new changes
 1. Choose clearer naming/structure for locale table/field keys
     1. Consider `tablealias` and default to `table` or something (as `fieldalias` defaults to `fieldname`); aliased heading (also used as the title of the page)
+1. Update schemas to reflect new localization-related file changes (languages.json, files.json, metadata files) and make one for site-sample.json (and move to bahaiwritings as site.json)
 1. Review code for readability, refactoring opportunities
 
 1. Aliases
     1. Consider using `prefer_alias` for field alias use and optionally show both if not given (e.g., for Bible books with `prefer_alias`, show only the pull-down of books whereas with the Qur'an (where Surah numbers are more commonly used) link a pull-down of Surah names to a textbox allowing numbers)?
     1. Remove locale info for "numbers only" string key (including from locale files?) if allowing for aliased searches (e.g., "Gen")
+1. Build library (for browser or Node) to utilize site.json file to add site-wide navigation bar headers, breadcrumbs, link rel=next/prev/contents/etc., sitemap, and page title (supplied argument of the current page)? Also about text and removecookies.
+1. Code to populate locale files with missing localization strings and report the missing ones (and sort as such in assistant file); put assistant localization keys in own file?
 1. Options to have range of context and range for highlighting (with own styles) and anchoring
 1. Add content language(s) multiple select option to always browse for those in the desired locale(s); utilize "localization-strings"/<code>/languages/<code> in language.json
 1. Schema-aware and metadata-aware column sorting options (e.g., sort by order and ASC/DESC) with user customizability (i.e., presorting along with dynamic client-side after-load sorting, with or without search filtering; use "search" in locale to add this filtering to UI)
