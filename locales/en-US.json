@@ -205,11 +205,6 @@
             "German": "German",
             "Arabic": "Arabic"
         },
-        "iqan": {
-            "Page": "Page",
-            "Paragraph": "Paragraph",
-            "Text": "Text"
-        },
         "peace": {
             "Paragraph": "Paragraph",
             "Chinese": "Chinese",
@@ -244,14 +239,6 @@
             "Section": "Section",
             "Paragraph": "Paragraph",
             "Chinese": "Chinese"
-        },
-        "alvah_va_saya-yi_mubarikih": {
-            "Text": "Text",
-            "Page": "Page",
-            "unique_id": "unique_id",
-            "Persian with English tooltips (from Text)": "Persian with English tooltips (from Text)",
-            "Auto-Romanized Persian (from Text)": "Auto-Romanized Persian (from Text)",
-            "alvah_va_saya-yi_mubarikih": "Word-by-word \"Auto-translation\" (from Text)"
         },
         "pm": {
             "Number": "Number",
