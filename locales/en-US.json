@@ -170,19 +170,6 @@
             "Call Number": "Call Number",
             "Keywords": "Keywords"
         },
-        "Bible": {
-            "Book #": "Book #",
-            "Chapter #": "Chapter #",
-            "Verse #": "Verse #",
-            "King James Translation": "King James Translation",
-            "Bahá'í Translation": "Bahá'í Translation",
-            "Bahá'í Central Figures References": "Bahá'í Central Figures References",
-            "Bahá'í Special References": "Bahá'í Special References",
-            "Pilgrim's Notes References": "Pilgrim's Notes References",
-            "Cross-Bible References": "Cross-Bible References",
-            "Individual Bahá'í Scholars": "Individual Bahá'í Scholars",
-            "Qur'ánic References": "Qur'ánic References"
-        },
         "epistle_to_the_son_of_the_wolf": {
             "Paragraph": "Paragraph",
             "English": "English"

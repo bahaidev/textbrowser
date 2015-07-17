@@ -68,23 +68,7 @@
     
 
     "fieldname": {
-        "collins": {
-            "Record ID": "شماره",
-            "Date of Publication": "سال چاپ"
-        },
-        "Bible": {
-            "Book #": "کتاب شماره",
-            "Chapter #": "قسمت  شماره",
-            "Verse #": "جمله شماره",
-            "King James Translation": " ترجم King James ",
-            "Bahá'í Translation": "ترجمه بهایی",
-            "Bahá'í Central Figures References": "توضیحات مندرجد در اثار بهایی",
-            "Bahá'í Special References": "مراجع ویژه بهایی",
-            "Pilgrim's Notes References": "مراجع مسافرین ارض اقدس",
-            "Cross-Bible References": "مراجع ربط داده شده به انجیل و تورات",
-            "Individual Bahá'í Scholars": "دانشپژوهان بهایی",
-            "Qur'ánic References": "مراجع قرانی"
-        },
+        
         "epistle_to_the_son_of_the_wolf": {
             "Paragraph": "پاراگراف",
             "Text": "نوشتجات"
