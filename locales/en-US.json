@@ -122,11 +122,9 @@
     
 
     "tablealias": {
-        "iqan": "Kitáb-i-Íqán",
         "quran": "Qur'án",
         "peace": "Promise of World Peace",
         "collins": "Collins Bibliography",
-        "Leiden": "Leiden List",
         "Bible": "Bible",
         "hidden words": "Hidden Words",
         "epistle_to_the_son_of_the_wolf": "Epistle to the Son of the Wolf",
@@ -134,15 +132,12 @@
         "gems of divine mysteries": "Gems of Divine Mysteries",
         "gleanings": "Gleanings",
         "wwtf": "Who's Writing the Future?",
-        "alvah_va_saya-yi_mubarikih": "Alváh va Sáyá-yí Mubárikih-yi-Hadrat-i-'Abdu'l-Bahá",
         "pm": "Prayers and Meditations"
     },
     "tableheading": {
-        "iqan": "The Kitáb-i-Íqán",
         "quran": "The Holy Qur'án",
         "peace": "The Promise of World Peace",
         "collins": "The Collins Bibliography",
-        "Leiden": "The Leiden List",
         "Bible": "The Bible",
         "hidden words": "The Hidden Words",
         "epistle_to_the_son_of_the_wolf": "Epistle to the Son of the Wolf",
@@ -150,25 +145,7 @@
         "lights": "Lights of Guidance",
         "gleanings": "Gleanings from the Writings of Bahá'u'lláh",
         "wwtf": "Who's Writing the Future?",
-        "alvah_va_saya-yi_mubarikih": "Alváh va Sáyá-yí Mubárikih-yi-Hadrat-i-'Abdu'l-Bahá",
         "pm": "Prayers and Meditations"
-    },
-    
-    "fieldalias": {
-        "quran": {
-            "surah-name": "Suráh Name"
-        },
-        "Bible": {
-            "book-name": "Book Name"
-        }
-    },
-    "fieldvalue": {
-        "hidden words": {
-            "Original Language": {
-                "Persian": "Persian",
-                "Arabic": "Arabic"
-            }
-        }
     },
     "fieldname": {
         "collins": {

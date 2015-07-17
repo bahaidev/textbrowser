@@ -39,57 +39,5 @@
     "or": "او",
     "notwait": "غذا لاتريد الانتضار ، انقر هنا",
     "max": "الحد الاقصى",
-    "min": "الحد الادنى",
-
-
-    "tablealias": {
-        "aqdas": "الكتاب الأقدس",
-        "iqan": "كتاب الإيقان",
-        "quran": "القرآن الكريم",
-        "peace": "السلام العالمي وعد حق",
-        "collins": "ببليوغرافية كولنز (Collins Bibliography)",
-        "Leiden": "قائمة ليدن (Leiden List)",
-        "Bible": "الكتاب المقدس (الأنجيل والعهد القديم معا)",
-        "hidden words": "الكلمات المكنونة",
-        "epistle_to_the_son_of_the_wolf": "لوح ابن الذئب"
-    },
-    "tableheading": {
-        "aqdas": "الكتاب الأقدس",
-        "iqan": "كتاب الايقان",
-        "quran": "القرآن المجيد",
-        "peace": "وعد السلام العالمي",
-        "collins": "ببليوغرافية كولنز",
-        "Leiden": "قائمة لايدن",
-        "Bible": "الانجيل",
-        "hidden words": "الكلمات المكنونة"
-    },
-
-    "fieldvalue": {
-        "hidden words": {
-            "Original Language": {
-                "Arabic": "عربي"
-            }
-        }
-    },
-    "fieldname": {
-        "collins": {
-            "Record ID": "رقم",
-            "Date of Publication": "سنة الاصدار"
-            "Size": "حجم",
-            "Series Editor": "محرر المسلسل",
-            "Series Editor Role": "مهمة محرر المسلسل",
-            "Series Title": "عنوان المسلسل",
-            "Document Type": "نوع الملف"
-        },
-        "Bible": {
-            "Book #": "كتاب #",
-            "Chapter #": "فصل #"
-        },
-        "hidden words": {
-            "Arabic": "عربي"
-        },
-        "aqdas": {
-            "Arabic": "عربي"
-        }
-    }
+    "min": "الحد الادنى"
 }

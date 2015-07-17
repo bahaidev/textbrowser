@@ -86,14 +86,7 @@
         "Bible": "انجیل",
         "hidden words": "کلمات مکنونه"
     },
-    "fieldvalue": {
-        "hidden words": {
-            "Original Language": {
-                "Persian": "فارسي",
-                "Arabic": "عربی"
-            }
-        }
-    },
+
     "fieldname": {
         "collins": {
             "Record ID": "شماره",
