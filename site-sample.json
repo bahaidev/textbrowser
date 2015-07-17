@@ -1,14 +1,13 @@
 {
     "site": [
-        ["Langs", "Books", "Book", "Results"],
-        "Download", "Accessibility", "Vision", "News", "Help", "About", "Goals", "RSS", "Main pages", "Readme", "Sitemap", "Administrator Documentation"
+        "Langs", [
+            "Books", ["Book", ["Results"]],
+            "Download", "Accessibility", "Vision", "News", "Help", "About", "Goals", "RSS", "Main pages", "Readme", "Sitemap", "Administrator Documentation"
+        ]
     ],
-    "navigation": [
-        ["Langs", "Books", "Book", "Results"],
-        
-        "Download", "Accessibility", "Vision", "News", "Help", "About", "Goals", "RSS", "Main pages", "Readme", "Sitemap", "Administrator Documentation"
-        
-    ],
+    "navigation": {
+        "$ref": "#/site"
+    },
     "localization-strings": {
         "en-US": {
             "browser-title": "Sacred Writings Browser",

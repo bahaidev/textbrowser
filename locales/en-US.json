@@ -1,25 +1,19 @@
 {
-    "choosewritings_bahai_writingsdb": "Choose the Writings you wish to browse",
-    "choosewritings_bahai_writingsotherdb": "Or, choose from the following (non-Scriptural) works",
-
-    "browserfile-workselect": "Sacred Writings Browser: Work Selection",
-    "browserfile-workdisplay": "Sacred Writings Browser: {work}",
-    "browserfile-resultsdisplay": "Sacred Writings Browser: {work} results",
-
-    "save": "Save",
-    "assistantfile": "Browser Translation Interface",
-    "assistantlanguagetranslate": "Choose your language to translate",
-    "assistantpassword": "Password",
-    "assistantwrongpassword": "Password as entered does not allow access",
-    "assistantredirecting": "Redirecting to",
-    "assistant_original": "Original",
-    "assistant_translation": "Translation",
-    "assistant_shouldbechanged": "should be changed here to",
-    "assistant_choosedifferenteditlanguage": "Click here to choose a different editing language",
-    "assistant_changesignored": "if you click here, the changes you have made on this page will be ignored unless you have already saved the changes before",
-    "assistant_returnediting": "Click here to return to editing the same language as before",
-    "assistant_ransqlcommand": "Ran SQL command",
-    
+    "assistant": {
+        "save": "Save",
+        "file": "Browser Translation Interface",
+        "languagetranslate": "Choose your language to translate",
+        "password": "Password",
+        "wrongpassword": "Password as entered does not allow access",
+        "redirecting": "Redirecting to",
+        "original": "Original",
+        "translation": "Translation",
+        "shouldbechanged": "should be changed here to",
+        "choosedifferenteditlanguage": "Click here to choose a different editing language",
+        "changesignored": "if you click here, the changes you have made on this page will be ignored unless you have already saved the changes before",
+        "returnediting": "Click here to return to editing the same language as before",
+        "rancommand": "Ran command"
+    },
     "submitgo": "Go",
     "search": "search",
     "field_enabled": "Enabled",
@@ -105,14 +99,7 @@
     "navbar": "Navigation bar",
     "Breadcrumbs": "Breadcrumbs",
     "advancedmode": "Advanced mode",
-    "wordbyword": "Word-by-word \"Auto-translation\"",
-    "wordbyword1": "Auto-Romanized Persian",
-    "googlify": "Find word in \"Google\"",
-    "googledefine": "Definition (Google)",
-    "wordbyword2": "Persian with English tooltips",
-    "wikify": "Editable wiki page",
     "from": "from",
-    "wikilinks": "Links to Wiki",
     "auto": "Auto-field",
     "fullinput": "Choose a range of verses by number or, if applicable, by name",
     "fullinputbox": "Choose range",
@@ -133,6 +120,7 @@
     "enum-all": "All",
     
     
+
     "tablealias": {
         "aqdas": "Kitáb-i-Aqdas",
         "iqan": "Kitáb-i-Íqán",

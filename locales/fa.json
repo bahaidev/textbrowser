@@ -1,25 +1,19 @@
 {
-    "choosewritings_bahai_writingsdb": "آثار و الواح مورد دلخواه را انتخاب فرمائید",
-    "choosewritings_bahai_writingsotherdb": "یا از فهرست نوشتجات دیگر انتخاب فرمائید",
-
-    "browserfile-workselect": null,
-    "browserfile-workdisplay": null,
-    "browserfile-resultsdisplay": null,
-    
-    "save": "حفظ کنید",
-    "assistantfile": "برازر مترجم",
-    "assistantlanguagetranslate": "زبان ترجمه را انتخاب فرمایید",
-    "assistantpassword": "رمز عبور",
-    "assistantwrongpassword": "رمز عبور وارد شده قبول نیست ",
-    "assistantredirecting": "راهنمایی شدید به جهت",
-    "assistant_original": "اصلی",
-    "assistant_translation": "ترجمه",
-    "assistant_shouldbechanged": "اینجا تغییر بدهید به",
-    "assistant_choosedifferenteditlanguage": "اینجا کلک کنید در جهت انتخاب زبان ترجمه",
-    "assistant_changesignored": "اگر اینجا کلک کنید تغییرات حفظ نشده این صفحه نادیده انگاشته میشود",
-    "assistant_returnediting": "تا ادامه به استفاده از زبان ترجمه قبلی خود دهید اینجا کلک کنید",
-    "assistant_ransqlcommand": "SQL command اجرا کنید",
-
+    "assistant": {
+        "save": "حفظ کنید",
+        "file": "برازر مترجم",
+        "languagetranslate": "زبان ترجمه را انتخاب فرمایید",
+        "password": "رمز عبور",
+        "wrongpassword": "رمز عبور وارد شده قبول نیست ",
+        "redirecting": "راهنمایی شدید به جهت",
+        "original": "اصلی",
+        "translation": "ترجمه",
+        "shouldbechanged": "اینجا تغییر بدهید به",
+        "choosedifferenteditlanguage": "اینجا کلک کنید در جهت انتخاب زبان ترجمه",
+        "changesignored": "اگر اینجا کلک کنید تغییرات حفظ نشده این صفحه نادیده انگاشته میشود",
+        "returnediting": "تا ادامه به استفاده از زبان ترجمه قبلی خود دهید اینجا کلک کنید",
+        "rancommand": "command اجرا کنید"
+    },
     "submitgo": "بروید",
     "field_enabled": "قابل انجام",
     "field_title": "تیتر فیلد",
@@ -106,14 +100,7 @@
     "navbar": null,
     "Breadcrumbs": null,
     "advancedmode": null,
-    "wordbyword": null,
-    "wordbyword1": null,
-    "googlify": null,
-    "googledefine": null,
-    "wordbyword2": null,
-    "wikify": null,
     "from": null,
-    "wikilinks": null,
     "auto": null,
     "fullinput": null,
     "fullinputbox": null,
@@ -167,17 +154,6 @@
         "wwtf": null,
         "alvah_va_saya-yi_mubarikih": null,
         "pm": null
-    },
-    "groupbytoggle": {
-        "hidden words": null
-    },
-    "fieldalias": {
-        "quran": {
-            "surah-name": null
-        },
-        "Bible": {
-            "book-name": null
-        }
     },
     "fieldvalue": {
         "hidden words": {
@@ -294,37 +270,6 @@
             "Bahá'í References (Special)": null,
             "Rodwell Translation": null,
             "Rodwell's Notes": null
-        },
-        "gems of divine mysteries": {
-            "Paragraph": null,
-            "English": null
-        },
-        "lights": {
-            "Number": null,
-            "English": null
-        },
-        "gleanings": {
-            "Section": null,
-            "English": null
-        },
-        "wwtf": {
-            "Section": null,
-            "Paragraph": null,
-            "Chinese": null
-        },
-        "alvah_va_saya-yi_mubarikih": {
-            "Text": null,
-            "Page": null,
-            "unique_id": null,
-            "Persian with English tooltips (from Text)": null,
-            "Auto-Romanized Persian (from Text)": null,
-            "alvah_va_saya-yi_mubarikih": null
-        },
-        "pm": {
-            "Number": null,
-            "Roman #": null,
-            "Synopsis": null,
-            "English": null
         }
     }
 }

@@ -1,25 +1,18 @@
 {
-    "choosewritings_bahai_writingsdb": "إختار الكتاب الذي تود قرائته",
-    "choosewritings_bahai_writingsotherdb": "أو .. اختار من هذه الكتب الأخرى (من غير الآثار البهائية)",
-    
-    "browserfile-workselect": null,
-    "browserfile-workdisplay": null,
-    "browserfile-resultsdisplay": null,
-
-    "save": "احفظ",
-    "assistantfile": null,
-    "assistantlanguagetranslate": "اختر لغتك للترجمة",
-    "assistantpassword": "كلمة السر",
-    "assistantwrongpassword": "كلمة السر كما ادخلتها لا تسمح بالدخول",
-    "assistantredirecting": "اعادة توجيه الصفحة الى",
-    "assistant_original": "الاصلية",
-    "assistant_translation": "ترجمة",
-    "assistant_shouldbechanged": "يجب تغييرها هنا الى",
-    "assistant_choosedifferenteditlanguage": null,
-    "assistant_changesignored": null,
-    "assistant_returnediting": null,
-    "assistant_ransqlcommand": null,
-
+    "assistant": {
+        "save": "احفظ",
+        "file": null,
+        "languagetranslate": "اختر لغتك للترجمة",
+        "password": "كلمة السر",
+        "wrongpassword": "كلمة السر كما ادخلتها لا تسمح بالدخول",
+        "redirecting": "اعادة توجيه الصفحة الى",
+        "original": "الاصلية",
+        "translation": "ترجمة",
+        "shouldbechanged": "يجب تغييرها هنا الى",
+        "choosedifferenteditlanguage": null,
+        "changesignored": null,
+        "returnediting": null
+    },
     "submitgo": "إذهب",
     "field_enabled": null,
     "field_title": null,
@@ -104,14 +97,7 @@
     "navbar": null,
     "Breadcrumbs": null,
     "advancedmode": null,
-    "wordbyword": null,
-    "wordbyword1": null,
-    "googlify": null,
-    "googledefine": null,
-    "wordbyword2": null,
-    "wikify": null,
     "from": null,
-    "wikilinks": null,
     "auto": null,
     "fullinput": null,
     "fullinputbox": null,
@@ -166,17 +152,7 @@
         "alvah_va_saya-yi_mubarikih": null,
         "pm": null
     },
-    "groupbytoggle": {
-        "hidden words": null
-    },
-    "fieldalias": {
-        "quran": {
-            "surah-name": null
-        },
-        "Bible": {
-            "book-name": null
-        }
-    },
+
     "fieldvalue": {
         "hidden words": {
             "Original Language": {
@@ -248,10 +224,6 @@
             "Individual Bahá'í Scholars": null,
             "Qur'ánic References": null
         },
-        "epistle_to_the_son_of_the_wolf": {
-            "Paragraph": null,
-            "Text": null
-        },
         "hidden words": {
             "Original Language": null,
             "Number": null,
@@ -269,60 +241,6 @@
             "English": null,
             "German": null,
             "Arabic": "عربي"
-        },
-        "iqan": {
-            "Page": null,
-            "Paragraph": null,
-            "Text": null
-        },
-        "peace": {
-            "Paragraph": null,
-            "Chinese": null,
-            "Section Number": null,
-            "English": null
-        },
-        "quran": {
-            "Rodwell Suráh #": null,
-            "Verse #": null,
-            "Traditional Suráh #": null,
-            "Sale Translation": null,
-            "Sale's Notes": null,
-            "Bahá'í References (Central Figures)": null,
-            "Bahá'í Translation (Shoghi Effendi unless otherwise noted)": null,
-            "Bahá'í References (Special)": null,
-            "Rodwell Translation": null,
-            "Rodwell's Notes": null
-        },
-        "gems of divine mysteries": {
-            "Paragraph": null,
-            "English": null
-        },
-        "lights": {
-            "Number": null,
-            "English": null
-        },
-        "gleanings": {
-            "Section": null,
-            "English": null
-        },
-        "wwtf": {
-            "Section": null,
-            "Paragraph": null,
-            "Chinese": null
-        },
-        "alvah_va_saya-yi_mubarikih": {
-            "Text": null,
-            "Page": null,
-            "unique_id": null,
-            "Persian with English tooltips (from Text)": null,
-            "Auto-Romanized Persian (from Text)": null,
-            "alvah_va_saya-yi_mubarikih": null
-        },
-        "pm": {
-            "Number": null,
-            "Roman #": null,
-            "Synopsis": null,
-            "English": null
         }
     }
 }

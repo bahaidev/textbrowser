@@ -114,7 +114,7 @@ The API can be adapted as needed. The file in `resources/user-sample.js` shows i
 1. Node.js synchronization of locale files?
 1. Might support arbitrary JSON and JSON Reference querying (if files.json configured to indicate a wildcard or something)
 1. Update "about" text and utilize on popup or something?
-1. Assistant file (for translating; needs server for password); work optionally with main locales, files, table, and field locale info
+1. Assistant file (for translating; needs server for password); work optionally with main locales, files, table, and field locale info. Use already-existing localization strings.
 1. Add tooltips and table summaries, etc. back (see locale file for these and reapply any other unused) and add any missing ones describing how to use the elements
 1. Change "Saving settings as URL" to a redirect if faithfully copying everything?
 1. Provide option to skip over `langs.json` with a default language (though discourage since the UI translations may help some people).
