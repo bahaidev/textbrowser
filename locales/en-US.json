@@ -120,33 +120,6 @@
     "enum-all": "All",
     
     
-
-    "tablealias": {
-        "quran": "Qur'án",
-        "peace": "Promise of World Peace",
-        "collins": "Collins Bibliography",
-        "Bible": "Bible",
-        "hidden words": "Hidden Words",
-        "epistle_to_the_son_of_the_wolf": "Epistle to the Son of the Wolf",
-        "lights": "Lights of Guidance",
-        "gems of divine mysteries": "Gems of Divine Mysteries",
-        "gleanings": "Gleanings",
-        "wwtf": "Who's Writing the Future?",
-        "pm": "Prayers and Meditations"
-    },
-    "tableheading": {
-        "quran": "The Holy Qur'án",
-        "peace": "The Promise of World Peace",
-        "collins": "The Collins Bibliography",
-        "Bible": "The Bible",
-        "hidden words": "The Hidden Words",
-        "epistle_to_the_son_of_the_wolf": "Epistle to the Son of the Wolf",
-        "gems of divine mysteries": "Gems of Divine Mysteries",
-        "lights": "Lights of Guidance",
-        "gleanings": "Gleanings from the Writings of Bahá'u'lláh",
-        "wwtf": "Who's Writing the Future?",
-        "pm": "Prayers and Meditations"
-    },
     "fieldname": {
         "collins": {
             "Record ID": "Record ID",

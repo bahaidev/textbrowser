@@ -66,26 +66,6 @@
     "startingat": "شروع از",
     
     
-    "tablealias": {
-        "aqdas": "كتاب اقدس",
-        "iqan": "كتاب ايقان",
-        "quran": "قران",
-        "peace": "وعده صلح جهانى",
-        "collins": "کتابنامه Collins",
-        "Leiden": " لیست Leiden ",
-        "Bible": "انجیل",
-        "hidden words": "كلمات مكنونه"
-    },
-    "tableheading": {
-        "aqdas": "کتاب اقدس",
-        "iqan": "کتاب ایقان",
-        "quran": "قران",
-        "peace": "وعده صلح جهانی",
-        "collins": "کتابنامه Collins",
-        "Leiden": "لیست Leiden",
-        "Bible": "انجیل",
-        "hidden words": "کلمات مکنونه"
-    },
 
     "fieldname": {
         "collins": {
