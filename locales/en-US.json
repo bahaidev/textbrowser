@@ -170,46 +170,6 @@
             "Call Number": "Call Number",
             "Keywords": "Keywords"
         },
-        "epistle_to_the_son_of_the_wolf": {
-            "Paragraph": "Paragraph",
-            "English": "English"
-        },
-        "hidden words": {
-            "Original Language": "Original Language",
-            "Number": "Number",
-            "Synopsis": "Synopsis",
-            "English": "English",
-            "Arabic": "Arabic",
-            "Persian": "Persian",
-            "hidden words": "Word-by-word \"Auto-translation\" (from Persian)",
-            "unique_id": "unique_id",
-            "Auto-Romanized Persian (from Persian)": "Auto-Romanized Persian (from Persian)",
-            "Persian with English tooltips (from Persian)": "Persian with English tooltips (from Persian)"
-        },
-        "aqdas": {
-            "Paragraph": "Paragraph",
-            "English": "English",
-            "German": "German",
-            "Arabic": "Arabic"
-        },
-        "peace": {
-            "Paragraph": "Paragraph",
-            "Chinese": "Chinese",
-            "Section Number": "Section Number",
-            "English": "English"
-        },
-        "quran": {
-            "Rodwell Suráh #": "Rodwell Suráh #",
-            "Verse #": "Verse #",
-            "Traditional Suráh #": "Traditional Suráh #",
-            "Sale Translation": "Sale Translation",
-            "Sale's Notes": "Sale's Notes",
-            "Bahá'í References (Central Figures)": "Bahá'í References (Central Figures)",
-            "Bahá'í Translation (Shoghi Effendi unless otherwise noted)": "Bahá'í Translation (Shoghi Effendi unless otherwise noted)",
-            "Bahá'í References (Special)": "Bahá'í References (Special)",
-            "Rodwell Translation": "Rodwell Translation",
-            "Rodwell's Notes": "Rodwell's Notes"
-        },
         "gems of divine mysteries": {
             "Paragraph": "Paragraph",
             "English": "English"

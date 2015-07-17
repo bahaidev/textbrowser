@@ -63,40 +63,5 @@
     "headerfixed-wishtoscroll": "تیتر جدول غیرقابل تغییر است (اگر امکان دارد)",
     "atonce": "فورآ",
     "set": "اماده",
-    "startingat": "شروع از",
-    
-    
-
-    "fieldname": {
-        
-        "epistle_to_the_son_of_the_wolf": {
-            "Paragraph": "پاراگراف",
-            "Text": "نوشتجات"
-        },
-        "hidden words": {
-            "Original Language": "زبان اصلی",
-            "Number": "شماره",
-            "Synopsis": "خلاصه",
-            "English": "نوشتجات",
-            "Arabic": "عربی",
-            "Persian": "فارسي"
-        },
-        "aqdas": {
-            "Paragraph": "پاراگراف",
-            "English": "نوشتجات",
-            "German": "المانی",
-            "Arabic": "عربی"
-        },
-        "peace": {
-            "Paragraph": "پاراگراف",
-            "Chinese": "چینی",
-            "Section Number": "قسمت",
-            "English": "انگلیسی"
-        },
-        "quran": {
-            "Rodwell Suráh #": "سوره شماره  در Rodwell",
-            "Verse #": "سوره شماره",
-            "Sale Translation": "ترجمه صالح"
-        }
-    }
+    "startingat": "شروع از"
 }
