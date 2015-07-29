@@ -80,9 +80,9 @@ The API can be adapted as needed. The file in `resources/user-sample.js` shows i
 1. Once stabilized, target "textbrowser" dependency mentioned above by tagged version instead of `master`.
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)!
 1. Separate formatting within Jamilih code to CSS; separate business and design logic for own sake and also for unit testing and performance by being able to use a natively stringifying version of Jamilih (once complete)
-1. Node.js (or PHP) for serving JSON files immediately and then injecting config for index.js to avoid reloading
+1. Node.js (or PHP) for serving JSON files immediately and then injecting config for `index.js` to avoid reloading
 1. Make Node.js/PHP tools to build `languages.json` based on available locale files, and build `files.json` based on a target directory.
-1. Add/Add back automated: Synopsis, Roman numerals, Chinese numbers, word-by-word translation, auto-romanized Persian/Arabic, Persian with English tooltips, English with Persian/Arabic tooltips, text-to-(Google search, Google define, Wikipedia, etc. edit pages); add Word-by-word/phrase mapping
+1. Add/Add back automated: Synopsis, Roman numerals, Chinese numbers, word-by-word translation, auto-romanized Persian/Arabic, Persian with English tooltips, English with Persian/Arabic tooltips, text-to-(Google search, Google define, Wikipedia, etc. edit pages); add Word-by-word/phrase mapping; add back-links for index entries (which needs its own JSON Schema-based project for the hierarchical representations), including optionally merging them for different books
     1. Reverse engineer missing work by using `bahai_locales` database (which contains more than localization info: automated column data, alternative field names, etc.)
     1. Metadata for default field column placement and table/field applicability
     1. Automated word-by-word translations, auto-links to Google, Amazon, etc.
