@@ -22,6 +22,7 @@ Todos (higher priority)
 1. Code to populate locale files with missing localization strings and report the missing ones (and sort as such in assistant file); put assistant localization keys in own file?
 1. Incorporate speech synthesis from http://bahai.works/MediaWiki:Common.js
 1. Options to have range of context and range for highlighting (with own styles) and anchoring
+1. CORS and HTTPQuery headers?
 1. Add content language(s) multiple select option to always browse for those in the desired locale(s); utilize "localization-strings"/<code>/languages/<code> in language.json
 1. Schema-aware and metadata-aware column sorting options (e.g., sort by order and ASC/DESC) with user customizability (i.e., presorting along with dynamic client-side after-load sorting, with or without search filtering; use "search" in locale to add this filtering to UI)
 1. Get the automated fields listed in drop-down menus; also new overlay type (See README todos)
