@@ -8,7 +8,13 @@ it can work offline.
 
 # Text Browser
 
-This software currently allows for multilinear texts (represented in user-customizable JSON tables. These texts are accessible from a main interface (currently requiring a whitelist though it may be made customizable in the future for open-ended usage/dynamic server-side generation of available files), with each text being given its own customizable interface to allow browsing of the contents of the text, utilizing JSON Schema and metadata JSON associated with the files.
+This software currently allows for multilinear texts (represented in
+user-customizable JSON tables. These texts are accessible from a main
+interface (currently requiring a whitelist though it may be made
+customizable in the future for open-ended usage/dynamic server-side
+generation of available files), with each text being given its own
+customizable interface to allow browsing of the contents of the text,
+utilizing JSON Schema and metadata JSON associated with the files.
 
 # Installation
 
@@ -31,12 +37,21 @@ bower install
 
 # Usage
 
-NOTE: The following needs to be modified according to new usage, invoke this file from `index.html` with locations for `files.json` and optionally `languages.json`; also get rid of references to files-sample.json as including it there; reference metadata and schema samples inside the Baha'i repo too)
+NOTE: The following needs to be modified according to new usage, invoke
+this file from `index.html` with locations for `files.json` and optionally
+`languages.json`; also get rid of references to files-sample.json as
+including it there; reference metadata and schema samples inside the
+Baha'i repo too)
     1. Location: https://bitbucket.org/brettz9/bahaiwritings
 
-The following instructions are aimed at those adding *TextBrowser* as a bower dependency of their own project. Notes follow for those seeking to add their files within this repository.
+The following instructions are aimed at those adding *TextBrowser* as a
+bower dependency of their own project. Notes follow for those seeking to
+add their files within this repository.
 
-If you would like to see a sample package implementing the following, see the [bahaiwritings](https://bitbucket.org/brettz9/bahaiwritings) project.
+If you would like to see a sample package implementing the
+following, see the
+[bahaiwritings](https://bitbucket.org/brettz9/bahaiwritings)
+project.
 
 The recommended project directory structure (which works with the default paths) is as follows:
 
@@ -50,9 +65,20 @@ The recommended project directory structure (which works with the default paths)
 - ***bower_components*** - *TextBrowser* and its dependencies will be added here via bower install as well as any dependencies you indicate within `bower.json`.
 - ***data/*** - Directory recommended as a convention for holding data files. It is also recommended that child directories be named for each file group, and within each file group, have the JSON data files (adhering to `general-schemas/table-container.jsonschema` and its subschema `array-of-arrays.jsonschema`) as well as "schema" and "metadata" directories containing the specific JSON schemas for each data file (adhering to `general-schemas/table.jsonschema`) and the TextBrowser-specific meta-data files (adhering to `general-schemas/metadata.jsonschema`). See the "JSON Schema and metadata files and fields in use" section.
 
-New language information should be added to TextBrowser's `/appdata/languages.json` (and the copy of this file, `languages-tb.json`, which only differs in its `localeFileBasePath`) and new translations to a new file in TextBrowser's `/locales`. This information should be generic to the application, so please contribute back through pull requests if you have new locales to offer. However, you may also supply a `languages` property pointing to a languages file of your own choosing. See `general-schemas/languages.jsonschema` and `general-schemas/locale.jsonschema` for the composition of these file(s).
+New language information should be added to TextBrowser's
+`/appdata/languages.json` (and the copy of this file,
+`languages-tb.json`, which only differs in its `localeFileBasePath`)
+and new translations to a new file in TextBrowser's `/locales`. This
+information should be generic to the application, so please
+contribute back through pull requests if you have new locales
+to offer. However, you may also supply a `languages` property
+pointing to a languages file of your own choosing. See
+`general-schemas/languages.jsonschema` and
+`general-schemas/locale.jsonschema` for the composition of these file(s).
 
-For those wishing to test files within the TextBrowser project itself (not generally recommended), you can follow the follow tweaks to the above instructions:
+For those wishing to test files within the TextBrowser project itself
+(not generally recommended), you can follow the follow tweaks to
+the above instructions:
 
 1. You should not need to alter `bower.json` though you may install Bower dependencies (e.g., `bower install git@bitbucket.org:brettz9/bahaiwritings.git`) if you update paths accordingly. You may alternatively add data files to the reserved `data` directory at the root of TextBrowser.
 1. Change paths. The path prefix `bower_components/textbrowser` in your `index.html` and `textbrowser.appcache` will need to be stripped in this environment. You will also need to change the `languages` property in the `resources/user.js` call to the *TextBrowser* constructor to point to `languages-tb.json` instead of `languages.json` or otherwise supply a languages file which resolves to the correct path).
@@ -75,7 +101,7 @@ The API can be adapted as needed. The file in `resources/user-sample.js` shows i
 
 # Todos
 
-1. See also todos inside `index.js`
+1. See also todos inside `resources/index.js`
 1. Use validators with all JSON Schemas and instances to confirm schemas are defined properly
 1. Once stabilized, target "textbrowser" dependency mentioned above by tagged version instead of `master`.
 1. As with table/array-of-arrays schema, develop schema for outlines (and utilize)!
