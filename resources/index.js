@@ -6,7 +6,7 @@ Todos (higher priority)
 
 1. WAITING (version update): Add and make use of updated json-refs to make single `resolveRemoteRef` call (or whatever the new API may become) and try new relative refs feature.
 
-1. Change to utilize ! in hash for indexability (also ensuring links to it?) as per https://developers.google.com/webmasters/ajax-crawling/docs/getting-started?csw=1
+1. Change to utilize ! in hash for indexability (also ensuring links to it?) as per https://developers.google.com/webmasters/ajax-crawling/docs/getting-started?csw=1 and https://developers.google.com/webmasters/ajax-crawling/docs/specification
 1. Cbeck whether URLSearchParams.toString is still working
 
 1. Fix code to work with table-specific/field-specific locale data that has been moved to files.json (and languages.json) and metadata files for modularity; then avoid unchecking when clicking button re: matching current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue` functionality)
