@@ -1,5 +1,7 @@
-/*globals formSerialize, JsonRefs, IMF, getJSON, jml, URLSearchParams*/
+/*global formSerialize, JsonRefs, IMF, getJSON, jml, URLSearchParams, window, alert, document, location*/
 /*jslint vars:true, regexp:true, todo:true*/
+/*eslint max-len: 0, require-jsdoc: 0, no-alert: 0, no-warning-comments: 0, no-magic-numbers: 0, no-extra-parens: 0, lines-around-comment: 0*/
+/* exported TextBrowser*/
 
 /*
 Todos (higher priority)
@@ -39,9 +41,10 @@ Todos (for browse9.php equivalent)
 
 var TextBrowser = (function () {'use strict';
 
+/* eslint-disable indent */
 var nbsp = '\u00a0';
 
-function TextBrowser (options) {
+function TextBrowser (options) { // eslint-disable-line
     if (!(this instanceof TextBrowser)) {
         return new TextBrowser(options);
     }
@@ -59,7 +62,7 @@ TextBrowser.prototype.displayLanguages = function () {
     getJSON(this.languages, function (langData) {
         that.langData = langData;
         that.paramChange();
-        
+
         // INIT/ADD EVENTS
         window.addEventListener('hashchange', that.paramChange.bind(that), false);
     }, function (err) {
@@ -79,9 +82,9 @@ TextBrowser.prototype.getDirectionForLanguageCode = function getDirectionForLang
 TextBrowser.prototype.paramChange = function paramChange () {
     var that = this;
     var langs = this.langData.languages;
-    
+
     document.body.parentNode.replaceChild(document.createElement('body'), document.body);
-    
+
     var params = new URLSearchParams(location.hash.slice(1));
     function $p (param) {
         return params.get(param);
@@ -98,7 +101,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
     var direction = this.getDirectionForLanguageCode(preferredLocale);
     var fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
     document.dir = direction;
-    
+
     var work = $p('work');
     var result = $p('result');
 
@@ -109,11 +112,11 @@ TextBrowser.prototype.paramChange = function paramChange () {
             [['select', {size: langs.length, $on: {change: function (e) {
                 params.set('lang', e.target.selectedOptions[0].value);
                 followParams();
-            }}}, langs.map(function (lang) {
-                return ['option', {value: lang.code}, [lang.name]];
+            }}}, langs.map(function (lan) {
+                return ['option', {value: lan.code}, [lan.name]];
             })]], document.body
 
-            // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?            
+            // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
             /* Works too:
             langs.map(function (lang) {
                 return ['div', [
@@ -123,42 +126,42 @@ TextBrowser.prototype.paramChange = function paramChange () {
             */
         );
     }
-    
+
     function workSelect (l/*, defineFormatter*/) {
         document.title = l({key: "browserfile-workselect", fallback: true});
 
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
         getJSON(that.files, function (dbs) {
-            var lo = function (key, atts) {
+            function lo (key, atts) {
                 return ['option', atts, [
                     l({key: key, fallback: function (obj) {
                         atts.dir = fallbackDirection;
                         return obj.message;
                     }})
                 ]];
-            };
-            var ld = function (key, values, formats) {
+            }
+            function ld (key, values, formats) {
                 return l({key: key, values: values, formats: formats, fallback: function (obj) {
                     // Displaying as div with inline display instead of span since Firefox puts punctuation at left otherwise
                     return ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [obj.message]];
                 }});
-            };
+            }
             jml(
                 'div',
                 {'class': 'focus'},
                 dbs.groups.map(function (fileGroup, i) {
                     return ['div', [
-                        (i > 0 ? ['br', 'br', 'br'] : ''),
+                        i > 0 ? ['br', 'br', 'br'] : '',
                         ['div', [ld(fileGroup.directions)]],
                         ['br'],
                         ['select', {'class': 'file', dataset: {name: fileGroup.name}, $on: {
-                            click: [function (e) {
+                            click: [(function (e) {
                                 if (e.target.nodeName.toLowerCase() === 'select') {
                                     return;
                                 }
                                 params.set('work', e.target.value);
                                 followParams();
-                            }, true]
+                            }), true]
                         }}, fileGroup.files.map(function (file) {
                             return lo(['tablealias', file.name], {value: file.name});
                         })]
@@ -171,54 +174,54 @@ TextBrowser.prototype.paramChange = function paramChange () {
             alert(err);
         });
     }
-    
+
     function _displayWork (l, defineFormatter, schema, metadata) {
 
         // Returns plain text node or element (as Jamilih) with fallback direction
-        var ld = function (key, values, formats) {
+        function ld (key, values, formats) {
             return l({key: key, values: values, formats: formats, fallback: function (obj) {
                 // Displaying as div with inline display instead of span since Firefox puts punctuation at left otherwise (bdo dir seemed to have issues in Firefox)
                 return ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [obj.message]];
             }});
-        };
+        }
         // Returns option element with localized option text (as Jamilih), with optional fallback direction
-        var lo = function (key, atts) {
+        function lo (key, atts) {
             return ['option', atts, [
                 l({key: key, fallback: function (obj) {
                     atts.dir = fallbackDirection;
                     return obj.message;
                 }})
             ]];
-        };
+        }
         // Returns element with localized or fallback attribute value (as Jamilih); also adds direction
-        var le = function (key, el, attToLocalize, atts, children) {
+        function le (key, el, attToLocalize, atts, children) {
             atts[attToLocalize] = l({key: key, fallback: function (obj) {
                 atts.dir = fallbackDirection;
                 return obj.message;
             }});
             return [el, atts, children];
-        };
+        }
 
         var schemaItems = schema.items.items;
         var content = [];
-        
+
         function serializeParamsAsURL (cb) {
             var paramsCopy = new URLSearchParams(params);
-            var formParamsHash = formSerialize(document.querySelector('form[name=browse]'), {hash:true});
-            
+            var formParamsHash = formSerialize(document.querySelector('form[name=browse]'), {hash: true});
+
             Object.keys(formParamsHash).forEach(function (key) {
                 paramsCopy.set(key, formParamsHash[key]);
             });
-            
+
             // Follow the same style (and order) for checkboxes
-            paramsCopy['delete']('rand');
+            paramsCopy.delete('rand');
             paramsCopy.set('rand', document.querySelector('#rand').checked ? 'Yes' : 'No');
-            
+
             Array.from(document.querySelectorAll('input[type=checkbox]')).forEach(function (checkbox) { // We want checkboxes to typically show by default, so we cannot use the standard serialization
-                paramsCopy['delete'](checkbox.name); // Let's ensure the checked items are all together (at the end)
+                paramsCopy.delete(checkbox.name); // Let's ensure the checked items are all together (at the end)
                 paramsCopy.set(checkbox.name, checkbox.checked ? 'Yes' : 'No');
             });
-            
+
             cb(paramsCopy);
             return window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
         }
@@ -240,31 +243,31 @@ TextBrowser.prototype.paramChange = function paramChange () {
         var enumFvs = {};
         var enumerateds = {};
         metadata.table.browse_fields.forEach(function (browseFieldObject, i) {
-            
+
             if (typeof browseFieldObject === 'string') {
                 browseFieldObject = {set: [browseFieldObject]};
             }
-            
-            
+
+
             var fieldSets = browseFieldObject.set;
             // Todo: Deal with ['td', [['h3', [ld(browseFieldObject.name)]]]] as kind of fieldset
 
-            var browseFields = fieldSets.map(function (browse_field, j) {
+            var browseFields = fieldSets.map(function (browseField, j) {
                 var fieldSchema = schemaItems.find(function (item) {
-                    return item.title === browse_field;
+                    return item.title === browseField;
                 });
-                
+
                 // Todo: Check fieldSchema for integer or string?
-                
-                var enumerated = metadata.fields && metadata.fields[browse_field] && metadata.fields[browse_field].sequentialEnum && fieldSchema['enum'];
+
+                var enumerated = metadata.fields && metadata.fields[browseField] && metadata.fields[browseField].sequentialEnum && fieldSchema.enum;
                 if (enumerated) {
                     enumerateds[j] = enumerated;
-                    enumFvs[j] = defineFormatter(['fieldvalue', work, browse_field]);
+                    enumFvs[j] = defineFormatter(['fieldvalue', work, browseField]);
                 }
-                
-                return getFieldAliasOrName(browse_field);
+
+                return getFieldAliasOrName(browseField);
             });
-            
+
             [
                 // Todo: Separate formatting to CSS
                 i > 0 ?
@@ -307,18 +310,18 @@ TextBrowser.prototype.paramChange = function paramChange () {
                 ]
             ].forEach(addRowContent);
         });
-        
+
         [
             Object.keys(enumFvs).reduce(function (arr, enumFv, i) {
                 var fv = enumFvs[enumFv];
                 var enumerated = enumerateds[enumFv];
-                
+
                 var name = 'toggle' + (i + 1);
                 arr.push(
                     ['td', {colspan: 12}, [
                         ['br'],
                         ['table', {align: 'center'}, [['tr', [['td',
-                            (enumerated.length > 2) ? [
+                            enumerated.length > 2 ? [
                                 ['select', {name: name}, enumerated.concat('All').map(function (choice) {
                                     choice = choice === 'All' ? '' : choice;
                                     var atts = {value: choice};
@@ -332,7 +335,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                                     return ['option', atts, [fv({key: choice, fallback: true})]];
                                 })]
                             ] :
-                            enumerated.map(function (choice, j, arr) {
+                            enumerated.map(function (choice, j, a) {
                                 var atts = {name: name, type: 'radio', value: choice};
                                 var allAtts = {name: name, type: 'radio', value: ''};
                                 if ($p(name) === choice) {
@@ -347,7 +350,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                                         fv({key: choice, fallback: true}),
                                         ['input', atts]
                                     ]],
-                                    j === arr.length - 1 ?
+                                    j === a.length - 1 ?
                                         {'#': [
                                             nbsp.repeat(4),
                                             ['label', [
@@ -380,7 +383,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                     nbsp.repeat(3),
                     le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
                         var url = serializeParamsAsURL(function (paramsCopy) {
-                            paramsCopy['delete']('random'); // In case it was added previously on this page, let's put random again toward the end
+                            paramsCopy.delete('random'); // In case it was added previously on this page, let's put random again toward the end
                             paramsCopy.set('random', 'Yes');
                             paramsCopy.set('result', 'Yes');
                         });
@@ -390,7 +393,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                 ]]
             ]
         ].forEach(addRowContent);
-        
+
         var colors = [
             'aqua',
             'black',
@@ -441,7 +444,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
             'Brushstroke, fantasy',
             'fantasy'
         ];
-                
+
         var fields = schemaItems.map(function (schemaItem) {
             return schemaItem.title;
         });
@@ -527,7 +530,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                             ) {
                                 document.querySelector('#checked' + idx).checked = true;
                             }
-                            else if (!schemaItems.some(function (item) {
+                            else if (schemaItems.every(function (item) {
                                 return item.title === field && item.type !== 'string';
                             })) {
                                 document.querySelector('#checked' + idx).checked = false;
@@ -541,9 +544,9 @@ TextBrowser.prototype.paramChange = function paramChange () {
             ]]
         ]];
 
-        
+
         // var arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
-        
+
         jml(
             'div',
             {'class': 'focus'},
@@ -561,7 +564,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                                     columnsTable,
                                     le("save-settings-URL", 'input', 'value', {type: 'button', $on: {click: function () {
                                         var url = serializeParamsAsURL(function (paramsCopy) {
-                                            paramsCopy['delete']('random'); // In case it was added previously on this page, let's remove it
+                                            paramsCopy.delete('random'); // In case it was added previously on this page, let's remove it
                                         });
                                         document.querySelector('#settings-URL').value = url;
                                     }}}),
@@ -579,7 +582,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                                             return lo(color, atts);
                                         })]
                                     ]],
-                                    
+
                                     ['label', [
                                         nbsp, ld("or_entercolor"),
                                         ['input', {name: 'color', type: 'text', value: ($p('color') || '#'), size: '7', maxlength: '7'}]
@@ -630,7 +633,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                                     ['label', [
                                         ld("font_variant"), nbsp.repeat(3),
                                         ['label', [
-                                            ['input', {name: 'fontvariant', type: 'radio', value: 'normal', checked: $p('font_variant') !== 'small-caps' ? 'checked' : undefined}],
+                                            ['input', {name: 'fontvariant', type: 'radio', value: 'normal', checked: $p('font_variant') === 'small-caps' ? undefined : 'checked'}],
                                             ld("fontvariant_normal"), nbsp
                                         ]],
                                         ['label', [
@@ -667,7 +670,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                                         ]
                                     ]],
                                     /**/
-                                    ['br'],['br'],
+                                    ['br'], ['br'],
                                     ['label', [
                                         ld("letter_spacing"), " (normal, .9em, -.05cm): ",
                                         ['input', {name: 'letterspacing', type: 'text', value: params.has('letterspacing') ? $p('letterspacing') : 'normal', size: '7', maxlength: '12'}]
@@ -677,7 +680,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                                         ld("line_height"), " (normal, 1.5, 22px, 150%): ",
                                         ['input', {name: 'lineheight', type: 'text', value: params.has('lineheight') ? $p('lineheight') : 'normal', size: '7', maxlength: '12'}]
                                     ]],
-                                    ['br'],['br'],
+                                    ['br'], ['br'],
                                     le("tableformatting_tips", 'h3', 'title', {}, [
                                         ld("tableformatting")
                                     ]),
@@ -707,7 +710,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                                     ['label', [
                                         ld("table_wborder"), nbsp.repeat(2),
                                         ['label', [
-                                            ['input', {name: 'border', type: 'radio', value: '1', checked: $p('border') !== '0' ? 'checked' : undefined}],
+                                            ['input', {name: 'border', type: 'radio', value: '1', checked: $p('border') === '0' ? undefined : 'checked'}],
                                             ld("yes"), nbsp.repeat(3)
                                         ]],
                                         ['label', [
@@ -720,7 +723,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                                         ['input', {name: 'transpose', type: 'checkbox', value: 'Yes', checked: $p('transpose') === 'Yes' ? 'checked' : undefined}],
                                         nbsp.repeat(2), ld("transpose")
                                     ]],
-                                    ['br'],['br'],
+                                    ['br'], ['br'],
                                     le("pageformatting_tips", 'h3', 'title', {}, [
                                         ld("pageformatting")
                                     ]),
@@ -763,24 +766,24 @@ TextBrowser.prototype.paramChange = function paramChange () {
             document.body
         );
     }
-    
+
     function workDisplay (l, defineFormatter) {
         getJSON(that.files, function (dbs) {
-            
+
             // Use the following to dynamically add specific file schema in place of generic table schema if validating against files.jsonschema
             // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
             // Todo: Allow use of dbs and fileGroup together in base directories?
             function getMetadata (file, property, cb) {
                 var currDir = window.location.href.replace(/(index\.html)?#.*$/, '');
-                JsonRefs.resolveRefs({$ref: currDir + file + (property ? '#/' + property : '') }, {
+                JsonRefs.resolveRefs({$ref: currDir + file + (property ? '#/' + property : '')}, {
                     // Temporary fix for lack of resolution of relative references: https://github.com/whitlockjc/json-refs/issues/11
                     processContent: function (content) {
                         var json = JSON.parse(content);
                         Object.keys(JsonRefs.findRefs(json)).forEach(function (path) {
                             var lastParent;
-                            var value = JsonRefs.pathFromPointer(path).reduce(function (json, pathSeg) {
-                                lastParent = json;
-                                return json[pathSeg];
+                            var value = JsonRefs.pathFromPointer(path).reduce(function (j, pathSeg) {
+                                lastParent = j;
+                                return j[pathSeg];
                             }, json);
                             lastParent.$ref = currDir + file.slice(0, file.lastIndexOf('/') + 1) + value;
                         });
@@ -794,27 +797,27 @@ TextBrowser.prototype.paramChange = function paramChange () {
             }
 
             var fileData;
-            var fileGroup = dbs.groups.find(function (fileGroup) {
-                fileData = fileGroup.files.find(function (file) {
+            var fileGroup = dbs.groups.find(function (fg) {
+                fileData = fg.files.find(function (file) {
                     return work === file.name;
                 });
-                return !!fileData;
+                return Boolean(fileData);
             });
-            
+
             document.title = l({key: "browserfile-workdisplay", values: {work: fileData ?
                 l({key: ["tablealias", work], fallback: true}) : ''
             }, fallback: true});
-            
+
             var baseDir = (dbs.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
             var schemaBaseDir = (dbs.schemaBaseDirectory || '') + (fileGroup.schemaBaseDirectory || '') + '/';
             var metadataBaseDir = (dbs.metadataBaseDirectory || '') + (fileGroup.metadataBaseDirectory || '') + '/';
-            
+
             var file = baseDir + fileData.file.$ref;
-            var schemaFile = fileData.schemaFile ? (schemaBaseDir + fileData.schemaFile) : '';
-            var metadataFile = fileData.metadataFile ? (metadataBaseDir + fileData.metadataFile) : '';
+            var schemaFile = fileData.schemaFile ? schemaBaseDir + fileData.schemaFile : '';
+            var metadataFile = fileData.metadataFile ? metadataBaseDir + fileData.metadataFile : '';
 
             var schemaProperty = '', metadataProperty = '';
-            
+
             if (!schemaFile) {
                 schemaFile = file;
                 schemaProperty = 'schema';
@@ -823,36 +826,36 @@ TextBrowser.prototype.paramChange = function paramChange () {
                 metadataFile = file;
                 metadataProperty = 'metadata';
             }
-            
+
             getMetadata(schemaFile, schemaProperty, function (schema) {
                 getMetadata(metadataFile, metadataProperty, function (metadata) {
                     _displayWork(l, defineFormatter, schema, metadata);
                 });
             });
-        
-            
+
+
         }, function (err) {
             alert(err);
         });
     }
-    
-    function resultsDisplay (l/*, defineFormatter*/) {
+
+    function resultsDisplay (/* l, defineFormatter*/) {
         // Will need to retrieve fileData as above (abstract?)
         // document.title = l({key: "browserfile-resultsdisplay", values: {work: fileData ?
         //    l({key: ["tablealias", work], fallback: true}) : ''
-        //}, fallback: true});
+        // }, fallback: true});
     }
-    
-    function localeFromLangData (lang) {
-        return that.langData['localization-strings'][lang];
+
+    function localeFromLangData (lan) {
+        return that.langData['localization-strings'][lan];
     }
     if (!languageParam) {
-        var imf = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)});
+        var imf = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)}); // eslint-disable-line new-cap
         languageSelect(imf.getFormatter());
         return;
     }
 
-    function localeCallback (/*l, defineFormatter*/) {
+    function localeCallback (/* l, defineFormatter*/) {
         if (!work) {
             workSelect.apply(null, arguments);
             return;
@@ -863,19 +866,19 @@ TextBrowser.prototype.paramChange = function paramChange () {
         }
         resultsDisplay.apply(null, arguments);
     }
-    
-    IMF({
+
+    IMF({ // eslint-disable-line new-cap
         languages: lang,
         fallbackLanguages: fallbackLanguages,
         localeFileResolver: function (code) {
-            return that.langData.localeFileBasePath + langs.find(function (lang) {
-                return lang.code === code;
+            return that.langData.localeFileBasePath + langs.find(function (l) {
+                return l.code === code;
             }).locale.$ref; // Todo: For editing of locales, we might instead resolve all $ref (as with https://github.com/whitlockjc/json-refs ) and replace IMF() loadLocales behavior with our own now resolved locales; see https://github.com/jdorn/json-editor/issues/132
         },
         callback: localeCallback
     });
-    
-    
+
+
 };
 
 return TextBrowser;
