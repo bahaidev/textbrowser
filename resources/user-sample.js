@@ -1,4 +1,4 @@
-/*globals TextBrowser*/
+/*global TextBrowser*/
 window.addEventListener('DOMContentLoaded', function () {'use strict';
 
     var tb = new TextBrowser({
