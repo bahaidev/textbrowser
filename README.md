@@ -181,10 +181,6 @@ shows its usage (assuming paths relative to a package containing
 
 # Todos
 
-1.  Add and make use of updated `json-refs` to make
-    single `resolveRemoteRef` call (or whatever the new API may become) and
-    try new relative refs feature. See <https://github.com/whitlockjc/json-refs/pull/23>
-
 1.  Check whether `URLSearchParams.toString()` is still working
 
 1.  Fix code to work with table-specific/field-specific locale data that
@@ -227,25 +223,36 @@ shows its usage (assuming paths relative to a package containing
         from locale files?) if allowing for aliased searches
         (e.g., "Gen")
 
-1.  Build library (for browser or Node) to utilize site.json file to add
-    site-wide navigation bar headers, breadcrumbs,
-    link rel=next/prev/contents/etc., sitemap, and page title (supplied
-    argument of the current page)? Also about text and removecookies.
-
-1.  Code to populate locale files with missing localization strings and
-    report the missing ones (and sort as such in assistant file); put
-    assistant localization keys in own file?
-
-1.  Node.js delivery of HTML content by same URL so third parties can
-    consume without JavaScript
-
 1.  Incorporate speech synthesis from
     <http://bahai.works/MediaWiki:Common.js>
 
 1.  Options to have range of context and range for highlighting
     (with own styles) and anchoring
 
-1.  CORS and HTTPQuery headers?
+1.  CORS headers
+
+1.  Optional links to go to previous/next results if only loading a subset
+    of available content (allow customization of size of chunking in
+    preferences as well as on the fly)
+
+1.  Hide advanced formatting options (make savable in preferences)
+
+1.  Support optional tfoot to repeat header info on bottom?
+
+1.  Further localization of the interface
+
+1.  Make full preferences system for saved/favorite, recent
+    searches/browses, etc.
+
+1.  Support metadata to combine fields during browsing
+
+1.  Figure out how to get rowspans (or even colspans) for additional
+    columns (e.g., a field spanning by whole pages of a book and another
+    field spanning only by paragraphs) - use some kind of counter and
+    don't display the HTML until finished cycling??; also figure out
+    how to reassemble if the minute fields are not needed (e.g., if
+    the user only wants to see the text by paragraph and not anything
+    related to by page)
 
 1.  Add content language(s) multiple select option to always browse for
     those in the desired locale(s); utilize
@@ -256,41 +263,15 @@ shows its usage (assuming paths relative to a package containing
       with dynamic client-side after-load sorting, with or without search
       filtering; use "search" in locale to add this filtering to UI)
 
-1.  Get the automated fields listed in drop-down menus; also new overlay
-    type (See README todos)
-
-1.  For `browse9.php` equivalent
-
-    1.  Handle defaults for empty boxes if not already
-    1.  Test all locales and works and combos
-    1.  Utilize `prefer_alias`
-
-1.  Use validators with all JSON Schemas and instances to confirm
-schemas are defined properly
-
-1.  Once stabilized, target "textbrowser" dependency mentioned above
-by tagged version instead of `master`.
-
-1.  As with table/array-of-arrays schema, develop schema for
-outlines (and utilize)!
-
-1.  Separate formatting within Jamilih code to CSS; separate business
-and design logic for own sake and also for unit testing and performance
-by being able to use a natively stringifying version of Jamilih (once complete)
-
-1.  Node.js (or PHP) for serving JSON files immediately and then
-injecting config for `index.js` to avoid reloading
-
-1.  Make Node.js/PHP tools to build `languages.json` based on available
-locale files, and build `files.json` based on a target directory.
-
-1.  Add/Add back automated: Synopsis, Roman numerals, Chinese numbers,
-    word-by-word translation, auto-romanized Persian/Arabic, Persian with
+1.  Add/Add back automated (including into drop-downs): Synopsis, Roman
+    numerals, Chinese numbers, word-by-word translation, auto-romanized
+    Persian/Arabic, Persian with
     English tooltips, English with Persian/Arabic tooltips,
     text-to-(Google search, Google define, Wikipedia, etc. edit pages);
     add Word-by-word/phrase mapping; add back-links for index entries (which
     needs its own JSON Schema-based project for the hierarchical
-    representations), including optionally merging them for different books
+    representations), including optionally merging them for different books;
+    also overlays
 
     1.  Reverse engineer missing work by using `bahai_locales` database (which
        contains more than localization info: automated column data,
@@ -349,31 +330,48 @@ locale files, and build `files.json` based on a target directory.
         1.  Allow for dynamic addition of JSON overlay sources or metadata
             to work selection/work display files?
 
-1.  Optional links to go to previous/next results if only loading a subset
-    of available content (allow customization of size of chunking in
-    preferences as well as on the fly)
+1.  For `browse9.php` equivalent
 
-1.  Hide advanced formatting options (make savable in preferences)
+    1.  Handle defaults for empty boxes if not already
 
-1.  Support optional tfoot to repeat header info on bottom?
+    1.  Test all locales and works and combos
 
-1.  Make full preferences system for saved/favorite, recent
-    searches/browses, etc.
+    1.  Utilize `prefer_alias`
 
-1.  Allow tables to be re-sortable via a JavaScript which allows
-    sorting by multiple columns with various data, etc.
+    1.  Allow tables to be re-sortable via JavaScript which allows
+          sorting by multiple columns with various data, etc.
 
-1.  Figure out how to get rowspans (or even colspans) for additional
-    columns (e.g., a field spanning by whole pages of a book and another
-    field spanning only by paragraphs) - use some kind of counter and
-    don't display the HTML until finished cycling??; also figure out
-    how to reassemble if the minute fields are not needed (e.g., if
-    the user only wants to see the text by paragraph and not anything
-    related to by page)
+1.  Once stabilized, target "textbrowser" dependency mentioned above
+    by tagged version instead of `master`.
 
-1.  Further localization of the interface
+# Todos (medium priority)
 
-1.  Support metadata to combine fields during browsing
+1.  Add and make use of updated `json-refs` to make
+    single `resolveRemoteRef` call (or whatever the new API may become) and
+    try new relative refs feature. See <https://github.com/whitlockjc/json-refs/pull/23>
+
+1.  Separate formatting within Jamilih code to CSS; separate business
+    and design logic for own sake and also for unit testing and performance
+    by being able to use a natively stringifying version of Jamilih
+    (once complete)
+
+1.  Build library (for browser or Node) to utilize site.json file to add
+    site-wide navigation bar headers, breadcrumbs,
+    link rel=next/prev/contents/etc., sitemap, and page title (supplied
+    argument of the current page)? Also about text and removecookies.
+
+1.  Node.js (and/or PHP)
+
+    1.  Delivery of HTML content by same URL so third parties can
+        consume without JavaScript
+
+    1.  Serve JSON files immediately and then
+        inject config for `index.js` to avoid reloading
+
+    1.  Make tools to build `languages.json` based on available
+        locale files, and build `files.json` based on a target directory.
+
+    1.  [HTTPQuery](https://github.com/brettz9/httpquery) headers
 
 1.  filetypes.json (from WebAppFind) for app and schema association?
     (files.json for permitted files - a file which could be auto-created,
@@ -381,9 +379,19 @@ locale files, and build `files.json` based on a target directory.
     useful with JSONEditor to allow editing of these files, app types
     (replacing assistant.php):
 
-    1.langs + locale / locale only
-    1.files/dbs->file (supply language choice)->file contents
-    1.schemas
+    1.  langs + locale / locale only
+    1.  files/dbs->file (supply language choice)->file contents
+    1.  schemas
+
+1.  Code to populate locale files with missing localization strings and
+    report the missing ones (and sort as such in assistant file); put
+    assistant localization keys in own file?
+
+1.  Use validators with all JSON Schemas and instances to confirm
+    schemas are defined properly    
+
+1.  As with table/array-of-arrays schema, develop schema for
+    outlines (and utilize)!
 
 # Todos (Lower priority)
 
