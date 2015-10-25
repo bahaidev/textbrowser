@@ -181,14 +181,11 @@ shows its usage (assuming paths relative to a package containing
 
 # Todos
 
-1.  WAITING (version update): Add and make use of updated json-refs to make
-  single `resolveRemoteRef` call (or whatever the new API may become) and
-  try new relative refs feature.
+1.  Add and make use of updated `json-refs` to make
+    single `resolveRemoteRef` call (or whatever the new API may become) and
+    try new relative refs feature. See <https://github.com/whitlockjc/json-refs/pull/23>
 
-1.  Change to utilize history.pushState?
-    <https://developer.mozilla.org/en-US/docs/Web/API/History_API>
-
-1.  Check whether URLSearchParams.toString is still working
+1.  Check whether `URLSearchParams.toString()` is still working
 
 1.  Fix code to work with table-specific/field-specific locale data that
     has been moved to files.json (and languages.json) and metadata files
@@ -197,7 +194,7 @@ shows its usage (assuming paths relative to a package containing
     functionality)
 
     1.  Update README and metadata.jsonschema (or table.jsonschema?) to
-      reflect new changes
+        reflect new changes
 
 1.  Rename localization strings, esp. auto-field ones; consider making
     some reusable, pointing to scripts, or how else to designate auto-field
@@ -208,8 +205,8 @@ shows its usage (assuming paths relative to a package containing
 1.  Choose clearer naming/structure for locale table/field keys
 
     1.  Consider `tablealias` and default to `table` or something (as
-          `fieldalias` defaults to `fieldname`); aliased heading (also used
-          as the title of the page)
+        `fieldalias` defaults to `fieldname`); aliased heading (also used
+        as the title of the page)
 
 1.  Update schemas to reflect new localization-related file changes
     (languages.json, files.json, metadata files) and make one for
@@ -367,12 +364,12 @@ locale files, and build `files.json` based on a target directory.
     sorting by multiple columns with various data, etc.
 
 1.  Figure out how to get rowspans (or even colspans) for additional
-columns (e.g., a field spanning by whole pages of a book and another
-field spanning only by paragraphs) - use some kind of counter and
-don't display the HTML until finished cycling??; also figure out
-how to reassemble if the minute fields are not needed (e.g., if
-the user only wants to see the text by paragraph and not anything
-related to by page)
+    columns (e.g., a field spanning by whole pages of a book and another
+    field spanning only by paragraphs) - use some kind of counter and
+    don't display the HTML until finished cycling??; also figure out
+    how to reassemble if the minute fields are not needed (e.g., if
+    the user only wants to see the text by paragraph and not anything
+    related to by page)
 
 1.  Further localization of the interface
 
@@ -389,6 +386,13 @@ related to by page)
     1.schemas
 
 # Todos (Lower priority)
+
+1.  Change AppCache to
+    [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
+    as the former is apparently being deprecated
+
+1.  Change to utilize history.pushState?
+    <https://developer.mozilla.org/en-US/docs/Web/API/History_API>
 
 1.  Add link color (browse.php and browse9.php) as option
 to advanced formatting
