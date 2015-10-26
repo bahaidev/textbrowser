@@ -7,6 +7,8 @@ var TextBrowser = (function () {'use strict';
 /* eslint-disable indent */
 var nbsp = '\u00a0';
 
+function s (obj) {alert(JSON.stringify(obj));} // eslint-disable-line no-unused-vars
+
 function TextBrowser (options) { // eslint-disable-line
     if (!(this instanceof TextBrowser)) {
         return new TextBrowser(options);
@@ -73,6 +75,9 @@ TextBrowser.prototype.paramChange = function paramChange () {
     function localeFromLangData (lan) {
         return that.langData['localization-strings'][lan];
     }
+    function localeFromFileData (lan) {
+        return that.fileData['localization-strings'][lan];
+    }
     function languageSelect (l) {
         // Also can use l("chooselanguage"), but assumes locale as with page title
         document.title = l("browser-title");
@@ -98,10 +103,13 @@ TextBrowser.prototype.paramChange = function paramChange () {
     }
 
     function workSelect (l/*, defineFormatter*/) {
-        document.title = l({key: "browserfile-workselect", fallback: true});
-
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
         getJSON(that.files, function (dbs) {
+            that.fileData = dbs;
+            var imfFile = IMF({locales: lang.map(localeFromFileData), fallbackLocales: fallbackLanguages.map(localeFromFileData)}); // eslint-disable-line new-cap
+            var lf = imfFile.getFormatter();
+            document.title = lf({key: "browserfile-workselect", fallback: true});
+
             function lo (key, atts) {
                 return ['option', atts, [
                     l({key: key, fallback: function (obj) {
@@ -120,6 +128,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                 'div',
                 {'class': 'focus'},
                 dbs.groups.map(function (fileGroup, i) {
+//                  s(fileGroup.directions);
                     return ['div', [
                         i > 0 ? ['br', 'br', 'br'] : '',
                         ['div', [ld(fileGroup.directions)]],
@@ -133,6 +142,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                                 followParams();
                             }), true]
                         }}, fileGroup.files.map(function (file) {
+                        //  s(file);
                             return lo(['tablealias', file.name], {value: file.name});
                         })]
                         // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
