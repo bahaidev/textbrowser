@@ -12,6 +12,7 @@ function TextBrowser (options) { // eslint-disable-line
         return new TextBrowser(options);
     }
     this.languages = options.languages || 'bower_components/textbrowser/appdata/languages.json';
+    this.site = options.site || 'site.json';
     this.files = options.files || 'files.json';
 }
 
@@ -22,8 +23,9 @@ TextBrowser.prototype.init = function () {
 TextBrowser.prototype.displayLanguages = function () {
     var that = this;
     // We use getJSON instead of JsonRefs as we do not need to resolve the locales here
-    getJSON(this.languages, function (langData) {
+    getJSON([this.languages, this.site], function (langData, siteData) {
         that.langData = langData;
+        that.siteData = siteData;
         that.paramChange();
 
         // INIT/ADD EVENTS
@@ -71,22 +73,24 @@ TextBrowser.prototype.paramChange = function paramChange () {
     function languageSelect (l) {
         // Also can use l("chooselanguage"), but assumes locale as with page title
         document.title = l("browser-title");
-        jml('div', {'class': 'focus'},
-            [['select', {size: langs.length, $on: {change: function (e) {
-                params.set('lang', e.target.selectedOptions[0].value);
-                followParams();
-            }}}, langs.map(function (lan) {
-                return ['option', {value: lan.code}, [lan.name]];
-            })]], document.body
 
-            // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
-            /* Works too:
-            langs.map(function (lang) {
-                return ['div', [
-                    ['a', {href: '#', dataset: {code: lang.code}}, [lang.name]]
-                ]];
-            }), document.body
-            */
+        jml('div', {'class': 'focus'}, [
+              ['select', {size: langs.length, $on: {change: function (e) {
+                  params.set('lang', e.target.selectedOptions[0].value);
+                  followParams();
+              }}}, langs.map(function (lan) {
+                  return ['option', {value: lan.code}, [localeFromLangData(lan.code).languages[lan.code]]];
+              })]
+          ], document.body
+
+          // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
+          /* Works too:
+          langs.map(function (lang) {
+              return ['div', [
+                  ['a', {href: '#', dataset: {code: lang.code}}, [lang.name]]
+              ]];
+          }), document.body
+          */
         );
     }
 
@@ -812,9 +816,13 @@ TextBrowser.prototype.paramChange = function paramChange () {
     function localeFromLangData (lan) {
         return that.langData['localization-strings'][lan];
     }
+    function localeFromSiteData (lan) {
+        return that.siteData['localization-strings'][lan];
+    }
     if (!languageParam) {
-        var imf = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)}); // eslint-disable-line new-cap
-        languageSelect(imf.getFormatter());
+        var imfSite = IMF({locales: lang.map(localeFromSiteData), fallbackLocales: fallbackLanguages.map(localeFromSiteData)}); // eslint-disable-line new-cap
+        var imfLang = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)}); // eslint-disable-line new-cap
+        languageSelect(imfSite.getFormatter(), imfLang.getFormatter());
         return;
     }
 
