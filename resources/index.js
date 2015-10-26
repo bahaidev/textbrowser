@@ -102,6 +102,11 @@ TextBrowser.prototype.paramChange = function paramChange () {
         );
     }
 
+
+    function getCurrDir () {
+      return window.location.href.replace(/(index\.html)?#.*$/, '');
+    }
+
     function workSelect (l/*, defineFormatter*/) {
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
         getJSON(that.files, function (dbs) {
@@ -124,14 +129,14 @@ TextBrowser.prototype.paramChange = function paramChange () {
                     return ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [obj.message]];
                 }});
             }
+
             jml(
                 'div',
                 {'class': 'focus'},
                 dbs.groups.map(function (fileGroup, i) {
-//                  s(fileGroup.directions);
                     return ['div', [
                         i > 0 ? ['br', 'br', 'br'] : '',
-                        ['div', [ld(fileGroup.directions)]],
+                        ['div', [ld(fileGroup.directions.$ref.replace(/~lang/g, preferredLocale))]],
                         ['br'],
                         ['select', {'class': 'file', dataset: {name: fileGroup.name}, $on: {
                             click: [(function (e) {
@@ -754,7 +759,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
             // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
             // Todo: Allow use of dbs and fileGroup together in base directories?
             function getMetadata (file, property, cb) {
-                var currDir = window.location.href.replace(/(index\.html)?#.*$/, '');
+                var currDir = getCurrDir();
                 JsonRefs.resolveRefs({$ref: currDir + file + (property ? '#/' + property : '')}, {
                     // Temporary fix for lack of resolution of relative references: https://github.com/whitlockjc/json-refs/issues/11
                     processContent: function (content) {
