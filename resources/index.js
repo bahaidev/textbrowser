@@ -70,6 +70,9 @@ TextBrowser.prototype.paramChange = function paramChange () {
     var work = $p('work');
     var result = $p('result');
 
+    function localeFromLangData (lan) {
+        return that.langData['localization-strings'][lan];
+    }
     function languageSelect (l) {
         // Also can use l("chooselanguage"), but assumes locale as with page title
         document.title = l("browser-title");
@@ -813,9 +816,6 @@ TextBrowser.prototype.paramChange = function paramChange () {
         // }, fallback: true});
     }
 
-    function localeFromLangData (lan) {
-        return that.langData['localization-strings'][lan];
-    }
     function localeFromSiteData (lan) {
         return that.siteData['localization-strings'][lan];
     }
