@@ -355,6 +355,8 @@ shows its usage (assuming paths relative to a package containing
     by being able to use a natively stringifying version of Jamilih
     (once complete)
 
+1.  URL (sorted) params keyed to indexHTML of page for caching
+
 1.  Build library (for browser or Node) to utilize site.json file to add
     site-wide navigation bar headers, breadcrumbs,
     link rel=next/prev/contents/etc., sitemap, and page title (supplied
