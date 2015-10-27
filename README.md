@@ -364,7 +364,8 @@ shows its usage (assuming paths relative to a package containing
 
     1.  Optionally allow server push and/or WebSockets updates
 
-        1.  Allow centralized copies or distributed versioning
+        1.  Allow centralized copies or distributed versioning,
+            including single copy storage
 
     1.  Delivery of HTML content by same URL so third parties can
         consume without JavaScript
