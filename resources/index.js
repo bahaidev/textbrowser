@@ -7,11 +7,14 @@ var TextBrowser = (function () {'use strict';
 /* eslint-disable indent */
 var nbsp = '\u00a0';
 
+function s (obj) {alert(JSON.stringify(obj));} // eslint-disable-line no-unused-vars
+
 function TextBrowser (options) { // eslint-disable-line
     if (!(this instanceof TextBrowser)) {
         return new TextBrowser(options);
     }
     this.languages = options.languages || 'bower_components/textbrowser/appdata/languages.json';
+    this.site = options.site || 'site.json';
     this.files = options.files || 'files.json';
 }
 
@@ -22,8 +25,9 @@ TextBrowser.prototype.init = function () {
 TextBrowser.prototype.displayLanguages = function () {
     var that = this;
     // We use getJSON instead of JsonRefs as we do not need to resolve the locales here
-    getJSON(this.languages, function (langData) {
+    getJSON([this.languages, this.site], function (langData, siteData) {
         that.langData = langData;
+        that.siteData = siteData;
         that.paramChange();
 
         // INIT/ADD EVENTS
@@ -68,33 +72,49 @@ TextBrowser.prototype.paramChange = function paramChange () {
     var work = $p('work');
     var result = $p('result');
 
+    function localeFromLangData (lan) {
+        return that.langData['localization-strings'][lan];
+    }
+    function localeFromFileData (lan) {
+        return that.fileData['localization-strings'][lan];
+    }
     function languageSelect (l) {
         // Also can use l("chooselanguage"), but assumes locale as with page title
         document.title = l("browser-title");
-        jml('div', {'class': 'focus'},
-            [['select', {size: langs.length, $on: {change: function (e) {
-                params.set('lang', e.target.selectedOptions[0].value);
-                followParams();
-            }}}, langs.map(function (lan) {
-                return ['option', {value: lan.code}, [lan.name]];
-            })]], document.body
 
-            // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
-            /* Works too:
-            langs.map(function (lang) {
-                return ['div', [
-                    ['a', {href: '#', dataset: {code: lang.code}}, [lang.name]]
-                ]];
-            }), document.body
-            */
+        jml('div', {'class': 'focus'}, [
+              ['select', {size: langs.length, $on: {change: function (e) {
+                  params.set('lang', e.target.selectedOptions[0].value);
+                  followParams();
+              }}}, langs.map(function (lan) {
+                  return ['option', {value: lan.code}, [localeFromLangData(lan.code).languages[lan.code]]];
+              })]
+          ], document.body
+
+          // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
+          /* Works too:
+          langs.map(function (lang) {
+              return ['div', [
+                  ['a', {href: '#', dataset: {code: lang.code}}, [lang.name]]
+              ]];
+          }), document.body
+          */
         );
     }
 
-    function workSelect (l/*, defineFormatter*/) {
-        document.title = l({key: "browserfile-workselect", fallback: true});
 
+    function getCurrDir () {
+      return window.location.href.replace(/(index\.html)?#.*$/, '');
+    }
+
+    function workSelect (l/*, defineFormatter*/) {
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
         getJSON(that.files, function (dbs) {
+            that.fileData = dbs;
+            var imfFile = IMF({locales: lang.map(localeFromFileData), fallbackLocales: fallbackLanguages.map(localeFromFileData)}); // eslint-disable-line new-cap
+            var lf = imfFile.getFormatter();
+            document.title = lf({key: "browserfile-workselect", fallback: true});
+
             function lo (key, atts) {
                 return ['option', atts, [
                     l({key: key, fallback: function (obj) {
@@ -109,13 +129,14 @@ TextBrowser.prototype.paramChange = function paramChange () {
                     return ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [obj.message]];
                 }});
             }
+
             jml(
                 'div',
                 {'class': 'focus'},
                 dbs.groups.map(function (fileGroup, i) {
                     return ['div', [
                         i > 0 ? ['br', 'br', 'br'] : '',
-                        ['div', [ld(fileGroup.directions)]],
+                        ['div', [ld(fileGroup.directions.$ref.replace(/~lang/g, preferredLocale))]],
                         ['br'],
                         ['select', {'class': 'file', dataset: {name: fileGroup.name}, $on: {
                             click: [(function (e) {
@@ -126,6 +147,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
                                 followParams();
                             }), true]
                         }}, fileGroup.files.map(function (file) {
+                        //  s(file);
                             return lo(['tablealias', file.name], {value: file.name});
                         })]
                         // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
@@ -737,7 +759,7 @@ TextBrowser.prototype.paramChange = function paramChange () {
             // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
             // Todo: Allow use of dbs and fileGroup together in base directories?
             function getMetadata (file, property, cb) {
-                var currDir = window.location.href.replace(/(index\.html)?#.*$/, '');
+                var currDir = getCurrDir();
                 JsonRefs.resolveRefs({$ref: currDir + file + (property ? '#/' + property : '')}, {
                     // Temporary fix for lack of resolution of relative references: https://github.com/whitlockjc/json-refs/issues/11
                     processContent: function (content) {
@@ -809,12 +831,13 @@ TextBrowser.prototype.paramChange = function paramChange () {
         // }, fallback: true});
     }
 
-    function localeFromLangData (lan) {
-        return that.langData['localization-strings'][lan];
+    function localeFromSiteData (lan) {
+        return that.siteData['localization-strings'][lan];
     }
     if (!languageParam) {
-        var imf = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)}); // eslint-disable-line new-cap
-        languageSelect(imf.getFormatter());
+        var imfSite = IMF({locales: lang.map(localeFromSiteData), fallbackLocales: fallbackLanguages.map(localeFromSiteData)}); // eslint-disable-line new-cap
+        var imfLang = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)}); // eslint-disable-line new-cap
+        languageSelect(imfSite.getFormatter(), imfLang.getFormatter());
         return;
     }
 
