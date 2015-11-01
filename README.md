@@ -8,7 +8,7 @@ it can work offline.
 
 # Text Browser
 
-This software currently allows for multilinear texts (represented in
+This software currently allows for multi-linear texts (represented in
 user-customizable JSON tables. These texts are accessible from a main
 interface (currently requiring a whitelist though it may be made
 customizable in the future for open-ended usage/dynamic server-side
@@ -192,7 +192,7 @@ shows its usage (assuming paths relative to a package containing
     1.  Update README and metadata.jsonschema (or table.jsonschema?) to
         reflect new changes
 
-1.  Rename localization strings, esp. auto-field ones; consider making
+1.  Rename localization strings, especially auto-field ones; consider making
     some reusable, pointing to scripts, or how else to designate auto-field
     plugins?
 
@@ -206,7 +206,7 @@ shows its usage (assuming paths relative to a package containing
 
 1.  Update schemas to reflect new localization-related file changes
     (languages.json, files.json, metadata files) and make one for
-    site-sample.json (and move to bahaiwritings as site.json)
+    site-sample.json (and move to `bahaiwritings` as site.json)
 
 1.  Review code for readability, refactoring opportunities
 
