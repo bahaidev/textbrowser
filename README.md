@@ -355,12 +355,19 @@ shows its usage (assuming paths relative to a package containing
     by being able to use a natively stringifying version of Jamilih
     (once complete)
 
+1.  URL (sorted) params keyed to indexHTML of page for caching
+
 1.  Build library (for browser or Node) to utilize site.json file to add
     site-wide navigation bar headers, breadcrumbs,
     link rel=next/prev/contents/etc., sitemap, and page title (supplied
     argument of the current page)? Also about text and removecookies.
 
 1.  Node.js (and/or PHP)
+
+    1.  Optionally allow server push and/or WebSockets updates
+
+        1.  Allow centralized copies or distributed versioning,
+            including single copy storage
 
     1.  Delivery of HTML content by same URL so third parties can
         consume without JavaScript
