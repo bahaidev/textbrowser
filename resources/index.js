@@ -38,7 +38,7 @@ TextBrowser.prototype.displayLanguages = function () {
 };
 
 // Need for directionality even if language specified (and we don't want to require it as a param)
-TextBrowser.prototype.getDirectionForLanguageCode = function getDirectionForLanguageCode (code) {
+TextBrowser.prototype.getDirectionForLanguageCode = function (code) {
     var langs = this.langData.languages;
     return langs.find(function (lang) {
         return lang.code === code;
@@ -46,7 +46,7 @@ TextBrowser.prototype.getDirectionForLanguageCode = function getDirectionForLang
 };
 
 // Todo: Break this up further
-TextBrowser.prototype.paramChange = function paramChange () {
+TextBrowser.prototype.paramChange = function () {
     var that = this;
     var langs = this.langData.languages;
 
