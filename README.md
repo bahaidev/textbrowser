@@ -179,7 +179,7 @@ shows its usage (assuming paths relative to a package containing
 -   (To document; for now, see the `/general-schemas` directory and for
   usage examples, as well as the subdirectories within <https://bitbucket.org/brettz9/bahaiwritings>)
 
-# Todos
+# To-dos
 
 1.  Check whether `URLSearchParams.toString()` is still working
 
