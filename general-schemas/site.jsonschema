@@ -1,0 +1,35 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "required": true,
+    "definitions": {
+        "stringOrArray": {
+            "anyOf": [{"type": "string"}, {"type": "array", "items": {
+                "$ref": "#/definitions/stringOrArray"
+            }}]
+        },
+        "siteType": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/stringOrArray"
+            }
+        }
+    },
+    "properties": {
+        "site": {"$ref": "#/definitions/siteType"},
+        "navigation": {"$ref": "#/definitions/siteType"},
+        "localization-strings": {
+            "type": "object",
+            "patternProperties": {
+                ".*": {
+                    "type": "object",
+                    "patternProperties": {
+                        ".*": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

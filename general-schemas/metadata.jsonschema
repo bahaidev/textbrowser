@@ -10,6 +10,19 @@
         }
     },
     "properties": {
+        "localization-strings": {
+            "type": "object",
+            "patternProperties": {
+                ".*": {
+                    "type": "object",
+                    "patternProperties": {
+                        ".*": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "table": {
             "type": "object",
             "properties": {
@@ -122,7 +135,7 @@
                         }
                     }
                 }
-            }                
+            }
         }
     }
 }
