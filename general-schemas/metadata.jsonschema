@@ -7,6 +7,17 @@
                 {"type": "string"},
                 {"type": "integer"}
             ]
+        },
+        "nameType": {
+            "anyOf": [
+                {"type": "string"},
+                {
+                    "type": "object",
+                    "properties": {
+                        "localeKey": "string"
+                    }
+                }
+            ]
         }
     },
     "properties": {
@@ -96,9 +107,8 @@
                         "roman": {
                             "type": "boolean"
                         },
-                        "alias": {
-                            "type": "string"
-                        },
+                        "alias": {"$ref": "#/definitions/nameType"},
+                        "name": {"$ref": "#/definitions/nameType"}
                         "prefer_alias": {
                             "type": "boolean"
                         },
