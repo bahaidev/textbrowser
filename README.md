@@ -189,9 +189,6 @@ shows its usage (assuming paths relative to a package containing
     current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue`
     functionality)
 
-    1.  Update README and metadata.jsonschema (or table.jsonschema?) to
-        reflect new changes
-
 1.  Rename localization strings, especially auto-field ones; consider making
     some reusable, pointing to scripts, or how else to designate auto-field
     plugins?
