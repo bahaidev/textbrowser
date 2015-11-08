@@ -232,7 +232,8 @@ shows its usage (assuming paths relative to a package containing
     of available content (allow customization of size of chunking in
     preferences as well as on the fly)
 
-1.  Hide advanced formatting options (make savable in preferences)
+1.  Add URL params which can include/disable modules to simplify screen
+    1.  Hide advanced formatting options (make savable in preferences)
 
 1.  Support optional tfoot to repeat header info on bottom?
 
@@ -242,8 +243,6 @@ shows its usage (assuming paths relative to a package containing
     searches/browses, etc.
 
 1.  Support metadata to combine fields during browsing
-
-1.  Add URL params which can include/disable modules to simplify screen
 
 1.  Figure out how to get rowspans (or even colspans) for additional
     columns (e.g., a field spanning by whole pages of a book and another
