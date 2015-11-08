@@ -243,6 +243,8 @@ shows its usage (assuming paths relative to a package containing
 
 1.  Support metadata to combine fields during browsing
 
+1.  Add URL params which can include/disable modules to simplify screen
+
 1.  Figure out how to get rowspans (or even colspans) for additional
     columns (e.g., a field spanning by whole pages of a book and another
     field spanning only by paragraphs) - use some kind of counter and
