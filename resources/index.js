@@ -115,14 +115,6 @@ TextBrowser.prototype.paramChange = function () {
             var lf = imfFile.getFormatter();
             document.title = lf({key: "browserfile-workselect", fallback: true});
 
-            function lo (key, atts) {
-                return ['option', atts, [
-                    l({key: key, fallback: function (obj) {
-                        atts.dir = fallbackDirection;
-                        return obj.message;
-                    }})
-                ]];
-            }
             function ld (key, values, formats) {
                 return l({key: key, values: values, formats: formats, fallback: function (obj) {
                     // Displaying as div with inline display instead of span since Firefox puts punctuation at left otherwise
@@ -130,31 +122,55 @@ TextBrowser.prototype.paramChange = function () {
                 }});
             }
 
-            jml(
-                'div',
-                {'class': 'focus'},
-                dbs.groups.map(function (fileGroup, i) {
-                    return ['div', [
-                        i > 0 ? ['br', 'br', 'br'] : '',
-                        ['div', [ld(fileGroup.directions.$ref.replace(/~lang/g, preferredLocale))]],
-                        ['br'],
-                        ['select', {'class': 'file', dataset: {name: fileGroup.name}, $on: {
-                            click: [(function (e) {
-                                if (e.target.nodeName.toLowerCase() === 'select') {
-                                    return;
-                                }
-                                params.set('work', e.target.value);
-                                followParams();
-                            }), true]
-                        }}, fileGroup.files.map(function (file) {
-                        //  s(file);
-                            return lo(['tablealias', file.name], {value: file.name});
-                        })]
-                        // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
-                    ]];
-                }),
-                document.body
-            );
+            var map = {};
+            getJSON(dbs.groups.reduce(function (arr, fileGroup, i) {
+                var metadataBaseDir = (dbs.metadataBaseDirectory || '') +
+                    (fileGroup.metadataBaseDirectory || '') + '/';
+                return fileGroup.files.reduce(function (arr, fileData) {
+                    return arr.concat(metadataBaseDir + fileData.metadataFile);
+                }, arr);
+            }, [])).then(function (metadataFiles) {
+                function getProp (prop) {
+                    var prop;
+                    lang.some(function (lan, i) {
+                        var strings = metadataFiles[fileCtr]['localization-strings'][lan];
+                        prop = strings && strings[prop];
+                        return prop;
+                    });
+                    return prop;
+                }
+                function lo (atts) {
+                    return ['option', atts, [getProp('alias')]];
+                }
+                var fileCtr = -1;
+                jml(
+                    'div',
+                    {'class': 'focus'},
+                    dbs.groups.map(function (fileGroup, i) {
+                        return ['div', [
+                            i > 0 ? ['br', 'br', 'br'] : '',
+                            ['div', [localeFromFileData(preferredLocale)[fileGroup.directions.localeKey]]],
+                            ['br'],
+                            ['select', {'class': 'file', dataset: {name: fileGroup.name.localeKey}, $on: {
+                                click: [(function (e) {
+                                    if (e.target.nodeName.toLowerCase() === 'select') {
+                                        return;
+                                    }
+                                    params.set('work', e.target.value);
+                                    followParams();
+                                }), true]
+                            }}, fileGroup.files.map(function (file, i) {
+                                fileCtr++;
+                                return lo({value: file.name});
+                            })]
+                            // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
+                        ]];
+                    }),
+                    document.body
+                );
+            }, function (err) {
+                alert('Error: ' + err);
+            });
         }, function (err) {
             alert(err);
         });
