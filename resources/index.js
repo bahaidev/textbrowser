@@ -233,8 +233,11 @@ TextBrowser.prototype.paramChange = function () {
             return window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
         }
         function getFieldAliasOrName (field) {
-            var fieldName;
-            var fieldAlias = metadataObj.fields && metadataObj.fields[field] && metadataObj.fields[field].alias;
+            var fieldObj = metadataObj.fields && metadataObj.fields[field];
+            var fieldName, fieldAlias;
+            if (fieldObj) {
+                fieldAlias = fieldObj.alias;
+            }
             if (fieldAlias) {
                 if (typeof fieldAlias === 'string') {
                     fieldName = fieldAlias;
@@ -244,8 +247,12 @@ TextBrowser.prototype.paramChange = function () {
                     fieldName = getMetaProp(metadataObj, fieldAlias.split('/'));
                 }
             }
-            if (!fieldAlias || !fieldName[2][0]) { // No alias
-                fieldName = ld(['fieldnames', field]);
+            else { // No alias
+                fieldName = fieldObj.name;
+                if (typeof fieldName === 'object') {
+                    fieldName = fieldName.localeKey;
+                    fieldName = getMetaProp(metadataObj, fieldName.split('/'));
+                }
             }
             return fieldName;
         }
