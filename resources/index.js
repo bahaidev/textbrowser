@@ -149,7 +149,9 @@ TextBrowser.prototype.paramChange = function () {
                     dbs.groups.map(function (fileGroup, i) {
                         return ['div', [
                             i > 0 ? ['br', 'br', 'br'] : '',
-                            ['div', [localeFromFileData(preferredLocale)[fileGroup.directions.localeKey]]],
+                            ['div', [
+                                lf({key: fileGroup.directions.localeKey, fallback: true})
+                            ]],
                             ['br'],
                             ['select', {'class': 'file', dataset: {name: fileGroup.name.localeKey}, $on: {
                                 click: [(function (e) {
