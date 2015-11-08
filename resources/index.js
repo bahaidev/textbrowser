@@ -106,6 +106,19 @@ TextBrowser.prototype.paramChange = function () {
     function getCurrDir () {
       return window.location.href.replace(/(index\.html)?#.*$/, '');
     }
+    function getMetaProp (metadataObj, properties) {
+        var prop;
+        properties = typeof properties === 'string' ? [properties] : properties;
+        lang.some(function (lan, i) {
+            var strings = metadataObj['localization-strings'][lan];
+            while (strings && properties.length) {
+                strings = strings[properties.shift()];
+            }
+            prop = strings;
+            return prop;
+        });
+        return prop;
+    }
 
     function workSelect (l/*, defineFormatter*/) {
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
@@ -129,18 +142,9 @@ TextBrowser.prototype.paramChange = function () {
                 return fileGroup.files.reduce(function (arr, fileData) {
                     return arr.concat(metadataBaseDir + fileData.metadataFile);
                 }, arr);
-            }, [])).then(function (metadataFiles) {
-                function getProp (prop) {
-                    var prop;
-                    lang.some(function (lan, i) {
-                        var strings = metadataFiles[fileCtr]['localization-strings'][lan];
-                        prop = strings && strings[prop];
-                        return prop;
-                    });
-                    return prop;
-                }
-                function lo (atts) {
-                    return ['option', atts, [getProp('alias')]];
+            }, [])).then(function (metadataObjs) {
+                function lo (metadataObj, atts) {
+                    return ['option', atts, [getMetaProp(metadataObj, 'alias')]];
                 }
                 var fileCtr = -1;
                 jml(
@@ -163,7 +167,7 @@ TextBrowser.prototype.paramChange = function () {
                                 }), true]
                             }}, fileGroup.files.map(function (file, i) {
                                 fileCtr++;
-                                return lo({value: file.name});
+                                return lo(metadataObjs[fileCtr], {value: file.name});
                             })]
                             // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
                         ]];
@@ -178,7 +182,7 @@ TextBrowser.prototype.paramChange = function () {
         });
     }
 
-    function _displayWork (l, defineFormatter, schema, metadata) {
+    function _displayWork (l, defineFormatter, schemaObj, metadataObj) {
 
         // Returns plain text node or element (as Jamilih) with fallback direction
         function ld (key, values, formats) {
@@ -205,7 +209,7 @@ TextBrowser.prototype.paramChange = function () {
             return [el, atts, children];
         }
 
-        var schemaItems = schema.items.items;
+        var schemaItems = schemaObj.items.items;
         var content = [];
 
         function serializeParamsAsURL (cb) {
@@ -230,12 +234,18 @@ TextBrowser.prototype.paramChange = function () {
         }
         function getFieldAliasOrName (field) {
             var fieldName;
-            var fieldAlias = metadata.fields && metadata.fields[field] && metadata.fields[field].alias;
+            var fieldAlias = metadataObj.fields && metadataObj.fields[field] && metadataObj.fields[field].alias;
             if (fieldAlias) {
-                fieldName = ld(['fieldalias', work, fieldAlias]);
+                if (typeof fieldAlias === 'string') {
+                    fieldName = fieldAlias;
+                }
+                else {
+                    fieldAlias = fieldAlias.localeKey;
+                    fieldName = getMetaProp(metadataObj, fieldAlias.split('/'));
+                }
             }
             if (!fieldAlias || !fieldName[2][0]) { // No alias
-                fieldName = ld(['fieldname', work, field]);
+                fieldName = ld(['fieldnames', field]);
             }
             return fieldName;
         }
@@ -245,7 +255,7 @@ TextBrowser.prototype.paramChange = function () {
         }
         var enumFvs = {};
         var enumerateds = {};
-        metadata.table.browse_fields.forEach(function (browseFieldObject, i) {
+        metadataObj.table.browse_fields.forEach(function (browseFieldObject, i) {
 
             if (typeof browseFieldObject === 'string') {
                 browseFieldObject = {set: [browseFieldObject]};
@@ -262,7 +272,7 @@ TextBrowser.prototype.paramChange = function () {
 
                 // Todo: Check fieldSchema for integer or string?
 
-                var enumerated = metadata.fields && metadata.fields[browseField] && metadata.fields[browseField].sequentialEnum && fieldSchema.enum;
+                var enumerated = metadataObj.fields && metadataObj.fields[browseField] && metadataObj.fields[browseField].sequentialEnum && fieldSchema.enum;
                 if (enumerated) {
                     enumerateds[j] = enumerated;
                     enumFvs[j] = defineFormatter(['fieldvalue', work, browseField]);
@@ -521,10 +531,10 @@ TextBrowser.prototype.paramChange = function () {
                         // Todo: remember this locales choice by cookie?
                         fields.forEach(function (field, i) {
                             var idx = i + 1;
-                            var metaFieldInfo = metadata && metadata.fields && metadata.fields[field];
+                            var metaFieldInfo = metadataObj && metadataObj.fields && metadataObj.fields[field];
                             var metaLang;
                             if (metaFieldInfo) {
-                                metaLang = metadata.fields[field].lang;
+                                metaLang = metadataObj.fields[field].lang;
                             }
                             var higherLocale = preferredLocale.replace(/\-.*$/, '');
 
@@ -830,9 +840,9 @@ TextBrowser.prototype.paramChange = function () {
                 metadataProperty = 'metadata';
             }
 
-            getMetadata(schemaFile, schemaProperty, function (schema) {
-                getMetadata(metadataFile, metadataProperty, function (metadata) {
-                    _displayWork(l, defineFormatter, schema, metadata);
+            getMetadata(schemaFile, schemaProperty, function (schemaObj) {
+                getMetadata(metadataFile, metadataProperty, function (metadataObj) {
+                    _displayWork(l, defineFormatter, schemaObj, metadataObj);
                 });
             });
 
