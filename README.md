@@ -58,62 +58,68 @@ The recommended project directory structure (which works with the
 default paths) is as follows:
 
 -   ***bower.json*** - Should indicate `textbrowser` as a dependency as per
-the "Installation" section above. See `bower-sample.json` for an example.
+    the "Installation" section above. See `bower-sample.json` for an example.
+
+-   ***site.json*** - Not yet utilized in the app. Has top-level `site` array
+    indicating nesting of the site's page hierarchy (usable for site map
+    generation). Also has `navigation` to indicate the subset of this site
+    available on the navigation bar. Can also be used to generate
+    breadcrumbs, &lt;link rel=next/prev&gt; links, and a sitemap.
 
 -   ***files.json*** - Points to your data files (e.g., any kept in `data/`).
-Is an object with a `groups` property set to an array of file groups where
-each group has the property `name` for a file group display name as a string
-or localization key; an optional `directions` string or localization key;
-an optional `baseDirectory`, `schemaBaseDirectory`, and
-`metadataBaseDirectory` for base paths; and a `files` array property with
-each file containing the properties, `name` for the file name as a string
-or localization key; `file` for file contents (recommended as a
-[JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)
-object which will be resolved relative to any `baseDirectory` properties);
-and `schemaFile`, and `metadataFile` file paths (relative to the respective
-base paths). The same base directory properties are also available at the
-root of the file and if present will be prefixed to any file-group-specific
-base paths and the file. You may wish to validate your `files.json` with
-`general-schemas/files.jsonschema`, but this is not required.
+    Is an object with a `groups` property set to an array of file groups where
+    each group has the property `name` for a file group display name as a string
+    or localization key; an optional `directions` string or localization key;
+    an optional `baseDirectory`, `schemaBaseDirectory`, and
+    `metadataBaseDirectory` for base paths; and a `files` array property with
+    each file containing the properties, `name` for the file name as a string
+    or localization key; `file` for file contents (recommended as a
+    [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)
+    object which will be resolved relative to any `baseDirectory` properties);
+    and `schemaFile`, and `metadataFile` file paths (relative to the respective
+    base paths). The same base directory properties are also available at the
+    root of the file and if present will be prefixed to any file-group-specific
+    base paths and the file. You may wish to validate your `files.json` with
+    `general-schemas/files.jsonschema`, but this is not required.
 
 -   ***index.html*** - The main application code. One can use
   `index-sample.html` as is or modified as desired. Note that it
   may be sufficient to modify `resources/user.css` and `resources/user.js`.
 
 -   ***textbrowser.appcache*** - Offline AppCache manifest. You may base
-this off of `textbrowser-sample.appcache`, being sure to add your
-own data files for offline caching. If you are using `user.css` or
-`user.js`, be sure to uncomment in the copied file (HTML currently
-only allows one cache file apparently as per
-<https://html.spec.whatwg.org/multipage/semantics.html#attr-html-manifest>,
-so we apparently cannot add to this dynamically nor use data: URLs.)
+    this off of `textbrowser-sample.appcache`, being sure to add your
+    own data files for offline caching. If you are using `user.css` or
+    `user.js`, be sure to uncomment in the copied file (HTML currently
+    only allows one cache file apparently as per
+    <https://html.spec.whatwg.org/multipage/semantics.html#attr-html-manifest>,
+    so we apparently cannot add to this dynamically nor use data: URLs.)
 
 -   ***.htaccess*** - If using Apache, you may wish to have this file
-  copied from TextBrowser's `.htaccess-sample` in order to serve the
-  proper Content Type for the AppCache file.
+    copied from TextBrowser's `.htaccess-sample` in order to serve the
+    proper Content Type for the AppCache file.
 
 -   ***resources/user.css*** - Add any custom CSS you wish to apply
-  for `index.html`.
+    for `index.html`.
 
 -   ***resources/user.js*** - Add any JavaScript you wish to use. Unless
-  already invoked in `index.html`, you should call the `TextBrowser`
-  constructor here. See TextBrowser's `resources/user-sample.js` for
-  a pattern you can copy and optionally adapt.
+    already invoked in `index.html`, you should call the `TextBrowser`
+    constructor here. See TextBrowser's `resources/user-sample.js` for
+    a pattern you can copy and optionally adapt.
 
 -   ***bower_components*** - *TextBrowser* and its dependencies will be
-  added here via bower install as well as any dependencies you indicate
-  within `bower.json`.
+    added here via bower install as well as any dependencies you indicate
+    within `bower.json`.
 
 -   ***data/*** - Directory recommended as a convention for holding data
-  files. It is also recommended that child directories be named for each
-  file group, and within each file group, have the JSON data files
-  (adhering to `general-schemas/table-container.jsonschema` and its
-  subschema `array-of-arrays.jsonschema`) as well as "schema" and
-  "metadata" directories containing the specific JSON schemas for each
-  data file (adhering to `general-schemas/table.jsonschema`) and the
-  TextBrowser-specific meta-data files (adhering to
-  `general-schemas/metadata.jsonschema`). See the "JSON Schema and
-  metadata files and fields in use" section.
+    files. It is also recommended that child directories be named for each
+    file group, and within each file group, have the JSON data files
+    (adhering to `general-schemas/table-container.jsonschema` and its
+    subschema `array-of-arrays.jsonschema`) as well as "schema" and
+    "metadata" directories containing the specific JSON schemas for each
+    data file (adhering to `general-schemas/table.jsonschema`) and the
+    TextBrowser-specific meta-data files (adhering to
+    `general-schemas/metadata.jsonschema`). See the "JSON Schema and
+    metadata files and fields in use" section.
 
 New language information should be added to TextBrowser's
 `/appdata/languages.json` (and the copy of this file,
@@ -193,17 +199,13 @@ shows its usage (assuming paths relative to a package containing
     some reusable, pointing to scripts, or how else to designate auto-field
     plugins?
 
-    1.  Update README and files.jsonschema to reflect new changes
+    1.  Update README and files.jsonschema as needed to reflect new changes
 
 1.  Choose clearer naming/structure for locale table/field keys
 
     1.  Consider `tablealias` and default to `table` or something (as
         `fieldalias` defaults to `fieldname`); aliased heading (also used
         as the title of the page)
-
-1.  Update schemas to reflect new localization-related file changes
-    (languages.json, files.json, metadata files) and make one for
-    site-sample.json (and move to `bahaiwritings` as site.json)
 
 1.  Review code for readability, refactoring opportunities
 
