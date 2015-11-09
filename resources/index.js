@@ -63,7 +63,7 @@ TextBrowser.prototype.paramChange = function () {
     var languageParam = $p('lang');
     var fallbackLanguages = ['en-US'];
     var language = languageParam || fallbackLanguages[0]; // We need a default to display a default title
-    var lang = language.split('.');
+    var lang = language.split('.').concat(fallbackLanguages);
     var preferredLocale = lang[0];
     var direction = this.getDirectionForLanguageCode(preferredLocale);
     var fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
@@ -109,12 +109,13 @@ TextBrowser.prototype.paramChange = function () {
     function getMetaProp (metadataObj, properties) {
         var prop;
         properties = typeof properties === 'string' ? [properties] : properties;
-        lang.some(function (lan, i) {
+        lang.some(function (lan) {
+            var p = properties.slice(0);
             var strings = metadataObj['localization-strings'][lan];
-            while (strings && properties.length) {
-                strings = strings[properties.shift()];
+            while (strings && p.length) {
+                strings = strings[p.shift()];
             }
-            prop = strings;
+            prop = typeof strings === 'string' ? strings : false;
             return prop;
         });
         return prop;
