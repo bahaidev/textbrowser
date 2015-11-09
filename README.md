@@ -391,7 +391,7 @@ shows its usage (assuming paths relative to a package containing
     assistant localization keys in own file?
 
 1.  Use validators with all JSON Schemas and instances to confirm
-    schemas are defined properly    
+    schemas are defined properly (as part of `npm test`)
 
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize)!
