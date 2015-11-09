@@ -63,7 +63,8 @@ TextBrowser.prototype.paramChange = function () {
     var languageParam = $p('lang');
     var fallbackLanguages = ['en-US'];
     var language = languageParam || fallbackLanguages[0]; // We need a default to display a default title
-    var lang = language.split('.').concat(fallbackLanguages);
+    var preferredLangs = language.split('.');
+    var lang = preferredLangs.concat(fallbackLanguages);
     var preferredLocale = lang[0];
     var direction = this.getDirectionForLanguageCode(preferredLocale);
     var fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
@@ -541,8 +542,10 @@ TextBrowser.prototype.paramChange = function () {
                     }}}),
                     le("checkmark_locale_fields_only", 'input', 'value', {type: 'button', $on: {click: function () {
                         // Todo: remember this locales choice by cookie?
-                        fields.forEach(function (field, i) {
+                        fields.forEach(function (fld, i) {
                             var idx = i + 1;
+                            var field = document.querySelector('#field' + idx).value;
+
                             var metaFieldInfo = metadataObj && metadataObj.fields && metadataObj.fields[field];
                             var metaLang;
                             if (metaFieldInfo) {
@@ -555,13 +558,13 @@ TextBrowser.prototype.paramChange = function () {
                             ) {
                                 document.querySelector('#checked' + idx).checked = true;
                             }
-                            else if (schemaItems.every(function (item) {
+                            else if (schemaItems.some(function (item) {
                                 return item.title === field && item.type !== 'string';
                             })) {
-                                document.querySelector('#checked' + idx).checked = false;
+                                document.querySelector('#checked' + idx).checked = true;
                             }
                             else {
-                                document.querySelector('#checked' + idx).checked = true;
+                                document.querySelector('#checked' + idx).checked = false;
                             }
                         });
                     }}})
