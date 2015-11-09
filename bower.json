@@ -1,6 +1,5 @@
 {
   "name": "textbrowser",
-  "version": "0.1.0",
   "main": "index.html",
   "dependencies": {
       "jamilih": "0.x",
