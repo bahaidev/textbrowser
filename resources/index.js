@@ -503,7 +503,7 @@ TextBrowser.prototype.paramChange = function () {
                     le("check-sequence", 'td', 'title', {}, [
                         ['select', {name: fieldIndex, id: fieldIndex, size: '1'},
                             fields.map(function (field, j) {
-                                var fn = getFieldAliasOrName(field);
+                                var fn = getFieldAliasOrName(field) || field;
                                 var matchedFieldParam = fieldParam && fieldParam === field;
                                 return (matchedFieldParam || (!params.has(fieldIndex) && j === i)) ? // Todo: Localize field names in params too?
                                     ['option', {value: fn, selected: 'selected'}, [fn]] :
