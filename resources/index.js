@@ -117,7 +117,7 @@ TextBrowser.prototype.paramChange = function () {
             }
             // Todo: Fix this allowance for allowObjects (as it does not properly
             //        fallback if an object is returned from a language because
-            //        that language is missing content and is only thus returning 
+            //        that language is missing content and is only thus returning
             //        an object)
             prop = allowObjects || typeof strings === 'string' ? strings : false;
             return prop;

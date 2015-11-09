@@ -187,11 +187,7 @@ shows its usage (assuming paths relative to a package containing
 
 # To-dos
 
-1.  Check whether `URLSearchParams.toString()` is still working
-
-1.  Fix code to work with table-specific/field-specific locale data that
-    has been moved to files.json (and languages.json) and metadata files
-    for modularity; then avoid unchecking when clicking button re: matching
+1.  Avoid unchecking when clicking button re: matching
     current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue`
     functionality)
 
