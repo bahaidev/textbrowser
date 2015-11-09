@@ -106,7 +106,7 @@ TextBrowser.prototype.paramChange = function () {
     function getCurrDir () {
       return window.location.href.replace(/(index\.html)?#.*$/, '');
     }
-    function getMetaProp (metadataObj, properties) {
+    function getMetaProp (metadataObj, properties, allowObjects) {
         var prop;
         properties = typeof properties === 'string' ? [properties] : properties;
         lang.some(function (lan) {
@@ -115,7 +115,11 @@ TextBrowser.prototype.paramChange = function () {
             while (strings && p.length) {
                 strings = strings[p.shift()];
             }
-            prop = typeof strings === 'string' ? strings : false;
+            // Todo: Fix this allowance for allowObjects (as it does not properly
+            //        fallback if an object is returned from a language because
+            //        that language is missing content and is only thus returning 
+            //        an object)
+            prop = allowObjects || typeof strings === 'string' ? strings : false;
             return prop;
         });
         return prop;
@@ -283,7 +287,7 @@ TextBrowser.prototype.paramChange = function () {
                 var enumerated = metadataObj.fields && metadataObj.fields[browseField] && metadataObj.fields[browseField].sequentialEnum && fieldSchema.enum;
                 if (enumerated) {
                     enumerateds[j] = enumerated;
-                    enumFvs[j] = getMetaProp(metadataObj, ['fieldvalue', browseField]);
+                    enumFvs[j] = getMetaProp(metadataObj, ['fieldvalue', browseField], true);
                 }
 
                 return getFieldAliasOrName(browseField);
