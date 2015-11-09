@@ -571,7 +571,7 @@ TextBrowser.prototype.paramChange = function () {
             'div',
             {'class': 'focus'},
             [
-                ['h2', [ld(['tableheading', work])]],
+                ['h2', [getMetaProp(metadataObj, 'heading')]],
                 ['br'],
                 ['form', {name: 'browse'}, [
                     ['table', {align: 'center'}, content],
