@@ -282,7 +282,7 @@ TextBrowser.prototype.paramChange = function () {
                 var enumerated = metadataObj.fields && metadataObj.fields[browseField] && metadataObj.fields[browseField].sequentialEnum && fieldSchema.enum;
                 if (enumerated) {
                     enumerateds[j] = enumerated;
-                    enumFvs[j] = defineFormatter(['fieldvalue', work, browseField]);
+                    enumFvs[j] = getMetaProp(metadataObj, ['fieldvalue', browseField]);
                 }
 
                 return getFieldAliasOrName(browseField);
@@ -352,7 +352,7 @@ TextBrowser.prototype.paramChange = function () {
                                         atts.value = '';
                                         return ['option', atts, [ld("enum-all")]];
                                     }
-                                    return ['option', atts, [fv({key: choice, fallback: true})]];
+                                    return ['option', atts, [fv[choice]]];
                                 })]
                             ] :
                             enumerated.map(function (choice, j, a) {
@@ -367,7 +367,7 @@ TextBrowser.prototype.paramChange = function () {
                                 return {'#': [
                                     j > 0 ? nbsp.repeat(3) : '',
                                     ['label', [
-                                        fv({key: choice, fallback: true}),
+                                        fv[choice],
                                         ['input', atts]
                                     ]],
                                     j === a.length - 1 ?
