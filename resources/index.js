@@ -797,7 +797,7 @@ TextBrowser.prototype.paramChange = function () {
 
     function workDisplay (l, defineFormatter) {
         getJSON(that.files, function (dbs) {
-
+            that.fileData = dbs;
             // Use the following to dynamically add specific file schema in place of generic table schema if validating against files.jsonschema
             // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
             // Todo: Allow use of dbs and fileGroup together in base directories?
@@ -832,10 +832,6 @@ TextBrowser.prototype.paramChange = function () {
                 return Boolean(fileData);
             });
 
-            document.title = l({key: "browserfile-workdisplay", values: {work: fileData ?
-                l({key: ["tablealias", work], fallback: true}) : ''
-            }, fallback: true});
-
             var baseDir = (dbs.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
             var schemaBaseDir = (dbs.schemaBaseDirectory || '') + (fileGroup.schemaBaseDirectory || '') + '/';
             var metadataBaseDir = (dbs.metadataBaseDirectory || '') + (fileGroup.metadataBaseDirectory || '') + '/';
@@ -857,6 +853,11 @@ TextBrowser.prototype.paramChange = function () {
 
             getMetadata(schemaFile, schemaProperty, function (schemaObj) {
                 getMetadata(metadataFile, metadataProperty, function (metadataObj) {
+                      var imfFile = IMF({locales: lang.map(localeFromFileData), fallbackLocales: fallbackLanguages.map(localeFromFileData)}); // eslint-disable-line new-cap
+                      var lf = imfFile.getFormatter();
+                      document.title = lf({key: "browserfile-workdisplay", values: {work: fileData ?
+                          getMetaProp(metadataObj, 'alias') : ''
+                      }, fallback: true});
                     _displayWork(l, defineFormatter, schemaObj, metadataObj);
                 });
             });
