@@ -862,7 +862,6 @@ TextBrowser.prototype.paramChange = function () {
                 });
             });
 
-
         }, function (err) {
             alert(err);
         });
