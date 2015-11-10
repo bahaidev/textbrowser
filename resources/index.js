@@ -920,12 +920,6 @@ TextBrowser.prototype.paramChange = function () {
     function localeFromSiteData (lan) {
         return that.siteData['localization-strings'][lan];
     }
-    if (!languageParam) {
-        var imfSite = IMF({locales: lang.map(localeFromSiteData), fallbackLocales: fallbackLanguages.map(localeFromSiteData)}); // eslint-disable-line new-cap
-        var imfLang = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)}); // eslint-disable-line new-cap
-        languageSelect(imfSite.getFormatter(), imfLang.getFormatter());
-        return;
-    }
 
     function localeCallback (/* l, defineFormatter*/) {
         var l10n = arguments[0];
@@ -945,6 +939,12 @@ TextBrowser.prototype.paramChange = function () {
         resultsDisplay.apply(this, arguments);
     }
 
+    if (!languageParam) {
+        var imfSite = IMF({locales: lang.map(localeFromSiteData), fallbackLocales: fallbackLanguages.map(localeFromSiteData)}); // eslint-disable-line new-cap
+        var imfLang = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)}); // eslint-disable-line new-cap
+        languageSelect(imfSite.getFormatter(), imfLang.getFormatter());
+        return;
+    }
     IMF({ // eslint-disable-line new-cap
         languages: lang,
         fallbackLanguages: fallbackLanguages,
@@ -955,11 +955,8 @@ TextBrowser.prototype.paramChange = function () {
         },
         callback: localeCallback.bind(this)
     });
-
-
 };
 
 return TextBrowser;
-
 
 }());
