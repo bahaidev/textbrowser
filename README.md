@@ -187,9 +187,7 @@ shows its usage (assuming paths relative to a package containing
 
 # To-dos
 
-1.  Change `params.set` and `params.delete` to work on localized param
-    names (as with `get`/`has`), wrapping all in a (proxy) class. Allow
-    (URL-and-preferences-alterable, developer-defaultable) preference
+1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
     to avoid localizing "query string" hash property names and values
 
 1.  i18nize start and end params, and i18nize param values (including fields).
