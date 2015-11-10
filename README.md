@@ -187,6 +187,8 @@ shows its usage (assuming paths relative to a package containing
 
 # To-dos
 
+1.  i18nize start, end, toggle and param values (including fields)
+
 1.  Fix "checkmark_locale_fields_only" and "Save settings as URL"
     so that both are locale-sensitive.
 
