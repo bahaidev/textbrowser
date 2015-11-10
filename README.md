@@ -219,7 +219,10 @@ shows its usage (assuming paths relative to a package containing
 
     1.  Remove locale info for "numbers only" string key (including
         from locale files?) if allowing for aliased searches
-        (e.g., "Gen")
+        (e.g., "Gen").
+
+    1.  Ensure searching can be done through URL params, especially
+        to use in conjunction with bookmark keywords.
 
 1.  Incorporate speech synthesis from
     <http://bahai.works/MediaWiki:Common.js>
