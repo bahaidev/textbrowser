@@ -230,6 +230,8 @@ shows its usage (assuming paths relative to a package containing
         to use in conjunction with bookmark keywords (in which case
         it particularly ought to be available through a single param).
 
+    1. Ensure aliases are i18nized
+
 1.  Incorporate speech synthesis from
     <http://bahai.works/MediaWiki:Common.js>, allowing different
     speech voices for different rows or columns.

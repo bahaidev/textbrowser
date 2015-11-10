@@ -352,7 +352,7 @@ TextBrowser.prototype.paramChange = function () {
                                 ['label', {'for': name}, [browseField]]
                             ]],
                             ['td', [
-                                ['input', {id: name, name: name, type: 'text', size: '7', value: $p.get(name)}],
+                                ['input', {id: name, name: name, type: 'number', value: $p.get(name)}],
                                 nbsp.repeat(3)
                             ]]
                         );
@@ -369,7 +369,7 @@ TextBrowser.prototype.paramChange = function () {
                                 ['label', {'for': name}, [browseField]]
                             ]],
                             ['td', [
-                                ['input', {id: name, name: name, type: 'text', size: '7', value: $p.get(name)}],
+                                ['input', {id: name, name: name, type: 'number', value: $p.get(name)}],
                                 nbsp.repeat(2)
                             ]]
                         );
@@ -442,12 +442,12 @@ TextBrowser.prototype.paramChange = function () {
                 ['td', {colspan: 12, align: 'center'}, [
                     // Todo: Could allow random with fixed starting and/or ending range
                     ['label', [
-                        ['input', {id: 'rand', name: 'rand', type: 'checkbox', value: 'Yes', checked: ($p.get('rand') === 'Yes' ? 'checked' : undefined)}],
-                        ld("rnd"), nbsp.repeat(3)
+                        ld("rnd"), nbsp.repeat(3),
+                        ['input', {id: 'rand', name: 'rand', type: 'checkbox', value: 'Yes', checked: ($p.get('rand') === 'Yes' ? 'checked' : undefined)}]
                     ]],
                     ['label', [
                         ld("verses-context"), nbsp,
-                        ['input', {name: 'context', type: 'text', size: 4, value: $p.get('context')}]
+                        ['input', {name: 'context', type: 'number', size: 4, value: $p.get('context')}]
                     ]],
                     nbsp.repeat(3),
                     le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
