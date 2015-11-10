@@ -435,6 +435,9 @@ to advanced formatting
 1.  ES6 Modules import of JavaScript in place of script tags;
     dynamic or hierarchical loading of CSS too?
 
+1.  `window.postMessage` API (since CORS is only for Ajax and
+    `document.domain` is only for subdomains).
+
 # History
 
 One PHP-based version was released in 2005-12-22 and was my
