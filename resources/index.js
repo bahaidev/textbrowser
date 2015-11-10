@@ -15,7 +15,7 @@ function _prepareParam (param, skip) {
         return param;
     }
     // todo: also deal with field names!
-    var endNums = /\d+$/;
+    var endNums = /\d+(-\d+)?$/;
     var indexed = param.match(endNums);
     if (indexed) {
         return this.l10n(['params', 'indexed', param.replace(endNums, '')]) + indexed[0]; // Todo: We could i18nize numbers as well
@@ -346,13 +346,13 @@ TextBrowser.prototype.paramChange = function () {
                     '',
                 [
                     browseFields.reduce(function (rowContent, browseField, j) {
-                        var name = 'start' + (i + 1) + '-' + fieldSets[j];
+                        var name = 'start' + (i + 1) + '-' + (j + 1);
                         rowContent['#'].push(
                             ['td', [
                                 ['label', {'for': name}, [browseField]]
                             ]],
                             ['td', [
-                                ['input', {id: name, name: name, type: 'text', size: '7', value: $p.get(name, true)}],
+                                ['input', {id: name, name: name, type: 'text', size: '7', value: $p.get(name)}],
                                 nbsp.repeat(3)
                             ]]
                         );
@@ -363,13 +363,13 @@ TextBrowser.prototype.paramChange = function () {
                         nbsp.repeat(3)
                     ]],
                     browseFields.reduce(function (rowContent, browseField, j) {
-                        var name = 'end' + (i + 1) + '-' + fieldSets[j];
+                        var name = 'end' + (i + 1) + '-' + (j + 1);
                         rowContent['#'].push(
                             ['td', [
                                 ['label', {'for': name}, [browseField]]
                             ]],
                             ['td', [
-                                ['input', {id: name, name: name, type: 'text', size: '7', value: $p.get(name, true)}],
+                                ['input', {id: name, name: name, type: 'text', size: '7', value: $p.get(name)}],
                                 nbsp.repeat(2)
                             ]]
                         );

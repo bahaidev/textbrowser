@@ -125,7 +125,9 @@
             "interlin": "interlin",
             "css": "css",
             "search": "search",
-            "toggle": "toggle"
+            "toggle": "toggle",
+            "start": "start",
+            "end": "end"
         },
         "lang": "lang",
         "work": "work",
