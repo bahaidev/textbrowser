@@ -661,7 +661,7 @@ TextBrowser.prototype.paramChange = function () {
                                     ['label', [
                                         ld("font_variant"), nbsp.repeat(3),
                                         ['label', [
-                                            ['input', {name: 'fontvariant', type: 'radio', value: 'normal', checked: $p('font_variant') === 'small-caps' ? undefined : 'checked'}],
+                                            ['input', {name: 'fontvariant', type: 'radio', value: 'normal', checked: $p('fontvariant') === 'small-caps' ? undefined : 'checked'}],
                                             ld("fontvariant_normal"), nbsp
                                         ]],
                                         ['label', [
