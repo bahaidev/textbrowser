@@ -222,7 +222,8 @@ shows its usage (assuming paths relative to a package containing
         (e.g., "Gen").
 
     1.  Ensure searching can be done through URL params, especially
-        to use in conjunction with bookmark keywords.
+        to use in conjunction with bookmark keywords (in which case
+        it particularly ought to be available through a single param).
 
 1.  Incorporate speech synthesis from
     <http://bahai.works/MediaWiki:Common.js>
