@@ -124,7 +124,8 @@
             "checked": "checked",
             "interlin": "interlin",
             "css": "css",
-            "search": "search"
+            "search": "search",
+            "toggle": "toggle"
         },
         "lang": "lang",
         "work": "work",

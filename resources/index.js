@@ -54,18 +54,24 @@ TextBrowser.prototype.paramChange = function () {
 
     // Todo: Could give option to i18nize "lang" or omit
     var params = new URLSearchParams(location.hash.slice(1));
-    function $p (param, skip) {
+    function _prepareParam (param, skip) {
         if (skip) { // (lang), start, end, toggle
-            return params.get(param);
+            return param;
         }
         // todo: also deal with field names!
         var endNums = /\d+$/;
         var indexed = param.match(endNums);
         if (indexed) {
-            return params.get(that.l10n(['params', 'indexed', param.replace(endNums, '')]) + indexed[0]); // Todo: We could i18nize numbers as well
+            return that.l10n(['params', 'indexed', param.replace(endNums, '')]) + indexed[0]; // Todo: We could i18nize numbers as well
         }
-        return params.get(that.l10n(['params', param]));
+        return that.l10n(['params', param]);
     }
+    function $p (param, skip) {
+        return params.get(_prepareParam.call(that, param, skip));
+    }
+    $p.has = function (param, skip) {
+        return params.has(_prepareParam.call(that, param, skip));
+    };
     function followParams () {
         location.hash = '#' + params.toString();
     }
@@ -345,7 +351,7 @@ TextBrowser.prototype.paramChange = function () {
         });
 
         [
-            Object.keys(enumFvs).reduce(function (arr, enumFv, i) {
+            Object.keys(enumFvs).reduce(function (arr, enumFv, i) { // Enums must be in consistent iteration order in meta-data (otherwise will need to sort here)!
                 var fv = enumFvs[enumFv];
                 var enumerated = enumerateds[enumFv];
 
@@ -358,7 +364,7 @@ TextBrowser.prototype.paramChange = function () {
                                 ['select', {name: name}, enumerated.concat('All').map(function (choice) {
                                     choice = choice === 'All' ? '' : choice;
                                     var atts = {value: choice};
-                                    if ($p(name, true) === choice) {
+                                    if ($p(name) === choice) {
                                         atts.selected = 'selected';
                                     }
                                     if (choice === '') {
@@ -371,10 +377,10 @@ TextBrowser.prototype.paramChange = function () {
                             enumerated.map(function (choice, j, a) {
                                 var atts = {name: name, type: 'radio', value: choice};
                                 var allAtts = {name: name, type: 'radio', value: ''};
-                                if ($p(name, true) === choice) {
+                                if ($p(name) === choice) {
                                     atts.checked = 'checked';
                                 }
-                                else if (params.has(name) && $p(name, true) === '') {
+                                else if ($p.has(name) && $p(name) === '') {
                                     allAtts.checked = 'checked';
                                 }
                                 return {'#': [
@@ -518,7 +524,7 @@ TextBrowser.prototype.paramChange = function () {
                             fields.map(function (field, j) {
                                 var fn = getFieldAliasOrName(field) || field;
                                 var matchedFieldParam = fieldParam && fieldParam === field;
-                                return (matchedFieldParam || (!params.has(fieldIndex) && j === i)) ? // Todo: Localize field names in params too?
+                                return (matchedFieldParam || (!$p.has(fieldIndex) && j === i)) ? // Todo: Localize field names in params too?
                                     ['option', {value: fn, selected: 'selected'}, [fn]] :
                                     ['option', {value: fn}, [fn]];
                             })
@@ -611,7 +617,7 @@ TextBrowser.prototype.paramChange = function () {
                                         ld("textcolor"),
                                         ['select', {name: 'colorName'}, colors.map(function (color, i) {
                                             var atts = {value: color};
-                                            if ($p('colorName') === color || (i === 1 && !params.has('colorName'))) {
+                                            if ($p('colorName') === color || (i === 1 && !$p.has('colorName'))) {
                                                 atts.selected = 'selected';
                                             }
                                             return lo(color, atts);
@@ -627,7 +633,7 @@ TextBrowser.prototype.paramChange = function () {
                                         ld("backgroundcolor"),
                                         ['select', {name: 'bgcolorName'}, colors.map(function (color, i) {
                                             var atts = {value: color};
-                                            if ($p('bgcolorName') === color || (i === 14 && !params.has('bgcolorName'))) {
+                                            if ($p('bgcolorName') === color || (i === 14 && !$p.has('bgcolorName'))) {
                                                 atts.selected = 'selected';
                                             }
                                             return lo(color, atts);
@@ -643,7 +649,7 @@ TextBrowser.prototype.paramChange = function () {
                                         // Todo: remove hard-coded direction if i81nizing
                                         ['select', {name: 'fontSeq', dir: 'ltr'}, fonts.map(function (fontSeq, i) {
                                             var atts = {value: fontSeq};
-                                            if ($p('fontSeq') === fontSeq || (i === 7 && !params.has('fontSeq'))) {
+                                            if ($p('fontSeq') === fontSeq || (i === 7 && !$p.has('fontSeq'))) {
                                                 atts.selected = 'selected';
                                             }
                                             return ['option', atts, [fontSeq]];
@@ -658,7 +664,7 @@ TextBrowser.prototype.paramChange = function () {
                                             'oblique'
                                         ].map(function (fontstyle, i) {
                                             var atts = {value: fontstyle};
-                                            if ($p('fontstyle') === fontstyle || (i === 1 && !params.has('fontstyle'))) {
+                                            if ($p('fontstyle') === fontstyle || (i === 1 && !$p.has('fontstyle'))) {
                                                 atts.selected = 'selected';
                                             }
                                             return lo("fontstyle_" + fontstyle, atts);
@@ -679,7 +685,7 @@ TextBrowser.prototype.paramChange = function () {
                                     ['br'],
                                     ['label', [
                                         ld("font_weight"), " (normal, bold, 100-900, etc.): ", // Todo: i18n and allow for normal/bold pulldown and float input?
-                                        ['input', {name: 'fontweight', type: 'text', value: params.has('fontweight') ? $p('fontweight') : 'normal', size: '7', maxlength: '12'}]
+                                        ['input', {name: 'fontweight', type: 'text', value: $p.has('fontweight') ? $p('fontweight') : 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
                                     ['label', [
@@ -697,7 +703,7 @@ TextBrowser.prototype.paramChange = function () {
                                         ['select', {name: 'fontstretch'},
                                             ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(function (stretch) {
                                                 var atts = {value: stretch};
-                                                if ($p('fontstretch') === stretch || (!params.has('fontstretch') && stretch === 'normal')) {
+                                                if ($p('fontstretch') === stretch || (!$p.has('fontstretch') && stretch === 'normal')) {
                                                     atts.selected = 'selected';
                                                 }
                                                 return ['option', atts, [stretch]];
@@ -708,12 +714,12 @@ TextBrowser.prototype.paramChange = function () {
                                     ['br'], ['br'],
                                     ['label', [
                                         ld("letter_spacing"), " (normal, .9em, -.05cm): ",
-                                        ['input', {name: 'letterspacing', type: 'text', value: params.has('letterspacing') ? $p('letterspacing') : 'normal', size: '7', maxlength: '12'}]
+                                        ['input', {name: 'letterspacing', type: 'text', value: $p.has('letterspacing') ? $p('letterspacing') : 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
                                     ['label', [
                                         ld("line_height"), " (normal, 1.5, 22px, 150%): ",
-                                        ['input', {name: 'lineheight', type: 'text', value: params.has('lineheight') ? $p('lineheight') : 'normal', size: '7', maxlength: '12'}]
+                                        ['input', {name: 'lineheight', type: 'text', value: $p.has('lineheight') ? $p('lineheight') : 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'], ['br'],
                                     le("tableformatting_tips", 'h3', 'title', {}, [
@@ -727,7 +733,7 @@ TextBrowser.prototype.paramChange = function () {
                                             ['none', '0']
                                         ].map(function (headings, i, arr) {
                                             return ['label', [
-                                                ['input', {name: 'headings', type: 'radio', value: headings[1], checked: $p('headings') === headings[1] || (!params.has('headings') && i === 1) ? 'checked' : undefined}],
+                                                ['input', {name: 'headings', type: 'radio', value: headings[1], checked: $p('headings') === headings[1] || (!$p.has('headings') && i === 1) ? 'checked' : undefined}],
                                                 ld(headings[0]), (i === arr.length - 1 ? '' : nbsp.repeat(3))
                                             ]];
                                         })}
