@@ -271,11 +271,11 @@ TextBrowser.prototype.paramChange = function () {
 
             // Follow the same style (and order) for checkboxes
             paramsCopy.delete('rand');
-            paramsCopy.set('rand', document.querySelector('#rand').checked ? 'Yes' : 'No');
+            paramsCopy.set('rand', document.querySelector('#rand').checked ? l("yes") : "no");
 
             Array.from(document.querySelectorAll('input[type=checkbox]')).forEach(function (checkbox) { // We want checkboxes to typically show by default, so we cannot use the standard serialization
                 paramsCopy.delete(checkbox.name); // Let's ensure the checked items are all together (at the end)
-                paramsCopy.set(checkbox.name, checkbox.checked ? 'Yes' : 'No');
+                paramsCopy.set(checkbox.name, checkbox.checked ? l("yes") : l("no"));
             });
 
             cb(paramsCopy);
@@ -443,7 +443,7 @@ TextBrowser.prototype.paramChange = function () {
                     // Todo: Could allow random with fixed starting and/or ending range
                     ['label', [
                         ld("rnd"), nbsp.repeat(3),
-                        ['input', {id: 'rand', name: 'rand', type: 'checkbox', value: 'Yes', checked: ($p.get('rand') === 'Yes' ? 'checked' : undefined)}]
+                        ['input', {id: 'rand', name: 'rand', type: 'checkbox', value: l("yes"), checked: ($p.get('rand') === l("yes") ? 'checked' : undefined)}]
                     ]],
                     ['label', [
                         ld("verses-context"), nbsp,
@@ -453,8 +453,8 @@ TextBrowser.prototype.paramChange = function () {
                     le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
                         var url = serializeParamsAsURL(function (paramsCopy) {
                             paramsCopy.delete('random'); // In case it was added previously on this page, let's put random again toward the end
-                            paramsCopy.set('random', 'Yes');
-                            paramsCopy.set('result', 'Yes');
+                            paramsCopy.set('random', l("yes"));
+                            paramsCopy.set('result', l("yes"));
                         });
                         document.querySelector('#randomURL').value = url;
                     }}}),
@@ -547,7 +547,7 @@ TextBrowser.prototype.paramChange = function () {
                 return ['tr', [
                     ['td', [String(idx)]],
                     le("check-columns-to-browse", 'td', 'title', {}, [
-                        le("yes", 'input', 'value', {'class': 'fieldSelector', id: checkedIndex, name: checkedIndex, checked: $p.get(checkedIndex) === 'No' ? undefined : 'checked', type: 'checkbox'})
+                        le("yes", 'input', 'value', {'class': 'fieldSelector', id: checkedIndex, name: checkedIndex, checked: $p.get(checkedIndex) === l("no") ? undefined : 'checked', type: 'checkbox'})
                     ]),
                     le("check-sequence", 'td', 'title', {}, [
                         ['select', {name: fieldIndex, id: fieldIndex, size: '1'},
@@ -561,7 +561,7 @@ TextBrowser.prototype.paramChange = function () {
                         ]
                     ]),
                     ['td', [ // Todo: Make as tag selector with fields as options
-                        le("interlinear-tips", 'input', 'title', {name: 'interlin' + idx, value: $p.get('interlin' + idx)})
+                        le("interlinear-tips", 'input', 'title', {name: 'interlin' + idx, value: $p.get('interlin' + idx)}) // Todo: Could allow i18n of numbers here
                     ]],
                     ['td', [ // Todo: Make as CodeMirror-highlighted CSS
                         ['input', {name: 'css' + idx, value: $p.get('css' + idx)}]
@@ -647,8 +647,8 @@ TextBrowser.prototype.paramChange = function () {
                                     ['label', [
                                         ld("textcolor"),
                                         ['select', {name: 'colorName'}, colors.map(function (color, i) {
-                                            var atts = {value: color};
-                                            if ($p.get('colorName') === color || (i === 1 && !$p.has('colorName'))) {
+                                            var atts = {value: l(color)};
+                                            if ($p.get('colorName') === l(color) || (i === 1 && !$p.has('colorName'))) {
                                                 atts.selected = 'selected';
                                             }
                                             return lo(color, atts);
@@ -663,8 +663,8 @@ TextBrowser.prototype.paramChange = function () {
                                     ['label', [
                                         ld("backgroundcolor"),
                                         ['select', {name: 'bgcolorName'}, colors.map(function (color, i) {
-                                            var atts = {value: color};
-                                            if ($p.get('bgcolorName') === color || (i === 14 && !$p.has('bgcolorName'))) {
+                                            var atts = {value: l(color)};
+                                            if ($p.get('bgcolorName') === l(color) || (i === 14 && !$p.has('bgcolorName'))) {
                                                 atts.selected = 'selected';
                                             }
                                             return lo(color, atts);
@@ -677,7 +677,7 @@ TextBrowser.prototype.paramChange = function () {
                                     ['br'], ['br'],
                                     ['label', [
                                         ld("text_font"),
-                                        // Todo: remove hard-coded direction if i81nizing
+                                        // Todo: remove hard-coded direction if i81nizing; also i18nize fontSeq param
                                         ['select', {name: 'fontSeq', dir: 'ltr'}, fonts.map(function (fontSeq, i) {
                                             var atts = {value: fontSeq};
                                             if ($p.get('fontSeq') === fontSeq || (i === 7 && !$p.has('fontSeq'))) {
@@ -694,22 +694,23 @@ TextBrowser.prototype.paramChange = function () {
                                             'normal',
                                             'oblique'
                                         ].map(function (fontstyle, i) {
-                                            var atts = {value: fontstyle};
-                                            if ($p.get('fontstyle') === fontstyle || (i === 1 && !$p.has('fontstyle'))) {
+                                            var i18nFS = 'fontstyle_' + fontstyle;
+                                            var atts = {value: l(i18nFS)};
+                                            if ($p.get('fontstyle') === l(i18nFS) || (i === 1 && !$p.has('fontstyle'))) {
                                                 atts.selected = 'selected';
                                             }
-                                            return lo("fontstyle_" + fontstyle, atts);
+                                            return lo(i18nFS, atts);
                                         })]
                                     ]],
                                     ['br'],
                                     ['label', [
                                         ld("font_variant"), nbsp.repeat(3),
                                         ['label', [
-                                            ['input', {name: 'fontvariant', type: 'radio', value: 'normal', checked: $p.get('fontvariant') === 'small-caps' ? undefined : 'checked'}],
+                                            ['input', {name: 'fontvariant', type: 'radio', value: l("normal"), checked: $p.get('fontvariant') === l("smallcaps") ? undefined : 'checked'}],
                                             ld("fontvariant_normal"), nbsp
                                         ]],
                                         ['label', [
-                                            ['input', {name: 'fontvariant', type: 'radio', value: 'small-caps', checked: $p.get('fontvariant') === 'small-caps' ? 'checked' : undefined}],
+                                            ['input', {name: 'fontvariant', type: 'radio', value: l("smallcaps"), checked: $p.get('fontvariant') === l("smallcaps") ? 'checked' : undefined}],
                                             ld("smallcaps"), nbsp
                                         ]]
                                     ]],
@@ -770,12 +771,12 @@ TextBrowser.prototype.paramChange = function () {
                                         })}
                                     ]],
                                     ['label', [
-                                        ['input', {name: 'wishcaption', type: 'checkbox', value: 'Yes', checked: $p.get('wishcaption') === 'Yes' ? 'checked' : undefined}],
+                                        ['input', {name: 'wishcaption', type: 'checkbox', value: l("yes"), checked: $p.get('wishcaption') === l("yes") ? 'checked' : undefined}],
                                         nbsp.repeat(2), ld("wishcaption")
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        ['input', {name: 'headerfixed', type: 'checkbox', value: 'Yes', checked: $p.get('headerfixed') === 'Yes' ? 'checked' : undefined}],
+                                        ['input', {name: 'headerfixed', type: 'checkbox', value: l("yes"), checked: $p.get('headerfixed') === l("yes") ? 'checked' : undefined}],
                                         nbsp.repeat(2), ld("headerfixed-wishtoscroll")
                                     ]],
                                     ['br'],
@@ -792,7 +793,7 @@ TextBrowser.prototype.paramChange = function () {
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        ['input', {name: 'transpose', type: 'checkbox', value: 'Yes', checked: $p.get('transpose') === 'Yes' ? 'checked' : undefined}],
+                                        ['input', {name: 'transpose', type: 'checkbox', value: l("yes"), checked: $p.get('transpose') === l("yes") ? 'checked' : undefined}],
                                         nbsp.repeat(2), ld("transpose")
                                     ]],
                                     ['br'], ['br'],
@@ -801,6 +802,7 @@ TextBrowser.prototype.paramChange = function () {
                                     ]),
                                     le("outputmode_tips", 'label', 'title', {}, [
                                         ld("outputmode"),
+                                        // Todo: Could i18nize, but would need smaller values
                                         ['select', {name: 'outputmode'}, [
                                             'table',
                                             'div',
