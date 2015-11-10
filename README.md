@@ -448,6 +448,10 @@ to advanced formatting
 1.  `window.postMessage` API (since CORS is only for Ajax and
     `document.domain` is only for subdomains).
 
+1.  Allow user to pass array of language codes that can be checked
+    at the beginning of the string without need for `lang=` (or for
+    the i18n of "lang"?).
+
 # History
 
 One PHP-based version was released in 2005-12-22 and was my
