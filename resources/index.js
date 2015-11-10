@@ -24,7 +24,7 @@ function _prepareParam (param, skip) {
 }
 function IntlURLSearchParams (config) {
     config = config || {};
-    this.i10n = config.i10n;
+    this.l10n = config.l10n;
     var params = config.params;
     if (!params) {
         params = location.hash.slice(1);
