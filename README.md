@@ -231,7 +231,8 @@ shows its usage (assuming paths relative to a package containing
         it particularly ought to be available through a single param).
 
 1.  Incorporate speech synthesis from
-    <http://bahai.works/MediaWiki:Common.js>
+    <http://bahai.works/MediaWiki:Common.js>, allowing different
+    speech voices for different rows or columns.
 
 1.  Options to have range of context and range for highlighting
     (with own styles) and anchoring
