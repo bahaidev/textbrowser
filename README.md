@@ -227,8 +227,6 @@ shows its usage (assuming paths relative to a package containing
 1.  Options to have range of context and range for highlighting
     (with own styles) and anchoring
 
-1.  CORS headers
-
 1.  Optional links to go to previous/next results if only loading a subset
     of available content (allow customization of size of chunking in
     preferences as well as on the fly)
