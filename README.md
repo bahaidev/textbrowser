@@ -341,7 +341,7 @@ shows its usage (assuming paths relative to a package containing
 1.  Once stabilized, target "textbrowser" dependency mentioned above
     by tagged version instead of `master`.
 
-# Todos (medium priority)
+# To-dos (medium priority)
 
 1.  Add and make use of updated `json-refs` to make
     single `resolveRemoteRef` call (or whatever the new API may become) and
@@ -397,7 +397,7 @@ shows its usage (assuming paths relative to a package containing
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize)!
 
-# Todos (Lower priority)
+# To-dos (Lower priority)
 
 1.  Change AppCache to
     [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
