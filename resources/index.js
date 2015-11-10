@@ -594,6 +594,7 @@ TextBrowser.prototype.paramChange = function () {
                             if (metaFieldInfo) {
                                 metaLang = metadataObj.fields[field].lang;
                             }
+                            // Todo: Could add tag input box for listing multiple language codes
                             var higherLocale = preferredLocale.replace(/\-.*$/, '');
 
                             if ((metaFieldInfo && metaFieldInfo.hasFieldvalue) || // If this is a localized field (e.g., enum), we don't want to avoid as may be translated (should check though)
