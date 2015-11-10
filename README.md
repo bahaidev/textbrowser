@@ -187,13 +187,13 @@ shows its usage (assuming paths relative to a package containing
 
 # To-dos
 
-1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
-    to avoid localizing "query string" hash property names and values
-
 1.  i18nize start and end params, and i18nize param values (including fields).
 
 1.  Fix "checkmark_locale_fields_only" and "Save settings as URL"
     so that both are locale-sensitive.
+
+1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
+    to avoid localizing "query string" hash property names and values    
 
 1.  Avoid unchecking when clicking button re: matching
     current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue`
