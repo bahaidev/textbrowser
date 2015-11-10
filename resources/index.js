@@ -52,15 +52,25 @@ TextBrowser.prototype.paramChange = function () {
 
     document.body.parentNode.replaceChild(document.createElement('body'), document.body);
 
+    // Todo: Could give option to i18nize "lang" or omit
     var params = new URLSearchParams(location.hash.slice(1));
-    function $p (param) {
-        return params.get(param);
+    function $p (param, skip) {
+        if (skip) { // (lang), start, end, toggle
+            return params.get(param);
+        }
+        // todo: also deal with field names!
+        var endNums = /\d+$/;
+        var indexed = param.match(endNums);
+        if (indexed) {
+            return params.get(that.l10n(['params', 'indexed', param.replace(endNums, '')]) + indexed[0]); // Todo: We could i18nize numbers as well
+        }
+        return params.get(that.l10n(['params', param]));
     }
     function followParams () {
         location.hash = '#' + params.toString();
     }
 
-    var languageParam = $p('lang');
+    var languageParam = $p('lang', true);
     var fallbackLanguages = ['en-US'];
     var language = languageParam || fallbackLanguages[0]; // We need a default to display a default title
     var preferredLangs = language.split('.');
@@ -69,9 +79,6 @@ TextBrowser.prototype.paramChange = function () {
     var direction = this.getDirectionForLanguageCode(preferredLocale);
     var fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
     document.dir = direction;
-
-    var work = $p('work');
-    var result = $p('result');
 
     function localeFromLangData (lan) {
         return that.langData['localization-strings'][lan];
@@ -309,7 +316,7 @@ TextBrowser.prototype.paramChange = function () {
                                 ['label', {'for': name}, [browseField]]
                             ]],
                             ['td', [
-                                ['input', {id: name, name: name, type: 'text', size: '7', value: $p(name)}],
+                                ['input', {id: name, name: name, type: 'text', size: '7', value: $p(name, true)}],
                                 nbsp.repeat(3)
                             ]]
                         );
@@ -326,7 +333,7 @@ TextBrowser.prototype.paramChange = function () {
                                 ['label', {'for': name}, [browseField]]
                             ]],
                             ['td', [
-                                ['input', {id: name, name: name, type: 'text', size: '7', value: $p(name)}],
+                                ['input', {id: name, name: name, type: 'text', size: '7', value: $p(name, true)}],
                                 nbsp.repeat(2)
                             ]]
                         );
@@ -351,7 +358,7 @@ TextBrowser.prototype.paramChange = function () {
                                 ['select', {name: name}, enumerated.concat('All').map(function (choice) {
                                     choice = choice === 'All' ? '' : choice;
                                     var atts = {value: choice};
-                                    if ($p(name) === choice) {
+                                    if ($p(name, true) === choice) {
                                         atts.selected = 'selected';
                                     }
                                     if (choice === '') {
@@ -364,10 +371,10 @@ TextBrowser.prototype.paramChange = function () {
                             enumerated.map(function (choice, j, a) {
                                 var atts = {name: name, type: 'radio', value: choice};
                                 var allAtts = {name: name, type: 'radio', value: ''};
-                                if ($p(name) === choice) {
+                                if ($p(name, true) === choice) {
                                     atts.checked = 'checked';
                                 }
-                                else if (params.has(name) && $p(name) === '') {
+                                else if (params.has(name) && $p(name, true) === '') {
                                     allAtts.checked = 'checked';
                                 }
                                 return {'#': [
@@ -827,7 +834,7 @@ TextBrowser.prototype.paramChange = function () {
             var fileData;
             var fileGroup = dbs.groups.find(function (fg) {
                 fileData = fg.files.find(function (file) {
-                    return work === file.name;
+                    return $p('work') === file.name;
                 });
                 return Boolean(fileData);
             });
@@ -870,7 +877,7 @@ TextBrowser.prototype.paramChange = function () {
     function resultsDisplay (/* l, defineFormatter*/) {
         // Will need to retrieve fileData as above (abstract?)
         // document.title = l({key: "browserfile-resultsdisplay", values: {work: fileData ?
-        //    l({key: ["tablealias", work], fallback: true}) : ''
+        //    l({key: ["tablealias", $p('work')], fallback: true}) : ''
         // }, fallback: true});
     }
 
@@ -885,15 +892,18 @@ TextBrowser.prototype.paramChange = function () {
     }
 
     function localeCallback (/* l, defineFormatter*/) {
+        this.l10n = arguments[0];
+        var work = $p('work');
+        var result = $p('result');
         if (!work) {
-            workSelect.apply(null, arguments);
+            workSelect.apply(this, arguments);
             return;
         }
         if (!result) {
-            workDisplay.apply(null, arguments);
+            workDisplay.apply(this, arguments);
             return;
         }
-        resultsDisplay.apply(null, arguments);
+        resultsDisplay.apply(this, arguments);
     }
 
     IMF({ // eslint-disable-line new-cap
@@ -904,7 +914,7 @@ TextBrowser.prototype.paramChange = function () {
                 return l.code === code;
             }).locale.$ref; // Todo: For editing of locales, we might instead resolve all $ref (as with https://github.com/whitlockjc/json-refs ) and replace IMF() loadLocales behavior with our own now resolved locales; see https://github.com/jdorn/json-editor/issues/132
         },
-        callback: localeCallback
+        callback: localeCallback.bind(this)
     });
 
 

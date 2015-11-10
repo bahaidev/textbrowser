@@ -117,5 +117,37 @@
     "check-columns-to-browse": "Check the columns you wish to browse",
     "check-sequence": "Check the sequence (you can choose the same field twice if you wish)",
     "interlinear-tips": "Add a comma-separated list of column numbers to be added to the current column interlinearly",
-    "enum-all": "All"
+    "enum-all": "All",
+    "params": {
+        "indexed": {
+            "field": "field",
+            "checked": "checked",
+            "interlin": "interlin",
+            "css": "css",
+            "search": "search"
+        },
+        "lang": "lang",
+        "work": "work",
+        "result": "result",
+        "rand": "rand",
+        "context": "context",
+        "colorName": "colorName",
+        "color": "color",
+        "bgcolorName": "bgcolorName",
+        "bgcolor": "bgcolor",
+        "fontSeq": "fontSeq",
+        "fontstyle": "fontstyle",
+        "fontvariant": "fontvariant",
+        "fontweight": "fontweight",
+        "fontsize": "fontsize",
+        "fontstretch": "fontstretch",
+        "letterspacing": "letterspacing",
+        "lineheight": "lineheight",
+        "headings": "headings",
+        "wishcaption": "wishcaption",
+        "headerfixed": "headerfixed",
+        "border": "border",
+        "transpose": "transpose",
+        "outputmode": "outputmode"
+    }
 }
