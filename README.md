@@ -16,6 +16,9 @@ generation of available files), with each text being given its own
 customizable interface to allow browsing of the contents of the text,
 utilizing JSON Schema and metadata JSON associated with the files.
 
+Despite the name of the project referring to "text", this project
+can be used for any tabular data.
+
 # Installation
 
 The intent of this repository is for it to be used as a dependency.
@@ -270,7 +273,8 @@ shows its usage (assuming paths relative to a package containing
     text-to-(Google search, Google define, Wikipedia, etc. edit pages);
     add Word-by-word/phrase mapping; add back-links for index entries (which
     needs its own JSON Schema-based project for the hierarchical
-    representations), including optionally merging them for different books;
+    representations (see [TEI](http://www.tei-c.org/release/doc/tei-p5-doc/en/html/CO.html#CONOIX)
+    for ideas)), including optionally merging them for different books;
     also overlays
 
     1.  Reverse engineer missing work by using `bahai_locales` database (which
