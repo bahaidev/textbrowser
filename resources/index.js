@@ -269,7 +269,7 @@ TextBrowser.prototype.paramChange = function () {
         var content = [];
 
         function serializeParamsAsURL (cb) {
-            var paramsCopy = new IntlURLSearchParams({l10n: that.l10n, params: new URLSearchParams($p.params)});
+            var paramsCopy = new URLSearchParams($p.params);
             var formParamsHash = formSerialize(document.querySelector('form#browse'), {hash: true});
 
             Object.keys(formParamsHash).forEach(function (key) {
@@ -277,8 +277,8 @@ TextBrowser.prototype.paramChange = function () {
             });
 
             // Follow the same style (and order) for checkboxes
-            paramsCopy.delete('rand');
-            paramsCopy.set('rand', document.querySelector('#rand').checked ? l("yes") : "no");
+            paramsCopy.delete(il('rand'));
+            paramsCopy.set(il('rand'), document.querySelector('#rand').checked ? l("yes") : l("no"));
 
             Array.from(document.querySelectorAll('input[type=checkbox]')).forEach(function (checkbox) { // We want checkboxes to typically show by default, so we cannot use the standard serialization
                 paramsCopy.delete(checkbox.name); // Let's ensure the checked items are all together (at the end)
@@ -459,9 +459,9 @@ TextBrowser.prototype.paramChange = function () {
                     nbsp.repeat(3),
                     le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
                         var url = serializeParamsAsURL(function (paramsCopy) {
-                            paramsCopy.delete('random'); // In case it was added previously on this page, let's put random again toward the end
-                            paramsCopy.set('random', l("yes"));
-                            paramsCopy.set('result', l("yes"));
+                            paramsCopy.delete(il('random')); // In case it was added previously on this page, let's put random again toward the end
+                            paramsCopy.set(il('random'), l("yes"));
+                            paramsCopy.set(il('result'), l("yes"));
                         });
                         document.querySelector('#randomURL').value = url;
                     }}}),
@@ -643,7 +643,7 @@ TextBrowser.prototype.paramChange = function () {
                                     columnsTable,
                                     le("save-settings-URL", 'input', 'value', {type: 'button', $on: {click: function () {
                                         var url = serializeParamsAsURL(function (paramsCopy) {
-                                            paramsCopy.delete('random'); // In case it was added previously on this page, let's remove it
+                                            paramsCopy.delete(il('random')); // In case it was added previously on this page, let's remove it
                                         });
                                         document.querySelector('#settings-URL').value = url;
                                     }}}),
@@ -840,7 +840,15 @@ TextBrowser.prototype.paramChange = function () {
                         ]]
                     ]],
                     ['p', {align: 'center'}, [
-                        le("submitgo", 'input', 'value', {type: 'button'})
+                        le("submitgo", 'input', 'value', {type: 'button', $on: {click: function () {
+                            // Todo:
+                            var url = serializeParamsAsURL(function (paramsCopy) {
+                                paramsCopy.delete(il('random')); // In case it was added previously on this page, let's put random again toward the end
+                                paramsCopy.set(il('random'), l("yes"));
+                                paramsCopy.set(il('result'), l("yes"));
+                            });
+                            window.location.href = url;
+                        }}})
                     ]]
                 ]]
             ],
