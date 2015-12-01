@@ -189,8 +189,7 @@ shows its usage (assuming paths relative to a package containing
 
 1.  i18nize work values in URL.
 
-1.  Fix "checkmark_locale_fields_only" and "Save settings as URL"
-    so that both are locale-sensitive.
+1.  Fix "checkmark_locale_fields_only" so that it is locale-sensitive.
 
 1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
     to avoid localizing "query string" hash property names and values    
