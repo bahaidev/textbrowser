@@ -187,85 +187,94 @@ shows its usage (assuming paths relative to a package containing
 
 # To-dos
 
-1.  Fix "checkmark_locale_fields_only" so that it is locale-sensitive.
+1.  Locale and alias fixes/changes
 
-1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
-    to avoid localizing "query string" hash property names and values    
+    1.  Fix "checkmark_locale_fields_only" so that it is locale-sensitive.
 
-1.  Avoid unchecking when clicking button re: matching
-    current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue`
-    functionality)
+    1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
+        to avoid localizing "query string" hash property names and values
 
-1.  Rename localization strings, especially auto-field ones; consider making
-    some reusable, pointing to scripts, or how else to designate auto-field
-    plugins?
+    1.  Avoid unchecking when clicking button re: matching
+        current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue`
+        functionality)
 
-    1.  Update README and files.jsonschema as needed to reflect new changes
+    1.  Add content language(s) multiple select option to always browse for
+        those in the desired locale(s); utilize
+        "localization-strings"/&lt;code>/languages/&lt;code> in language.json
 
-1.  Choose clearer naming/structure for locale table/field keys
+    1.  Aliases
 
-    1.  Consider `tablealias` and default to `table` or something (as
-        `fieldalias` defaults to `fieldname`); aliased heading (also used
-        as the title of the page)
+        1.  Consider using `prefer_alias` for field alias use and optionally
+           show both if not given (e.g., for Bible books with
+           `prefer_alias`, show only the pull-down of books whereas
+           with the Qur'an (where Surah numbers are more commonly
+           used) link a pull-down of Surah names to a textbox
+           allowing numbers)?
 
-1.  Review code for readability, refactoring opportunities
+        1.  Remove locale info for "numbers only" string key (including
+            from locale files?) if allowing for aliased searches
+            (e.g., "Gen").
 
-1.  Aliases
+        1.  Ensure searching can be done through URL params, especially
+            to use in conjunction with bookmark keywords (in which case
+            it particularly ought to be available through a single param).
 
-    1.  Consider using `prefer_alias` for field alias use and optionally
-       show both if not given (e.g., for Bible books with
-       `prefer_alias`, show only the pull-down of books whereas
-       with the Qur'an (where Surah numbers are more commonly
-       used) link a pull-down of Surah names to a textbox
-       allowing numbers)?
+        1. Ensure aliases are i18nized
 
-    1.  Remove locale info for "numbers only" string key (including
-        from locale files?) if allowing for aliased searches
-        (e.g., "Gen").
+1.  Refactoring/Testing
 
-    1.  Ensure searching can be done through URL params, especially
-        to use in conjunction with bookmark keywords (in which case
-        it particularly ought to be available through a single param).
+    1.  Add URL params which can include/disable modules to simplify screen
 
-    1. Ensure aliases are i18nized
+        1.  Hide advanced formatting options (make savable in preferences)
 
-1.  Incorporate speech synthesis from
-    <http://bahai.works/MediaWiki:Common.js>, allowing different
-    speech voices for different rows or columns.
+    1.  Rename localization strings, especially auto-field ones; consider making
+        some reusable, pointing to scripts, or how else to designate auto-field
+        plugins?
 
-1.  Options to have range of context and range for highlighting
-    (with own styles) and anchoring
+        1.  Update README and files.jsonschema as needed to reflect new changes
 
-1.  Optional links to go to previous/next results if only loading a subset
-    of available content (allow customization of size of chunking in
-    preferences as well as on the fly)
+    1.  Choose clearer naming/structure for locale table/field keys
 
-1.  Add URL params which can include/disable modules to simplify screen
-    1.  Hide advanced formatting options (make savable in preferences)
+        1.  Consider `tablealias` and default to `table` or something (as
+            `fieldalias` defaults to `fieldname`); aliased heading (also used
+            as the title of the page)
 
-1.  Support optional tfoot to repeat header info on bottom?
+    1.  Use ES6 modules (babel) and add browser-based testing (PhantomJS?)
 
-1.  Make full preferences system for saved/favorite, recent
-    searches/browses, etc.
+    1.  Review code for readability, refactoring opportunities
 
-1.  Support metadata to combine fields during browsing
+1.  New features (requiring UI adjustments)
 
-1.  Figure out how to get rowspans (or even colspans) for additional
-    columns (e.g., a field spanning by whole pages of a book and another
-    field spanning only by paragraphs) - use some kind of counter and
-    don't display the HTML until finished cycling??; also figure out
-    how to reassemble if the minute fields are not needed (e.g., if
-    the user only wants to see the text by paragraph and not anything
-    related to by page)
+    1.  Incorporate speech synthesis from
+        <http://bahai.works/MediaWiki:Common.js>, allowing different
+        speech voices for different rows or columns.
 
-1.  Add content language(s) multiple select option to always browse for
-    those in the desired locale(s); utilize
-    "localization-strings"/&lt;code>/languages/&lt;code> in language.json
+    1.  Options to have range of context and range for highlighting
+        (with own styles) and anchoring
 
-1.  Schema-aware and metadata-aware column sorting options (e.g., sort by
-      order and ASC/DESC) with user customizability (i.e., presorting along
-      with dynamic client-side after-load sorting, with or without search
-      filtering; use "search" in locale to add this filtering to UI)
+    1.  Optional links to go to previous/next results if only loading a subset
+        of available content (allow customization of size of chunking in
+        preferences as well as on the fly)
+
+    1.  Support optional tfoot to repeat header info on bottom?
+
+    1.  Make full preferences system for saved/favorite, recent
+        searches/browses, etc.
+
+    1.  Support metadata to combine fields during browsing
+
+    1.  Figure out how to get rowspans (or even colspans) for additional
+        columns (e.g., a field spanning by whole pages of a book and another
+        field spanning only by paragraphs) - use some kind of counter and
+        don't display the HTML until finished cycling??; also figure out
+        how to reassemble if the minute fields are not needed (e.g., if
+        the user only wants to see the text by paragraph and not anything
+        related to by page)
+
+    1.  Schema-aware and metadata-aware column sorting options (e.g., sort by
+          order and ASC/DESC) with user customizability (i.e., presorting along
+          with dynamic client-side after-load sorting, with or without search
+          filtering; use "search" in locale to add this filtering to UI)
 
 1.  Add/Add back automated (including into drop-downs): Synopsis, Roman
     numerals, Chinese numbers, word-by-word translation, auto-romanized
