@@ -208,13 +208,11 @@ TextBrowser.prototype.paramChange = function () {
                             ]],
                             ['br'],
                             ['select', {'class': 'file', dataset: {name: fileGroup.name.localeKey}, $on: {
-                                click: [(function (e) {
-                                    if (e.target.nodeName.toLowerCase() === 'select') {
-                                        return;
-                                    }
+                                change: function (e) {
+                                    // if (e.target.nodeName.toLowerCase() === 'select') {return;} // If using click, but click doesn't always fire
                                     $p.set('work', e.target.value);
                                     followParams();
-                                }), true]
+                                }
                             }}, fileGroup.files.map(function (file, i) {
                                 fileCtr++;
                                 return lo(metadataObjs[fileCtr], {value: file.name});
