@@ -14,7 +14,7 @@ function _prepareParam (param, skip) {
     if (skip) { // (lang)
         return param;
     }
-    // todo: also deal with field names!
+
     var endNums = /\d+(-\d+)?$/; // start, end, toggle
     var indexed = param.match(endNums);
     if (indexed) {
