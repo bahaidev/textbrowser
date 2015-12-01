@@ -11,11 +11,11 @@ function s (obj) {alert(JSON.stringify(obj));} // eslint-disable-line no-unused-
 
 
 function _prepareParam (param, skip) {
-    if (skip) { // (lang), start, end, toggle
+    if (skip) { // (lang)
         return param;
     }
     // todo: also deal with field names!
-    var endNums = /\d+(-\d+)?$/;
+    var endNums = /\d+(-\d+)?$/; // start, end, toggle
     var indexed = param.match(endNums);
     if (indexed) {
         return this.l10n(['params', 'indexed', param.replace(endNums, '')]) + indexed[0]; // Todo: We could i18nize numbers as well
@@ -123,12 +123,13 @@ TextBrowser.prototype.paramChange = function () {
         return that.fileData['localization-strings'][lan];
     }
     function languageSelect (l) {
+        $p.l10n = l;
         // Also can use l("chooselanguage"), but assumes locale as with page title
         document.title = l("browser-title");
 
         jml('div', {'class': 'focus'}, [
               ['select', {size: langs.length, $on: {change: function (e) {
-                  $p.set('lang', e.target.selectedOptions[0].value);
+                  $p.set('lang', e.target.selectedOptions[0].value, true);
                   followParams();
               }}}, langs.map(function (lan) {
                   return ['option', {value: lan.code}, [localeFromLangData(lan.code).languages[lan.code]]];
