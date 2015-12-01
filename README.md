@@ -245,8 +245,6 @@ shows its usage (assuming paths relative to a package containing
 
 1.  Support optional tfoot to repeat header info on bottom?
 
-1.  Further localization of the interface
-
 1.  Make full preferences system for saved/favorite, recent
     searches/browses, etc.
 
@@ -402,6 +400,8 @@ shows its usage (assuming paths relative to a package containing
 1.  Code to populate locale files with missing localization strings and
     report the missing ones (and sort as such in assistant file); put
     assistant localization keys in own file?
+
+    1.  Find translators to do further localization of the interface
 
 1.  Use validators with all JSON Schemas and instances to confirm
     schemas are defined properly (as part of `npm test`)
