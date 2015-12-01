@@ -298,6 +298,9 @@ shows its usage (assuming paths relative to a package containing
            (local/remote and wiki WYSIWYG with Git version control?);
            support loading from `bower_components`
 
+    1.  Automated whole document/table-level or column-level
+        changes (e.g., word counts)
+
     1.  Add an "overlay" column like interlinear, but which overlays by
         tooltip if any data is present; can also use metadata if the overlay
         is within-cell (and this metadata can also be used for putting
