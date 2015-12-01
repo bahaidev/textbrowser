@@ -215,7 +215,8 @@ TextBrowser.prototype.paramChange = function () {
                                 }
                             }}, fileGroup.files.reduce(function (childEls, file, i) {
                                 fileCtr++;
-                                childEls.push(lo(metadataObjs[fileCtr], {value: file.name}));
+                                var metadataObj = metadataObjs[fileCtr];
+                                childEls.push(lo(metadataObj, {value: lf(['workNames', fileGroup.id, file.name])}));
                                 return childEls;
                             }, [['option', {value: ''}, ['--']]])]
                             // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
@@ -859,6 +860,9 @@ TextBrowser.prototype.paramChange = function () {
     function workDisplay (l, defineFormatter) {
         getJSON(that.files, function (dbs) {
             that.fileData = dbs;
+            var imfFile = IMF({locales: lang.map(localeFromFileData), fallbackLocales: fallbackLanguages.map(localeFromFileData)}); // eslint-disable-line new-cap
+            var lf = imfFile.getFormatter();
+
             // Use the following to dynamically add specific file schema in place of generic table schema if validating against files.jsonschema
             // filesSchema.properties.groups.items.properties.files.items.properties.file.anyOf.splice(1, 1, {$ref: schemaFile});
             // Todo: Allow use of dbs and fileGroup together in base directories?
@@ -888,7 +892,7 @@ TextBrowser.prototype.paramChange = function () {
             var fileData;
             var fileGroup = dbs.groups.find(function (fg) {
                 fileData = fg.files.find(function (file) {
-                    return $p.get('work') === file.name;
+                    return $p.get('work') === lf(['workNames', fg.id, file.name]);
                 });
                 return Boolean(fileData);
             });
@@ -914,11 +918,9 @@ TextBrowser.prototype.paramChange = function () {
 
             getMetadata(schemaFile, schemaProperty, function (schemaObj) {
                 getMetadata(metadataFile, metadataProperty, function (metadataObj) {
-                      var imfFile = IMF({locales: lang.map(localeFromFileData), fallbackLocales: fallbackLanguages.map(localeFromFileData)}); // eslint-disable-line new-cap
-                      var lf = imfFile.getFormatter();
-                      document.title = lf({key: "browserfile-workdisplay", values: {work: fileData ?
-                          getMetaProp(metadataObj, 'alias') : ''
-                      }, fallback: true});
+                    document.title = lf({key: "browserfile-workdisplay", values: {work: fileData ?
+                        getMetaProp(metadataObj, 'alias') : ''
+                    }, fallback: true});
                     _displayWork(l, defineFormatter, schemaObj, metadataObj);
                 });
             });
