@@ -187,8 +187,6 @@ shows its usage (assuming paths relative to a package containing
 
 # To-dos
 
-1.  i18nize work values in URL.
-
 1.  Fix "checkmark_locale_fields_only" so that it is locale-sensitive.
 
 1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
