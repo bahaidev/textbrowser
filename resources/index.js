@@ -213,10 +213,11 @@ TextBrowser.prototype.paramChange = function () {
                                     $p.set('work', e.target.value);
                                     followParams();
                                 }
-                            }}, fileGroup.files.map(function (file, i) {
+                            }}, fileGroup.files.reduce(function (childEls, file, i) {
                                 fileCtr++;
-                                return lo(metadataObjs[fileCtr], {value: file.name});
-                            })]
+                                childEls.push(lo(metadataObjs[fileCtr], {value: file.name}));
+                                return childEls;
+                            }, [['option', {value: ''}, ['--']]])]
                             // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
                         ]];
                     }),
