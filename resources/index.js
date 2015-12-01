@@ -606,7 +606,7 @@ TextBrowser.prototype.paramChange = function () {
                             var higherLocale = preferredLocale.replace(/\-.*$/, '');
 
                             if ((metaFieldInfo && metaFieldInfo.hasFieldvalue) || // If this is a localized field (e.g., enum), we don't want to avoid as may be translated (should check though)
-                                [preferredLocale, higherLocale].indexOf(metaLang) > -1
+                                [preferredLocale, higherLocale].includes(metaLang)
                             ) {
                                 document.querySelector('#checked' + idx).checked = true;
                             }
