@@ -563,8 +563,8 @@ TextBrowser.prototype.paramChange = function () {
                                 var fn = getFieldAliasOrName(field) || field;
                                 var matchedFieldParam = fieldParam && fieldParam === field;
                                 return (matchedFieldParam || (!$p.has(fieldIndex) && j === i)) ?
-                                    ['option', {value: fn, selected: 'selected'}, [fn]] :
-                                    ['option', {value: fn}, [fn]];
+                                    ['option', {dataset: {name: field}, value: fn, selected: 'selected'}, [fn]] :
+                                    ['option', {dataset: {name: field}, value: fn}, [fn]];
                             })
                         ]
                     ]),
@@ -593,31 +593,31 @@ TextBrowser.prototype.paramChange = function () {
                     }}}),
                     le("checkmark_locale_fields_only", 'input', 'value', {type: 'button', $on: {click: function () {
                         // Todo: remember this locales choice by cookie?
+                        function getPreferredLanguages (lang) {
+                            // Todo: Add to this array with user preferences and/or tag input box
+                            var langArr = [];
+                            // Todo: Check for multiple separate hyphenated groupings (for each supplied language)
+                            var higherLocale = lang.replace(/\-.*$/, '');
+                            langArr.push(lang, higherLocale);
+                            return langArr;
+                        }
                         fields.forEach(function (fld, i) {
                             var idx = i + 1;
-                            var field = document.querySelector('#field' + idx).value;
+                            var field = document.querySelector('#field' + idx).selectedOptions[0].dataset.name;
 
                             var metaFieldInfo = metadataObj && metadataObj.fields && metadataObj.fields[field];
                             var metaLang;
                             if (metaFieldInfo) {
                                 metaLang = metadataObj.fields[field].lang;
                             }
-                            // Todo: Could add tag input box for listing multiple language codes
-                            var higherLocale = preferredLocale.replace(/\-.*$/, '');
 
-                            if ((metaFieldInfo && metaFieldInfo.hasFieldvalue) || // If this is a localized field (e.g., enum), we don't want to avoid as may be translated (should check though)
-                                [preferredLocale, higherLocale].includes(metaLang)
-                            ) {
-                                document.querySelector('#checked' + idx).checked = true;
-                            }
-                            else if (schemaItems.some(function (item) {
-                                return item.title === field && item.type !== 'string';
-                            })) {
-                                document.querySelector('#checked' + idx).checked = true;
-                            }
-                            else {
-                                document.querySelector('#checked' + idx).checked = false;
-                            }
+                            var preferredLanguages = getPreferredLanguages(preferredLocale);
+                            document.querySelector('#checked' + idx).checked =
+                                (metaFieldInfo && metaFieldInfo.hasFieldvalue) || // If this is a localized field (e.g., enum), we don't want to avoid as may be translated (should check though)
+                                (metaLang && preferredLanguages.includes(metaLang)) ||
+                                schemaItems.some(item =>
+                                    item.title === field && item.type !== 'string'
+                                );
                         });
                     }}})
                 ]]

@@ -189,8 +189,6 @@ shows its usage (assuming paths relative to a package containing
 
 1.  Locale fixes/changes
 
-    1.  Fix "checkmark_locale_fields_only" so that it is locale-sensitive.
-
     1.  Avoid unchecking when clicking button re: matching
         current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue`
         functionality)
@@ -262,7 +260,7 @@ shows its usage (assuming paths relative to a package containing
         to advanced formatting (or page-wide CSS?)
 
     1.  Make full preferences system for saved/favorite, recent
-        searches/browses, etc.
+        searches/browses, preferred locales, etc.
 
     1.  Support metadata to combine fields during browsing
 
