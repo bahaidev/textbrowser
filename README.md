@@ -187,7 +187,7 @@ shows its usage (assuming paths relative to a package containing
 
 # To-dos
 
-1.  Locale and alias fixes/changes
+1.  Locale fixes/changes
 
     1.  Fix "checkmark_locale_fields_only" so that it is locale-sensitive.
 
@@ -201,25 +201,6 @@ shows its usage (assuming paths relative to a package containing
     1.  Add content language(s) multiple select option to always browse for
         those in the desired locale(s); utilize
         "localization-strings"/&lt;code>/languages/&lt;code> in language.json
-
-    1.  Aliases
-
-        1.  Consider using `prefer_alias` for field alias use and optionally
-           show both if not given (e.g., for Bible books with
-           `prefer_alias`, show only the pull-down of books whereas
-           with the Qur'an (where Surah numbers are more commonly
-           used) link a pull-down of Surah names to a textbox
-           allowing numbers)?
-
-        1.  Remove locale info for "numbers only" string key (including
-            from locale files?) if allowing for aliased searches
-            (e.g., "Gen").
-
-        1.  Ensure searching can be done through URL params, especially
-            to use in conjunction with bookmark keywords (in which case
-            it particularly ought to be available through a single param).
-
-        1. Ensure aliases are i18nized
 
 1.  Refactoring/Testing
 
@@ -244,6 +225,25 @@ shows its usage (assuming paths relative to a package containing
     1.  Review code for readability, refactoring opportunities
 
 1.  New features (requiring UI adjustments)
+
+    1.  Aliased search
+
+        1.  Consider using `prefer_alias` for field alias use and optionally
+           show both if not given (e.g., for Bible books with
+           `prefer_alias`, show only the pull-down of books whereas
+           with the Qur'an (where Surah numbers are more commonly
+           used) link a pull-down of Surah names to a textbox
+           allowing numbers)?
+
+        1.  Remove locale info for "numbers only" string key (including
+            from locale files?) if allowing for aliased searches
+            (e.g., "Gen").
+
+        1.  Ensure searching can be done through URL params, especially
+            to use in conjunction with bookmark keywords (in which case
+            it particularly ought to be available through a single param).
+
+        1. Ensure aliases are i18nized
 
     1.  Incorporate speech synthesis from
         <http://bahai.works/MediaWiki:Common.js>, allowing different
