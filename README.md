@@ -216,7 +216,7 @@ shows its usage (assuming paths relative to a package containing
 
 1.  New features (requiring UI adjustments)
 
-    1.  Aliased search
+    1.  Aliased search (space-separated field and drop-downs)
 
         1.  Consider using `prefer_alias` for field alias use and optionally
            show both if not given (e.g., for Bible books with
