@@ -275,9 +275,9 @@ shows its usage (assuming paths relative to a package containing
         related to by page)
 
     1.  Schema-aware and metadata-aware column sorting options (e.g., sort by
-          order and ASC/DESC) with user customizability (i.e., presorting along
-          with dynamic client-side after-load sorting, with or without search
-          filtering; use "search" in locale to add this filtering to UI)
+        order and ASC/DESC) with user customizability (i.e., presorting along
+        with dynamic client-side after-load sorting, with or without search
+        filtering; use "search" in locale to add this filtering to UI)
 
 1.  Add/Add back automated (including into drop-downs): Synopsis, Roman
     numerals, Chinese numbers, word-by-word translation, auto-romanized
