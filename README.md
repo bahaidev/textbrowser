@@ -239,9 +239,7 @@ shows its usage (assuming paths relative to a package containing
             `fieldalias` defaults to `fieldname`); aliased heading (also used
             as the title of the page)
 
-    1.  Use ES6 modules (babel) and add browser-based testing (PhantomJS?)
-
-        1.  dynamic or hierarchical loading of CSS too?
+    1.  Add browser-based testing (PhantomJS?)
 
     1.  Review code for readability, refactoring opportunities
 
@@ -259,6 +257,9 @@ shows its usage (assuming paths relative to a package containing
         preferences as well as on the fly)
 
     1.  Support optional tfoot to repeat header info on bottom?
+
+    1.  Add link style (browse.php and browse9.php) as option
+        to advanced formatting (or page-wide CSS?)
 
     1.  Make full preferences system for saved/favorite, recent
         searches/browses, etc.
@@ -437,8 +438,9 @@ shows its usage (assuming paths relative to a package containing
 1.  Change to utilize history.pushState?
     <https://developer.mozilla.org/en-US/docs/Web/API/History_API>
 
-1.  Add link style (browse.php and browse9.php) as option
-to advanced formatting
+1. Use ES6 modules (babel)
+
+    1.  dynamic or hierarchical loading of CSS too?
 
 1.  Sort file selection listing per locale?
 
