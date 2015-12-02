@@ -189,10 +189,6 @@ shows its usage (assuming paths relative to a package containing
 
 1.  Locale fixes/changes
 
-    1.  Avoid unchecking when clicking button re: matching
-        current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue`
-        functionality)
-
     1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
         to avoid localizing "query string" hash property names and values
 

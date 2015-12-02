@@ -603,17 +603,24 @@ TextBrowser.prototype.paramChange = function () {
                         }
                         fields.forEach(function (fld, i) {
                             var idx = i + 1;
-                            var field = document.querySelector('#field' + idx).selectedOptions[0].dataset.name;
-
+                            var field = document.querySelector('#field' + idx).selectedOptions[0].dataset.name; // Redundant with "fld" but may need to retrieve later out of order?
                             var metaFieldInfo = metadataObj && metadataObj.fields && metadataObj.fields[field];
                             var metaLang;
                             if (metaFieldInfo) {
                                 metaLang = metadataObj.fields[field].lang;
                             }
+                            var localeStrings = metadataObj && metadataObj['localization-strings'];
+
+                            // If this is a localized field (e.g., enum), we don't want
+                            //  to avoid as may be translated (should check though)
+                            var hasFieldValue = localeStrings && Object.keys(localeStrings).some(lang => {
+                                var fv = localeStrings[lang] && localeStrings[lang].fieldvalue;
+                                return fv && fv[field];
+                            });
 
                             var preferredLanguages = getPreferredLanguages(preferredLocale);
                             document.querySelector('#checked' + idx).checked =
-                                (metaFieldInfo && metaFieldInfo.hasFieldvalue) || // If this is a localized field (e.g., enum), we don't want to avoid as may be translated (should check though)
+                                hasFieldValue ||
                                 (metaLang && preferredLanguages.includes(metaLang)) ||
                                 schemaItems.some(item =>
                                     item.title === field && item.type !== 'string'
