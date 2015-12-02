@@ -63,6 +63,7 @@ function TextBrowser (options) { // eslint-disable-line
     this.languages = options.languages || 'bower_components/textbrowser/appdata/languages.json';
     this.site = options.site || 'site.json';
     this.files = options.files || 'files.json';
+    this.namespace = options.namespace || 'textbrowser';
 }
 
 TextBrowser.prototype.init = function () {
@@ -240,6 +241,8 @@ TextBrowser.prototype.paramChange = function () {
         var iil = function (key) {
             return l(['params', 'indexed', key]); // We could make this a different function if avoiding localization of param names
         };
+        var imfLang = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)}); // eslint-disable-line new-cap
+        var imfl = imfLang.getFormatter();
 
         // Returns plain text node or element (as Jamilih) with fallback direction
         function ld (key, values, formats) {
@@ -593,12 +596,18 @@ TextBrowser.prototype.paramChange = function () {
                     }}}),
                     le("checkmark_locale_fields_only", 'input', 'value', {type: 'button', $on: {click: function () {
                         // Todo: remember this locales choice by cookie?
-                        function getPreferredLanguages (lang) {
-                            // Todo: Add to this array with user preferences and/or tag input box
+                        function getPreferredLanguages (langs) {
                             var langArr = [];
-                            // Todo: Check for multiple separate hyphenated groupings (for each supplied language)
-                            var higherLocale = lang.replace(/\-.*$/, '');
-                            langArr.push(lang, higherLocale);
+                            langs.forEach(function (lang) {
+                                // Todo: Check for multiple separate hyphenated groupings (for each supplied language)
+                                var higherLocale = lang.replace(/\-.*$/, '');
+                                if (higherLocale === lang) {
+                                    langArr.push(lang);
+                                }
+                                else {
+                                    langArr.push(lang, higherLocale);
+                                }
+                            });
                             return langArr;
                         }
                         fields.forEach(function (fld, i) {
@@ -618,7 +627,11 @@ TextBrowser.prototype.paramChange = function () {
                                 return fv && fv[field];
                             });
 
-                            var preferredLanguages = getPreferredLanguages(preferredLocale);
+                            // Todo: Add to this optionally with one-off tag input box
+                            var langCodes = localStorage.getItem(that.namespace + '-langCodes');
+                            var preferredLanguages = getPreferredLanguages(
+                                (langCodes && JSON.parse(langCodes)) || [preferredLocale]
+                            );
                             document.querySelector('#checked' + idx).checked =
                                 hasFieldValue ||
                                 (metaLang && preferredLanguages.includes(metaLang)) ||
@@ -638,6 +651,31 @@ TextBrowser.prototype.paramChange = function () {
             'div',
             {'class': 'focus'},
             [
+                ['div', {style: 'float: left;'}, [
+                    ['button', {$on: {click: function () {
+                        var prefs = document.querySelector('#preferences');
+                        prefs.hidden = !prefs.hidden;
+                    }}}, ['Preferences']],
+                    ['div', {id: 'preferences', hidden: 'true'}, [
+                        ['select', {multiple: 'multiple', size: langs.length, $on: {change: function (e) {
+                            // Todo: EU disclaimer re: storage?
+                            localStorage.setItem(that.namespace + '-langCodes', JSON.stringify(Array.from(e.target.selectedOptions).map(function (opt) {
+                                return opt.value;
+                            })));
+                        }}}, langs.map(function (lan) {
+                            var langCodes = localStorage.getItem(that.namespace + '-langCodes');
+                            langCodes = langCodes && JSON.parse(langCodes);
+                            var atts = {value: lan.code};
+                            if (langCodes.includes(lan.code)) {
+                                atts.selected = 'selected';
+                            }
+                            return ['option', atts, [
+                                imfl(['languages', lan.code])
+                            ]];
+
+                        })]
+                    ]]
+                ]],
                 ['h2', [getMetaProp(metadataObj, 'heading')]],
                 ['br'],
                 ['form', {id: 'browse', name: il('browse')}, [
@@ -968,8 +1006,7 @@ TextBrowser.prototype.paramChange = function () {
 
     if (!languageParam) {
         var imfSite = IMF({locales: lang.map(localeFromSiteData), fallbackLocales: fallbackLanguages.map(localeFromSiteData)}); // eslint-disable-line new-cap
-        var imfLang = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)}); // eslint-disable-line new-cap
-        languageSelect(imfSite.getFormatter(), imfLang.getFormatter());
+        languageSelect(imfSite.getFormatter());
         return;
     }
     IMF({ // eslint-disable-line new-cap

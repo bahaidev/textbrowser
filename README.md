@@ -192,10 +192,6 @@ shows its usage (assuming paths relative to a package containing
     1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
         to avoid localizing "query string" hash property names and values
 
-    1.  Add content language(s) multiple select preference option to always
-        browse for those in the desired locale(s); utilize
-        "localization-strings"/&lt;code>/languages/&lt;code> in language.json
-
 1.  Refactoring/Testing
 
     1.  Add URL params which can include/disable modules to simplify screen
