@@ -187,12 +187,10 @@ shows its usage (assuming paths relative to a package containing
 
 # To-dos
 
-1.  Locale changes
+1.  Config/Refactoring/Testing
 
     1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
         to avoid localizing "query string" hash property names and values
-
-1.  Refactoring/Testing
 
     1.  Add URL params which can include/disable modules to simplify screen
 
@@ -251,8 +249,8 @@ shows its usage (assuming paths relative to a package containing
     1.  Add link style (browse.php and browse9.php) as option
         to advanced formatting (or page-wide CSS?)
 
-    1.  Make full preferences system for saved/favorite, recent
-        searches/browses, preferred locales, etc.
+    1.  Add to preferences system for saved/favorite, recent
+        searches/browses, etc.
 
     1.  Support metadata to combine fields during browsing
 
