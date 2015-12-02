@@ -241,6 +241,8 @@ shows its usage (assuming paths relative to a package containing
 
     1.  Use ES6 modules (babel) and add browser-based testing (PhantomJS?)
 
+        1.  dynamic or hierarchical loading of CSS too?
+
     1.  Review code for readability, refactoring opportunities
 
 1.  New features (requiring UI adjustments)
@@ -371,6 +373,9 @@ shows its usage (assuming paths relative to a package containing
     by being able to use a natively stringifying version of Jamilih
     (once complete)
 
+1.  Use validators with all JSON Schemas and instances to confirm
+    schemas are defined properly (as part of `npm test`)
+
 1.  URL (sorted) params keyed to indexHTML of page for caching
 
 1.  Build library (for browser or Node) to utilize site.json file to add
@@ -412,8 +417,13 @@ shows its usage (assuming paths relative to a package containing
 
     1.  Find translators to do further localization of the interface
 
-1.  Use validators with all JSON Schemas and instances to confirm
-    schemas are defined properly (as part of `npm test`)
+    1.  Assistant file (for translating; needs server for password);
+        work optionally with main locales, files, table, and field
+        locale info. Use already-existing localization strings.
+
+    1.  Add tooltips and table summaries, etc. back (see locale file for
+        these and reapply any other unused) and add any missing ones
+        describing how to use the elements
 
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize)!
@@ -427,7 +437,7 @@ shows its usage (assuming paths relative to a package containing
 1.  Change to utilize history.pushState?
     <https://developer.mozilla.org/en-US/docs/Web/API/History_API>
 
-1.  Add link color (browse.php and browse9.php) as option
+1.  Add link style (browse.php and browse9.php) as option
 to advanced formatting
 
 1.  Sort file selection listing per locale?
@@ -439,29 +449,18 @@ to advanced formatting
 
 1.  Update "about" text and utilize on popup or something?
 
-1.  Assistant file (for translating; needs server for password);
-    work optionally with main locales, files, table, and field
-    locale info. Use already-existing localization strings.
-
-1.  Add tooltips and table summaries, etc. back (see locale file for
-    these and reapply any other unused) and add any missing ones
-    describing how to use the elements
-
 1.  Change "Saving settings as URL" to a redirect if faithfully
     copying everything?
 
 1.  Provide option to skip over `langs.json` with a default language
     (though discourage since the UI translations may help some people).
 
-1.  ES6 Modules import of JavaScript in place of script tags;
-    dynamic or hierarchical loading of CSS too?
-
-1.  `window.postMessage` API (since CORS is only for Ajax and
-    `document.domain` is only for subdomains).
-
 1.  Allow user to pass array of language codes that can be checked
     at the beginning of the string without need for `lang=` (or for
     the i18n of "lang"?).
+
+1.  `window.postMessage` API (since CORS is only for Ajax and
+    `document.domain` is only for subdomains).
 
 # History
 
