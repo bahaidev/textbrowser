@@ -191,15 +191,15 @@ shows its usage (assuming paths relative to a package containing
 
     1.  Fix "checkmark_locale_fields_only" so that it is locale-sensitive.
 
-    1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
-        to avoid localizing "query string" hash property names and values
-
     1.  Avoid unchecking when clicking button re: matching
         current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue`
         functionality)
 
-    1.  Add content language(s) multiple select option to always browse for
-        those in the desired locale(s); utilize
+    1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
+        to avoid localizing "query string" hash property names and values
+
+    1.  Add content language(s) multiple select preference option to always
+        browse for those in the desired locale(s); utilize
         "localization-strings"/&lt;code>/languages/&lt;code> in language.json
 
 1.  Refactoring/Testing
