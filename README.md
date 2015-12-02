@@ -187,7 +187,7 @@ shows its usage (assuming paths relative to a package containing
 
 # To-dos
 
-1.  Locale fixes/changes
+1.  Locale changes
 
     1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
         to avoid localizing "query string" hash property names and values
