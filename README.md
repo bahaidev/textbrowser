@@ -456,3 +456,10 @@ shows its usage (assuming paths relative to a package containing
 
 One PHP-based version was released in 2005-12-22 and was my
 first project used in aiding my learning programming.
+
+# Testing
+
+```
+npm install
+npm test
+```
