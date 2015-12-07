@@ -1,0 +1,23 @@
+{
+  "name": "textbrowser",
+  "version": "0.0.1",
+  "description": "Multilinear text browser",
+  "main": "resources/index.js",
+  "scripts": {
+    "test": "phantom-jasmine test/tests.html",
+    "prepublish": "bower install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brettz9/textbrowser.git"
+  },
+  "devDependencies": {
+      "phantom-jasmine": "0.x"
+  },
+  "author": "Brett Zamir",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brettz9/textbrowser/issues"
+  },
+  "homepage": "https://github.com/brettz9/textbrowser#readme"
+}

@@ -8,7 +8,7 @@ it can work offline.
 
 # Text Browser
 
-This software currently allows for multilinear texts (represented in
+This software currently allows for multi-linear texts (represented in
 user-customizable JSON tables. These texts are accessible from a main
 interface (currently requiring a whitelist though it may be made
 customizable in the future for open-ended usage/dynamic server-side
@@ -61,62 +61,68 @@ The recommended project directory structure (which works with the
 default paths) is as follows:
 
 -   ***bower.json*** - Should indicate `textbrowser` as a dependency as per
-the "Installation" section above. See `bower-sample.json` for an example.
+    the "Installation" section above. See `bower-sample.json` for an example.
+
+-   ***site.json*** - Not yet utilized in the app. Has top-level `site` array
+    indicating nesting of the site's page hierarchy (usable for site map
+    generation). Also has `navigation` to indicate the subset of this site
+    available on the navigation bar. Can also be used to generate
+    breadcrumbs, &lt;link rel=next/prev&gt; links, and a sitemap.
 
 -   ***files.json*** - Points to your data files (e.g., any kept in `data/`).
-Is an object with a `groups` property set to an array of file groups where
-each group has the property `name` for a file group display name as a string
-or localization key; an optional `directions` string or localization key;
-an optional `baseDirectory`, `schemaBaseDirectory`, and
-`metadataBaseDirectory` for base paths; and a `files` array property with
-each file containing the properties, `name` for the file name as a string
-or localization key; `file` for file contents (recommended as a
-[JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)
-object which will be resolved relative to any `baseDirectory` properties);
-and `schemaFile`, and `metadataFile` file paths (relative to the respective
-base paths). The same base directory properties are also available at the
-root of the file and if present will be prefixed to any file-group-specific
-base paths and the file. You may wish to validate your `files.json` with
-`general-schemas/files.jsonschema`, but this is not required.
+    Is an object with a `groups` property set to an array of file groups where
+    each group has the property `name` for a file group display name as a string
+    or localization key; an optional `directions` string or localization key;
+    an optional `baseDirectory`, `schemaBaseDirectory`, and
+    `metadataBaseDirectory` for base paths; and a `files` array property with
+    each file containing the properties, `name` for the file name as a string
+    or localization key; `file` for file contents (recommended as a
+    [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)
+    object which will be resolved relative to any `baseDirectory` properties);
+    and `schemaFile`, and `metadataFile` file paths (relative to the respective
+    base paths). The same base directory properties are also available at the
+    root of the file and if present will be prefixed to any file-group-specific
+    base paths and the file. You may wish to validate your `files.json` with
+    `general-schemas/files.jsonschema`, but this is not required.
 
 -   ***index.html*** - The main application code. One can use
   `index-sample.html` as is or modified as desired. Note that it
   may be sufficient to modify `resources/user.css` and `resources/user.js`.
 
 -   ***textbrowser.appcache*** - Offline AppCache manifest. You may base
-this off of `textbrowser-sample.appcache`, being sure to add your
-own data files for offline caching. If you are using `user.css` or
-`user.js`, be sure to uncomment in the copied file (HTML currently
-only allows one cache file apparently as per
-<https://html.spec.whatwg.org/multipage/semantics.html#attr-html-manifest>,
-so we apparently cannot add to this dynamically nor use data: URLs.)
+    this off of `textbrowser-sample.appcache`, being sure to add your
+    own data files for offline caching. If you are using `user.css` or
+    `user.js`, be sure to uncomment in the copied file (HTML currently
+    only allows one cache file apparently as per
+    <https://html.spec.whatwg.org/multipage/semantics.html#attr-html-manifest>,
+    so we apparently cannot add to this dynamically nor use data: URLs.)
 
 -   ***.htaccess*** - If using Apache, you may wish to have this file
-  copied from TextBrowser's `.htaccess-sample` in order to serve the
-  proper Content Type for the AppCache file.
+    copied from TextBrowser's `.htaccess-sample` in order to serve the
+    proper Content Type for the AppCache file.
 
 -   ***resources/user.css*** - Add any custom CSS you wish to apply
-  for `index.html`.
+    for `index.html`.
 
 -   ***resources/user.js*** - Add any JavaScript you wish to use. Unless
-  already invoked in `index.html`, you should call the `TextBrowser`
-  constructor here. See TextBrowser's `resources/user-sample.js` for
-  a pattern you can copy and optionally adapt.
+    already invoked in `index.html`, you should call the `TextBrowser`
+    constructor here. See TextBrowser's `resources/user-sample.js` for
+    a pattern you can copy and optionally adapt.
 
 -   ***bower_components*** - *TextBrowser* and its dependencies will be
-  added here via bower install as well as any dependencies you indicate
-  within `bower.json`.
+    added here via bower install as well as any dependencies you indicate
+    within `bower.json`.
 
 -   ***data/*** - Directory recommended as a convention for holding data
-  files. It is also recommended that child directories be named for each
-  file group, and within each file group, have the JSON data files
-  (adhering to `general-schemas/table-container.jsonschema` and its
-  subschema `array-of-arrays.jsonschema`) as well as "schema" and
-  "metadata" directories containing the specific JSON schemas for each
-  data file (adhering to `general-schemas/table.jsonschema`) and the
-  TextBrowser-specific meta-data files (adhering to
-  `general-schemas/metadata.jsonschema`). See the "JSON Schema and
-  metadata files and fields in use" section.
+    files. It is also recommended that child directories be named for each
+    file group, and within each file group, have the JSON data files
+    (adhering to `general-schemas/table-container.jsonschema` and its
+    subschema `array-of-arrays.jsonschema`) as well as "schema" and
+    "metadata" directories containing the specific JSON schemas for each
+    data file (adhering to `general-schemas/table.jsonschema`) and the
+    TextBrowser-specific meta-data files (adhering to
+    `general-schemas/metadata.jsonschema`). See the "JSON Schema and
+    metadata files and fields in use" section.
 
 New language information should be added to TextBrowser's
 `/appdata/languages.json` (and the copy of this file,
@@ -182,89 +188,87 @@ shows its usage (assuming paths relative to a package containing
 -   (To document; for now, see the `/general-schemas` directory and for
   usage examples, as well as the subdirectories within <https://bitbucket.org/brettz9/bahaiwritings>)
 
-# Todos
+# To-dos
 
-1.  Check whether `URLSearchParams.toString()` is still working
+1.  Config/Refactoring/Testing
 
-1.  Fix code to work with table-specific/field-specific locale data that
-    has been moved to files.json (and languages.json) and metadata files
-    for modularity; then avoid unchecking when clicking button re: matching
-    current locale if `fieldvalue` is present (i.e., replace `hasFieldvalue`
-    functionality)
+    1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
+        to avoid localizing "query string" hash property names and values
 
-    1.  Update README and metadata.jsonschema (or table.jsonschema?) to
-        reflect new changes
+    1.  Add URL params which can include/disable modules to simplify screen
 
-1.  Rename localization strings, esp. auto-field ones; consider making
-    some reusable, pointing to scripts, or how else to designate auto-field
-    plugins?
+        1.  Hide advanced formatting options (make savable in preferences)
 
-    1.  Update README and files.jsonschema to reflect new changes
+    1.  Rename localization strings, especially auto-field ones; consider making
+        some reusable, pointing to scripts, or how else to designate auto-field
+        plugins?
 
-1.  Choose clearer naming/structure for locale table/field keys
+        1.  Update README and files.jsonschema as needed to reflect new changes
 
-    1.  Consider `tablealias` and default to `table` or something (as
-        `fieldalias` defaults to `fieldname`); aliased heading (also used
-        as the title of the page)
+    1.  Choose clearer naming/structure for locale table/field keys
 
-1.  Update schemas to reflect new localization-related file changes
-    (languages.json, files.json, metadata files) and make one for
-    site-sample.json (and move to bahaiwritings as site.json)
+        1.  Consider `tablealias` and default to `table` or something (as
+            `fieldalias` defaults to `fieldname`); aliased heading (also used
+            as the title of the page)
 
-1.  Review code for readability, refactoring opportunities
+    1.  Add browser-based testing (PhantomJS?)
 
-1.  Aliases
+    1.  Review code for readability, refactoring opportunities
 
-    1.  Consider using `prefer_alias` for field alias use and optionally
-       show both if not given (e.g., for Bible books with
-       `prefer_alias`, show only the pull-down of books whereas
-       with the Qur'an (where Surah numbers are more commonly
-       used) link a pull-down of Surah names to a textbox
-       allowing numbers)?
+1.  New features (requiring UI adjustments)
 
-    1.  Remove locale info for "numbers only" string key (including
-        from locale files?) if allowing for aliased searches
-        (e.g., "Gen")
+    1.  Aliased search (space-separated field and drop-downs)
 
-1.  Incorporate speech synthesis from
-    <http://bahai.works/MediaWiki:Common.js>
+        1.  Consider using `prefer_alias` for field alias use and optionally
+           show both if not given (e.g., for Bible books with
+           `prefer_alias`, show only the pull-down of books whereas
+           with the Qur'an (where Surah numbers are more commonly
+           used) link a pull-down of Surah names to a textbox
+           allowing numbers)?
 
-1.  Options to have range of context and range for highlighting
-    (with own styles) and anchoring
+        1.  Remove locale info for "numbers only" string key (including
+            from locale files?) if allowing for aliased searches
+            (e.g., "Gen").
 
-1.  CORS headers
+        1.  Ensure searching can be done through URL params, especially
+            to use in conjunction with bookmark keywords (in which case
+            it particularly ought to be available through a single param).
 
-1.  Optional links to go to previous/next results if only loading a subset
-    of available content (allow customization of size of chunking in
-    preferences as well as on the fly)
+        1. Ensure aliases are i18nized
 
-1.  Hide advanced formatting options (make savable in preferences)
+    1.  Incorporate speech synthesis from
+        <http://bahai.works/MediaWiki:Common.js>, allowing different
+        speech voices for different rows or columns.
 
-1.  Support optional tfoot to repeat header info on bottom?
+    1.  Options to have range of context and range for highlighting
+        (with own styles) and anchoring
 
-1.  Further localization of the interface
+    1.  Optional links to go to previous/next results if only loading a subset
+        of available content (allow customization of size of chunking in
+        preferences as well as on the fly)
 
-1.  Make full preferences system for saved/favorite, recent
-    searches/browses, etc.
+    1.  Support optional tfoot to repeat header info on bottom?
 
-1.  Support metadata to combine fields during browsing
+    1.  Add link style (browse.php and browse9.php) as option
+        to advanced formatting (or page-wide CSS?)
 
-1.  Figure out how to get rowspans (or even colspans) for additional
-    columns (e.g., a field spanning by whole pages of a book and another
-    field spanning only by paragraphs) - use some kind of counter and
-    don't display the HTML until finished cycling??; also figure out
-    how to reassemble if the minute fields are not needed (e.g., if
-    the user only wants to see the text by paragraph and not anything
-    related to by page)
+    1.  Add to preferences system for saved/favorite, recent
+        searches/browses, etc.
 
-1.  Add content language(s) multiple select option to always browse for
-    those in the desired locale(s); utilize
-    "localization-strings"/&lt;code>/languages/&lt;code> in language.json
+    1.  Support metadata to combine fields during browsing
 
-1.  Schema-aware and metadata-aware column sorting options (e.g., sort by
-      order and ASC/DESC) with user customizability (i.e., presorting along
-      with dynamic client-side after-load sorting, with or without search
-      filtering; use "search" in locale to add this filtering to UI)
+    1.  Figure out how to get rowspans (or even colspans) for additional
+        columns (e.g., a field spanning by whole pages of a book and another
+        field spanning only by paragraphs) - use some kind of counter and
+        don't display the HTML until finished cycling??; also figure out
+        how to reassemble if the minute fields are not needed (e.g., if
+        the user only wants to see the text by paragraph and not anything
+        related to by page)
+
+    1.  Schema-aware and metadata-aware column sorting options (e.g., sort by
+        order and ASC/DESC) with user customizability (i.e., presorting along
+        with dynamic client-side after-load sorting, with or without search
+        filtering; use "search" in locale to add this filtering to UI)
 
 1.  Add/Add back automated (including into drop-downs): Synopsis, Roman
     numerals, Chinese numbers, word-by-word translation, auto-romanized
@@ -292,6 +296,9 @@ shows its usage (assuming paths relative to a package containing
         1.  Built-in (including offline or only offline) note-taking
            (local/remote and wiki WYSIWYG with Git version control?);
            support loading from `bower_components`
+
+    1.  Automated whole document/table-level or column-level
+        changes (e.g., word counts)
 
     1.  Add an "overlay" column like interlinear, but which overlays by
         tooltip if any data is present; can also use metadata if the overlay
@@ -348,7 +355,7 @@ shows its usage (assuming paths relative to a package containing
 1.  Once stabilized, target "textbrowser" dependency mentioned above
     by tagged version instead of `master`.
 
-# Todos (medium priority)
+# To-dos (medium priority)
 
 1.  Add and make use of updated `json-refs` to make
     single `resolveRemoteRef` call (or whatever the new API may become) and
@@ -358,6 +365,9 @@ shows its usage (assuming paths relative to a package containing
     and design logic for own sake and also for unit testing and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)
+
+1.  Use validators with all JSON Schemas and instances to confirm
+    schemas are defined properly (as part of `npm test`)
 
 1.  URL (sorted) params keyed to indexHTML of page for caching
 
@@ -398,13 +408,20 @@ shows its usage (assuming paths relative to a package containing
     report the missing ones (and sort as such in assistant file); put
     assistant localization keys in own file?
 
-1.  Use validators with all JSON Schemas and instances to confirm
-    schemas are defined properly    
+    1.  Find translators to do further localization of the interface
+
+    1.  Assistant file (for translating; needs server for password);
+        work optionally with main locales, files, table, and field
+        locale info. Use already-existing localization strings.
+
+    1.  Add tooltips and table summaries, etc. back (see locale file for
+        these and reapply any other unused) and add any missing ones
+        describing how to use the elements
 
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize)!
 
-# Todos (Lower priority)
+# To-dos (Lower priority)
 
 1.  Change AppCache to
     [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
@@ -413,8 +430,9 @@ shows its usage (assuming paths relative to a package containing
 1.  Change to utilize history.pushState?
     <https://developer.mozilla.org/en-US/docs/Web/API/History_API>
 
-1.  Add link color (browse.php and browse9.php) as option
-to advanced formatting
+1. Use ES6 modules (babel)
+
+    1.  dynamic or hierarchical loading of CSS too?
 
 1.  Sort file selection listing per locale?
 
@@ -425,24 +443,27 @@ to advanced formatting
 
 1.  Update "about" text and utilize on popup or something?
 
-1.  Assistant file (for translating; needs server for password);
-    work optionally with main locales, files, table, and field
-    locale info. Use already-existing localization strings.
-
-1.  Add tooltips and table summaries, etc. back (see locale file for
-    these and reapply any other unused) and add any missing ones
-    describing how to use the elements
-
 1.  Change "Saving settings as URL" to a redirect if faithfully
     copying everything?
 
 1.  Provide option to skip over `langs.json` with a default language
     (though discourage since the UI translations may help some people).
 
-1.  ES6 Modules import of JavaScript in place of script tags;
-    dynamic or hierarchical loading of CSS too?
+1.  Allow user to pass array of language codes that can be checked
+    at the beginning of the string without need for `lang=` (or for
+    the i18n of "lang"?).
+
+1.  `window.postMessage` API (since CORS is only for Ajax and
+    `document.domain` is only for subdomains).
 
 # History
 
 One PHP-based version was released in 2005-12-22 and was my
 first project used in aiding my learning programming.
+
+# Testing
+
+```
+npm install
+npm test
+```
