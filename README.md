@@ -71,9 +71,9 @@ default paths) is as follows:
 
 -   ***files.json*** - Points to your data files (e.g., any kept in `data/`).
     Is an object with a `groups` property set to an array of file groups where
-    each group has the property `name` for a file group display name as a string
-    or localization key; an optional `directions` string or localization key;
-    an optional `baseDirectory`, `schemaBaseDirectory`, and
+    each group has the property `name` for a file group display name as a
+    string or localization key; an optional `directions` string or localization
+    key; an optional `baseDirectory`, `schemaBaseDirectory`, and
     `metadataBaseDirectory` for base paths; and a `files` array property with
     each file containing the properties, `name` for the file name as a string
     or localization key; `file` for file contents (recommended as a
@@ -192,6 +192,9 @@ shows its usage (assuming paths relative to a package containing
 
 1.  Config/Refactoring/Testing
 
+    1.  Use validators with all JSON Schemas and instances to confirm
+        schemas are defined properly (as part of `npm test`)
+
     1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
         to avoid localizing "query string" hash property names and values
 
@@ -199,9 +202,9 @@ shows its usage (assuming paths relative to a package containing
 
         1.  Hide advanced formatting options (make savable in preferences)
 
-    1.  Rename localization strings, especially auto-field ones; consider making
-        some reusable, pointing to scripts, or how else to designate auto-field
-        plugins?
+    1.  Rename localization strings, especially auto-field ones; consider
+        making some reusable, pointing to scripts, or how else to designate
+        auto-field plugins?
 
         1.  Update README and files.jsonschema as needed to reflect new changes
 
@@ -234,7 +237,7 @@ shows its usage (assuming paths relative to a package containing
             to use in conjunction with bookmark keywords (in which case
             it particularly ought to be available through a single param).
 
-        1. Ensure aliases are i18nized
+        1.  Ensure aliases are i18nized
 
     1.  Incorporate speech synthesis from
         <http://bahai.works/MediaWiki:Common.js>, allowing different
@@ -366,9 +369,6 @@ shows its usage (assuming paths relative to a package containing
     by being able to use a natively stringifying version of Jamilih
     (once complete)
 
-1.  Use validators with all JSON Schemas and instances to confirm
-    schemas are defined properly (as part of `npm test`)
-
 1.  URL (sorted) params keyed to indexHTML of page for caching
 
 1.  Build library (for browser or Node) to utilize site.json file to add
@@ -430,7 +430,7 @@ shows its usage (assuming paths relative to a package containing
 1.  Change to utilize history.pushState?
     <https://developer.mozilla.org/en-US/docs/Web/API/History_API>
 
-1. Use ES6 modules (babel)
+1.  Use ES6 modules (babel)
 
     1.  dynamic or hierarchical loading of CSS too?
 
@@ -463,7 +463,7 @@ first project used in aiding my learning programming.
 
 # Testing
 
-```
+```console
 npm install
 npm test
 ```
