@@ -190,10 +190,14 @@ shows its usage (assuming paths relative to a package containing
 
 # To-dos
 
-1.  Config/Refactoring/Testing
+1.   Testing
 
     1.  Use validators with all JSON Schemas and instances to confirm
         schemas are defined properly (as part of `npm test`)
+
+    1.  Add browser-based testing (PhantomJS?)
+
+1.   Configuration
 
     1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
         to avoid localizing "query string" hash property names and values
@@ -201,6 +205,8 @@ shows its usage (assuming paths relative to a package containing
     1.  Add URL params which can include/disable modules to simplify screen
 
         1.  Hide advanced formatting options (make savable in preferences)
+
+1.   Refactoring
 
     1.  Rename localization strings, especially auto-field ones; consider
         making some reusable, pointing to scripts, or how else to designate
@@ -213,8 +219,6 @@ shows its usage (assuming paths relative to a package containing
         1.  Consider `tablealias` and default to `table` or something (as
             `fieldalias` defaults to `fieldname`); aliased heading (also used
             as the title of the page)
-
-    1.  Add browser-based testing (PhantomJS?)
 
     1.  Review code for readability, refactoring opportunities
 
