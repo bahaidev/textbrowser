@@ -19,7 +19,7 @@ utilizing JSON Schema and metadata JSON associated with the files.
 Despite the name of the project referring to "text", this project
 can be used for any tabular data.
 
-# Installation
+## Installation
 
 The intent of this repository is for it to be used as a dependency.
 
@@ -38,7 +38,7 @@ own data files within it, you can install its dependencies via:
 bower install
 ```
 
-# Usage
+## Usage
 
 NOTE: The following needs to be modified according to new usage, invoke
 this file from `index.html` with locations for `files.json` and optionally
@@ -152,7 +152,7 @@ the above instructions:
   to `languages-tb.json` instead of `languages.json` or otherwise supply
   a languages file which resolves to the correct path).
 
-# API
+## API
 
 The API can be adapted as needed. The file in `resources/user-sample.js`
 shows its usage (assuming paths relative to a package containing
@@ -183,12 +183,12 @@ shows its usage (assuming paths relative to a package containing
   languages, works, or results. Will probably be broken up further
   in the future.
 
-# JSON Schema and metadata files and fields in use
+## JSON Schema and metadata files and fields in use
 
 -   (To document; for now, see the `/general-schemas` directory and for
   usage examples, as well as the subdirectories within <https://bitbucket.org/brettz9/bahaiwritings>)
 
-# To-dos
+## To-dos
 
 1.  Config/Refactoring/Testing
 
@@ -217,6 +217,8 @@ shows its usage (assuming paths relative to a package containing
     1.  Add browser-based testing (PhantomJS?)
 
     1.  Review code for readability, refactoring opportunities
+
+    1.  Consider footnote targeting mechanism
 
 1.  New features (requiring UI adjustments)
 
@@ -358,7 +360,7 @@ shows its usage (assuming paths relative to a package containing
 1.  Once stabilized, target "textbrowser" dependency mentioned above
     by tagged version instead of `master`.
 
-# To-dos (medium priority)
+## To-dos (medium priority)
 
 1.  Add and make use of updated `json-refs` to make
     single `resolveRemoteRef` call (or whatever the new API may become) and
@@ -421,7 +423,7 @@ shows its usage (assuming paths relative to a package containing
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize)!
 
-# To-dos (Lower priority)
+## To-dos (Lower priority)
 
 1.  Change AppCache to
     [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
@@ -456,12 +458,12 @@ shows its usage (assuming paths relative to a package containing
 1.  `window.postMessage` API (since CORS is only for Ajax and
     `document.domain` is only for subdomains).
 
-# History
+## History
 
 One PHP-based version was released in 2005-12-22 and was my
 first project used in aiding my learning programming.
 
-# Testing
+## Testing
 
 ```console
 npm install
