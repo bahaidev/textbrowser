@@ -5,7 +5,7 @@
       "jamilih": "0.x",
       "get-json": "1.x",
       "imf": "0.x",
-      "json-refs": "1.x",
+      "json-refs": "2.x",
       "form-serialize": "0.x"
   },
   "ignore": [],
