@@ -191,81 +191,54 @@ shows its usage (assuming paths relative to a package containing
 ## To-dos
 
 1.   Testing
-
     1.  Use validators with all JSON Schemas and instances to confirm
         schemas are defined properly (as part of `npm test`)
-
     1.  Add browser-based testing (PhantomJS?)
-
 1.   Configuration
-
     1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
         to avoid localizing "query string" hash property names and values
-
     1.  Add URL params which can include/disable modules to simplify screen
-
         1.  Hide advanced formatting options (make savable in preferences)
-
 1.   Refactoring
-
     1.  Rename localization strings, especially auto-field ones; consider
         making some reusable, pointing to scripts, or how else to designate
         auto-field plugins?
-
         1.  Update README and files.jsonschema as needed to reflect new changes
-
     1.  Choose clearer naming/structure for locale table/field keys
-
         1.  Consider `tablealias` and default to `table` or something (as
             `fieldalias` defaults to `fieldname`); aliased heading (also used
             as the title of the page)
-
     1.  Review code for readability, refactoring opportunities
-
     1.  Consider footnote targeting mechanism
-
 1.  New features (requiring UI adjustments)
-
     1.  Aliased search (space-separated field and drop-downs)
-
         1.  Consider using `prefer_alias` for field alias use and optionally
            show both if not given (e.g., for Bible books with
            `prefer_alias`, show only the pull-down of books whereas
            with the Qur'an (where Surah numbers are more commonly
            used) link a pull-down of Surah names to a textbox
            allowing numbers)?
-
         1.  Remove locale info for "numbers only" string key (including
             from locale files?) if allowing for aliased searches
             (e.g., "Gen").
-
         1.  Ensure searching can be done through URL params, especially
             to use in conjunction with bookmark keywords (in which case
             it particularly ought to be available through a single param).
-
         1.  Ensure aliases are i18nized
-
     1.  Incorporate speech synthesis from
         <http://bahai.works/MediaWiki:Common.js>, allowing different
         speech voices for different rows or columns.
-
     1.  Options to have range of context and range for highlighting
         (with own styles) and anchoring
-
     1.  Optional links to go to previous/next results if only loading a subset
         of available content (allow customization of size of chunking in
         preferences as well as on the fly)
-
     1.  Support optional tfoot to repeat header info on bottom?
-
     1.  Add link style (browse.php and browse9.php) as option
         to advanced formatting (or page-wide CSS?)
-
     1.  Add to preferences system for saved/favorite, recent
         searches/browses, etc.
-
     1.  Support metadata to combine fields during browsing
-
     1.  Figure out how to get rowspans (or even colspans) for additional
         columns (e.g., a field spanning by whole pages of a book and another
         field spanning only by paragraphs) - use some kind of counter and
@@ -273,12 +246,10 @@ shows its usage (assuming paths relative to a package containing
         how to reassemble if the minute fields are not needed (e.g., if
         the user only wants to see the text by paragraph and not anything
         related to by page)
-
     1.  Schema-aware and metadata-aware column sorting options (e.g., sort by
         order and ASC/DESC) with user customizability (i.e., presorting along
         with dynamic client-side after-load sorting, with or without search
         filtering; use "search" in locale to add this filtering to UI)
-
 1.  Add/Add back automated (including into drop-downs): Synopsis, Roman
     numerals, Chinese numbers, word-by-word translation, auto-romanized
     Persian/Arabic, Persian with
@@ -289,26 +260,19 @@ shows its usage (assuming paths relative to a package containing
     representations (see [TEI](http://www.tei-c.org/release/doc/tei-p5-doc/en/html/CO.html#CONOIX)
     for ideas)), including optionally merging them for different books;
     also overlays
-
     1.  Reverse engineer missing work by using `bahai_locales` database (which
        contains more than localization info: automated column data,
        alternative field names, etc.)
-
     1.  Metadata for default field column placement and table/field
         applicability
-
     1.  Automated word-by-word translations, auto-links to Google, Amazon, etc.
-
     1.  Auto-links by verse to relevant forums, wikis, blogs, or personal
         notes pertaining to a given verse...
-
         1.  Built-in (including offline or only offline) note-taking
            (local/remote and wiki WYSIWYG with Git version control?);
            support loading from `bower_components`
-
     1.  Automated whole document/table-level or column-level
         changes (e.g., word counts)
-
     1.  Add an "overlay" column like interlinear, but which overlays by
         tooltip if any data is present; can also use metadata if the overlay
         is within-cell (and this metadata can also be used for putting
@@ -318,7 +282,6 @@ shows its usage (assuming paths relative to a package containing
         may only have been for two discontinuous sentences out of a
         paragraph, but could still show such sentences reassembled (with
         some kind of separator) in a paragraph-based cell)
-
         1.  Deal with other metadata/automated (besides overlays) which is
             intended to allow collapsing of ranges (above paragraph cells, but
             may overlap); do as multiple tbodies but needs to be done
@@ -328,11 +291,9 @@ shows its usage (assuming paths relative to a package containing
             click button outside table (or by level); allow automated
             collapsing based on sequentially exact values (e.g., until
             rows stop having a column with value "1")
-
         1.  Allow collapsing even within cells (as with overlays) (like
             our "Baha'i Translation" could have been). Also make
             non-metadata regions collapsible so can hide them from view.
-
         1.  Allow something to be prefixed to interlinear number to
             indicate the field should be treated as an overlay (tooltip);
             if so, may need tooltip to be in blocks in case multiple
@@ -340,27 +301,19 @@ shows its usage (assuming paths relative to a package containing
             fields separate from the regular fields for those fields
             which do not map exclusively by cell boundaries (or
             relatively within them).
-
         1.  Allow types of overlays (or "mashes") such as underlays (adding
             invisible metadata), onlays/"mash ons" (replacing text in place),
             as well as regular overlays (adding text via mouseover); let
             these be alterable as possible by the user (e.g., text might
             be desirable to replace existing text or put it as a mouseover)
-
         1.  Allow for dynamic addition of JSON overlay sources or metadata
             to work selection/work display files?
-
 1.  For `browse9.php` equivalent
-
     1.  Handle defaults for empty boxes if not already
-
     1.  Test all locales and works and combos
-
     1.  Utilize `prefer_alias`
-
     1.  Allow tables to be re-sortable via JavaScript which allows
           sorting by multiple columns with various data, etc.
-
 1.  Once stabilized, target "textbrowser" dependency mentioned above
     by tagged version instead of `master`.
 
@@ -369,61 +322,44 @@ shows its usage (assuming paths relative to a package containing
 1.  Add and make use of updated `json-refs` to make
     single `resolveRemoteRef` call (or whatever the new API may become) and
     try new relative refs feature. See <https://github.com/whitlockjc/json-refs/pull/23>
-
 1.  Separate formatting within Jamilih code to CSS; separate business
     and design logic for own sake and also for unit testing and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)
-
 1.  URL (sorted) params keyed to indexHTML of page for caching
-
 1.  Build library (for browser or Node) to utilize site.json file to add
     site-wide navigation bar headers, breadcrumbs,
     link rel=next/prev/contents/etc., sitemap, and page title (supplied
     argument of the current page)? Also about text and removecookies.
-
 1.  Node.js (and/or PHP)
-
     1.  Optionally allow server push and/or WebSockets updates
-
         1.  Allow centralized copies or distributed versioning,
             including single copy storage
-
     1.  Delivery of HTML content by same URL so third parties can
         consume without JavaScript
-
     1.  Serve JSON files immediately and then
         inject config for `index.js` to avoid reloading
-
     1.  Make tools to build `languages.json` based on available
         locale files, and build `files.json` based on a target directory.
-
     1.  [HTTPQuery](https://github.com/brettz9/httpquery) headers
-
 1.  filetypes.json (from WebAppFind) for app and schema association?
     (files.json for permitted files - a file which could be auto-created,
     e.g., if server permits all in a directory); especially potentially
     useful with JSONEditor to allow editing of these files, app types
     (replacing assistant.php):
-
     1.  langs + locale / locale only
     1.  files/dbs->file (supply language choice)->file contents
     1.  schemas
-
 1.  Code to populate locale files with missing localization strings and
     report the missing ones (and sort as such in assistant file); put
     assistant localization keys in own file?
-
     1.  Find translators to do further localization of the interface
-
     1.  Assistant file (for translating; needs server for password);
         work optionally with main locales, files, table, and field
         locale info. Use already-existing localization strings.
-
     1.  Add tooltips and table summaries, etc. back (see locale file for
         these and reapply any other unused) and add any missing ones
         describing how to use the elements
-
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize)!
 
@@ -432,33 +368,22 @@ shows its usage (assuming paths relative to a package containing
 1.  Change AppCache to
     [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
     as the former is apparently being deprecated
-
 1.  Change to utilize history.pushState?
     <https://developer.mozilla.org/en-US/docs/Web/API/History_API>
-
 1.  Use ES6 modules (babel)
-
     1.  dynamic or hierarchical loading of CSS too?
-
 1.  Sort file selection listing per locale?
-
 1.  Node.js synchronization of locale files?
-
 1.  Might support arbitrary JSON and JSON Reference querying
    (if files.json configured to indicate a wildcard or something)
-
 1.  Update "about" text and utilize on popup or something?
-
 1.  Change "Saving settings as URL" to a redirect if faithfully
     copying everything?
-
 1.  Provide option to skip over `langs.json` with a default language
     (though discourage since the UI translations may help some people).
-
 1.  Allow user to pass array of language codes that can be checked
     at the beginning of the string without need for `lang=` (or for
     the i18n of "lang"?).
-
 1.  `window.postMessage` API (since CORS is only for Ajax and
     `document.domain` is only for subdomains).
 
