@@ -83,7 +83,7 @@
                                                 }
                                             }
                                         },
-                                        {"$ref": "table-container.jsonschema#"}
+                                        {"$ref": "table-container.jsonschema"}
                                     ]
                                 },
                                 "name": {
