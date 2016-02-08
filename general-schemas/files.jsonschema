@@ -75,11 +75,9 @@
                                     "anyOf": [
                                         {
                                             "type": "object",
-                                            "required": true,
                                             "properties": {
                                                 "$ref": {
-                                                    "type": "string",
-                                                    "required": true
+                                                    "type": "string"
                                                 }
                                             }
                                         },
