@@ -1,7 +1,6 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
-    "required": true,
     "definitions": {
         "stringOrArray": {
             "anyOf": [{"type": "string"}, {"type": "array", "items": {

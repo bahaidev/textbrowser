@@ -3,12 +3,10 @@
     "definitions": {
         "typeArray": {
             "type": "string",
-            "enum": ["array"],
-            "required": true
+            "enum": ["array"]
         }
     },
     "type": "object",
-    "required": true,
     "properties": {
         "$schema": {
             "type": "string"
@@ -20,10 +18,8 @@
                 "type": {"$ref": "#/definitions/typeArray"},
                 "items": {
                     "type": "array",
-                    "required": true,
                     "items": {
                         "type": "object",
-                        "required": true,
                         "properties": {"$ref": "http://json-schema.org/schema#"}
                     }
                 }
