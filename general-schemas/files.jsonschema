@@ -1,5 +1,20 @@
 {
     "$schema": "http://json-schema.org/schema#",
+    "definitions": {
+        "typeObjectOrString": {
+            "anyOf": [
+                {"type": "string"},
+                {
+                    "type": "object",
+                    "patternProperties": {
+                        ".*": {
+                            "$ref": "#/definitions/typeObjectOrString"
+                        }
+                    }
+                }
+            ],
+        }
+    },
     "type": "object",
     "properties": {
         "baseDirectory": {
@@ -38,12 +53,7 @@
             "type": "object",
             "patternProperties": {
                 ".*": {
-                    "type": "object",
-                    "patternProperties": {
-                        ".*": {
-                            "type": "string"
-                        }
-                    }
+                    "$ref": "#/definitions/typeObjectOrString"
                 }
             }
         },

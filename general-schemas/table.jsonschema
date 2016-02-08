@@ -17,8 +17,7 @@
             "properties": {
                 "type": {"$ref": "#/definitions/typeArray"},
                 "items": {
-                    "type": "array",
-                    "items": {}
+                    "type": "array"
                 }
             }
         }
