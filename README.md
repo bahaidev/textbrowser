@@ -210,7 +210,14 @@ shows its usage (assuming paths relative to a package containing
             as the title of the page)
     1.  Review code for readability, refactoring opportunities
     1.  Consider footnote targeting mechanism
-    1.  Cause locale-using files to rely on definition of `localization-strings` in `locale.json`
+    1.  Cause locale-using files (`site.jsonschema`, `metadata.jsonschema`,
+        `files.jsonschema` and `languages.jsonschema`) to rely on definition
+        of `localization-strings` in `locale.json` (and have `locale` point
+        to `locale.json` in `languages.jsonschema`) once
+        <https://github.com/whitlockjc/json-refs/issues/75> is fixed
+    1. Cause `languages.json` test to distinguish relative base for the
+        file's path and the path of its internally-referenced locales once
+        <https://github.com/whitlockjc/json-refs/issues/76> is fixed
 1.  New features (requiring UI adjustments)
     1.  Aliased search (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
