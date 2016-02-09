@@ -913,25 +913,12 @@ TextBrowser.prototype.paramChange = function () {
             // Todo: Allow use of dbs and fileGroup together in base directories?
             function getMetadata (file, property, cb) {
                 var currDir = getCurrDir();
-                JsonRefs.resolveRefs({$ref: currDir + file + (property ? '#/' + property : '')}, {
-                    // Temporary fix for lack of resolution of relative references: https://github.com/whitlockjc/json-refs/issues/11
-                    processContent: function (content) {
-                        var json = JSON.parse(content);
-                        Object.keys(JsonRefs.findRefs(json)).forEach(function (path) {
-                            var lastParent;
-                            var value = JsonRefs.pathFromPointer(path).reduce(function (j, pathSeg) {
-                                lastParent = j;
-                                return j[pathSeg];
-                            }, json);
-                            lastParent.$ref = currDir + file.slice(0, file.lastIndexOf('/') + 1) + value;
-                        });
-                        return json;
-                    }
-                },
-                function (err, rJson, metadata) {
-                    if (err) {throw err;}
-                    cb(rJson, metadata);
-                });
+                JsonRefs.resolveRefsAt(currDir + file + (property ? '#/' + property : '')).
+                    then(function (rJson, metadata) {
+                        cb(rJson.resolved, metadata);
+                    }).catch(function (err) {alert('catch:'+err);
+                        throw err;
+                    });
             }
 
             var fileData;
