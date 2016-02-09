@@ -221,6 +221,8 @@ shows its usage (assuming paths relative to a package containing
     1.  Update the code utilizing `JsonRefs` to utilize the latest version and
         then move `langauges.jsonschema` and `locales.jsonschema` validation
         tests from `bahaiwritings` to this repo.
+    1.  Change schema to avoid using `localeKey` in favor of substitutable
+        JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>).
 1.  New features (requiring UI adjustments)
     1.  Aliased search (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
