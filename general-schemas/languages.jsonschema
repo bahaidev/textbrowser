@@ -54,7 +54,7 @@
                                     }
                                 }
                             },
-                            {"$ref": "locale.jsonschema#"}
+                            {"type": "object"}
                         ]
                     }
                 }
