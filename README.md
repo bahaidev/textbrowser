@@ -215,9 +215,12 @@ shows its usage (assuming paths relative to a package containing
         of `localization-strings` in `locale.json` (and have `locale` point
         to `locale.json` in `languages.jsonschema`) once
         <https://github.com/whitlockjc/json-refs/issues/75> is fixed
-    1. Cause `languages.json` test to distinguish relative base for the
+    1.  Cause `languages.json` test to distinguish relative base for the
         file's path and the path of its internally-referenced locales once
         <https://github.com/whitlockjc/json-refs/issues/76> is fixed
+    1.  Update the code utilizing `JsonRefs` to utilize the latest version and
+        then move `langauges.jsonschema` and `locales.jsonschema` validation
+        tests from `bahaiwritings` to this repo.
 1.  New features (requiring UI adjustments)
     1.  Aliased search (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
@@ -383,7 +386,7 @@ shows its usage (assuming paths relative to a package containing
 1.  Sort file selection listing per locale?
 1.  Node.js synchronization of locale files?
 1.  Might support arbitrary JSON and JSON Reference querying
-   (if files.json configured to indicate a wildcard or something)
+   (if `files.json` configured to indicate a wildcard or something)
 1.  Update "about" text and utilize on popup or something?
 1.  Change "Saving settings as URL" to a redirect if faithfully
     copying everything?
