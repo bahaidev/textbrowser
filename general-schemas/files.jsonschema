@@ -1,6 +1,19 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "definitions": {
+        "localeKey": {
+            "anyOf": [
+                {"type": "string"},
+                {
+                    "type": "object",
+                    "properties": {
+                        "localeKey": {
+                            "type": "string"
+                        }
+                    }
+                }
+            ]
+        },
         "typeObjectOrString": {
             "anyOf": [
                 {"type": "string"},
@@ -62,12 +75,8 @@
             "items": {
                 "type": "object",
                 "properties": {
-                    "name": {
-                        "type": "string"
-                    },
-                    "directions": {
-                        "type": "string"
-                    },
+                    "name": {"$ref": "#/definitions/localeKey"},
+                    "directions": {"$ref": "#/definitions/localeKey"},
                     "baseDirectory": {
                         "type": "string"
                     },
