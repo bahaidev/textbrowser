@@ -387,6 +387,8 @@ shows its usage (assuming paths relative to a package containing
     1.  dynamic or hierarchical loading of CSS too?
 1.  Sort file selection listing per locale?
 1.  Node.js synchronization of locale files?
+1.  Could allow Node to built schemas, optionally allowing or disallowing
+    unresolved JSON References.
 1.  Might support arbitrary JSON and JSON Reference querying
    (if `files.json` configured to indicate a wildcard or something)
 1.  Update "about" text and utilize on popup or something?
