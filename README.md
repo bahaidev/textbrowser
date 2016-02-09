@@ -210,6 +210,7 @@ shows its usage (assuming paths relative to a package containing
             as the title of the page)
     1.  Review code for readability, refactoring opportunities
     1.  Consider footnote targeting mechanism
+    1.  Cause locale-using files to rely on definition of `localization-strings` in `locale.json`
 1.  New features (requiring UI adjustments)
     1.  Aliased search (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
