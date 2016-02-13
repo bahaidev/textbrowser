@@ -28,8 +28,8 @@ var textbrowserTests = {
             JsonRefs.resolveRefsAt('ar.json', {relativeBase: localesBase}),
             JsonRefs.resolveRefsAt('fa.json', {relativeBase: localesBase}),
             JsonRefs.resolveRefsAt('ru.json', {relativeBase: localesBase})
-        ]).then(function ([{resolved: schema}, {resolved: enUS}, {resolved: ar}, {resolved: fa}, {resolved: ru}]) {
-            [enUS, ar, fa, ru].forEach(function (locale) {
+        ]).then(function ([{resolved: schema}, ...locales]) {
+            locales.forEach(function ({resolved: locale}) {
                 valid = validate(schema, locale);
                 test.strictEqual(valid, true);
             });
