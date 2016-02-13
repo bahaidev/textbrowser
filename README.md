@@ -191,7 +191,6 @@ shows its usage (assuming paths relative to a package containing
 ## To-dos
 
 1.  Testing
-    1.  Add browser-based testing (PhantomJS?)
     1.  Cause `languages.json` test to distinguish relative base for the
         file's path and the path of its internally-referenced locales once
         <https://github.com/whitlockjc/json-refs/issues/76> is fixed
@@ -396,6 +395,9 @@ shows its usage (assuming paths relative to a package containing
     the i18n of "lang"?).
 1.  `window.postMessage` API (since CORS is only for Ajax and
     `document.domain` is only for subdomains).
+1.  Testing
+    1.  Add browser-based testing (PhantomJS?)
+
 
 ## History
 
