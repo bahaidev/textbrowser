@@ -14,7 +14,9 @@
                 {
                     "type": "object",
                     "properties": {
-                        "localeKey": "string"
+                        "localeKey": {
+                            "type": "string"
+                        }
                     }
                 }
             ]
@@ -53,7 +55,7 @@
                                 },
                                 "set": {
                                     "type": "array",
-                                    "properties": {
+                                    "items": {
                                         "type": "string"
                                     }
                                 }
@@ -94,7 +96,7 @@
                         },
                         "orig_langs": {
                             "type": "array",
-                            "properties": {
+                            "items": {
                                 "type": "string"
                             }
                         },
@@ -125,7 +127,7 @@
                                                 },
                                                 {
                                                     "type": "array",
-                                                    "properties": {
+                                                    "items": {
                                                         "type": "string"
                                                     }
                                                 },
