@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>TextBrowser Test Suite</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ajv/3.5.3/ajv.bundle.js"></script>
+    <script src="../bower_components/path-loader/browser/path-loader.js"></script>
+    <script src="../bower_components/json-refs/browser/json-refs.js"></script>
+
+    <!-- Testing dependencies -->
+    <link rel="stylesheet" href="../node_modules/nodeunit/share/nodeunit.css" type="text/css" />
+    <script src="../node_modules/nodeunit/examples/browser/nodeunit.js"></script>
+    <script src="textbrowserTests.js"></script>
+  </head>
+  <body>
+    <h1 id="nodeunit-header">TextBrowser Test Suite</h1>
+    <script>
+      nodeunit.run({
+        'Suite One': textbrowserTests
+      });
+    </script>
+  </body>
+</html>

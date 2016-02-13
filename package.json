@@ -4,18 +4,24 @@
   "description": "Multilinear text browser",
   "main": "resources/index.js",
   "scripts": {
-    "test": "phantom-jasmine test/tests.html",
+    "test": "node test/textbrowserTests",
+    "phantom": "phantom-jasmine test/tests.html",
     "prepublish": "bower install"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/brettz9/textbrowser.git"
   },
+  "dependencies": {},
   "devDependencies": {
+      "nodeunit": "0.x",
       "phantom-jasmine": "0.x"
   },
+  "engines": {},
   "author": "Brett Zamir",
+  "contributors": [],
   "license": "MIT",
+  "keywords": ["text"],
   "bugs": {
     "url": "https://github.com/brettz9/textbrowser/issues"
   },
