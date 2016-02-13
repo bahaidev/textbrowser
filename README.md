@@ -191,9 +191,10 @@ shows its usage (assuming paths relative to a package containing
 ## To-dos
 
 1.  Testing
-    1.  Cause `languages.json` test to distinguish relative base for the
-        file's path and the path of its internally-referenced locales once
-        <https://github.com/whitlockjc/json-refs/issues/76> is fixed
+    1.  Waiting for <https://github.com/whitlockjc/json-refs/issues/76>
+        to be fixed: cause `languages.json` test to distinguish relative
+        base for the file's path and the path of its internally-referenced
+        locales
 1.  Configuration
     1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
         to avoid localizing "query string" hash property names and values
