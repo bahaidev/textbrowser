@@ -190,19 +190,19 @@ shows its usage (assuming paths relative to a package containing
 
 ## To-dos
 
-1.   Testing
+1.  Testing
     1.  Move `languages.jsonschema` and `locales.jsonschema` validation
         tests from `bahaiwritings` to this repo.
     1.  Add browser-based testing (PhantomJS?)
     1.  Cause `languages.json` test to distinguish relative base for the
         file's path and the path of its internally-referenced locales once
         <https://github.com/whitlockjc/json-refs/issues/76> is fixed
-1.   Configuration
+1.  Configuration
     1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
         to avoid localizing "query string" hash property names and values
     1.  Add URL params which can include/disable modules to simplify screen
         1.  Hide advanced formatting options (make savable in preferences)
-1.   Refactoring
+1.  Refactoring
     1.  Rename localization strings, especially auto-field ones; consider
         making some reusable, pointing to scripts, or how else to designate
         auto-field plugins?
