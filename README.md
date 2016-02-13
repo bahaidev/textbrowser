@@ -191,8 +191,6 @@ shows its usage (assuming paths relative to a package containing
 ## To-dos
 
 1.  Testing
-    1.  Move `languages.jsonschema` and `locales.jsonschema` validation
-        tests from `bahaiwritings` to this repo.
     1.  Add browser-based testing (PhantomJS?)
     1.  Cause `languages.json` test to distinguish relative base for the
         file's path and the path of its internally-referenced locales once
