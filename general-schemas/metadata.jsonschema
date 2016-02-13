@@ -108,7 +108,7 @@
                             "type": "boolean"
                         },
                         "alias": {"$ref": "#/definitions/nameType"},
-                        "name": {"$ref": "#/definitions/nameType"}
+                        "name": {"$ref": "#/definitions/nameType"},
                         "prefer_alias": {
                             "type": "boolean"
                         },
