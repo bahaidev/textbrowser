@@ -399,7 +399,6 @@ shows its usage (assuming paths relative to a package containing
 1.  Testing
     1.  Add browser-based testing (PhantomJS?)
 
-
 ## History
 
 One PHP-based version was released in 2005-12-22 and was my
