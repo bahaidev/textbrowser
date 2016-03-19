@@ -629,6 +629,7 @@ TextBrowser.prototype.paramChange = function () {
                             });
 
                             // Todo: Add to this optionally with one-off tag input box
+                            // Todo: Switch to fallbackLanguages so can default to navigator.languages?
                             var langCodes = localStorage.getItem(that.namespace + '-langCodes');
                             var preferredLanguages = getPreferredLanguages(
                                 (langCodes && JSON.parse(langCodes)) || [preferredLocale]
