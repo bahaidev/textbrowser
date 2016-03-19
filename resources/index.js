@@ -106,9 +106,17 @@ TextBrowser.prototype.paramChange = function () {
     function followParams () {
         location.hash = '#' + $p.toString();
     }
+    function localePass (lcl) {
+        // Todo: Would be better to retrieve this data from language.json and then cache
+        return ['en-US', 'fa', 'ar', 'ru'].indexOf(lcl) > -1 ? lcl : false;
+    }
 
     var languageParam = $p.get('lang', true);
-    var fallbackLanguages = navigator.languages || [navigator.language || 'en-US'];
+
+    // Todo: We could (unless overridden by another button) assume the browser language
+    //         based on fallbackLanguages instead of giving a choice
+    var navLangs = navigator.languages.filter(localePass);
+    var fallbackLanguages = navLangs.length ? navLangs : [localePass(navigator.language) || 'en-US'];
     var language = languageParam || fallbackLanguages[0]; // We need a default to display a default title
     var preferredLangs = language.split('.');
     var lang = preferredLangs.concat(fallbackLanguages);
