@@ -2,6 +2,9 @@
   "env": {
     "browser": true
   },
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
   "rules": {
     "comma-dangle": 2,
     "no-cond-assign": 2,
@@ -47,7 +50,6 @@
     "no-caller": 2,
     "no-div-regex": 2,
     "no-else-return": 2,
-    "no-empty-label": 2,
     "no-empty-pattern": 2,
     "no-eq-null": 2,
     "no-eval": 2,
@@ -165,19 +167,17 @@
     "semi-spacing": 2,
     "semi": 2,
     "sort-vars": 0,
-    "space-after-keywords": 2,
     "space-before-blocks": 2,
     "space-before-function-paren": 2,
-    "space-before-keywords": 2,
     "space-in-parens": 2,
     "space-infix-ops": 2,
-    "space-return-throw-case": 2,
+    "keyword-spacing": 2,
     "space-unary-ops": 2,
-    "spaced-comment": [2, "always", {"markers": ["global", "globals", "jslint", "jshint", "exported", "eslint", "eslint-disable", "eslint-enable", "eslint-env", "e", ","]}],
+    "spaced-comment": [2, "always", {"markers": ["global", "globals", "exported", "eslint", "eslint-disable", "eslint-enable", "eslint-env", "e", ","]}],
     "wrap-regex": 2,
 
 
-    "arrow-parens": 2,
+    "arrow-parens": [2, "as-needed"],
     "arrow-spacing": 2,
     "constructor-super": 2,
     "generator-star-spacing": 2,

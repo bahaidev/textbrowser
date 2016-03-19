@@ -2,9 +2,9 @@
 /*eslint max-len: 0, require-jsdoc: 0, no-alert: 0, no-warning-comments: 0, no-magic-numbers: 0, no-extra-parens: 0, lines-around-comment: 0*/
 /* exported TextBrowser*/
 
-var TextBrowser = (function () {'use strict';
-
+var TextBrowser = (function () {
 /* eslint-disable indent */
+'use strict';
 var nbsp = '\u00a0';
 
 function s (obj) {alert(JSON.stringify(obj));} // eslint-disable-line no-unused-vars
@@ -108,7 +108,7 @@ TextBrowser.prototype.paramChange = function () {
     }
 
     var languageParam = $p.get('lang', true);
-    var fallbackLanguages = ['en-US'];
+    var fallbackLanguages = navigator.languages || [navigator.language || 'en-US'];
     var language = languageParam || fallbackLanguages[0]; // We need a default to display a default title
     var preferredLangs = language.split('.');
     var lang = preferredLangs.concat(fallbackLanguages);
@@ -171,7 +171,7 @@ TextBrowser.prototype.paramChange = function () {
         return prop;
     }
 
-    function workSelect (l/*, defineFormatter*/) {
+    function workSelect (/* l, defineFormatter*/) {
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
         getJSON(that.files, function (dbs) {
             that.fileData = dbs;
@@ -179,19 +179,20 @@ TextBrowser.prototype.paramChange = function () {
             var lf = imfFile.getFormatter();
             document.title = lf({key: "browserfile-workselect", fallback: true});
 
+            /*
             function ld (key, values, formats) {
                 return l({key: key, values: values, formats: formats, fallback: function (obj) {
                     // Displaying as div with inline display instead of span since Firefox puts punctuation at left otherwise
                     return ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [obj.message]];
                 }});
             }
+            */
 
-            var map = {};
-            getJSON(dbs.groups.reduce(function (arr, fileGroup, i) {
+            getJSON(dbs.groups.reduce(function (arr, fileGroup) {
                 var metadataBaseDir = (dbs.metadataBaseDirectory || '') +
                     (fileGroup.metadataBaseDirectory || '') + '/';
-                return fileGroup.files.reduce(function (arr, fileData) {
-                    return arr.concat(metadataBaseDir + fileData.metadataFile);
+                return fileGroup.files.reduce(function (ar, fileData) {
+                    return ar.concat(metadataBaseDir + fileData.metadataFile);
                 }, arr);
             }, [])).then(function (metadataObjs) {
                 function lo (metadataObj, atts) {
@@ -214,7 +215,7 @@ TextBrowser.prototype.paramChange = function () {
                                     $p.set('work', e.target.value);
                                     followParams();
                                 }
-                            }}, fileGroup.files.reduce(function (childEls, file, i) {
+                            }}, fileGroup.files.reduce(function (childEls, file) {
                                 fileCtr++;
                                 var metadataObj = metadataObjs[fileCtr];
                                 childEls.push(lo(metadataObj, {value: lf(['workNames', fileGroup.id, file.name])}));
@@ -235,12 +236,12 @@ TextBrowser.prototype.paramChange = function () {
 
     function _displayWork (l, defineFormatter, schemaObj, metadataObj) {
 
-        var il = function (key) {
+        function il (key) {
             return l(['params', key]); // We could make this a different function if avoiding localization of param names
-        };
-        var iil = function (key) {
+        }
+        function iil (key) {
             return l(['params', 'indexed', key]); // We could make this a different function if avoiding localization of param names
-        };
+        }
         var imfLang = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)}); // eslint-disable-line new-cap
         var imfl = imfLang.getFormatter();
 
@@ -596,16 +597,16 @@ TextBrowser.prototype.paramChange = function () {
                     }}}),
                     le("checkmark_locale_fields_only", 'input', 'value', {type: 'button', $on: {click: function () {
                         // Todo: remember this locales choice by cookie?
-                        function getPreferredLanguages (langs) {
+                        function getPreferredLanguages (lngs) {
                             var langArr = [];
-                            langs.forEach(function (lang) {
+                            lngs.forEach(function (lng) {
                                 // Todo: Check for multiple separate hyphenated groupings (for each supplied language)
-                                var higherLocale = lang.replace(/\-.*$/, '');
-                                if (higherLocale === lang) {
-                                    langArr.push(lang);
+                                var higherLocale = lng.replace(/\-.*$/, '');
+                                if (higherLocale === lng) {
+                                    langArr.push(lng);
                                 }
                                 else {
-                                    langArr.push(lang, higherLocale);
+                                    langArr.push(lng, higherLocale);
                                 }
                             });
                             return langArr;
@@ -622,8 +623,8 @@ TextBrowser.prototype.paramChange = function () {
 
                             // If this is a localized field (e.g., enum), we don't want
                             //  to avoid as may be translated (should check though)
-                            var hasFieldValue = localeStrings && Object.keys(localeStrings).some(lang => {
-                                var fv = localeStrings[lang] && localeStrings[lang].fieldvalue;
+                            var hasFieldValue = localeStrings && Object.keys(localeStrings).some(lng => {
+                                var fv = localeStrings[lng] && localeStrings[lng].fieldvalue;
                                 return fv && fv[field];
                             });
 
@@ -916,7 +917,7 @@ TextBrowser.prototype.paramChange = function () {
                 JsonRefs.resolveRefsAt(currDir + file + (property ? '#/' + property : '')).
                     then(function (rJson, metadata) {
                         cb(rJson.resolved, metadata);
-                    }).catch(function (err) {alert('catch:'+err);
+                    }).catch(function (err) {alert('catch:' + err);
                         throw err;
                     });
             }

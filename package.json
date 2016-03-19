@@ -14,14 +14,17 @@
   },
   "dependencies": {},
   "devDependencies": {
-      "nodeunit": "0.x",
-      "phantom-jasmine": "0.x"
+    "eslint": "^2.4.0",
+    "nodeunit": "0.x",
+    "phantom-jasmine": "0.x"
   },
   "engines": {},
   "author": "Brett Zamir",
   "contributors": [],
   "license": "MIT",
-  "keywords": ["text"],
+  "keywords": [
+    "text"
+  ],
   "bugs": {
     "url": "https://github.com/brettz9/textbrowser/issues"
   },
