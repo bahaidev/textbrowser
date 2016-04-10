@@ -35,22 +35,22 @@
         {
             "code": "en-US",
             "direction": "ltr",
-            "locale": {"$ref": "en-US.json"}
+            "locale": {"$ref": "../locales/en-US.json"}
         },
         {
             "code": "fa",
             "direction": "rtl",
-            "locale": {"$ref": "fa.json"}
+            "locale": {"$ref": "../locales/fa.json"}
         },
         {
             "code": "ar",
             "direction": "rtl",
-            "locale": {"$ref": "ar.json"}
+            "locale": {"$ref": "../locales/ar.json"}
         },
         {
             "code": "ru",
             "direction": "ltr",
-            "locale": {"$ref": "ru.json"}
+            "locale": {"$ref": "../locales/ru.json"}
         }
     ]
 }

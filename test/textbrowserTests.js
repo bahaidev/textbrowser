@@ -7,10 +7,10 @@ var textbrowserTests, bahaiwritingsTests;
 /* eslint-disable indent*/
 'use strict';
 
-var appBase = '/textbrowser/';
+var appBase = '/';
 var schemaBase = appBase + 'general-schemas/';
 var localesBase = appBase + 'locales/';
-// var appdataBase = appBase + 'appdata/';
+var appdataBase = appBase + 'appdata/';
 
 /**
 * @param {object} schema Schema object
@@ -52,7 +52,7 @@ textbrowserTests = {
     'languages.json test': function (test) { // See TextBrowser to-dos on what must be fixed for this to work
         Promise.all([
             JsonRefs.resolveRefsAt('languages.jsonschema', {relativeBase: schemaBase}),
-            JsonRefs.resolveRefsAt('languages.json', {relativeBase: localesBase})
+            JsonRefs.resolveRefsAt('languages.json', {relativeBase: appdataBase})
         ]).then(function ([{resolved: schema}, {resolved: data}]) {
             var valid = validate(schema, data);
             test.strictEqual(valid, true);
