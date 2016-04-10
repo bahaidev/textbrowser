@@ -409,7 +409,25 @@ first project used in aiding my learning programming.
 
 ## Testing
 
-```console
-npm install
+You will first need to run `npm install`.
+
+The syntax used in the tests currently only works in a modern browser.
+Note that this may lock up your browser as the validator loads all of
+the files:
+
+```shell
 npm test
+```
+
+If you merely wish to see the app running in a server, you can run:
+
+```shell
+npm start
+```
+
+If you do not wish to automatically open a tab each time the command is run,
+use:
+
+```shell
+npm run start-no-open
 ```

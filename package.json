@@ -5,7 +5,8 @@
   "main": "resources/index.js",
   "scripts": {
     "node": "node test/textbrowserTests",
-    "test": "node test/nodeunit-server",
+    "test": "node server http://127.0.0.1/test/ 8082",
+    "start-no-open": "node server 0",
     "phantom": "phantom-jasmine test/tests.html",
     "prepublish": "bower install"
   },
@@ -15,10 +16,10 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "open": "0.0.5",
+    "opn": "^4.0.1",
     "node-static": "^0.7.7",
     "eslint": "^2.4.0",
-    "nodeunit": "0.x",
+    "nodeunit": "^0.9.x",
     "phantom-jasmine": "0.x"
   },
   "engines": {},
