@@ -4,7 +4,8 @@
   "description": "Multilinear text browser",
   "main": "resources/index.js",
   "scripts": {
-    "test": "node test/textbrowserTests",
+    "node": "node test/textbrowserTests",
+    "test": "node test/nodeunit-server",
     "phantom": "phantom-jasmine test/tests.html",
     "prepublish": "bower install"
   },
@@ -14,6 +15,8 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "open": "0.0.5",
+    "node-static": "^0.7.7",
     "eslint": "^2.4.0",
     "nodeunit": "0.x",
     "phantom-jasmine": "0.x"

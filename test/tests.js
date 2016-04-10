@@ -1,4 +1,5 @@
-describe("DOM Tests", function () {
+/*eslint-env jasmine*/
+describe("DOM Tests", function () {'use strict';
     var el = document.createElement("div");
     el.id = "myDiv";
     el.innerHTML = "Hi there!";
