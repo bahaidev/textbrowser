@@ -196,6 +196,7 @@ shows its usage (assuming paths relative to a package containing
         base for the file's path and the path of its internally-referenced
         locales
     1.  Fix app in Chrome
+    1.  Start browser testing: <http://nightwatchjs.org/>
 1.  Configuration
     1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
         to avoid localizing "query string" hash property names and values
