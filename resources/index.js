@@ -107,7 +107,10 @@ TextBrowser.prototype.paramChange = function () {
 
     // Todo: Could give option to i18nize "lang" or omit
     var $p = new IntlURLSearchParams();
-    var localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : that.localizeParamNames;
+    var prefI18n = localStorage.getItem(that.namespace + '-localizeParamNames');
+    var localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : ( // eslint-disable-line no-nested-ternary
+        prefI18n === 'true' ? true : (prefI18n === 'false' ? false : that.localizeParamNames) // eslint-disable-line no-nested-ternary
+    );
 
     function followParams () {
         location.hash = '#' + $p.toString();
@@ -672,26 +675,41 @@ TextBrowser.prototype.paramChange = function () {
                         var prefs = document.querySelector('#preferences');
                         prefs.hidden = !prefs.hidden;
                     }}}, [l('Preferences')]],
-                    ['div', {id: 'preferences', hidden: 'true'}, [
-                        ['label', {for: 'prefLangs'}, [l('Preferred language')]],
-                        ['br'],
-                        ['select', {id: 'prefLangs', multiple: 'multiple', size: langs.length, $on: {change: function (e) {
-                            // Todo: EU disclaimer re: storage?
-                            localStorage.setItem(that.namespace + '-langCodes', JSON.stringify(Array.from(e.target.selectedOptions).map(function (opt) {
-                                return opt.value;
-                            })));
-                        }}}, langs.map(function (lan) {
-                            var langCodes = localStorage.getItem(that.namespace + '-langCodes');
-                            langCodes = langCodes && JSON.parse(langCodes);
-                            var atts = {value: lan.code};
-                            if (langCodes && langCodes.includes(lan.code)) {
-                                atts.selected = 'selected';
-                            }
-                            return ['option', atts, [
-                                imfl(['languages', lan.code])
-                            ]];
+                    ['div', {style: {textAlign: 'left'}, id: 'preferences', hidden: 'true'}, [
+                        ['div', {style: 'margin-top: 10px;'}, [
+                            ['label', [
+                                l('localizeParamNames'),
+                                ['input', {
+                                    id: 'localizeParamNames',
+                                    type: 'checkbox',
+                                    checked: localizeParamNames,
+                                    $on: {change: function (e) {
+                                        localStorage.setItem(that.namespace + '-localizeParamNames', e.target.checked);
+                                    }}
+                                }]
+                            ]]
+                        ]],
+                        ['div', [
+                            ['label', {for: 'prefLangs'}, [l('Preferred language')]],
+                            ['br'],
+                            ['select', {id: 'prefLangs', multiple: 'multiple', size: langs.length, $on: {change: function (e) {
+                                // Todo: EU disclaimer re: storage?
+                                localStorage.setItem(that.namespace + '-langCodes', JSON.stringify(Array.from(e.target.selectedOptions).map(function (opt) {
+                                    return opt.value;
+                                })));
+                            }}}, langs.map(function (lan) {
+                                var langCodes = localStorage.getItem(that.namespace + '-langCodes');
+                                langCodes = langCodes && JSON.parse(langCodes);
+                                var atts = {value: lan.code};
+                                if (langCodes && langCodes.includes(lan.code)) {
+                                    atts.selected = 'selected';
+                                }
+                                return ['option', atts, [
+                                    imfl(['languages', lan.code])
+                                ]];
 
-                        })]
+                            })]
+                        ]]
                     ]]
                 ]],
                 ['h2', [getMetaProp(metadataObj, 'heading')]],

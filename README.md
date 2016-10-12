@@ -196,8 +196,6 @@ shows its usage (assuming paths relative to a package containing
         base for the file's path and the path of its internally-referenced
         locales
 1.  Configuration
-    1.  Allow preference to avoid localizing "query string" hash property
-        names and values
     1.  Add URL params which can include/disable modules to simplify screen
         1.  Hide advanced formatting options (make savable in preferences)
 1.  Refactoring

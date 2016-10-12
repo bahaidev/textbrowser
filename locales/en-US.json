@@ -120,6 +120,7 @@
     "enum-all": "All",
     "Preferences": "Preferences",
     "Preferred language": "Preferred language",
+    "localizeParamNames": "Localize URL parameter names by default",
     "params": {
         "indexed": {
             "field": "field",
