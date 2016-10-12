@@ -381,7 +381,7 @@ shows its usage (assuming paths relative to a package containing
     1.  Change Preferences to be set before work or with work but specific to it
     1.  Change Preferences to disallow URL overriding
     1.  Change preferred languages preference to be dynamic with work column languages
-    1.  Add "Save settings as preferences" option
+        1.  Preference to remember enabled checkboxes and formatting
 1.  Change to utilize history.pushState?
     <https://developer.mozilla.org/en-US/docs/Web/API/History_API>
 1.  Use ES6 modules (babel)
