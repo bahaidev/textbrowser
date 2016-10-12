@@ -690,7 +690,7 @@ TextBrowser.prototype.paramChange = function () {
                             ]]
                         ]],
                         ['div', [
-                            ['label', {for: 'prefLangs'}, [l('Preferred language')]],
+                            ['label', {for: 'prefLangs'}, [l('Preferred language(s)')]],
                             ['br'],
                             ['select', {id: 'prefLangs', multiple: 'multiple', size: langs.length, $on: {change: function (e) {
                                 // Todo: EU disclaimer re: storage?
