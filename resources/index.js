@@ -8,7 +8,11 @@ var TextBrowser = (function () {
 var nbsp = '\u00a0';
 
 function s (obj) {alert(JSON.stringify(obj));} // eslint-disable-line no-unused-vars
-
+if (!Array.prototype.includes) {
+    Array.prototype.includes = function (item) { // eslint-disable-line no-extend-native
+        return this.indexOf(item) > -1;
+    };
+}
 
 function _prepareParam (param, skip) {
     if (skip) { // (lang)
@@ -676,7 +680,7 @@ TextBrowser.prototype.paramChange = function () {
                             var langCodes = localStorage.getItem(that.namespace + '-langCodes');
                             langCodes = langCodes && JSON.parse(langCodes);
                             var atts = {value: lan.code};
-                            if (langCodes.includes(lan.code)) {
+                            if (langCodes && langCodes.includes(lan.code)) {
                                 atts.selected = 'selected';
                             }
                             return ['option', atts, [
