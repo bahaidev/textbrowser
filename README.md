@@ -159,14 +159,25 @@ shows its usage (assuming paths relative to a package containing
 *TextBrowser* as a dependency).
 
 -   ***TextBrowser(options)*** - Constructor which takes an options object
-    with the optional properties, `files` and `languages`.
+    with the following optional properties:
 
     -   `files` - Path for the `files.json` containing meta-data on the files
-       to be made available via the interface. file Defaults to 'files.json'.
+        to be made available via the interface. file Defaults to 'files.json'.
 
     -   `languages` - Path for the `languages.json` file containing meta-data
-      on the languages to be displayed in the interface. Defaults to
-      'bower_components/textbrowser/appdata/languages.json'.
+        on the languages to be displayed in the interface. Defaults to
+        'bower_components/textbrowser/appdata/languages.json'.
+
+    -   `site` - Path for the `site.json` containing meta-data on the site.
+
+    -   `namespace` - Namespace to use as a prefix for all `localStorage`.
+        Defaults to "textbrowser".
+
+    -   `localizeParamNames` - Boolean as to whether to localize parameter
+        names by default (can be overridden by the user in preferences).
+
+    -   `hideFormattingSection` -Boolean as to whether to hide the formatting
+        section by default (can be overridden by the user in preferences).
 
 -   ***init*** - Default implementation merely invokes `displayLanguages`.
 
