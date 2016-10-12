@@ -15,7 +15,7 @@ if (!Array.prototype.includes) {
 }
 
 function _prepareParam (param, skip) {
-    if (skip) { // (lang)
+    if (skip || !this.localizeParamNames) { // (lang)
         return param;
     }
 
@@ -68,6 +68,7 @@ function TextBrowser (options) { // eslint-disable-line
     this.site = options.site || 'site.json';
     this.files = options.files || 'files.json';
     this.namespace = options.namespace || 'textbrowser';
+    this.localizeParamNames = options.localizeParamNames === undefined ? true : options.localizeParamNames;
 }
 
 TextBrowser.prototype.init = function () {
@@ -106,6 +107,7 @@ TextBrowser.prototype.paramChange = function () {
 
     // Todo: Could give option to i18nize "lang" or omit
     var $p = new IntlURLSearchParams();
+    var localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : that.localizeParamNames;
 
     function followParams () {
         location.hash = '#' + $p.toString();
@@ -247,13 +249,13 @@ TextBrowser.prototype.paramChange = function () {
     }
 
     function _displayWork (l, defineFormatter, schemaObj, metadataObj) {
+        var il = localizeParamNames ? function il (key) {
+            return l(['params', key]);
+        } : function (key) {return key;};
+        var iil = localizeParamNames ? function iil (key) {
+            return l(['params', 'indexed', key]);
+        } : function (key) {return key;};
 
-        function il (key) {
-            return l(['params', key]); // We could make this a different function if avoiding localization of param names
-        }
-        function iil (key) {
-            return l(['params', 'indexed', key]); // We could make this a different function if avoiding localization of param names
-        }
         var imfLang = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)}); // eslint-disable-line new-cap
         var imfl = imfLang.getFormatter();
 
