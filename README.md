@@ -195,9 +195,6 @@ shows its usage (assuming paths relative to a package containing
         to be fixed: cause `languages.json` test to distinguish relative
         base for the file's path and the path of its internally-referenced
         locales
-1.  Configuration
-    1.  Add URL params/prefs which can include/disable modules to simplify screen
-        1.  Hide advanced formatting options (make savable in preferences)
 1.  Refactoring
     1.  Rename localization strings, especially auto-field ones; consider
         making some reusable, pointing to scripts, or how else to designate

@@ -69,6 +69,7 @@ function TextBrowser (options) { // eslint-disable-line
     this.files = options.files || 'files.json';
     this.namespace = options.namespace || 'textbrowser';
     this.localizeParamNames = options.localizeParamNames === undefined ? true : options.localizeParamNames;
+    this.hideFormattingSection = Boolean(options.hideFormattingSection);
 }
 
 TextBrowser.prototype.init = function () {
@@ -108,8 +109,13 @@ TextBrowser.prototype.paramChange = function () {
     // Todo: Could give option to i18nize "lang" or omit
     var $p = new IntlURLSearchParams();
     var prefI18n = localStorage.getItem(that.namespace + '-localizeParamNames');
+    var prefFormatting = localStorage.getItem(that.namespace + '-hideFormattingSection');
+
     var localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : ( // eslint-disable-line no-nested-ternary
         prefI18n === 'true' ? true : (prefI18n === 'false' ? false : that.localizeParamNames) // eslint-disable-line no-nested-ternary
+    );
+    var hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : ( // eslint-disable-line no-nested-ternary
+        prefFormatting === 'true' ? true : (prefFormatting === 'false' ? false : that.hideFormattingSection) // eslint-disable-line no-nested-ternary
     );
 
     function followParams () {
@@ -690,6 +696,20 @@ TextBrowser.prototype.paramChange = function () {
                             ]]
                         ]],
                         ['div', [
+                            ['label', [
+                                l('Hide formatting section'),
+                                ['input', {
+                                    id: 'hideFormattingSection',
+                                    type: 'checkbox',
+                                    checked: hideFormattingSection,
+                                    $on: {change: function (e) {
+                                        document.querySelector('#advancedformatting').style.display = e.target.checked ? 'none' : 'block';
+                                        localStorage.setItem(that.namespace + '-hideFormattingSection', e.target.checked);
+                                    }}
+                                }]
+                            ]]
+                        ]],
+                        ['div', [
                             ['label', {for: 'prefLangs'}, [l('Preferred language(s)')]],
                             ['br'],
                             ['select', {id: 'prefLangs', multiple: 'multiple', size: langs.length, $on: {change: function (e) {
@@ -731,7 +751,7 @@ TextBrowser.prototype.paramChange = function () {
                                     }}}),
                                     ['input', {id: 'settings-URL'}]
                                 ]],
-                                ['td', [
+                                ['td', {id: 'advancedformatting', style: {display: (hideFormattingSection ? 'none' : 'block')}}, [
                                     ['h3', [ld("advancedformatting")]],
                                     ['label', [
                                         ld("textcolor"),

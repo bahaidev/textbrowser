@@ -121,6 +121,7 @@
     "Preferences": "Preferences",
     "Preferred language(s)": "Preferred language(s)",
     "localizeParamNames": "Localize URL parameter names by default",
+    "Hide formatting section": "Hide formatting section",
     "params": {
         "indexed": {
             "field": "field",
