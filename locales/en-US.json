@@ -118,6 +118,8 @@
     "check-sequence": "Check the sequence (you can choose the same field twice if you wish)",
     "interlinear-tips": "Add a comma-separated list of column numbers to be added to the current column interlinearly",
     "enum-all": "All",
+    "Preferences": "Preferences",
+    "Preferred language": "Preferred language",
     "params": {
         "indexed": {
             "field": "field",

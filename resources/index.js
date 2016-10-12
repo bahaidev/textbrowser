@@ -671,9 +671,11 @@ TextBrowser.prototype.paramChange = function () {
                     ['button', {$on: {click: function () {
                         var prefs = document.querySelector('#preferences');
                         prefs.hidden = !prefs.hidden;
-                    }}}, ['Preferences']],
+                    }}}, [l('Preferences')]],
                     ['div', {id: 'preferences', hidden: 'true'}, [
-                        ['select', {multiple: 'multiple', size: langs.length, $on: {change: function (e) {
+                        ['label', {for: 'prefLangs'}, [l('Preferred language')]],
+                        ['br'],
+                        ['select', {id: 'prefLangs', multiple: 'multiple', size: langs.length, $on: {change: function (e) {
                             // Todo: EU disclaimer re: storage?
                             localStorage.setItem(that.namespace + '-langCodes', JSON.stringify(Array.from(e.target.selectedOptions).map(function (opt) {
                                 return opt.value;
