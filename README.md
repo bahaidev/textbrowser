@@ -216,7 +216,6 @@ shows its usage (assuming paths relative to a package containing
             `fieldalias` defaults to `fieldname`); aliased heading (also used
             as the title of the page)
     1.  Review code for readability, refactoring opportunities
-    1.  Consider footnote targeting mechanism
     1.  Cause locale-using files (`site.jsonschema`, `metadata.jsonschema`,
         `files.jsonschema` and `languages.jsonschema`) to rely on definition
         of `localization-strings` in `locale.json` (and have `locale` point
@@ -359,7 +358,7 @@ shows its usage (assuming paths relative to a package containing
     1.  Make tools to build `languages.json` based on available
         locale files, and build `files.json` based on a target directory.
     1.  [HTTPQuery](https://github.com/brettz9/httpquery) headers
-1.  filetypes.json (from WebAppFind) for app and schema association?
+1.  `filetypes.json` (from WebAppFind) for app and schema association?
     (files.json for permitted files - a file which could be auto-created,
     e.g., if server permits all in a directory); especially potentially
     useful with JSONEditor to allow editing of these files, app types
@@ -379,6 +378,8 @@ shows its usage (assuming paths relative to a package containing
         describing how to use the elements
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize)!
+1.  Develop footnote targeting mechanism to hide/reveal footnotes inline
+    (based on a `data-footnote` attribute or the like).
 
 ## To-dos (Lower priority)
 

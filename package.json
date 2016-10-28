@@ -18,8 +18,8 @@
   "devDependencies": {
     "opn": "^4.0.1",
     "node-static": "^0.7.7",
-    "eslint": "^2.4.0",
-    "nodeunit": "^0.9.x",
+    "eslint": "^3.8.1",
+    "nodeunit": "^0.10.x",
     "phantom-jasmine": "0.x"
   },
   "engines": {},
