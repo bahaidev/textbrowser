@@ -221,8 +221,8 @@ shows its usage (assuming paths relative to a package containing
     1.  Review code for readability, refactoring opportunities
     1.  Cause locale-using files (`site.jsonschema`, `metadata.jsonschema`,
         `files.jsonschema` and `languages.jsonschema`) to rely on definition
-        of `localization-strings` in `locale.json` (and have `locale` point
-        to `locale.json` in `languages.jsonschema`) once
+        of `localization-strings` in `locale.jsonschema` (and have `locale` point
+        to `locale.jsonschema` in `languages.jsonschema`) once
         <https://github.com/whitlockjc/json-refs/issues/75> is fixed
 1.  New features (requiring UI adjustments)
     1.  Aliased search (space-separated field and drop-downs)
