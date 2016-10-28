@@ -201,11 +201,14 @@ shows its usage (assuming paths relative to a package containing
 
 ## To-dos
 
-1.  Testing
-    1.  Waiting for <https://github.com/whitlockjc/json-refs/issues/76>
+1.  Waiting:
+    1.  Testing: Waiting for <https://github.com/whitlockjc/json-refs/issues/76>
         to be fixed: cause `languages.json` test to distinguish relative
         base for the file's path and the path of its internally-referenced
         locales
+    1.  i18n: Change schema to avoid using `localeKey` in favor of
+        substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
+        and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
 1.  Refactoring
     1.  Rename localization strings, especially auto-field ones; consider
         making some reusable, pointing to scripts, or how else to designate
@@ -409,9 +412,6 @@ shows its usage (assuming paths relative to a package containing
     the i18n of "lang"?).
 1.  `window.postMessage` API (since CORS is only for Ajax and
     `document.domain` is only for subdomains).
-1.  Change schema to avoid using `localeKey` in favor of substitutable
-    JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
-    and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
 1.  Testing
     1.  Add browser-based testing (PhantomJS?)
 
