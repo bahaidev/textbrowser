@@ -20,7 +20,8 @@
     "node-static": "^0.7.7",
     "eslint": "^3.8.1",
     "nodeunit": "^0.10.x",
-    "phantom-jasmine": "0.x"
+    "phantom-jasmine": "0.x",
+    "remark-lint": "^5.1.0"
   },
   "engines": {},
   "author": "Brett Zamir",

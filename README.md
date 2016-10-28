@@ -221,8 +221,6 @@ shows its usage (assuming paths relative to a package containing
         of `localization-strings` in `locale.json` (and have `locale` point
         to `locale.json` in `languages.jsonschema`) once
         <https://github.com/whitlockjc/json-refs/issues/75> is fixed
-    1.  Change schema to avoid using `localeKey` in favor of substitutable
-        JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>).
 1.  New features (requiring UI adjustments)
     1.  Aliased search (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
@@ -411,6 +409,9 @@ shows its usage (assuming paths relative to a package containing
     the i18n of "lang"?).
 1.  `window.postMessage` API (since CORS is only for Ajax and
     `document.domain` is only for subdomains).
+1.  Change schema to avoid using `localeKey` in favor of substitutable
+    JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
+    and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
 1.  Testing
     1.  Add browser-based testing (PhantomJS?)
 
