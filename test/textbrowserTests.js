@@ -15,16 +15,17 @@ var appdataBase = appBase + 'appdata/';
 /**
 * @param {object} schema Schema object
 * @param {any} data Data object
+* @param {string} testName Name of the current test
 * @returns {boolean} Whether validation succeeded
 */
-function validate (schema, data) {
+function validate (schema, data, testName) {
     var ajv = Ajv(); // eslint-disable-line new-cap
     var valid;
     try {
         valid = ajv.validate(schema, data);
     }
     catch (e) {
-        console.log(e); // eslint-disable-line no-console
+        console.log('(' + testName + ') ' + e); // eslint-disable-line no-console
     }
     finally {
         if (!valid) {console.log(JSON.stringify(ajv.errors));} // eslint-disable-line no-console
@@ -43,7 +44,7 @@ textbrowserTests = {
             JsonRefs.resolveRefsAt('ru.json', {relativeBase: localesBase})
         ]).then(function ([{resolved: schema}, ...locales]) {
             locales.forEach(function ({resolved: locale}) {
-                var valid = validate(schema, locale);
+                var valid = validate(schema, locale, 'locales tests');
                 test.strictEqual(valid, true);
             });
             test.done();
@@ -54,7 +55,7 @@ textbrowserTests = {
             JsonRefs.resolveRefsAt('languages.jsonschema', {relativeBase: schemaBase}),
             JsonRefs.resolveRefsAt('languages.json', {relativeBase: appdataBase})
         ]).then(function ([{resolved: schema}, {resolved: data}]) {
-            var valid = validate(schema, data);
+            var valid = validate(schema, data, 'languages.json test');
             test.strictEqual(valid, true);
             test.done();
         });

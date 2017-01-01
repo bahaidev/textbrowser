@@ -159,14 +159,25 @@ shows its usage (assuming paths relative to a package containing
 *TextBrowser* as a dependency).
 
 -   ***TextBrowser(options)*** - Constructor which takes an options object
-    with the optional properties, `files` and `languages`.
+    with the following optional properties:
 
     -   `files` - Path for the `files.json` containing meta-data on the files
-       to be made available via the interface. file Defaults to 'files.json'.
+        to be made available via the interface. file Defaults to 'files.json'.
 
     -   `languages` - Path for the `languages.json` file containing meta-data
-      on the languages to be displayed in the interface. Defaults to
-      'bower_components/textbrowser/appdata/languages.json'.
+        on the languages to be displayed in the interface. Defaults to
+        'bower_components/textbrowser/appdata/languages.json'.
+
+    -   `site` - Path for the `site.json` containing meta-data on the site.
+
+    -   `namespace` - Namespace to use as a prefix for all `localStorage`.
+        Defaults to "textbrowser".
+
+    -   `localizeParamNames` - Boolean as to whether to localize parameter
+        names by default (can be overridden by the user in preferences).
+
+    -   `hideFormattingSection` -Boolean as to whether to hide the formatting
+        section by default (can be overridden by the user in preferences).
 
 -   ***init*** - Default implementation merely invokes `displayLanguages`.
 
@@ -190,19 +201,14 @@ shows its usage (assuming paths relative to a package containing
 
 ## To-dos
 
-1.  Testing
-    1.  Waiting for <https://github.com/whitlockjc/json-refs/issues/76>
+1.  Waiting:
+    1.  Testing: Waiting for <https://github.com/whitlockjc/json-refs/issues/76>
         to be fixed: cause `languages.json` test to distinguish relative
         base for the file's path and the path of its internally-referenced
         locales
-    1.  Fix app in Chrome
-    1.  Start browser testing: <https://www.npmjs.com/package/testcafe> (or
-        possibly <http://nightwatchjs.org/>)
-1.  Configuration
-    1.  Allow (URL-and-preferences-alterable, developer-defaultable) preference
-        to avoid localizing "query string" hash property names and values
-    1.  Add URL params which can include/disable modules to simplify screen
-        1.  Hide advanced formatting options (make savable in preferences)
+1.  i18n: Change schema to avoid using `localeKey` in favor of
+    substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
+    and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
 1.  Refactoring
     1.  Rename localization strings, especially auto-field ones; consider
         making some reusable, pointing to scripts, or how else to designate
@@ -213,14 +219,11 @@ shows its usage (assuming paths relative to a package containing
             `fieldalias` defaults to `fieldname`); aliased heading (also used
             as the title of the page)
     1.  Review code for readability, refactoring opportunities
-    1.  Consider footnote targeting mechanism
     1.  Cause locale-using files (`site.jsonschema`, `metadata.jsonschema`,
         `files.jsonschema` and `languages.jsonschema`) to rely on definition
-        of `localization-strings` in `locale.json` (and have `locale` point
-        to `locale.json` in `languages.jsonschema`) once
+        of `localization-strings` in `locale.jsonschema` (and have `locale` point
+        to `locale.jsonschema` in `languages.jsonschema`) once
         <https://github.com/whitlockjc/json-refs/issues/75> is fixed
-    1.  Change schema to avoid using `localeKey` in favor of substitutable
-        JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>).
 1.  New features (requiring UI adjustments)
     1.  Aliased search (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
@@ -356,7 +359,7 @@ shows its usage (assuming paths relative to a package containing
     1.  Make tools to build `languages.json` based on available
         locale files, and build `files.json` based on a target directory.
     1.  [HTTPQuery](https://github.com/brettz9/httpquery) headers
-1.  filetypes.json (from WebAppFind) for app and schema association?
+1.  `filetypes.json` (from WebAppFind) for app and schema association?
     (files.json for permitted files - a file which could be auto-created,
     e.g., if server permits all in a directory); especially potentially
     useful with JSONEditor to allow editing of these files, app types
@@ -376,12 +379,19 @@ shows its usage (assuming paths relative to a package containing
         describing how to use the elements
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize)!
+1.  Develop footnote targeting mechanism to hide/reveal footnotes inline
+    (based on a `data-footnote` attribute or the like).
 
 ## To-dos (Lower priority)
 
 1.  Change AppCache to
     [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
     as the former is apparently being deprecated
+1.  Preferences
+    1.  Change Preferences to be set before work or with work but specific to it
+    1.  Change Preferences to disallow URL overriding
+    1.  Change preferred languages preference to be dynamic with work column languages
+        1.  Preference to remember enabled checkboxes and formatting
 1.  Change to utilize history.pushState?
     <https://developer.mozilla.org/en-US/docs/Web/API/History_API>
 1.  Use ES6 modules (babel)
@@ -403,7 +413,8 @@ shows its usage (assuming paths relative to a package containing
 1.  `window.postMessage` API (since CORS is only for Ajax and
     `document.domain` is only for subdomains).
 1.  Testing
-    1.  Add browser-based testing (PhantomJS?)
+    1.  Start browser testing: <https://www.npmjs.com/package/testcafe> (or
+        possibly <http://nightwatchjs.org/>)
 
 ## History
 
