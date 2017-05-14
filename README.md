@@ -201,14 +201,15 @@ shows its usage (assuming paths relative to a package containing
 
 ## To-dos
 
-1.  Waiting:
-    1.  Testing: Waiting for <https://github.com/whitlockjc/json-refs/issues/76>
-        to be fixed: cause `languages.json` test to distinguish relative
-        base for the file's path and the path of its internally-referenced
-        locales
-1.  i18n: Change schema to avoid using `localeKey` in favor of
+1.  Waiting ([JSON UI Schema](https://github.com/json-schema-org/json-schema-spec/issues/67)
+    or [JSON Schema Annotation and Documentation Extension](https://github.com/json-schema-org/json-schema-spec/issues/136)):
+    i18n: Utilize more standard mechanism instead of our `localeKey`; might also use
     substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
     and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
+
+1.  Testing: Cause `languages.json` test to distinguish relative
+    base for the file's path and the path of its internally-referenced
+    locales (see <https://github.com/whitlockjc/json-refs/issues/76>).
 1.  Refactoring
     1.  Rename localization strings, especially auto-field ones; consider
         making some reusable, pointing to scripts, or how else to designate
@@ -380,7 +381,9 @@ shows its usage (assuming paths relative to a package containing
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize)!
 1.  Develop footnote targeting mechanism to hide/reveal footnotes inline
-    (based on a `data-footnote` attribute or the like).
+    (based on a `data-footnote` attribute or the like). Utilize JSON
+    Schema `links` for indicating footnote location in document then
+    allow HTML `<a href>` to point to the scheme designated therein.
 
 ## To-dos (Lower priority)
 
