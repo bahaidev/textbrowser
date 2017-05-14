@@ -1,13 +1,13 @@
-/*global formSerialize, JsonRefs, IMF, getJSON, jml, URLSearchParams, window, alert, document, location*/
-/*eslint max-len: 0, require-jsdoc: 0, no-alert: 0, no-warning-comments: 0, no-magic-numbers: 0, no-extra-parens: 0, lines-around-comment: 0*/
-/* exported TextBrowser*/
+/* eslint-env browser */
+/* global formSerialize, JsonRefs, IMF, getJSON, jml, URLSearchParams */
+/* exported TextBrowser */
 
 var TextBrowser = (function () {
 /* eslint-disable indent */
 'use strict';
 var nbsp = '\u00a0';
 
-function s (obj) {alert(JSON.stringify(obj));} // eslint-disable-line no-unused-vars
+function s (obj) { alert(JSON.stringify(obj)); } // eslint-disable-line no-unused-vars
 if (!Array.prototype.includes) {
     Array.prototype.includes = function (item) { // eslint-disable-line no-extend-native
         return this.indexOf(item) > -1;
@@ -106,7 +106,7 @@ TextBrowser.prototype.paramChange = function () {
 
     document.body.parentNode.replaceChild(document.createElement('body'), document.body);
 
-    // Todo: Could give option to i18nize "lang" or omit
+    // Todo: Could give option to i18nize 'lang' or omit
     var $p = new IntlURLSearchParams();
     var prefI18n = localStorage.getItem(that.namespace + '-localizeParamNames');
     var prefFormatting = localStorage.getItem(that.namespace + '-hideFormattingSection');
@@ -148,19 +148,24 @@ TextBrowser.prototype.paramChange = function () {
     }
     function languageSelect (l) {
         $p.l10n = l;
-        // Also can use l("chooselanguage"), but assumes locale as with page title
-        document.title = l("browser-title");
+        // Also can use l('chooselanguage'), but assumes locale as with page title
+        document.title = l('browser-title');
 
         jml('div', {'class': 'focus'}, [
-              ['select', {size: langs.length, $on: {change: function (e) {
-                  $p.set('lang', e.target.selectedOptions[0].value, true);
-                  followParams();
-              }}}, langs.map(function (lan) {
+              ['select', {
+                  size: langs.length,
+                  $on: {
+                      change: function (e) {
+                          $p.set('lang', e.target.selectedOptions[0].value, true);
+                          followParams();
+                      }
+                  }
+              }, langs.map(function (lan) {
                   return ['option', {value: lan.code}, [localeFromLangData(lan.code).languages[lan.code]]];
               })]
           ], document.body
 
-          // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
+          // Todo: Add in Go button (with 'submitgo' localization string) to avoid need for pull-down if using first selection?
           /* Works too:
           langs.map(function (lang) {
               return ['div', [
@@ -170,7 +175,6 @@ TextBrowser.prototype.paramChange = function () {
           */
         );
     }
-
 
     function getCurrDir () {
       return window.location.href.replace(/(index\.html)?#.*$/, '');
@@ -194,13 +198,13 @@ TextBrowser.prototype.paramChange = function () {
         return prop;
     }
 
-    function workSelect (/* l, defineFormatter*/) {
+    function workSelect (/* l, defineFormatter */) {
         // We use getJSON instead of JsonRefs as we do not necessarily need to resolve the file contents here
         getJSON(that.files, function (dbs) {
             that.fileData = dbs;
             var imfFile = IMF({locales: lang.map(localeFromFileData), fallbackLocales: fallbackLanguages.map(localeFromFileData)}); // eslint-disable-line new-cap
             var lf = imfFile.getFormatter();
-            document.title = lf({key: "browserfile-workselect", fallback: true});
+            document.title = lf({key: 'browserfile-workselect', fallback: true});
 
             /*
             function ld (key, values, formats) {
@@ -232,19 +236,25 @@ TextBrowser.prototype.paramChange = function () {
                                 lf({key: fileGroup.directions.localeKey, fallback: true})
                             ]],
                             ['br'],
-                            ['select', {'class': 'file', dataset: {name: fileGroup.name.localeKey}, $on: {
-                                change: function (e) {
-                                    // if (e.target.nodeName.toLowerCase() === 'select') {return;} // If using click, but click doesn't always fire
-                                    $p.set('work', e.target.value);
-                                    followParams();
+                            ['select', {
+                                'class': 'file',
+                                dataset: {
+                                    name: fileGroup.name.localeKey
+                                },
+                                $on: {
+                                    change: function (e) {
+                                        // if (e.target.nodeName.toLowerCase() === 'select') {return;} // If using click, but click doesn't always fire
+                                        $p.set('work', e.target.value);
+                                        followParams();
+                                    }
                                 }
-                            }}, fileGroup.files.reduce(function (childEls, file) {
+                            }, fileGroup.files.reduce(function (childEls, file) {
                                 fileCtr++;
                                 var metadataObj = metadataObjs[fileCtr];
                                 childEls.push(lo(metadataObj, {value: lf(['workNames', fileGroup.id, file.name])}));
                                 return childEls;
                             }, [['option', {value: ''}, ['--']]])]
-                            // Todo: Add in Go button (with "submitgo" localization string) to avoid need for pull-down if using first selection?
+                            // Todo: Add in Go button (with 'submitgo' localization string) to avoid need for pull-down if using first selection?
                         ]];
                     }),
                     document.body
@@ -260,36 +270,47 @@ TextBrowser.prototype.paramChange = function () {
     function _displayWork (l, defineFormatter, schemaObj, metadataObj) {
         var il = localizeParamNames ? function il (key) {
             return l(['params', key]);
-        } : function (key) {return key;};
+        } : function (key) { return key; };
         var iil = localizeParamNames ? function iil (key) {
             return l(['params', 'indexed', key]);
-        } : function (key) {return key;};
+        } : function (key) { return key; };
 
         var imfLang = IMF({locales: lang.map(localeFromLangData), fallbackLocales: fallbackLanguages.map(localeFromLangData)}); // eslint-disable-line new-cap
         var imfl = imfLang.getFormatter();
 
         // Returns plain text node or element (as Jamilih) with fallback direction
         function ld (key, values, formats) {
-            return l({key: key, values: values, formats: formats, fallback: function (obj) {
-                // Displaying as div with inline display instead of span since Firefox puts punctuation at left otherwise (bdo dir seemed to have issues in Firefox)
-                return ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [obj.message]];
-            }});
+            return l({
+                key: key,
+                values: values,
+                formats: formats,
+                fallback: function (obj) {
+                    // Displaying as div with inline display instead of span since Firefox puts punctuation at left otherwise (bdo dir seemed to have issues in Firefox)
+                    return ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [obj.message]];
+                }
+            });
         }
         // Returns option element with localized option text (as Jamilih), with optional fallback direction
         function lo (key, atts) {
             return ['option', atts, [
-                l({key: key, fallback: function (obj) {
-                    atts.dir = fallbackDirection;
-                    return obj.message;
-                }})
+                l({
+                    key: key,
+                    fallback: function (obj) {
+                        atts.dir = fallbackDirection;
+                        return obj.message;
+                    }
+                })
             ]];
         }
         // Returns element with localized or fallback attribute value (as Jamilih); also adds direction
         function le (key, el, attToLocalize, atts, children) {
-            atts[attToLocalize] = l({key: key, fallback: function (obj) {
-                atts.dir = fallbackDirection;
-                return obj.message;
-            }});
+            atts[attToLocalize] = l({
+                key: key,
+                fallback: function (obj) {
+                    atts.dir = fallbackDirection;
+                    return obj.message;
+                }
+            });
             return [el, atts, children];
         }
 
@@ -306,11 +327,11 @@ TextBrowser.prototype.paramChange = function () {
 
             // Follow the same style (and order) for checkboxes
             paramsCopy.delete(il('rand'));
-            paramsCopy.set(il('rand'), document.querySelector('#rand').checked ? l("yes") : l("no"));
+            paramsCopy.set(il('rand'), document.querySelector('#rand').checked ? l('yes') : l('no'));
 
             Array.from(document.querySelectorAll('input[type=checkbox]')).forEach(function (checkbox) { // We want checkboxes to typically show by default, so we cannot use the standard serialization
                 paramsCopy.delete(checkbox.name); // Let's ensure the checked items are all together (at the end)
-                paramsCopy.set(checkbox.name, checkbox.checked ? l("yes") : l("no"));
+                paramsCopy.set(checkbox.name, checkbox.checked ? l('yes') : l('no'));
             });
 
             cb(paramsCopy);
@@ -325,13 +346,11 @@ TextBrowser.prototype.paramChange = function () {
             if (fieldAlias) {
                 if (typeof fieldAlias === 'string') {
                     fieldName = fieldAlias;
-                }
-                else {
+                } else {
                     fieldAlias = fieldAlias.localeKey;
                     fieldName = getMetaProp(metadataObj, fieldAlias.split('/'));
                 }
-            }
-            else { // No alias
+            } else { // No alias
                 fieldName = fieldObj.name;
                 if (typeof fieldName === 'object') {
                     fieldName = fieldName.localeKey;
@@ -341,17 +360,15 @@ TextBrowser.prototype.paramChange = function () {
             return fieldName;
         }
         function addRowContent (rowContent) {
-            if (!rowContent || !rowContent.length) {return;}
+            if (!rowContent || !rowContent.length) { return; }
             content.push(['tr', rowContent]);
         }
         var enumFvs = {};
         var enumerateds = {};
         metadataObj.table.browse_fields.forEach(function (browseFieldObject, i) {
-
             if (typeof browseFieldObject === 'string') {
                 browseFieldObject = {set: [browseFieldObject]};
             }
-
 
             var fieldSets = browseFieldObject.set;
             // Todo: Deal with ['td', [['h3', [ld(browseFieldObject.name)]]]] as kind of fieldset
@@ -374,11 +391,11 @@ TextBrowser.prototype.paramChange = function () {
 
             [
                 // Todo: Separate formatting to CSS
-                i > 0 ?
-                    [
-                        ['td', {colspan: 12, align: 'center'}, [['br'], ld("or"), ['br'], ['br']]]
-                    ] :
-                    '',
+                i > 0
+                    ? [
+                        ['td', {colspan: 12, align: 'center'}, [['br'], ld('or'), ['br'], ['br']]]
+                    ]
+                    : '',
                 [
                     browseFields.reduce(function (rowContent, browseField, j) {
                         var name = iil('start') + (i + 1) + '-' + (j + 1);
@@ -394,7 +411,7 @@ TextBrowser.prototype.paramChange = function () {
                         return rowContent;
                     }, {'#': []}),
                     ['td', [
-                        ['b', [ld("to")]],
+                        ['b', [ld('to')]],
                         nbsp.repeat(3)
                     ]],
                     browseFields.reduce(function (rowContent, browseField, j) {
@@ -410,7 +427,7 @@ TextBrowser.prototype.paramChange = function () {
                         );
                         return rowContent;
                     }, {'#': []}),
-                    ['td', [ld("numbers-only"), ' ', browseFields > 1 ? ld("versesendingdataoptional") : '']]
+                    ['td', [ld('numbers-only'), ' ', browseFields > 1 ? ld('versesendingdataoptional') : '']]
                 ]
             ].forEach(addRowContent);
         });
@@ -425,74 +442,80 @@ TextBrowser.prototype.paramChange = function () {
                     ['td', {colspan: 12}, [
                         ['br'],
                         ['table', {align: 'center'}, [['tr', [['td',
-                            enumerated.length > 2 ? [
-                                ['select', {name: name}, enumerated.concat('All').map(function (choice) {
-                                    choice = choice === 'All' ? '' : choice;
-                                    var atts = {value: choice};
+                            enumerated.length > 2
+                                ? [
+                                    ['select', {name: name}, enumerated.concat('All').map(function (choice) {
+                                        choice = choice === 'All' ? '' : choice;
+                                        var atts = {value: choice};
+                                        if ($p.get(name) === choice) {
+                                            atts.selected = 'selected';
+                                        }
+                                        if (choice === '') {
+                                            atts.value = '';
+                                            return ['option', atts, [ld('enum-all')]];
+                                        }
+                                        return ['option', atts, [fv[choice]]];
+                                    })]
+                                ]
+                                : enumerated.map(function (choice, j, a) {
+                                    var atts = {name: name, type: 'radio', value: choice};
+                                    var allAtts = {name: name, type: 'radio', value: ''};
                                     if ($p.get(name) === choice) {
-                                        atts.selected = 'selected';
+                                        atts.checked = 'checked';
+                                    } else if ($p.has(name) && $p.get(name) === '') {
+                                        allAtts.checked = 'checked';
                                     }
-                                    if (choice === '') {
-                                        atts.value = '';
-                                        return ['option', atts, [ld("enum-all")]];
-                                    }
-                                    return ['option', atts, [fv[choice]]];
-                                })]
-                            ] :
-                            enumerated.map(function (choice, j, a) {
-                                var atts = {name: name, type: 'radio', value: choice};
-                                var allAtts = {name: name, type: 'radio', value: ''};
-                                if ($p.get(name) === choice) {
-                                    atts.checked = 'checked';
-                                }
-                                else if ($p.has(name) && $p.get(name) === '') {
-                                    allAtts.checked = 'checked';
-                                }
-                                return {'#': [
-                                    j > 0 ? nbsp.repeat(3) : '',
-                                    ['label', [
-                                        fv[choice],
-                                        ['input', atts]
-                                    ]],
-                                    j === a.length - 1 ?
-                                        {'#': [
-                                            nbsp.repeat(4),
-                                            ['label', [
-                                                ld("both"),
-                                                ['input', allAtts]
-                                            ]]
-                                        ]} :
-                                        ''
-                                ]};
-                            })
-                        ]]]]]
+                                    return {'#': [
+                                        j > 0 ? nbsp.repeat(3) : '',
+                                        ['label', [
+                                            fv[choice],
+                                            ['input', atts]
+                                        ]],
+                                        j === a.length - 1
+                                            ? {'#': [
+                                                nbsp.repeat(4),
+                                                ['label', [
+                                                    ld('both'),
+                                                    ['input', allAtts]
+                                                ]]
+                                            ]}
+                                            : ''
+                                    ]};
+                                })
+                            ]
+                        ]]]]
                     ]]
                 );
                 return arr;
             }, []),
             [
-                ['td', {colspan: 12, align: 'center'}, [['br'], ld("or"), ['br'], ['br']]]
+                ['td', {colspan: 12, align: 'center'}, [['br'], ld('or'), ['br'], ['br']]]
             ],
             [
                 ['td', {colspan: 12, align: 'center'}, [
                     // Todo: Could allow random with fixed starting and/or ending range
                     ['label', [
-                        ld("rnd"), nbsp.repeat(3),
-                        ['input', {id: 'rand', name: il('rand'), type: 'checkbox', value: l("yes"), checked: ($p.get('rand') === l("yes") ? 'checked' : undefined)}]
+                        ld('rnd'), nbsp.repeat(3),
+                        ['input', {id: 'rand', name: il('rand'), type: 'checkbox', value: l('yes'), checked: ($p.get('rand') === l('yes') ? 'checked' : undefined)}]
                     ]],
                     ['label', [
-                        ld("verses-context"), nbsp,
+                        ld('verses-context'), nbsp,
                         ['input', {name: il('context'), type: 'number', size: 4, value: $p.get('context')}]
                     ]],
                     nbsp.repeat(3),
-                    le("view-random-URL", 'input', 'value', {type: 'button', $on: {click: function () {
-                        var url = serializeParamsAsURL(function (paramsCopy) {
-                            paramsCopy.delete(il('random')); // In case it was added previously on this page, let's put random again toward the end
-                            paramsCopy.set(il('random'), l("yes"));
-                            paramsCopy.set(il('result'), l("yes"));
-                        });
-                        document.querySelector('#randomURL').value = url;
-                    }}}),
+                    le('view-random-URL', 'input', 'value', {
+                        type: 'button',
+                        $on: {
+                            click: function () {
+                                var url = serializeParamsAsURL(function (paramsCopy) {
+                                    paramsCopy.delete(il('random')); // In case it was added previously on this page, let's put random again toward the end
+                                    paramsCopy.set(il('random'), l('yes'));
+                                    paramsCopy.set(il('result'), l('yes'));
+                                });
+                                document.querySelector('#randomURL').value = url;
+                            }
+                        }
+                    }),
                     ['input', {id: 'randomURL', type: 'text'}]
                 ]]
             ]
@@ -556,22 +579,22 @@ TextBrowser.prototype.paramChange = function () {
         var columnsTable = ['table', {border: '1', cellpadding: '5', align: 'center'}, [
             ['tr', [
                 ['th', [
-                    ld("fieldno")
+                    ld('fieldno')
                 ]],
                 ['th', {align: 'left', width: '20'}, [
-                    ld("field_enabled")
+                    ld('field_enabled')
                 ]],
                 ['th', [
-                    ld("field_title")
+                    ld('field_title')
                 ]],
                 ['th', [
-                    ld("fieldinterlin")
+                    ld('fieldinterlin')
                 ]],
                 ['th', [
-                    ld("fieldcss")
+                    ld('fieldcss')
                 ]],
                 ['th', [
-                    ld("fieldsearch")
+                    ld('fieldsearch')
                 ]]
             ]],
             {'#': fields.map(function (fieldName, i) {
@@ -581,22 +604,22 @@ TextBrowser.prototype.paramChange = function () {
                 var fieldParam = $p.get(fieldIndex);
                 return ['tr', [
                     ['td', [String(idx)]],
-                    le("check-columns-to-browse", 'td', 'title', {}, [
-                        le("yes", 'input', 'value', {'class': 'fieldSelector', id: checkedIndex, name: iil('checked') + idx, checked: $p.get(checkedIndex) === l("no") ? undefined : 'checked', type: 'checkbox'})
+                    le('check-columns-to-browse', 'td', 'title', {}, [
+                        le('yes', 'input', 'value', {'class': 'fieldSelector', id: checkedIndex, name: iil('checked') + idx, checked: $p.get(checkedIndex) === l('no') ? undefined : 'checked', type: 'checkbox'})
                     ]),
-                    le("check-sequence", 'td', 'title', {}, [
+                    le('check-sequence', 'td', 'title', {}, [
                         ['select', {name: iil('field') + idx, id: fieldIndex, size: '1'},
                             fields.map(function (field, j) {
                                 var fn = getFieldAliasOrName(field) || field;
                                 var matchedFieldParam = fieldParam && fieldParam === field;
-                                return (matchedFieldParam || (!$p.has(fieldIndex) && j === i)) ?
-                                    ['option', {dataset: {name: field}, value: fn, selected: 'selected'}, [fn]] :
-                                    ['option', {dataset: {name: field}, value: fn}, [fn]];
+                                return (matchedFieldParam || (!$p.has(fieldIndex) && j === i))
+                                    ? ['option', {dataset: {name: field}, value: fn, selected: 'selected'}, [fn]]
+                                    : ['option', {dataset: {name: field}, value: fn}, [fn]];
                             })
                         ]
                     ]),
                     ['td', [ // Todo: Make as tag selector with fields as options
-                        le("interlinear-tips", 'input', 'title', {name: iil('interlin') + idx, value: $p.get('interlin' + idx)}) // Todo: Could allow i18n of numbers here
+                        le('interlinear-tips', 'input', 'title', {name: iil('interlin') + idx, value: $p.get('interlin' + idx)}) // Todo: Could allow i18n of numbers here
                     ]],
                     ['td', [ // Todo: Make as CodeMirror-highlighted CSS
                         ['input', {name: iil('css') + idx, value: $p.get('css' + idx)}]
@@ -608,67 +631,80 @@ TextBrowser.prototype.paramChange = function () {
             })},
             ['tr', [
                 ['td', {colspan: 3}, [
-                    le("check_all", 'input', 'value', {type: 'button', $on: {click: function () {
-                        Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) {
-                            checkbox.checked = true;
-                        });
-                    }}}),
-                    le("uncheck_all", 'input', 'value', {type: 'button', $on: {click: function () {
-                        Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) {
-                            checkbox.checked = false;
-                        });
-                    }}}),
-                    le("checkmark_locale_fields_only", 'input', 'value', {type: 'button', $on: {click: function () {
-                        // Todo: remember this locales choice by cookie?
-                        function getPreferredLanguages (lngs) {
-                            var langArr = [];
-                            lngs.forEach(function (lng) {
-                                // Todo: Check for multiple separate hyphenated groupings (for each supplied language)
-                                var higherLocale = lng.replace(/\-.*$/, '');
-                                if (higherLocale === lng) {
-                                    langArr.push(lng);
-                                }
-                                else {
-                                    langArr.push(lng, higherLocale);
-                                }
-                            });
-                            return langArr;
-                        }
-                        fields.forEach(function (fld, i) {
-                            var idx = i + 1;
-                            var field = document.querySelector('#field' + idx).selectedOptions[0].dataset.name; // Redundant with "fld" but may need to retrieve later out of order?
-                            var metaFieldInfo = metadataObj && metadataObj.fields && metadataObj.fields[field];
-                            var metaLang;
-                            if (metaFieldInfo) {
-                                metaLang = metadataObj.fields[field].lang;
+                    le('check_all', 'input', 'value', {
+                        type: 'button',
+                        $on: {
+                            click: function () {
+                                Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) {
+                                    checkbox.checked = true;
+                                });
                             }
-                            var localeStrings = metadataObj && metadataObj['localization-strings'];
+                        }
+                    }),
+                    le('uncheck_all', 'input', 'value', {
+                        type: 'button',
+                        $on: {
+                            click: function () {
+                                Array.from(document.querySelectorAll('.fieldSelector')).forEach(function (checkbox) {
+                                    checkbox.checked = false;
+                                });
+                            }
+                        }
+                    }),
+                    le('checkmark_locale_fields_only', 'input', 'value', {
+                        type: 'button',
+                        $on: {
+                            click: function () {
+                                // Todo: remember this locales choice by cookie?
+                                function getPreferredLanguages (lngs) {
+                                    var langArr = [];
+                                    lngs.forEach(function (lng) {
+                                        // Todo: Check for multiple separate hyphenated groupings (for each supplied language)
+                                        var higherLocale = lng.replace(/-.*$/, '');
+                                        if (higherLocale === lng) {
+                                            langArr.push(lng);
+                                        } else {
+                                            langArr.push(lng, higherLocale);
+                                        }
+                                    });
+                                    return langArr;
+                                }
+                                fields.forEach(function (fld, i) {
+                                    var idx = i + 1;
+                                    var field = document.querySelector('#field' + idx).selectedOptions[0].dataset.name; // Redundant with 'fld' but may need to retrieve later out of order?
+                                    var metaFieldInfo = metadataObj && metadataObj.fields && metadataObj.fields[field];
+                                    var metaLang;
+                                    if (metaFieldInfo) {
+                                        metaLang = metadataObj.fields[field].lang;
+                                    }
+                                    var localeStrings = metadataObj && metadataObj['localization-strings'];
 
-                            // If this is a localized field (e.g., enum), we don't want
-                            //  to avoid as may be translated (should check though)
-                            var hasFieldValue = localeStrings && Object.keys(localeStrings).some(lng => {
-                                var fv = localeStrings[lng] && localeStrings[lng].fieldvalue;
-                                return fv && fv[field];
-                            });
+                                    // If this is a localized field (e.g., enum), we don't want
+                                    //  to avoid as may be translated (should check though)
+                                    var hasFieldValue = localeStrings && Object.keys(localeStrings).some(lng => {
+                                        var fv = localeStrings[lng] && localeStrings[lng].fieldvalue;
+                                        return fv && fv[field];
+                                    });
 
-                            // Todo: Add to this optionally with one-off tag input box
-                            // Todo: Switch to fallbackLanguages so can default to navigator.languages?
-                            var langCodes = localStorage.getItem(that.namespace + '-langCodes');
-                            var preferredLanguages = getPreferredLanguages(
-                                (langCodes && JSON.parse(langCodes)) || [preferredLocale]
-                            );
-                            document.querySelector('#checked' + idx).checked =
-                                hasFieldValue ||
-                                (metaLang && preferredLanguages.includes(metaLang)) ||
-                                schemaItems.some(item =>
-                                    item.title === field && item.type !== 'string'
-                                );
-                        });
-                    }}})
+                                    // Todo: Add to this optionally with one-off tag input box
+                                    // Todo: Switch to fallbackLanguages so can default to navigator.languages?
+                                    var langCodes = localStorage.getItem(that.namespace + '-langCodes');
+                                    var preferredLanguages = getPreferredLanguages(
+                                        (langCodes && JSON.parse(langCodes)) || [preferredLocale]
+                                    );
+                                    document.querySelector('#checked' + idx).checked =
+                                        hasFieldValue ||
+                                        (metaLang && preferredLanguages.includes(metaLang)) ||
+                                        schemaItems.some(item =>
+                                            item.title === field && item.type !== 'string'
+                                        );
+                                });
+                            }
+                        }
+                    })
                 ]]
             ]]
         ]];
-
 
         // var arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
 
@@ -712,12 +748,19 @@ TextBrowser.prototype.paramChange = function () {
                         ['div', [
                             ['label', {for: 'prefLangs'}, [l('Preferred language(s)')]],
                             ['br'],
-                            ['select', {id: 'prefLangs', multiple: 'multiple', size: langs.length, $on: {change: function (e) {
-                                // Todo: EU disclaimer re: storage?
-                                localStorage.setItem(that.namespace + '-langCodes', JSON.stringify(Array.from(e.target.selectedOptions).map(function (opt) {
-                                    return opt.value;
-                                })));
-                            }}}, langs.map(function (lan) {
+                            ['select', {
+                                id: 'prefLangs',
+                                multiple: 'multiple',
+                                size: langs.length,
+                                $on: {
+                                    change: function (e) {
+                                        // Todo: EU disclaimer re: storage?
+                                        localStorage.setItem(that.namespace + '-langCodes', JSON.stringify(Array.from(e.target.selectedOptions).map(function (opt) {
+                                            return opt.value;
+                                        })));
+                                    }
+                                }
+                            }, langs.map(function (lan) {
                                 var langCodes = localStorage.getItem(that.namespace + '-langCodes');
                                 langCodes = langCodes && JSON.parse(langCodes);
                                 var atts = {value: lan.code};
@@ -727,7 +770,6 @@ TextBrowser.prototype.paramChange = function () {
                                 return ['option', atts, [
                                     imfl(['languages', lan.code])
                                 ]];
-
                             })]
                         ]]
                     ]]
@@ -743,18 +785,23 @@ TextBrowser.prototype.paramChange = function () {
                             ['tr', {valign: 'top'}, [
                                 ['td', [
                                     columnsTable,
-                                    le("save-settings-URL", 'input', 'value', {type: 'button', $on: {click: function () {
-                                        var url = serializeParamsAsURL(function (paramsCopy) {
-                                            paramsCopy.delete(il('random')); // In case it was added previously on this page, let's remove it
-                                        });
-                                        document.querySelector('#settings-URL').value = url;
-                                    }}}),
+                                    le('save-settings-URL', 'input', 'value', {
+                                        type: 'button',
+                                        $on: {
+                                            click: function () {
+                                                var url = serializeParamsAsURL(function (paramsCopy) {
+                                                    paramsCopy.delete(il('random')); // In case it was added previously on this page, let's remove it
+                                                });
+                                                document.querySelector('#settings-URL').value = url;
+                                            }
+                                        }
+                                    }),
                                     ['input', {id: 'settings-URL'}]
                                 ]],
                                 ['td', {id: 'advancedformatting', style: {display: (hideFormattingSection ? 'none' : 'block')}}, [
-                                    ['h3', [ld("advancedformatting")]],
+                                    ['h3', [ld('advancedformatting')]],
                                     ['label', [
-                                        ld("textcolor"),
+                                        ld('textcolor'),
                                         ['select', {name: il('colorName')}, colors.map(function (color, i) {
                                             var atts = {value: l(color)};
                                             if ($p.get('colorName') === l(color) || (i === 1 && !$p.has('colorName'))) {
@@ -765,12 +812,12 @@ TextBrowser.prototype.paramChange = function () {
                                     ]],
 
                                     ['label', [
-                                        nbsp, ld("or_entercolor"),
+                                        nbsp, ld('or_entercolor'),
                                         ['input', {name: il('color'), type: 'text', value: ($p.get('color') || '#'), size: '7', maxlength: '7'}]
                                     ]],
                                     ['br'], ['br'],
                                     ['label', [
-                                        ld("backgroundcolor"),
+                                        ld('backgroundcolor'),
                                         ['select', {name: il('bgcolorName')}, colors.map(function (color, i) {
                                             var atts = {value: l(color)};
                                             if ($p.get('bgcolorName') === l(color) || (i === 14 && !$p.has('bgcolorName'))) {
@@ -780,12 +827,12 @@ TextBrowser.prototype.paramChange = function () {
                                         })]
                                     ]],
                                     ['label', [
-                                        nbsp, ld("or_entercolor"),
+                                        nbsp, ld('or_entercolor'),
                                         ['input', {name: il('bgcolor'), type: 'text', value: ($p.get('bgcolor') || '#'), size: '7', maxlength: '7'}]
                                     ]],
                                     ['br'], ['br'],
                                     ['label', [
-                                        ld("text_font"),
+                                        ld('text_font'),
                                         // Todo: remove hard-coded direction if i81nizing; also i18nize fontSeq param
                                         ['select', {name: il('fontSeq'), dir: 'ltr'}, fonts.map(function (fontSeq, i) {
                                             var atts = {value: fontSeq};
@@ -797,7 +844,7 @@ TextBrowser.prototype.paramChange = function () {
                                     ]],
                                     ['br'], ['br'],
                                     ['label', [
-                                        ld("font_style"), nbsp,
+                                        ld('font_style'), nbsp,
                                         ['select', {name: il('fontstyle')}, [
                                             'italic',
                                             'normal',
@@ -813,24 +860,24 @@ TextBrowser.prototype.paramChange = function () {
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        ld("font_variant"), nbsp.repeat(3),
+                                        ld('font_variant'), nbsp.repeat(3),
                                         ['label', [
-                                            ['input', {name: il('fontvariant'), type: 'radio', value: l("normal"), checked: $p.get('fontvariant') === l("smallcaps") ? undefined : 'checked'}],
-                                            ld("fontvariant_normal"), nbsp
+                                            ['input', {name: il('fontvariant'), type: 'radio', value: l('normal'), checked: $p.get('fontvariant') === l('smallcaps') ? undefined : 'checked'}],
+                                            ld('fontvariant_normal'), nbsp
                                         ]],
                                         ['label', [
-                                            ['input', {name: il('fontvariant'), type: 'radio', value: l("smallcaps"), checked: $p.get('fontvariant') === l("smallcaps") ? 'checked' : undefined}],
-                                            ld("smallcaps"), nbsp
+                                            ['input', {name: il('fontvariant'), type: 'radio', value: l('smallcaps'), checked: $p.get('fontvariant') === l('smallcaps') ? 'checked' : undefined}],
+                                            ld('smallcaps'), nbsp
                                         ]]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        ld("font_weight"), " (normal, bold, 100-900, etc.): ", // Todo: i18n and allow for normal/bold pulldown and float input?
+                                        ld('font_weight'), ' (normal, bold, 100-900, etc.): ', // Todo: i18n and allow for normal/bold pulldown and float input?
                                         ['input', {name: il('fontweight'), type: 'text', value: $p.has('fontweight') ? $p.get('fontweight') : 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        ld("font_size"), " (14pt, 14px, small, 75%, etc.): ",
+                                        ld('font_size'), ' (14pt, 14px, small, 75%, etc.): ',
                                         ['input', {name: il('fontsize'), type: 'text', value: $p.get('fontsize'), size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
@@ -839,8 +886,8 @@ TextBrowser.prototype.paramChange = function () {
                                     */
                                     // Todo: i18nize title and values?
                                     // Todo: remove hard-coded direction if i81nizing
-                                    ['label', {dir: 'ltr', title: "wider, narrower, semi-expanded, ultra-condensed, extra-expanded, etc."}, [
-                                        ld("font_stretch"), nbsp,
+                                    ['label', {dir: 'ltr', title: 'wider, narrower, semi-expanded, ultra-condensed, extra-expanded, etc.'}, [
+                                        ld('font_stretch'), nbsp,
                                         ['select', {name: il('fontstretch')},
                                             ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(function (stretch) {
                                                 var atts = {value: stretch};
@@ -854,20 +901,20 @@ TextBrowser.prototype.paramChange = function () {
                                     /**/
                                     ['br'], ['br'],
                                     ['label', [
-                                        ld("letter_spacing"), " (normal, .9em, -.05cm): ",
+                                        ld('letter_spacing'), ' (normal, .9em, -.05cm): ',
                                         ['input', {name: il('letterspacing'), type: 'text', value: $p.has('letterspacing') ? $p.get('letterspacing') : 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        ld("line_height"), " (normal, 1.5, 22px, 150%): ",
+                                        ld('line_height'), ' (normal, 1.5, 22px, 150%): ',
                                         ['input', {name: il('lineheight'), type: 'text', value: $p.has('lineheight') ? $p.get('lineheight') : 'normal', size: '7', maxlength: '12'}]
                                     ]],
                                     ['br'], ['br'],
-                                    le("tableformatting_tips", 'h3', 'title', {}, [
-                                        ld("tableformatting")
+                                    le('tableformatting_tips', 'h3', 'title', {}, [
+                                        ld('tableformatting')
                                     ]),
                                     ['div', [
-                                        ld("header_wstyles"), nbsp.repeat(2),
+                                        ld('header_wstyles'), nbsp.repeat(2),
                                         {'#': [
                                             ['yes', 'y'],
                                             ['no', 'n'],
@@ -880,37 +927,37 @@ TextBrowser.prototype.paramChange = function () {
                                         })}
                                     ]],
                                     ['label', [
-                                        ['input', {name: il('wishcaption'), type: 'checkbox', value: l("yes"), checked: $p.get('wishcaption') === l("yes") ? 'checked' : undefined}],
-                                        nbsp.repeat(2), ld("wishcaption")
+                                        ['input', {name: il('wishcaption'), type: 'checkbox', value: l('yes'), checked: $p.get('wishcaption') === l('yes') ? 'checked' : undefined}],
+                                        nbsp.repeat(2), ld('wishcaption')
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        ['input', {name: il('headerfixed'), type: 'checkbox', value: l("yes"), checked: $p.get('headerfixed') === l("yes") ? 'checked' : undefined}],
-                                        nbsp.repeat(2), ld("headerfixed-wishtoscroll")
+                                        ['input', {name: il('headerfixed'), type: 'checkbox', value: l('yes'), checked: $p.get('headerfixed') === l('yes') ? 'checked' : undefined}],
+                                        nbsp.repeat(2), ld('headerfixed-wishtoscroll')
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        ld("table_wborder"), nbsp.repeat(2),
+                                        ld('table_wborder'), nbsp.repeat(2),
                                         ['label', [
                                             ['input', {name: il('border'), type: 'radio', value: '1', checked: $p.get('border') === '0' ? undefined : 'checked'}],
-                                            ld("yes"), nbsp.repeat(3)
+                                            ld('yes'), nbsp.repeat(3)
                                         ]],
                                         ['label', [
                                             ['input', {name: il('border'), type: 'radio', value: '0', checked: $p.get('border') === '0' ? 'checked' : undefined}],
-                                            ld("no")
+                                            ld('no')
                                         ]]
                                     ]],
                                     ['br'],
                                     ['label', [
-                                        ['input', {name: il('transpose'), type: 'checkbox', value: l("yes"), checked: $p.get('transpose') === l("yes") ? 'checked' : undefined}],
-                                        nbsp.repeat(2), ld("transpose")
+                                        ['input', {name: il('transpose'), type: 'checkbox', value: l('yes'), checked: $p.get('transpose') === l('yes') ? 'checked' : undefined}],
+                                        nbsp.repeat(2), ld('transpose')
                                     ]],
                                     ['br'], ['br'],
-                                    le("pageformatting_tips", 'h3', 'title', {}, [
-                                        ld("pageformatting")
+                                    le('pageformatting_tips', 'h3', 'title', {}, [
+                                        ld('pageformatting')
                                     ]),
-                                    le("outputmode_tips", 'label', 'title', {}, [
-                                        ld("outputmode"),
+                                    le('outputmode_tips', 'label', 'title', {}, [
+                                        ld('outputmode'),
                                         // Todo: Could i18nize, but would need smaller values
                                         ['select', {name: il('outputmode')}, [
                                             'table',
@@ -922,7 +969,7 @@ TextBrowser.prototype.paramChange = function () {
                                             if ($p.get('outputmode') === mode) {
                                                 atts.selected = 'selected';
                                             }
-                                            return lo("outputmode_" + mode, atts);
+                                            return lo('outputmode_' + mode, atts);
                                         })]
                                     ])
                                 ]]
@@ -932,8 +979,8 @@ TextBrowser.prototype.paramChange = function () {
                                     // Todo: Allow naming of the field differently for Persian? Allowing any column to be resized would probably be most consistent with this project's aim to not make arbitrary decisions on what should be customizable, but rather make as much as possible customizable. It may also be helpful for Chinese, etc. If adding, also need $p.get() for defaulting behavior
                                     {'#': arabicContent.map(function (item, i) {
                                         return {'#': [
-                                            "Width of Arabic column: ", // Todo: i18n
-                                            ['input', {name: il("arw") + i, type: 'text', value: '', size: '7', maxlength: '12'}]
+                                            'Width of Arabic column: ', // Todo: i18n
+                                            ['input', {name: il('arw') + i, type: 'text', value: '', size: '7', maxlength: '12'}]
                                         ]};
                                     })} :
                                     ''
@@ -942,15 +989,20 @@ TextBrowser.prototype.paramChange = function () {
                         ]]
                     ]],
                     ['p', {align: 'center'}, [
-                        le("submitgo", 'input', 'value', {type: 'button', $on: {click: function () {
-                            // Todo:
-                            var url = serializeParamsAsURL(function (paramsCopy) {
-                                paramsCopy.delete(il('random')); // In case it was added previously on this page, let's put random again toward the end
-                                paramsCopy.set(il('random'), l("yes"));
-                                paramsCopy.set(il('result'), l("yes"));
-                            });
-                            window.location.href = url;
-                        }}})
+                        le('submitgo', 'input', 'value', {
+                            type: 'button',
+                            $on: {
+                                click: function () {
+                                    // Todo:
+                                    var url = serializeParamsAsURL(function (paramsCopy) {
+                                        paramsCopy.delete(il('random')); // In case it was added previously on this page, let's put random again toward the end
+                                        paramsCopy.set(il('random'), l('yes'));
+                                        paramsCopy.set(il('result'), l('yes'));
+                                    });
+                                    window.location.href = url;
+                                }
+                            }
+                        })
                     ]]
                 ]]
             ],
@@ -969,10 +1021,11 @@ TextBrowser.prototype.paramChange = function () {
             // Todo: Allow use of dbs and fileGroup together in base directories?
             function getMetadata (file, property, cb) {
                 var currDir = getCurrDir();
-                JsonRefs.resolveRefsAt(currDir + file + (property ? '#/' + property : '')).
-                    then(function (rJson, metadata) {
+                JsonRefs.resolveRefsAt(currDir + file + (property ? '#/' + property : ''))
+                    .then(function (rJson, metadata) {
                         cb(rJson.resolved, metadata);
-                    }).catch(function (err) {alert('catch:' + err);
+                    }).catch(function (err) {
+                        alert('catch:' + err);
                         throw err;
                     });
             }
@@ -1006,22 +1059,27 @@ TextBrowser.prototype.paramChange = function () {
 
             getMetadata(schemaFile, schemaProperty, function (schemaObj) {
                 getMetadata(metadataFile, metadataProperty, function (metadataObj) {
-                    document.title = lf({key: "browserfile-workdisplay", values: {work: fileData ?
-                        getMetaProp(metadataObj, 'alias') : ''
-                    }, fallback: true});
+                    document.title = lf({
+                        key: 'browserfile-workdisplay',
+                        values: {
+                            work: fileData
+                                ? getMetaProp(metadataObj, 'alias')
+                                : ''
+                        },
+                        fallback: true
+                    });
                     _displayWork(l, defineFormatter, schemaObj, metadataObj);
                 });
             });
-
         }, function (err) {
             alert(err);
         });
     }
 
-    function resultsDisplay (/* l, defineFormatter*/) {
+    function resultsDisplay (/* l, defineFormatter */) {
         // Will need to retrieve fileData as above (abstract?)
-        // document.title = l({key: "browserfile-resultsdisplay", values: {work: fileData ?
-        //    l({key: ["tablealias", $p.get('work')], fallback: true}) : ''
+        // document.title = l({key: 'browserfile-resultsdisplay', values: {work: fileData ?
+        //    l({key: ['tablealias', $p.get('work')], fallback: true}) : ''
         // }, fallback: true});
     }
 
@@ -1029,7 +1087,7 @@ TextBrowser.prototype.paramChange = function () {
         return that.siteData['localization-strings'][lan];
     }
 
-    function localeCallback (/* l, defineFormatter*/) {
+    function localeCallback (/* l, defineFormatter */) {
         var l10n = arguments[0];
         this.l10n = l10n;
         $p.l10n = l10n;
@@ -1065,5 +1123,4 @@ TextBrowser.prototype.paramChange = function () {
 };
 
 return TextBrowser;
-
 }());

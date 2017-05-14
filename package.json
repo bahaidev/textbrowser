@@ -16,12 +16,18 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "opn": "^4.0.1",
-    "node-static": "^0.7.7",
-    "eslint": "^3.8.1",
-    "nodeunit": "^0.10.x",
+    "opn": "4.0.1",
+    "node-static": "0.7.7",
+    "eslint": "3.19.0",
+    "eslint-config-standard": "10.2.1",
+    "eslint-plugin-compat": "1.0.2",
+    "eslint-plugin-import": "2.2.0",
+    "eslint-plugin-node": "4.2.2",
+    "eslint-plugin-promise": "3.5.0",
+    "eslint-plugin-standard": "3.0.1",
+    "nodeunit": "0.10.x",
     "phantom-jasmine": "0.x",
-    "remark-lint": "^5.1.0"
+    "remark-lint": "5.1.0"
   },
   "engines": {},
   "author": "Brett Zamir",
