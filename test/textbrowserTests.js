@@ -1,7 +1,13 @@
-/* globals Ajv, JsonRefs, Promise, module */
-/* exported textbrowserTests, bahaiwritingsTests */
+/* globals Ajv:true, JsonRefs:true, Promise, module, require */
+/* exported textbrowserTests */
 
-let textbrowserTests, bahaiwritingsTests;
+var Ajv, JsonRefs; // eslint-disable-line no-var
+if (typeof exports !== 'undefined') {
+    Ajv = require('ajv');
+    JsonRefs = require('json-refs');
+}
+
+let textbrowserTests;
 (function () {
 /* eslint-disable indent */
 'use strict';
@@ -34,11 +40,11 @@ textbrowserTests = {
     'locales tests': function (test) {
         test.expect(4); // eslint-disable-line no-magic-numbers
         Promise.all([
-            JsonRefs.resolveRefsAt('locale.jsonschema', {relativeBase: schemaBase}),
-            JsonRefs.resolveRefsAt('en-US.json', {relativeBase: localesBase}),
-            JsonRefs.resolveRefsAt('ar.json', {relativeBase: localesBase}),
-            JsonRefs.resolveRefsAt('fa.json', {relativeBase: localesBase}),
-            JsonRefs.resolveRefsAt('ru.json', {relativeBase: localesBase})
+            JsonRefs.resolveRefsAt('locale.jsonschema', {location: schemaBase}),
+            JsonRefs.resolveRefsAt('en-US.json', {location: localesBase}),
+            JsonRefs.resolveRefsAt('ar.json', {location: localesBase}),
+            JsonRefs.resolveRefsAt('fa.json', {location: localesBase}),
+            JsonRefs.resolveRefsAt('ru.json', {location: localesBase})
         ]).then(function ([{resolved: schema}, ...locales]) {
             locales.forEach(function ({resolved: locale}) {
                 const valid = validate(schema, locale, 'locales tests');
@@ -49,8 +55,8 @@ textbrowserTests = {
     },
     'languages.json test': function (test) { // See TextBrowser to-dos on what must be fixed for this to work
         Promise.all([
-            JsonRefs.resolveRefsAt('languages.jsonschema', {relativeBase: schemaBase}),
-            JsonRefs.resolveRefsAt('languages.json', {relativeBase: appdataBase})
+            JsonRefs.resolveRefsAt('languages.jsonschema', {location: schemaBase}),
+            JsonRefs.resolveRefsAt('languages.json', {location: appdataBase})
         ]).then(function ([{resolved: schema}, {resolved: data}]) {
             const valid = validate(schema, data, 'languages.json test');
             test.strictEqual(valid, true);
@@ -60,7 +66,7 @@ textbrowserTests = {
 };
 
 if (typeof exports !== 'undefined') {
-    module.exports = bahaiwritingsTests;
+    module.exports = textbrowserTests;
 }
 /* eslint-enable indent */
 }());

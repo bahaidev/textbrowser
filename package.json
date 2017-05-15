@@ -4,7 +4,7 @@
   "description": "Multilinear text browser",
   "main": "resources/index.js",
   "scripts": {
-    "node": "node test/textbrowserTests",
+    "node": "nodeunit test/textbrowserTests.js",
     "eslint": "eslint ./*.js resources/*.js test/*.js",
     "test": "npm run eslint && node server http://127.0.0.1/test/ 8081",
     "start-no-open": "node server 0",
@@ -17,6 +17,8 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "ajv": "5.1.1",
+    "json-refs": "3.0.0",
     "opn": "5.0.0",
     "node-static": "0.7.9",
     "eslint": "3.19.0",
