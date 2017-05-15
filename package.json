@@ -5,7 +5,7 @@
   "main": "resources/index.js",
   "scripts": {
     "node": "node test/textbrowserTests",
-    "eslint": "eslint ./*.js resources/*.js",
+    "eslint": "eslint ./*.js resources/*.js test/*.js",
     "test": "npm run eslint && node server http://127.0.0.1/test/ 8081",
     "start-no-open": "node server 0",
     "phantom": "phantom-jasmine test/tests.html",
@@ -17,8 +17,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "opn": "4.0.1",
-    "node-static": "0.7.7",
+    "opn": "5.0.0",
+    "node-static": "0.7.9",
     "eslint": "3.19.0",
     "eslint-config-standard": "10.2.1",
     "eslint-plugin-compat": "1.0.2",
@@ -26,9 +26,9 @@
     "eslint-plugin-node": "4.2.2",
     "eslint-plugin-promise": "3.5.0",
     "eslint-plugin-standard": "3.0.1",
-    "nodeunit": "0.10.x",
-    "phantom-jasmine": "0.x",
-    "remark-lint": "5.1.0"
+    "nodeunit": "0.11.0",
+    "phantom-jasmine": "0.3.0",
+    "remark-lint": "6.0.0"
   },
   "engines": {},
   "author": "Brett Zamir",

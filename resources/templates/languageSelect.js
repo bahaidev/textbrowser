@@ -14,7 +14,8 @@ Templates.languageSelect = ({langs, getLanguageFromCode, followParams, $p}) =>
         )]
     ], document.body);
 
-    // Todo: Add in Go button (with 'submitgo' localization string) to avoid need for pull-down if using first selection?
+    // Todo: Add in Go button (with 'submitgo' localization string) to
+    //   avoid need for pull-down if using first selection?
     /* Works too:
     langs.map(({code, name}) =>
         ['div', [
