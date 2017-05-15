@@ -1,16 +1,15 @@
-/*global Ajv, JsonRefs, Promise, module*/
-/*exported textbrowserTests, bahaiwritingsTests*/
+/* globals Ajv, JsonRefs, Promise, module */
+/* exported textbrowserTests, bahaiwritingsTests */
 
-var textbrowserTests, bahaiwritingsTests;
+let textbrowserTests, bahaiwritingsTests;
 (function () {
-
-/* eslint-disable indent*/
+/* eslint-disable indent */
 'use strict';
 
-var appBase = '/';
-var schemaBase = appBase + 'general-schemas/';
-var localesBase = appBase + 'locales/';
-var appdataBase = appBase + 'appdata/';
+const appBase = '/';
+const schemaBase = appBase + 'general-schemas/';
+const localesBase = appBase + 'locales/';
+const appdataBase = appBase + 'appdata/';
 
 /**
 * @param {object} schema Schema object
@@ -19,16 +18,14 @@ var appdataBase = appBase + 'appdata/';
 * @returns {boolean} Whether validation succeeded
 */
 function validate (schema, data, testName) {
-    var ajv = Ajv(); // eslint-disable-line new-cap
-    var valid;
+    const ajv = Ajv(); // eslint-disable-line new-cap
+    let valid;
     try {
         valid = ajv.validate(schema, data);
-    }
-    catch (e) {
+    } catch (e) {
         console.log('(' + testName + ') ' + e); // eslint-disable-line no-console
-    }
-    finally {
-        if (!valid) {console.log(JSON.stringify(ajv.errors));} // eslint-disable-line no-console
+    } finally {
+        if (!valid) { console.log(JSON.stringify(ajv.errors)); } // eslint-disable-line no-console
     }
     return valid;
 }
@@ -44,7 +41,7 @@ textbrowserTests = {
             JsonRefs.resolveRefsAt('ru.json', {relativeBase: localesBase})
         ]).then(function ([{resolved: schema}, ...locales]) {
             locales.forEach(function ({resolved: locale}) {
-                var valid = validate(schema, locale, 'locales tests');
+                const valid = validate(schema, locale, 'locales tests');
                 test.strictEqual(valid, true);
             });
             test.done();
@@ -55,7 +52,7 @@ textbrowserTests = {
             JsonRefs.resolveRefsAt('languages.jsonschema', {relativeBase: schemaBase}),
             JsonRefs.resolveRefsAt('languages.json', {relativeBase: appdataBase})
         ]).then(function ([{resolved: schema}, {resolved: data}]) {
-            var valid = validate(schema, data, 'languages.json test');
+            const valid = validate(schema, data, 'languages.json test');
             test.strictEqual(valid, true);
             test.done();
         });
@@ -65,5 +62,5 @@ textbrowserTests = {
 if (typeof exports !== 'undefined') {
     module.exports = bahaiwritingsTests;
 }
-
+/* eslint-enable indent */
 }());

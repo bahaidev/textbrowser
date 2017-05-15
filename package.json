@@ -5,7 +5,8 @@
   "main": "resources/index.js",
   "scripts": {
     "node": "node test/textbrowserTests",
-    "test": "node server http://127.0.0.1/test/ 8081",
+    "eslint": "eslint ./*.js resources/*.js",
+    "test": "npm run eslint && node server http://127.0.0.1/test/ 8081",
     "start-no-open": "node server 0",
     "phantom": "phantom-jasmine test/tests.html",
     "prepublish": "bower install"

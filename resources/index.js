@@ -163,4 +163,5 @@ TextBrowser.prototype.paramChange = function () {
 };
 
 return TextBrowser;
+/* eslint-enable indent */
 }());

@@ -1,4 +1,4 @@
-/*eslint-env node */
+/* eslint-env node */
 'use strict';
 const ns = require('node-static');
 const opn = require('opn');
