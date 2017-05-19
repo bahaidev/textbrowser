@@ -209,9 +209,6 @@ shows its usage (assuming paths relative to a package containing
 1. Waiting: ES6 Modules in browser or if need Babel routine: Switch to imports over script tags and
     functions passing main functions as arguments
 
-1.  Testing: Cause `languages.json` test to distinguish relative
-    base for the file's path and the path of its internally-referenced
-    locales (see <https://github.com/whitlockjc/json-refs/issues/76>).
 1.  Refactoring
     1.  Rename localization strings, especially auto-field ones; consider
         making some reusable, pointing to scripts, or how else to designate

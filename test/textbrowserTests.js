@@ -1,18 +1,27 @@
-/* globals Ajv:true, JsonRefs:true, Promise, module, require */
+/* globals __dirname, Ajv:true, JsonRefs:true, path:true, Promise, module, require */
 /* exported textbrowserTests */
 
-var Ajv, JsonRefs; // eslint-disable-line no-var
-if (typeof exports !== 'undefined') {
-    Ajv = require('ajv');
-    JsonRefs = require('json-refs');
-}
+var Ajv, JsonRefs, __dirname, path; // eslint-disable-line no-var
 
 let textbrowserTests;
 (function () {
 /* eslint-disable indent */
 'use strict';
 
-const appBase = '/';
+let appBase = '../';
+
+if (typeof exports !== 'undefined') {
+    Ajv = require('ajv');
+    JsonRefs = require('json-refs');
+    path = require('path');
+} else {
+    path = {
+        join: (...args) => args.join('')
+    };
+    appBase = location.protocol + '//' + location.host + '/';
+    __dirname = ''; // eslint-disable-line no-global-assign
+}
+
 const schemaBase = appBase + 'general-schemas/';
 const localesBase = appBase + 'locales/';
 const appdataBase = appBase + 'appdata/';
@@ -39,13 +48,17 @@ function validate (schema, data, testName) {
 textbrowserTests = {
     'locales tests': function (test) {
         test.expect(4); // eslint-disable-line no-magic-numbers
-        Promise.all([
-            JsonRefs.resolveRefsAt('locale.jsonschema', {location: schemaBase}),
-            JsonRefs.resolveRefsAt('en-US.json', {location: localesBase}),
-            JsonRefs.resolveRefsAt('ar.json', {location: localesBase}),
-            JsonRefs.resolveRefsAt('fa.json', {location: localesBase}),
-            JsonRefs.resolveRefsAt('ru.json', {location: localesBase})
-        ]).then(function ([{resolved: schema}, ...locales]) {
+        Promise.all(
+            [
+                'locale.jsonschema',
+                'en-US.json',
+                'ar.json',
+                'fa.json',
+                'ru.json'
+            ].map((file, i) => JsonRefs.resolveRefsAt(
+                path.join(__dirname, i ? localesBase : schemaBase, file)
+            ))
+        ).then(function ([{resolved: schema}, ...locales]) {
             locales.forEach(function ({resolved: locale}) {
                 const valid = validate(schema, locale, 'locales tests');
                 test.strictEqual(valid, true);
@@ -53,10 +66,10 @@ textbrowserTests = {
             test.done();
         });
     },
-    'languages.json test': function (test) { // See TextBrowser to-dos on what must be fixed for this to work
+    'languages.json test': function (test) {
         Promise.all([
-            JsonRefs.resolveRefsAt('languages.jsonschema', {location: schemaBase}),
-            JsonRefs.resolveRefsAt('languages.json', {location: appdataBase})
+            JsonRefs.resolveRefsAt(path.join(__dirname, schemaBase, 'languages.jsonschema')),
+            JsonRefs.resolveRefsAt(path.join(__dirname, appdataBase, 'languages.json'))
         ]).then(function ([{resolved: schema}, {resolved: data}]) {
             const valid = validate(schema, data, 'languages.json test');
             test.strictEqual(valid, true);
