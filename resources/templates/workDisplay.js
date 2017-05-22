@@ -463,20 +463,8 @@ Templates.workDisplay = {
         ])
     ]],
     addEnumFieldValues: ({
-        enumFvs, enumerateds, fallbackDirection, iil, il, l, le, $p, serializeParamsAsURL, content
+        enumFvs, enumerateds, fallbackDirection, iil, il, ld, l, le, $p, serializeParamsAsURL, content
     }) => {
-        // Returns plain text node or element (as Jamilih) with fallback direction
-        const ld = (key, values, formats) =>
-            l({
-                key: key,
-                values: values,
-                formats: formats,
-                fallback: ({message}) =>
-                    // Displaying as div with inline display instead of span since Firefox
-                    //    puts punctuation at left otherwise (bdo dir seemed to have
-                    //    issues in Firefox)
-                    ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [message]]
-            });
         const addRowContent = (rowContent) => {
             if (!rowContent || !rowContent.length) { return; }
             content.push(['tr', rowContent]);
@@ -705,22 +693,9 @@ Templates.workDisplay = {
         l, namespace, heading, fallbackDirection, imfl, langs, fields, localizeParamNames,
         serializeParamsAsURL,
         hideFormattingSection, $p,
-        getMetaProp, metadataObj, il, le,
-        iil, getFieldAliasOrName, preferredLocale, schemaItems
+        getMetaProp, metadataObj, il, le, ld,
+        iil, getFieldAliasOrName, preferredLocale, schemaItems, content
     }) => {
-        // Returns plain text node or element (as Jamilih) with fallback direction
-        // Todo: Resolve fact duplicating this function in another template in this file
-        const ld = (key, values, formats) =>
-            l({
-                key: key,
-                values: values,
-                formats: formats,
-                fallback: ({message}) =>
-                    // Displaying as div with inline display instead of span since
-                    //    Firefox puts punctuation at left otherwise (bdo dir
-                    //    seemed to have issues in Firefox)
-                    ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [message]]
-            });
         const lo = (key, atts) =>
             ['option', atts, [
                 l({
@@ -742,14 +717,14 @@ Templates.workDisplay = {
                         const prefs = $('#preferences');
                         prefs.hidden = !prefs.hidden;
                     }}}, [l('Preferences')]],
-                    Templates.getPreferences({
+                    Templates.workDisplay.getPreferences({
                         langs, imfl, l, localizeParamNames, namespace, hideFormattingSection
                     })
                 ]],
                 ['h2', [heading]],
                 ['br'],
                 ['form', {id: 'browse', name: il('browse')}, [
-                    ['table', {align: 'center'}, Templates.workDisplay.getContent()],
+                    ['table', {align: 'center'}, content],
                     ['br'],
                     ['div', {style: 'margin-left: 20px'}, [
                         ['br'], ['br'],

@@ -1,23 +1,19 @@
 /* globals jml, Templates */
-Templates.workSelect = ({dbs, lf, getNextAlias, $p, followParams}) =>
+Templates.workSelect = ({groups, lf, getNextAlias, $p, followParams}) =>
     jml(
         'div',
         {'class': 'focus'},
-        dbs.groups.map(({
-            fileGroupFiles, fileGroupDirections: {
-                localeKey: fileGroupDirections
-            }, fileGroupName, fileGroupID
-        }, i) =>
+        groups.map((group, i) =>
             ['div', [
                 i > 0 ? ['br', 'br', 'br'] : '',
                 ['div', [
-                    lf({key: fileGroupDirections.localeKey, fallback: true})
+                    lf({key: group.directions.localeKey, fallback: true})
                 ]],
                 ['br'],
                 ['select', {
                     'class': 'file',
                     dataset: {
-                        name: fileGroupName.localeKey
+                        name: group.name.localeKey
                     },
                     $on: {
                         change: ({target: {value}}) => {
@@ -33,9 +29,9 @@ Templates.workSelect = ({dbs, lf, getNextAlias, $p, followParams}) =>
                     }
                 }, [
                     ['option', {value: ''}, ['--']],
-                    ...fileGroupFiles.map(({name: fileName}) =>
+                    ...group.files.map(({name: fileName}) =>
                         ['option', {
-                            value: lf(['workNames', fileGroupID, fileName])
+                            value: lf(['workNames', group.id, fileName])
                         }, [getNextAlias()]]
                     )
                 ]]

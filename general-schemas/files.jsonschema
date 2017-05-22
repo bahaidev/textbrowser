@@ -13,19 +13,6 @@
                     }
                 }
             ]
-        },
-        "objectOrString": {
-            "anyOf": [
-                {"type": "string"},
-                {
-                    "type": "object",
-                    "patternProperties": {
-                        ".*": {
-                            "$ref": "#/definitions/objectOrString"
-                        }
-                    }
-                }
-            ]
         }
     },
     "type": "object",

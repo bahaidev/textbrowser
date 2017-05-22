@@ -26,7 +26,8 @@ TextBrowser.prototype.workSelect = function workSelect ({
         }
         */
 
-        getJSON(dbs.groups.reduce((arr, fileGroup) => {
+        const groups = dbs.groups;
+        getJSON(groups.reduce((arr, fileGroup) => {
             const metadataBaseDir = (dbs.metadataBaseDirectory || '') +
                 (fileGroup.metadataBaseDirectory || '') + '/';
             return fileGroup.files.reduce((ar, fileData) =>
@@ -38,7 +39,7 @@ TextBrowser.prototype.workSelect = function workSelect ({
                 const metadataObj = metadataObjsIter.next().value;
                 return getMetaProp(metadataObj, 'alias');
             };
-            Templates.workSelect({dbs, lf, getNextAlias, $p, followParams});
+            Templates.workSelect({groups, lf, getNextAlias, $p, followParams});
         }, (err) => {
             alert('Error: ' + err);
         });

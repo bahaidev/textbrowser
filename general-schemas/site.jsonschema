@@ -7,19 +7,6 @@
                 "$ref": "#/definitions/stringOrArray"
             }}]
         },
-        "objectOrString": {
-            "anyOf": [
-                {"type": "string"},
-                {
-                    "type": "object",
-                    "patternProperties": {
-                        ".*": {
-                            "$ref": "#/definitions/objectOrString"
-                        }
-                    }
-                }
-            ]
-        },
         "siteType": {
             "type": "array",
             "items": {

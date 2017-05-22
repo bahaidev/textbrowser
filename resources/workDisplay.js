@@ -1,4 +1,8 @@
 /* globals TextBrowser, Templates, IMF, formSerialize, getJSON, JsonRefs */
+
+(function () {
+/* eslint-disable indent */
+
 const getCurrDir = () =>
     window.location.href.replace(/(index\.html)?#.*$/, '');
 
@@ -6,7 +10,7 @@ const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
 TextBrowser.prototype.workDisplay = function workDisplay ({
-    lang, localeFromLangData, fallbackLanguages, getMetaProp, $p,
+    lang, preferredLocale, localeFromLangData, fallbackLanguages, getMetaProp, $p,
     localeFromFileData
 }, l, defineFormatter) {
     const that = this;
@@ -62,6 +66,19 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             });
             return [el, atts, children];
         };
+
+        // Returns plain text node or element (as Jamilih) with fallback direction
+        const ld = (key, values, formats) =>
+            l({
+                key,
+                values,
+                formats,
+                fallback: ({message}) =>
+                    // Displaying as div with inline display instead of span since
+                    //    Firefox puts punctuation at left otherwise (bdo dir
+                    //    seemed to have issues in Firefox)
+                    ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [message]]
+            });
 
         const schemaItems = schemaObj.items.items;
         const content = [];
@@ -139,13 +156,13 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
                 return getFieldAliasOrName(browseField);
             });
 
-            Templates.workDisplay.addBrowseFields({browseFields, content});
+            Templates.workDisplay.addBrowseFields({browseFields, ld, i, iil, $p, content});
         });
 
         Templates.workDisplay.addEnumFieldValues({
             /* eslint-disable object-property-newline */
             enumFvs, enumerateds, iil, fallbackDirection,
-            il, l, le, $p, serializeParamsAsURL, content
+            il, l, ld, le, $p, serializeParamsAsURL, content
             /* eslint-enable object-property-newline */
         });
 
@@ -159,7 +176,8 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             imfl, fallbackDirection,
             langs, fields, localizeParamNames,
             serializeParamsAsURL, hideFormattingSection, $p,
-            getMetaProp, metadataObj, il, content, le
+            getMetaProp, metadataObj, il, le, ld, iil,
+            getFieldAliasOrName, preferredLocale, schemaItems, content
             /* eslint-enable object-property-newline */
         });
     }
@@ -235,3 +253,6 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
         alert(err);
     });
 };
+
+/* eslint-enable indent */
+}());

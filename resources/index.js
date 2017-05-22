@@ -1,7 +1,7 @@
 /* global IMF, getJSON, IntlURLSearchParams, Templates */
 /* exported TextBrowser */
 
-const TextBrowser = (function () {
+(function () {
 /* eslint-disable indent */
 'use strict';
 
@@ -141,7 +141,10 @@ TextBrowser.prototype.paramChange = function () {
         }
         if (!result) {
             this.workDisplay({
-                lang, localeFromFileData, fallbackLanguages, getMetaProp, $p, localeFromLangData
+                /* eslint-disable object-property-newline */
+                lang, preferredLocale, localeFromFileData, fallbackLanguages, getMetaProp,
+                $p, localeFromLangData
+                /* eslint-enable object-property-newline */
             }, ...args);
             return;
         }
@@ -162,6 +165,6 @@ TextBrowser.prototype.paramChange = function () {
     });
 };
 
-return TextBrowser;
+window.TextBrowser = TextBrowser;
 /* eslint-enable indent */
 }());

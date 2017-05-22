@@ -9,7 +9,7 @@ const portIdx = 3;
 const defaultPort = 8080;
 const port = parseInt(process.argv[portIdx] || defaultPort, 10);
 
-const file = new ns.Server();
+const file = new ns.Server(undefined, {cache: false});
 
 require('http').createServer(function (req, res) {
     req.addListener('end', function () {
