@@ -1,9 +1,7 @@
 /* globals __dirname, Ajv:true, getJSON:true, path:true, Promise, module, require */
 /* exported textbrowserTests */
-
 var Ajv, getJSON, __dirname, path; // eslint-disable-line no-var
 
-let textbrowserTests;
 (function () {
 /* eslint-disable indent */
 'use strict';
@@ -48,7 +46,7 @@ function validate (testName, schema, data, extraSchemas = []) {
     return valid;
 }
 
-textbrowserTests = {
+const textbrowserTests = {
     'locales tests': function (test) {
         test.expect(4); // eslint-disable-line no-magic-numbers
         Promise.all(
@@ -70,11 +68,12 @@ textbrowserTests = {
         });
     },
     'languages.json test': function (test) {
+        test.expect(1); // eslint-disable-line no-magic-numbers
         Promise.all([
-            getJSON(path.join(__dirname, schemaBase, 'languages.jsonschema')),
             getJSON(path.join(__dirname, appdataBase, 'languages.json')),
+            getJSON(path.join(__dirname, schemaBase, 'languages.jsonschema')),
             getJSON(path.join(__dirname, schemaBase, 'locale.jsonschema'))
-        ]).then(function ([schema, data, extraSchema]) {
+        ]).then(function ([data, schema, extraSchema]) {
             const valid = validate('languages.json test', schema, data, [['locale.jsonschema', extraSchema]]);
             test.strictEqual(valid, true);
             test.done();
@@ -84,6 +83,8 @@ textbrowserTests = {
 
 if (typeof exports !== 'undefined') {
     module.exports = textbrowserTests;
+} else {
+    window.textbrowserTests = textbrowserTests;
 }
 /* eslint-enable indent */
 }());
