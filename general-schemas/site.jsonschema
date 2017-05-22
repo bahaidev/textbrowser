@@ -31,12 +31,7 @@
         "site": {"$ref": "#/definitions/siteType"},
         "navigation": {"$ref": "#/definitions/siteType"},
         "localization-strings": {
-            "type": "object",
-            "patternProperties": {
-                ".*": {
-                    "$ref": "#/definitions/objectOrString"
-                }
-            }
+            "$ref": "locale.jsonschema"
         }
     }
 }

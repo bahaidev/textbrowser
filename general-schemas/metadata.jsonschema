@@ -24,17 +24,7 @@
     },
     "properties": {
         "localization-strings": {
-            "type": "object",
-            "patternProperties": {
-                ".*": {
-                    "type": "object",
-                    "patternProperties": {
-                        ".*": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
+            "$ref": "locale.jsonschema"
         },
         "table": {
             "type": "object",

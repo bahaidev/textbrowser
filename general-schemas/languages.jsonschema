@@ -1,34 +1,13 @@
 {
     "$schema": "http://json-schema.org/schema#",
     "type": "object",
-    "definitions": {
-        "objectOrString": {
-            "anyOf": [
-                {"type": "string"},
-                {
-                    "type": "object",
-                    "patternProperties": {
-                        ".*": {
-                            "$ref": "#/definitions/objectOrString"
-                        }
-                    }
-                }
-            ]
-        },
-        "localizationStrings": {
-            "type": "object",
-            "patternProperties": {
-                ".*": {
-                    "$ref": "#/definitions/objectOrString"
-                }
-            }
-        }
-    },
     "properties": {
         "localeFileBasePath": {
             "type": "string"
         },
-        "localization-strings": {"$ref": "#/definitions/localizationStrings"},
+        "localization-strings": {
+            "$ref": "locale.jsonschema"
+        },
         "languages": {
             "type": "array",
             "items": {
@@ -45,17 +24,7 @@
                         "enum": ["ltr", "rtl"]
                     },
                     "locale": {
-                        "anyOf": [
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "$ref": {
-                                        "type": "string"
-                                    }
-                                }
-                            },
-                            {"type": "object"}
-                        ]
+                        "$ref": "locale.jsonschema"
                     }
                 }
             }

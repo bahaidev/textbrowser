@@ -62,14 +62,7 @@
                 }
             }
         },
-        "localization-strings": {
-            "type": "object",
-            "patternProperties": {
-                ".*": {
-                    "$ref": "#/definitions/objectOrString"
-                }
-            }
-        },
+        "localization-strings": {"$ref": "locale.jsonschema"},
         "groups": {
             "type": "array",
             "items": {

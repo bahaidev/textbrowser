@@ -213,17 +213,13 @@ shows its usage (assuming paths relative to a package containing
     1.  Rename localization strings, especially auto-field ones; consider
         making some reusable, pointing to scripts, or how else to designate
         auto-field plugins?
-        1.  Update README and files.jsonschema as needed to reflect new changes
+        1.  Update `README.md` and `files.jsonschema` as needed to reflect new changes
     1.  Choose clearer naming/structure for locale table/field keys
         1.  Consider `tablealias` and default to `table` or something (as
             `fieldalias` defaults to `fieldname`); aliased heading (also used
             as the title of the page)
+    1.  Switch wholly to npm?
     1.  Review code for readability, refactoring opportunities
-    1.  Cause locale-using files (`site.jsonschema`, `metadata.jsonschema`,
-        `files.jsonschema` and `languages.jsonschema`) to rely on definition
-        of `localization-strings` in `locale.jsonschema` (and have `locale` point
-        to `locale.jsonschema` in `languages.jsonschema`) once
-        <https://github.com/whitlockjc/json-refs/issues/75> is fixed
 1.  New features (requiring UI adjustments)
     1.  Aliased search (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally

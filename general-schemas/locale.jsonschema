@@ -1,28 +1,5 @@
 {
     "$schema": "http://json-schema.org/schema#",
-    "definitions": {
-        "objectOrString": {
-            "anyOf": [
-                {"type": "string"},
-                {
-                    "type": "object",
-                    "patternProperties": {
-                        ".*": {
-                            "$ref": "#/definitions/objectOrString"
-                        }
-                    }
-                }
-            ]
-        },
-        "localizationStrings": {
-            "type": "object",
-            "patternProperties": {
-                ".*": {
-                    "$ref": "#/definitions/objectOrString"
-                }
-            }
-        }
-    },
     "type": "object",
     "patternProperties": {
         ".*": {
@@ -31,7 +8,7 @@
                     "type": "string"
                 },
                 {
-                    "$ref": "#/"
+                    "$ref": "#"
                 }
             ]
         }
