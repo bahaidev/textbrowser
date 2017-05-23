@@ -210,7 +210,7 @@ shows its usage (assuming paths relative to a package containing
     functions passing main functions as arguments
 
 1.  New features (requiring UI adjustments)
-    1.  Support metadata to combine fields during browsing
+    1.  Support metadata to combine fields during browsing or omit
     1.  Aliased search (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
            show both if not given (e.g., for Bible books with
@@ -227,13 +227,6 @@ shows its usage (assuming paths relative to a package containing
         1.  Ensure aliases are i18nized
     1.  Options to have range of context and range for highlighting
         (with own styles) and anchoring
-    1.  Figure out how to get rowspans (or even colspans) for additional
-        columns (e.g., a field spanning by whole pages of a book and another
-        field spanning only by paragraphs) - use some kind of counter and
-        don't display the HTML until finished cycling??; also figure out
-        how to reassemble if the minute fields are not needed (e.g., if
-        the user only wants to see the text by paragraph and not anything
-        related to by page)
 1.  Add/Add back automated (including into drop-downs): Synopsis, Roman
     numerals, Chinese numbers, word-by-word translation, auto-romanized
     Persian/Arabic, Persian with
@@ -257,6 +250,16 @@ shows its usage (assuming paths relative to a package containing
            ~support loading from `bower_components`~
     1.  Automated whole document/table-level or column-level
         changes (e.g., word counts)
+    1.  Automated field to split up rows based on presence of `<hr />` or
+        `<a id=>`, etc., with the ability to browse by such numbers (would
+        ideally tap into browsing autocomplete code indicating min/max too).
+        Optionally get `rowspan`s (or even `colspan`s) for additional
+        columns (e.g., a field spanning by whole pages of a book and another
+        field spanning only by paragraphs) - use some kind of counter and
+        don't display the HTML until finished cycling??; also figure out
+        how to reassemble if the minute fields are not needed (e.g., if
+        the user only wants to see the text by paragraph and not anything
+        related to by page)
     1.  Add an "overlay" column like interlinear, but which overlays by
         tooltip if any data is present; can also use metadata if the overlay
         is within-cell (and this metadata can also be used for putting
