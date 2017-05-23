@@ -211,7 +211,7 @@ shows its usage (assuming paths relative to a package containing
            allowing numbers)?
         1.  Remove locale info for "numbers only" string key (including
             from locale files?) if allowing for aliased browsing
-            (e.g., "Gen").
+            (e.g., "Gen"). Fix Bible's current use of "Book Name"
         1.  Ensure browsing can be done through URL params, especially
             to use in conjunction with bookmark keywords (in which case
             it particularly ought to be available through a single param).
@@ -240,16 +240,6 @@ shows its usage (assuming paths relative to a package containing
            ~support loading from `bower_components`~
     1.  Automated whole document/table-level or column-level
         changes (e.g., word counts)
-    1.  Automated field to split up rows based on presence of `<hr />` or
-        `<a id=>`, etc., with the ability to browse by such numbers (would
-        ideally tap into browsing autocomplete code indicating min/max too).
-        Optionally get `rowspan`s (or even `colspan`s) for additional
-        columns (e.g., a field spanning by whole pages of a book and another
-        field spanning only by paragraphs) - use some kind of counter and
-        don't display the HTML until finished cycling??; also figure out
-        how to reassemble if the minute fields are not needed (e.g., if
-        the user only wants to see the text by paragraph and not anything
-        related to by page)
     1.  Add an "overlay" column like interlinear, but which overlays by
         tooltip if any data is present; can also use metadata if the overlay
         is within-cell (and this metadata can also be used for putting
@@ -288,6 +278,22 @@ shows its usage (assuming paths relative to a package containing
         1.  See bahaiwritings project re: using Firefox's [Browser API](https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API)
             to allow independent navigation controls for each iframe (and
             side-by-side viewing of verses/lines and commentary)
+    1.  Support metadata to omit or combine fields during browsing (like
+        checkboxes and interlinear field, but admin-set; also ensure, or
+        add option for, no line breaks or indication of original source
+        column within interlinear display so not bloating or surfacing
+        internal column differences to users); increment counts despite
+        some surfacing, as better ensures future compatibility/portability
+    1.  Automated field to split up rows based on presence of `<hr />` or
+        `<a id=>`, etc., with the ability to browse by such numbers (would
+        ideally tap into browsing autocomplete code indicating min/max too).
+        Optionally get `rowspan`s (or even `colspan`s) for additional
+        columns (e.g., a field spanning by whole pages of a book and another
+        field spanning only by paragraphs) - use some kind of counter and
+        don't display the HTML until finished cycling??; also figure out
+        how to reassemble if the minute fields are not needed (e.g., if
+        the user only wants to see the text by paragraph and not anything
+        related to by page)
 1.  For `browse9.php` equivalent
     1.  Handle defaults for empty boxes if not already
     1.  Test all locales and works and combos
@@ -318,12 +324,6 @@ shows its usage (assuming paths relative to a package containing
     (based on a `data-footnote` attribute or the like). Utilize JSON
     Schema `links` for indicating footnote location in document then
     allow HTML `<a href>` to point to the scheme designated therein.
-1.  Support metadata to omit or combine fields during browsing (like
-    checkboxes and interlinear field, but admin-set; also ensure, or
-    add option for, no line breaks or indication of original source
-    column within interlinear display so not bloating or surfacing
-    internal column differences to users); increment counts despite
-    some surfacing, as better ensures future compatibility/portability
 1.  Search/Sorting
     1.  Add to preferences system for saved/favorite, recent
         searches/browses, etc.
