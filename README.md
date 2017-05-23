@@ -317,13 +317,34 @@ shows its usage (assuming paths relative to a package containing
 
 ## To-dos (medium priority)
 
-1.  Add and make use of updated `json-refs` to make
-    single `resolveRemoteRef` call (or whatever the new API may become) and
-    try new relative refs feature. See <https://github.com/whitlockjc/json-refs/pull/23>
+1.  As with table/array-of-arrays schema, develop schema for
+    outlines (and utilize)!
+1.  Develop footnote targeting mechanism to hide/reveal footnotes inline
+    (based on a `data-footnote` attribute or the like). Utilize JSON
+    Schema `links` for indicating footnote location in document then
+    allow HTML `<a href>` to point to the scheme designated therein.
+1.  Search/Sorting
+    1.  Add to preferences system for saved/favorite, recent
+        searches/browses, etc.
+    1.  Schema-aware and metadata-aware column sorting options (e.g., sort by
+        order and ASC/DESC) with user customizability (i.e., presorting along
+        with dynamic client-side after-load sorting, with or without search
+        filtering; use "search" in locale to add this filtering to UI)
+    1.  Option to have range of context (even if browsing and not searching?),
+        e.g., 2 rows before and after designated row(s) and range for highlighting
+    1.  Option for highlighting search terms (with own styles), and/or if context
+        is specified, to highlight rows with search results and alternatively
+        style context rows
+    1.  Optional links to go to previous/next results if only loading a subset
+        of available content (allow customization of size of chunking in
+        preferences as well as on the fly)
+    1.  Support user-driven or automated (expandable) ellipses for surrounding
+        content with option for highlighting these (e.g., to highlight a
+        parts of a sentence, including one spanning multiple rows/verses)
 1.  Separate formatting within Jamilih code to CSS; unit test and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)
-1.  URL (sorted) params keyed to indexHTML of page for caching
+1.  URL (sorted) params keyed to `outerHTML` of page for caching
 1.  Build library (for browser or Node) to utilize `site.json` file to add
     site-wide navigation bar headers, breadcrumbs,
     link rel=next/prev/contents/etc., sitemap, and page title (supplied
@@ -357,30 +378,6 @@ shows its usage (assuming paths relative to a package containing
     1.  Add tooltips and table summaries, etc. back (see locale file for
         these and reapply any other unused) and add any missing ones
         describing how to use the elements
-1.  As with table/array-of-arrays schema, develop schema for
-    outlines (and utilize)!
-1.  Develop footnote targeting mechanism to hide/reveal footnotes inline
-    (based on a `data-footnote` attribute or the like). Utilize JSON
-    Schema `links` for indicating footnote location in document then
-    allow HTML `<a href>` to point to the scheme designated therein.
-1.  Search/Sorting
-    1.  Add to preferences system for saved/favorite, recent
-        searches/browses, etc.
-    1.  Schema-aware and metadata-aware column sorting options (e.g., sort by
-        order and ASC/DESC) with user customizability (i.e., presorting along
-        with dynamic client-side after-load sorting, with or without search
-        filtering; use "search" in locale to add this filtering to UI)
-    1.  Option to have range of context (even if browsing and not searching?),
-        e.g., 2 rows before and after designated row(s) and range for highlighting
-    1.  Option for highlighting search terms (with own styles), and/or if context
-        is specified, to highlight rows with search results and alternatively
-        style context rows
-    1.  Optional links to go to previous/next results if only loading a subset
-        of available content (allow customization of size of chunking in
-        preferences as well as on the fly)
-    1.  Support user-driven or automated (expandable) ellipses for surrounding
-        content with option for highlighting these (e.g., to highlight a
-        parts of a sentence, including one spanning multiple rows/verses)
 
 ## To-dos (Lower priority)
 
