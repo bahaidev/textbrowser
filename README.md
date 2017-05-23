@@ -318,7 +318,7 @@ shows its usage (assuming paths relative to a package containing
 ## To-dos (medium priority)
 
 1.  As with table/array-of-arrays schema, develop schema for
-    outlines (and utilize)!
+    outlines (and utilize, e.g., with JSONEditor)!
 1.  Develop footnote targeting mechanism to hide/reveal footnotes inline
     (based on a `data-footnote` attribute or the like). Utilize JSON
     Schema `links` for indicating footnote location in document then
