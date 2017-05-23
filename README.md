@@ -199,22 +199,9 @@ shows its usage (assuming paths relative to a package containing
 -   (To document; for now, see the `/general-schemas` directory and for
   usage examples, as well as the subdirectories within <https://bitbucket.org/brettz9/bahaiwritings>)
 
-## To-dos
-
-1.  Waiting ([JSON UI Schema](https://github.com/json-schema-org/json-schema-spec/issues/67)
-    or [JSON Schema Annotation and Documentation Extension](https://github.com/json-schema-org/json-schema-spec/issues/136)):
-    i18n: Utilize more standard mechanism instead of our `localeKey`; might also use
-    substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
-    and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
-1. Waiting: ES6 Modules in browser or if need Babel routine: Switch to imports over script tags and
-    functions passing main functions as arguments
+## To-dos (immediate priority)
 
 1.  New features (requiring UI adjustments)
-    1.  Support metadata to omit or combine fields during browsing (like
-        checkboxes and interlinear field, but admin-set; also ensure, or
-        add option for, no line breaks or indication of original source
-        column within interlinear display so not bloating or surfacing
-        internal column differences to users); avoid incrementing counts
     1.  Aliased browsing (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
            show both if not given (e.g., for Bible books with
@@ -238,7 +225,8 @@ shows its usage (assuming paths relative to a package containing
     needs its own JSON Schema-based project for the hierarchical
     representations (see [TEI](http://www.tei-c.org/release/doc/tei-p5-doc/en/html/CO.html#CONOIX)
     for ideas)), including optionally merging them for different books;
-    also overlays
+    also overlays; don't need to implement all columns immediately but at least
+    include mechanism for now
     1.  Reverse engineer missing work by using `bahai_locales` database (which
        contains more than localization info: automated column data,
        alternative field names, etc.)
@@ -314,7 +302,15 @@ shows its usage (assuming paths relative to a package containing
 1.  Once stabilized, target "textbrowser" dependency mentioned above
     by tagged version instead of `master`.
 
-## To-dos (medium priority)
+## To-dos (high priority)
+
+1.  Waiting ([JSON UI Schema](https://github.com/json-schema-org/json-schema-spec/issues/67)
+    or [JSON Schema Annotation and Documentation Extension](https://github.com/json-schema-org/json-schema-spec/issues/136)):
+    i18n: Utilize more standard mechanism instead of our `localeKey`; might also use
+    substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
+    and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
+1. Waiting: ES6 Modules in browser or if need Babel routine: Switch to imports over script tags and
+    functions passing main functions as arguments
 
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize, e.g., with JSONEditor)!
@@ -322,6 +318,12 @@ shows its usage (assuming paths relative to a package containing
     (based on a `data-footnote` attribute or the like). Utilize JSON
     Schema `links` for indicating footnote location in document then
     allow HTML `<a href>` to point to the scheme designated therein.
+1.  Support metadata to omit or combine fields during browsing (like
+    checkboxes and interlinear field, but admin-set; also ensure, or
+    add option for, no line breaks or indication of original source
+    column within interlinear display so not bloating or surfacing
+    internal column differences to users); increment counts despite
+    some surfacing, as better ensures future compatibility/portability
 1.  Search/Sorting
     1.  Add to preferences system for saved/favorite, recent
         searches/browses, etc.
@@ -343,6 +345,9 @@ shows its usage (assuming paths relative to a package containing
 1.  Separate formatting within Jamilih code to CSS; unit test and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)
+
+## To-dos (medium priority)
+
 1.  URL (sorted) params keyed to `outerHTML` of page for caching
 1.  Build library (for browser or Node) to utilize `site.json` file to add
     site-wide navigation bar headers, breadcrumbs,
