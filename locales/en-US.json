@@ -126,7 +126,7 @@
     "localizeParamNames": "Localize URL parameter names by default",
     "Hide formatting section": "Hide formatting section",
     "page_css": "Page CSS",
-    "page_css_tips": "CSS to apply to the whole page (e.g., to style links/visited links, etc.)",
+    "page_css_tips": "CSS to apply to the whole page (e.g., to style links/visited links, etc.); note that surrounding context verses have class 'context'",
     "params": {
         "indexed": {
             "field": "field",

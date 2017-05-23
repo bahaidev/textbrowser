@@ -331,8 +331,6 @@ shows its usage (assuming paths relative to a package containing
         order and ASC/DESC) with user customizability (i.e., presorting along
         with dynamic client-side after-load sorting, with or without search
         filtering; use "search" in locale to add this filtering to UI)
-    1.  Option to have range of context (even if browsing and not searching?),
-        e.g., 2 rows before and after designated row(s) and range for highlighting
     1.  Option for highlighting search terms (with own styles), and/or if context
         is specified, to highlight rows with search results and alternatively
         style context rows
@@ -341,7 +339,9 @@ shows its usage (assuming paths relative to a package containing
         preferences as well as on the fly)
     1.  Support user-driven or automated (expandable) ellipses for surrounding
         content with option for highlighting these (e.g., to highlight a
-        parts of a sentence, including one spanning multiple rows/verses)
+        parts of a sentence, including one spanning multiple rows/verses);
+        consider range for highlighting if verse range + added context range
+        not enough
 1.  Separate formatting within Jamilih code to CSS; unit test and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)
