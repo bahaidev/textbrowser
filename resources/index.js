@@ -11,7 +11,7 @@ function TextBrowser (options) { // eslint-disable-line
     if (!(this instanceof TextBrowser)) {
         return new TextBrowser(options);
     }
-    this.languages = options.languages || 'bower_components/textbrowser/appdata/languages.json';
+    this.languages = options.languages || 'node_modules/textbrowser/appdata/languages.json';
     this.site = options.site || 'site.json';
     this.files = options.files || 'files.json';
     this.namespace = options.namespace || 'textbrowser';

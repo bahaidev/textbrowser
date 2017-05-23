@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html><head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="bower_components/textbrowser/resources/index.css" />
+    <title></title>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
+    <link rel="stylesheet" href="node_modules/textbrowser/resources/index.css" />
     <link rel="stylesheet" href="resources/user.css" />
+    <script src="node_modules/urlsearchparams/urlsearchparams.js"></script>
     <script>
     if (!Array.prototype.includes) {
         Array.prototype.includes = function (item) { // eslint-disable-line no-extend-native
@@ -10,31 +13,34 @@
         };
     }
     </script>
-    <script src="resources/IntlURLSearchParams.js"></script>
-    <script src="resources/templates/index.js"></script>
-    <script src="resources/templates/languageSelect.js"></script>
     <script src="resources/user.js"></script>
 </head><body>
 
 <!-- jamilih -->
-<script src="bower_components/jamilih/jml.js"></script>
+<script src="node_modules/jamilih/jml.js"></script>
 
 <!-- imf (also using getJSON directly in textbrowser) -->
-<script src="bower_components/intl-messageformat/dist/intl-messageformat-with-locales.min.js"></script>
-<script src="bower_components/get-json/index.js"></script>
-<script src="bower_components/imf/index.js"></script>
+<script src="node_modules/intl-messageformat/dist/intl-messageformat-with-locales.min.js"></script>
+<script src="node_modules/simple-get-json/index.js"></script>
+<script src="node_modules/intl-messageformat/index.js"></script>
 
 <!--json-refs-->
-<script src="bower_components/path-loader/browser/path-loader-min.js"></script>
-<script src="bower_components/traverse/traverse.js"></script>
-<script src="bower_components/json-refs/browser/json-refs.js"></script>
+<script src="node_modules/json-refs/browser/json-refs-standalone.js"></script>
 
 <!--form-serialize-->
-
-<script src="bower_components/form-serialize/index.js"></script>
+<script src="node_modules/form-serialize/index.js"></script>
 
 <!-- Main textbrowser script -->
-<script src="bower_components/textbrowser/resources/index.js"></script>
+<script src="node_modules/textbrowser/resources/templates/index.js"></script>
+<script src="node_modules/textbrowser/resources/templates/languageSelect.js"></script>
+<script src="node_modules/textbrowser/resources/templates/workSelect.js"></script>
+<script src="node_modules/textbrowser/resources/templates/workDisplay.js"></script>
+
+<script src="node_modules/textbrowser/resources/index.js"></script>
+<script src="node_modules/textbrowser/resources/IntlURLSearchParams.js"></script>
+<script src="node_modules/textbrowser/resources/workSelect.js"></script>
+<script src="node_modules/textbrowser/resources/workDisplay.js"></script>
+<script src="node_modules/textbrowser/resources/resultsDisplay.js"></script>
 
 </body>
 </html>

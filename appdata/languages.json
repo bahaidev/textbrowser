@@ -1,5 +1,5 @@
 {
-    "localeFileBasePath": "bower_components/textbrowser/locales/",
+    "localeFileBasePath": "node_modules/textbrowser/locales/",
     "localization-strings": {
         "en-US": {
             "chooselanguage": "Your interface language",

@@ -23,7 +23,7 @@ can be used for any tabular data.
 
 The intent of this repository is for it to be used as a dependency.
 
-Add the following to your application's `bower.json`:
+Add the following to your application's `package.json`:
 
 ```json
 "dependencies": {
@@ -35,7 +35,7 @@ If you instead merely wish to test the current repository, adding your
 own data files within it, you can install its dependencies via:
 
 ```console
-bower install
+npm install
 ```
 
 ## Usage
@@ -49,7 +49,7 @@ Baha'i repo too)
 1.  Location: <https://bitbucket.org/brettz9/bahaiwritings>
 
 The following instructions are aimed at those adding *TextBrowser* as a
-bower dependency of their own project. Notes follow for those seeking to
+dependency of their own project. Notes follow for those seeking to
 add their files within this repository.
 
 If you would like to see a sample package implementing the
@@ -60,8 +60,8 @@ project.
 The recommended project directory structure (which works with the
 default paths) is as follows:
 
--   ***bower.json*** - Should indicate `textbrowser` as a dependency as per
-    the "Installation" section above. See `bower-sample.json` for an example.
+-   ***package.json*** - Should indicate `textbrowser` as a dependency as per
+    the "Installation" section above.
 
 -   ***site.json*** - Not yet utilized in the app. Has top-level `site` array
     indicating nesting of the site's page hierarchy (usable for site map
@@ -95,7 +95,8 @@ default paths) is as follows:
     `user.js`, be sure to uncomment in the copied file (HTML currently
     only allows one cache file apparently as per
     <https://html.spec.whatwg.org/multipage/semantics.html#attr-html-manifest>,
-    so we apparently cannot add to this dynamically nor use data: URLs.)
+    so we apparently cannot add to this dynamically nor use data: URLs.) This
+    is in the process of being changed to service workers.
 
 -   ***.htaccess*** - If using Apache, you may wish to have this file
     copied from TextBrowser's `.htaccess-sample` in order to serve the
@@ -109,9 +110,9 @@ default paths) is as follows:
     constructor here. See TextBrowser's `resources/user-sample.js` for
     a pattern you can copy and optionally adapt.
 
--   ***bower_components*** - *TextBrowser* and its dependencies will be
+-   ***node_modules*** - *TextBrowser* and its dependencies will be
     added here via bower install as well as any dependencies you indicate
-    within `bower.json`.
+    within `package.json`.
 
 -   ***data/*** - Directory recommended as a convention for holding data
     files. It is also recommended that child directories be named for each
@@ -139,13 +140,12 @@ For those wishing to test files within the TextBrowser project itself
 (not generally recommended), you can follow the follow tweaks to
 the above instructions:
 
-1.  You should not need to alter `bower.json` though you may install Bower
-    dependencies (e.g.,
-    `bower install git@bitbucket.org:brettz9/bahaiwritings.git`)
-    if you update paths accordingly. You may alternatively add data
-    files to the reserved `data` directory at the root of TextBrowser.
+1.  You should not need to alter `package.json` though you may install
+    other dependencies if you update paths accordingly. You may
+    alternatively add data files to the reserved `data` directory
+    at the root of TextBrowser.
 
-1.  Change paths. The path prefix `bower_components/textbrowser` in your
+1.  Change paths. The path prefix `node_modules/textbrowser` in your
   `index.html` and `textbrowser.appcache` will need to be stripped in
   this environment. You will also need to change the `languages` property
   in the `resources/user.js` call to the *TextBrowser* constructor to point
@@ -166,7 +166,7 @@ shows its usage (assuming paths relative to a package containing
 
     -   `languages` - Path for the `languages.json` file containing meta-data
         on the languages to be displayed in the interface. Defaults to
-        'bower_components/textbrowser/appdata/languages.json'.
+        'node_modules/textbrowser/appdata/languages.json'.
 
     -   `site` - Path for the `site.json` containing meta-data on the site.
 
@@ -280,7 +280,7 @@ shows its usage (assuming paths relative to a package containing
         notes pertaining to a given verse...
         1.  Built-in (including offline or only offline) note-taking
            (local/remote and wiki WYSIWYG with Git version control?);
-           support loading from `bower_components`
+           ~support loading from `bower_components`~
     1.  Automated whole document/table-level or column-level
         changes (e.g., word counts)
     1.  Add an "overlay" column like interlinear, but which overlays by

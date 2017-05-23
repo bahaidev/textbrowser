@@ -7,15 +7,18 @@
     "node": "nodeunit test/textbrowserTests.js",
     "eslint": "eslint ./*.js resources/*.js test/*.js",
     "test": "npm run eslint && node server http://127.0.0.1/test/ 8081",
-    "start-no-open": "node server 0",
-    "phantom": "phantom-jasmine test/tests.html",
-    "prepublish": "bower install"
+    "start-no-open": "node server 0"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/brettz9/textbrowser.git"
   },
-  "dependencies": {},
+  "dependencies": {
+      "imf": "1.0.2",
+      "json-refs": "https://github.com/brettz9/json-refs#browser",
+      "simple-get-json": "1.1.0",
+      "urlsearchparams": "0.1.1"
+  },
   "devDependencies": {
     "ajv": "5.1.3",
     "eslint": "3.19.0",
@@ -28,8 +31,7 @@
     "node-static": "0.7.9",
     "nodeunit": "0.11.0",
     "opn": "5.0.0",
-    "remark-lint": "6.0.0",
-    "simple-get-json": "1.1.0"
+    "remark-lint": "6.0.0"
   },
   "engines": {},
   "author": "Brett Zamir",

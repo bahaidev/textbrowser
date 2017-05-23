@@ -11,41 +11,41 @@ files.json
 # resources/user.css
 
 # Textbrowser files
-bower_components/textbrowser/appdata/languages.json
+node_modules/textbrowser/appdata/languages.json
 
-bower_components/textbrowser/general-schemas/files.jsonschema
-bower_components/textbrowser/general-schemas/languages.jsonschema
-bower_components/textbrowser/general-schemas/locale.jsonschema
-bower_components/textbrowser/general-schemas/metadata.jsonschema
-# bower_components/textbrowser/general-schemas/table.jsonschema # Not currently using for validation or meta-data
+node_modules/textbrowser/general-schemas/files.jsonschema
+node_modules/textbrowser/general-schemas/languages.jsonschema
+node_modules/textbrowser/general-schemas/locale.jsonschema
+node_modules/textbrowser/general-schemas/metadata.jsonschema
+# node_modules/textbrowser/general-schemas/table.jsonschema # Not currently using for validation or meta-data
 
-bower_components/textbrowser/locales/ar.json
-bower_components/textbrowser/locales/en-US.json
-bower_components/textbrowser/locales/fa.json
-bower_components/textbrowser/locales/ru.json
+node_modules/textbrowser/locales/ar.json
+node_modules/textbrowser/locales/en-US.json
+node_modules/textbrowser/locales/fa.json
+node_modules/textbrowser/locales/ru.json
 
-bower_components/textbrowser/resources/index.css
-bower_components/textbrowser/resources/index.js
+node_modules/textbrowser/resources/index.css
+node_modules/textbrowser/resources/index.js
 
 # Textbrowser dependency files
 
-bower_components/form-serialize/index.js
-bower_components/get-json/index.js
-bower_components/imf/index.js
+node_modules/form-serialize/index.js
+node_modules/simple-get-json/index.js
+node_modules/imf/index.js
 
 # Might want to change to uncomment these instead of the following line:
-# 1. bower_components/intl-messageformat/dist/intl-messageformat.min.js
-# 2. individual locale files: bower_components/intl-messageformat/dist/locale-data/en.js, etc.
-bower_components/intl-messageformat/dist/intl-messageformat-with-locales.min.js
+# 1. node_modules/intl-messageformat/dist/intl-messageformat.min.js
+# 2. individual locale files: node_modules/intl-messageformat/dist/locale-data/en.js, etc.
+node_modules/intl-messageformat/dist/intl-messageformat-with-locales.min.js
 
-bower_components/jamilih/jml.js
+node_modules/jamilih/jml.js
 
 # Uncomment the next line and comment out the following in production
-# bower_components/json-refs/browser/json-refs-min.js
-bower_components/json-refs/browser/json-refs.js
+# node_modules/json-refs/browser/json-refs-min.js
+node_modules/json-refs/browser/json-refs.js
 
-bower_components/path-loader/browser/path-loader-min.js
-bower_components/traverse/traverse.js
+node_modules/path-loader/browser/path-loader-min.js
+node_modules/traverse/traverse.js
 
 # Add user data files here:
 
