@@ -218,7 +218,6 @@ shows its usage (assuming paths relative to a package containing
         1.  Consider `tablealias` and default to `table` or something (as
             `fieldalias` defaults to `fieldname`); aliased heading (also used
             as the title of the page)
-    1.  Switch wholly to npm?
     1.  Review code for readability, refactoring opportunities
 1.  New features (requiring UI adjustments)
     1.  Aliased search (space-separated field and drop-downs)
