@@ -378,6 +378,26 @@ Templates.workDisplay = {
             ld('tableformatting')
         ]),
         ['div', [
+            ['label', [
+                ld('speech_controls'), nbsp.repeat(2),
+                ['label', [
+                    ['input', {
+                        name: il('speech'),
+                        type: 'radio',
+                        value: '1',
+                        checked: $p.get('speech') === '1' ? 'checked' : undefined}],
+                    ld('yes'), nbsp.repeat(3)
+                ]],
+                ['label', [
+                    ['input', {
+                        name: il('speech'),
+                        type: 'radio',
+                        value: '0',
+                        checked: $p.get('speech') === '1' ? undefined : 'checked'}],
+                    ld('no')
+                ]]
+            ]],
+            ['br'],
             ld('header_wstyles'), nbsp.repeat(2),
             ...([
                 ['yes', 'y'],

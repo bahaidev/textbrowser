@@ -224,9 +224,6 @@ shows its usage (assuming paths relative to a package containing
             to use in conjunction with bookmark keywords (in which case
             it particularly ought to be available through a single param).
         1.  Ensure aliases are i18nized
-    1.  Incorporate speech synthesis from
-        <http://bahai.works/MediaWiki:Common.js>, allowing different
-        speech voices for different rows or columns.
     1.  Options to have range of context and range for highlighting
         (with own styles) and anchoring
     1.  Optional links to go to previous/next results if only loading a subset
@@ -316,6 +313,10 @@ shows its usage (assuming paths relative to a package containing
     1.  Utilize `prefer_alias`
     1.  Allow tables to be re-sortable via JavaScript which allows
           sorting by multiple columns with various data, etc.
+    1.  Incorporate speech synthesis from
+        <http://bahai.works/MediaWiki:Common.js>, allowing different
+        speech voices for different rows or columns (or just let user
+        add CSS to columns to mark).
 1.  Once stabilized, target "textbrowser" dependency mentioned above
     by tagged version instead of `master`.
 
