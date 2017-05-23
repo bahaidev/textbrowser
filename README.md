@@ -210,14 +210,13 @@ shows its usage (assuming paths relative to a package containing
     functions passing main functions as arguments
 
 1.  New features (requiring UI adjustments)
-    1.  Options to have range of context and range for highlighting
-        (with own styles) and anchoring
+    1.  Options to have range for highlighting (with own styles) and anchoring
     1.  Support metadata to omit or combine fields during browsing (like
         checkboxes and interlinear field, but admin-set; also ensure, or
         add option for, no line breaks or indication of original source
         column within interlinear display so not bloating or surfacing
         internal column differences to users); avoid incrementing counts
-    1.  Aliased search (space-separated field and drop-downs)
+    1.  Aliased browsing (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
            show both if not given (e.g., for Bible books with
            `prefer_alias`, show only the pull-down of books whereas
@@ -225,9 +224,9 @@ shows its usage (assuming paths relative to a package containing
            used) link a pull-down of Surah names to a textbox
            allowing numbers)?
         1.  Remove locale info for "numbers only" string key (including
-            from locale files?) if allowing for aliased searches
+            from locale files?) if allowing for aliased browsing
             (e.g., "Gen").
-        1.  Ensure searching can be done through URL params, especially
+        1.  Ensure browsing can be done through URL params, especially
             to use in conjunction with bookmark keywords (in which case
             it particularly ought to be available through a single param).
         1.  Ensure aliases are i18nized
@@ -365,15 +364,16 @@ shows its usage (assuming paths relative to a package containing
     Schema `links` for indicating footnote location in document then
     allow HTML `<a href>` to point to the scheme designated therein.
 1.  Search/Sorting
-    1.  Optional links to go to previous/next results if only loading a subset
-        of available content (allow customization of size of chunking in
-        preferences as well as on the fly)
     1.  Add to preferences system for saved/favorite, recent
         searches/browses, etc.
     1.  Schema-aware and metadata-aware column sorting options (e.g., sort by
         order and ASC/DESC) with user customizability (i.e., presorting along
         with dynamic client-side after-load sorting, with or without search
         filtering; use "search" in locale to add this filtering to UI)
+    1.  Option to have range of context (even if browsing and not searching)
+    1.  Optional links to go to previous/next results if only loading a subset
+        of available content (allow customization of size of chunking in
+        preferences as well as on the fly)
 
 ## To-dos (Lower priority)
 
