@@ -210,7 +210,6 @@ shows its usage (assuming paths relative to a package containing
     functions passing main functions as arguments
 
 1.  New features (requiring UI adjustments)
-    1.  Prevent XSS in field and page CSS fields
     1.  Support metadata to combine fields during browsing
     1.  Aliased search (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
@@ -228,11 +227,6 @@ shows its usage (assuming paths relative to a package containing
         1.  Ensure aliases are i18nized
     1.  Options to have range of context and range for highlighting
         (with own styles) and anchoring
-    1.  Optional links to go to previous/next results if only loading a subset
-        of available content (allow customization of size of chunking in
-        preferences as well as on the fly)
-    1.  Add to preferences system for saved/favorite, recent
-        searches/browses, etc.
     1.  Figure out how to get rowspans (or even colspans) for additional
         columns (e.g., a field spanning by whole pages of a book and another
         field spanning only by paragraphs) - use some kind of counter and
@@ -240,10 +234,6 @@ shows its usage (assuming paths relative to a package containing
         how to reassemble if the minute fields are not needed (e.g., if
         the user only wants to see the text by paragraph and not anything
         related to by page)
-    1.  Schema-aware and metadata-aware column sorting options (e.g., sort by
-        order and ASC/DESC) with user customizability (i.e., presorting along
-        with dynamic client-side after-load sorting, with or without search
-        filtering; use "search" in locale to add this filtering to UI)
 1.  Add/Add back automated (including into drop-downs): Synopsis, Roman
     numerals, Chinese numbers, word-by-word translation, auto-romanized
     Persian/Arabic, Persian with
@@ -315,6 +305,7 @@ shows its usage (assuming paths relative to a package containing
         <http://bahai.works/MediaWiki:Common.js>, allowing different
         speech voices for different rows or columns (or just let user
         add CSS to columns to mark).
+    1.  Prevent XSS in field and page CSS fields
 1.  Once stabilized, target "textbrowser" dependency mentioned above
     by tagged version instead of `master`.
 
@@ -323,12 +314,11 @@ shows its usage (assuming paths relative to a package containing
 1.  Add and make use of updated `json-refs` to make
     single `resolveRemoteRef` call (or whatever the new API may become) and
     try new relative refs feature. See <https://github.com/whitlockjc/json-refs/pull/23>
-1.  Separate formatting within Jamilih code to CSS; separate business
-    and design logic for own sake and also for unit testing and performance
+1.  Separate formatting within Jamilih code to CSS; unit test and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)
 1.  URL (sorted) params keyed to indexHTML of page for caching
-1.  Build library (for browser or Node) to utilize site.json file to add
+1.  Build library (for browser or Node) to utilize `site.json` file to add
     site-wide navigation bar headers, breadcrumbs,
     link rel=next/prev/contents/etc., sitemap, and page title (supplied
     argument of the current page)? Also about text and removecookies.
@@ -367,6 +357,16 @@ shows its usage (assuming paths relative to a package containing
     (based on a `data-footnote` attribute or the like). Utilize JSON
     Schema `links` for indicating footnote location in document then
     allow HTML `<a href>` to point to the scheme designated therein.
+1.  Search/Sorting
+    1.  Optional links to go to previous/next results if only loading a subset
+        of available content (allow customization of size of chunking in
+        preferences as well as on the fly)
+    1.  Add to preferences system for saved/favorite, recent
+        searches/browses, etc.
+    1.  Schema-aware and metadata-aware column sorting options (e.g., sort by
+        order and ASC/DESC) with user customizability (i.e., presorting along
+        with dynamic client-side after-load sorting, with or without search
+        filtering; use "search" in locale to add this filtering to UI)
 
 ## To-dos (Lower priority)
 
