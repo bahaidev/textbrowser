@@ -210,7 +210,7 @@ shows its usage (assuming paths relative to a package containing
     functions passing main functions as arguments
 
 1.  New features (requiring UI adjustments)
-    1.  Options to have range for highlighting (with own styles) and anchoring
+    1.  Support specifying anchor
     1.  Support metadata to omit or combine fields during browsing (like
         checkboxes and interlinear field, but admin-set; also ensure, or
         add option for, no line breaks or indication of original source
@@ -370,10 +370,17 @@ shows its usage (assuming paths relative to a package containing
         order and ASC/DESC) with user customizability (i.e., presorting along
         with dynamic client-side after-load sorting, with or without search
         filtering; use "search" in locale to add this filtering to UI)
-    1.  Option to have range of context (even if browsing and not searching)
+    1.  Option to have range of context (even if browsing and not searching?),
+        e.g., 2 rows before and after designated row(s) and range for highlighting
+    1.  Option for highlighting search terms (with own styles), and/or if context
+        is specified, to highlight rows with search results and alternatively
+        style context rows
     1.  Optional links to go to previous/next results if only loading a subset
         of available content (allow customization of size of chunking in
         preferences as well as on the fly)
+    1.  Support user-driven or automated (expandable) ellipses for surrounding
+        content with option for highlighting these (e.g., to highlight a
+        parts of a sentence, including one spanning multiple rows/verses)
 
 ## To-dos (Lower priority)
 
