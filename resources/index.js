@@ -7,7 +7,7 @@
 
 function s (obj) { alert(JSON.stringify(obj)); } // eslint-disable-line no-unused-vars
 
-function TextBrowser (options) { // eslint-disable-line
+function TextBrowser (options) {
     if (!(this instanceof TextBrowser)) {
         return new TextBrowser(options);
     }
@@ -119,7 +119,7 @@ TextBrowser.prototype.paramChange = function () {
 
             Templates.languageSelect({langs, getLanguageFromCode, followParams, $p});
         };
-        const imfSite = IMF({ // eslint-disable-line new-cap
+        const imfSite = IMF({
             locales: lang.map(localeFromSiteData),
             fallbackLocales: fallbackLanguages.map(localeFromSiteData)
         });
@@ -150,7 +150,7 @@ TextBrowser.prototype.paramChange = function () {
         }
         this.resultsDisplay({}, ...args);
     };
-    IMF({ // eslint-disable-line new-cap
+    IMF({
         languages: lang,
         fallbackLanguages: fallbackLanguages,
         localeFileResolver: (code) =>
