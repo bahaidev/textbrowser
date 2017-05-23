@@ -210,6 +210,7 @@ shows its usage (assuming paths relative to a package containing
     functions passing main functions as arguments
 
 1.  New features (requiring UI adjustments)
+    1.  Prevent XSS in field and page CSS fields
     1.  Support metadata to combine fields during browsing
     1.  Aliased search (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
