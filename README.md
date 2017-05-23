@@ -210,6 +210,7 @@ shows its usage (assuming paths relative to a package containing
     functions passing main functions as arguments
 
 1.  New features (requiring UI adjustments)
+    1.  Support metadata to combine fields during browsing
     1.  Aliased search (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
            show both if not given (e.g., for Bible books with
@@ -229,12 +230,8 @@ shows its usage (assuming paths relative to a package containing
     1.  Optional links to go to previous/next results if only loading a subset
         of available content (allow customization of size of chunking in
         preferences as well as on the fly)
-    1.  Support optional tfoot to repeat header info on bottom?
-    1.  Add link style (browse.php and browse9.php) as option
-        to advanced formatting (or page-wide CSS?)
     1.  Add to preferences system for saved/favorite, recent
         searches/browses, etc.
-    1.  Support metadata to combine fields during browsing
     1.  Figure out how to get rowspans (or even colspans) for additional
         columns (e.g., a field spanning by whole pages of a book and another
         field spanning only by paragraphs) - use some kind of counter and

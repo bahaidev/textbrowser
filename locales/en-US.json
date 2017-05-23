@@ -66,6 +66,7 @@
     "checkmark_locale_fields_only": "Check fields whose content matches current locale",
     "save-settings-URL": "Save settings as URL",
     "headerfixed-wishtoscroll": "Table header fixed (if possible)",
+    "tfoot-wishtoscroll": "Table footer fixed (if possible)",
     "atonce": "at once",
     "set": "Set",
     "startingat": "Starting at",
@@ -123,6 +124,8 @@
     "Preferred language(s)": "Preferred language(s)",
     "localizeParamNames": "Localize URL parameter names by default",
     "Hide formatting section": "Hide formatting section",
+    "page_css": "Page CSS",
+    "page_css_tips": "CSS to apply to the whole page (e.g., to style links/visited links, etc.)",
     "params": {
         "indexed": {
             "field": "field",
@@ -156,8 +159,10 @@
         "headings": "headings",
         "wishcaption": "wishcaption",
         "headerfixed": "headerfixed",
+        "tfoot": "tfoot",
         "border": "border",
         "transpose": "transpose",
+        "pagecss": "pagecss",
         "outputmode": "outputmode"
     }
 }

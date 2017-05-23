@@ -378,26 +378,6 @@ Templates.workDisplay = {
             ld('tableformatting')
         ]),
         ['div', [
-            ['label', [
-                ld('speech_controls'), nbsp.repeat(2),
-                ['label', [
-                    ['input', {
-                        name: il('speech'),
-                        type: 'radio',
-                        value: '1',
-                        checked: $p.get('speech') === '1' ? 'checked' : undefined}],
-                    ld('yes'), nbsp.repeat(3)
-                ]],
-                ['label', [
-                    ['input', {
-                        name: il('speech'),
-                        type: 'radio',
-                        value: '0',
-                        checked: $p.get('speech') === '1' ? undefined : 'checked'}],
-                    ld('no')
-                ]]
-            ]],
-            ['br'],
             ld('header_wstyles'), nbsp.repeat(2),
             ...([
                 ['yes', 'y'],
@@ -434,6 +414,15 @@ Templates.workDisplay = {
         ]],
         ['br'],
         ['label', [
+            ['input', {
+                name: il('tfoot'),
+                type: 'checkbox',
+                value: l('yes'),
+                checked: $p.get('tfoot') === l('yes') ? 'checked' : undefined}],
+            nbsp.repeat(2), ld('tfoot-wishtoscroll')
+        ]],
+        ['br'],
+        ['label', [
             ld('table_wborder'), nbsp.repeat(2),
             ['label', [
                 ['input', {
@@ -465,6 +454,35 @@ Templates.workDisplay = {
         le('pageformatting_tips', 'h3', 'title', {}, [
             ld('pageformatting')
         ]),
+        ['label', [
+            ld('speech_controls'), nbsp.repeat(2),
+            ['label', [
+                ['input', {
+                    name: il('speech'),
+                    type: 'radio',
+                    value: '1',
+                    checked: $p.get('speech') === '1' ? 'checked' : undefined}],
+                ld('yes'), nbsp.repeat(3)
+            ]],
+            ['label', [
+                ['input', {
+                    name: il('speech'),
+                    type: 'radio',
+                    value: '0',
+                    checked: $p.get('speech') === '1' ? undefined : 'checked'}],
+                ld('no')
+            ]]
+        ]],
+        ['br'],
+        ['label', [
+            ld('page_css'), nbsp.repeat(2),
+            ['textarea', {
+                name: il('pagecss'),
+                title: l('page_css_tips'),
+                value: $p.get('pagecss')
+            }]
+        ]],
+        ['br'],
         le('outputmode_tips', 'label', 'title', {}, [
             ld('outputmode'),
             // Todo: Could i18nize, but would need smaller values
