@@ -77,6 +77,7 @@
     "versesendingdataoptional": "verses and ending data optional",
     "to": "TO",
     "or": "OR",
+    "anchored-at": "Anchored at:",
     "fieldtablesummary": "This table offers the choice of which fields to enable and their order in the display of the current text.",
     "resultstablesummary": "This table displays the results of a previous verse selection.",
     "nofileyet": "You haven't specified a file yet.",
@@ -135,7 +136,8 @@
             "search": "search",
             "toggle": "toggle",
             "start": "start",
-            "end": "end"
+            "end": "end",
+            "anchor": "anchor"
         },
         "lang": "lang",
         "work": "work",

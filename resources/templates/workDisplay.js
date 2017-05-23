@@ -724,6 +724,31 @@ Templates.workDisplay = {
                 ['td', [
                     ld('numbers-only'), ' ', browseFields > 1 ? ld('versesendingdataoptional') : ''
                 ]]
+            ],
+            [
+                ['td', {colspan: 4 * browseFields.length + 2, align: 'center'}, [
+                    ['table', [
+                        ['tr', [
+                            browseFields.reduce((rowContent, browseField, j) => {
+                                const name = iil('anchor') + (i + 1) + '-' + (j + 1);
+                                rowContent['#'].push(
+                                    ['td', [
+                                        ['label', {'for': name}, [browseField]]
+                                    ]],
+                                    ['td', [
+                                        ['input', {name, id: name, type: 'number', value: $p.get(name)}],
+                                        nbsp.repeat(2)
+                                    ]]
+                                );
+                                return rowContent;
+                            }, {'#': [
+                                ['td', {style: 'font-weight: bold; vertical-align: bottom;'}, [
+                                    ld('anchored-at') + nbsp.repeat(3)
+                                ]]
+                            ]})
+                        ]]
+                    ]]
+                ]]
             ]
         ].forEach(addRowContent);
     },

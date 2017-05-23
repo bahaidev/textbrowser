@@ -210,7 +210,6 @@ shows its usage (assuming paths relative to a package containing
     functions passing main functions as arguments
 
 1.  New features (requiring UI adjustments)
-    1.  Support specifying anchor
     1.  Support metadata to omit or combine fields during browsing (like
         checkboxes and interlinear field, but admin-set; also ensure, or
         add option for, no line breaks or indication of original source
