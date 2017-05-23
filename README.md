@@ -211,7 +211,8 @@ shows its usage (assuming paths relative to a package containing
            allowing numbers)?
         1.  Remove locale info for "numbers only" string key (including
             from locale files?) if allowing for aliased browsing
-            (e.g., "Gen"). Fix Bible's current use of "Book Name"
+            (e.g., "Gen"). (Fix Bible's current use of "Book Name"
+            with integer enforcement in bahaiwritings repo)
         1.  Ensure browsing can be done through URL params, especially
             to use in conjunction with bookmark keywords (in which case
             it particularly ought to be available through a single param).
