@@ -210,7 +210,13 @@ shows its usage (assuming paths relative to a package containing
     functions passing main functions as arguments
 
 1.  New features (requiring UI adjustments)
-    1.  Support metadata to combine fields during browsing or omit
+    1.  Options to have range of context and range for highlighting
+        (with own styles) and anchoring
+    1.  Support metadata to omit or combine fields during browsing (like
+        checkboxes and interlinear field, but admin-set; also ensure, or
+        add option for, no line breaks or indication of original source
+        column within interlinear display so not bloating or surfacing
+        internal column differences to users); avoid incrementing counts
     1.  Aliased search (space-separated field and drop-downs)
         1.  Consider using `prefer_alias` for field alias use and optionally
            show both if not given (e.g., for Bible books with
@@ -225,8 +231,6 @@ shows its usage (assuming paths relative to a package containing
             to use in conjunction with bookmark keywords (in which case
             it particularly ought to be available through a single param).
         1.  Ensure aliases are i18nized
-    1.  Options to have range of context and range for highlighting
-        (with own styles) and anchoring
 1.  Add/Add back automated (including into drop-downs): Synopsis, Roman
     numerals, Chinese numbers, word-by-word translation, auto-romanized
     Persian/Arabic, Persian with
