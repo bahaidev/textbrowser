@@ -3,34 +3,10 @@
     "type": "object",
     "properties": {
         "schema": {
-            "anyOf": [
-                {
-                    "$ref": "table.jsonschema"
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "$ref": {
-                            "type": "string"
-                        }
-                    }
-                }
-            ]
+            "$ref": "table.jsonschema"
         },
         "metadata": {
-            "anyOf": [
-                {
-                    "$ref": "metadata.jsonschema"
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "$ref": {
-                            "type": "string"
-                        }
-                    }
-                }
-            ]
+            "$ref": "metadata.jsonschema"
         },
         "data": {
             "$ref": "array-of-arrays.jsonschema"
