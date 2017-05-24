@@ -20,6 +20,20 @@
                     }
                 }
             ]
+        },
+        "nameSet": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "set": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
         }
     },
     "properties": {
@@ -30,26 +44,20 @@
             "type": "object",
             "properties": {
                 "browse_fields": {
-                    "anyOf": [
+                    "oneOf": [
                         {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "oneOf": [
+                                    {"type": "string"},
+                                    {
+                                        "$ref": "#/definitions/nameSet"
+                                    }
+                                ]
                             }
                         },
                         {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "type": "string"
-                                },
-                                "set": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
+                            "$ref": "#/definitions/nameSet"
                         }
                     ]
                 },
@@ -93,45 +101,33 @@
                         "hasFieldvalue": {
                             "type": "boolean"
                         },
-                        "sequentialEnum": {
-                            "type": "boolean"
-                        },
                         "roman": {
                             "type": "boolean"
                         },
                         "alias": {"$ref": "#/definitions/nameType"},
                         "name": {"$ref": "#/definitions/nameType"},
                         "prefer_alias": {
-                            "type": "boolean"
+                            "oneOf": [
+                                {"type": "boolean"},
+                                {"type": "string"}
+                            ]
                         },
                         "fieldvalue-aliases": {
                             "type": "object",
                             "patternProperties": {
                                 ".*": {
-                                    "type": "object",
-                                    "patternProperties": {
-                                        ".*": {
-                                            "anyOf": [
-                                                {
-                                                    "type": "string"
-                                                },
-                                                {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string"
-                                                    }
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "patternProperties": {
-                                                        ".*": {
-                                                            "type": "string"
-                                                        }
-                                                    }
-                                                }
-                                            ]
+                                    "oneOf": [
+                                        {
+                                            "type": "object",
+                                            "patternProperties": {
+                                                ".*": {"$ref": "#/definitions/stringOrIntegerType"}
+                                            }
+                                        },
+                                        {
+                                            "type": "array",
+                                            "items": {"$ref": "#/definitions/stringOrIntegerType"}
                                         }
-                                    }
+                                    ]
                                 }
                             }
                         }

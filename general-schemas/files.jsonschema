@@ -69,17 +69,7 @@
                             "type": "object",
                             "properties": {
                                 "file": {
-                                    "anyOf": [
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "$ref": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        },
-                                        {"$ref": "table-container.jsonschema"}
-                                    ]
+                                    "$ref": "table-container.jsonschema"
                                 },
                                 "name": {
                                     "type": "string"
