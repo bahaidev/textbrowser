@@ -31,7 +31,7 @@ const appdataBase = appBase + 'appdata/';
 * @returns {boolean} Whether validation succeeded
 */
 function validate (testName, schema, data, extraSchemas = []) {
-    const ajv = Ajv(); // eslint-disable-line new-cap
+    const ajv = new Ajv({extendRefs: 'fail'});
     let valid;
     try {
         extraSchemas.forEach(([key, val]) => {

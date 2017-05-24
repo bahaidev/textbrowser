@@ -294,7 +294,8 @@ shows its usage (assuming paths relative to a package containing
         don't display the HTML until finished cycling??; also figure out
         how to reassemble if the minute fields are not needed (e.g., if
         the user only wants to see the text by paragraph and not anything
-        related to by page)
+        related to by page); will provide a new browsing column and also
+        divide certain existing one(s)
 1.  For `browse9.php` equivalent
     1.  Handle defaults for empty boxes if not already
     1.  Test all locales and works and combos
