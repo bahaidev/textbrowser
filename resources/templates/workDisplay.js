@@ -500,72 +500,14 @@ Templates.workDisplay = {
             })]
         ])
     ]],
-    addEnumFieldValues: ({
-        enumFvs, enumerateds, fallbackDirection, iil, il, ld, l, le, $p, serializeParamsAsURL, content
+    addRandomFormFields: ({
+        il, ld, l, le, $p, serializeParamsAsURL, content
     }) => {
         const addRowContent = (rowContent) => {
             if (!rowContent || !rowContent.length) { return; }
             content.push(['tr', rowContent]);
         };
         [
-            // Enums must be in consistent iteration order in
-            //   meta-data (otherwise will need to sort here)!
-            Object.keys(enumFvs).reduce((arr, enumFv, i) => {
-                const fv = enumFvs[enumFv];
-                const enumerated = enumerateds[enumFv];
-
-                const name = iil('toggle') + (i + 1);
-                arr.push(
-                    ['td', {colspan: 12}, [
-                        ['br'],
-                        ['table', {align: 'center'}, [['tr', [['td',
-                            enumerated.length > 2
-                                ? [
-                                    ['select', {name: name}, enumerated.concat('All').map(
-                                        (choice) => {
-                                            choice = choice === 'All' ? '' : choice;
-                                            const atts = {value: choice};
-                                            if ($p.get(name) === choice) {
-                                                atts.selected = 'selected';
-                                            }
-                                            if (choice === '') {
-                                                atts.value = '';
-                                                return ['option', atts, [ld('enum-all')]];
-                                            }
-                                            return ['option', atts, [fv[choice]]];
-                                        }
-                                    )]
-                                ]
-                                : enumerated.map((choice, j, a) => {
-                                    const atts = {name: name, type: 'radio', value: choice};
-                                    const allAtts = {name: name, type: 'radio', value: ''};
-                                    if ($p.get(name) === choice) {
-                                        atts.checked = 'checked';
-                                    } else if ($p.has(name) && $p.get(name) === '') {
-                                        allAtts.checked = 'checked';
-                                    }
-                                    return {'#': [
-                                        j > 0 ? nbsp.repeat(3) : '',
-                                        ['label', [
-                                            fv[choice],
-                                            ['input', atts]
-                                        ]],
-                                        j === a.length - 1
-                                            ? {'#': [
-                                                nbsp.repeat(4),
-                                                ['label', [
-                                                    ld('both'),
-                                                    ['input', allAtts]
-                                                ]]
-                                            ]}
-                                            : ''
-                                    ]};
-                                })
-                        ]]]]]
-                    ]]
-                );
-                return arr;
-            }, []),
             [
                 ['td', {colspan: 12, align: 'center'}, [['br'], ld('or'), ['br'], ['br']]]
             ],
@@ -582,6 +524,7 @@ Templates.workDisplay = {
                             checked: ($p.get('rand') === l('yes') ? 'checked' : undefined)
                         }]
                     ]],
+                    nbsp.repeat(3),
                     ['label', [
                         ld('verses-context'), nbsp,
                         ['input', {
@@ -603,7 +546,7 @@ Templates.workDisplay = {
                                     paramsCopy.set(il('random'), l('yes'));
                                     paramsCopy.set(il('result'), l('yes'));
                                 });
-                                document.querySelector('#randomURL').value = url;
+                                $('#randomURL').value = url;
                             }
                         }
                     }),
@@ -691,52 +634,83 @@ Templates.workDisplay = {
                 ]
                 : '',
             [
-                browseFields.reduce((rowContent, browseField, j) => {
-                    const name = iil('start') + (i + 1) + '-' + (j + 1);
-                    rowContent['#'].push(
+                ...(function () {
+                    const addBrowseFieldSet = (setType) =>
+                        browseFields.reduce((rowContent, {browseFieldName, aliases}, j) => {
+                            const name = iil(setType) + (i + 1) + '-' + (j + 1);
+                            const id = name;
+                            rowContent['#'].push(
+                                ['td', [
+                                    ['label', {'for': name}, [browseFieldName]]
+                                ]],
+                                ['td', [
+                                    aliases ? ['datalist', {id: 'dl-' + id},
+                                        aliases.map((alias) => ['option', [alias]])
+                                    ] : '',
+                                    aliases
+                                        ? ['input', {
+                                            /* eslint-disable object-property-newline */
+                                            name, id, class: 'browseField',
+                                            list: 'dl-' + id, value: $p.get(name),
+                                            /* eslint-enable object-property-newline */
+                                            $on: setType === 'start'
+                                                ? {
+                                                    change: function (e) {
+                                                        $$('input.browseField').forEach((bf) => {
+                                                            if (bf.id.includes((i + 1) + '-' + (j + 1))) {
+                                                                bf.value = e.target.value;
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                                : undefined
+                                        }]
+                                        : ['input', {
+                                            name, id, type: 'number', value: $p.get(name)
+                                        }],
+                                    nbsp.repeat(3)
+                                ]]
+                            );
+                            return rowContent;
+                        }, {'#': []});
+                    return [
+                        addBrowseFieldSet('start'),
                         ['td', [
-                            ['label', {'for': name}, [browseField]]
-                        ]],
-                        ['td', [
-                            ['input', {name, id: name, type: 'number', value: $p.get(name)}],
+                            ['b', [ld('to')]],
                             nbsp.repeat(3)
-                        ]]
-                    );
-                    return rowContent;
-                }, {'#': []}),
-                ['td', [
-                    ['b', [ld('to')]],
-                    nbsp.repeat(3)
-                ]],
-                browseFields.reduce((rowContent, browseField, j) => {
-                    const name = iil('end') + (i + 1) + '-' + (j + 1);
-                    rowContent['#'].push(
-                        ['td', [
-                            ['label', {'for': name}, [browseField]]
                         ]],
-                        ['td', [
-                            ['input', {name, id: name, type: 'number', value: $p.get(name)}],
-                            nbsp.repeat(2)
-                        ]]
-                    );
-                    return rowContent;
-                }, {'#': []}),
+                        addBrowseFieldSet('end')
+                    ];
+                }()),
                 ['td', [
-                    ld('numbers-only'), ' ', browseFields > 1 ? ld('versesendingdataoptional') : ''
+                    browseFields.length > 1 ? ld('versesendingdataoptional') : ''
                 ]]
             ],
             [
                 ['td', {colspan: 4 * browseFields.length + 2, align: 'center'}, [
                     ['table', [
                         ['tr', [
-                            browseFields.reduce((rowContent, browseField, j) => {
+                            browseFields.reduce((rowContent, {browseFieldName, aliases}, j) => {
                                 const name = iil('anchor') + (i + 1) + '-' + (j + 1);
+                                const id = name;
                                 rowContent['#'].push(
                                     ['td', [
-                                        ['label', {'for': name}, [browseField]]
+                                        ['label', {'for': name}, [browseFieldName]]
                                     ]],
                                     ['td', [
-                                        ['input', {name, id: name, type: 'number', value: $p.get(name)}],
+                                        aliases ? ['datalist', {id: 'dl-' + id},
+                                            aliases.map((alias) => ['option', [alias]])
+                                        ] : '',
+                                        aliases
+                                            ? ['input', {
+                                                /* eslint-disable object-property-newline */
+                                                name, id, class: 'browseField',
+                                                list: 'dl-' + id, value: $p.get(name)
+                                                /* eslint-enable object-property-newline */
+                                            }]
+                                            : ['input', {
+                                                name, id, type: 'number', value: $p.get(name)
+                                            }],
                                         nbsp.repeat(2)
                                     ]]
                                 );

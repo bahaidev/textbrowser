@@ -129,8 +129,7 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             }
             return fieldName;
         }
-        const enumFvs = {};
-        const enumerateds = {};
+
         metadataObj.table.browse_fields.forEach((browseFieldObject, i) => {
             if (typeof browseFieldObject === 'string') {
                 browseFieldObject = {set: [browseFieldObject]};
@@ -144,26 +143,42 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
                     item.title === browseField
                 );
 
-                // Todo: Check fieldSchema for integer or string?
+                const ret = {
+                    browseFieldName: getFieldAliasOrName(browseField)
+                };
 
-                const enumerated = metadataObj.fields && metadataObj.fields[browseField] &&
-                    metadataObj.fields[browseField].sequentialEnum && fieldSchema.enum;
-                if (enumerated) {
-                    enumerateds[j] = enumerated;
-                    enumFvs[j] = getMetaProp(metadataObj, ['fieldvalue', browseField], true);
+                let fvAliases = metadataObj.fields && metadataObj.fields[browseField] &&
+                    metadataObj.fields[browseField]['fieldvalue-aliases'];
+                if (fvAliases) {
+                    if (fvAliases.localeKey) {
+                        fvAliases = getMetaProp(metadataObj, fvAliases.localeKey.split('/'), true);
+                    }
+                    if (fieldSchema.enum && fieldSchema.enum.length) {
+                        ret.aliases = [];
+                        fieldSchema.enum.forEach((enm) => {
+                            ret.aliases.push(
+                                getMetaProp(metadataObj, ['fieldvalue', browseField, enm], true)
+                            );
+                            if (enm in fvAliases &&
+                                // Todo: We could allow numbers here too, but crowds pull-down
+                                typeof fvAliases[enm] === 'string') {
+                                ret.aliases.push(...fvAliases[enm]);
+                            }
+                        });
+                        ret.aliases.sort();
+                    } else {
+                        // Todo: Allow non-enum fields to have aliases (check fieldSchema for integer or string)
+                    }
                 }
 
-                return getFieldAliasOrName(browseField);
+                return ret;
             });
 
             Templates.workDisplay.addBrowseFields({browseFields, ld, i, iil, $p, content});
         });
 
-        Templates.workDisplay.addEnumFieldValues({
-            /* eslint-disable object-property-newline */
-            enumFvs, enumerateds, iil, fallbackDirection,
+        Templates.workDisplay.addRandomFormFields({
             il, l, ld, le, $p, serializeParamsAsURL, content
-            /* eslint-enable object-property-newline */
         });
 
         const fields = schemaItems.map((schemaItem) => schemaItem.title);
