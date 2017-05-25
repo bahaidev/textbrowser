@@ -296,6 +296,8 @@ shows its usage (assuming paths relative to a package containing
         the user only wants to see the text by paragraph and not anything
         related to by page); will provide a new browsing column and also
         divide certain existing one(s)
+    1.  Allow automated algorithm to merge, remove rows (e.g., intro
+        section of text with same "0" number)
 1.  For `browse9.php` equivalent
     1.  Handle defaults for empty boxes if not already
     1.  Test all locales and works and combos
