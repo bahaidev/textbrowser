@@ -154,6 +154,7 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
                         fvAliases = getMetaProp(metadataObj, fvAliases.localeKey.split('/'), true);
                     }
                     ret.aliases = [];
+                    // Todo: We could use `prefer_alias` but algorithm below may cover needed cases
                     if (fieldSchema.enum && fieldSchema.enum.length) {
                         fieldSchema.enum.forEach((enm) => {
                             ret.aliases.push(
