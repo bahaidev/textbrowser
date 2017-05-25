@@ -211,7 +211,9 @@ shows its usage (assuming paths relative to a package containing
     representations (see [TEI](http://www.tei-c.org/release/doc/tei-p5-doc/en/html/CO.html#CONOIX)
     for ideas)), including optionally merging them for different books;
     also overlays; don't need to implement all columns immediately but at least
-    include mechanism for now
+    include mechanism for now; may be additive or reductive, for columns or rows,
+    and admin/files-driven and ideally user-driven though security issue for
+    additive approach
     1.  Reverse engineer missing work by using `bahai_locales` database (which
        contains more than localization info: automated column data,
        alternative field names, etc.)
