@@ -56,7 +56,7 @@ const textbrowserTests = {
     'locales tests': function (test) {
         test.expect(7); // eslint-disable-line no-magic-numbers
         Promise.all(
-            [getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-04-schema.json'))].concat(
+            [getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-06-schema.json'))].concat(
                 [
                     'locale.jsonschema',
                     'en-US.json',
@@ -89,7 +89,7 @@ const textbrowserTests = {
         test.expect(7); // eslint-disable-line no-magic-numbers
         Promise.all([
             JsonRefs.resolveRefsAt(path.join(__dirname, appdataBase, 'languages.json')),
-            getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-04-schema.json')),
+            getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-06-schema.json')),
             getJSON(path.join(__dirname, schemaBase, 'languages.jsonschema')),
             getJSON(path.join(__dirname, schemaBase, 'locale.jsonschema'))
         ]).then(function ([{resolved: data}, jsonSchema, schema, localeSchema]) {

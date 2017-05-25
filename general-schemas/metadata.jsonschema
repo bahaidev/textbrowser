@@ -113,23 +113,35 @@
                             ]
                         },
                         "fieldvalue-aliases": {
-                            "type": "object",
-                            "patternProperties": {
-                                ".*": {
-                                    "oneOf": [
-                                        {
-                                            "type": "object",
-                                            "patternProperties": {
-                                                ".*": {"$ref": "#/definitions/stringOrIntegerType"}
-                                            }
-                                        },
-                                        {
-                                            "type": "array",
-                                            "items": {"$ref": "#/definitions/stringOrIntegerType"}
+                            "anyOf": [
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "localeKey": {
+                                            "type": "string"
                                         }
-                                    ]
+                                    }
+                                },
+                                {
+                                    "type": "object",
+                                    "patternProperties": {
+                                        ".*": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "object",
+                                                    "patternProperties": {
+                                                        ".*": {"$ref": "#/definitions/stringOrIntegerType"}
+                                                    }
+                                                },
+                                                {
+                                                    "type": "array",
+                                                    "items": {"$ref": "#/definitions/stringOrIntegerType"}
+                                                }
+                                            ]
+                                        }
+                                    }
                                 }
-                            }
+                            ]
                         }
                     }
                 }
