@@ -201,22 +201,6 @@ shows its usage (assuming paths relative to a package containing
 
 ## To-dos (immediate priority)
 
-1.  New features (requiring UI adjustments)
-    1.  Aliased browsing (space-separated field and drop-downs)
-        1.  Consider using `prefer_alias` for field alias use and optionally
-           show both if not given (e.g., for Bible books with
-           `prefer_alias`, show only the pull-down of books whereas
-           with the Qur'an (where Surah numbers are more commonly
-           used) link a pull-down of Surah names to a textbox
-           allowing numbers)?
-        1.  Remove locale info for "numbers only" string key (including
-            from locale files?) if allowing for aliased browsing
-            (e.g., "Gen"). (Fix Bible's current use of "Book Name"
-            with integer enforcement in bahaiwritings repo)
-        1.  Ensure browsing can be done through URL params, especially
-            to use in conjunction with bookmark keywords (in which case
-            it particularly ought to be available through a single param).
-        1.  Ensure aliases are i18nized
 1.  Add/Add back automated (including into drop-downs): Synopsis, Roman
     numerals, Chinese numbers, word-by-word translation, auto-romanized
     Persian/Arabic, Persian with
@@ -346,6 +330,11 @@ shows its usage (assuming paths relative to a package containing
         parts of a sentence, including one spanning multiple rows/verses);
         consider range for highlighting if verse range + added context range
         not enough
+    1.  Text box parsing? (for browsing ranges too)
+        1.  Ensure browsing can be done through URL params, especially
+            to use in conjunction with bookmark keywords (in which case
+            it particularly ought to be available through a single param
+            without need for system allowing expansion)
 1.  Separate formatting within Jamilih code to CSS; unit test and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)
