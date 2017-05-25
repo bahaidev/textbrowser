@@ -153,8 +153,8 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
                     if (fvAliases.localeKey) {
                         fvAliases = getMetaProp(metadataObj, fvAliases.localeKey.split('/'), true);
                     }
+                    ret.aliases = [];
                     if (fieldSchema.enum && fieldSchema.enum.length) {
-                        ret.aliases = [];
                         fieldSchema.enum.forEach((enm) => {
                             ret.aliases.push(
                                 getMetaProp(metadataObj, ['fieldvalue', browseField, enm], true)
@@ -165,10 +165,28 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
                                 ret.aliases.push(...fvAliases[enm]);
                             }
                         });
-                        ret.aliases.sort();
                     } else {
+                        // Todo: We might iterate over all values (in case some not included in fv map)
                         // Todo: Allow non-enum fields to have aliases (check fieldSchema for integer or string)
+                        Object.entries(fvAliases).forEach(([key, aliases]) => {
+                            // We'll preserve the numbers since probably more useful if stored
+                            //   with data (as opposed to enums)
+                            if (!Array.isArray(aliases)) {
+                                aliases = Object.values(aliases);
+                            }
+                            // We'll assume the longest version is best for auto-complete
+                            ret.aliases.push(
+                                ...(
+                                    aliases.filter((v) =>
+                                        aliases.every((x) =>
+                                            x === v || !(x.toLowerCase().startsWith(v.toLowerCase()))
+                                        )
+                                    ).map((v) => v + ' (' + key + ')')
+                                )
+                            );
+                        });
                     }
+                    // ret.aliases.sort();
                 }
 
                 return ret;
