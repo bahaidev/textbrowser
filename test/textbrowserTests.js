@@ -36,8 +36,8 @@ const appdataBase = appBase + 'appdata/';
 * @param {string} testName Name of the current test
 * @returns {boolean} Whether validation succeeded
 */
-function validate (testName, schema, data, extraSchemas = []) {
-    const ajv = new Ajv({extendRefs: 'fail'});
+function validate (testName, schema, data, extraSchemas = [], removeAdditional = false) {
+    const ajv = new Ajv({extendRefs: 'fail', removeAdditional});
     let valid;
     try {
         extraSchemas.forEach(([key, val]) => {
