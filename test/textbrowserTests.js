@@ -36,8 +36,8 @@ const appdataBase = appBase + 'appdata/';
 * @param {string} testName Name of the current test
 * @returns {boolean} Whether validation succeeded
 */
-function validate (testName, schema, data, extraSchemas = [], removeAdditional = false) {
-    const ajv = new Ajv({extendRefs: 'fail', removeAdditional});
+function validate (testName, schema, data, extraSchemas = [], additionalOptions = {}) {
+    const ajv = new Ajv(Object.assign({}, {extendRefs: 'fail'}, additionalOptions));
     let valid;
     try {
         extraSchemas.forEach(([key, val]) => {
@@ -54,7 +54,7 @@ function validate (testName, schema, data, extraSchemas = [], removeAdditional =
 
 const textbrowserTests = {
     'locales tests': function (test) {
-        test.expect(7); // eslint-disable-line no-magic-numbers
+        test.expect(5); // eslint-disable-line no-magic-numbers
         Promise.all(
             [getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-06-schema.json'))].concat(
                 [
@@ -73,12 +73,16 @@ const textbrowserTests = {
                 test.strictEqual(valid, true);
             });
 
-            const valid = validate('Schema test', jsonSchema, schema);
-            test.strictEqual(valid, true);
+            validate('Schema test', jsonSchema, schema, undefined, {
+                validateSchema: false
+            });
 
             const schema2 = cloneJSON(schema);
-            const valid2 = validate('Schema test 2', jsonSchema, schema2, undefined, 'all');
-            test.strictEqual(valid2, true);
+            validate('Schema test 2', jsonSchema, schema2, undefined, {
+                removeAdditional: 'all',
+                validateSchema: false
+            });
+
             const diff = jsonpatch.compare(schema, schema2);
             test.strictEqual(diff.length, 0);
 
@@ -86,7 +90,7 @@ const textbrowserTests = {
         });
     },
     'languages.json test': function (test) {
-        test.expect(7); // eslint-disable-line no-magic-numbers
+        test.expect(3); // eslint-disable-line no-magic-numbers
         Promise.all([
             JsonRefs.resolveRefsAt(path.join(__dirname, appdataBase, 'languages.json')),
             getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-06-schema.json')),
@@ -99,12 +103,15 @@ const textbrowserTests = {
 
             const schemas = arguments[0].slice(2);
             schemas.forEach((schema, i) => {
-                const valid = validate('Schema test', jsonSchema, schema);
-                test.strictEqual(valid, true);
+                validate('Schema test', jsonSchema, schema, undefined, {
+                    validateSchema: false
+                });
 
                 const schema2 = cloneJSON(schema);
-                const valid2 = validate('Schema test 2', jsonSchema, schema2, extraSchemas, 'all');
-                test.strictEqual(valid2, true);
+                validate('Schema test 2', jsonSchema, schema2, extraSchemas, {
+                    removeAdditional: 'all',
+                    validateSchema: false
+                });
                 const diff = jsonpatch.compare(schema, schema2);
                 test.strictEqual(diff.length, 0);
             });

@@ -113,35 +113,30 @@
                             ]
                         },
                         "fieldvalue-aliases": {
-                            "anyOf": [
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "localeKey": {
-                                            "type": "string"
-                                        }
-                                    }
-                                },
-                                {
-                                    "type": "object",
-                                    "patternProperties": {
-                                        ".*": {
-                                            "anyOf": [
-                                                {
-                                                    "type": "object",
-                                                    "patternProperties": {
-                                                        ".*": {"$ref": "#/definitions/stringOrIntegerType"}
-                                                    }
-                                                },
-                                                {
-                                                    "type": "array",
-                                                    "items": {"$ref": "#/definitions/stringOrIntegerType"}
-                                                }
-                                            ]
-                                        }
-                                    }
+                            "type": "object",
+                            "properties": {
+                                "localeKey": {
+                                    "type": "string"
                                 }
-                            ]
+                            },
+                            "additionalProperties": false,
+                            "patternProperties": {
+                                ".*": {
+                                    "anyOf": [
+                                        {},
+                                        {
+                                            "type": "object",
+                                            "patternProperties": {
+                                                ".*": {"$ref": "#/definitions/stringOrIntegerType"}
+                                            }
+                                        },
+                                        {
+                                            "type": "array",
+                                            "items": {"$ref": "#/definitions/stringOrIntegerType"}
+                                        }
+                                    ]
+                                }
+                            }
                         }
                     }
                 }
