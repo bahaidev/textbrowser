@@ -55,12 +55,16 @@
             "items": {
                 "type": "object",
                 "properties": {
+                    "id": {"type": "string"},
                     "name": {"$ref": "#/definitions/localeKey"},
                     "directions": {"$ref": "#/definitions/localeKey"},
                     "baseDirectory": {
                         "type": "string"
                     },
                     "schemaBaseDirectory": {
+                        "type": "string"
+                    },
+                    "metadataBaseDirectory": {
                         "type": "string"
                     },
                     "files": {
@@ -73,7 +77,9 @@
                                 },
                                 "name": {
                                     "type": "string"
-                                }
+                                },
+                                "schemaFile": {"type": "string"},
+                                "metadataFile": {"type": "string"}
                             }
                         }
                     }
