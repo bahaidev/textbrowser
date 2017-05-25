@@ -1,16 +1,21 @@
 /* globals __dirname, Ajv:true, getJSON:true, path:true, Promise, module, require */
 /* exported textbrowserTests */
-var JsonRefs, Ajv, getJSON, __dirname, path; // eslint-disable-line no-var
+var JsonRefs, jsonpatch, Ajv, getJSON, __dirname, path; // eslint-disable-line no-var
 
 (function () {
 /* eslint-disable indent */
 'use strict';
+
+function cloneJSON (obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
 
 let appBase = '../';
 
 if (typeof exports !== 'undefined') {
     Ajv = require('ajv');
     JsonRefs = require('json-refs');
+    jsonpatch = require('fast-json-patch');
     getJSON = require('simple-get-json');
     path = require('path');
 } else {
@@ -49,34 +54,60 @@ function validate (testName, schema, data, extraSchemas = []) {
 
 const textbrowserTests = {
     'locales tests': function (test) {
-        test.expect(4); // eslint-disable-line no-magic-numbers
+        test.expect(7); // eslint-disable-line no-magic-numbers
         Promise.all(
-            [
-                'locale.jsonschema',
-                'en-US.json',
-                'ar.json',
-                'fa.json',
-                'ru.json'
-            ].map((file, i) => getJSON(
-                path.join(__dirname, i ? localesBase : schemaBase, file)
-            ))
-        ).then(function ([schema, ...locales]) {
+            [getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-04-schema.json'))].concat(
+                [
+                    'locale.jsonschema',
+                    'en-US.json',
+                    'ar.json',
+                    'fa.json',
+                    'ru.json'
+                ].map((file, i) => getJSON(
+                    path.join(__dirname, i ? localesBase : schemaBase, file)
+                ))
+            )
+        ).then(function ([jsonSchema, schema, ...locales]) {
             locales.forEach(function (locale) {
                 const valid = validate('locales tests', schema, locale);
                 test.strictEqual(valid, true);
             });
+
+            const valid = validate('Schema test', jsonSchema, schema);
+            test.strictEqual(valid, true);
+
+            const schema2 = cloneJSON(schema);
+            const valid2 = validate('Schema test 2', jsonSchema, schema2, undefined, 'all');
+            test.strictEqual(valid2, true);
+            const diff = jsonpatch.compare(schema, schema2);
+            test.strictEqual(diff.length, 0);
+
             test.done();
         });
     },
     'languages.json test': function (test) {
-        test.expect(1); // eslint-disable-line no-magic-numbers
+        test.expect(7); // eslint-disable-line no-magic-numbers
         Promise.all([
             JsonRefs.resolveRefsAt(path.join(__dirname, appdataBase, 'languages.json')),
+            getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-04-schema.json')),
             getJSON(path.join(__dirname, schemaBase, 'languages.jsonschema')),
             getJSON(path.join(__dirname, schemaBase, 'locale.jsonschema'))
-        ]).then(function ([{resolved: data}, schema, extraSchema]) {
-            const valid = validate('languages.json test', schema, data, [['locale.jsonschema', extraSchema]]);
+        ]).then(function ([{resolved: data}, jsonSchema, schema, localeSchema]) {
+            const extraSchemas = [['locale.jsonschema', localeSchema]];
+            const valid = validate('languages.json test', schema, data, extraSchemas);
             test.strictEqual(valid, true);
+
+            const schemas = arguments[0].slice(2);
+            schemas.forEach((schema, i) => {
+                const valid = validate('Schema test', jsonSchema, schema);
+                test.strictEqual(valid, true);
+
+                const schema2 = cloneJSON(schema);
+                const valid2 = validate('Schema test 2', jsonSchema, schema2, extraSchemas, 'all');
+                test.strictEqual(valid2, true);
+                const diff = jsonpatch.compare(schema, schema2);
+                test.strictEqual(diff.length, 0);
+            });
             test.done();
         });
     }
