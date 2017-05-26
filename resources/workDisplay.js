@@ -227,16 +227,14 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
         //  filesSchema.properties.groups.items.properties.files.items.properties.
         //      file.anyOf.splice(1, 1, {$ref: schemaFile});
         // Todo: Allow use of dbs and fileGroup together in base directories?
-        function getMetadata (file, property, cb) {
-            const currDir = getCurrDir();
-            JsonRefs.resolveRefsAt(currDir + file + (property ? '#/' + property : ''))
-                .then((rJson, metadata) => {
-                    cb(rJson.resolved, metadata);
-                }).catch((err) => {
+        const getMetadata = (file, property, cb) =>
+            JsonRefs
+                .resolveRefsAt(getCurrDir() + file + (property ? '#/' + property : ''))
+                .then(({resolved}) => resolved)
+                .catch((err) => {
                     alert('catch:' + err);
                     throw err;
                 });
-        }
 
         let fileData;
         const fileGroup = dbs.groups.find((fg) => {
@@ -267,19 +265,20 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             metadataProperty = 'metadata';
         }
 
-        getMetadata(schemaFile, schemaProperty, (schemaObj) => {
-            getMetadata(metadataFile, metadataProperty, (metadataObj) => {
-                document.title = lf({
-                    key: 'browserfile-workdisplay',
-                    values: {
-                        work: fileData
-                            ? getMetaProp(metadataObj, 'alias')
-                            : ''
-                    },
-                    fallback: true
-                });
-                _displayWork(l, defineFormatter, schemaObj, metadataObj);
+        Promise.all([
+            getMetadata(schemaFile, schemaProperty),
+            getMetadata(metadataFile, metadataProperty)
+        ]).then(([schemaObj, metadataObj]) => {
+            document.title = lf({
+                key: 'browserfile-workdisplay',
+                values: {
+                    work: fileData
+                        ? getMetaProp(metadataObj, 'alias')
+                        : ''
+                },
+                fallback: true
             });
+            _displayWork(l, defineFormatter, schemaObj, metadataObj);
         });
     }, (err) => {
         alert(err);
