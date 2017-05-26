@@ -214,7 +214,7 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
         });
     }
 
-    getJSON(this.files, (dbs) => {
+    getJSON(this.files).then((dbs) => {
         this.fileData = dbs;
         const imfFile = IMF({ // eslint-disable-line new-cap
             locales: lang.map(localeFromFileData),
@@ -265,22 +265,23 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             metadataProperty = 'metadata';
         }
 
-        Promise.all([
+        return Promise.all([
+            fileData, lf, l, // Pass on non-promises
             getMetadata(schemaFile, schemaProperty),
             getMetadata(metadataFile, metadataProperty)
-        ]).then(([schemaObj, metadataObj]) => {
-            document.title = lf({
-                key: 'browserfile-workdisplay',
-                values: {
-                    work: fileData
-                        ? getMetaProp(metadataObj, 'alias')
-                        : ''
-                },
-                fallback: true
-            });
-            _displayWork(l, defineFormatter, schemaObj, metadataObj);
+        ]);
+    }).then(([fileData, lf, l, schemaObj, metadataObj]) => {
+        document.title = lf({
+            key: 'browserfile-workdisplay',
+            values: {
+                work: fileData
+                    ? getMetaProp(metadataObj, 'alias')
+                    : ''
+            },
+            fallback: true
         });
-    }, (err) => {
+        _displayWork(l, defineFormatter, schemaObj, metadataObj);
+    }).catch((err) => {
         alert(err);
     });
 };
