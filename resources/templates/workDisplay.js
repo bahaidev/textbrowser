@@ -793,6 +793,7 @@ Templates.workDisplay = {
                                     ld, il, l, lo, le, $p, hideFormattingSection
                                 })
                                 /*
+                                // Todo: Is this still the case? No way to control with CSS?
                                 ,arabicContent ?
                                     // If there is Arabic content, a text box will be created for
                                     //    each field with such content to allow the user to choose

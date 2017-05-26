@@ -168,7 +168,7 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
                         });
                     } else {
                         // Todo: We might iterate over all values (in case some not included in fv map)
-                        // Todo: Allow non-enum fields to have aliases (check fieldSchema for integer or string)
+                        // Todo: Check `fieldSchema` for integer or string type
                         Object.entries(fvAliases).forEach(([key, aliases]) => {
                             // We'll preserve the numbers since probably more useful if stored
                             //   with data (as opposed to enums)
