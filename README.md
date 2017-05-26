@@ -211,6 +211,7 @@ shows its usage (assuming paths relative to a package containing
         1.  Admin/files-driven and ideally user-driven (though security issue for
             additive approach)
         1.  Browse fields or field list
+        1.  Modifying existing content or not
         1.  Levels of applicability
             1.  Automated whole document/table-level or column-level
                 changes (e.g., word counts)
@@ -224,9 +225,14 @@ shows its usage (assuming paths relative to a package containing
                 auto-romanized Persian/Arabic, Persian with English tooltips,
                 English with Persian/Arabic tooltips,
                 text-to-(Google search, Google define, Wikipedia, etc. edit pages)-links
-        1.  Back-links for index entries (which
-            needs its own JSON Schema-based project for the hierarchical
-            representations (see [TEI](http://www.tei-c.org/release/doc/tei-p5-doc/en/html/CO.html#CONOIX)
+        1.  Auto-links by verse to relevant forums, wikis, blogs, or personal
+            notes pertaining to a given verse
+            1.  Built-in (including offline or only offline) note-taking
+               (local/remote and wiki WYSIWYG with Git version control?);
+               modular loading of others' notes?
+        1.  Back-links for index entries (which needs its own JSON Schema-based
+            project for the hierarchical representations (see
+            [TEI](http://www.tei-c.org/release/doc/tei-p5-doc/en/html/CO.html#CONOIX)
             for ideas)) including optionally merging them for different books
         1.  Support metadata to omit or combine fields during browsing (like
             checkboxes and interlinear field, but admin-set; also ensure, or
@@ -247,11 +253,6 @@ shows its usage (assuming paths relative to a package containing
             divide certain existing one(s)
         1.  Allow automated algorithm to merge, remove rows (e.g., intro
             section of text with same "0" number)
-        1.  Auto-links by verse to relevant forums, wikis, blogs, or personal
-            notes pertaining to a given verse
-            1.  Built-in (including offline or only offline) note-taking
-               (local/remote and wiki WYSIWYG with Git version control?);
-               modular loading of others' notes?
         1.  Add an "overlay" column like interlinear, but which overlays by
             tooltip if any data is present; can also use metadata if the overlay
             is within-cell (and this metadata can also be used for putting
