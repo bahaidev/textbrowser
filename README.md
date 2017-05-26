@@ -223,6 +223,7 @@ shows its usage (assuming paths relative to a package containing
         1.  Levels of applicability
             1.  Automated whole document/table-level or column-level
                 changes (e.g., word counts) or even row-level/cell-level
+            1.  Spans across section
         1.  Provide example plugins of each type for this version if possible
     1.  Specific automated fields
         1. Previously implemented:
