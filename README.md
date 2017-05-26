@@ -201,7 +201,7 @@ shows its usage (assuming paths relative to a package containing
 
 ## To-dos (immediate priority)
 
-1.  Automated fields
+1.  Plugins/Automated fields
     1.  Include extensibility mechanism
         1.  Reverse engineer missing work by using `bahai_locales` database (which
             contains more than localization info: automated column data,
@@ -211,7 +211,7 @@ shows its usage (assuming paths relative to a package containing
                 1.  Admin-controlled merging/omission of columns like interlinear
                 1.  Merging rows with same number
         1.  Admin/files-driven and ideally user-driven (though security issue for
-            additive approach)
+            additive approach); could let plugin itself accept user input
         1.  Browse fields or field list
         1.  Modifying existing content or not
             1.  Splitting columns (e.g., by line break)
@@ -223,7 +223,7 @@ shows its usage (assuming paths relative to a package containing
                 changes (e.g., word counts)
             1.  Metadata for default field column placement and table/field
                 applicability
-        1.  Provide examples of each type for this version if possible
+        1.  Provide example plugins of each type for this version if possible
     1.  Specific automated fields
         1. Previously implemented:
             1. Synopsis, Roman numerals, Chinese numbers, word-by-word translation,
