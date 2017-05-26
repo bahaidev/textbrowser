@@ -206,18 +206,23 @@ shows its usage (assuming paths relative to a package containing
         1.  Reverse engineer missing work by using `bahai_locales` database (which
             contains more than localization info: automated column data,
             alternative field names, etc.)
-        1.  Additive or reductive (deleting/merging)
+        1.  Additive or reductive (omitting/merging)
             1.  Columns or rows
+                1.  Admin-controlled merging/omission of columns like interlinear
+                1.  Merging rows with same number
         1.  Admin/files-driven and ideally user-driven (though security issue for
             additive approach)
         1.  Browse fields or field list
         1.  Modifying existing content or not
+            1.  Splitting columns (e.g., by line break)
+            1.  Splitting rows by element (e.g., `<hr />`)
+                1.  With optional rowspan/colspan for non-split portions of row/column
+            1.  Overlays
         1.  Levels of applicability
             1.  Automated whole document/table-level or column-level
                 changes (e.g., word counts)
             1.  Metadata for default field column placement and table/field
                 applicability
-            1.  Overlays
         1.  Provide examples of each type for this version if possible
     1.  Specific automated fields
         1. Previously implemented:
@@ -253,6 +258,7 @@ shows its usage (assuming paths relative to a package containing
             divide certain existing one(s)
         1.  Allow automated algorithm to merge, remove rows (e.g., intro
             section of text with same "0" number)
+        1.  Splitting columns by line break, etc.
         1.  Add an "overlay" column like interlinear, but which overlays by
             tooltip if any data is present; can also use metadata if the overlay
             is within-cell (and this metadata can also be used for putting
