@@ -2,7 +2,7 @@ Due to changes in PHP (and the code being very old), the
 code currently in this repository is not working and needs a rewrite.
 
 However, I have begun a rewrite in client-side JavaScript so that
-it can work offline.
+it can work offline as well as online.
 
 ----
 
@@ -201,90 +201,96 @@ shows its usage (assuming paths relative to a package containing
 
 ## To-dos (immediate priority)
 
-1.  Add/Add back automated (including into drop-downs): Synopsis, Roman
-    numerals, Chinese numbers, word-by-word translation, auto-romanized
-    Persian/Arabic, Persian with
-    English tooltips, English with Persian/Arabic tooltips,
-    text-to-(Google search, Google define, Wikipedia, etc. edit pages);
-    add Word-by-word/phrase mapping; add back-links for index entries (which
-    needs its own JSON Schema-based project for the hierarchical
-    representations (see [TEI](http://www.tei-c.org/release/doc/tei-p5-doc/en/html/CO.html#CONOIX)
-    for ideas)), including optionally merging them for different books;
-    also overlays; don't need to implement all columns immediately but at least
-    include mechanism for now; may be additive or reductive, for columns or rows,
-    and admin/files-driven and ideally user-driven though security issue for
-    additive approach
-    1.  Reverse engineer missing work by using `bahai_locales` database (which
-       contains more than localization info: automated column data,
-       alternative field names, etc.)
-    1.  Metadata for default field column placement and table/field
-        applicability
-    1.  Automated word-by-word translations, auto-links to Google, Amazon, etc.
-    1.  Auto-links by verse to relevant forums, wikis, blogs, or personal
-        notes pertaining to a given verse...
-        1.  Built-in (including offline or only offline) note-taking
-           (local/remote and wiki WYSIWYG with Git version control?);
-           ~support loading from `bower_components`~
-    1.  Automated whole document/table-level or column-level
-        changes (e.g., word counts)
-    1.  Add an "overlay" column like interlinear, but which overlays by
-        tooltip if any data is present; can also use metadata if the overlay
-        is within-cell (and this metadata can also be used for putting
-        overlay data in its own column too, albeit with only partial
-        mapping to the other columns, e.g., if our "Baha'i translation"
-        had not already been put into its own column, a metadata mapping
-        may only have been for two discontinuous sentences out of a
-        paragraph, but could still show such sentences reassembled (with
-        some kind of separator) in a paragraph-based cell)
-        1.  Deal with other metadata/automated (besides overlays) which is
-            intended to allow collapsing of ranges (above paragraph cells, but
-            may overlap); do as multiple tbodies but needs to be done
-            dynamically since may wish alternate (and nestable) collapsing
-            (e.g., collection->book->chapter, user-contributed metadata
-            sections, etc.); allow collapsing/expanding of all fields by one
-            click button outside table (or by level); allow automated
-            collapsing based on sequentially exact values (e.g., until
-            rows stop having a column with value "1")
-        1.  Allow collapsing even within cells (as with overlays) (like
-            our "Baha'i Translation" could have been). Also make
-            non-metadata regions collapsible so can hide them from view.
-        1.  Allow something to be prefixed to interlinear number to
-            indicate the field should be treated as an overlay (tooltip);
-            if so, may need tooltip to be in blocks in case multiple
-            columns added. But also need to have section for automated
-            fields separate from the regular fields for those fields
-            which do not map exclusively by cell boundaries (or
-            relatively within them).
-        1.  Allow types of overlays (or "mashes") such as underlays (adding
-            invisible metadata), onlays/"mash ons" (replacing text in place),
-            as well as regular overlays (adding text via mouseover); let
-            these be alterable as possible by the user (e.g., text might
-            be desirable to replace existing text or put it as a mouseover)
-        1.  Allow for dynamic addition of JSON overlay sources or metadata
-            to work selection/work display files?
-        1.  See bahaiwritings project re: using Firefox's [Browser API](https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API)
-            to allow independent navigation controls for each iframe (and
-            side-by-side viewing of verses/lines and commentary)
-    1.  Support metadata to omit or combine fields during browsing (like
-        checkboxes and interlinear field, but admin-set; also ensure, or
-        add option for, no line breaks or indication of original source
-        column within interlinear display so not bloating or surfacing
-        internal column differences to users); increment counts despite
-        some surfacing, as better ensures future compatibility/portability
-    1.  Automated field to split up rows based on presence of `<hr />` or
-        `<a id=>`, etc., with the ability to browse by such numbers (would
-        ideally tap into browsing autocomplete code indicating min/max too).
-        Optionally get `rowspan`s (or even `colspan`s) for additional
-        columns (e.g., a field spanning by whole pages of a book and another
-        field spanning only by paragraphs) - use some kind of counter and
-        don't display the HTML until finished cycling??; also figure out
-        how to reassemble if the minute fields are not needed (e.g., if
-        the user only wants to see the text by paragraph and not anything
-        related to by page); will provide a new browsing column and also
-        divide certain existing one(s)
-    1.  Allow automated algorithm to merge, remove rows (e.g., intro
-        section of text with same "0" number)
-1.  For `browse9.php` equivalent
+1.  Automated fields
+    1.  Include extensibility mechanism
+        1.  Reverse engineer missing work by using `bahai_locales` database (which
+            contains more than localization info: automated column data,
+            alternative field names, etc.)
+        1.  Additive or reductive (deleting/merging)
+            1.  Columns or rows
+        1.  Admin/files-driven and ideally user-driven (though security issue for
+            additive approach)
+        1.  Browse fields or field list
+        1.  Levels of applicability
+            1.  Automated whole document/table-level or column-level
+                changes (e.g., word counts)
+            1.  Metadata for default field column placement and table/field
+                applicability
+            1.  Overlays
+        1.  Provide examples of each type for this version if possible
+    1.  Specific automated fields
+        1. Previously implemented:
+            1. Synopsis, Roman numerals, Chinese numbers, word-by-word translation,
+                auto-romanized Persian/Arabic, Persian with English tooltips,
+                English with Persian/Arabic tooltips,
+                text-to-(Google search, Google define, Wikipedia, etc. edit pages)-links
+        1.  Back-links for index entries (which
+            needs its own JSON Schema-based project for the hierarchical
+            representations (see [TEI](http://www.tei-c.org/release/doc/tei-p5-doc/en/html/CO.html#CONOIX)
+            for ideas)) including optionally merging them for different books
+        1.  Support metadata to omit or combine fields during browsing (like
+            checkboxes and interlinear field, but admin-set; also ensure, or
+            add option for, no line breaks or indication of original source
+            column within interlinear display so not bloating or surfacing
+            internal column differences to users); increment counts despite
+            some surfacing, as better ensures future compatibility/portability
+        1.  Automated field to split up rows based on presence of `<hr />` or
+            `<a id=>`, etc., with the ability to browse by such numbers (would
+            ideally tap into browsing autocomplete code indicating min/max too).
+            Optionally get `rowspan`s (or even `colspan`s) for additional
+            columns (e.g., a field spanning by whole pages of a book and another
+            field spanning only by paragraphs) - use some kind of counter and
+            don't display the HTML until finished cycling??; also figure out
+            how to reassemble if the minute fields are not needed (e.g., if
+            the user only wants to see the text by paragraph and not anything
+            related to by page); will provide a new browsing column and also
+            divide certain existing one(s)
+        1.  Allow automated algorithm to merge, remove rows (e.g., intro
+            section of text with same "0" number)
+        1.  Auto-links by verse to relevant forums, wikis, blogs, or personal
+            notes pertaining to a given verse
+            1.  Built-in (including offline or only offline) note-taking
+               (local/remote and wiki WYSIWYG with Git version control?);
+               modular loading of others' notes?
+        1.  Add an "overlay" column like interlinear, but which overlays by
+            tooltip if any data is present; can also use metadata if the overlay
+            is within-cell (and this metadata can also be used for putting
+            overlay data in its own column too, albeit with only partial
+            mapping to the other columns, e.g., if our "Baha'i translation"
+            had not already been put into its own column, a metadata mapping
+            may only have been for two discontinuous sentences out of a
+            paragraph, but could still show such sentences reassembled (with
+            some kind of separator) in a paragraph-based cell)
+            1.  Deal with other metadata/automated (besides overlays) which is
+                intended to allow collapsing of ranges (above paragraph cells, but
+                may overlap); do as multiple tbodies but needs to be done
+                dynamically since may wish alternate (and nestable) collapsing
+                (e.g., collection->book->chapter, user-contributed metadata
+                sections, etc.); allow collapsing/expanding of all fields by one
+                click button outside table (or by level); allow automated
+                collapsing based on sequentially exact values (e.g., until
+                rows stop having a column with value "1")
+            1.  Allow collapsing even within cells (as with overlays) (like
+                our "Baha'i Translation" could have been). Also make
+                non-metadata regions collapsible so can hide them from view.
+            1.  Allow something to be prefixed to interlinear number to
+                indicate the field should be treated as an overlay (tooltip);
+                if so, may need tooltip to be in blocks in case multiple
+                columns added. But also need to have section for automated
+                fields separate from the regular fields for those fields
+                which do not map exclusively by cell boundaries (or
+                relatively within them).
+            1.  Allow types of overlays (or "mashes") such as underlays (adding
+                invisible metadata), onlays/"mash ons" (replacing text in place),
+                as well as regular overlays (adding text via mouseover); let
+                these be alterable as possible by the user (e.g., text might
+                be desirable to replace existing text or put it as a mouseover)
+            1.  Allow for dynamic addition of JSON overlay sources or metadata
+                to work selection/work display files?
+            1.  See bahaiwritings project re: using Firefox's [Browser API](https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API)
+                to allow independent navigation controls for each iframe (and
+                side-by-side viewing of verses/lines and commentary)
+1.  For as-yet-not-reimplemented results display page (`browse9.php` equivalent)
     1.  Handle defaults for empty boxes if not already
     1.  Test all locales and works and combos
     1.  Utilize `prefer_alias`
@@ -295,6 +301,8 @@ shows its usage (assuming paths relative to a package containing
         speech voices for different rows or columns (or just let user
         add CSS to columns to mark).
     1.  Prevent XSS in field and page CSS fields
+    1.  Review work display page fields and schemas/metadata to ensure all
+        being used in results
 1.  Once stabilized, target "textbrowser" dependency mentioned above
     by tagged version instead of `master`.
 
