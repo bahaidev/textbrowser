@@ -1,8 +1,6 @@
 /* globals TextBrowser, Templates, IMF, formSerialize, getJSON, JsonRefs */
 
 (function () {
-/* eslint-disable indent */
-
 const getCurrDir = () =>
     window.location.href.replace(/(index\.html)?#.*$/, '');
 
@@ -287,6 +285,4 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
         alert(err);
     });
 };
-
-/* eslint-enable indent */
 }());

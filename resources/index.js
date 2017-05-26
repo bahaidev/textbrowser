@@ -2,7 +2,6 @@
 /* exported TextBrowser */
 
 (function () {
-/* eslint-disable indent */
 'use strict';
 
 function s (obj) { alert(JSON.stringify(obj)); } // eslint-disable-line no-unused-vars
@@ -166,5 +165,4 @@ TextBrowser.prototype.paramChange = function () {
 };
 
 window.TextBrowser = TextBrowser;
-/* eslint-enable indent */
 }());

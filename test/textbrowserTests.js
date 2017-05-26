@@ -3,7 +3,6 @@
 var JsonRefs, jsonpatch, Ajv, getJSON, __dirname, path; // eslint-disable-line no-var
 
 (function () {
-/* eslint-disable indent */
 'use strict';
 
 function cloneJSON (obj) {
@@ -125,5 +124,4 @@ if (typeof exports !== 'undefined') {
 } else {
     window.textbrowserTests = textbrowserTests;
 }
-/* eslint-enable indent */
 }());
