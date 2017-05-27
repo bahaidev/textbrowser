@@ -1,11 +1,8 @@
-/* globals TextBrowser, Templates, IMF, formSerialize, getJSON, JsonRefs */
+/* globals TextBrowser, Templates, JSONP, IMF, formSerialize, getJSON, JsonRefs */
 
-(function () {
+(() => {
 const getCurrDir = () =>
     window.location.href.replace(/(index\.html)?#.*$/, '');
-
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
 TextBrowser.prototype.workDisplay = function workDisplay ({
     lang, preferredLocale, localeFromLangData, fallbackLanguages, getMetaProp, $p,
@@ -78,12 +75,61 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
                     ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [message]]
             });
 
+        // Todo: remember this locales choice by cookie?
+        const getPreferredLanguages = (lngs) => {
+            const langArr = [];
+            lngs.forEach((lng) => {
+                // Todo: Check for multiple separate hyphenated
+                //   groupings (for each supplied language)
+                const higherLocale = lng.replace(/-.*$/, '');
+                if (higherLocale === lng) {
+                    langArr.push(lng);
+                } else {
+                    langArr.push(lng, higherLocale);
+                }
+            });
+            return langArr;
+        };
+
+        function fieldMatchesLocale (field) {
+            const metaFieldInfo = metadataObj && metadataObj.fields &&
+                metadataObj.fields[field];
+            let metaLang;
+            if (metaFieldInfo) {
+                metaLang = metadataObj.fields[field].lang;
+            }
+            const localeStrings = metadataObj &&
+                metadataObj['localization-strings'];
+
+            // If this is a localized field (e.g., enum), we don't want
+            //  to avoid as may be translated (should check though)
+            const hasFieldValue = localeStrings &&
+                Object.keys(localeStrings).some(lng => {
+                    const fv = localeStrings[lng] &&
+                        localeStrings[lng].fieldvalue;
+                    return fv && fv[field];
+                });
+
+            // Todo: Add to this optionally with one-off tag input box
+            // Todo: Switch to fallbackLanguages so can default to
+            //    navigator.languages?
+            const langCodes = localStorage.getItem(that.namespace + '-langCodes');
+            const preferredLanguages = getPreferredLanguages(
+                (langCodes && JSON.parse(langCodes)) || [preferredLocale]
+            );
+            return hasFieldValue ||
+                (metaLang && preferredLanguages.includes(metaLang)) ||
+                schemaItems.some(item =>
+                    item.title === field && item.type !== 'string'
+                );
+        }
+
         const schemaItems = schemaObj.items.items;
         const content = [];
 
-        function serializeParamsAsURL (cb) {
+        function serializeParamsAsURL ({form, random, checkboxes}, type) {
             const paramsCopy = new URLSearchParams($p.params);
-            const formParamsHash = formSerialize($('form#browse'), {hash: true});
+            const formParamsHash = formSerialize(form, {hash: true});
 
             Object.keys(formParamsHash).forEach((key) => {
                 paramsCopy.set(key, formParamsHash[key]);
@@ -91,17 +137,32 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
 
             // Follow the same style (and order) for checkboxes
             paramsCopy.delete(il('rand'));
-            paramsCopy.set(il('rand'), $('#rand').checked ? l('yes') : l('no'));
+            paramsCopy.set(il('rand'), random.checked ? l('yes') : l('no'));
 
             // We want checkboxes to typically show by default, so we cannot use the
             //    standard serialization
-            $$('input[type=checkbox]').forEach((checkbox) => {
+            checkboxes.forEach((checkbox) => {
                 // Let's ensure the checked items are all together (at the end)
                 paramsCopy.delete(checkbox.name);
                 paramsCopy.set(checkbox.name, checkbox.checked ? l('yes') : l('no'));
             });
 
-            cb(paramsCopy);
+            switch (type) {
+            case 'saveSettings': {
+                // In case it was added previously on
+                //    this page, let's remove it.
+                paramsCopy.delete(il('random'));
+                break;
+            }
+            case 'result': {
+                // In case it was added previously on this page,
+                //    let's put random again toward the end.
+                paramsCopy.delete(il('random'));
+                paramsCopy.set(il('random'), l('yes'));
+                paramsCopy.set(il('result'), l('yes'));
+                break;
+            }
+            }
             return window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
         }
         function getFieldAliasOrName (field) {
@@ -209,6 +270,7 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             langs, fields, localizeParamNames,
             serializeParamsAsURL, hideFormattingSection, $p,
             getMetaProp, metadataObj, il, le, ld, iil,
+            getPreferredLanguages, fieldMatchesLocale,
             getFieldAliasOrName, preferredLocale, schemaItems, content
             /* eslint-enable object-property-newline */
         });
@@ -268,9 +330,21 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
         return Promise.all([
             fileData, lf, l, // Pass on non-promises
             getMetadata(schemaFile, schemaProperty),
-            getMetadata(metadataFile, metadataProperty)
+            getMetadata(metadataFile, metadataProperty),
+            this.allowPlugins ? Object.keys(dbs.plugins) : null, // Non-promise
+            this.allowPlugins ? JSONP(Object.values(dbs.plugins)) : null
         ]);
-    }).then(([fileData, lf, l, schemaObj, metadataObj]) => {
+    }).then(([fileData, lf, l, schemaObj, metadataObj, pluginKeys, pluginObjects]) => {
+        console.log('pluginKeys', pluginKeys);
+        console.log('pluginObjects', pluginObjects);
+        if (pluginObjects) {
+            // console.log('aaap', pluginObjects[0].insertField());
+            /*
+            "plugins": {
+                "synopsis": "plugins/synopsis.js"
+            },
+            */
+        }
         document.title = lf({
             key: 'browserfile-workdisplay',
             values: {
@@ -285,4 +359,4 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
         alert(err);
     });
 };
-}());
+})();

@@ -54,10 +54,17 @@ const fonts = [
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
+const getDataForSerializingParamsAsURL = () => ({
+    form: $('form#browse'),
+    random: $('#rand'),
+    checkboxes: $$('input[type=checkbox]')
+});
+
 Templates.workDisplay = {
     columnsTable: ({
-        ld, namespace, fields, $p, le, iil, l, getFieldAliasOrName,
-        metadataObj, preferredLocale, schemaItems
+        ld, fields, $p, le, iil, l, getFieldAliasOrName,
+        metadataObj, preferredLocale, schemaItems, getPreferredLanguages,
+        fieldMatchesLocale
     }) => ['table', {
         border: '1', cellpadding: '5', align: 'center'
     }, [
@@ -154,58 +161,12 @@ Templates.workDisplay = {
                     type: 'button',
                     $on: {
                         click: () => {
-                            // Todo: remember this locales choice by cookie?
-                            const getPreferredLanguages = (lngs) => {
-                                const langArr = [];
-                                lngs.forEach((lng) => {
-                                    // Todo: Check for multiple separate hyphenated
-                                    //   groupings (for each supplied language)
-                                    const higherLocale = lng.replace(/-.*$/, '');
-                                    if (higherLocale === lng) {
-                                        langArr.push(lng);
-                                    } else {
-                                        langArr.push(lng, higherLocale);
-                                    }
-                                });
-                                return langArr;
-                            };
                             fields.forEach((fld, i) => {
                                 const idx = i + 1;
                                 // The following is redundant with 'fld' but may need to
                                 //     retrieve later out of order?
                                 const field = $('#field' + idx).selectedOptions[0].dataset.name;
-
-                                const metaFieldInfo = metadataObj && metadataObj.fields &&
-                                    metadataObj.fields[field];
-                                let metaLang;
-                                if (metaFieldInfo) {
-                                    metaLang = metadataObj.fields[field].lang;
-                                }
-                                const localeStrings = metadataObj &&
-                                    metadataObj['localization-strings'];
-
-                                // If this is a localized field (e.g., enum), we don't want
-                                //  to avoid as may be translated (should check though)
-                                const hasFieldValue = localeStrings &&
-                                    Object.keys(localeStrings).some(lng => {
-                                        const fv = localeStrings[lng] &&
-                                            localeStrings[lng].fieldvalue;
-                                        return fv && fv[field];
-                                    });
-
-                                // Todo: Add to this optionally with one-off tag input box
-                                // Todo: Switch to fallbackLanguages so can default to
-                                //    navigator.languages?
-                                const langCodes = localStorage.getItem(namespace + '-langCodes');
-                                const preferredLanguages = getPreferredLanguages(
-                                    (langCodes && JSON.parse(langCodes)) || [preferredLocale]
-                                );
-                                $('#checked' + idx).checked =
-                                    hasFieldValue ||
-                                    (metaLang && preferredLanguages.includes(metaLang)) ||
-                                    schemaItems.some(item =>
-                                        item.title === field && item.type !== 'string'
-                                    );
+                                $('#checked' + idx).checked = fieldMatchesLocale(field);
                             });
                         }
                     }
@@ -539,13 +500,10 @@ Templates.workDisplay = {
                         type: 'button',
                         $on: {
                             click: () => {
-                                const url = serializeParamsAsURL((paramsCopy) => {
-                                    // In case it was added previously on this page,
-                                    //    let's put random again toward the end.
-                                    paramsCopy.delete(il('random'));
-                                    paramsCopy.set(il('random'), l('yes'));
-                                    paramsCopy.set(il('result'), l('yes'));
-                                });
+                                const url = serializeParamsAsURL(
+                                    getDataForSerializingParamsAsURL(),
+                                    'result'
+                                );
                                 $('#randomURL').value = url;
                             }
                         }
@@ -730,8 +688,8 @@ Templates.workDisplay = {
         l, namespace, heading, fallbackDirection, imfl, langs, fields, localizeParamNames,
         serializeParamsAsURL,
         hideFormattingSection, $p,
-        getMetaProp, metadataObj, il, le, ld,
-        iil, getFieldAliasOrName, preferredLocale, schemaItems, content
+        getMetaProp, metadataObj, il, le, ld, iil, getPreferredLanguages, fieldMatchesLocale,
+        getFieldAliasOrName, preferredLocale, schemaItems, content
     }) => {
         const lo = (key, atts) =>
             ['option', atts, [
@@ -770,19 +728,19 @@ Templates.workDisplay = {
                                 ['td', [
                                     Templates.workDisplay.columnsTable({
                                         /* eslint-disable object-property-newline */
-                                        ld, namespace, fields, $p, le, iil, l, getFieldAliasOrName,
-                                        metadataObj, preferredLocale, schemaItems
+                                        ld, fields, $p, le, iil, l, getFieldAliasOrName,
+                                        metadataObj, preferredLocale, schemaItems, getPreferredLanguages,
+                                        fieldMatchesLocale
                                         /* eslint-enable object-property-newline */
                                     }),
                                     le('save-settings-URL', 'input', 'value', {
                                         type: 'button',
                                         $on: {
                                             click: () => {
-                                                const url = serializeParamsAsURL((paramsCopy) => {
-                                                    // In case it was added previously on
-                                                    //    this page, let's remove it
-                                                    paramsCopy.delete(il('random'));
-                                                });
+                                                const url = serializeParamsAsURL(
+                                                    getDataForSerializingParamsAsURL(),
+                                                    'saveSettings'
+                                                );
                                                 $('#settings-URL').value = url;
                                             }
                                         }
@@ -828,13 +786,10 @@ Templates.workDisplay = {
                             $on: {
                                 click: () => {
                                     // Todo:
-                                    const url = serializeParamsAsURL((paramsCopy) => {
-                                        // In case it was added previously on this page,
-                                        //    let's put random again toward the end
-                                        paramsCopy.delete(il('random'));
-                                        paramsCopy.set(il('random'), l('yes'));
-                                        paramsCopy.set(il('result'), l('yes'));
-                                    });
+                                    const url = serializeParamsAsURL(
+                                        getDataForSerializingParamsAsURL(),
+                                        'result'
+                                    );
                                     window.location.href = url;
                                 }
                             }

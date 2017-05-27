@@ -173,10 +173,12 @@ shows its usage (assuming paths relative to a package containing
     -   `namespace` - Namespace to use as a prefix for all `localStorage`.
         Defaults to "textbrowser".
 
+    -   `allowPlugins` - Enables `files.json`-specified plugins
+
     -   `localizeParamNames` - Boolean as to whether to localize parameter
         names by default (can be overridden by the user in preferences).
 
-    -   `hideFormattingSection` -Boolean as to whether to hide the formatting
+    -   `hideFormattingSection` - Boolean as to whether to hide the formatting
         section by default (can be overridden by the user in preferences).
 
 -   ***init*** - Default implementation merely invokes `displayLanguages`.

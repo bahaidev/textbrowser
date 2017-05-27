@@ -14,10 +14,11 @@
     "url": "git+https://github.com/brettz9/textbrowser.git"
   },
   "dependencies": {
-      "imf": "1.0.2",
-      "json-refs": "https://github.com/brettz9/json-refs#browser",
-      "simple-get-json": "1.1.0",
-      "urlsearchparams": "0.1.1"
+    "imf": "1.0.2",
+    "jsonpadding": "0.3.1",
+    "json-refs": "https://github.com/brettz9/json-refs#browser",
+    "simple-get-json": "1.1.0",
+    "urlsearchparams": "0.1.1"
   },
   "devDependencies": {
     "ajv": "5.1.3",

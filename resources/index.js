@@ -1,7 +1,7 @@
 /* global IMF, getJSON, IntlURLSearchParams, Templates */
 /* exported TextBrowser */
 
-(function () {
+(() => {
 'use strict';
 
 function s (obj) { alert(JSON.stringify(obj)); } // eslint-disable-line no-unused-vars
@@ -14,6 +14,7 @@ function TextBrowser (options) {
     this.site = options.site || 'site.json';
     this.files = options.files || 'files.json';
     this.namespace = options.namespace || 'textbrowser';
+    this.allowPlugins = options.allowPlugins;
     this.localizeParamNames = options.localizeParamNames === undefined
         ? true
         : options.localizeParamNames;
@@ -165,4 +166,4 @@ TextBrowser.prototype.paramChange = function () {
 };
 
 window.TextBrowser = TextBrowser;
-}());
+})();

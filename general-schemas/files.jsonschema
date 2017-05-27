@@ -23,6 +23,14 @@
         "schemaBaseDirectory": {
             "type": "string"
         },
+        "plugins": {
+            "type": "object",
+            "patternProperties": {
+                ".*": {
+                    "type": "string"
+                }
+            }
+        },
         "autofield-mapping": {
             "type": "object",
             "patternProperties": {
