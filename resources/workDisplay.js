@@ -16,23 +16,15 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
     const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
     const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true)
         ? $p.get('i18n', true) === '1'
-        : ( // eslint-disable-line no-nested-ternary
-            prefI18n === 'true'
-                ? true
-                : (prefI18n === 'false'
-                    ? false
-                    : this.localizeParamNames) // eslint-disable-line no-nested-ternary
+        : prefI18n === 'true' || (
+            prefI18n !== 'false' && this.localizeParamNames
         );
 
     const prefFormatting = localStorage.getItem(this.namespace + '-hideFormattingSection');
     const hideFormattingSection = $p.has('formatting', true)
         ? $p.get('formatting', true) === '0'
-        : ( // eslint-disable-line no-nested-ternary
-            prefFormatting === 'true'
-                ? true
-                : (prefFormatting === 'false'
-                    ? false
-                    : this.hideFormattingSection) // eslint-disable-line no-nested-ternary
+        : prefFormatting === 'true' || (
+            prefFormatting !== 'false' && this.hideFormattingSection
         );
 
     function _displayWork (l, defineFormatter, schemaObj, metadataObj) {
