@@ -27,14 +27,6 @@ INSERT INTO `auto_field_data` (`id`, `stringkey`, `tablekey`, `tablekeyno`, `pla
 (8, 'alias_fielding1', 'Bible', '', 0, 'en', '', '', '', '', '', '', 1, 'alias_fielding'),
 (9, 'alias_fielding2', 'quran', '', 0, 'en', '', '', '', '', '', '', 1, 'alias_fielding');
 
-
-CREATE TABLE `cell_data` (
-  `tablekey` text,
-  `cell_identifier` text,
-  `xmllang` text
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-
 CREATE TABLE `table_data` (
   `table_name` text,
   `browse_levels` tinyint(4) NOT NULL DEFAULT '0',
