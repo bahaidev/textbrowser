@@ -321,7 +321,7 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             getMetadata(schemaFile, schemaProperty),
             getMetadata(metadataFile, metadataProperty),
             this.allowPlugins ? Object.keys(dbs.plugins) : null, // Non-promise
-            this.allowPlugins ? JSONP(Object.values(dbs.plugins)) : null
+            this.allowPlugins ? JSONP(Object.values(dbs.plugins).map((p) => p.path)) : null
         ]);
     }).then(([fileData, lf, l, schemaObj, metadataObj, pluginKeys, pluginObjects]) => {
         console.log('pluginKeys', pluginKeys);

@@ -27,30 +27,40 @@
             "type": "object",
             "patternProperties": {
                 ".*": {
-                    "type": "string"
+                    "type": "object",
+                    "properties": {
+                        "path": {
+                            "type": "string"
+                        },
+                        "onByDefault": {
+                            "type": "boolean"
+                        }
+                    }
                 }
             }
         },
-        "autofield-mapping": {
+        "field-mapping": {
             "type": "object",
             "patternProperties": {
                 ".*": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "patternProperties": {
-                            ".*": {
-                                "anyOf": [
-                                    {
-                                        "type": "array",
-                                        "items": {
+                    "type": "object",
+                    "patternProperties": {
+                        ".*": {
+                            "type": "object",
+                            "properties": {
+                                "applicable-fields": {
+                                    "anyOf": [
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        {
                                             "type": "string"
                                         }
-                                    },
-                                    {
-                                        "type": "string"
-                                    }
-                                ]
+                                    ]
+                                }
                             }
                         }
                     }
