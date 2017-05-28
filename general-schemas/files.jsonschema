@@ -34,8 +34,13 @@
                         },
                         "onByDefault": {
                             "type": "boolean"
+                        },
+                        "lang": {
+                            "type": "string",
+                            "format": "language-code"
                         }
-                    }
+                    },
+                    "required": ["path"]
                 }
             }
         },
@@ -49,17 +54,14 @@
                             "type": "object",
                             "properties": {
                                 "applicable-fields": {
-                                    "anyOf": [
-                                        {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string"
+                                    "type": "object",
+                                    "patternProperties": {
+                                        ".*": {
+                                            "type": "object",
+                                            "properties": {
                                             }
-                                        },
-                                        {
-                                            "type": "string"
                                         }
-                                    ]
+                                    }
                                 }
                             }
                         }

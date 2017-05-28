@@ -90,12 +90,14 @@
                             "type": "boolean"
                         },
                         "lang": {
-                            "type": "string"
+                            "type": "string",
+                            "format": "language-code"
                         },
                         "orig_langs": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "type": "string",
+                                "format": "language-code"
                             }
                         },
                         "hasFieldvalue": {

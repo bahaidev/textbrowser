@@ -358,6 +358,11 @@ shows its usage (assuming paths relative to a package containing
 1.  Separate formatting within Jamilih code to CSS; unit test and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)
+1.  Option to allow main browse field(s) to be reflected in heading instead of
+    as a column to save space (e.g., Genesis or Genesis-Exodus)
+1.  Option to show renamed fields (like "Book #" for Bible) before
+    renaming (reimplement as additive plug-in but with one field on
+    by default and the other off)
 
 ## To-dos (medium priority)
 
