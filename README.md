@@ -205,7 +205,7 @@ shows its usage (assuming paths relative to a package containing
 
 1.  Plugins/Automated fields
     1.  Include extensibility mechanism
-        1.  Reverse engineer missing work by using `bahai_locales` database (which
+        1.  Reverse engineer missing work indicated in `localhost.sql` (which
             contains more than localization info: automated column data,
             alternative field names, etc.)
         1.  Admin/files-driven and ideally user-driven (though security issue for
