@@ -311,6 +311,7 @@ shows its usage (assuming paths relative to a package containing
         speech voices for different rows or columns (or just let user
         add CSS to columns to mark).
     1.  Prevent XSS in field and page CSS fields
+    1.  Unless `format: "html"`, should be escaped!
     1.  Review work display page fields and schemas/metadata to ensure all
         being used in results
 1.  Once stabilized, target "textbrowser" dependency mentioned above
@@ -355,12 +356,13 @@ shows its usage (assuming paths relative to a package containing
             to use in conjunction with bookmark keywords (in which case
             it particularly ought to be available through a single param
             without need for system allowing expansion)
+    1.  Ability to run XPath/`querySelector`-like queries against
+        `format: "html"` fields relative to specific cells (or against
+        original source HTML or XML document)
 1.  Separate formatting within Jamilih code to CSS; unit test and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)
-1.  Option to allow main browse field(s) to be reflected in heading instead of
-    as a column to save space (e.g., Genesis or Genesis-Exodus)
-1.  Option to show renamed fields (like "Book #" for Bible) before
+1.  Option to show renamed fields (like "Book #" -> "Book Name" for Bible) before
     renaming (reimplement as additive plug-in but with one field on
     by default and the other off)
 
@@ -400,6 +402,10 @@ shows its usage (assuming paths relative to a package containing
     1.  Add tooltips and table summaries, etc. back (see locale file for
         these and reapply any other unused) and add any missing ones
         describing how to use the elements
+1.  Option to allow main browse field(s) to be reflected in heading instead of
+     as a column to save space (e.g., Genesis or Genesis-Exodus as caption at top)
+1.  Default field(s) and default value(s) for when no text is entered and a reasonable
+    sample is desired to be shown.
 
 ## To-dos (Lower priority)
 
