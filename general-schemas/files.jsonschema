@@ -39,7 +39,7 @@
                 }
             }
         },
-        "field-mapping": {
+        "plugin-field-mapping": {
             "type": "object",
             "patternProperties": {
                 ".*": {
