@@ -61,6 +61,11 @@ const getDataForSerializingParamsAsURL = () => ({
 });
 
 Templates.workDisplay = {
+    bdo: ({fallbackDirection, message}) =>
+        // Displaying as div with inline display instead of span since
+        //    Firefox puts punctuation at left otherwise (bdo dir
+        //    seemed to have issues in Firefox)
+        ['div', {style: 'display: inline; direction: ' + fallbackDirection}, [message]],
     columnsTable: ({
         ld, fields, $p, le, iil, l, getFieldAliasOrName,
         metadataObj, preferredLocale, schemaItems, getPreferredLanguages,

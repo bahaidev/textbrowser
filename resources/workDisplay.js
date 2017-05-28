@@ -69,10 +69,7 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
                 values,
                 formats,
                 fallback: ({message}) =>
-                    // Displaying as div with inline display instead of span since
-                    //    Firefox puts punctuation at left otherwise (bdo dir
-                    //    seemed to have issues in Firefox)
-                    ['div', {style: 'display: inline;direction: ' + fallbackDirection}, [message]]
+                    Templates.workDisplay.bdo({fallbackDirection, message})
             });
 
         // Todo: remember this locales choice by cookie?
