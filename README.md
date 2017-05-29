@@ -224,6 +224,11 @@ shows its usage (assuming paths relative to a package containing
                 changes (e.g., word counts) or even row-level/cell-level (including language code)
             1.  Spans across section
         1.  Provide example plugins of each type for this version if possible
+        1.  Define all possible areas as plugins? e.g., Move search/CSS/interlinear, advanced
+            formatting, or even browse fields and/or field lists and/or search as a whole to plugins?
+            If doing so for individual fields in field lists, should support adding, e.g., pull-downs,
+            even multiple ones for arguments (e.g., a web search plugin could specify the desired
+            search engine)
     1.  Specific automated fields
         1. Previously implemented:
             1.  Option to show renamed fields (like "Book #" -> "Book Name" for Bible) before
