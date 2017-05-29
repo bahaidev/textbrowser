@@ -73,6 +73,9 @@
                                                 "targetLanguage": {
                                                     "type": "string",
                                                     "format": "language-code"
+                                                },
+                                                "onByDefault": {
+                                                    "type": "boolean"
                                                 }
                                             },
                                             "patternProperties": {
