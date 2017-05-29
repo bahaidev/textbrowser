@@ -53,15 +53,38 @@
                         ".*": {
                             "type": "object",
                             "properties": {
+                                "placement": {
+                                    "anyOf": [
+                                        {
+                                            "type": "string",
+                                            "enum": ["end"]
+                                        },
+                                        {
+                                            "type": "number"
+                                        }
+                                    ]
+                                },
                                 "applicable-fields": {
                                     "type": "object",
                                     "patternProperties": {
                                         ".*": {
                                             "type": "object",
                                             "properties": {
+                                                "targetLanguage": {
+                                                    "type": "string",
+                                                    "format": "language-code"
+                                                }
+                                            },
+                                            "patternProperties": {
+                                                ".*": {}
                                             }
                                         }
                                     }
+                                }
+                            },
+                            "patternProperties": {
+                                ".*": {
+
                                 }
                             }
                         }
@@ -69,7 +92,56 @@
                 }
             }
         },
-        "localization-strings": {"$ref": "locale.jsonschema"},
+        "localization-strings": {
+            "type": "object",
+            "patternProperties": {
+                ".*": {
+                    "type": "object",
+                    "properties": {
+                        "workNames": {
+                            "type": "object",
+                            "patternProperties": {
+                                ".*": {
+                                    "title": "Work key"
+                                }
+                            }
+                        },
+                        "plugins": {
+                            "type": "object",
+                            "patternProperties": {
+                                ".*": {
+                                    "title": "Plugin key",
+                                    "type": "object",
+                                    "properties": {
+                                        "fieldname": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "patternProperties": {
+                        ".*": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                {
+                                    "$ref": "locale.jsonschema"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "groups": {
             "type": "array",
             "items": {

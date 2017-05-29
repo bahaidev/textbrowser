@@ -205,9 +205,6 @@ shows its usage (assuming paths relative to a package containing
 
 1.  Plugins/Automated fields
     1.  Include extensibility mechanism
-        1.  Reverse engineer missing work indicated in `localhost.sql` (which
-            contains more than localization info: automated column data,
-            alternative field names, etc.)
         1.  Admin/files-driven and ideally user-driven (though security issue for
             additive approach); could let plugin itself accept user input
         1.  Additive or reductive (omitting/merging)
@@ -229,6 +226,9 @@ shows its usage (assuming paths relative to a package containing
         1.  Provide example plugins of each type for this version if possible
     1.  Specific automated fields
         1. Previously implemented:
+            1.  Option to show renamed fields (like "Book #" -> "Book Name" for Bible) before
+                renaming (reimplement as additive plug-in but with one field on
+                by default and the other off); already has placeholder in `files.json` - add to `field-alias.js`; already added to new version but need to reimplement as plugin
             1. Synopsis, Roman numerals, Chinese numbers, word-by-word translation,
                 auto-romanized Persian/Arabic, Persian with English tooltips,
                 English with Persian/Arabic tooltips,
@@ -362,9 +362,7 @@ shows its usage (assuming paths relative to a package containing
 1.  Separate formatting within Jamilih code to CSS; unit test and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)
-1.  Option to show renamed fields (like "Book #" -> "Book Name" for Bible) before
-    renaming (reimplement as additive plug-in but with one field on
-    by default and the other off)
+1.  Caching for automated field content like translations (with ability to rebuild)
 
 ## To-dos (medium priority)
 
