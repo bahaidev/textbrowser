@@ -263,10 +263,11 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
     }
 
     this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p}).then((
-        [fileData, lf, schemaObj, metadataObj, pluginKeys, pluginObjects]
+        [fileData, lf, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
     ) => {
-        // console.log('pluginKeys', pluginKeys);
-        // console.log('pluginObjects', pluginObjects);
+        console.log('pluginKeys', pluginKeys);
+        console.log('pluginFieldMappings', pluginFieldMappings);
+        console.log('pluginObjects', pluginObjects);
         if (pluginObjects) {
             // console.log('aaap', pluginObjects[0].insertField());
             /*

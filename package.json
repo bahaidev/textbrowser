@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "imf": "1.0.2",
-    "jsonpadding": "0.3.2",
+    "jsonpadding": "0.3.3",
     "json-refs": "https://github.com/brettz9/json-refs#browser",
     "simple-get-json": "1.1.0",
     "urlsearchparams": "0.1.1"
