@@ -64,7 +64,8 @@ body {
                 (caption ? ['caption', [caption]] : ''),
                 ...tableData.map((tr) => ['tr',
                 /*
-                (field1, etc.)
+                handle ranges
+                (field1, etc.) - and auto-fields
                 localizeParamNames (preference)
                 rand
                 context
