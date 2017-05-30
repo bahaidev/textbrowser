@@ -63,6 +63,20 @@ body {
             ['table', {border: '1'}, [
                 (caption ? ['caption', [caption]] : ''),
                 ...tableData.map((tr) => ['tr',
+                /*
+                (field1, etc.)
+                localizeParamNames (preference)
+                rand
+                context
+                transpose
+                start1-1, etc.
+                end1-1, etc.
+                checked1, etc.
+                anchor1, etc.
+                interlin1, etc.
+                css1, etc.
+                search1, etc.
+                */
             /*
                 schemaItems.map(({title}, i) => {
                     const fieldI = $pRaw('field' + (i + 1));
