@@ -1,4 +1,4 @@
-/* globals TextBrowser, Templates, JsonRefs, jml */
+/* globals TextBrowser, Templates, JsonRefs */
 TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
     l, lang, localeFromFileData, fallbackLanguages, $p
 }) {
@@ -9,16 +9,6 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         console.log('pluginFieldMappings', pluginFieldMappings);
         console.log('pluginObjects', pluginObjects);
 
-        // Todo: Needs to actually take params into account!
-        JsonRefs.resolveRefs(fileData.file).then(({resolved: {data: tableData}}) => {
-            jml('table', {border: '1'}, tableData.map((tr) => ['tr',
-                tr.map((td) => ['td',
-                    // [td] // Todo: For non-escaped!!!!
-                    {innerHTML: td}
-                ])
-            ]), document.body);
-        });
-
         document.title = l({
             key: 'browserfile-resultsdisplay',
             values: {
@@ -28,6 +18,10 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             },
             fallback: true
         });
-        Templates.resultsDisplay.main();
+
+        // Todo: Needs to actually take params into account!
+        JsonRefs.resolveRefs(fileData.file).then(({resolved: {data: tableData}}) => {
+            Templates.resultsDisplay.main({tableData});
+        });
     });
 };
