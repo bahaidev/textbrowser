@@ -3,8 +3,12 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
     l, lang, localeFromFileData, fallbackLanguages, $p
 }) {
     this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p}).then((
-        [fileData, lf, schemaObj, metadataObj, pluginKeys, pluginObjects]
+        [fileData, lf, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
     ) => {
+        console.log('pluginKeys', pluginKeys);
+        console.log('pluginFieldMappings', pluginFieldMappings);
+        console.log('pluginObjects', pluginObjects);
+
         document.title = l({
             key: 'browserfile-resultsdisplay',
             values: {
