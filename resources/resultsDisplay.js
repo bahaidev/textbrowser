@@ -25,7 +25,8 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         return key || p; // $p.get(param, true);
     };
     const escapeQuotedCSS = (s) => s.replace(/"/g, '\\"');
-    const escapeCSS = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/, '&gt;');
+    const escapeHTML = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/, '&gt;');
+    const escapeCSS = escapeHTML;
     this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p}).then((
         [fileData, lf, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
     ) => {
@@ -47,9 +48,13 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         // Todo: Needs to actually take params into account!
         JsonRefs.resolveRefs(fileData.file).then(({resolved: {data: tableData}}) => {
             const schemaItems = schemaObj.items.items;
+            const browseFieldSets = [];
+            this.getBrowseFieldData({metadataObj, getMetaProp, schemaItems}, ({browseFields}) => {
+                browseFieldSets.push(browseFields);
+            });
             Templates.resultsDisplay.main({
-                tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS,
-                heading, l
+                tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS, escapeHTML,
+                heading, l, browseFieldSets
             });
         });
     });
