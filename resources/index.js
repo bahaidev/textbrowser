@@ -105,7 +105,7 @@ TextBrowser.prototype.getWorkData = function ({
 
         let getPlugins, pluginsInWork, pluginFieldsForWork, pluginPaths, pluginFieldMappingForWork;
         if (this.allowPlugins) {
-            const possiblePluginFieldMappingForWork = dbs['plugin-field-mapping'][fileData.name];
+            const possiblePluginFieldMappingForWork = dbs['plugin-field-mapping'][fileGroup.id][fileData.name];
             pluginFieldsForWork = Object.keys(possiblePluginFieldMappingForWork);
             pluginsInWork = Object.keys(dbs.plugins).filter((p) => pluginFieldsForWork.includes(p));
             pluginFieldMappingForWork = pluginsInWork.map((p) => possiblePluginFieldMappingForWork[p]);
@@ -232,9 +232,9 @@ TextBrowser.prototype.paramChange = function () {
             }, ...args);
             return;
         }
-        this.resultsDisplay({l: l10n, $p, lang, localeFromFileData, fallbackLanguages}, ...args);
+        this.resultsDisplay({l: l10n, imfLocales: imf.locales, $p, lang, localeFromFileData, fallbackLanguages}, ...args);
     };
-    IMF({
+    const imf = IMF({
         languages: lang,
         fallbackLanguages: fallbackLanguages,
         localeFileResolver: (code) =>

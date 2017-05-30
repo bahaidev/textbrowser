@@ -7,14 +7,20 @@
 // "testing code:" is for code to use when testing (can delete if desired)
 // Remove the values from the following for open-source version!
 ////////////////
-$host = "localhost"; // Change this if your SQL host is not onsite$dbuser = ""; // Fill in your MYSQL user here$passw = ""; // Fill in your password here$hardcodeddb = ""; // Fill in the database with the books; Delete this if fix hard-coding problem////////////////
+$host = "localhost"; // Change this if your SQL host is not onsite
+$dbuser = ""; // Fill in your MYSQL user here
+$passw = ""; // Fill in your password here
+$hardcodeddb = ""; // Fill in the database with the books; Delete this if fix hard-coding problem
+////////////////
 //Fix: There could probably be a good amount of simplifying (and checking) for the range_type function, the if-then web preceding the rangetype switch (which also itself needs expanding of the possible permutations) and the rangetype switch itself. I did not rereview these carefullyl when adding comments.
 
 
 /////////////// Define functions ///////////////////
-// Note to self: Functions in PHP 4 and 5 do not need to be defined at the beginning (in browse.php I even defined them within a function)
-// However, I am declaring all (except for semidynamic_variable (since it is small and not even potentially reusable within this file) at the beginning)
-///////////////// 
+// Note to self: Functions in PHP 4 and 5 do not need to be defined at the beginning (in
+//   browse.php I even defined them within a function)
+// However, I am declaring all (except for semidynamic_variable (since it is small and not
+//   even potentially reusable within this file) at the beginning)
+/////////////////
 // This function is called by the range_type function following (This could conceivably be included inside of range_type since I have read that user-defined functions are supposed to slow things down and should be omitted if they are not necessary--However, it does help with clarity, I think-- B.Z.)
 
 function make_table ($result) {
@@ -25,12 +31,19 @@ function make_table ($result) {
 			global $$option;
 			if ($$option == "yes") { // If the user opted to see that field
 				$field = "field".$k;
-//Fix: The number after arw should not be hard-coded here, but put in a for loop for future compatibility
+//Fix: The number after arw should not be hard-coded here, but put in a for loop for
+//  future compatibility
 				global $arabiccolumn, $arw0, $$field; // dynamically declare the field variables
-//Fix: The number after arw should not be hard-coded here, but put in a for loop for future compatibility
-				if ($arabiccolumn != "" && $arabiccolumn == $$field) { // && $arw0 != "" (if problem with no width being specified--but then need to deal with dir="rtl" for non-Arabic) -- print the cells with right-to-left directionality and column-width; Fix: make columns variable not only for Arabic
+//Fix: The number after arw should not be hard-coded here, but put in a for loop for
+//   future compatibility
+				if ($arabiccolumn != "" && $arabiccolumn == $$field) {
+				// && $arw0 != "" (if problem with no width being specified--but
+				///  then need to deal with dir="rtl" for non-Arabic) -- print
+				//   the cells with right-to-left directionality and column-width;
+				//   Fix: make columns variable not only for Arabic
 
-//Fix: The number after arw should not be hard-coded here, but put in a for loop for future compatibility
+//Fix: The number after arw should not be hard-coded here, but put in a for loop for
+//   future compatibility
 					print ("<td width='$arw0' valign='top' dir='rtl'>".$row[$$field]."</td>");
 				}
 				else { // print the cells with regular (left-to-right) directionality and no special width
@@ -93,10 +106,10 @@ function range_type ($ois1, $blevel, $endlevel, $fields_name, $fields_nameB="", 
 	else {
 		if ($toggle == "") { // See toggle declaration above in this function
 			if ($ois1=="yes") {
-				$result = mysql_query("SELECT * FROM `$file` WHERE `$fields_name` >= $blevel AND `$fields_name` < $endlevel");	
+				$result = mysql_query("SELECT * FROM `$file` WHERE `$fields_name` >= $blevel AND `$fields_name` < $endlevel");
 			} // end if
 			elseif ($ois1=="yes2") {
-				$result = mysql_query("SELECT * FROM `$file` WHERE `$fields_name` > $blevel AND `$fields_name` < $endlevel");	
+				$result = mysql_query("SELECT * FROM `$file` WHERE `$fields_name` > $blevel AND `$fields_name` < $endlevel");
 			} // end elseif
 			else {
 				$result = mysql_query("SELECT * FROM `$file` WHERE `$fields_name` >= $blevel AND `$fields_name` <= $endlevel");
@@ -105,15 +118,16 @@ function range_type ($ois1, $blevel, $endlevel, $fields_name, $fields_nameB="", 
 		} // end if
 		//testing code: print "$ois1, $blevel, $endlevel, $fields_name, $fields_nameB, $fields_nameC, $bookvalue, $chaptervalue";
 		else {
-			// New Book Add: If one wishes to toggle between one subset of columns and another (e.g., Persian or Arabic Hidden Words), hard-code that here
+			// New Book Add: If one wishes to toggle between one subset of columns and
+			//  another (e.g., Persian or Arabic Hidden Words), hard-code that here
 			if ($file == "Hidden Words") {
 				$fieldtoggle = "Original Language";
 			} // end if
 			if ($ois1=="yes") {
-				$result = mysql_query("SELECT * FROM `$file` WHERE `$fieldtoggle` = '$toggle' AND `$fields_name` >= $blevel AND `$fields_name` < $endlevel");	
+				$result = mysql_query("SELECT * FROM `$file` WHERE `$fieldtoggle` = '$toggle' AND `$fields_name` >= $blevel AND `$fields_name` < $endlevel");
 			} // end if
 			elseif ($ois1=="yes2") {
-				$result = mysql_query("SELECT * FROM `$file` WHERE `$fieldtoggle` = '$toggle' AND `$fields_name` > $blevel AND `$fields_name` < $endlevel");	
+				$result = mysql_query("SELECT * FROM `$file` WHERE `$fieldtoggle` = '$toggle' AND `$fields_name` > $blevel AND `$fields_name` < $endlevel");
 			} // end elseif
 			else {
 				$result = mysql_query("SELECT * FROM `$file` WHERE `$fieldtoggle` = '$toggle' AND `$fields_name` >= $blevel AND `$fields_name` <= $endlevel");
@@ -138,7 +152,12 @@ if ($file=="peace") {
 
 
 /*
-// Don't need this section; I thought I needed to set the encoding to iso-8859-6 for a fix for Mac Safari browser for Arabic (the letters appear disconnected), but the actual solution is simply to remove Times New Roman and Arial fonts from each user's ~/Library/Fonts directory (installed by Entourage 2004); manually setting the encoding here doesn't solve the problem (nor is it necessary).
+// Don't need this section; I thought I needed to set the encoding to
+iso-8859-6 for a fix for Mac Safari browser for Arabic (the letters appear
+disconnected), but the actual solution is simply to remove Times New Roman
+and Arial fonts from each user's ~/Library/Fonts directory (installed by
+Entourage 2004); manually setting the encoding here doesn't solve the
+problem (nor is it necessary).
 elseif ($file=="aqdas" || $file=="Hidden Words") {
 }
 */
@@ -230,11 +249,16 @@ semidynamic_variable ('field', 0, $field_and_option_no);
 
 
 //New Book Add: Change last parameter below if necessary
-semidynamic_variable ('arw', 0, 2); // Currently the length is only 1, but the Hidden Words are expected to have two Arabic columns; However, this ought to be dynamic based again on an if-then list (or SQL list); or one could just use "field_and_option_no" since it is the maximum # of fields (yet not ridiculously large to small things down too much
+semidynamic_variable ('arw', 0, 2); // Currently the length is only 1, but
+// the Hidden Words are expected to have two Arabic columns; However,
+// this ought to be dynamic based again on an if-then list (or SQL list);
+// or one could just use "field_and_option_no" since it is the maximum #
+// of fields (yet not ridiculously large to small things down too much
 
 
 /*
-DO NOT ENABLE THIS...THIS IS ONLY TO KEEP FOR REFERENCE TO THE OLD (LESS SECURE) WAY OF DOING THINGS HERE
+DO NOT ENABLE THIS...THIS IS ONLY TO KEEP FOR REFERENCE TO THE OLD
+(LESS SECURE) WAY OF DOING THINGS HERE
 foreach($_GET as $key=>$value) {
 	${$key} = $value;
 } //end foreach getting superglobals
@@ -264,14 +288,15 @@ elseif ($blevela1 == "" && $elevela1 == "" && $blevelb1 == "" && $elevelb1 == ""
 //////////////// Set Arabic column width and indicate number
 
 
-// Fix: The number after arw should not be hard-coded here, but put in a for loop for future compatibility
+// Fix: The number after arw should not be hard-coded here, but put in a for loop
+//   for future compatibility
 // Fix: All columns should actually allow variable column width
 if ($arw0 == "") {
 // $arw0 = 200; // any default width of Arabic field
 }
 
-/////New Book Add: If there is Arabic content (its column size is adjustable), indicate which column it is
-
+/////New Book Add: If there is Arabic content (its column size is adjustable),
+//   indicate which column it is
 if ($file == "aqdas") {
 	$arabiccolumn = 2;
 }
@@ -281,7 +306,8 @@ if ($file == "Hidden Words") {
 }
 
 
-///////////// Go with the pull-down menu of colors if the color field is blank or only includes the hash mark ///////////////
+//// Go with the pull-down menu of colors if the color field
+//  is blank or only includes the hash mark ///////////////
 
 if ($color == "" || $color == "#") {
 	$color = $colorName;
@@ -294,85 +320,8 @@ if ($bgcolor == "" || $bgcolor == "#") {
 
 //////////////// Set styles according to user selections
 
-print <<<HERE
-<head><meta charset="utf-8" />
-<style type="text/css">
-<!--
-HERE;
-print "\n\n";
+// <head><meta charset="utf-8" />
 
-if ($headings == "y") {
-	$headingstyles = "td, th";
-}
-elseif ($headings == "n") {
-	$headingstyles = "td";
-}
-elseif ($headings == "0") {
-	$headingstyles = "td";
-}
-else {
-	$headingstyles = "td";
-}
-
-
-print $headingstyles;
-
-print " {
-font-style: ";
-print $fontstyle;
-print ";
-
-font-variant: ";
-print $fontvariant;
-
-print ";
-
-font-weight: ";
-print $fontweight;
-print ";
-
-font-size: ";
-print $fontsize;
-print ";
-
-font-family: ";
-print $fontSeq;
-
-
-//Removed following as aren't supported in browsers; did letter-spacing instead
-// print ";
-// 
-// font-stretch: ";
-// print $fontstretch;
-
-
-print ";
-
-letter-spacing: ";
-print $letterspacing;
-
-
-print ";
-
-line-height: ";
-print $lineheight;
-
-print ";
-
-color: ";
-print $color;
-
-print ";
-}
-
-body {
-background-color: ";
-print $bgcolor;
-print ";
-}
-
--->
-</style>";
 $newheading = stripslashes($heading);
 ?>
 
@@ -394,7 +343,7 @@ $newheading = stripslashes($heading);
 
 if ($border == "") {
 	$border = 1;
-} // end if (if there is no border code specified for some reason, add a border anyways) 
+} // end if (if there is no border code specified for some reason, add a border anyways)
 
 print "<table border='".$border."' cellpadding='5'><thead>";
 
@@ -408,7 +357,7 @@ print "<table border='".$border."' cellpadding='5'><thead>";
 if ($headings !== "0") {
 	print "<tr>";
 
-	if ($fields_name2 !== "" && $fields_name3 !== "") { 
+	if ($fields_name2 !== "" && $fields_name3 !== "") {
 		$resulta1 = mysql_query("SELECT * FROM `$file` WHERE `$fields_name1` = 1 AND `$fields_name2` = 1 AND `$fields_name3` = 1");
 	} // end if (if the text uses 3 fields for verse browsing--e.g., book/chapter/verse)
 
@@ -531,7 +480,7 @@ else { //nothing hereinafter is totally blank or arbitrary; selected range won't
 				} // end if (if the second level item ending is blank)
 				elseif ($elevelc1 == "") { //Case 2
 					$rangetype = 2;
-				} // end elseif (if the third level item ending is blank) 
+				} // end elseif (if the third level item ending is blank)
 				else { //Case 3
 					$rangetype = 3;
 				} // end else (if all endings (and the first level beginning) exist, but not the 2nd level beginning)
@@ -562,7 +511,7 @@ else { //nothing hereinafter is totally blank or arbitrary; selected range won't
 			} // end else (if beginnings exist at all levels)
 		} // end else (if both beginnings and endings exist for the first level)
 	} // end else (if there is a ending for the first level (but not a beginning) or both beginnings and endings exist for the first level)
-} // end else (if the beginning and/or the ending of the first level item have values) 
+} // end else (if the beginning and/or the ending of the first level item have values)
 
 
 // Set ois flag (acrononym?) which affects whether the item is <= or just <, etc.
@@ -589,7 +538,7 @@ switch ($rangetype) {
 			range_type($ois1, $blevela1, $elevela1, $fields_name1);
 		} // end if
 		if ($elevelb1 > 1) {
-			$ois1 = "yes";	
+			$ois1 = "yes";
 			range_type($ois1, $blevelb1, $elevelb1, $fields_name1, $fields_name2, "", $elevela1);
 		} // end if
 		$ois1 = "no";
@@ -662,15 +611,15 @@ switch ($rangetype) {
 		if ($elevela1 > $blevela1 || $elevelb1 > $blevelb1) {
 			$ois1 = "yes2";
 			if ($blevela1 == $elevela1) {
-				range_type($ois1, $blevelb1, $elevelb1, $fields_name1, $fields_name2, "", $blevela1);	
+				range_type($ois1, $blevelb1, $elevelb1, $fields_name1, $fields_name2, "", $blevela1);
 			} // end if
 			else {
-				range_type($ois1, $blevelb1, "", $fields_name1, $fields_name2, "", $blevela1);	
+				range_type($ois1, $blevelb1, "", $fields_name1, $fields_name2, "", $blevela1);
 			} // end else
 		} // end if
 		if ($elevela1-1 > $blevela1) {
 			$ois1 = "yes2";
-			range_type($ois1, $blevela1, $elevela1, $fields_name1);	
+			range_type($ois1, $blevela1, $elevela1, $fields_name1);
 		} // end if
 
 		if ($elevela1 > $blevela1) {
@@ -684,16 +633,16 @@ switch ($rangetype) {
 			range_type($ois1, $blevelc1, "", $fields_name1, $fields_name2, $fields_name3, $blevela1, $blevelb1);
 			if ($blevela1 == $elevela1) {
 				$ois1 = "yes3";
-				range_type($ois1, $blevelb1, $elevelb1, $fields_name1, $fields_name2, "", $blevela1);	
+				range_type($ois1, $blevelb1, $elevelb1, $fields_name1, $fields_name2, "", $blevela1);
 			} // end if
 			else {
 				$ois1 = "yes2";
-				range_type($ois1, $blevelb1, "", $fields_name1, $fields_name2, "", $blevela1);	
+				range_type($ois1, $blevelb1, "", $fields_name1, $fields_name2, "", $blevela1);
 			} // end else
 
 			if ($elevela1-1 > $blevela1) {
 				$ois1 = "yes2";
-				range_type($ois1, $blevela1, $elevela1, $fields_name1);	
+				range_type($ois1, $blevela1, $elevela1, $fields_name1);
 			} // end if
 
 			if ($elevela1 > $blevela1) {

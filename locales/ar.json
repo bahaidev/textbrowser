@@ -11,25 +11,9 @@
     },
     "submitgo": "إذهب",
     "textcolor": "لون الحروف",
-    "aqua": "مائي (سمائي)",
-    "black": "اسود",
-    "blue": "ازرق",
-    "gray": "رمادي",
-    "green": "اخضر",
-    "olive": "زيتوني",
-    "purple": "بنفسجي",
-    "red": "احمر",
-    "silver": "فضي",
-    "white": "ابيض",
-    "yellow": "اصفر",
     "or_entercolor": "او ادخل لون الكود هنا",
     "backgroundcolor": "لون الخلفية",
     "text_font": "لون النص",
-    "fontstyle_italic": "مائل",
-    "fontstyle_normal": "عادي",
-    "fontvariant_normal": "عادي",
-    "yes": "نعم",
-    "no": "لا",
     "results_for": "النتائج لـ",
     "startingat": "بداية",
     "showall": "اظهر الكل",
@@ -39,5 +23,32 @@
     "or": "او",
     "notwait": "غذا لاتريد الانتضار ، انقر هنا",
     "max": "الحد الاقصى",
-    "min": "الحد الادنى"
+    "min": "الحد الادنى",
+
+    "yes": "نعم",
+    "no": "لا",
+    "normal": "عادي",
+
+    "param_values": {
+        "colors": {
+            "aqua": "مائي (سمائي)",
+            "black": "اسود",
+            "blue": "ازرق",
+            "gray": "رمادي",
+            "green": "اخضر",
+            "olive": "زيتوني",
+            "purple": "بنفسجي",
+            "red": "احمر",
+            "silver": "فضي",
+            "white": "ابيض",
+            "yellow": "اصفر"
+        },
+        "fontstyle": {
+            "italic": "مائل",
+            "normal": "عادي"
+        },
+        "fontvariant": {
+            "normal": "عادي"
+        }
+    }
 }

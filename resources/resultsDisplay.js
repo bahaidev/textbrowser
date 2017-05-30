@@ -1,7 +1,30 @@
 /* globals TextBrowser, Templates, JsonRefs */
 TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
-    l, lang, localeFromFileData, fallbackLanguages, $p
+    l, lang, localeFromFileData, fallbackLanguages, $p, imfLocales
 }) {
+    const $pRaw = (param) => {
+        // Todo: Should work with i18n=true (if names i18nized, need reverse look-up)
+        let key;
+        const p = $p.get(param, true);
+        function reverseLocaleLookup (locale) {
+            if (Array.isArray(locale)) {
+                return locale.some(reverseLocaleLookup);
+            }
+            const localeValues = Object.values(locale);
+            return localeValues.some((val, i) => {
+                if (typeof val !== 'string') {
+                    return reverseLocaleLookup(val);
+                }
+                if (val === p) {
+                    key = Object.keys(locale)[i];
+                    return true;
+                }
+            });
+        }
+        reverseLocaleLookup(imfLocales);
+        return key || p; // $p.get(param, true);
+    };
+    const escapeQuotedCSS = (s) => s.replace(/"/g, '\\"');
     this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p}).then((
         [fileData, lf, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
     ) => {
@@ -21,7 +44,8 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
 
         // Todo: Needs to actually take params into account!
         JsonRefs.resolveRefs(fileData.file).then(({resolved: {data: tableData}}) => {
-            Templates.resultsDisplay.main({tableData});
+            const schemaItems = schemaObj.items.items;
+            Templates.resultsDisplay.main({tableData, schemaItems, $pRaw, escapeQuotedCSS});
         });
     });
 };

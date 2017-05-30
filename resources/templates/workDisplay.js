@@ -190,7 +190,7 @@ Templates.workDisplay = {
                 if ($p.get('colorName') === l(color) || (i === 1 && !$p.has('colorName'))) {
                     atts.selected = 'selected';
                 }
-                return lo(color, atts);
+                return lo(['param_values', 'colors', color], atts);
             })]
         ]],
 
@@ -211,7 +211,7 @@ Templates.workDisplay = {
                 if ($p.get('bgcolorName') === l(color) || (i === 14 && !$p.has('bgcolorName'))) {
                     atts.selected = 'selected';
                 }
-                return lo(color, atts);
+                return lo(['param_values', 'colors', color], atts);
             })]
         ]],
         ['label', [
@@ -243,12 +243,11 @@ Templates.workDisplay = {
                 'normal',
                 'oblique'
             ].map((fontstyle, i) => {
-                const i18nFS = 'fontstyle_' + fontstyle;
-                const atts = {value: l(i18nFS)};
-                if ($p.get('fontstyle') === l(i18nFS) || (i === 1 && !$p.has('fontstyle'))) {
+                const atts = {value: l(fontstyle)};
+                if ($p.get('fontstyle') === l(fontstyle) || (i === 1 && !$p.has('fontstyle'))) {
                     atts.selected = 'selected';
                 }
-                return lo(i18nFS, atts);
+                return lo(['param_values', 'fontstyle', fontstyle], atts);
             })]
         ]],
         ['br'],
@@ -259,16 +258,16 @@ Templates.workDisplay = {
                     name: il('fontvariant'),
                     type: 'radio',
                     value: l('normal'),
-                    checked: $p.get('fontvariant') === l('smallcaps') ? undefined : 'checked'}],
-                ld('fontvariant_normal'), nbsp
+                    checked: $p.get('fontvariant') === ld(['param_values', 'fontvariant', 'smallcaps']) ? undefined : 'checked'}],
+                ld(['param_values', 'fontvariant', 'normal']), nbsp
             ]],
             ['label', [
                 ['input', {
                     name: il('fontvariant'),
                     type: 'radio',
                     value: l('smallcaps'),
-                    checked: $p.get('fontvariant') === l('smallcaps') ? 'checked' : undefined}],
-                ld('smallcaps'), nbsp
+                    checked: $p.get('fontvariant') === ld(['param_values', 'fontvariant', 'smallcaps']) ? 'checked' : undefined}],
+                ld(['param_values', 'fontvariant', 'smallcaps']), nbsp
             ]]
         ]],
         ['br'],
@@ -462,7 +461,7 @@ Templates.workDisplay = {
                 if ($p.get('outputmode') === mode) {
                     atts.selected = 'selected';
                 }
-                return lo('outputmode_' + mode, atts);
+                return lo(['param_values', 'outputmode', mode], atts);
             })]
         ])
     ]],
@@ -699,7 +698,7 @@ Templates.workDisplay = {
         const lo = (key, atts) =>
             ['option', atts, [
                 l({
-                    key: key,
+                    key,
                     fallback: ({message}) => {
                         atts.dir = fallbackDirection;
                         return message;
