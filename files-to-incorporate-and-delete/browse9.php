@@ -182,18 +182,6 @@ elseif ($file=="aqdas" || $file=="Hidden Words") {
 // The following are mostly in the order they appear in browse.php (dynamically generated ones have been moved out of order into a separate section below)
 
 $toggle = $_GET['toggle'];
-$colorName = $_GET['colorName'];
-$color = $_GET['color'];
-$bgcolorName = $_GET['bgcolorName'];
-$bgcolor = $_GET['bgcolor'];
-$fontSeq = $_GET['fontSeq'];
-$fontstyle = $_GET['fontstyle'];
-$fontvariant = $_GET['fontvariant'];
-$fontweight = $_GET['fontweight'];
-$fontsize = $_GET['fontsize'];
-$fontstretch = $_GET['fontstretch']; // currently explicitly only using letterspacing since fontstretch is not well-supported and letter-spacing does the trick
-$letterspacing = $_GET['letterspacing'];
-$lineheight = $_GET['lineheight'];
 $headings = $_GET['headings'];
 $border = $_GET['border'];
 $levels = $_GET['levels'];

@@ -193,7 +193,6 @@ Templates.workDisplay = {
                 return lo(['param_values', 'colors', color], atts);
             })]
         ]],
-
         ['label', [
             nbsp, ld('or_entercolor'),
             ['input', {
@@ -292,12 +291,8 @@ Templates.workDisplay = {
                 maxlength: '12'}]
         ]],
         ['br'],
-        /*
-        This CSS attribute didn't work so it was removed in favor of letter-spacing (see the
-        following) which can do the trick:
-        */
         // Todo: i18nize title and values?
-        // Todo: remove hard-coded direction if i81nizing
+        // Todo: remove hard-coded direction if i18nizing
         ['label', {
             dir: 'ltr',
             title: 'wider, narrower, semi-expanded, ultra-condensed, extra-expanded, etc.'
