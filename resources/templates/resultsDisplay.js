@@ -36,6 +36,21 @@ body {
     },
     main: ({tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS}) => {
         let caption;
+        /*
+        outputmode
+                        'table',
+                        'div',
+                        'json-array',
+                        'json-object'
+
+        border
+        speech
+
+        headings
+        wishcaption
+        headerfixed
+        tfoot
+        */
         if ($pRaw('wishcaption') !== 'no') {
             caption = 'aaa';
             // heading + toggleyes + ': ' +
