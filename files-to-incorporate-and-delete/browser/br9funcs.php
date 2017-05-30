@@ -2,7 +2,7 @@
 
 /////////////// Define functions ///////////////////
 // Note to self: Functions in PHP 4 and 5 do not need to be defined at the beginning. However, I am declaring all.
-///////////////// 
+/////////////////
 
 // Note the functions below include alphabetic dummy placeholders since the calling function may vary in length and not all values will be used for each function; remember to list all fields, even if your user function doesn't use them all (and use this alphabetic convention for consistency and readability)
 // Idea: Use "static" keyword in functions be build cumulative results for automated fields (e.g., word counts which were added up (and displayed) in successive cells)
@@ -64,7 +64,7 @@ function wikilinks($number="", $number2="", $number3="", $a="", $b="", $num_fiel
 
 	$redbluelink = "http://bahai9.com/index.php?title={$urlencoded}&action=brett2";
 	$backforw_ifr = file_get_contents($redbluelink);
-	
+
  	return $backforw_ifr;
 
 } // end function wikilinks
@@ -92,7 +92,7 @@ function wikify($number="", $number2="", $number3="", $a="", $b="", $num_field="
 // commented the above before
 
 /*
-	} 
+	}
 	else {
 		echo "The file $filename is not writable";
 	} // end else
@@ -123,7 +123,7 @@ function wikify($number="", $number2="", $number3="", $a="", $b="", $num_field="
 		$brws_fld_C_txt = "-".$brws_fld_C_txt;
 	} // end if
 	$heading = str_replace(" ", "_", $heading);
-	
+
 
 // See also headeradd.php
 	if (strstr($_SERVER['HTTP_USER_AGENT'], "Firefox") && $_GET['ff'] !="1") {
@@ -133,14 +133,14 @@ function wikify($number="", $number2="", $number3="", $a="", $b="", $num_field="
 //		$id2 = $id."id";
 		$id2 = $id;
 	} // end else
-		
+
 	$heading = str_replace(" ", "_", $heading);
 	$urlencoded = urlencode($heading.$fieldtoggletxt.$brws_fld_A_txt.$brws_fld_B_txt.$brws_fld_C_txt);
-		
+
 	$backforw_ifr .= <<<HERE
-<a href="javascript:void(0)" onclick="backbutton('{$id}');" id="{$id}back" target="{$id}" style="display:none">&lt;--</a><div id="{$id}backtext" style="display:inline">&lt;--</div> &nbsp; 
+<a href="javascript:void(0)" onclick="backbutton('{$id}');" id="{$id}back" target="{$id}" style="display:none">&lt;--</a><div id="{$id}backtext" style="display:inline">&lt;--</div> &nbsp;
 <a href="javascript:void(0)" onclick="forwardbutton('{$id}');" id="{$id}forward" target="{$id}" style="display:none">--&gt;</a><div id="{$id}forwardtext" style="display:inline">--&gt;</div> &nbsp; <a href="javascript:void(0)" onclick="urlbackadd('{$id}')">URL</a>  &nbsp; <a href="javascript:void(0)" onclick="var locat = eval('window.frames.{$id}.document.location');
-var reglocat = new RegExp('&amp;', 'g');locat = locat.toString();locat = locat.replace(reglocat, '&amp;amp;');document.getElementById('{$id}snap').style.display='inline';document.getElementById('{$id}snaptext').style.display='none';document.getElementById('{$id}s').innerHTML=locat;">Mark</a> &nbsp; <a id="{$id}snap" href="javascript:void(0)" onclick="var abcde=document.getElementById('{$id}s').innerHTML;document.getElementById('{$id2}').setAttribute('src', abcde);document.getElementById('{$id}snap').style.display='none';document.getElementById('{$id}snaptext').style.display='inline';" style="display:none">Snap-back</a><div id="{$id}snaptext" style="display:inline">Snap-back</div> &nbsp; <a href="javascript:void(0)" id="{$id}backhist" target="BackHistory{$id}" onclick="openRequestedPopup('', this.target, '{$id}', 1); return false;" title="This link will create a new window or will re-use an already opened one" style="display:none">Back History</a><div id="{$id}backhisttext" style="display:inline">Back History</div> &nbsp; <a href="javascript:void(0)" id="{$id}forwremaining" target="ForwRemaining{$id}" onclick="openRequestedPopup('', this.target, '{$id}', 0); return false;" title="This link will create a new window or will re-use an already opened one" style="display:none">Forward Remaining</a><div id="{$id}forwremainingtext" style="display:inline">Forward Remaining</div> &nbsp; <a id="href{$id}" href="javascript:void(0)" target="new{$id}">Open frame</a><!--Could have the preceding link immediately set by all the various functions rather than iframe onload -->	
+var reglocat = new RegExp('&amp;', 'g');locat = locat.toString();locat = locat.replace(reglocat, '&amp;amp;');document.getElementById('{$id}snap').style.display='inline';document.getElementById('{$id}snaptext').style.display='none';document.getElementById('{$id}s').innerHTML=locat;">Mark</a> &nbsp; <a id="{$id}snap" href="javascript:void(0)" onclick="var abcde=document.getElementById('{$id}s').innerHTML;document.getElementById('{$id2}').setAttribute('src', abcde);document.getElementById('{$id}snap').style.display='none';document.getElementById('{$id}snaptext').style.display='inline';" style="display:none">Snap-back</a><div id="{$id}snaptext" style="display:inline">Snap-back</div> &nbsp; <a href="javascript:void(0)" id="{$id}backhist" target="BackHistory{$id}" onclick="openRequestedPopup('', this.target, '{$id}', 1); return false;" title="This link will create a new window or will re-use an already opened one" style="display:none">Back History</a><div id="{$id}backhisttext" style="display:inline">Back History</div> &nbsp; <a href="javascript:void(0)" id="{$id}forwremaining" target="ForwRemaining{$id}" onclick="openRequestedPopup('', this.target, '{$id}', 0); return false;" title="This link will create a new window or will re-use an already opened one" style="display:none">Forward Remaining</a><div id="{$id}forwremainingtext" style="display:inline">Forward Remaining</div> &nbsp; <a id="href{$id}" href="javascript:void(0)" target="new{$id}">Open frame</a><!--Could have the preceding link immediately set by all the various functions rather than iframe onload -->
 <br />
 <iframe height="*" width="*" onload="var locat = eval('window.frames.{$id}.document.location');var locat2 = locat.toString();var fphp = /^http:\/\/(www\.){0,1}bahai9\.com\/f\.php\?f=/;locat2 = locat2.replace(fphp, '');var fphpb = /&amp;action=brett/;locat2 = locat2.replace(fphpb, '');var reglocat = new RegExp('&amp;', 'g');locat2 = locat2.replace(reglocat, '&amp;amp;');locat2=decodeURIComponent(locat2);document.getElementById('href{$id}').setAttribute('href', locat2);fixlinks('{$id}');" name="{$id}" id="{$id2}" src="index.php?title={$urlencoded}&amp;action=brett"></iframe>
 <textarea id="{$id}b" rows="10" style="display:none;"></textarea>
@@ -148,7 +148,7 @@ var reglocat = new RegExp('&amp;', 'g');locat = locat.toString();locat = locat.r
 <textarea id="{$id}s" rows="10" style="display:none;"></textarea>
 HERE;
 // f.php?f= also doesn't fix the back/forward for Safari
-// src="$filename"	
+// src="$filename"
 //	$backforw_ifr = $_SERVER['SERVER_ADDR']; // Just used this to find the server's IP address to permit it to access bahai9.com since offline
 //	$wikitext = file_get_contents('http://www.bahai9.com/index.php/?title=HiddenWordArabic'.$number.'&action=brett');
 // return $wikitext;
@@ -169,7 +169,7 @@ function googlify($input, $a="", $b="", $param1="", $d="", $e="", $f="", $g="", 
 
 	$countinput = count($input_array);
 	$filename = "ifr/".$id."ifr.html";
-	
+
 // commented below before
 
 	$googlified = <<<HERE
@@ -184,13 +184,13 @@ HERE;
 // Couldn't get following (giving Adsense credit) to work inside of own proxy (needed for accessing external files to make them backable/forwardable within iframes)
 //		$googlified .= "<a href='http://www.google.com/custom?domains=bahai-library.com&q=".$param1.$input_ready."&sitesearch=&sa=Search&client=pub-9515729973633640&forid=1&ie=UTF-8&oe=UTF-8&safe=active&cof=GALT%3A%23008000%3BGL%3A1%3BDIV%3A%23336699%3BVLC%3A663399%3B%0D%0AAH%3Acenter%3BBGC%3AFFFFFF%3BLBGC%3A336699%3BALC%3A0000FF%3BLC%3A0000FF%3BT%3A000000%3BGFNT%3A0000FF%3BGIMP%3A%0D%0A0000FF%3BFORID%3A1%3B&hl=en'>".$input_array[$i]."</a> ";
 		$googlified .= "<a href='http://www.google.com/search?q=".$param1.$input_ready."&amp;start=0&amp;ie=utf-8&amp;oe=utf-8&amp;client=firefox-a&amp;rls=org.mozilla:en-US:official'>".$input_array[$i]."</a> ";
-		
+
 	} // end for
 	$googlified .= "</body>
 </html>";
-	
-	
-	
+
+
+
 //	if (is_writable($filename)) {
 
 		if (!$handle = fopen($filename, 'w')) {
@@ -209,7 +209,7 @@ HERE;
 // commented the above before
 
 /*
-	} 
+	}
 	else {
 		echo "The file $filename is not writable";
 	} // end else
@@ -223,10 +223,10 @@ HERE;
 //		$id2 = $id."id";
 		$id2 = $id;
 	} // end else
-	
+
 	$backforw_ifr = <<<HERE
-<a href="javascript:void(0)" onclick="backbutton('{$id}');" id="{$id}back" target="{$id}" style="display:none">&lt;--</a><div id="{$id}backtext" style="display:inline">&lt;--</div> &nbsp; 
-<a href="javascript:void(0)" onclick="forwardbutton('{$id}');" id="{$id}forward" target="{$id}" style="display:none">--&gt;</a><div id="{$id}forwardtext" style="display:inline">--&gt;</div> &nbsp; <a href="javascript:void(0)" onclick="urlbackadd('{$id}')">URL</a>  &nbsp; 
+<a href="javascript:void(0)" onclick="backbutton('{$id}');" id="{$id}back" target="{$id}" style="display:none">&lt;--</a><div id="{$id}backtext" style="display:inline">&lt;--</div> &nbsp;
+<a href="javascript:void(0)" onclick="forwardbutton('{$id}');" id="{$id}forward" target="{$id}" style="display:none">--&gt;</a><div id="{$id}forwardtext" style="display:inline">--&gt;</div> &nbsp; <a href="javascript:void(0)" onclick="urlbackadd('{$id}')">URL</a>  &nbsp;
 
 <a href="javascript:void(0)" onclick="var locat = eval('window.frames.{$id}.document.location');
 var reglocat = new RegExp('&amp;', 'g');locat = locat.toString();locat = locat.replace(reglocat, '&amp;amp;');document.getElementById('{$id}snap').style.display='inline';document.getElementById('{$id}snaptext').style.display='none';document.getElementById('{$id}s').innerHTML=locat;">Mark</a> &nbsp; <a id="{$id}snap" href="javascript:void(0)" onclick="var abcde=document.getElementById('{$id}s').innerHTML;document.getElementById('{$id2}').setAttribute('src', abcde);document.getElementById('{$id}snap').style.display='none';document.getElementById('{$id}snaptext').style.display='inline';" style="display:none">Snap-back</a><div id="{$id}snaptext" style="display:inline">Snap-back</div> &nbsp; <a href="javascript:void(0)" id="{$id}backhist" target="BackHistory{$id}" onclick="openRequestedPopup('', this.target, '{$id}', 1); return false;" title="This link will create a new window or will re-use an already opened one" style="display:none">Back History</a><div id="{$id}backhisttext" style="display:inline">Back History</div> &nbsp; <a href="javascript:void(0)" id="{$id}forwremaining" target="ForwRemaining{$id}" onclick="openRequestedPopup('', this.target, '{$id}', 0); return false;" title="This link will create a new window or will re-use an already opened one" style="display:none">Forward Remaining</a><div id="{$id}forwremainingtext" style="display:inline">Forward Remaining</div> &nbsp; <a id="href{$id}" href="javascript:void(0)" target="new{$id}">Open frame</a><!--Could have the preceding link immediately set by all the various functions rather than iframe onload -->
@@ -236,7 +236,7 @@ var reglocat = new RegExp('&amp;', 'g');locat = locat.toString();locat = locat.r
 <textarea id="{$id}f" rows="10" style="display:none;"></textarea>
 <textarea id="{$id}s" rows="10" style="display:none;"></textarea>
 HERE;
-	
+
 	return utf8_encode($backforw_ifr);
 } // end function
 
@@ -246,7 +246,7 @@ function wordbyword($rawtext, $a="", $b="", $type, $target, $field="", $c="", $d
 	$_GET['target'] = $target;
 
 	$_GET['outputonly'] = "1"; // Used in Farsi.php file to indicate we don't want the surrounding XHTML
-	
+
 	include('farsi.php'); // returns $outputnow
 	$autocellcontent = $outputnow;
 	return $autocellcontent;
@@ -271,13 +271,13 @@ function make_table ($result) {
 	global $countautofldplcmnt;
 	global $hardcodeddb, $host, $dbuser, $passw;
 	global $heading;
-	
+
 	global $tableheadarray, $count_tbl_hd_arr;
-	
+
 
 	get_language($defaultlanguage, 1); // Used for language direction below--could cause conflict if need default language for the given interface language (as opposed to the default of the whole site, and by assumption, of the contents)
 	get_table($file); // Used to see whether escapehtml should be turned on (and used for $function_field -- could also do get_field to make something like $function_field to use information pertaining to a given field)
-	
+
 	while ($row = mysql_fetch_array($result)) { // get all the records based on the selection statement determined in the range_type function
 
 		$brws_fld_A_txt= $row[$browse_field_A];
@@ -322,13 +322,13 @@ function make_table ($result) {
 						$interflda = "interfld".$k."_".$q;
 						global ${$interflda};
 						global $correl_flds, $correl_flds_sk, $correl_auto, $correl_akq;
-					
+
 						$n = strtok($$fieldauto, "_"); // Get the placement (before the "-")
 						$o = ltrim(strstr($$fieldauto, "_"),"_"); // Get the placement sequence after the "-"
 
 						$auto_keys = array_keys($auto_fld_placement, $n);
 						$akq = $auto_keys[$o];
-					
+
 						$auto_fld_str = $auto_fld_string[$akq];
 						$fieldautoclass = str_replace('"', "'", $auto_fld_str);
 						$fieldautoclass = htmlentities($fieldautoclass);
@@ -344,13 +344,13 @@ function make_table ($result) {
 
 							$param1 = $auto_fld_param1[$akq];
 							$param2 = $auto_fld_param2[$akq];
-							
+
 							$textcontents = $row[$fieldref];
 							$textcontents2 = $row[$fieldref2];
 							$textcontents3 = $row[$fieldref3];
 
 							$fieldtoggletxt = $row[$fieldtoggle];
-							
+
 							$function_field_txt = $row[$function_field];
 
 /* // Can't add this (used for default when not specified in table_data) because it needs to stay blank for fields without any external alias tables
@@ -359,7 +359,7 @@ function make_table ($result) {
 							} // end if
 */
 							$alias_field_txt = $row[$alias_field];
-							
+
 							$id = "id".$k."cyc".$q."field".$trns;
 
 
@@ -375,12 +375,12 @@ function make_table ($result) {
 							get_language($auto_xmllang);
 							$textdirecauto = $lang_direction;
 
-							
+
 							$autocellcontent = $functioncall($textcontents, $textcontents2, $textcontents3, $param1, $param2, $fieldref, $fieldref2, $fieldref3, $id, $heading, $brws_fld_A_txt, $brws_fld_B_txt, $brws_fld_C_txt, $fieldtoggletxt, $function_field_txt, $alias_field_txt, $auto_xmllang, $lang_direction, "");
 
 //							if ($functioncall != "alias_fielding" && $alias_field != "") {
 								$tablearrayprep = '<'.$tdopen.' id="cell'.$id.'" class="'.$fieldautoclass.' cell '.$fieldauto.'" xml:lang="'.$auto_xmllang.'" dir="'.$textdirecauto.'">';
-								
+
 								if ($_GET['trnsps']=="1") {
 									$interlindivider = "<br />"; // Should be table inside table
 								} // end if
@@ -457,7 +457,7 @@ function make_table ($result) {
 									} // end else
 								} // end for
 								$odd = 0;
-								
+
 								if (!$escapehtml) {
 									$tablearray[$trns][] = $tablearrayprep.$autocellcontent.$td_interlin.$tddivider."</".$tdclose.">";
 								} // end if
@@ -465,7 +465,7 @@ function make_table ($result) {
 									$tablearray[$trns][] = $tablearrayprep.htmlspecialchars($autocellcontent, ENT_QUOTES, "UTF-8").$td_interlin.$tddivider."</".$tdclose.">";
 								} // end else
 //							} // end if
-							
+
 /*
 							if ($_GET['upd']=="y") {
 								$escfile = mysql_real_escape_string($file);
@@ -481,7 +481,7 @@ function make_table ($result) {
 */
 
 						} // if the user opted to print the automated field
-					
+
 						elseif ($$optionauto == "yes") {
 
 
@@ -509,12 +509,12 @@ HERE;
 							else {
 								$tablearrayprep .= $default_lang_direction; // This will be the default of the whole site (not the user's interface choice) because the latest get_language default call was called above with the default language of the whole site
 							} // end else (if there is no language direction for the field, use the default)
-		
+
 							$tablearrayprep .= "'>";
-		
+
 		/*
 		// The following large section was used to add anchors which were fixed according to the database contents (including by optional browsing setting) rather than the current display options. This caused problems for XHTML validation (such as is required in Firefox) when the cells were not unique (or had incompatible values for an id) and were thus added as non-unique ids. It is also not necessary in XHTML1.1-compatible browsers since the cells already have their own ids. This could work in XHTML1.0 and less-compatible browsers if the id references below are removed (or if added to an array, non-unique items could be auto-distinguished such as by an additional sequenced number added).
-		
+
 							if ($for_counter==1) {
 								if ($anchorC != "") {
 									$anchor = $toggle.$anchorA."-".$anchorB."-".$anchorC;
@@ -529,7 +529,7 @@ HERE;
 									$anchor = $toggle.$anchorNoDefault;
 								}
 								print "<a name='".$anchor."' id='c".$anchor."'></a>";
-			
+
 								if ($anchor1 !="") {
 									if ($anchor3 != "") {
 										$anchoroption = $toggle."optionB-".$anchor1."-".$anchor2."-".$anchor3;
@@ -540,12 +540,12 @@ HERE;
 									else {
 										$anchoroption = $toggle."optionB-".$anchor1;
 									} // end else (if there is only a third place for the anchor)
-		
+
 									print "<a name='".$anchoroption."' id='c".$anchoroption."'></a>";
-		
+
 								} // end if (if there are additional browsing options and anchors should be set for them)
 							} // end if (if it is the first cell (to add cell-independent anchors to it))
-		
+
 							// Print cell-specific anchors
 							if ($anchorC != "") {
 								$anchorcell = "cell".($k+1)."-".$toggle.$anchorA."-".$anchorB."-".$anchorC;
@@ -560,7 +560,7 @@ HERE;
 								$anchorcell = "cell".($k+1)."-".$toggle.$anchorNoDefault;
 							}
 							print "<a name='".$anchorcell."' id='".$anchorcell."'></a>";
-		
+
 							if ($anchor1 !="") {
 								if ($anchor3 != "") {
 									$anchorcelloption = "cell".($k+1)."-"."optionB-".$toggle.$anchor1."-".$anchor2."-".$anchor3;
@@ -574,9 +574,9 @@ HERE;
 							print "<a name='".$anchorcelloption."' id='".$anchorcelloption."'></a>";
 							} // end if (if there are additional browsing options and anchors should be set for them)
 		*/
-		
+
 		// Collins: Replaced < and > in Record ID's. Best to have the following on by default (testing for compliance--one can use the convert.php script as a base to fix any problems), but best if don't need, so that processing will be faster (as I recall, this UTF-8 mode did not display everything correctly as UTF-8...)
-		
+
 							if ($_GET['trnsps']=="1") {
 								$interlindivider = "<br />"; // Should be table inside table
 							} // end if
@@ -652,13 +652,13 @@ HERE;
 								} // end else
 							} // end for
 							$odd = 0;
-	
+
 							if ($fieldkey=="ISBN") {
 								$pattern = '/([0-9]{10,13})/'; // Find the ISBN number
 								$replace = '<a href="http://www.amazon.com/exec/obidos/redirect?link_code=ur2&amp;tag=brettsblog-20&amp;camp=1789&amp;creative=9325&amp;path=external-search%3Fsearch-type=ss%26index=blended%26keyword=${1}">${1}</a><img src="http://www.assoc-amazon.com/e/ir?t=brettsblog-20&amp;amp;l=ur2&amp;amp;o=1" width="1" height="1" border="0" alt="isbn" style="border:none !important; margin:0px !important;" />'; // ${1} are the back replacements
 								$rowentry0 = preg_replace("/-/", "", $row[$$fieldauto]); // Need to replace the hyphens so that they do not appear in the URL, as Amazon doesn't handle them
 								$rowentry = preg_replace($pattern, $replace, $rowentry0);
-							
+
 								$tablearray[$trns][] = $tablearrayprep.$rowentry.$td_interlin.$tddivider."</".$tdclose.">";
 							}
 							elseif ($fieldkey=="Location/URL") {
@@ -673,7 +673,7 @@ HERE;
 							else {
 								$tablearray[$trns][] = $tablearrayprep.htmlspecialchars($row[$$fieldauto], ENT_QUOTES, "UTF-8").$td_interlin.$tddivider."</".$tdclose.">";
 							}
-					
+
 						} // end elseif (if it is a field to be printed, but not the default auto one)
 
 					} // end for (go through possibly multiple auto fields at a given level)
@@ -693,7 +693,7 @@ HERE;
 				$interflda = "interfld".$k;
 				global ${$interflda};
 				global $correl_flds, $correl_flds_sk, $correl_auto, $correl_akq;
-				
+
 
 				if ($$option == "yes" && (strpos($$field, "_", 1))) {
 					$for_counter++;
@@ -718,7 +718,7 @@ HERE;
 					$textcontents = $row[$fieldref];
 					$textcontents2 = $row[$fieldref2];
 					$textcontents3 = $row[$fieldref3];
-					
+
 					$param1 = $auto_fld_param1[$akq];
 					$param2 = $auto_fld_param2[$akq];
 
@@ -825,7 +825,7 @@ HERE;
 						} // end else
 					} // end for
 					$odd = 0;
-					
+
 
 					if (!$escapehtml) {
 						$tablearray[$trns][] = $tablearrayprep.$autocellcontent.$td_interlin.$tddivider."</".$tdclose.">";
@@ -834,10 +834,10 @@ HERE;
 						$tablearray[$trns][] = $tablearrayprep.htmlspecialchars($autocellcontent, ENT_QUOTES, "UTF-8").$td_interlin.$tddivider."</".$tdclose.">";
 					} // end else
 
-							
-				
+
+
 				} // end if
-				
+
 				elseif ($$option == "yes") { // If the user opted to see that field
 					$for_counter++;
 					// print the cells
@@ -867,7 +867,14 @@ HERE;
 					$tablearrayprep .= "'>";
 
 /*
-// The following large section was used to add anchors which were fixed according to the database contents (including by optional browsing setting) rather than the current display options. This caused problems for XHTML validation (such as is required in Firefox) when the cells were not unique (or had incompatible values for an id) and were thus added as non-unique ids. It is also not necessary in XHTML1.1-compatible browsers since the cells already have their own ids. This could work in XHTML1.0 and less-compatible browsers if the id references below are removed (or if added to an array, non-unique items could be auto-distinguished such as by an additional sequenced number added).
+// The following large section was used to add anchors which were fixed according to the
+database contents (including by optional browsing setting) rather than the current display
+options. This caused problems for XHTML validation (such as is required in Firefox) when
+the cells were not unique (or had incompatible values for an id) and were thus added as
+non-unique ids. It is also not necessary in XHTML1.1-compatible browsers since the cells
+already have their own ids. This could work in XHTML1.0 and less-compatible browsers if
+the id references below are removed (or if added to an array, non-unique items could be
+auto-distinguished such as by an additional sequenced number added).
 
 					if ($for_counter==1) {
 						if ($anchorC != "") {
@@ -883,7 +890,7 @@ HERE;
 							$anchor = $toggle.$anchorNoDefault;
 						}
 						print "<a name='".$anchor."' id='c".$anchor."'></a>";
-	
+
 						if ($anchor1 !="") {
 							if ($anchor3 != "") {
 								$anchoroption = $toggle."optionB-".$anchor1."-".$anchor2."-".$anchor3;
@@ -1013,7 +1020,7 @@ HERE;
 						$replace = '<a href="http://www.amazon.com/exec/obidos/redirect?link_code=ur2&amp;tag=brettsblog-20&amp;camp=1789&amp;creative=9325&amp;path=external-search%3Fsearch-type=ss%26index=blended%26keyword=${1}">${1}</a><img src="http://www.assoc-amazon.com/e/ir?t=brettsblog-20&amp;amp;l=ur2&amp;amp;o=1" width="1" height="1" border="0" alt="isbn" style="border:none !important; margin:0px !important;" />'; // ${1} are the back replacements
 						$rowentry0 = preg_replace("/-/", "", $row[$$field]); // Need to replace the hyphens so that they do not appear in the URL, as Amazon doesn't handle them
 						$rowentry = preg_replace($pattern, $replace, $rowentry0);
-					
+
 						$tablearray[$trns][] = $tablearrayprep.$rowentry.$td_interlin.$tddivider."</".$tdclose.">";
 					}
 					elseif ($fieldkey=="Location/URL") {
@@ -1039,7 +1046,7 @@ HERE;
 	if ($_GET['trnsps']=="1") { // Horizontal
 		for ($j = 1; $j < $counttablearray-1; $j++) {
 			print $tablearray[1][0];
-			
+
 			if ($headings != "0") {
 				$q = $j+1;
 				print $tableheadarray[$q];
@@ -1093,7 +1100,7 @@ function range_type ($ois1, $blevel, $endlevel, $fields_name, $fields_nameB="", 
 		$blevel = 0;
 	} // end if
 	if ($endlevel == "") {
-	
+
 		$endlevelmax = mysql_query("SELECT max(`".mysql_real_escape_string($fieldsGeneric_name)."`) FROM `$file`"); // Finds the highest value for the lowest level field (e.g., for verse)
 		$endlevelmax2 = mysql_fetch_row($endlevelmax);
 		//$endlevelmax2[0] = $endlevelmax2[0] //add back "+ 1;" if it is necessary
@@ -1130,12 +1137,12 @@ function range_type ($ois1, $blevel, $endlevel, $fields_name, $fields_nameB="", 
 			if ($fieldtoggle != "" && ($groupbytoggle)) {
 				$toggleorder = "`".$fieldtoggle."`, ";
 			} // end if
-				
+
 			if ($ois1=="yes") {
-				$query = "SELECT * FROM `$file` WHERE `$fields_name` >= $blevel AND `$fields_name` < $endlevel ORDER BY $toggleorder `$fields_name`";	
+				$query = "SELECT * FROM `$file` WHERE `$fields_name` >= $blevel AND `$fields_name` < $endlevel ORDER BY $toggleorder `$fields_name`";
 			} // end if
 			elseif ($ois1=="yes2") {
-				$query = "SELECT * FROM `$file` WHERE `$fields_name` > $blevel AND `$fields_name` < $endlevel ORDER BY $toggleorder `$fields_name`";	
+				$query = "SELECT * FROM `$file` WHERE `$fields_name` > $blevel AND `$fields_name` < $endlevel ORDER BY $toggleorder `$fields_name`";
 			} // end elseif
 			else {
 				$query = "SELECT * FROM `$file` WHERE `$fields_name` >= $blevel AND `$fields_name` <= $endlevel ORDER BY $toggleorder `$fields_name`";
@@ -1159,7 +1166,7 @@ function range_type ($ois1, $blevel, $endlevel, $fields_name, $fields_nameB="", 
 	$result = mysql_query($query);
 
 
-	
+
 make_table ($result);
 } // end range_type function
 

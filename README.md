@@ -442,6 +442,7 @@ shows its usage (assuming paths relative to a package containing
     the i18n of "lang"?).
 1.  `window.postMessage` API (since CORS is only for Ajax and
     `document.domain` is only for subdomains).
+1.  `indexedDB` for JSON data
 1.  Testing
     1.  Start browser testing: <https://www.npmjs.com/package/testcafe> (or
         possibly <http://nightwatchjs.org/>)
