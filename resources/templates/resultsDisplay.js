@@ -35,9 +35,19 @@ body {
         ]];
     },
     main: ({tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS}) => {
+        let caption;
+        if ($pRaw('wishcaption') !== 'no') {
+            caption = 'aaa';
+            // heading + toggleyes + ': ' +
+            // htmlEscape($lclzd_fields_name1.$fieldnamegroup2.$fieldnamegroup3) + ' ' +
+            // htmlEscape($blevela1.$blevelbgroup.$blevelcgroup) + ' ' +
+            // l('to').toLowerCase() + ' '. htmlEscape($elevela1.$elevelbgroup.$elevelcgroup);
+        }
         jml('div', [
             Templates.resultsDisplay.styles({$pRaw, escapeQuotedCSS, escapeCSS}),
-            ['table', {border: '1'}, tableData.map((tr) => ['tr',
+            ['table', {border: '1'}, [
+                (caption ? ['caption', [caption]] : ''),
+                ...tableData.map((tr) => ['tr',
             /*
                 schemaItems.map(({title}, i) => {
                     const fieldI = $pRaw('field' + (i + 1));
@@ -53,11 +63,12 @@ body {
                     return 'ttt:' + title;
                 })
             */
-                tr.map((td) => ['td',
-                    // [td] // Todo: For non-escaped!!!!
-                    {innerHTML: td}
+                    tr.map((td) => ['td',
+                        // [td] // Todo: For non-escaped!!!!
+                        {innerHTML: td}
+                    ])
                 ])
-            ])]
+            ]]
         ], document.body);
     }
 };

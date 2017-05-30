@@ -1,25 +1,3 @@
-{* Note that {$table}, etc. have to have a "<" sent here (they cannot be added here at the moment), due to a bug in smarty: http://www.phpinsider.com/smarty-forum/viewtopic.php?p=32428#32428 *}
-{* although i could make the table head tags, etc. dynamic and remove the ifs (if they're blank, it won't break anything anyways); but the ifs help emphasize to the template designer that that section is not always going to be printed *}
-<div id="top"></div>
-{if $smarty.get.navgat}
-{include file='header.tpl'}
-{include file='head1.tpl'}
-	
-
-{* {doc_raw target=doctype}
-<!ENTITY % xhtml-target.module "INCLUDE">
-{/doc_raw}
-*}
-	
-<!--// Header 2 (Login, etc.) -->
-	<div class="loginlinks">
-{include file='login_links.tpl'}
-</div>
-
-{/if}
-
-<!--// Head -->
-
 {if $table_output_flag}
 <table class="results" summary="{$resultstablesummary}" dir="{$textdir.resultstablesummary}">
 	{if $caption_flag}
@@ -55,8 +33,3 @@
 </tbody>
 </table>
 {/if}
-{if $smarty.get.navgat}
-		
-{/if}
-</div>
-<div id='right'>&#160;</div>
