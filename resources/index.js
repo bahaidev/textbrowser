@@ -1,4 +1,4 @@
-/* global IMF, getJSON, IntlURLSearchParams, Templates */
+/* global IMF, getJSON, JsonRefs, JSONP, IntlURLSearchParams, Templates */
 /* exported TextBrowser */
 
 (() => {
@@ -36,6 +36,79 @@ TextBrowser.prototype.displayLanguages = function () {
         window.addEventListener('hashchange', this.paramChange.bind(this), false);
     }, (err) => {
         alert(err);
+    });
+};
+
+TextBrowser.prototype.getFilesData = function () {
+    return getJSON(this.files).then((dbs) => {
+        this.fileData = dbs;
+        return dbs;
+    });
+};
+
+TextBrowser.prototype.getWorkData = function ({
+    lang, localeFromFileData, fallbackLanguages, $p
+}) {
+    const getCurrDir = () =>
+        window.location.href.replace(/(index\.html)?#.*$/, '');
+
+    return this.getFilesData().then((dbs) => {
+        const imfFile = IMF({ // eslint-disable-line new-cap
+            locales: lang.map(localeFromFileData),
+            fallbackLocales: fallbackLanguages.map(localeFromFileData)
+        });
+        const lf = imfFile.getFormatter();
+
+        // Use the following to dynamically add specific file schema in place of
+        //    generic table schema if validating against files.jsonschema
+        //  filesSchema.properties.groups.items.properties.files.items.properties.
+        //      file.anyOf.splice(1, 1, {$ref: schemaFile});
+        // Todo: Allow use of dbs and fileGroup together in base directories?
+        const getMetadata = (file, property, cb) =>
+            JsonRefs
+                .resolveRefsAt(getCurrDir() + file + (property ? '#/' + property : ''))
+                .then(({resolved}) => resolved)
+                .catch((err) => {
+                    alert('catch:' + err);
+                    throw err;
+                });
+
+        let fileData;
+        const fileGroup = dbs.groups.find((fg) => {
+            fileData = fg.files.find((file) =>
+                $p.get('work') === lf(['workNames', fg.id, file.name])
+            );
+            return Boolean(fileData);
+        });
+
+        const baseDir = (dbs.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
+        const schemaBaseDir = (dbs.schemaBaseDirectory || '') +
+            (fileGroup.schemaBaseDirectory || '') + '/';
+        const metadataBaseDir = (dbs.metadataBaseDirectory || '') +
+            (fileGroup.metadataBaseDirectory || '') + '/';
+
+        const file = baseDir + fileData.file.$ref;
+        let schemaFile = fileData.schemaFile ? schemaBaseDir + fileData.schemaFile : '';
+        let metadataFile = fileData.metadataFile ? metadataBaseDir + fileData.metadataFile : '';
+
+        let schemaProperty = '', metadataProperty = '';
+
+        if (!schemaFile) {
+            schemaFile = file;
+            schemaProperty = 'schema';
+        }
+        if (!metadataFile) {
+            metadataFile = file;
+            metadataProperty = 'metadata';
+        }
+
+        return Promise.all([
+            fileData, lf, // Pass on non-promises
+            getMetadata(schemaFile, schemaProperty),
+            getMetadata(metadataFile, metadataProperty),
+            this.allowPlugins ? Object.keys(dbs.plugins) : null, // Non-promise
+            this.allowPlugins ? JSONP(Object.values(dbs.plugins).map((p) => p.path)) : null
+        ]);
     });
 };
 
@@ -148,7 +221,7 @@ TextBrowser.prototype.paramChange = function () {
             }, ...args);
             return;
         }
-        this.resultsDisplay({}, ...args);
+        this.resultsDisplay({l: l10n, $p, lang, localeFromFileData, fallbackLanguages}, ...args);
     };
     IMF({
         languages: lang,

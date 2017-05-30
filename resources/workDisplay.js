@@ -1,13 +1,10 @@
-/* globals TextBrowser, Templates, JSONP, IMF, formSerialize, getJSON, JsonRefs */
+/* globals TextBrowser, Templates, IMF, formSerialize */
 
 (() => {
-const getCurrDir = () =>
-    window.location.href.replace(/(index\.html)?#.*$/, '');
-
 TextBrowser.prototype.workDisplay = function workDisplay ({
     lang, preferredLocale, localeFromLangData, fallbackLanguages, getMetaProp, $p,
     localeFromFileData
-}, l, defineFormatter) {
+}, l) {
     const that = this;
     const langs = this.langData.languages;
 
@@ -27,7 +24,7 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             prefFormatting !== 'false' && this.hideFormattingSection
         );
 
-    function _displayWork (l, defineFormatter, schemaObj, metadataObj) {
+    function _displayWork (l, schemaObj, metadataObj) {
         const il = localizeParamNames
             ? key => l(['params', key])
             : key => key;
@@ -265,67 +262,11 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
         });
     }
 
-    getJSON(this.files).then((dbs) => {
-        this.fileData = dbs;
-        const imfFile = IMF({ // eslint-disable-line new-cap
-            locales: lang.map(localeFromFileData),
-            fallbackLocales: fallbackLanguages.map(localeFromFileData)
-        });
-        const lf = imfFile.getFormatter();
-
-        // Use the following to dynamically add specific file schema in place of
-        //    generic table schema if validating against files.jsonschema
-        //  filesSchema.properties.groups.items.properties.files.items.properties.
-        //      file.anyOf.splice(1, 1, {$ref: schemaFile});
-        // Todo: Allow use of dbs and fileGroup together in base directories?
-        const getMetadata = (file, property, cb) =>
-            JsonRefs
-                .resolveRefsAt(getCurrDir() + file + (property ? '#/' + property : ''))
-                .then(({resolved}) => resolved)
-                .catch((err) => {
-                    alert('catch:' + err);
-                    throw err;
-                });
-
-        let fileData;
-        const fileGroup = dbs.groups.find((fg) => {
-            fileData = fg.files.find((file) =>
-                $p.get('work') === lf(['workNames', fg.id, file.name])
-            );
-            return Boolean(fileData);
-        });
-
-        const baseDir = (dbs.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
-        const schemaBaseDir = (dbs.schemaBaseDirectory || '') +
-            (fileGroup.schemaBaseDirectory || '') + '/';
-        const metadataBaseDir = (dbs.metadataBaseDirectory || '') +
-            (fileGroup.metadataBaseDirectory || '') + '/';
-
-        const file = baseDir + fileData.file.$ref;
-        let schemaFile = fileData.schemaFile ? schemaBaseDir + fileData.schemaFile : '';
-        let metadataFile = fileData.metadataFile ? metadataBaseDir + fileData.metadataFile : '';
-
-        let schemaProperty = '', metadataProperty = '';
-
-        if (!schemaFile) {
-            schemaFile = file;
-            schemaProperty = 'schema';
-        }
-        if (!metadataFile) {
-            metadataFile = file;
-            metadataProperty = 'metadata';
-        }
-
-        return Promise.all([
-            fileData, lf, l, // Pass on non-promises
-            getMetadata(schemaFile, schemaProperty),
-            getMetadata(metadataFile, metadataProperty),
-            this.allowPlugins ? Object.keys(dbs.plugins) : null, // Non-promise
-            this.allowPlugins ? JSONP(Object.values(dbs.plugins).map((p) => p.path)) : null
-        ]);
-    }).then(([fileData, lf, l, schemaObj, metadataObj, pluginKeys, pluginObjects]) => {
-        console.log('pluginKeys', pluginKeys);
-        console.log('pluginObjects', pluginObjects);
+    this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p}).then((
+        [fileData, lf, schemaObj, metadataObj, pluginKeys, pluginObjects]
+    ) => {
+        // console.log('pluginKeys', pluginKeys);
+        // console.log('pluginObjects', pluginObjects);
         if (pluginObjects) {
             // console.log('aaap', pluginObjects[0].insertField());
             /*
@@ -343,7 +284,7 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             },
             fallback: true
         });
-        _displayWork(l, defineFormatter, schemaObj, metadataObj);
+        _displayWork(l, schemaObj, metadataObj);
     }).catch((err) => {
         alert(err);
     });

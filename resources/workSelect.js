@@ -4,8 +4,7 @@ TextBrowser.prototype.workSelect = function workSelect ({
 } /* , l, defineFormatter */) {
     // We use getJSON instead of JsonRefs as we do not necessarily need to
     //    resolve the file contents here
-    getJSON(this.files).then((dbs) => {
-        this.fileData = dbs;
+    this.getFilesData().then((dbs) => {
         return getJSON(dbs.groups.reduce((arr, fileGroup) => {
             const metadataBaseDir = (dbs.metadataBaseDirectory || '') +
                 (fileGroup.metadataBaseDirectory || '') + '/';
