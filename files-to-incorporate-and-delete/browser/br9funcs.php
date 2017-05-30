@@ -1,11 +1,16 @@
 <?php
 
 /////////////// Define functions ///////////////////
-// Note to self: Functions in PHP 4 and 5 do not need to be defined at the beginning. However, I am declaring all.
+// Note to self: Functions in PHP 4 and 5 do not need to be defined at the beginning.
+// However, I am declaring all.
 /////////////////
 
-// Note the functions below include alphabetic dummy placeholders since the calling function may vary in length and not all values will be used for each function; remember to list all fields, even if your user function doesn't use them all (and use this alphabetic convention for consistency and readability)
-// Idea: Use "static" keyword in functions be build cumulative results for automated fields (e.g., word counts which were added up (and displayed) in successive cells)
+// Note the functions below include alphabetic dummy placeholders since the calling
+//   function may vary in length and not all values will be used for each function;
+//   remember to list all fields, even if your user function doesn't use them all
+//   (and use this alphabetic convention for consistency and readability)
+// Idea: Use "static" keyword in functions be build cumulative results for automated
+//   fields (e.g., word counts which were added up (and displayed) in successive cells)
 @include('userfunctions.php');
 
 function alias_fielding($a="", $b="", $c="", $d="", $e="", $f="", $g="", $h="", $j="", $k="", $l="", $m="", $n="", $o="", $p="", $alias_field_txt="", $lang="", $q="", $disablealias="") {
@@ -181,15 +186,14 @@ function googlify($input, $a="", $b="", $param1="", $d="", $e="", $f="", $g="", 
 HERE;
 	for ($i=0; $i < $countinput; $i++) {
 		$input_ready = urlencode(htmlentities($input_array[$i]));
-// Couldn't get following (giving Adsense credit) to work inside of own proxy (needed for accessing external files to make them backable/forwardable within iframes)
+// Couldn't get following (giving Adsense credit) to work inside of own proxy (needed
+//   for accessing external files to make them backable/forwardable within iframes)
 //		$googlified .= "<a href='http://www.google.com/custom?domains=bahai-library.com&q=".$param1.$input_ready."&sitesearch=&sa=Search&client=pub-9515729973633640&forid=1&ie=UTF-8&oe=UTF-8&safe=active&cof=GALT%3A%23008000%3BGL%3A1%3BDIV%3A%23336699%3BVLC%3A663399%3B%0D%0AAH%3Acenter%3BBGC%3AFFFFFF%3BLBGC%3A336699%3BALC%3A0000FF%3BLC%3A0000FF%3BT%3A000000%3BGFNT%3A0000FF%3BGIMP%3A%0D%0A0000FF%3BFORID%3A1%3B&hl=en'>".$input_array[$i]."</a> ";
 		$googlified .= "<a href='http://www.google.com/search?q=".$param1.$input_ready."&amp;start=0&amp;ie=utf-8&amp;oe=utf-8&amp;client=firefox-a&amp;rls=org.mozilla:en-US:official'>".$input_array[$i]."</a> ";
 
 	} // end for
 	$googlified .= "</body>
 </html>";
-
-
 
 //	if (is_writable($filename)) {
 
