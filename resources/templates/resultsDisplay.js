@@ -1,6 +1,6 @@
 /* globals Templates, jml */
 Templates.resultsDisplay = {
-    styles: ({$pRaw, escapeQuotedCSS}) => {
+    styles: ({$pRaw, escapeQuotedCSS, escapeCSS}) => {
         const color = !$pRaw('color') || $pRaw('color') === '#'
             ? $pRaw('colorName')
             : $pRaw('color');
@@ -22,7 +22,8 @@ Templates.resultsDisplay = {
     font-stretch: ${$pRaw('fontstretch')};
     letter-spacing: ${$pRaw('letterspacing')};
     line-height: ${$pRaw('lineheight')};
-    color: ${color};
+    ${color ? `color: ${color};` : ''}
+    ${escapeCSS($pRaw('pagecss') || '')}
 }` +
             (bgcolor
                 ? `
@@ -33,14 +34,25 @@ body {
                 : '')
         ]];
     },
-    main: ({tableData, schemaItems, $pRaw, escapeQuotedCSS}) => {
-        schemaItems.forEach((itemInfo) => {
-            console.log('itemInfo', itemInfo);
-        });
-
+    main: ({tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS}) => {
         jml('div', [
-            Templates.resultsDisplay.styles({$pRaw, escapeQuotedCSS}),
+            Templates.resultsDisplay.styles({$pRaw, escapeQuotedCSS, escapeCSS}),
             ['table', {border: '1'}, tableData.map((tr) => ['tr',
+            /*
+                schemaItems.map(({title}, i) => {
+                    const fieldI = $pRaw('field' + (i + 1));
+                    if (fieldI) {
+                        const idx = schemaItems.findIndex(({title}) => title === fieldI);
+                        console.log('iiii', title, i, idx, fieldI);
+                        return idx === -1
+                            ? ['td', ['(empty)' + title]]
+                            : ['td', {
+                                innerHTML: tr[idx] // Todo: Only do for non-escaped!!!!
+                            }];
+                    }
+                    return 'ttt:' + title;
+                })
+            */
                 tr.map((td) => ['td',
                     // [td] // Todo: For non-escaped!!!!
                     {innerHTML: td}
