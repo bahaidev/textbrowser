@@ -606,10 +606,8 @@ Templates.workDisplay = {
                                     ] : '',
                                     aliases
                                         ? ['input', {
-                                            /* eslint-disable object-property-newline */
                                             name, id, class: 'browseField',
                                             list: 'dl-' + id, value: $p.get(name),
-                                            /* eslint-enable object-property-newline */
                                             $on: setType === 'start'
                                                 ? {
                                                     change: function (e) {
@@ -660,10 +658,8 @@ Templates.workDisplay = {
                                         ] : '',
                                         aliases
                                             ? ['input', {
-                                                /* eslint-disable object-property-newline */
                                                 name, id, class: 'browseField',
                                                 list: 'dl-' + id, value: $p.get(name)
-                                                /* eslint-enable object-property-newline */
                                             }]
                                             : ['input', {
                                                 name, id, type: 'number', value: $p.get(name)
@@ -726,11 +722,9 @@ Templates.workDisplay = {
                             ['tr', {valign: 'top'}, [
                                 ['td', [
                                     Templates.workDisplay.columnsTable({
-                                        /* eslint-disable object-property-newline */
                                         ld, fields, $p, le, iil, l, getFieldAliasOrName,
                                         metadataObj, preferredLocale, schemaItems, getPreferredLanguages,
                                         fieldMatchesLocale
-                                        /* eslint-enable object-property-newline */
                                     }),
                                     le('save-settings-URL', 'input', 'value', {
                                         type: 'button',

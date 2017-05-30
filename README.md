@@ -217,7 +217,7 @@ shows its usage (assuming paths relative to a package containing
         1.  Modifying existing content or not
             1.  Splitting columns (e.g., by line break)
             1.  Splitting rows by element (e.g., `<hr />`)
-                1.  With optional rowspan/colspan for non-split portions of row/column
+                1.  With optional `rowspan`/`colspan` for non-split portions of row/column
             1.  Overlays
         1.  Levels of applicability
             1.  Automated whole document/table-level or column-level
@@ -313,10 +313,6 @@ shows its usage (assuming paths relative to a package containing
     1.  Utilize `prefer_alias`
     1.  Allow tables to be re-sortable via JavaScript which allows
           sorting by multiple columns with various data, etc.
-    1.  Incorporate speech synthesis from
-        <http://bahai.works/MediaWiki:Common.js>, allowing different
-        speech voices for different rows or columns (or just let user
-        add CSS to columns to mark).
     1.  Prevent XSS in field and page CSS fields
     1.  Unless `format: "html"`, should be escaped!
     1.  Review work display page fields and schemas/metadata to ensure all
@@ -370,6 +366,10 @@ shows its usage (assuming paths relative to a package containing
     by being able to use a natively stringifying version of Jamilih
     (once complete)
 1.  Caching for automated field content like translations (with ability to rebuild)
+1.  Incorporate speech synthesis from
+    <http://bahai.works/MediaWiki:Common.js>, allowing different
+    speech voices for different rows or columns (or just let user
+    add CSS to columns to mark).
 
 ## To-dos (medium priority)
 

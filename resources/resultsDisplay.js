@@ -1,6 +1,6 @@
 /* globals TextBrowser, Templates, JsonRefs */
 TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
-    l, lang, localeFromFileData, fallbackLanguages, $p, imfLocales
+    l, lang, localeFromFileData, fallbackLanguages, $p, imfLocales, getMetaProp
 }) {
     const $pRaw = (param) => {
         // Todo: Should work with i18n=true (if names i18nized, need reverse look-up)
@@ -43,11 +43,13 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             fallback: true
         });
 
+        const heading = getMetaProp(metadataObj, 'heading');
         // Todo: Needs to actually take params into account!
         JsonRefs.resolveRefs(fileData.file).then(({resolved: {data: tableData}}) => {
             const schemaItems = schemaObj.items.items;
             Templates.resultsDisplay.main({
-                tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS
+                tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS,
+                heading, l
             });
         });
     });

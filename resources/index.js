@@ -225,14 +225,15 @@ TextBrowser.prototype.paramChange = function () {
         }
         if (!result) {
             this.workDisplay({
-                /* eslint-disable object-property-newline */
                 lang, preferredLocale, localeFromFileData, fallbackLanguages, getMetaProp,
                 $p, localeFromLangData
-                /* eslint-enable object-property-newline */
             }, ...args);
             return;
         }
-        this.resultsDisplay({l: l10n, imfLocales: imf.locales, $p, lang, localeFromFileData, fallbackLanguages}, ...args);
+        this.resultsDisplay({
+            l: l10n, imfLocales: imf.locales, $p, lang, localeFromFileData, fallbackLanguages,
+            getMetaProp
+        }, ...args);
     };
     const imf = IMF({
         languages: lang,

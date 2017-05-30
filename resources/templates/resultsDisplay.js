@@ -34,7 +34,7 @@ body {
                 : '')
         ]];
     },
-    main: ({tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS}) => {
+    main: ({tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS, heading, l}) => {
         let caption;
         /*
         outputmode
@@ -44,19 +44,17 @@ body {
                         'json-object'
 
         border
-        speech
 
         headings
-        wishcaption
         headerfixed
         tfoot
         */
         if ($pRaw('wishcaption') !== 'no') {
-            caption = 'aaa';
-            // heading + toggleyes + ': ' +
-            // htmlEscape($lclzd_fields_name1.$fieldnamegroup2.$fieldnamegroup3) + ' ' +
-            // htmlEscape($blevela1.$blevelbgroup.$blevelcgroup) + ' ' +
-            // l('to').toLowerCase() + ' '. htmlEscape($elevela1.$elevelbgroup.$elevelcgroup);
+            caption = heading + ': ' +
+                // Todo: Finish...
+                // htmlEscape($lclzd_fields_name1.$fieldnamegroup2.$fieldnamegroup3) + ' ' +
+                // htmlEscape($blevela1.$blevelbgroup.$blevelcgroup) + ' ' +
+                l('to').toLowerCase() + ' '; // + htmlEscape($elevela1.$elevelbgroup.$elevelcgroup);
         }
         jml('div', [
             Templates.resultsDisplay.styles({$pRaw, escapeQuotedCSS, escapeCSS}),

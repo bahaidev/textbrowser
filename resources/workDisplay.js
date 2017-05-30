@@ -250,7 +250,6 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
         // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
         const heading = getMetaProp(metadataObj, 'heading');
         Templates.workDisplay.main({
-            /* eslint-disable object-property-newline */
             l, namespace: that.namespace, heading,
             imfl, fallbackDirection,
             langs, fields, localizeParamNames,
@@ -258,7 +257,6 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             getMetaProp, metadataObj, il, le, ld, iil,
             getPreferredLanguages, fieldMatchesLocale,
             getFieldAliasOrName, preferredLocale, schemaItems, content
-            /* eslint-enable object-property-newline */
         });
     }
 
