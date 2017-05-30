@@ -1,25 +1,19 @@
 /* globals Templates, jml */
 Templates.resultsDisplay = {
-    main: ({tableData, schemaItems, $pRaw, escapeQuotedCSS}) => {
-        schemaItems.forEach((itemInfo) => {
-            console.log('itemInfo', itemInfo);
-        });
-
+    styles: ({$pRaw, escapeQuotedCSS}) => {
         const color = !$pRaw('color') || $pRaw('color') === '#'
             ? $pRaw('colorName')
             : $pRaw('color');
         const bgcolor = !$pRaw('bgcolor') || $pRaw('bgcolor') === '#'
             ? $pRaw('bgcolorName')
             : $pRaw('bgcolor');
-
-        jml('div', [
-            ['style', [
-                {
-                    'y': 'td, th',
-                    'n': 'td',
-                    '0': 'td',
-                    'undefined': 'td'
-                }[$pRaw('headings')] + `{
+        return ['style', [
+            {
+                'y': 'td, th',
+                'n': 'td',
+                '0': 'td',
+                'undefined': 'td'
+            }[$pRaw('headings')] + `{
     font-style: ${$pRaw('fontstyle')};
     font-variant: ${$pRaw('fontvariant')};
     font-weight: ${$pRaw('fontweight')};
@@ -30,14 +24,22 @@ Templates.resultsDisplay = {
     line-height: ${$pRaw('lineheight')};
     color: ${color};
 }` +
-                (bgcolor
-                    ? `
+            (bgcolor
+                ? `
 body {
     background-color: ${bgcolor};
 }
 `
-                    : '')
-            ]],
+                : '')
+        ]];
+    },
+    main: ({tableData, schemaItems, $pRaw, escapeQuotedCSS}) => {
+        schemaItems.forEach((itemInfo) => {
+            console.log('itemInfo', itemInfo);
+        });
+
+        jml('div', [
+            Templates.resultsDisplay.styles({$pRaw, escapeQuotedCSS}),
             ['table', {border: '1'}, tableData.map((tr) => ['tr',
                 tr.map((td) => ['td',
                     // [td] // Todo: For non-escaped!!!!
