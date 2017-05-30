@@ -46,48 +46,57 @@
         },
         "plugin-field-mapping": {
             "type": "object",
+            "title": "Groups",
             "patternProperties": {
                 ".*": {
                     "type": "object",
+                    "title": "Works",
                     "patternProperties": {
                         ".*": {
                             "type": "object",
-                            "properties": {
-                                "placement": {
-                                    "anyOf": [
-                                        {
-                                            "type": "string",
-                                            "enum": ["end"]
-                                        },
-                                        {
-                                            "type": "number"
-                                        }
-                                    ]
-                                },
-                                "applicable-fields": {
-                                    "type": "object",
-                                    "patternProperties": {
-                                        ".*": {
-                                            "type": "object",
-                                            "properties": {
-                                                "targetLanguage": {
-                                                    "type": "string",
-                                                    "format": "language-code"
-                                                },
-                                                "onByDefault": {
-                                                    "type": "boolean"
-                                                }
-                                            },
-                                            "patternProperties": {
-                                                ".*": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            },
+                            "title": "Fields",
                             "patternProperties": {
                                 ".*": {
+                                    "type": "object",
+                                    "title": "Field arguments",
+                                    "properties": {
+                                        "placement": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string",
+                                                    "enum": ["end"]
+                                                },
+                                                {
+                                                    "type": "number"
+                                                }
+                                            ]
+                                        },
+                                        "applicable-fields": {
+                                            "type": "object",
+                                            "patternProperties": {
+                                                ".*": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "targetLanguage": {
+                                                            "type": "string",
+                                                            "format": "language-code"
+                                                        },
+                                                        "onByDefault": {
+                                                            "type": "boolean"
+                                                        }
+                                                    },
+                                                    "patternProperties": {
+                                                        ".*": {}
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "patternProperties": {
+                                        ".*": {
 
+                                        }
+                                    }
                                 }
                             }
                         }
