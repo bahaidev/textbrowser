@@ -236,7 +236,9 @@ shows its usage (assuming paths relative to a package containing
                 by default and the other off); already has placeholder in `files.json` - add to `field-alias.js`; already added to new version but need to reimplement as plugin
             1. Synopsis, Roman numerals, Chinese numbers, word-by-word translation,
                 auto-romanized Persian/Arabic, Persian with English tooltips,
-                English with Persian/Arabic tooltips, ISBN for Collins,
+                English with Persian/Arabic tooltips, ISBN for Collins (use JSON Schema
+                `format` for link detection--might also reimplement ISBN to make use of
+                JSON Schema format);
                 text-to-(Google search, Google define, Wikipedia, etc. edit pages)-links
         1.  Auto-links by verse to relevant forums, wikis, blogs, or personal
             notes pertaining to a given verse
