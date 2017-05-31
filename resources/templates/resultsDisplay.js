@@ -164,7 +164,7 @@ body {
                     )
                 ]) : ''),
                 addChildren(tbodyElem, [
-                    // 1.  Support JSON types for `outputmode`, opening new window
+                    // 1.  Todo: Support JSON types for `outputmode`, opening new window
                     //     with content-type set
                     /*
                     // Todo: Handle transpose, in header, footer, and body
