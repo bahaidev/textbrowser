@@ -193,6 +193,7 @@ body {
                                 context (highlight?)
 
                             // Todo: Handle the following in output
+                                escaping (and in headings and footer too)
                                 anchor1, etc.
                                 interlin1, etc.
                                     Todo: interlin1, etc. should (optionally) get additional
