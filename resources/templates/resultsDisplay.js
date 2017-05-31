@@ -165,7 +165,7 @@ body {
                     //   column names added too
                     */
                 ]) : ''),
-                ($p.get('tfoot') === l('yes') ? addChildren(tfootElem, [
+                ($pRaw('tfoot') === 'yes' ? addChildren(tfootElem, [
                     addChildren(trElem,
                         checkedFields.map((cf) =>
                             localizedFieldNames.includes(cf) ? addChildren(thElem, [
