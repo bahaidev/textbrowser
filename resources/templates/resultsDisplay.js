@@ -36,7 +36,7 @@ body {
     },
     main: ({
         tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS, escapeHTML,
-        heading, l, browseFieldSets
+        heading, l, browseFieldSets, localizedFieldNames
     }) => {
         let caption;
         const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
@@ -134,32 +134,53 @@ body {
             el.push(children);
             return el;
         };
-        console.log('schemaItems', schemaItems);
+        // Todo: Handle transpose, in header, footer, and body
+
+        let num = 1;
+        let field, checked;
+        const checkedFields = [];
+        do {
+            field = $pRaw('field' + num);
+            checked = $p.get('checked' + num, true);
+            num++;
+            if (field && checked === l('yes')) {
+                checkedFields.push(field);
+            }
+        } while (field);
+        console.log('checkedFields', checkedFields);
+
         jml('div', [
             Templates.resultsDisplay.styles({$pRaw, escapeQuotedCSS, escapeCSS}),
             addChildren(tableElem, [
                 (caption ? addChildren(captionElem, [caption]) : ''),
                 ($pRaw('headings') !== '0' ? addChildren(theadElem, [
-                    // Header/footers: trElem, thElem
-
-                    // Todo: thead content
+                    addChildren(trElem,
+                        checkedFields.map((cf) =>
+                            localizedFieldNames.includes(cf) ? addChildren(thElem, [
+                                cf
+                            ]) : ''
+                        )
+                    )
                     /*
-                    // interlin1, etc. should (optionally) get additional column names added too
-                    (field1, etc.) - and auto-fields
-                    checked1, etc.
-                    transpose
+                    // Todo: interlin1, etc. should (optionally) get additional
+                    //   column names added too
                     */
                 ]) : ''),
-                ($pRaw('tfoot') === 'yes' ? addChildren(tfootElem, [
-                    // Header/footers: trElem, thElem
-                    // Todo: tfoot content
+                ($p.get('tfoot') === l('yes') ? addChildren(tfootElem, [
+                    addChildren(trElem,
+                        checkedFields.map((cf) =>
+                            localizedFieldNames.includes(cf) ? addChildren(thElem, [
+                                cf
+                            ]) : ''
+                        )
+                    )
                 ]) : ''),
                 addChildren(tbodyElem, [
                     // 1.  Support JSON types for `outputmode`, opening new window
                     //     with content-type set
                     /*
                     // Styling todos:
-                        $pRaw('headerfixed') === 'yes'
+                        $pRaw('headerfixed') === l('yes')
                         $pRaw('border') === '1'
                         $pRaw('headings') === 'y' or 'n' on whether to apply styles
                     */
@@ -178,6 +199,7 @@ body {
                                 end1-1, etc.
                             // Todo: Handle the following
                                 (field1, etc.) - and auto-fields
+                                checked1, etc.
                                 localizeParamNames (preference)
                                 rand
                                 context

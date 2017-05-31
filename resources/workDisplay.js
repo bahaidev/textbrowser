@@ -42,7 +42,7 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
         //   optional fallback direction
         const le = (key, el, attToLocalize, atts, children) => {
             atts[attToLocalize] = l({
-                key: key,
+                key,
                 fallback: ({message}) => {
                     atts.dir = fallbackDirection;
                     return message;
