@@ -154,14 +154,14 @@ body {
             Templates.resultsDisplay.styles({$pRaw, escapeQuotedCSS, escapeCSS}),
             addChildren(tableElem, [
                 (caption ? addChildren(captionElem, [caption]) : ''),
+                /*
+                // Todo: interlin1, etc. should (optionally) get additional
+                //   column names added too for headings/footer
+                */
                 ($pRaw('headings') !== '0' ? addChildren(theadElem, [
                     addChildren(trElem,
                         checkedFields.map((cf) => addChildren(thElem, [cf]))
                     )
-                    /*
-                    // Todo: interlin1, etc. should (optionally) get additional
-                    //   column names added too
-                    */
                 ]) : ''),
                 ($pRaw('tfoot') === 'yes' ? addChildren(tfootElem, [
                     addChildren(trElem,
@@ -187,20 +187,22 @@ body {
                     // */
                     /*
                             /*
+                            // Todo: localizeParamNames (preference)?
+
                             // Todo: Add ranges within applicable browse field set
                                 start1-1, etc.
                                 end1-1, etc.
-                            // Todo: Handle the following
-                                (field1, etc.) - and auto-fields
-                                checked1, etc.
-                                localizeParamNames (preference)
                                 rand
-                                context
-                                transpose
+                                context (highlight?)
+
+                            // Todo: Handle the following in output
                                 anchor1, etc.
                                 interlin1, etc.
                                 css1, etc.
+
+                            // Todo: Later:
                                 search1, etc.
+                                auto-fields
                             */
                             /*
                             schemaItems.map(({title}, i) => {
