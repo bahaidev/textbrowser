@@ -197,7 +197,6 @@ body {
                                 rand
                                 context
                                 transpose
-                                checked1, etc.
                                 anchor1, etc.
                                 interlin1, etc.
                                 css1, etc.
