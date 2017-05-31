@@ -137,7 +137,7 @@ body {
 
         let num = 1;
         let field, checked;
-        const checkedFields = [];
+        let checkedFields = [];
         do {
             field = $pRaw('field' + num);
             checked = $p.get('checked' + num, true);
@@ -146,6 +146,7 @@ body {
                 checkedFields.push(field);
             }
         } while (field);
+        checkedFields = checkedFields.filter((cf) => localizedFieldNames.includes(cf));
 
         // Todo: Handle transpose, in header, footer, and body
         jml('div', [
@@ -154,11 +155,7 @@ body {
                 (caption ? addChildren(captionElem, [caption]) : ''),
                 ($pRaw('headings') !== '0' ? addChildren(theadElem, [
                     addChildren(trElem,
-                        checkedFields.map((cf) =>
-                            localizedFieldNames.includes(cf) ? addChildren(thElem, [
-                                cf
-                            ]) : ''
-                        )
+                        checkedFields.map((cf) => addChildren(thElem, [cf]))
                     )
                     /*
                     // Todo: interlin1, etc. should (optionally) get additional
@@ -167,11 +164,7 @@ body {
                 ]) : ''),
                 ($pRaw('tfoot') === 'yes' ? addChildren(tfootElem, [
                     addChildren(trElem,
-                        checkedFields.map((cf) =>
-                            localizedFieldNames.includes(cf) ? addChildren(thElem, [
-                                cf
-                            ]) : ''
-                        )
+                        checkedFields.map((cf) => addChildren(thElem, [cf]))
                     )
                 ]) : ''),
                 addChildren(tbodyElem, [
