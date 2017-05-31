@@ -47,7 +47,7 @@ TextBrowser.prototype.getFilesData = function () {
 };
 
 TextBrowser.prototype.getWorkData = function ({
-    lang, localeFromFileData, fallbackLanguages, $p
+    lang, localeFromFileData, fallbackLanguages, $p, getMetaProp
 }) {
     const getCurrDir = () =>
         window.location.href.replace(/(index\.html)?#.*$/, '');
@@ -112,14 +112,39 @@ TextBrowser.prototype.getWorkData = function ({
             pluginPaths = pluginsInWork.map((p) => dbs.plugins[p].path);
             getPlugins = this.allowPlugins && pluginsInWork;
         }
-        return Promise.all([
-            fileData, lf, // Pass on non-promises
-            getMetadata(schemaFile, schemaProperty),
-            getMetadata(metadataFile, metadataProperty),
-            getPlugins ? pluginsInWork : null, // Non-promise
-            getPlugins ? pluginFieldMappingForWork : null, // Non-promise
-            getPlugins ? JSONP(pluginPaths) : null
-        ]);
+        return getMetadata(metadataFile, metadataProperty).then((metadataObj) => {
+            function getFieldAliasOrName (field) {
+                const fieldObj = metadataObj.fields && metadataObj.fields[field];
+                let fieldName;
+                let fieldAlias;
+                if (fieldObj) {
+                    fieldAlias = fieldObj.alias;
+                }
+                if (fieldAlias) {
+                    if (typeof fieldAlias === 'string') {
+                        fieldName = fieldAlias;
+                    } else {
+                        fieldAlias = fieldAlias.localeKey;
+                        fieldName = getMetaProp(metadataObj, fieldAlias.split('/'));
+                    }
+                } else { // No alias
+                    fieldName = fieldObj.name;
+                    if (typeof fieldName === 'object') {
+                        fieldName = fieldName.localeKey;
+                        fieldName = getMetaProp(metadataObj, fieldName.split('/'));
+                    }
+                }
+                return fieldName;
+            }
+            return Promise.all([
+                fileData, lf, getFieldAliasOrName, // Pass on non-promises
+                getMetadata(schemaFile, schemaProperty),
+                metadataObj,
+                getPlugins ? pluginsInWork : null, // Non-promise
+                getPlugins ? pluginFieldMappingForWork : null, // Non-promise
+                getPlugins ? JSONP(pluginPaths) : null
+            ]);
+        });
     });
 };
 
@@ -131,31 +156,9 @@ TextBrowser.prototype.getDirectionForLanguageCode = function (code) {
     ).direction;
 };
 
-TextBrowser.prototype.getBrowseFieldData = function ({metadataObj, getMetaProp, schemaItems}, cb) {
-    function getFieldAliasOrName (field) {
-        const fieldObj = metadataObj.fields && metadataObj.fields[field];
-        let fieldName;
-        let fieldAlias;
-        if (fieldObj) {
-            fieldAlias = fieldObj.alias;
-        }
-        if (fieldAlias) {
-            if (typeof fieldAlias === 'string') {
-                fieldName = fieldAlias;
-            } else {
-                fieldAlias = fieldAlias.localeKey;
-                fieldName = getMetaProp(metadataObj, fieldAlias.split('/'));
-            }
-        } else { // No alias
-            fieldName = fieldObj.name;
-            if (typeof fieldName === 'object') {
-                fieldName = fieldName.localeKey;
-                fieldName = getMetaProp(metadataObj, fieldName.split('/'));
-            }
-        }
-        return fieldName;
-    }
-
+TextBrowser.prototype.getBrowseFieldData = function ({
+    metadataObj, getMetaProp, schemaItems, getFieldAliasOrName
+}, cb) {
     metadataObj.table.browse_fields.forEach((browseFieldObject, i) => {
         if (typeof browseFieldObject === 'string') {
             browseFieldObject = {set: [browseFieldObject]};
@@ -218,7 +221,7 @@ TextBrowser.prototype.getBrowseFieldData = function ({metadataObj, getMetaProp, 
 
             return ret;
         });
-        cb({browseFields, i, getFieldAliasOrName}); // eslint-disable-line standard/no-callback-literal
+        cb({browseFields, i}); // eslint-disable-line standard/no-callback-literal
     });
 };
 

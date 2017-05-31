@@ -134,27 +134,43 @@ body {
             el.push(children);
             return el;
         };
-
+        console.log('schemaItems', schemaItems);
         jml('div', [
             Templates.resultsDisplay.styles({$pRaw, escapeQuotedCSS, escapeCSS}),
             addChildren(tableElem, [
                 (caption ? addChildren(captionElem, [caption]) : ''),
+                ($pRaw('headings') !== '0' ? addChildren(theadElem, [
+                    // Header/footers: trElem, thElem
+
+                    // Todo: thead content
+                    /*
+                    // interlin1, etc. should (optionally) get additional column names added too
+                    (field1, etc.) - and auto-fields
+                    checked1, etc.
+                    transpose
+                    */
+                ]) : ''),
+                ($pRaw('tfoot') === 'yes' ? addChildren(tfootElem, [
+                    // Header/footers: trElem, thElem
+                    // Todo: tfoot content
+                ]) : ''),
                 addChildren(tbodyElem, [
                     // 1.  Support JSON types for `outputmode`, opening new window
                     //     with content-type set
                     /*
-                    border
-                    headings
-                    headerfixed
-                    tfoot
+                    // Styling todos:
+                        $pRaw('headerfixed') === 'yes'
+                        $pRaw('border') === '1'
+                        $pRaw('headings') === 'y' or 'n' on whether to apply styles
                     */
-                    // Header/footers: trElem, thElem, theadElem, tfootElem
+                    /**
                     ...tableData.map((tr) =>
                         addChildren(trElem,
                             tr.map((td) =>
                                 [tdElem[0], Object.assign({}, tdElem[1], {innerHTML: td})]
                                 // addChildren(tdElem, [td]]) // Todo: For non-escaped!!!!
                             )
+                    // */
                     /*
                             /*
                             // Todo: Add ranges within applicable browse field set
@@ -187,10 +203,10 @@ body {
                                 return 'ttt:' + title;
                             })
                             */
-                /*
+                /**
                         )
                     )
-                */
+                // */
                 ])
             ])
         ], document.body);

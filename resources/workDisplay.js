@@ -24,7 +24,7 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             prefFormatting !== 'false' && this.hideFormattingSection
         );
 
-    function _displayWork (l, schemaObj, metadataObj) {
+    function _displayWork (l, schemaObj, metadataObj, getFieldAliasOrName) {
         const il = localizeParamNames
             ? key => l(['params', key])
             : key => key;
@@ -151,10 +151,9 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             }
             return window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
         }
-        let getFieldAliasOrName;
-        this.getBrowseFieldData({metadataObj, getMetaProp, schemaItems}, ({browseFields, i, getFieldAliasOrName: gfaon}) => {
-            getFieldAliasOrName = gfaon;
-            console.log('browseFields', browseFields);
+        this.getBrowseFieldData({
+            metadataObj, getMetaProp, schemaItems, getFieldAliasOrName
+        }, ({browseFields, i}) => {
             Templates.workDisplay.addBrowseFields({browseFields, ld, i, iil, $p, content});
         });
 
@@ -177,8 +176,8 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
         });
     }
 
-    this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p}).then((
-        [fileData, lf, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
+    this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p, getMetaProp}).then((
+        [fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
     ) => {
         if (pluginObjects) {
             // console.log('aaap', pluginObjects[0].insertField());
@@ -201,7 +200,7 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             },
             fallback: true
         });
-        _displayWork.call(this, l, schemaObj, metadataObj);
+        _displayWork.call(this, l, schemaObj, metadataObj, getFieldAliasOrName);
     }).catch((err) => {
         alert(err);
     });

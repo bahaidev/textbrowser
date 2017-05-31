@@ -27,8 +27,8 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
     const escapeQuotedCSS = (s) => s.replace(/"/g, '\\"');
     const escapeHTML = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/, '&gt;');
     const escapeCSS = escapeHTML;
-    this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p}).then((
-        [fileData, lf, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
+    this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p, getMetaProp}).then((
+        [fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
     ) => {
         console.log('pluginKeys', pluginKeys);
         console.log('pluginFieldMappings', pluginFieldMappings);
@@ -49,7 +49,9 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         JsonRefs.resolveRefs(fileData.file).then(({resolved: {data: tableData}}) => {
             const schemaItems = schemaObj.items.items;
             const browseFieldSets = [];
-            this.getBrowseFieldData({metadataObj, getMetaProp, schemaItems}, ({browseFields}) => {
+            this.getBrowseFieldData({metadataObj, getMetaProp, schemaItems, getFieldAliasOrName}, ({
+                browseFields
+            }) => {
                 browseFieldSets.push(browseFields);
             });
             Templates.resultsDisplay.main({
