@@ -149,15 +149,10 @@ body {
         checkedFields = checkedFields.filter((cf) => localizedFieldNames.includes(cf));
         const checkedFieldIndexes = checkedFields.map((cf) => localizedFieldNames.indexOf(cf));
 
-        // Todo: Handle transpose, in header, footer, and body
         jml('div', [
             Templates.resultsDisplay.styles({$pRaw, escapeQuotedCSS, escapeCSS}),
             addChildren(tableElem, [
                 (caption ? addChildren(captionElem, [caption]) : ''),
-                /*
-                // Todo: interlin1, etc. should (optionally) get additional
-                //   column names added too for headings/footer
-                */
                 ($pRaw('headings') !== '0' ? addChildren(theadElem, [
                     addChildren(trElem,
                         checkedFields.map((cf) => addChildren(thElem, [cf]))
@@ -172,7 +167,9 @@ body {
                     // 1.  Support JSON types for `outputmode`, opening new window
                     //     with content-type set
                     /*
-                    // Styling todos:
+                    // Todo: Handle transpose, in header, footer, and body
+
+                    // Todo: Styling
                         $pRaw('headerfixed') === 'yes'
                         $pRaw('border') === '1'
                         $pRaw('headings') === 'y' or 'n' on whether to apply styles
@@ -198,6 +195,8 @@ body {
                             // Todo: Handle the following in output
                                 anchor1, etc.
                                 interlin1, etc.
+                                    Todo: interlin1, etc. should (optionally) get additional
+                                        column names added for headings/footer
                                 css1, etc.
 
                             // Todo: Later:
