@@ -127,14 +127,13 @@ body {
             return;
         }
         const [tableElem, trElem, tdElem, thElem, captionElem, theadElem, tbodyElem, tfootElem] = tableElems;
-        console.log(tdElem, trElem, thElem, theadElem, tfootElem);
+        console.log('tdElem', tdElem);
 
         const addChildren = (el, children) => {
             el = JSON.parse(JSON.stringify(el));
             el.push(children);
             return el;
         };
-        // Todo: Handle transpose, in header, footer, and body
 
         let num = 1;
         let field, checked;
@@ -147,8 +146,8 @@ body {
                 checkedFields.push(field);
             }
         } while (field);
-        console.log('checkedFields', checkedFields);
 
+        // Todo: Handle transpose, in header, footer, and body
         jml('div', [
             Templates.resultsDisplay.styles({$pRaw, escapeQuotedCSS, escapeCSS}),
             addChildren(tableElem, [
