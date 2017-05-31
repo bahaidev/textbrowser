@@ -147,6 +147,7 @@ body {
             }
         } while (field);
         checkedFields = checkedFields.filter((cf) => localizedFieldNames.includes(cf));
+        const checkedFieldIndexes = checkedFields.map((cf) => localizedFieldNames.indexOf(cf));
 
         // Todo: Handle transpose, in header, footer, and body
         jml('div', [
@@ -172,14 +173,14 @@ body {
                     //     with content-type set
                     /*
                     // Styling todos:
-                        $pRaw('headerfixed') === l('yes')
+                        $pRaw('headerfixed') === 'yes'
                         $pRaw('border') === '1'
                         $pRaw('headings') === 'y' or 'n' on whether to apply styles
                     */
-                    /**
+                    /**/
                     ...tableData.map((tr) =>
                         addChildren(trElem,
-                            tr.map((td) =>
+                            tr.filter((td, i) => checkedFieldIndexes.includes(i)).map((td) =>
                                 [tdElem[0], Object.assign({}, tdElem[1], {innerHTML: td})]
                                 // addChildren(tdElem, [td]]) // Todo: For non-escaped!!!!
                             )
@@ -217,7 +218,7 @@ body {
                                 return 'ttt:' + title;
                             })
                             */
-                /**
+                /**/
                         )
                     )
                 // */
