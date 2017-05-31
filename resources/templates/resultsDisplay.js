@@ -43,19 +43,6 @@ body {
             typeof $pRaw('start' + (i + 1) + '-1') === 'string'
         );
         const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
-        /*
-        outputmode
-                        'table',
-                        'div',
-                        'json-array',
-                        'json-object'
-
-        border
-
-        headings
-        headerfixed
-        tfoot
-        */
         if ($pRaw('wishcaption') !== 'no') {
             /*
             // Works but displays in parentheses browse fields which
@@ -108,49 +95,104 @@ body {
             };
             caption = heading + ' ' + buildRanges();
         }
+
+        // Todo: Support colgroup/col?
+        const tableElems = ({
+            table: [
+                // Todo: Make border dynamic based on user selection (here and below)
+                ['table', {'class': 'table', border: '1'}],
+                ['tr', {'class': 'tr'}],
+                ['td', {'class': 'td'}],
+                ['th', {'class': 'th'}],
+                ['caption', {'class': 'caption'}],
+                ['thead', {'class': 'thead'}],
+                ['tbody', {'class': 'tbody'}],
+                ['tfoot', {'class': 'tfoot'}]
+            ],
+            div: [
+                ['div', {'class': 'table', style: 'display: table;'}],
+                ['div', {'class': 'tr', style: 'display: table-row;'}],
+                ['div', {'class': 'td', style: 'display: table-cell;'}],
+                ['div', {'class': 'th', style: 'display: table-cell;'}],
+                ['div', {'class': 'caption', style: 'display: table-caption;'}],
+                ['div', {'class': 'thead', style: 'display: table-header-group;'}],
+                ['div', {'class': 'tbody', style: 'display: table-row-group;'}],
+                ['div', {'class': 'tfoot', style: 'display: table-footer-group;'}]
+            ],
+            'json-array': 'json',
+            'json-object': 'json'
+        }[$pRaw('outputmode')]);
+        if (tableElems === 'json') {
+            alert('JSON support is currently not available');
+            return;
+        }
+        const [tableElem, trElem, tdElem, thElem, captionElem, theadElem, tbodyElem, tfootElem] = tableElems;
+        console.log(tdElem, trElem, thElem, theadElem, tfootElem);
+
+        const addChildren = (el, children) => {
+            el = JSON.parse(JSON.stringify(el));
+            el.push(children);
+            return el;
+        };
+
         jml('div', [
             Templates.resultsDisplay.styles({$pRaw, escapeQuotedCSS, escapeCSS}),
-            ['table', {border: '1'}, [
-                (caption ? ['div', [caption]] : '')
-                // ...tableData.map((tr) => ['tr',
+            addChildren(tableElem, [
+                (caption ? addChildren(captionElem, [caption]) : ''),
+                addChildren(tbodyElem, [
+                    // 1.  Support JSON types for `outputmode`, opening new window
+                    //     with content-type set
+                    /*
+                    border
+                    headings
+                    headerfixed
+                    tfoot
+                    */
+                    // Header/footers: trElem, thElem, theadElem, tfootElem
+                    ...tableData.map((tr) =>
+                        addChildren(trElem,
+                            tr.map((td) =>
+                                [tdElem[0], Object.assign({}, tdElem[1], {innerHTML: td})]
+                                // addChildren(tdElem, [td]]) // Todo: For non-escaped!!!!
+                            )
+                    /*
+                            /*
+                            // Todo: Add ranges within applicable browse field set
+                                start1-1, etc.
+                                end1-1, etc.
+                            // Todo: Handle the following
+                                (field1, etc.) - and auto-fields
+                                localizeParamNames (preference)
+                                rand
+                                context
+                                transpose
+                                checked1, etc.
+                                anchor1, etc.
+                                interlin1, etc.
+                                css1, etc.
+                                search1, etc.
+                            */
+                            /*
+                            schemaItems.map(({title}, i) => {
+                                const fieldI = $pRaw('field' + (i + 1));
+                                if (fieldI) {
+                                    const idx = schemaItems.findIndex(({title}) => title === fieldI);
+                                    console.log('iiii', title, i, idx, fieldI);
+                                    return idx === -1
+                                        ? [tdElem, ['(empty)' + title]]
+                                        : [tdElem, {
+                                            innerHTML: tr[idx] // Todo: Only do for non-escaped!!!!
+                                        }];
+                                }
+                                return 'ttt:' + title;
+                            })
+                            */
                 /*
-                // Todo: Add ranges within applicable browse field set
-                    start1-1, etc.
-                    end1-1, etc.
-                // Todo: Handle the following
-                    (field1, etc.) - and auto-fields
-                    localizeParamNames (preference)
-                    rand
-                    context
-                    transpose
-                    checked1, etc.
-                    anchor1, etc.
-                    interlin1, etc.
-                    css1, etc.
-                    search1, etc.
+                        )
+                    )
                 */
-            /*
-                schemaItems.map(({title}, i) => {
-                    const fieldI = $pRaw('field' + (i + 1));
-                    if (fieldI) {
-                        const idx = schemaItems.findIndex(({title}) => title === fieldI);
-                        console.log('iiii', title, i, idx, fieldI);
-                        return idx === -1
-                            ? ['td', ['(empty)' + title]]
-                            : ['td', {
-                                innerHTML: tr[idx] // Todo: Only do for non-escaped!!!!
-                            }];
-                    }
-                    return 'ttt:' + title;
-                })
-            */
-            /*
-                    tr.map((td) => ['td',
-                        // [td] // Todo: For non-escaped!!!!
-                        {innerHTML: td}
-                    ])
-                ])*/
-            ]]
+                ])
+            ])
         ], document.body);
     }
 };
