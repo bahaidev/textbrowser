@@ -197,6 +197,7 @@ body {
         } while (field);
         checkedFields = checkedFields.filter((cf) => localizedFieldNames.includes(cf));
         const checkedFieldIndexes = checkedFields.map((cf) => localizedFieldNames.indexOf(cf));
+        console.log('checkedFieldIndexes', checkedFieldIndexes);
 
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
         const tableWrap = (children) => {
@@ -242,9 +243,8 @@ body {
                         /**/
                         ...tableData.map((tr) =>
                             addChildren(trElem,
-                                tr.filter((td, i) => checkedFieldIndexes.includes(i)).map((td) =>
-                                    [tdElem[0], Object.assign({}, tdElem[1], {innerHTML: td})]
-                                    // addChildren(tdElem, [td]]) // Todo: For non-escaped!!!!
+                                checkedFieldIndexes.map((idx) =>
+                                    [tdElem[0], Object.assign({}, tdElem[1], {innerHTML: tr[idx]})]
                                 )
                         // */
                         /*
