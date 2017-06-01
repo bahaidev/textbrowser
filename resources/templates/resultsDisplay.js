@@ -107,7 +107,7 @@ body {
             const buildRangePoint = (startOrEnd) => escapeHTML(
                 browseFieldSets.reduce((txt, bfs, i) =>
                     (txt ? txt + ' (' : '') + bfs.map((bf, j) =>
-                        (j > 0 ? ', ' : '') + bf + ' ' +
+                        (j > 0 ? l('comma-space') : '') + bf + ' ' +
                             $pRaw(startOrEnd + (i + 1) + '-' + (j + 1))
                     ).join('') + (txt ? ')' : ''), '')
             );
@@ -116,7 +116,7 @@ body {
             // Works but overly long
             const buildRangePoint = (startOrEnd) => escapeHTML(
                 applicableBrowseFieldSet.map((bf, j) =>
-                    (j > 0 ? ', ' : '') + bf + ' ' +
+                    (j > 0 ? l('comma-space') : '') + bf + ' ' +
                         $pRaw(startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1))
                 ).join('')
             );
@@ -143,7 +143,7 @@ body {
                 }, '').slice(0, -1);
 
                 const rangeNames = applicableBrowseFieldSet.map((abfs) =>
-                    abfs.browseFieldName).join(', ');
+                    abfs.browseFieldName).join(l('comma-space'));
                 return escapeHTML(
                     startStr +
                     // l('to').toLowerCase() + ' ' +
@@ -203,7 +203,12 @@ body {
         } while (field);
         checkedFields = checkedFields.filter((cf) => localizedFieldNames.includes(cf));
         const checkedFieldIndexes = checkedFields.map((cf) => localizedFieldNames.indexOf(cf));
-        const interlinearCols = checkedFieldIndexes.map((cfi, i) => $pRaw('interlin' + (i + 1)));
+        const allInterlinearColIndexes = checkedFieldIndexes.map((cfi, i) => {
+            const interlin = $pRaw('interlin' + (i + 1));
+            return interlin && interlin.split(/\s*,\s*/).map((col) =>
+                parseInt(col, 10) - 1
+            );
+        });
 
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
         const tableWrap = (children) => {
@@ -237,26 +242,44 @@ body {
                     */
                     ($pRaw('header') !== '0' ? addChildren(theadElem, [
                         addChildren(trElem,
-                            checkedFields.map((cf) => addChildren(thElem, [
-                                cf,
-                                tableWithFixedHeaderAndFooter ? ['div', {class: 'zupa1'}, [
-                                    ['div', {class: 'th-inner'}, [
-                                        ['span', [cf]]
-                                    ]]
-                                ]] : ''
-                            ]))
+                            checkedFields.map((cf, i) => {
+                                const interlinearColIndexes = allInterlinearColIndexes[i];
+                                cf = cf + (interlinearColIndexes
+                                    ? l('comma-space') + interlinearColIndexes.map((idx) =>
+                                        localizedFieldNames[idx]
+                                    ).join(l('comma-space'))
+                                    : ''
+                                );
+                                return addChildren(thElem, [
+                                    cf,
+                                    (tableWithFixedHeaderAndFooter ? ['div', {class: 'zupa1'}, [
+                                        ['div', {class: 'th-inner'}, [
+                                            ['span', [cf]]
+                                        ]]
+                                    ]] : '')
+                                ]);
+                            })
                         )
                     ]) : ''),
                     ($pRaw('footer') !== '0' ? addChildren(tfootElem, [
                         addChildren(trElem,
-                            checkedFields.map((cf) => addChildren(thElem, [
-                                cf,
-                                tableWithFixedHeaderAndFooter ? ['div', {class: 'zupa1'}, [
-                                    ['div', {class: 'th-inner'}, [
-                                        ['span', [cf]]
-                                    ]]
-                                ]] : ''
-                            ]))
+                            checkedFields.map((cf, i) => {
+                                const interlinearColIndexes = allInterlinearColIndexes[i];
+                                cf = cf + (interlinearColIndexes
+                                    ? l('comma-space') + interlinearColIndexes.map((idx) =>
+                                        localizedFieldNames[idx]
+                                    ).join(l('comma-space'))
+                                    : ''
+                                );
+                                return addChildren(thElem, [
+                                    cf,
+                                    (tableWithFixedHeaderAndFooter ? ['div', {class: 'zupa1'}, [
+                                        ['div', {class: 'th-inner'}, [
+                                            ['span', [cf]]
+                                        ]]
+                                    ]] : '')
+                                ]);
+                            })
                         )
                     ]) : ''),
                     addChildren(tbodyElem, [
@@ -264,12 +287,12 @@ body {
                         ...tableData.map((tr) =>
                             addChildren(trElem,
                                 checkedFieldIndexes.map((idx, i) => {
-                                    const interlinearCol = interlinearCols[i];
+                                    const interlinearColIndexes = allInterlinearColIndexes[i];
                                     return addAtts(tdElem, {
-                                        innerHTML: tr[idx] + (interlinearCol
+                                        innerHTML: tr[idx] + (interlinearColIndexes
                                             ? '<br /><br />' +
-                                                interlinearCol.split(/\s*,\s*/).map((col) =>
-                                                    tr[parseInt(col, 10) - 1]
+                                                interlinearColIndexes.map((idx) =>
+                                                    tr[idx]
                                                 ).join('<br /><br />')
                                             : ''
                                         )
@@ -279,11 +302,9 @@ body {
                         /*
                                 /*
                                 // Todo: Handle the following in output
-                                    anchor1, etc.
-                                    interlin1, etc. should (optionally) get additional
-                                        column names added for header/footer
                                     Check old code for any interlinear separator options
-                                    escaping (and in header and footer too)
+                                        escaping (and in header and footer too)
+                                    anchor1, etc.
 
                                 // Todo: Add ranges within applicable browse field set
                                     (also need to cache JSON into IndexedDB or at

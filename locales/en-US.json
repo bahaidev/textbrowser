@@ -101,6 +101,7 @@
     "normal": "Normal",
     "none": "None",
     "both": "Both",
+    "comma-space": ", ",
 
     "param_values": {
         "colors": {
