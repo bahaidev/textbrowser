@@ -18,13 +18,15 @@ Templates.resultsDisplay = {
     font-variant: ${$pRaw('fontvariant')};
     font-weight: ${$pRaw('fontweight')};
     ${$pRaw('fontsize') ? `font-size: ${$pRaw('fontsize')};` : ''}
-    font-family: "${escapeQuotedCSS($pRaw('fontSeq'))}";
+    font-family: ${escapeQuotedCSS($pRaw('fontSeq'))};
+
     font-stretch: ${$pRaw('fontstretch')};
     letter-spacing: ${$pRaw('letterspacing')};
     line-height: ${$pRaw('lineheight')};
     ${color ? `color: ${color};` : ''}
     ${escapeCSS($pRaw('pagecss') || '')}
-}` +
+}
+` +
             (tableWithFixedHeaderAndFooter
                 ? `
 html, body, body > div {
