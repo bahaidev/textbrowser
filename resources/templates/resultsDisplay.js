@@ -320,7 +320,8 @@ body {
                         // */
                         /*
                                 /*
-                                // Todo: anchor1, etc.
+                                // Todo: anchor1, etc. (and add to it to indicate
+                                //     field no. too for horizontal anchoring)
                                 // Todo: needs scroll into view for repeated anchor
 
                                 // Todo: Add ranges within applicable browse field set
