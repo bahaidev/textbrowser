@@ -144,7 +144,6 @@ body {
             caption = heading + ' ' + buildRanges();
         }
 
-        // Todo: Support colgroup/col?
         const tableElems = ({
             table: [
                 ['table', {'class': 'table', border: $pRaw('border') || '0'}],
@@ -237,9 +236,6 @@ body {
                         )
                     ]) : ''),
                     addChildren(tbodyElem, [
-                        // 1.  Todo: Support JSON types for `outputmode`, opening new window
-                        //     with content-type set
-                        // Todo: Handle transpose, in header, footer, and body
                         /**/
                         ...tableData.map((tr) =>
                             addChildren(trElem,
@@ -250,8 +246,6 @@ body {
                         // */
                         /*
                                 /*
-                                // Todo: localizeParamNames (preference)?
-
                                 // Todo: Add ranges within applicable browse field set
                                     start1-1, etc.
                                     end1-1, etc.
@@ -265,6 +259,13 @@ body {
                                         Todo: interlin1, etc. should (optionally) get additional
                                             column names added for header/footer
                                     css1, etc.
+
+                                // Todo: Handle transpose, in header, footer, and body
+
+                                // Todo: localizeParamNames (preference)?
+                                // Todo: Support JSON types for `outputmode`, opening new window
+                                //     with content-type set
+                                // Todo: Support colgroup/col?
 
                                 // Todo: Later:
                                     search1, etc.

@@ -410,6 +410,7 @@ Templates.workDisplay = {
                 ld('no')
             ]]
         ]],
+        /*
         ['br'],
         ['label', [
             ['input', {
@@ -419,6 +420,7 @@ Templates.workDisplay = {
                 checked: $p.get('transpose') === l('yes') ? 'checked' : undefined}],
             nbsp.repeat(2), ld('transpose')
         ]],
+        */
         ['br'], ['br'],
         le('pageformatting_tips', 'h3', 'title', {}, [
             ld('pageformatting')
