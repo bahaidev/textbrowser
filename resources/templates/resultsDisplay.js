@@ -133,7 +133,8 @@ body {
                     return ret + ':';
                 }, '').slice(0, -1);
 
-                const rangeNames = applicableBrowseFieldSet.join(', ');
+                const rangeNames = applicableBrowseFieldSet.map((abfs) =>
+                    abfs.browseFieldName).join(', ');
                 return escapeHTML(
                     startStr +
                     // l('to').toLowerCase() + ' ' +
@@ -266,6 +267,7 @@ body {
                                 // Todo: Support JSON types for `outputmode`, opening new window
                                 //     with content-type set
                                 // Todo: Support colgroup/col?
+                                // Todo: Speech controls
 
                                 // Todo: Later:
                                     search1, etc.

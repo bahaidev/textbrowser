@@ -425,6 +425,7 @@ Templates.workDisplay = {
         le('pageformatting_tips', 'h3', 'title', {}, [
             ld('pageformatting')
         ]),
+        /*
         ['label', [
             ld('speech_controls'), nbsp.repeat(2),
             ['label', [
@@ -445,6 +446,7 @@ Templates.workDisplay = {
             ]]
         ]],
         ['br'],
+        */
         ['label', [
             ld('page_css'), nbsp.repeat(2),
             ['textarea', {
