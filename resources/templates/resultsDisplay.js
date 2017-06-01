@@ -288,13 +288,14 @@ body {
                     ]) : ''),
                     addChildren(tbodyElem, [
                         /**/
-                        ...tableData.map((tr) =>
+                        ...tableData.map((tr, i) =>
                             addChildren(trElem,
-                                checkedFieldIndexes.map((idx, i) => {
-                                    const interlinearColIndexes = allInterlinearColIndexes[i];
+                                checkedFieldIndexes.map((idx, j) => {
+                                    const interlinearColIndexes = allInterlinearColIndexes[j];
                                     const showInterlinTitles = $pRaw('interlintitle') === '1' &&
                                         interlinearColIndexes;
                                     return addAtts(tdElem, {
+                                        id: 'row' + (i + 1) + 'cell' + (j + 1),
                                         innerHTML:
                                             (showInterlinTitles
                                                 ? '<span class="interlintitle">' +
@@ -320,6 +321,7 @@ body {
                         /*
                                 /*
                                 // Todo: anchor1, etc.
+                                // Todo: needs scroll into view for repeated anchor
 
                                 // Todo: Add ranges within applicable browse field set
                                     (also need to cache JSON into IndexedDB or at
