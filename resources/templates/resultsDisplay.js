@@ -147,8 +147,7 @@ body {
         // Todo: Support colgroup/col?
         const tableElems = ({
             table: [
-                // Todo: Make border dynamic based on user selection (here and below)
-                ['table', {'class': 'table', border: '1'}],
+                ['table', {'class': 'table', border: $pRaw('border') || '0'}],
                 ['tr', {'class': 'tr'}],
                 ['td', {'class': 'td'}],
                 ['th', {'class': 'th'}],
@@ -240,12 +239,7 @@ body {
                     addChildren(tbodyElem, [
                         // 1.  Todo: Support JSON types for `outputmode`, opening new window
                         //     with content-type set
-                        /*
                         // Todo: Handle transpose, in header, footer, and body
-
-                        // Todo: Styling
-                            $pRaw('border') === '1'
-                        */
                         /**/
                         ...tableData.map((tr) =>
                             addChildren(trElem,
