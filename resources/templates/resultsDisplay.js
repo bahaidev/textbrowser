@@ -276,6 +276,8 @@ body {
                                     escaping (and in header and footer too)
 
                                 // Todo: Add ranges within applicable browse field set
+                                    (also need to cache JSON into IndexedDB or at
+                                        least localStorage for now)
                                     start1-1, etc.
                                     end1-1, etc.
                                     rand
