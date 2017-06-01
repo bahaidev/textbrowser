@@ -19,6 +19,7 @@ function TextBrowser (options) {
         ? true
         : options.localizeParamNames;
     this.hideFormattingSection = Boolean(options.hideFormattingSection);
+    this.interlinearSeparator = options.interlinearSeparator;
 }
 
 TextBrowser.prototype.init = function () {

@@ -71,6 +71,9 @@ ${checkedFieldIndexes.map((idx, i) => `
 `).join('')}
 
 /* http://salzerdesign.com/test/fixedTable.html */
+.interlintitle {
+    ${escapeCSS($pRaw('interlintitle_css'))}
+}
 .zupa div.zupa1 {
     margin: 0 auto !important;
     width: 0 !important;
@@ -93,7 +96,8 @@ body {
     },
     main: ({
         tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS, escapeHTML,
-        heading, l, browseFieldSets, localizedFieldNames
+        heading, l, browseFieldSets, localizedFieldNames,
+        interlinearSeparator = '<br /><br />'
     }) => {
         let caption;
         const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
@@ -211,13 +215,13 @@ body {
         });
 
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
-        const tableWrap = (children) => {
-            return tableWithFixedHeaderAndFooter
+        const tableWrap = (children) =>
+            tableWithFixedHeaderAndFooter
                 ? ['div', {'class': 'anchor-table-header zupa'}, [
                     ['div', {'class': 'anchor-table-body'}, children]
                 ]]
                 : ['div', children];
-        };
+
         const addChildren = (el, children) => {
             el = JSON.parse(JSON.stringify(el));
             el.push(children);
@@ -288,13 +292,27 @@ body {
                             addChildren(trElem,
                                 checkedFieldIndexes.map((idx, i) => {
                                     const interlinearColIndexes = allInterlinearColIndexes[i];
+                                    const showInterlinTitles = $pRaw('interlintitle') === '1' &&
+                                        interlinearColIndexes;
                                     return addAtts(tdElem, {
-                                        innerHTML: tr[idx] + (interlinearColIndexes
-                                            ? '<br /><br />' +
-                                                interlinearColIndexes.map((idx) =>
-                                                    tr[idx]
-                                                ).join('<br /><br />')
-                                            : ''
+                                        innerHTML:
+                                            (showInterlinTitles
+                                                ? '<span class="interlintitle">' +
+                                                    localizedFieldNames[idx] +
+                                                    '</span>' + l('colon-space')
+                                                : ''
+                                            ) +
+                                            tr[idx] + (interlinearColIndexes
+                                                ? interlinearSeparator +
+                                                    interlinearColIndexes.map((idx) =>
+                                                        (showInterlinTitles
+                                                            ? '<span class="interlintitle">' +
+                                                                localizedFieldNames[idx] +
+                                                                '</span>' + l('colon-space')
+                                                            : '') +
+                                                        tr[idx]
+                                                    ).join(interlinearSeparator)
+                                                : ''
                                         )
                                     });
                                 })

@@ -257,7 +257,7 @@ Templates.workDisplay = {
             })]
         ]],
         ['br'],
-        ['label', [
+        ['div', [
             ld('font_variant'), nbsp.repeat(3),
             ['label', [
                 ['input', {
@@ -398,7 +398,7 @@ Templates.workDisplay = {
             nbsp.repeat(2), ld('wishcaption')
         ]],
         ['br'],
-        ['label', [
+        ['div', [
             ld('table_wborder'), nbsp.repeat(2),
             ['label', [
                 ['input', {
@@ -417,6 +417,35 @@ Templates.workDisplay = {
                 ld('no')
             ]]
         ]],
+        ['div', [
+            ld('interlin_repeat_field_names'), nbsp.repeat(2),
+            ['label', [
+                ['input', {
+                    name: il('interlintitle'),
+                    type: 'radio',
+                    value: '1',
+                    checked: $p.get('interlintitle') === '0' ? undefined : 'checked'}],
+                ld('yes'), nbsp.repeat(3)
+            ]],
+            ['label', [
+                ['input', {
+                    name: il('interlintitle'),
+                    type: 'radio',
+                    value: '0',
+                    checked: $p.get('interlintitle') === '0' ? 'checked' : undefined}],
+                ld('no')
+            ]]
+        ]],
+        ['label', [
+            ld('interlintitle_css'),
+            ['input', {
+                name: il('interlintitle_css'),
+                type: 'text',
+                value: $p.get('interlintitle_css') || '',
+                size: '7',
+                maxlength: '12'}]
+        ]],
+        ['br'],
         /*
         ['br'],
         ['label', [
@@ -428,7 +457,7 @@ Templates.workDisplay = {
             nbsp.repeat(2), ld('transpose')
         ]],
         */
-        ['br'], ['br'],
+        ['br'],
         le('pageformatting_tips', 'h3', 'title', {}, [
             ld('pageformatting')
         ]),

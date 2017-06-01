@@ -34,6 +34,8 @@
     "header_wstyles": "Header (with Styles?)",
     "footer_wstyles": "Footer (with Styles?)",
     "table_wborder": "Table (with border?)",
+    "interlin_repeat_field_names": "Repeat interlinear field names",
+    "interlintitle_css": "Interlinear title CSS",
     "advancedformatting_tips": "These options add special formatting (such as text coloring) to your browsing selection.",
     "field_enabled_tips": "Uncheck a box here to remove the field from your browsing view",
     "results_for": "results for",
@@ -102,6 +104,7 @@
     "none": "None",
     "both": "Both",
     "comma-space": ", ",
+    "colon-space": ": ",
 
     "param_values": {
         "colors": {
@@ -176,6 +179,8 @@
         "headerfooterfixed": "headerfooterfixed",
         "footerfixed": "footerfixed",
         "border": "border",
+        "interlintitle": "interlintitle",
+        "interlintitle_css": "interlintitle_css",
         "transpose": "transpose",
         "pagecss": "pagecss",
         "outputmode": "outputmode"

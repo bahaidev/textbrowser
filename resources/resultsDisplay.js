@@ -57,7 +57,8 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             const localizedFieldNames = schemaItems.map((si) => getFieldAliasOrName(si.title));
             Templates.resultsDisplay.main({
                 tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS, escapeHTML,
-                heading, l, browseFieldSets, localizedFieldNames
+                heading, l, browseFieldSets, localizedFieldNames,
+                interlinearSeparator: this.interlinearSeparator
             });
         });
     });

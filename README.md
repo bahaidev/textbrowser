@@ -181,6 +181,12 @@ shows its usage (assuming paths relative to a package containing
     -   `hideFormattingSection` - Boolean as to whether to hide the formatting
         section by default (can be overridden by the user in preferences).
 
+    -   `interlinearSeparator` - HTML code to be injected between each
+        interlinear entry; this is not exposed to the user for
+        security reasons (preventing cross-site scripting attacks));
+        defaults to `<br /><br />` though one may set to another string
+        such as `<hr />`
+
 -   ***init*** - Default implementation merely invokes `displayLanguages`.
 
 -   ***displayLanguages*** - Retrieves the `options.language` JSON file
