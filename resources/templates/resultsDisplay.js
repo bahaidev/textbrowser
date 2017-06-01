@@ -203,6 +203,7 @@ body {
         } while (field);
         checkedFields = checkedFields.filter((cf) => localizedFieldNames.includes(cf));
         const checkedFieldIndexes = checkedFields.map((cf) => localizedFieldNames.indexOf(cf));
+        const interlinearCols = checkedFieldIndexes.map((cfi, i) => $pRaw('interlin' + (i + 1)));
 
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
         const tableWrap = (children) => {
@@ -262,17 +263,26 @@ body {
                         /**/
                         ...tableData.map((tr) =>
                             addChildren(trElem,
-                                checkedFieldIndexes.map((idx) =>
-                                    addAtts(tdElem, {innerHTML: tr[idx]})
-                                )
+                                checkedFieldIndexes.map((idx, i) => {
+                                    const interlinearCol = interlinearCols[i];
+                                    return addAtts(tdElem, {
+                                        innerHTML: tr[idx] + (interlinearCol
+                                            ? '<br /><br />' +
+                                                interlinearCol.split(/\s*,\s*/).map((col) =>
+                                                    tr[parseInt(col, 10) - 1]
+                                                ).join('<br /><br />')
+                                            : ''
+                                        )
+                                    });
+                                })
                         // */
                         /*
                                 /*
                                 // Todo: Handle the following in output
                                     anchor1, etc.
-                                    interlin1, etc.
-                                        Todo: interlin1, etc. should (optionally) get additional
-                                            column names added for header/footer
+                                    interlin1, etc. should (optionally) get additional
+                                        column names added for header/footer
+                                    Check old code for any interlinear separator options
                                     escaping (and in header and footer too)
 
                                 // Todo: Add ranges within applicable browse field set
