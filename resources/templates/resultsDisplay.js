@@ -24,8 +24,8 @@ Templates.resultsDisplay = {
     letter-spacing: ${$pRaw('letterspacing')};
     line-height: ${$pRaw('lineheight')};
     ${color ? `color: ${color};` : ''}
-    ${escapeCSS($pRaw('pagecss') || '')}
 }
+${escapeCSS($pRaw('pagecss') || '')}
 ` +
             (tableWithFixedHeaderAndFooter
                 ? `
