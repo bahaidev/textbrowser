@@ -268,30 +268,26 @@ body {
                         // */
                         /*
                                 /*
+                                // Todo: Handle the following in output
+                                    anchor1, etc.
+                                    interlin1, etc.
+                                        Todo: interlin1, etc. should (optionally) get additional
+                                            column names added for header/footer
+                                    escaping (and in header and footer too)
+
                                 // Todo: Add ranges within applicable browse field set
                                     start1-1, etc.
                                     end1-1, etc.
                                     rand
                                     context (highlight?)
 
-                                // Todo: Handle the following in output
-                                    escaping (and in header and footer too)
-                                    anchor1, etc.
-                                    interlin1, etc.
-                                        Todo: interlin1, etc. should (optionally) get additional
-                                            column names added for header/footer
-                                    css1, etc.
-
-                                // Todo: Handle transpose, in header, footer, and body
-
                                 // Todo: localizeParamNames (preference)?
-                                // Todo: Support JSON types for `outputmode`, opening new window
-                                //     with content-type set
-                                // Todo: Speech controls
-
-                                // Todo: Later:
-                                    search1, etc.
-                                    auto-fields
+                                // Todo: Later: Speech controls
+                                // Todo: Later: search1, etc.
+                                // Todo: Later: auto-fields
+                                // Todo: Later: Handle transpose, in header, footer, and body
+                                // Todo: Later: Support JSON types for `outputmode`, opening
+                                //     new window with content-type set
                                 */
                                 /*
                                 schemaItems.map(({title}, i) => {

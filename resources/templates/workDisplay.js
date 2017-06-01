@@ -468,9 +468,9 @@ Templates.workDisplay = {
             // Todo: Could i18nize, but would need smaller values
             ['select', {name: il('outputmode')}, [
                 'table',
-                'div',
-                'json-array',
-                'json-object'
+                'div'
+                // , 'json-array',
+                // 'json-object'
             ].map((mode) => {
                 const atts = {value: mode};
                 if ($p.get('outputmode') === mode) {
