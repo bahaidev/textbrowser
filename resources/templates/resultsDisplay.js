@@ -1,6 +1,8 @@
 /* globals Templates, jml */
 Templates.resultsDisplay = {
-    styles: ({$pRaw, escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter}) => {
+    styles: ({
+        $pRaw, escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter, checkedFieldIndexes
+    }) => {
         const color = !$pRaw('color') || $pRaw('color') === '#'
             ? $pRaw('colorName')
             : $pRaw('color');
@@ -45,23 +47,28 @@ html, body, body > div {
     height: 100%; /* If < 100%, the header anchor background color will seep below table */
 }
 
-thead th, tfoot th {
+.thead .th, .tfoot .th {
     line-height: 0; /* th div will have own line-height; reducing here avoids fattening it by an inner div */
     color: transparent; /* Hides the non-div duplicated header text */
     white-space: nowrap; /* Ensures column header text uses up full width without overlap (esp. wrap no longer seems to work); this must be applied outside of the div */
     border: none; /* We don't want a border for this invisible section */
 }
-thead th div.th-inner, tfoot th div.th-inner { /* divs are used as th is supposedly problematic */
+.thead .th div.th-inner, .tfoot .th div.th-inner { /* divs are used as th is supposedly problematic */
     position: absolute; /* Puts relative to nearest non-static ancestor (our relative header anchor) */
     color: initial; /* Header must have an explicit color or it will get transparent container color */
     line-height: normal; /* Revert ancestor line height of 0 */
 }
-thead th div.th-inner {
+.thead .th div.th-inner {
     top: 0; /* Ensures our header stays fixed at top outside of normal flow of table */
 }
-tfoot th div.th-inner { /* divs are used as th is supposedly problematic */
+.tfoot .th div.th-inner { /* divs are used as th is supposedly problematic */
     top: calc(100% - 2em); /* Ensures our header stays fixed at top outside of normal flow of table */
 }
+${checkedFieldIndexes.map((idx) => `
+.td:nth-child(${idx + 1}) {
+    ${$pRaw('css' + (idx + 1))}
+}
+`).join('')}
 
 /* http://salzerdesign.com/test/fixedTable.html */
 .zupa div.zupa1 {
@@ -157,6 +164,8 @@ body {
                 ['thead', {'class': 'thead'}],
                 ['tbody', {'class': 'tbody'}],
                 ['tfoot', {'class': 'tfoot'}]
+                // ['colgroup', {'class': 'colgroup'}],
+                // ['col', {'class': 'col'}]
             ],
             div: [
                 ['div', {'class': 'table', style: 'display: table;'}],
@@ -167,6 +176,8 @@ body {
                 ['div', {'class': 'thead', style: 'display: table-header-group;'}],
                 ['div', {'class': 'tbody', style: 'display: table-row-group;'}],
                 ['div', {'class': 'tfoot', style: 'display: table-footer-group;'}]
+                // ['div', {'class': 'colgroup', style: 'display: table-column-group;'}],
+                // ['div', {'class': 'col', style: 'display: table-column;'}]
             ],
             'json-array': 'json',
             'json-object': 'json'
@@ -175,14 +186,9 @@ body {
             alert('JSON support is currently not available');
             return;
         }
-        const [tableElem, trElem, tdElem, thElem, captionElem, theadElem, tbodyElem, tfootElem] = tableElems;
-        console.log('tdElem', tdElem);
-
-        const addChildren = (el, children) => {
-            el = JSON.parse(JSON.stringify(el));
-            el.push(children);
-            return el;
-        };
+        const [
+            tableElem, trElem, tdElem, thElem, captionElem, theadElem, tbodyElem, tfootElem
+        ] = tableElems; // colgroupElem, colElem
 
         let num = 1;
         let field, checked;
@@ -197,7 +203,6 @@ body {
         } while (field);
         checkedFields = checkedFields.filter((cf) => localizedFieldNames.includes(cf));
         const checkedFieldIndexes = checkedFields.map((cf) => localizedFieldNames.indexOf(cf));
-        console.log('checkedFieldIndexes', checkedFieldIndexes);
 
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
         const tableWrap = (children) => {
@@ -207,14 +212,28 @@ body {
                 ]]
                 : ['div', children];
         };
+        const addChildren = (el, children) => {
+            el = JSON.parse(JSON.stringify(el));
+            el.push(children);
+            return el;
+        };
+        const addAtts = (el, newAtts) => [el[0], Object.assign({}, el[1], newAtts)];
 
         jml('div', [
             Templates.resultsDisplay.styles({
-                $pRaw, escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter
+                $pRaw, escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter, checkedFieldIndexes
             }),
             tableWrap([
                 addChildren(tableElem, [
                     (caption ? addChildren(captionElem, [caption]) : ''),
+                    /*
+                    // Works but quirky, e.g., `color` doesn't work (as also confirmed per https://quirksmode.org/css/css2/columns.html)
+                    addChildren(colgroupElem,
+                        checkedFieldIndexes.map((idx) =>
+                            addAtts(colElem, {style: $pRaw('css' + (idx + 1))})
+                        )
+                    ),
+                    */
                     ($pRaw('header') !== '0' ? addChildren(theadElem, [
                         addChildren(trElem,
                             checkedFields.map((cf) => addChildren(thElem, [
@@ -244,7 +263,7 @@ body {
                         ...tableData.map((tr) =>
                             addChildren(trElem,
                                 checkedFieldIndexes.map((idx) =>
-                                    [tdElem[0], Object.assign({}, tdElem[1], {innerHTML: tr[idx]})]
+                                    addAtts(tdElem, {innerHTML: tr[idx]})
                                 )
                         // */
                         /*
@@ -268,7 +287,6 @@ body {
                                 // Todo: localizeParamNames (preference)?
                                 // Todo: Support JSON types for `outputmode`, opening new window
                                 //     with content-type set
-                                // Todo: Support colgroup/col?
                                 // Todo: Speech controls
 
                                 // Todo: Later:
