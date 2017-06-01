@@ -1,6 +1,6 @@
 /* globals Templates, jml */
 Templates.resultsDisplay = {
-    styles: ({$pRaw, escapeQuotedCSS, escapeCSS}) => {
+    styles: ({$pRaw, escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter}) => {
         const color = !$pRaw('color') || $pRaw('color') === '#'
             ? $pRaw('colorName')
             : $pRaw('color');
@@ -13,7 +13,7 @@ Templates.resultsDisplay = {
                 'n': 'td',
                 '0': 'td',
                 'undefined': 'td'
-            }[$pRaw('headings')] + `{
+            }[$pRaw('header')] + `{
     font-style: ${$pRaw('fontstyle')};
     font-variant: ${$pRaw('fontvariant')};
     font-weight: ${$pRaw('fontweight')};
@@ -25,6 +25,54 @@ Templates.resultsDisplay = {
     ${color ? `color: ${color};` : ''}
     ${escapeCSS($pRaw('pagecss') || '')}
 }` +
+            (tableWithFixedHeaderAndFooter
+                ? `
+html, body, body > div {
+    height: 100%; /* Needed to ensure descendent heights retain 100%; could be avoided if didn't want percent on table height */
+}
+.anchor-table-header {
+    overflow-x: hidden; /* Not sure why we're getting extra here, but... */
+    position: relative; /* Ensures we are still flowing, but provides anchor for absolutely positioned thead below (absolute positioning positions relative to nearest non-static ancestor; clear demo at https://www.w3schools.com/cssref/playit.asp?filename=playcss_position&preval=fixed ) */
+    padding-top: 2em; /* Provides space for the header (the one that is absolutely positioned below relative to here) */
+    padding-bottom: 2em; /* Provides space for the footer (the one that is absolutely positioned below relative to here) */
+    background-color: white; /* Header background (not just for div text inside header, but for whole header area) */
+    height: 90%; /* Percent of the whole screen taken by the table */
+}
+.anchor-table-body {
+    overflow-y: auto; /* Provides scrollbars when text fills up beyond the height */
+    height: 100%; /* If < 100%, the header anchor background color will seep below table */
+}
+
+thead th, tfoot th {
+    line-height: 0; /* th div will have own line-height; reducing here avoids fattening it by an inner div */
+    color: transparent; /* Hides the non-div duplicated header text */
+    white-space: nowrap; /* Ensures column header text uses up full width without overlap (esp. wrap no longer seems to work); this must be applied outside of the div */
+    border: none; /* We don't want a border for this invisible section */
+}
+thead th div.th-inner, tfoot th div.th-inner { /* divs are used as th is supposedly problematic */
+    position: absolute; /* Puts relative to nearest non-static ancestor (our relative header anchor) */
+    color: initial; /* Header must have an explicit color or it will get transparent container color */
+    line-height: normal; /* Revert ancestor line height of 0 */
+}
+thead th div.th-inner {
+    top: 0; /* Ensures our header stays fixed at top outside of normal flow of table */
+}
+tfoot th div.th-inner { /* divs are used as th is supposedly problematic */
+    top: calc(100% - 2em); /* Ensures our header stays fixed at top outside of normal flow of table */
+}
+
+/* http://salzerdesign.com/test/fixedTable.html */
+.zupa div.zupa1 {
+    margin: 0 auto !important;
+    width: 0 !important;
+}
+.zupa div.th-inner {
+    width: 100%;
+    margin-left: -50%;
+    text-align: center;
+}
+`
+                : '') +
             (bgcolor
                 ? `
 body {
@@ -149,80 +197,105 @@ body {
         checkedFields = checkedFields.filter((cf) => localizedFieldNames.includes(cf));
         const checkedFieldIndexes = checkedFields.map((cf) => localizedFieldNames.indexOf(cf));
 
+        const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
+        const tableWrap = (children) => {
+            return tableWithFixedHeaderAndFooter
+                ? ['div', {'class': 'anchor-table-header zupa'}, [
+                    ['div', {'class': 'anchor-table-body'}, children]
+                ]]
+                : ['div', children];
+        };
+
         jml('div', [
-            Templates.resultsDisplay.styles({$pRaw, escapeQuotedCSS, escapeCSS}),
-            addChildren(tableElem, [
-                (caption ? addChildren(captionElem, [caption]) : ''),
-                ($pRaw('headings') !== '0' ? addChildren(theadElem, [
-                    addChildren(trElem,
-                        checkedFields.map((cf) => addChildren(thElem, [cf]))
-                    )
-                ]) : ''),
-                ($pRaw('tfoot') === 'yes' ? addChildren(tfootElem, [
-                    addChildren(trElem,
-                        checkedFields.map((cf) => addChildren(thElem, [cf]))
-                    )
-                ]) : ''),
-                addChildren(tbodyElem, [
-                    // 1.  Todo: Support JSON types for `outputmode`, opening new window
-                    //     with content-type set
-                    /*
-                    // Todo: Handle transpose, in header, footer, and body
-
-                    // Todo: Styling
-                        $pRaw('headerfixed') === 'yes'
-                        $pRaw('border') === '1'
-                        $pRaw('headings') === 'y' or 'n' on whether to apply styles
-                    */
-                    /**/
-                    ...tableData.map((tr) =>
+            Templates.resultsDisplay.styles({
+                $pRaw, escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter
+            }),
+            tableWrap([
+                addChildren(tableElem, [
+                    (caption ? addChildren(captionElem, [caption]) : ''),
+                    ($pRaw('header') !== '0' ? addChildren(theadElem, [
                         addChildren(trElem,
-                            tr.filter((td, i) => checkedFieldIndexes.includes(i)).map((td) =>
-                                [tdElem[0], Object.assign({}, tdElem[1], {innerHTML: td})]
-                                // addChildren(tdElem, [td]]) // Todo: For non-escaped!!!!
-                            )
-                    // */
-                    /*
-                            /*
-                            // Todo: localizeParamNames (preference)?
-
-                            // Todo: Add ranges within applicable browse field set
-                                start1-1, etc.
-                                end1-1, etc.
-                                rand
-                                context (highlight?)
-
-                            // Todo: Handle the following in output
-                                escaping (and in headings and footer too)
-                                anchor1, etc.
-                                interlin1, etc.
-                                    Todo: interlin1, etc. should (optionally) get additional
-                                        column names added for headings/footer
-                                css1, etc.
-
-                            // Todo: Later:
-                                search1, etc.
-                                auto-fields
-                            */
-                            /*
-                            schemaItems.map(({title}, i) => {
-                                const fieldI = $pRaw('field' + (i + 1));
-                                if (fieldI) {
-                                    const idx = schemaItems.findIndex(({title}) => title === fieldI);
-                                    console.log('iiii', title, i, idx, fieldI);
-                                    return idx === -1
-                                        ? [tdElem, ['(empty)' + title]]
-                                        : [tdElem, {
-                                            innerHTML: tr[idx] // Todo: Only do for non-escaped!!!!
-                                        }];
-                                }
-                                return 'ttt:' + title;
-                            })
-                            */
-                /**/
+                            checkedFields.map((cf) => addChildren(thElem, [
+                                cf,
+                                tableWithFixedHeaderAndFooter ? ['div', {class: 'zupa1'}, [
+                                    ['div', {class: 'th-inner'}, [
+                                        ['span', [cf]]
+                                    ]]
+                                ]] : ''
+                            ]))
                         )
-                    )
-                // */
+                    ]) : ''),
+                    ($pRaw('footer') !== '0' ? addChildren(tfootElem, [
+                        addChildren(trElem,
+                            checkedFields.map((cf) => addChildren(thElem, [
+                                cf,
+                                tableWithFixedHeaderAndFooter ? ['div', {class: 'zupa1'}, [
+                                    ['div', {class: 'th-inner'}, [
+                                        ['span', [cf]]
+                                    ]]
+                                ]] : ''
+                            ]))
+                        )
+                    ]) : ''),
+                    addChildren(tbodyElem, [
+                        // 1.  Todo: Support JSON types for `outputmode`, opening new window
+                        //     with content-type set
+                        /*
+                        // Todo: Handle transpose, in header, footer, and body
+
+                        // Todo: Styling
+                            $pRaw('border') === '1'
+                        */
+                        /**/
+                        ...tableData.map((tr) =>
+                            addChildren(trElem,
+                                tr.filter((td, i) => checkedFieldIndexes.includes(i)).map((td) =>
+                                    [tdElem[0], Object.assign({}, tdElem[1], {innerHTML: td})]
+                                    // addChildren(tdElem, [td]]) // Todo: For non-escaped!!!!
+                                )
+                        // */
+                        /*
+                                /*
+                                // Todo: localizeParamNames (preference)?
+
+                                // Todo: Add ranges within applicable browse field set
+                                    start1-1, etc.
+                                    end1-1, etc.
+                                    rand
+                                    context (highlight?)
+
+                                // Todo: Handle the following in output
+                                    escaping (and in header and footer too)
+                                    anchor1, etc.
+                                    interlin1, etc.
+                                        Todo: interlin1, etc. should (optionally) get additional
+                                            column names added for header/footer
+                                    css1, etc.
+
+                                // Todo: Later:
+                                    search1, etc.
+                                    auto-fields
+                                */
+                                /*
+                                schemaItems.map(({title}, i) => {
+                                    const fieldI = $pRaw('field' + (i + 1));
+                                    if (fieldI) {
+                                        const idx = schemaItems.findIndex(({title}) => title === fieldI);
+                                        console.log('iiii', title, i, idx, fieldI);
+                                        return idx === -1
+                                            ? [tdElem, ['(empty)' + title]]
+                                            : [tdElem, {
+                                                innerHTML: tr[idx] // Todo: Only do for non-escaped!!!!
+                                            }];
+                                    }
+                                    return 'ttt:' + title;
+                                })
+                                */
+                    /**/
+                            )
+                        )
+                    // */
+                    ])
                 ])
             ])
         ], document.body);

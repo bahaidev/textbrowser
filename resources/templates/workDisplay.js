@@ -343,18 +343,45 @@ Templates.workDisplay = {
                 ['yes', 'y'],
                 ['no', 'n'],
                 ['none', '0']
-            ].map((headings, i, arr) =>
+            ].map(([key, val], i, arr) =>
                 ['label', [
                     ['input', {
-                        name: il('headings'),
+                        name: il('header'),
                         type: 'radio',
-                        value: headings[1],
-                        checked: $p.get('headings') === headings[1] ||
-                            (!$p.has('headings') && i === 1) ? 'checked' : undefined}],
-                    ld(headings[0]), (i === arr.length - 1 ? '' : nbsp.repeat(3))
+                        value: val,
+                        checked: $p.get('header') === val ||
+                            (!$p.has('header') && i === 1) ? 'checked' : undefined}],
+                    ld(key), (i === arr.length - 1 ? '' : nbsp.repeat(3))
                 ]]
             ))
         ]],
+        ['div', [
+            ld('footer_wstyles'), nbsp.repeat(2),
+            ...([
+                ['yes', 'y'],
+                ['no', 'n'],
+                ['none', '0']
+            ].map(([key, val], i, arr) =>
+                ['label', [
+                    ['input', {
+                        name: il('footer'),
+                        type: 'radio',
+                        value: val,
+                        checked: $p.get('footer') === val ||
+                            (!$p.has('footer') && i === 2) ? 'checked' : undefined}],
+                    ld(key), (i === arr.length - 1 ? '' : nbsp.repeat(3))
+                ]]
+            ))
+        ]],
+        ['label', [
+            ['input', {
+                name: il('headerfooterfixed'),
+                type: 'checkbox',
+                value: l('yes'),
+                checked: $p.get('headerfooterfixed') === l('yes') ? 'checked' : undefined}],
+            nbsp.repeat(2), ld('headerfooterfixed-wishtoscroll')
+        ]],
+        ['br'],
         ['label', [
             ['input', {
                 name: il('wishcaption'),
@@ -362,24 +389,6 @@ Templates.workDisplay = {
                 value: l('yes'),
                 checked: $p.get('wishcaption') === l('yes') ? 'checked' : undefined}],
             nbsp.repeat(2), ld('wishcaption')
-        ]],
-        ['br'],
-        ['label', [
-            ['input', {
-                name: il('headerfixed'),
-                type: 'checkbox',
-                value: l('yes'),
-                checked: $p.get('headerfixed') === l('yes') ? 'checked' : undefined}],
-            nbsp.repeat(2), ld('headerfixed-wishtoscroll')
-        ]],
-        ['br'],
-        ['label', [
-            ['input', {
-                name: il('tfoot'),
-                type: 'checkbox',
-                value: l('yes'),
-                checked: $p.get('tfoot') === l('yes') ? 'checked' : undefined}],
-            nbsp.repeat(2), ld('tfoot-wishtoscroll')
         ]],
         ['br'],
         ['label', [
