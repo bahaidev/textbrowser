@@ -319,10 +319,7 @@ body {
                         // */
                         /*
                                 /*
-                                // Todo: Handle the following in output
-                                    Check old code for any interlinear separator options
-                                        escaping (and in header and footer too)
-                                    anchor1, etc.
+                                // Todo: anchor1, etc.
 
                                 // Todo: Add ranges within applicable browse field set
                                     (also need to cache JSON into IndexedDB or at
