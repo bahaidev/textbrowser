@@ -332,6 +332,8 @@ body {
                                     rand
                                     context (highlight?)
 
+                                // Todo: Option to fix caption (or do automatically
+                                //    if header/footer done)
                                 // Todo: localizeParamNames (preference)?
                                 // Todo: Later: Speech controls
                                 // Todo: Later: search1, etc.
