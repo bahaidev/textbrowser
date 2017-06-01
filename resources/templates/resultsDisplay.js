@@ -64,9 +64,9 @@ html, body, body > div {
 .tfoot .th div.th-inner { /* divs are used as th is supposedly problematic */
     top: calc(100% - 2em); /* Ensures our header stays fixed at top outside of normal flow of table */
 }
-${checkedFieldIndexes.map((idx) => `
-.td:nth-child(${idx + 1}) {
-    ${$pRaw('css' + (idx + 1))}
+${checkedFieldIndexes.map((idx, i) => `
+.td:nth-child(${i + 1}) {
+    ${$pRaw('css' + (i + 1))}
 }
 `).join('')}
 
@@ -229,8 +229,8 @@ body {
                     /*
                     // Works but quirky, e.g., `color` doesn't work (as also confirmed per https://quirksmode.org/css/css2/columns.html)
                     addChildren(colgroupElem,
-                        checkedFieldIndexes.map((idx) =>
-                            addAtts(colElem, {style: $pRaw('css' + (idx + 1))})
+                        checkedFieldIndexes.map((idx, i) =>
+                            addAtts(colElem, {style: $pRaw('css' + (i + 1))})
                         )
                     ),
                     */
