@@ -88,10 +88,14 @@ Templates.workDisplay = {
             ]],
             ['th', [
                 ld('fieldcss')
-            ]],
+            ]]
+            /*
+            Todo: Support search?
+            ,
             ['th', [
                 ld('fieldsearch')
             ]]
+            */
         ]],
         ...fields.map((fieldName, i) => {
             const idx = i + 1;
@@ -134,10 +138,13 @@ Templates.workDisplay = {
                 ]],
                 ['td', [ // Todo: Make as CodeMirror-highlighted CSS
                     ['input', {name: iil('css') + idx, value: $p.get('css' + idx)}]
-                ]],
+                ]]
+                /*
+                ,
                 ['td', [ // Todo: Allow plain or regexp searching
                     ['input', {name: iil('search') + idx, value: $p.get('search' + idx)}]
                 ]]
+                */
             ]];
         }),
         ['tr', [
