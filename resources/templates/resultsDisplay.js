@@ -25,9 +25,15 @@ Templates.resultsDisplay = {
         const topToBodyEndCalc = `calc(${topToBodyEnd})`;
         const topToFooter = `calc(${topToBodyEnd} + ${bodyToFooterPadding})`;
         return ['style', [
-            ($pRaw('header') === 'y' ? 'thead td, thead th, ' : '') +
-                ($pRaw('footer') === 'y' ? 'tfoot td, tfoot th, ' : '') +
-                ('tbody td') + `{
+            ($pRaw('caption') === 'y'
+                ? (tableWithFixedHeaderAndFooter
+                    ? '.caption div.inner-caption, '
+                    : '.caption, ')
+                : ''
+            ) +
+            ($pRaw('header') === 'y' ? '.thead .td, .thead .th, ' : '') +
+            ($pRaw('footer') === 'y' ? '.tfoot .td, .tfoot .th, ' : '') +
+            ('.tbody .td') + ` {
     font-style: ${$pRaw('fontstyle')};
     font-variant: ${$pRaw('fontvariant')};
     font-weight: ${$pRaw('fontweight')};
@@ -79,16 +85,6 @@ div.inner-caption {
 .tfoot .th div.th-inner { /* divs are used as th is supposedly problematic */
     top: ${topToFooter}; /* Ensures our header stays fixed at top outside of normal flow of table */
 }
-${checkedFieldIndexes.map((idx, i) => `
-.td:nth-child(${i + 1}) {
-    ${$pRaw('css' + (i + 1))}
-}
-`).join('')}
-
-/* http://salzerdesign.com/test/fixedTable.html */
-.interlintitle {
-    ${escapeCSS($pRaw('interlintitle_css'))}
-}
 .zupa div.zupa1 {
     margin: 0 auto !important;
     width: 0 !important;
@@ -100,6 +96,29 @@ ${checkedFieldIndexes.map((idx, i) => `
 }
 `
                 : '') +
+            checkedFieldIndexes.map((idx, i) =>
+                ($pRaw('header') === 'y'
+                    ? (tableWithFixedHeaderAndFooter
+                        ? `.thead .th:nth-child(${i + 1}) div.th-inner, `
+                        : `.thead .th:nth-child(${i + 1}), `)
+                    : '') +
+                ($pRaw('footer') === 'y'
+                    ? (tableWithFixedHeaderAndFooter
+                        ? `.tfoot .th:nth-child(${i + 1}) div.th-inner, `
+                        : `.tfoot .th:nth-child(${i + 1}), `)
+                    : '') +
+                `.tbody .td:nth-child(${i + 1}) ` +
+`{
+    ${$pRaw('css' + (i + 1))}
+}
+`).join('') +
+
+($pRaw('interlintitle_css') ? `
+/* http://salzerdesign.com/test/fixedTable.html */
+.interlintitle {
+    ${escapeCSS($pRaw('interlintitle_css'))}
+}
+` : '') +
             (bgcolor
                 ? `
 body {
@@ -119,7 +138,7 @@ body {
             typeof $pRaw('start' + (i + 1) + '-1') === 'string'
         );
         const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
-        const hasCaption = $pRaw('wishcaption') !== 'no';
+        const hasCaption = $pRaw('caption') !== '0';
         if (hasCaption) {
             /*
             // Works but displays in parentheses browse fields which
@@ -348,6 +367,7 @@ body {
                                 /*
                                 // Todo: Option to fix caption (or do automatically
                                 //    if header/footer done)
+                                // Todo: Check colors
 
                                 // Todo: anchor1, etc. (and add to it to indicate
                                 //     field no. too for horizontal anchoring)

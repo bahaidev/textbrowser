@@ -389,13 +389,23 @@ Templates.workDisplay = {
             nbsp.repeat(2), ld('headerfooterfixed-wishtoscroll')
         ]],
         ['br'],
-        ['label', [
-            ['input', {
-                name: il('wishcaption'),
-                type: 'checkbox',
-                value: l('yes'),
-                checked: $p.get('wishcaption') === l('yes') ? 'checked' : undefined}],
-            nbsp.repeat(2), ld('wishcaption')
+        ['div', [
+            ld('caption_wstyles'), nbsp.repeat(2),
+            ...([
+                ['yes', 'y'],
+                ['no', 'n'],
+                ['none', '0']
+            ].map(([key, val], i, arr) =>
+                ['label', [
+                    ['input', {
+                        name: il('caption'),
+                        type: 'radio',
+                        value: val,
+                        checked: $p.get('caption') === val ||
+                            (!$p.has('caption') && i === 2) ? 'checked' : undefined}],
+                    ld(key), (i === arr.length - 1 ? '' : nbsp.repeat(3))
+                ]]
+            ))
         ]],
         ['br'],
         ['div', [
@@ -442,8 +452,8 @@ Templates.workDisplay = {
                 name: il('interlintitle_css'),
                 type: 'text',
                 value: $p.get('interlintitle_css') || '',
-                size: '7',
-                maxlength: '12'}]
+                size: '12'
+            }]
         ]],
         ['br'],
         /*
