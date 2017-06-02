@@ -10,16 +10,24 @@ Templates.resultsDisplay = {
         const bgcolor = !$pRaw('bgcolor') || $pRaw('bgcolor') === '#'
             ? $pRaw('bgcolorName')
             : $pRaw('bgcolor');
-        const bodyHeight = '80%';
-        const bottomPadding = '1em';
-        const topPadding = '3.5em';
+
+        const tableHeight = '100%';
+
+        const topToCaptionStart = 0;
+        const captionSizeDelta = (hasCaption ? 2 : 0) + 0;
+        const topToHeadingsStart = topToCaptionStart + captionSizeDelta;
+        const headingsDelta = 1;
+
+        const topToBodyStart = (topToHeadingsStart + headingsDelta) + 'em';
+        const footerHeight = '2em';
+        const bodyToFooterPadding = '0.5em';
+        const topToBodyEnd = `100% - ${topToBodyStart} - ${footerHeight} - ${bodyToFooterPadding}`;
+        const topToBodyEndCalc = `calc(${topToBodyEnd})`;
+        const topToFooter = `calc(${topToBodyEnd} + ${bodyToFooterPadding})`;
         return ['style', [
-            {
-                'y': 'td, th',
-                'n': 'td',
-                '0': 'td',
-                'undefined': 'td'
-            }[$pRaw('header')] + `{
+            ($pRaw('header') === 'y' ? 'thead td, thead th, ' : '') +
+                ($pRaw('footer') === 'y' ? 'tfoot td, tfoot th, ' : '') +
+                ('tbody td') + `{
     font-style: ${$pRaw('fontstyle')};
     font-variant: ${$pRaw('fontvariant')};
     font-weight: ${$pRaw('fontweight')};
@@ -42,14 +50,13 @@ html, body, body > div {
 .anchor-table-header {
     overflow-x: hidden; /* Not sure why we're getting extra here, but... */
     position: relative; /* Ensures we are still flowing, but provides anchor for absolutely positioned thead below (absolute positioning positions relative to nearest non-static ancestor; clear demo at https://www.w3schools.com/cssref/playit.asp?filename=playcss_position&preval=fixed ) */
-    padding-top: ${topPadding}; /* Provides space for the header (and caption) (the one that is absolutely positioned below relative to here) */
-    padding-bottom: ${bottomPadding}; /* Provides space for the footer (the one that is absolutely positioned below relative to here) */
+    padding-top: ${topToBodyStart}; /* Provides space for the header (and caption) (the one that is absolutely positioned below relative to here) */
     background-color: white; /* Header background (not just for div text inside header, but for whole header area) */
-    height: 95%; /* Percent of the whole screen taken by the table */
+    height: ${tableHeight}; /* Percent of the whole screen taken by the table */
 }
 .anchor-table-body {
     overflow-y: auto; /* Provides scrollbars when text fills up beyond the height */
-    height: ${bodyHeight}; /* If < 100%, the header anchor background color will seep below table */
+    height: ${topToBodyEndCalc}; /* If < 100%, the header anchor background color will seep below table */
 }
 
 .caption, .thead .th, .tfoot .th {
@@ -64,13 +71,13 @@ div.inner-caption, .thead .th div.th-inner, .tfoot .th div.th-inner { /* divs ar
     line-height: normal; /* Revert ancestor line height of 0 */
 }
 .thead .th div.th-inner {
-    top: 2em; /* Ensures our header stays fixed at top outside of normal flow of table */
+    top: ${topToHeadingsStart}em; /* Ensures our header stays fixed at top outside of normal flow of table */
 }
 div.inner-caption {
-    top: 0;
+    top: ${topToCaptionStart}em;
 }
 .tfoot .th div.th-inner { /* divs are used as th is supposedly problematic */
-    top: calc(${bodyHeight} + ${bottomPadding}); /* Ensures our header stays fixed at top outside of normal flow of table */
+    top: ${topToFooter}; /* Ensures our header stays fixed at top outside of normal flow of table */
 }
 ${checkedFieldIndexes.map((idx, i) => `
 .td:nth-child(${i + 1}) {
