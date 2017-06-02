@@ -25,7 +25,7 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         return key || p; // $p.get(param, true);
     };
     const escapeQuotedCSS = (s) => s.replace(/"/g, '\\"');
-    const escapeHTML = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/, '&gt;');
+    const escapeHTML = (s) => !s ? '' : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/, '&gt;');
     const escapeCSS = escapeHTML;
     this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p, getMetaProp}).then((
         [fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]

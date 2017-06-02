@@ -1,7 +1,8 @@
 /* globals Templates, jml */
 Templates.resultsDisplay = {
     styles: ({
-        $pRaw, escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter, checkedFieldIndexes
+        $pRaw, escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter,
+        checkedFieldIndexes, hasCaption
     }) => {
         const color = !$pRaw('color') || $pRaw('color') === '#'
             ? $pRaw('colorName')
@@ -9,6 +10,9 @@ Templates.resultsDisplay = {
         const bgcolor = !$pRaw('bgcolor') || $pRaw('bgcolor') === '#'
             ? $pRaw('bgcolorName')
             : $pRaw('bgcolor');
+        const bodyHeight = '80%';
+        const bottomPadding = '1em';
+        const topPadding = '3.5em';
         return ['style', [
             {
                 'y': 'td, th',
@@ -33,36 +37,40 @@ ${escapeCSS($pRaw('pagecss') || '')}
                 ? `
 html, body, body > div {
     height: 100%; /* Needed to ensure descendent heights retain 100%; could be avoided if didn't want percent on table height */
+    overflow-y: hidden; /* Not sure why we're getting extra here, but... */
 }
 .anchor-table-header {
     overflow-x: hidden; /* Not sure why we're getting extra here, but... */
     position: relative; /* Ensures we are still flowing, but provides anchor for absolutely positioned thead below (absolute positioning positions relative to nearest non-static ancestor; clear demo at https://www.w3schools.com/cssref/playit.asp?filename=playcss_position&preval=fixed ) */
-    padding-top: 2em; /* Provides space for the header (the one that is absolutely positioned below relative to here) */
-    padding-bottom: 2em; /* Provides space for the footer (the one that is absolutely positioned below relative to here) */
+    padding-top: ${topPadding}; /* Provides space for the header (and caption) (the one that is absolutely positioned below relative to here) */
+    padding-bottom: ${bottomPadding}; /* Provides space for the footer (the one that is absolutely positioned below relative to here) */
     background-color: white; /* Header background (not just for div text inside header, but for whole header area) */
-    height: 90%; /* Percent of the whole screen taken by the table */
+    height: 95%; /* Percent of the whole screen taken by the table */
 }
 .anchor-table-body {
     overflow-y: auto; /* Provides scrollbars when text fills up beyond the height */
-    height: 100%; /* If < 100%, the header anchor background color will seep below table */
+    height: ${bodyHeight}; /* If < 100%, the header anchor background color will seep below table */
 }
 
-.thead .th, .tfoot .th {
+.caption, .thead .th, .tfoot .th {
     line-height: 0; /* th div will have own line-height; reducing here avoids fattening it by an inner div */
     color: transparent; /* Hides the non-div duplicated header text */
     white-space: nowrap; /* Ensures column header text uses up full width without overlap (esp. wrap no longer seems to work); this must be applied outside of the div */
     border: none; /* We don't want a border for this invisible section */
 }
-.thead .th div.th-inner, .tfoot .th div.th-inner { /* divs are used as th is supposedly problematic */
+div.inner-caption, .thead .th div.th-inner, .tfoot .th div.th-inner { /* divs are used as th is supposedly problematic */
     position: absolute; /* Puts relative to nearest non-static ancestor (our relative header anchor) */
     color: initial; /* Header must have an explicit color or it will get transparent container color */
     line-height: normal; /* Revert ancestor line height of 0 */
 }
 .thead .th div.th-inner {
-    top: 0; /* Ensures our header stays fixed at top outside of normal flow of table */
+    top: 2em; /* Ensures our header stays fixed at top outside of normal flow of table */
+}
+div.inner-caption {
+    top: 0;
 }
 .tfoot .th div.th-inner { /* divs are used as th is supposedly problematic */
-    top: calc(100% - 2em); /* Ensures our header stays fixed at top outside of normal flow of table */
+    top: calc(${bodyHeight} + ${bottomPadding}); /* Ensures our header stays fixed at top outside of normal flow of table */
 }
 ${checkedFieldIndexes.map((idx, i) => `
 .td:nth-child(${i + 1}) {
@@ -78,7 +86,7 @@ ${checkedFieldIndexes.map((idx, i) => `
     margin: 0 auto !important;
     width: 0 !important;
 }
-.zupa div.th-inner {
+.zupa div.th-inner, .zupa div.inner-caption {
     width: 100%;
     margin-left: -50%;
     text-align: center;
@@ -104,7 +112,8 @@ body {
             typeof $pRaw('start' + (i + 1) + '-1') === 'string'
         );
         const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
-        if ($pRaw('wishcaption') !== 'no') {
+        const hasCaption = $pRaw('wishcaption') !== 'no';
+        if (hasCaption) {
             /*
             // Works but displays in parentheses browse fields which
             //  may be non-applicable
@@ -231,11 +240,21 @@ body {
 
         jml('div', [
             Templates.resultsDisplay.styles({
-                $pRaw, escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter, checkedFieldIndexes
+                $pRaw, escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter,
+                checkedFieldIndexes, hasCaption
             }),
             tableWrap([
                 addChildren(tableElem, [
-                    (caption ? addChildren(captionElem, [caption]) : ''),
+                    (caption ? addChildren(captionElem, [
+                        caption,
+                        tableWithFixedHeaderAndFooter
+                            ? ['div', {class: 'zupa1'}, [
+                                ['div', {class: 'inner-caption'}, [
+                                    ['span', [caption]]
+                                ]]
+                            ]]
+                            : ''
+                    ]) : ''),
                     /*
                     // Works but quirky, e.g., `color` doesn't work (as also confirmed per https://quirksmode.org/css/css2/columns.html)
                     addChildren(colgroupElem,
@@ -320,9 +339,13 @@ body {
                         // */
                         /*
                                 /*
+                                // Todo: Option to fix caption (or do automatically
+                                //    if header/footer done)
+
                                 // Todo: anchor1, etc. (and add to it to indicate
                                 //     field no. too for horizontal anchoring)
                                 // Todo: needs scroll into view for repeated anchor
+                                // Todo: Support querySelector + text (like HTTPQuery)?
 
                                 // Todo: Add ranges within applicable browse field set
                                     (also need to cache JSON into IndexedDB or at
@@ -332,8 +355,6 @@ body {
                                     rand
                                     context (highlight?)
 
-                                // Todo: Option to fix caption (or do automatically
-                                //    if header/footer done)
                                 // Todo: localizeParamNames (preference)?
                                 // Todo: Later: Speech controls
                                 // Todo: Later: search1, etc.
