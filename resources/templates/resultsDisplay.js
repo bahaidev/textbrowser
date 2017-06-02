@@ -4,7 +4,7 @@ Templates.resultsDisplay = {
         $p, $pRaw, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, escapeCSS,
         tableWithFixedHeaderAndFooter, checkedFieldIndexes, hasCaption
     }) => {
-        const color = !$p.has('color', true) || $p.get('color', true) === '#'
+        const colorEsc = !$p.has('color', true) || $p.get('color', true) === '#'
             ? $pEscArbitrary('colorName')
             : $pEscArbitrary('color');
         const bgcolorEsc = !$p.has('bgcolor', true) || $p.get('bgcolor', true) === '#'
@@ -31,8 +31,16 @@ Templates.resultsDisplay = {
                     : '.caption, ')
                 : ''
             ) +
-            ($pRaw('header') === 'y' ? '.thead .td, .thead .th, ' : '') +
-            ($pRaw('footer') === 'y' ? '.tfoot .td, .tfoot .th, ' : '') +
+            ($pRaw('header') === 'y'
+                ? (tableWithFixedHeaderAndFooter
+                    ? `` // `.thead .th, .thead .th div.th-inner, ` // Problems at least in Chrome
+                    : `.thead .th, `)
+                : '') +
+            ($pRaw('footer') === 'y'
+                ? (tableWithFixedHeaderAndFooter
+                    ? `` // `.tfoot .th, .tfoot .th div.th-inner, ` // Problems at least in Chrome
+                    : `.tfoot .th, `)
+                : '') +
             ('.tbody .td') + ` {
     font-style: ${$pRawEsc('fontstyle')};
     font-variant: ${$pRawEsc('fontvariant')};
@@ -43,7 +51,12 @@ Templates.resultsDisplay = {
     font-stretch: ${$pEscArbitrary('fontstretch')};
     letter-spacing: ${$pEscArbitrary('letterspacing')};
     line-height: ${$pEscArbitrary('lineheight')};
-    ${color ? `color: ${escapeCSS(color)};` : ''}
+    ${colorEsc ? `color: ${escapeCSS(colorEsc)} !important;` : ''
+        // Marked `!important` as will be overridden by default fixed table colors
+    }
+    ${bgcolorEsc ? `background-color: ${escapeCSS(bgcolorEsc)} !important;` : ''
+        // Marked `!important` as will be overridden by default fixed table colors
+    }
 }
 ${escapeCSS($pEscArbitrary('pagecss') || '')}
 ` +
@@ -54,7 +67,7 @@ html, body, body > div {
     overflow-y: hidden; /* Not sure why we're getting extra here, but... */
 }
 .anchor-table-header {
-    background-color: ${bgcolorEsc ? bgcolorEsc : 'white'}; /* Header background (not just for div text inside header, but for whole header area) */
+    background-color: ${bgcolorEsc || 'white'}; /* Header background (not just for div text inside header, but for whole header area) */
     overflow-x: hidden; /* Not sure why we're getting extra here, but... */
     position: relative; /* Ensures we are still flowing, but provides anchor for absolutely positioned thead below (absolute positioning positions relative to nearest non-static ancestor; clear demo at https://www.w3schools.com/cssref/playit.asp?filename=playcss_position&preval=fixed ) */
     padding-top: ${topToBodyStart}; /* Provides space for the header (and caption) (the one that is absolutely positioned below relative to here) */
