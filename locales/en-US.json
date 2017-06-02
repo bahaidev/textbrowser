@@ -140,7 +140,24 @@
             "json-array": "JSON (Array table)",
             "json-object": "JSON (Object)"
         },
-        "enum-all": "All"
+        "font-stretch": {
+            "ultra-condensed": "ultra-condensed",
+            "extra-condensed": "extra-condensed",
+            "condensed": "condensed",
+            "semi-condensed": "semi-condensed",
+            "normal": "normal",
+            "semi-expanded": "semi-expanded",
+            "expanded": "expanded",
+            "extra-expanded": "extra-expanded",
+            "ultra-expanded": "ultra-expanded"
+        },
+        "enum-all": "All",
+        "y": "y",
+        "n": "n",
+        "1": "1",
+        "0": "0",
+        "table": "table",
+        "div": "div"
     },
     "params": {
         "indexed": {

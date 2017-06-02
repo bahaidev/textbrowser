@@ -193,8 +193,9 @@ Templates.workDisplay = {
         ['label', [
             ld('textcolor'),
             ['select', {name: il('colorName')}, colors.map((color, i) => {
-                const atts = {value: l(color)};
-                if ($p.get('colorName') === l(color) || (i === 1 && !$p.has('colorName'))) {
+                const atts = {value: l(['param_values', 'colors', color])};
+                if ($p.get('colorName') === l(['param_values', 'colors', color]) ||
+                    (i === 1 && !$p.has('colorName'))) {
                     atts.selected = 'selected';
                 }
                 return lo(['param_values', 'colors', color], atts);
@@ -213,8 +214,9 @@ Templates.workDisplay = {
         ['label', [
             ld('backgroundcolor'),
             ['select', {name: il('bgcolorName')}, colors.map((color, i) => {
-                const atts = {value: l(color)};
-                if ($p.get('bgcolorName') === l(color) || (i === 14 && !$p.has('bgcolorName'))) {
+                const atts = {value: l(['param_values', 'colors', color])};
+                if ($p.get('bgcolorName') === l(['param_values', 'colors', color]) ||
+                    (i === 14 && !$p.has('bgcolorName'))) {
                     atts.selected = 'selected';
                 }
                 return lo(['param_values', 'colors', color], atts);
@@ -249,8 +251,9 @@ Templates.workDisplay = {
                 'normal',
                 'oblique'
             ].map((fontstyle, i) => {
-                const atts = {value: l(fontstyle)};
-                if ($p.get('fontstyle') === l(fontstyle) || (i === 1 && !$p.has('fontstyle'))) {
+                const atts = {value: l(['param_values', 'fontstyle', fontstyle])};
+                if ($p.get('fontstyle') === l(['param_values', 'fontstyle', fontstyle]) ||
+                    (i === 1 && !$p.has('fontstyle'))) {
                     atts.selected = 'selected';
                 }
                 return lo(['param_values', 'fontstyle', fontstyle], atts);
@@ -301,8 +304,7 @@ Templates.workDisplay = {
         // Todo: i18nize title and values?
         // Todo: remove hard-coded direction if i18nizing
         ['label', {
-            dir: 'ltr',
-            title: 'wider, narrower, semi-expanded, ultra-condensed, extra-expanded, etc.'
+            dir: 'ltr'
         }, [
             ld('font_stretch'), nbsp,
             ['select', {name: il('fontstretch')},
@@ -310,12 +312,12 @@ Templates.workDisplay = {
                     'ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed',
                     'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'
                 ].map((stretch) => {
-                    const atts = {value: stretch};
+                    const atts = {value: ld(['param_values', 'font-stretch', stretch])};
                     if ($p.get('fontstretch') === stretch ||
                         (!$p.has('fontstretch') && stretch === 'normal')) {
                         atts.selected = 'selected';
                     }
-                    return ['option', atts, [stretch]];
+                    return ['option', atts, [ld(['param_values', 'font-stretch', stretch])]];
                 })
             ]
         ]],
@@ -347,9 +349,9 @@ Templates.workDisplay = {
         ['div', [
             ld('header_wstyles'), nbsp.repeat(2),
             ...([
-                ['yes', 'y'],
-                ['no', 'n'],
-                ['none', '0']
+                ['yes', ld(['param_values', 'y'])],
+                ['no', ld(['param_values', 'n'])],
+                ['none', ld(['param_values', '0'])]
             ].map(([key, val], i, arr) =>
                 ['label', [
                     ['input', {
@@ -365,9 +367,9 @@ Templates.workDisplay = {
         ['div', [
             ld('footer_wstyles'), nbsp.repeat(2),
             ...([
-                ['yes', 'y'],
-                ['no', 'n'],
-                ['none', '0']
+                ['yes', ld(['param_values', 'y'])],
+                ['no', ld(['param_values', 'n'])],
+                ['none', ld(['param_values', '0'])]
             ].map(([key, val], i, arr) =>
                 ['label', [
                     ['input', {
@@ -392,9 +394,9 @@ Templates.workDisplay = {
         ['div', [
             ld('caption_wstyles'), nbsp.repeat(2),
             ...([
-                ['yes', 'y'],
-                ['no', 'n'],
-                ['none', '0']
+                ['yes', ld(['param_values', 'y'])],
+                ['no', ld(['param_values', 'n'])],
+                ['none', ld(['param_values', '0'])]
             ].map(([key, val], i, arr) =>
                 ['label', [
                     ['input', {

@@ -2,7 +2,7 @@
 TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
     l, lang, localeFromFileData, fallbackLanguages, $p, imfLocales, getMetaProp
 }) {
-    const $pRaw = (param) => {
+    const $pRaw = (param, avoidLog) => {
         // Todo: Should work with i18n=true (if names i18nized, need reverse look-up)
         let key;
         const p = $p.get(param, true);
@@ -22,11 +22,17 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             });
         }
         reverseLocaleLookup(imfLocales);
-        return key || p; // $p.get(param, true);
+        if (!key && !avoidLog) {
+            console.log('pppp', param, '::', p);
+        }
+        return key; // || p; // $p.get(param, true);
     };
     const escapeQuotedCSS = (s) => s.replace(/"/g, '\\"');
     const escapeHTML = (s) => !s ? '' : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/, '&gt;');
     const escapeCSS = escapeHTML;
+    const $pRawEsc = (param) => escapeHTML($pRaw(param));
+    const $pEscArbitrary = (param) => escapeHTML($p.get(param, true));
+
     this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p, getMetaProp}).then((
         [fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
     ) => {
@@ -56,7 +62,8 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             });
             const localizedFieldNames = schemaItems.map((si) => getFieldAliasOrName(si.title));
             Templates.resultsDisplay.main({
-                tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS, escapeHTML,
+                tableData, schemaItems, $p, $pRaw, $pRawEsc, $pEscArbitrary,
+                escapeQuotedCSS, escapeCSS, escapeHTML,
                 heading, l, browseFieldSets, localizedFieldNames,
                 interlinearSeparator: this.interlinearSeparator
             });

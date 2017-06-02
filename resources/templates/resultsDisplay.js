@@ -1,15 +1,15 @@
 /* globals Templates, jml */
 Templates.resultsDisplay = {
     styles: ({
-        $pRaw, escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter,
-        checkedFieldIndexes, hasCaption
+        $p, $pRaw, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, escapeCSS,
+        tableWithFixedHeaderAndFooter, checkedFieldIndexes, hasCaption
     }) => {
-        const color = !$pRaw('color') || $pRaw('color') === '#'
-            ? $pRaw('colorName')
-            : $pRaw('color');
-        const bgcolor = !$pRaw('bgcolor') || $pRaw('bgcolor') === '#'
-            ? $pRaw('bgcolorName')
-            : $pRaw('bgcolor');
+        const color = !$p.has('color', true) || $p.get('color', true) === '#'
+            ? $pEscArbitrary('colorName')
+            : $pEscArbitrary('color');
+        const bgcolorEsc = !$p.has('bgcolor', true) || $p.get('bgcolor', true) === '#'
+            ? $pEscArbitrary('bgcolorName')
+            : $pEscArbitrary('bgcolor');
 
         const tableHeight = '100%';
 
@@ -34,18 +34,18 @@ Templates.resultsDisplay = {
             ($pRaw('header') === 'y' ? '.thead .td, .thead .th, ' : '') +
             ($pRaw('footer') === 'y' ? '.tfoot .td, .tfoot .th, ' : '') +
             ('.tbody .td') + ` {
-    font-style: ${$pRaw('fontstyle')};
-    font-variant: ${$pRaw('fontvariant')};
-    font-weight: ${$pRaw('fontweight')};
-    ${$pRaw('fontsize') ? `font-size: ${$pRaw('fontsize')};` : ''}
-    font-family: ${escapeQuotedCSS($pRaw('fontSeq'))};
+    font-style: ${$pRawEsc('fontstyle')};
+    font-variant: ${$pRawEsc('fontvariant')};
+    font-weight: ${$pEscArbitrary('fontweight')};
+    ${$pEscArbitrary('fontsize') ? `font-size: ${$pEscArbitrary('fontsize')};` : ''}
+    font-family: ${$pEscArbitrary('fontSeq')};
 
-    font-stretch: ${$pRaw('fontstretch')};
-    letter-spacing: ${$pRaw('letterspacing')};
-    line-height: ${$pRaw('lineheight')};
-    ${color ? `color: ${color};` : ''}
+    font-stretch: ${$pEscArbitrary('fontstretch')};
+    letter-spacing: ${$pEscArbitrary('letterspacing')};
+    line-height: ${$pEscArbitrary('lineheight')};
+    ${color ? `color: ${escapeCSS(color)};` : ''}
 }
-${escapeCSS($pRaw('pagecss') || '')}
+${escapeCSS($pEscArbitrary('pagecss') || '')}
 ` +
             (tableWithFixedHeaderAndFooter
                 ? `
@@ -54,10 +54,10 @@ html, body, body > div {
     overflow-y: hidden; /* Not sure why we're getting extra here, but... */
 }
 .anchor-table-header {
+    background-color: ${bgcolorEsc ? bgcolorEsc : 'white'}; /* Header background (not just for div text inside header, but for whole header area) */
     overflow-x: hidden; /* Not sure why we're getting extra here, but... */
     position: relative; /* Ensures we are still flowing, but provides anchor for absolutely positioned thead below (absolute positioning positions relative to nearest non-static ancestor; clear demo at https://www.w3schools.com/cssref/playit.asp?filename=playcss_position&preval=fixed ) */
     padding-top: ${topToBodyStart}; /* Provides space for the header (and caption) (the one that is absolutely positioned below relative to here) */
-    background-color: white; /* Header background (not just for div text inside header, but for whole header area) */
     height: ${tableHeight}; /* Percent of the whole screen taken by the table */
 }
 .anchor-table-body {
@@ -109,33 +109,34 @@ div.inner-caption {
                     : '') +
                 `.tbody .td:nth-child(${i + 1}) ` +
 `{
-    ${$pRaw('css' + (i + 1))}
+    ${$pEscArbitrary('css' + (i + 1))}
 }
 `).join('') +
 
-($pRaw('interlintitle_css') ? `
+($pEscArbitrary('interlintitle_css') ? `
 /* http://salzerdesign.com/test/fixedTable.html */
 .interlintitle {
-    ${escapeCSS($pRaw('interlintitle_css'))}
+    ${escapeCSS($pEscArbitrary('interlintitle_css'))}
 }
 ` : '') +
-            (bgcolor
+            (bgcolorEsc
                 ? `
 body {
-    background-color: ${bgcolor};
+    background-color: ${bgcolorEsc};
 }
 `
                 : '')
         ]];
     },
     main: ({
-        tableData, schemaItems, $p, $pRaw, escapeQuotedCSS, escapeCSS, escapeHTML,
+        tableData, schemaItems, $p, $pRaw, $pRawEsc, $pEscArbitrary,
+        escapeQuotedCSS, escapeCSS, escapeHTML,
         heading, l, browseFieldSets, localizedFieldNames,
         interlinearSeparator = '<br /><br />'
     }) => {
         let caption;
         const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
-            typeof $pRaw('start' + (i + 1) + '-1') === 'string'
+            typeof $p.get('start' + (i + 1) + '-1', true) === 'string'
         );
         const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
         const hasCaption = $pRaw('caption') !== '0';
@@ -163,8 +164,9 @@ body {
             const buildRanges = () => {
                 const buildRangePoint = (startOrEnd) =>
                     applicableBrowseFieldSet.map((bf, j) =>
-                        $pRaw(
-                            startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1)
+                        $p.get(
+                            startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
+                            true
                         )
                     );
                 const start = buildRangePoint('start');
@@ -233,7 +235,7 @@ body {
         let field, checked;
         let checkedFields = [];
         do {
-            field = $pRaw('field' + num);
+            field = $p.get('field' + num, true);
             checked = $p.get('checked' + num, true);
             num++;
             if (field && checked === l('yes')) {
@@ -243,10 +245,10 @@ body {
         checkedFields = checkedFields.filter((cf) => localizedFieldNames.includes(cf));
         const checkedFieldIndexes = checkedFields.map((cf) => localizedFieldNames.indexOf(cf));
         const allInterlinearColIndexes = checkedFieldIndexes.map((cfi, i) => {
-            const interlin = $pRaw('interlin' + (i + 1));
+            const interlin = $p.get('interlin' + (i + 1), true);
             return interlin && interlin.split(/\s*,\s*/).map((col) =>
                 parseInt(col, 10) - 1
-            );
+            ).filter((n) => !Number.isNaN(n));
         });
 
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
@@ -266,7 +268,8 @@ body {
 
         jml('div', [
             Templates.resultsDisplay.styles({
-                $pRaw, escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter,
+                $p, $pRaw, $pRawEsc, $pEscArbitrary,
+                escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter,
                 checkedFieldIndexes, hasCaption
             }),
             tableWrap([
@@ -293,7 +296,7 @@ body {
                         addChildren(trElem,
                             checkedFields.map((cf, i) => {
                                 const interlinearColIndexes = allInterlinearColIndexes[i];
-                                cf = cf + (interlinearColIndexes
+                                cf = escapeHTML(cf) + (interlinearColIndexes
                                     ? l('comma-space') + interlinearColIndexes.map((idx) =>
                                         localizedFieldNames[idx]
                                     ).join(l('comma-space'))
@@ -314,7 +317,7 @@ body {
                         addChildren(trElem,
                             checkedFields.map((cf, i) => {
                                 const interlinearColIndexes = allInterlinearColIndexes[i];
-                                cf = cf + (interlinearColIndexes
+                                cf = escapeHTML(cf) + (interlinearColIndexes
                                     ? l('comma-space') + interlinearColIndexes.map((idx) =>
                                         localizedFieldNames[idx]
                                     ).join(l('comma-space'))
@@ -365,10 +368,6 @@ body {
                         // */
                         /*
                                 /*
-                                // Todo: Option to fix caption (or do automatically
-                                //    if header/footer done)
-                                // Todo: Check colors
-
                                 // Todo: anchor1, etc. (and add to it to indicate
                                 //     field no. too for horizontal anchoring)
                                 // Todo: needs scroll into view for repeated anchor
