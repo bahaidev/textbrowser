@@ -367,7 +367,11 @@ shows its usage (assuming paths relative to a package containing
             without need for system allowing expansion)
     1.  Ability to run XPath/`querySelector`-like queries against
         `format: "html"` fields relative to specific cells (or against
-        original source HTML or XML document)
+        original source HTML or XML document); also highlighting as
+        part of page anchor ala original XPath schemes (e.g.,
+        `&anchor=.myClass` with `text()` from [HTTPQuery](https://github.com/brettz9/httpquery)
+        to identify by text content too if not a full blown query/transformation
+        language)?
 1.  Separate formatting within Jamilih code to CSS; unit test and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)

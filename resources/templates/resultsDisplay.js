@@ -244,13 +244,13 @@ body {
             tableElem, trElem, tdElem, thElem, captionElem, theadElem, tbodyElem, tfootElem
         ] = tableElems; // colgroupElem, colElem
 
-        let num = 1;
+        let i = 1;
         let field, checked;
         let checkedFields = [];
         do {
-            field = $p.get('field' + num, true);
-            checked = $p.get('checked' + num, true);
-            num++;
+            field = $p.get('field' + i, true);
+            checked = $p.get('checked' + i, true);
+            i++;
             if (field && checked === l('yes')) {
                 checkedFields.push(field);
             }
@@ -348,15 +348,23 @@ body {
                         )
                     ]) : ''),
                     addChildren(tbodyElem, [
-                        /**/
-                        ...tableData.map((tr, i) =>
-                            addChildren(trElem,
+                        ...tableData.map((tr, i) => {
+                            const rowID = applicableBrowseFieldSet.map((abfs) =>
+                                tr[localizedFieldNames.indexOf(abfs.browseFieldName)])
+                                    .join('-');
+                            return addChildren(trElem,
                                 checkedFieldIndexes.map((idx, j) => {
                                     const interlinearColIndexes = allInterlinearColIndexes[j];
                                     const showInterlinTitles = $pRaw('interlintitle') === '1' &&
                                         interlinearColIndexes;
                                     return addAtts(tdElem, {
-                                        id: 'row' + (i + 1) + 'cell' + (j + 1),
+                                        // anchors
+                                        // Todo: Print aliases!
+                                        id: 'row' + (i + 1) + 'col' + (j + 1), // Can't have unique IDs if user duplicates a column
+                                        dataset: {
+                                            col: localizedFieldNames[j],
+                                            row: rowID
+                                        },
                                         innerHTML:
                                             (showInterlinTitles
                                                 ? '<span class="interlintitle">' +
@@ -378,14 +386,7 @@ body {
                                         )
                                     });
                                 })
-                        // */
-                        /*
                                 /*
-                                // Todo: anchor1, etc. (and add to it to indicate
-                                //     field no. too for horizontal anchoring)
-                                // Todo: needs scroll into view for repeated anchor
-                                // Todo: Support querySelector + text (like HTTPQuery)?
-
                                 // Todo: Add ranges within applicable browse field set
                                     (also need to cache JSON into IndexedDB or at
                                         least localStorage for now)
@@ -393,37 +394,41 @@ body {
                                     end1-1, etc.
                                     rand
                                     context (highlight?)
+                                */
 
                                 // Todo: localizeParamNames (preference)?
+                                // Todo: Support `text()` with `querySelector`
                                 // Todo: Later: Speech controls
                                 // Todo: Later: search1, etc.
                                 // Todo: Later: auto-fields
                                 // Todo: Later: Handle transpose, in header, footer, and body
                                 // Todo: Later: Support JSON types for `outputmode`, opening
                                 //     new window with content-type set
-                                */
-                                /*
-                                schemaItems.map(({title}, i) => {
-                                    const fieldI = $pRaw('field' + (i + 1));
-                                    if (fieldI) {
-                                        const idx = schemaItems.findIndex(({title}) => title === fieldI);
-                                        console.log('iiii', title, i, idx, fieldI);
-                                        return idx === -1
-                                            ? [tdElem, ['(empty)' + title]]
-                                            : [tdElem, {
-                                                innerHTML: tr[idx] // Todo: Only do for non-escaped!!!!
-                                            }];
-                                    }
-                                    return 'ttt:' + title;
-                                })
-                                */
-                    /**/
-                            )
-                        )
-                    // */
+                            );
+                        })
                     ])
                 ])
             ])
         ], document.body);
+
+        const anchors = [];
+        for (let i = 1, breakout; !breakout && !anchors.length; i++) {
+            for (let j = 1; ; j++) {
+                const anchorText = 'anchor' + i + '-' + j;
+                const anchor = $p.get(anchorText, true);
+                if (!anchor) {
+                    if (j === 1) {
+                        breakout = true;
+                    }
+                    break;
+                }
+                anchors.push({anchorText, anchor});
+            }
+        }
+        // Todo: anchor1, etc. (and add to it to indicate
+        //     field no. too for horizontal anchoring)
+        // Todo: Support simple querySelector for now
+        // Todo: needs scroll into view for repeated anchor
+        console.log('anchors', anchors);
     }
 };
