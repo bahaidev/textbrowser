@@ -406,7 +406,9 @@ body {
                                     });
                                 })
                                 /*
-                                // Todo: Optimize Jamilih to build strings
+                                // Todo: Optimize Jamilih to build strings; also to preprocess
+                                //        files like this to convert Jamilih to complete string
+                                //        concatenation as somewhat faster
                                 // Todo: Add ranges within applicable browse field set
                                     (also need to cache JSON into IndexedDB or at
                                         least localStorage for now)
