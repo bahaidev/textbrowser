@@ -639,7 +639,7 @@ Templates.workDisplay = {
             })]
         ]]
     ]],
-    addBrowseFields: ({browseFields, ld, i, iil, $p, content}) => {
+    addBrowseFields: ({browseFields, fields, getFieldAliasOrName, ld, i, iil, $p, content}) => {
         const addRowContent = (rowContent) => {
             if (!rowContent || !rowContent.length) { return; }
             content.push(['tr', rowContent]);
@@ -703,7 +703,7 @@ Templates.workDisplay = {
                 ]]
             ],
             [
-                ['td', {colspan: 4 * browseFields.length + 2, align: 'center'}, [
+                ['td', {colspan: 4 * browseFields.length + 2 + 1, align: 'center'}, [
                     ['table', [
                         ['tr', [
                             browseFields.reduce((rowContent, {fieldName, aliases}, j) => {
@@ -733,7 +733,18 @@ Templates.workDisplay = {
                                 ['td', {style: 'font-weight: bold; vertical-align: bottom;'}, [
                                     ld('anchored-at') + nbsp.repeat(3)
                                 ]]
-                            ]})
+                            ]}),
+                            ['td', [
+                                ['label', [
+                                    ld('field') + nbsp.repeat(2),
+                                    ['select', {name: iil('anchorfield') + (i + 1), size: '1'},
+                                        fields.map((field, j) => {
+                                            const fn = getFieldAliasOrName(field) || field;
+                                            return ['option', [fn]];
+                                        })
+                                    ]
+                                ]]
+                            ]]
                         ]]
                     ]]
                 ]]

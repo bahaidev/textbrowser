@@ -151,17 +151,19 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             }
             return window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
         }
+
+        const fields = schemaItems.map((schemaItem) => schemaItem.title);
         this.getBrowseFieldData({
             metadataObj, getMetaProp, schemaItems, getFieldAliasOrName
         }, ({browseFields, i}) => {
-            Templates.workDisplay.addBrowseFields({browseFields, ld, i, iil, $p, content});
+            Templates.workDisplay.addBrowseFields({
+                browseFields, fields, getFieldAliasOrName, ld, i, iil, $p, content
+            });
         });
 
         Templates.workDisplay.addRandomFormFields({
             il, l, ld, le, $p, serializeParamsAsURL, content
         });
-
-        const fields = schemaItems.map((schemaItem) => schemaItem.title);
 
         // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
         const heading = getMetaProp(metadataObj, 'heading');

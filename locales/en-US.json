@@ -54,6 +54,7 @@
     "to": "TO",
     "or": "OR",
     "anchored-at": "Anchored at:",
+    "field": "Field",
     "fieldtablesummary": "This table offers the choice of which fields to enable and their order in the display of the current text.",
     "resultstablesummary": "This table displays the results of a previous verse selection.",
     "nofileyet": "You haven't specified a file yet.",
@@ -169,7 +170,8 @@
             "toggle": "toggle",
             "start": "start",
             "end": "end",
-            "anchor": "anchor"
+            "anchor": "anchor",
+            "anchorfield": "anchorfield"
         },
         "lang": "lang",
         "work": "work",
@@ -177,6 +179,7 @@
         "rand": "rand",
         "random": "random",
         "context": "context",
+        "anchorrowcol": "anchorrowcol",
         "colorName": "colorName",
         "color": "color",
         "bgcolorName": "bgcolorName",

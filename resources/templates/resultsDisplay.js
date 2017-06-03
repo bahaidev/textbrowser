@@ -351,17 +351,31 @@ body {
                     ]) : ''),
                     addChildren(tbodyElem, [
                         ...tableData.map((tr, i) => {
-                            const rowID = applicableBrowseFieldSet.map((abfs) =>
-                                tr[localizedFieldNames.indexOf(abfs.fieldName)])
-                                    .join('-');
+                            const rowID = applicableBrowseFieldSet.map((abfs) => {
+                                const idx = localizedFieldNames.indexOf(abfs.fieldName);
+                                // This works to put alias in anchor but this includes
+                                //   our ending parenthetical, the alias may be harder
+                                //   to remember and/or automated than original (e.g.,
+                                //   for a number representing a book), and there could
+                                //   be multiple aliases for a value; we may wish to
+                                //   switch this (and also for other browse field-based
+                                //   items).
+                                return fieldValueAliasMap[idx] !== undefined
+                                    ? fieldValueAliasMap[idx][tr[idx]]
+                                    : tr[idx];
+                                // return tr[idx];
+                            }).join('-');
                             return addChildren(trElem,
                                 checkedFieldIndexes.map((idx, j) => {
                                     const interlinearColIndexes = allInterlinearColIndexes[j];
                                     const showInterlinTitles = $pRaw('interlintitle') === '1' &&
                                         interlinearColIndexes;
+                                    const trVal = (fieldValueAliasMap[idx] !== undefined
+                                        ? fieldValueAliasMap[idx][tr[idx]]
+                                        : tr[idx]
+                                    );
                                     return addAtts(tdElem, {
                                         // anchors
-                                        // Todo: Print aliases!
                                         id: 'row' + (i + 1) + 'col' + (j + 1), // Can't have unique IDs if user duplicates a column
                                         dataset: {
                                             col: localizedFieldNames[j],
@@ -374,10 +388,7 @@ body {
                                                     '</span>' + l('colon-space')
                                                 : ''
                                             ) +
-                                            (fieldValueAliasMap[idx] !== undefined
-                                                ? fieldValueAliasMap[idx][tr[idx]]
-                                                : tr[idx]
-                                            ) +
+                                            trVal +
                                             (interlinearColIndexes
                                                 ? interlinearSeparator +
                                                     interlinearColIndexes.map((idx) =>
@@ -386,7 +397,7 @@ body {
                                                                 localizedFieldNames[idx] +
                                                                 '</span>' + l('colon-space')
                                                             : '') +
-                                                        tr[idx]
+                                                        trVal
                                                     ).join(interlinearSeparator)
                                                 : ''
                                         )
@@ -417,24 +428,55 @@ body {
             ])
         ], document.body);
 
-        const anchors = [];
-        for (let i = 1, breakout; !breakout && !anchors.length; i++) {
-            for (let j = 1; ; j++) {
-                const anchorText = 'anchor' + i + '-' + j;
-                const anchor = $p.get(anchorText, true);
-                if (!anchor) {
-                    if (j === 1) {
-                        breakout = true;
+        // Todo: Repeats some code in workDisplay; probably need to reuse
+        //   these functions more in this file
+        const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
+        const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true)
+            ? $p.get('i18n', true) === '1'
+            : prefI18n === 'true' || (
+                prefI18n !== 'false' && this.localizeParamNames
+            );
+        const iil = localizeParamNames
+            ? key => l(['params', 'indexed', key])
+            : key => key;
+
+        // Check if user added this (e.g., even to end of URL with
+        //   other anchor params)
+        let anchor;
+        const anchorRowCol = $p.get(iil('anchorrowcol'), true);
+        if (anchorRowCol) {
+            anchor = document.querySelector('#' + anchorRowCol);
+        }
+        if (!anchor) {
+            const anchors = [];
+            let anchorField = '';
+            for (let i = 1, breakout; !breakout && !anchors.length; i++) {
+                for (let j = 1; ; j++) {
+                    const anchorText = 'anchor' + i + '-' + j;
+                    const anchor = $p.get(anchorText, true);
+                    if (!anchor) {
+                        if (j === 1) {
+                            breakout = true;
+                        }
+                        break;
                     }
-                    break;
+                    anchorField = $p.get(iil('anchorfield') + i, true);
+                    anchors.push(anchor);
+                    // anchors.push({anchorText, anchor});
                 }
-                anchors.push({anchorText, anchor});
+            }
+
+            if (anchors.length) {
+                const escapeSelectorAttValue = (str) => (str || '').replace(/["\\]/g, '\\$&');
+                const sel = 'td[data-row="' + escapeSelectorAttValue(anchors.join('-')) + '"]' +
+                    (anchorField
+                        ? ('[data-col="' + escapeSelectorAttValue(anchorField) + '"]')
+                        : '');
+                anchor = document.querySelector(sel);
             }
         }
-        // Todo: anchor1, etc. (and add to it to indicate
-        //     field no. too for horizontal anchoring)
-        // Todo: Support simple querySelector for now
-        // Todo: needs scroll into view for repeated anchor
-        console.log('anchors', anchors);
+        if (anchor) {
+            anchor.scrollIntoView();
+        }
     }
 };
