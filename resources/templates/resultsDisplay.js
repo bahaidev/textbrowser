@@ -406,6 +406,7 @@ body {
                                     });
                                 })
                                 /*
+                                // Todo: Optimize Jamilih to build strings
                                 // Todo: Add ranges within applicable browse field set
                                     (also need to cache JSON into IndexedDB or at
                                         least localStorage for now)
