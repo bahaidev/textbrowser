@@ -157,6 +157,63 @@ TextBrowser.prototype.getDirectionForLanguageCode = function (code) {
     ).direction;
 };
 
+TextBrowser.prototype.getFieldNameAndValueAliases = function ({
+    field, schemaItems, metadataObj, getFieldAliasOrName, getMetaProp
+}) {
+    const fieldSchema = schemaItems.find((item) =>
+        item.title === field
+    );
+
+    const ret = {
+        fieldName: getFieldAliasOrName(field)
+    };
+
+    let fvAliases = metadataObj.fields && metadataObj.fields[field] &&
+        metadataObj.fields[field]['fieldvalue-aliases'];
+    if (fvAliases) {
+        if (fvAliases.localeKey) {
+            fvAliases = getMetaProp(metadataObj, fvAliases.localeKey.split('/'), true);
+        }
+        ret.aliases = [];
+        // Todo: We could use `prefer_alias` but algorithm below may cover needed cases
+        if (fieldSchema.enum && fieldSchema.enum.length) {
+            fieldSchema.enum.forEach((enm) => {
+                ret.aliases.push(
+                    getMetaProp(metadataObj, ['fieldvalue', field, enm], true)
+                );
+                if (enm in fvAliases &&
+                    // Todo: We could allow numbers here too, but crowds pull-down
+                    typeof fvAliases[enm] === 'string') {
+                    ret.aliases.push(...fvAliases[enm]);
+                }
+            });
+        } else {
+            // Todo: We might iterate over all values (in case some not included in fv map)
+            // Todo: Check `fieldSchema` for integer or string type
+            Object.entries(fvAliases).forEach(([key, aliases]) => {
+                // We'll preserve the numbers since probably more useful if stored
+                //   with data (as opposed to enums)
+                if (!Array.isArray(aliases)) {
+                    aliases = Object.values(aliases);
+                }
+                // We'll assume the longest version is best for auto-complete
+                ret.aliases.push(
+                    ...(
+                        aliases.filter((v) =>
+                            aliases.every((x) =>
+                                x === v || !(x.toLowerCase().startsWith(v.toLowerCase()))
+                            )
+                        ).map((v) => v + ' (' + key + ')')
+                    )
+                );
+            });
+        }
+        // ret.aliases.sort();
+    }
+
+    return ret;
+};
+
 TextBrowser.prototype.getBrowseFieldData = function ({
     metadataObj, getMetaProp, schemaItems, getFieldAliasOrName
 }, cb) {
@@ -168,60 +225,11 @@ TextBrowser.prototype.getBrowseFieldData = function ({
         const fieldSets = browseFieldObject.set;
         // Todo: Deal with ['td', [['h3', [ld(browseFieldObject.name)]]]] as kind of fieldset
 
-        const browseFields = fieldSets.map((browseField, j) => {
-            const fieldSchema = schemaItems.find((item) =>
-                item.title === browseField
-            );
-
-            const ret = {
-                browseFieldName: getFieldAliasOrName(browseField)
-            };
-
-            let fvAliases = metadataObj.fields && metadataObj.fields[browseField] &&
-                metadataObj.fields[browseField]['fieldvalue-aliases'];
-            if (fvAliases) {
-                if (fvAliases.localeKey) {
-                    fvAliases = getMetaProp(metadataObj, fvAliases.localeKey.split('/'), true);
-                }
-                ret.aliases = [];
-                // Todo: We could use `prefer_alias` but algorithm below may cover needed cases
-                if (fieldSchema.enum && fieldSchema.enum.length) {
-                    fieldSchema.enum.forEach((enm) => {
-                        ret.aliases.push(
-                            getMetaProp(metadataObj, ['fieldvalue', browseField, enm], true)
-                        );
-                        if (enm in fvAliases &&
-                            // Todo: We could allow numbers here too, but crowds pull-down
-                            typeof fvAliases[enm] === 'string') {
-                            ret.aliases.push(...fvAliases[enm]);
-                        }
-                    });
-                } else {
-                    // Todo: We might iterate over all values (in case some not included in fv map)
-                    // Todo: Check `fieldSchema` for integer or string type
-                    Object.entries(fvAliases).forEach(([key, aliases]) => {
-                        // We'll preserve the numbers since probably more useful if stored
-                        //   with data (as opposed to enums)
-                        if (!Array.isArray(aliases)) {
-                            aliases = Object.values(aliases);
-                        }
-                        // We'll assume the longest version is best for auto-complete
-                        ret.aliases.push(
-                            ...(
-                                aliases.filter((v) =>
-                                    aliases.every((x) =>
-                                        x === v || !(x.toLowerCase().startsWith(v.toLowerCase()))
-                                    )
-                                ).map((v) => v + ' (' + key + ')')
-                            )
-                        );
-                    });
-                }
-                // ret.aliases.sort();
-            }
-
-            return ret;
-        });
+        const browseFields = fieldSets.map((field) =>
+            this.getFieldNameAndValueAliases({
+                field, schemaItems, metadataObj, getFieldAliasOrName, getMetaProp
+            })
+        );
         cb({browseFields, i}); // eslint-disable-line standard/no-callback-literal
     });
 };

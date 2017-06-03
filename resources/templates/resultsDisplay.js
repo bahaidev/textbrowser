@@ -197,7 +197,7 @@ body {
                 }, '').slice(0, -1);
 
                 const rangeNames = applicableBrowseFieldSet.map((abfs) =>
-                    abfs.browseFieldName).join(l('comma-space'));
+                    abfs.fieldName).join(l('comma-space'));
                 return escapeHTML(
                     startStr +
                     // l('to').toLowerCase() + ' ' +
@@ -350,7 +350,7 @@ body {
                     addChildren(tbodyElem, [
                         ...tableData.map((tr, i) => {
                             const rowID = applicableBrowseFieldSet.map((abfs) =>
-                                tr[localizedFieldNames.indexOf(abfs.browseFieldName)])
+                                tr[localizedFieldNames.indexOf(abfs.fieldName)])
                                     .join('-');
                             return addChildren(trElem,
                                 checkedFieldIndexes.map((idx, j) => {

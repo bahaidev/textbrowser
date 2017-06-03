@@ -654,12 +654,12 @@ Templates.workDisplay = {
             [
                 ...(function () {
                     const addBrowseFieldSet = (setType) =>
-                        browseFields.reduce((rowContent, {browseFieldName, aliases}, j) => {
+                        browseFields.reduce((rowContent, {fieldName, aliases}, j) => {
                             const name = iil(setType) + (i + 1) + '-' + (j + 1);
                             const id = name;
                             rowContent['#'].push(
                                 ['td', [
-                                    ['label', {'for': name}, [browseFieldName]]
+                                    ['label', {'for': name}, [fieldName]]
                                 ]],
                                 ['td', [
                                     aliases ? ['datalist', {id: 'dl-' + id},
@@ -706,12 +706,12 @@ Templates.workDisplay = {
                 ['td', {colspan: 4 * browseFields.length + 2, align: 'center'}, [
                     ['table', [
                         ['tr', [
-                            browseFields.reduce((rowContent, {browseFieldName, aliases}, j) => {
+                            browseFields.reduce((rowContent, {fieldName, aliases}, j) => {
                                 const name = iil('anchor') + (i + 1) + '-' + (j + 1);
                                 const id = name;
                                 rowContent['#'].push(
                                     ['td', [
-                                        ['label', {'for': name}, [browseFieldName]]
+                                        ['label', {'for': name}, [fieldName]]
                                     ]],
                                     ['td', [
                                         aliases ? ['datalist', {id: 'dl-' + id},
