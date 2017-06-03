@@ -42,6 +42,7 @@ Templates.resultsDisplay = {
                     : `.tfoot .th, `)
                 : '') +
             ('.tbody .td') + ` {
+    vertical-align: top;
     font-style: ${$pRawEsc('fontstyle')};
     font-variant: ${$pRawEsc('fontvariant')};
     font-weight: ${$pEscArbitrary('fontweight')};
@@ -145,6 +146,7 @@ body {
         tableData, schemaItems, $p, $pRaw, $pRawEsc, $pEscArbitrary,
         escapeQuotedCSS, escapeCSS, escapeHTML,
         heading, l, browseFieldSets, localizedFieldNames,
+        fieldValueAliasMap,
         interlinearSeparator = '<br /><br />'
     }) => {
         let caption;
@@ -372,7 +374,11 @@ body {
                                                     '</span>' + l('colon-space')
                                                 : ''
                                             ) +
-                                            tr[idx] + (interlinearColIndexes
+                                            (fieldValueAliasMap[idx] !== undefined
+                                                ? fieldValueAliasMap[idx][tr[idx]]
+                                                : tr[idx]
+                                            ) +
+                                            (interlinearColIndexes
                                                 ? interlinearSeparator +
                                                     interlinearColIndexes.map((idx) =>
                                                         (showInterlinTitles

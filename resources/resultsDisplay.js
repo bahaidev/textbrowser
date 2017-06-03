@@ -60,11 +60,23 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             }) => {
                 browseFieldSets.push(browseFields);
             });
+            const fieldValueAliasMap = schemaItems.map(({title: field}) => {
+                const {preferAlias, fieldValueAliasMap} = this.getFieldNameAndValueAliases({
+                    field, schemaItems, metadataObj, getFieldAliasOrName, getMetaProp
+                });
+                if (fieldValueAliasMap) {
+                    Object.entries(fieldValueAliasMap).forEach(([key, val]) => {
+                        fieldValueAliasMap[key] = val + ' (' + key + ')';
+                    });
+                    return preferAlias !== false ? fieldValueAliasMap : undefined;
+                }
+            });
             const localizedFieldNames = schemaItems.map((si) => getFieldAliasOrName(si.title));
             Templates.resultsDisplay.main({
                 tableData, schemaItems, $p, $pRaw, $pRawEsc, $pEscArbitrary,
                 escapeQuotedCSS, escapeCSS, escapeHTML,
                 heading, l, browseFieldSets, localizedFieldNames,
+                fieldValueAliasMap,
                 interlinearSeparator: this.interlinearSeparator
             });
         });

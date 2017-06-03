@@ -168,11 +168,11 @@ TextBrowser.prototype.getFieldNameAndValueAliases = function ({
         fieldName: getFieldAliasOrName(field)
     };
 
-    let fvAliases = metadataObj.fields && metadataObj.fields[field] &&
+    let fieldValueAliasMap = metadataObj.fields && metadataObj.fields[field] &&
         metadataObj.fields[field]['fieldvalue-aliases'];
-    if (fvAliases) {
-        if (fvAliases.localeKey) {
-            fvAliases = getMetaProp(metadataObj, fvAliases.localeKey.split('/'), true);
+    if (fieldValueAliasMap) {
+        if (fieldValueAliasMap.localeKey) {
+            fieldValueAliasMap = getMetaProp(metadataObj, fieldValueAliasMap.localeKey.split('/'), true);
         }
         ret.aliases = [];
         // Todo: We could use `prefer_alias` but algorithm below may cover needed cases
@@ -181,16 +181,16 @@ TextBrowser.prototype.getFieldNameAndValueAliases = function ({
                 ret.aliases.push(
                     getMetaProp(metadataObj, ['fieldvalue', field, enm], true)
                 );
-                if (enm in fvAliases &&
+                if (enm in fieldValueAliasMap &&
                     // Todo: We could allow numbers here too, but crowds pull-down
-                    typeof fvAliases[enm] === 'string') {
-                    ret.aliases.push(...fvAliases[enm]);
+                    typeof fieldValueAliasMap[enm] === 'string') {
+                    ret.aliases.push(...fieldValueAliasMap[enm]);
                 }
             });
         } else {
             // Todo: We might iterate over all values (in case some not included in fv map)
             // Todo: Check `fieldSchema` for integer or string type
-            Object.entries(fvAliases).forEach(([key, aliases]) => {
+            Object.entries(fieldValueAliasMap).forEach(([key, aliases]) => {
                 // We'll preserve the numbers since probably more useful if stored
                 //   with data (as opposed to enums)
                 if (!Array.isArray(aliases)) {
@@ -208,9 +208,10 @@ TextBrowser.prototype.getFieldNameAndValueAliases = function ({
                 );
             });
         }
+        ret.fieldValueAliasMap = fieldValueAliasMap;
         // ret.aliases.sort();
     }
-
+    ret.preferAlias = getMetaProp(metadataObj, ['fields', field, 'prefer_alias']);
     return ret;
 };
 
@@ -290,7 +291,7 @@ TextBrowser.prototype.paramChange = function () {
             //        fallback if an object is returned from a language because
             //        that language is missing content and is only thus returning
             //        an object)
-            prop = allowObjects || typeof strings === 'string' ? strings : false;
+            prop = (allowObjects || typeof strings === 'string') ? strings : undefined;
             return prop;
         });
         return prop;
