@@ -410,6 +410,8 @@ body {
                                     start1-1, etc.
                                     end1-1, etc.
                                     rand
+                                        random within specific part of browse field range
+                                        (e.g., within a specific book)?
                                     context (highlight?)
                                 */
 
