@@ -280,6 +280,8 @@ body {
             return el;
         };
         const addAtts = (el, newAtts) => [el[0], Object.assign({}, el[1], newAtts)];
+        const showInterlinTitles = $pRaw('interlintitle') === '1';
+        const colonSpace = l('colon-space');
 
         jml('div', [
             Templates.resultsDisplay.styles({
@@ -368,7 +370,7 @@ body {
                             return addChildren(trElem,
                                 checkedFieldIndexes.map((idx, j) => {
                                     const interlinearColIndexes = allInterlinearColIndexes[j];
-                                    const showInterlinTitles = $pRaw('interlintitle') === '1' &&
+                                    const showInterlins = showInterlinTitles &&
                                         interlinearColIndexes;
                                     const trVal = (fieldValueAliasMap[idx] !== undefined
                                         ? fieldValueAliasMap[idx][tr[idx]]
@@ -382,20 +384,20 @@ body {
                                             row: rowID
                                         },
                                         innerHTML:
-                                            (showInterlinTitles
+                                            (showInterlins
                                                 ? '<span class="interlintitle">' +
                                                     localizedFieldNames[idx] +
-                                                    '</span>' + l('colon-space')
+                                                    '</span>' + colonSpace
                                                 : ''
                                             ) +
                                             trVal +
                                             (interlinearColIndexes
                                                 ? interlinearSeparator +
                                                     interlinearColIndexes.map((idx) =>
-                                                        (showInterlinTitles
+                                                        (showInterlins
                                                             ? '<span class="interlintitle">' +
                                                                 localizedFieldNames[idx] +
-                                                                '</span>' + l('colon-space')
+                                                                '</span>' + colonSpace
                                                             : '') +
                                                         trVal
                                                     ).join(interlinearSeparator)
