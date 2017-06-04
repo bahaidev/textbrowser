@@ -397,13 +397,6 @@ body {
                 //      numbers if possible where not and schema-detect type
                 //      for faster sorting--integer parsing only on URL params
                 //      per schema)
-                // Todo: Cache sort (and inform user when first caching)
-
-                // Todo: Optimize Jamilih to build strings; also to preprocess
-                //        files like this to convert Jamilih to complete string
-                //        concatenation as somewhat faster
-                // Todo: Cache JSON into IndexedDB or ideally at least
-                //        localStorage for now)
 
                 // Todo: rand
                 //      random within specific part of browse field range
@@ -411,6 +404,14 @@ body {
                 // Todo: context (highlight?)
 
                 // Todo: localizeParamNames (preference)?
+
+                // Todo: Optimize Jamilih to build strings; also to preprocess
+                //        files like this to convert Jamilih to complete string
+                //        concatenation as somewhat faster
+                // Todo: Cache JSON into IndexedDB or ideally at least
+                //        localStorage for now)
+                // Todo: Cache sort (and inform user when first caching)
+
                 // Todo: Support `text()` with `querySelector`
                 // Todo: Later: Speech controls
                 // Todo: Later: search1, etc.
