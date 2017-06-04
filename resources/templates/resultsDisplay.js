@@ -427,11 +427,11 @@ body {
                 //        localStorage for now)
                 // Todo: Cache sort (and inform user when first caching)
 
-                // Todo: Support `text()` with `querySelector`
+                // Todo: Later: Handle transpose, in header, footer, and body
+                // Todo: Later: Support `text()` with `querySelector`
                 // Todo: Later: Speech controls
                 // Todo: Later: search1, etc.
                 // Todo: Later: auto-fields
-                // Todo: Later: Handle transpose, in header, footer, and body
                 // Todo: Later: Support JSON types for `outputmode`, opening
                 //     new window with content-type set
             ));
