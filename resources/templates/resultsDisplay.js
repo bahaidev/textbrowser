@@ -403,6 +403,9 @@ body {
                     });
                 })
 
+                // Todo: Fix range algorithm to keep checking (e.g., for
+                //    multiple matches of "0") until no longer true
+
                 // Todo: Allow field to indicate need for pre-sorting on
                 //      relevant browser fields for out-of-order ranges (also
                 //      change to numbers if possible where not and schema-detect

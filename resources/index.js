@@ -107,11 +107,13 @@ TextBrowser.prototype.getWorkData = function ({
         let getPlugins, pluginsInWork, pluginFieldsForWork, pluginPaths, pluginFieldMappingForWork;
         if (this.allowPlugins) {
             const possiblePluginFieldMappingForWork = dbs['plugin-field-mapping'][fileGroup.id][fileData.name];
-            pluginFieldsForWork = Object.keys(possiblePluginFieldMappingForWork);
-            pluginsInWork = Object.keys(dbs.plugins).filter((p) => pluginFieldsForWork.includes(p));
-            pluginFieldMappingForWork = pluginsInWork.map((p) => possiblePluginFieldMappingForWork[p]);
-            pluginPaths = pluginsInWork.map((p) => dbs.plugins[p].path);
-            getPlugins = this.allowPlugins && pluginsInWork;
+            if (possiblePluginFieldMappingForWork) {
+                pluginFieldsForWork = Object.keys(possiblePluginFieldMappingForWork);
+                pluginsInWork = Object.keys(dbs.plugins).filter((p) => pluginFieldsForWork.includes(p));
+                pluginFieldMappingForWork = pluginsInWork.map((p) => possiblePluginFieldMappingForWork[p]);
+                pluginPaths = pluginsInWork.map((p) => dbs.plugins[p].path);
+                getPlugins = this.allowPlugins && pluginsInWork;
+            }
         }
         return getMetadata(metadataFile, metadataProperty).then((metadataObj) => {
             function getFieldAliasOrName (field) {
