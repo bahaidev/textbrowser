@@ -335,10 +335,9 @@ body {
             if (!foundStart) {
                 if (starts.some((part, i) =>
                     Array.isArray(rowIDParts[i])
-                        ? !rowIDParts[i].some((rip) => starts[i] === String(rip)) // Todo: Use schema to determine each
-                        : starts[i] !== String(rowIDParts[i]) // Todo: Use schema to determine each
+                        ? !rowIDParts[i].some((rip) => starts[i] === String(rip)) // Todo: Use schema to determine each and use `parseInt` on other value instead of `String` conversion
+                        : starts[i] !== String(rowIDParts[i]) // Todo: Use schema to determine each and use `parseInt` on other value instead of `String` conversion
                 )) {
-                    // console.log(rowIDParts);
                     return;
                 }
                 foundStart = true;
@@ -346,8 +345,8 @@ body {
             // This doesn't go in an `else` for the above in case the start is the end
             if (ends.every((part, i) =>
                 Array.isArray(rowIDParts[i])
-                    ? rowIDParts[i].some((rip) => ends[i] === String(rip))
-                    : ends[i] === String(rowIDParts[i]) // Todo: Use schema to determine each
+                    ? rowIDParts[i].some((rip) => ends[i] === String(rip)) // Todo: Use schema to determine each and use `parseInt` on other value instead of `String` conversion
+                    : ends[i] === String(rowIDParts[i]) // Todo: Use schema to determine each and use `parseInt` on other value instead of `String` conversion
             )) {
                 foundEnd = true;
             }
@@ -391,20 +390,22 @@ body {
                         )
                     });
                 })
-                /*
+                // Todo: Indicate need for pre-sorting on relevant browser fields
+                //      for out-of-order ranges (also change to
+                //      numbers if possible where not and schema-detect type
+                //      for faster sorting--integer parsing only on URL params
+                //      per schema)
+
                 // Todo: Optimize Jamilih to build strings; also to preprocess
                 //        files like this to convert Jamilih to complete string
                 //        concatenation as somewhat faster
-                // Todo: Add ranges within applicable browse field set
-                    (also need to cache JSON into IndexedDB or at
-                        least localStorage for now)
-                    start1-1, etc.
-                    end1-1, etc.
-                    rand
-                        random within specific part of browse field range
-                        (e.g., within a specific book)?
-                    context (highlight?)
-                */
+                // Todo: Cache JSON into IndexedDB or ideally at least
+                //        localStorage for now)
+
+                // Todo: rand
+                //      random within specific part of browse field range
+                //      (e.g., within a specific book)?
+                // Todo: context (highlight?)
 
                 // Todo: localizeParamNames (preference)?
                 // Todo: Support `text()` with `querySelector`
