@@ -551,6 +551,7 @@ Templates.workDisplay = {
                         ['input', {
                             name: il('context'),
                             type: 'number',
+                            min: 1,
                             size: 4,
                             value: $p.get('context')
                         }]
@@ -654,7 +655,7 @@ Templates.workDisplay = {
             [
                 ...(function () {
                     const addBrowseFieldSet = (setType) =>
-                        browseFields.reduce((rowContent, {fieldName, aliases}, j) => {
+                        browseFields.reduce((rowContent, {fieldName, aliases, fieldSchema: {minimum}}, j) => {
                             const name = iil(setType) + (i + 1) + '-' + (j + 1);
                             const id = name;
                             rowContent['#'].push(
@@ -682,7 +683,10 @@ Templates.workDisplay = {
                                                 : undefined
                                         }]
                                         : ['input', {
-                                            name, id, type: 'number', value: $p.get(name)
+                                            name, id,
+                                            type: 'number',
+                                            min: minimum,
+                                            value: $p.get(name)
                                         }],
                                     nbsp.repeat(3)
                                 ]]
@@ -706,7 +710,7 @@ Templates.workDisplay = {
                 ['td', {colspan: 4 * browseFields.length + 2 + 1, align: 'center'}, [
                     ['table', [
                         ['tr', [
-                            browseFields.reduce((rowContent, {fieldName, aliases}, j) => {
+                            browseFields.reduce((rowContent, {fieldName, aliases, fieldSchema: {minimum}}, j) => {
                                 const name = iil('anchor') + (i + 1) + '-' + (j + 1);
                                 const id = name;
                                 rowContent['#'].push(
@@ -723,7 +727,10 @@ Templates.workDisplay = {
                                                 list: 'dl-' + id, value: $p.get(name)
                                             }]
                                             : ['input', {
-                                                name, id, type: 'number', value: $p.get(name)
+                                                name, id,
+                                                type: 'number',
+                                                min: minimum,
+                                                value: $p.get(name)
                                             }],
                                         nbsp.repeat(2)
                                     ]]

@@ -213,6 +213,7 @@ TextBrowser.prototype.getFieldNameAndValueAliases = function ({
         ret.fieldValueAliasMap = fieldValueAliasMap;
         // ret.aliases.sort();
     }
+    ret.fieldSchema = fieldSchema;
     ret.preferAlias = metadataObj.fields[field].prefer_alias;
     return ret;
 };
