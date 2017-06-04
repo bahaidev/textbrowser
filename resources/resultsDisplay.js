@@ -70,6 +70,16 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
                             fieldValueAliasMap[key] = val.map((v) => v + ' (' + key + ')');
                             return;
                         }
+                        if (val && typeof val === 'object') {
+                            if (typeof preferAlias === 'string') {
+                                fieldValueAliasMap[key] = val[preferAlias] + ' (' + key + ')';
+                            } else {
+                                Object.entries(val).forEach(([k, v]) => {
+                                    fieldValueAliasMap[key][k] = v + ' (' + key + ')';
+                                });
+                            }
+                            return;
+                        }
                         fieldValueAliasMap[key] = val + ' (' + key + ')';
                     });
                     return preferAlias !== false ? fieldValueAliasMap : undefined;

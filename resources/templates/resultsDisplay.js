@@ -309,9 +309,6 @@ body {
         let foundStart = false;
         let foundEnd = false;
 
-        console.log('starts', starts);
-        console.log('ends', ends);
-
         const outArr = [];
         tableData.some((tr, i) => {
             if (foundEnd) {
@@ -331,23 +328,33 @@ body {
                     : tr[idx];
                 // return tr[idx];
             });
-            console.log('rowIDParts', rowIDParts[0], typeof rowIDParts[0]);
+
+            // Todo: Use schema to determine each and use `parseInt`
+            //   on other value instead of `String` conversions
             if (!foundStart) {
-                if (starts.some((part, i) =>
-                    Array.isArray(rowIDParts[i])
-                        ? !rowIDParts[i].some((rip) => starts[i] === String(rip)) // Todo: Use schema to determine each and use `parseInt` on other value instead of `String` conversion
-                        : starts[i] !== String(rowIDParts[i]) // Todo: Use schema to determine each and use `parseInt` on other value instead of `String` conversion
-                )) {
+                if (starts.some((part, i) => {
+                    const rowIDPart = rowIDParts[i];
+                    return Array.isArray(rowIDPart)
+                        ? !rowIDPart.some((rip) => starts[i] === String(rip))
+                        : (rowIDPart && typeof rowIDPart === 'object'
+                            ? !Object.values(rowIDPart).some((rip) => starts[i] === String(rip))
+                            : starts[i] !== String(rowIDPart)
+                        );
+                })) {
                     return;
                 }
                 foundStart = true;
             }
             // This doesn't go in an `else` for the above in case the start is the end
-            if (ends.every((part, i) =>
-                Array.isArray(rowIDParts[i])
-                    ? rowIDParts[i].some((rip) => ends[i] === String(rip)) // Todo: Use schema to determine each and use `parseInt` on other value instead of `String` conversion
-                    : ends[i] === String(rowIDParts[i]) // Todo: Use schema to determine each and use `parseInt` on other value instead of `String` conversion
-            )) {
+            if (ends.every((part, i) => {
+                const rowIDPart = rowIDParts[i];
+                return Array.isArray(rowIDPart)
+                    ? rowIDPart.some((rip) => ends[i] === String(rip))
+                    : (rowIDPart && typeof rowIDPart === 'object'
+                        ? Object.values(rowIDPart).some((rip) => ends[i] === String(rip))
+                        : ends[i] === String(rowIDPart)
+                    );
+            })) {
                 foundEnd = true;
             }
 
@@ -357,10 +364,16 @@ body {
                     const interlinearColIndexes = allInterlinearColIndexes[j];
                     const showInterlins = showInterlinTitles &&
                         interlinearColIndexes;
-                    const trVal = (fieldValueAliasMap[idx] !== undefined
+                    let trVal = (fieldValueAliasMap[idx] !== undefined
                         ? fieldValueAliasMap[idx][tr[idx]]
                         : tr[idx]
                     );
+                    if (trVal && typeof trVal === 'object') {
+                        trVal = Object.values(trVal);
+                    }
+                    if (Array.isArray(trVal)) {
+                        trVal = trVal.join(l('comma-space'));
+                    }
                     return addAtts(tdElem, {
                         // anchors
                         id: 'row' + (i + 1) + 'col' + (j + 1), // Can't have unique IDs if user duplicates a column
