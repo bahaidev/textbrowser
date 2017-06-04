@@ -149,11 +149,43 @@ body {
         fieldValueAliasMap,
         interlinearSeparator = '<br /><br />'
     }) => {
+        // Todo: Repeats some code in workDisplay; probably need to reuse
+        //   these functions more in this file
+        const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
+        const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true)
+            ? $p.get('i18n', true) === '1'
+            : prefI18n === 'true' || (
+                prefI18n !== 'false' && this.localizeParamNames
+            );
+        const il = localizeParamNames
+            ? key => l(['params', key])
+            : key => key;
+        const iil = localizeParamNames
+            ? key => l(['params', 'indexed', key])
+            : key => key;
+        const ilRaw = localizeParamNames
+            ? (key, suffix = '') => $p.get(il(key) + suffix, true)
+            : (key, suffix = '') => $p.get(key + suffix, true);
+        const iilRaw = localizeParamNames
+            ? (key, suffix = '') => $p.get(iil(key) + suffix, true)
+            : (key, suffix = '') => $p.get(key + suffix, true);
+
         let caption;
         const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
-            typeof $p.get('start' + (i + 1) + '-1', true) === 'string'
+            typeof iilRaw('start', (i + 1) + '-1') === 'string'
         );
         const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
+        const buildRangePoint = (startOrEnd) =>
+            applicableBrowseFieldSet.map((bf, j) =>
+                // Todo: i18nize?
+                $p.get(
+                    startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
+                    true
+                )
+            );
+        const starts = buildRangePoint('start');
+        const ends = buildRangePoint('end');
+
         const hasCaption = $pRaw('caption') !== '0';
         if (hasCaption) {
             /*
@@ -177,24 +209,15 @@ body {
             );
             */
             const buildRanges = () => {
-                const buildRangePoint = (startOrEnd) =>
-                    applicableBrowseFieldSet.map((bf, j) =>
-                        $p.get(
-                            startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
-                            true
-                        )
-                    );
-                const start = buildRangePoint('start');
-                const end = buildRangePoint('end');
                 const endVals = [];
-                const startStr = start.reduce((str, fieldValue, i) => {
+                const startStr = starts.reduce((str, fieldValue, i) => {
                     const ret = str + fieldValue;
-                    if (fieldValue === end[i]) {
+                    if (fieldValue === ends[i]) {
                         return ret +
                             (i > 0 ? ',' : '') + // e.g., for "Genesis 7, 5-8"
                             ' '; // e.g., for 2nd space in "Surah 2 5-8"
                     }
-                    endVals.push(end[i]);
+                    endVals.push(ends[i]);
                     return ret + ':';
                 }, '').slice(0, -1);
 
@@ -283,6 +306,117 @@ body {
         const showInterlinTitles = $pRaw('interlintitle') === '1';
         const colonSpace = l('colon-space');
 
+        let foundStart = false;
+        let foundEnd = false;
+
+        console.log('starts', starts);
+        console.log('ends', ends);
+
+        const outArr = [];
+        tableData.some((tr, i) => {
+            if (foundEnd) {
+                return true;
+            }
+            const rowIDParts = applicableBrowseFieldSet.map((abfs) => {
+                const idx = localizedFieldNames.indexOf(abfs.fieldName);
+                // This works to put alias in anchor but this includes
+                //   our ending parenthetical, the alias may be harder
+                //   to remember and/or automated than original (e.g.,
+                //   for a number representing a book), and there could
+                //   be multiple aliases for a value; we may wish to
+                //   switch this (and also for other browse field-based
+                //   items).
+                return fieldValueAliasMap[idx] !== undefined
+                    ? fieldValueAliasMap[idx][tr[idx]]
+                    : tr[idx];
+                // return tr[idx];
+            });
+            console.log('rowIDParts', rowIDParts[0], typeof rowIDParts[0]);
+            if (!foundStart) {
+                if (starts.some((part, i) =>
+                    Array.isArray(rowIDParts[i])
+                        ? !rowIDParts[i].some((rip) => starts[i] === String(rip)) // Todo: Use schema to determine each
+                        : starts[i] !== String(rowIDParts[i]) // Todo: Use schema to determine each
+                )) {
+                    // console.log(rowIDParts);
+                    return;
+                }
+                foundStart = true;
+            }
+            // This doesn't go in an `else` for the above in case the start is the end
+            if (ends.every((part, i) =>
+                Array.isArray(rowIDParts[i])
+                    ? rowIDParts[i].some((rip) => ends[i] === String(rip))
+                    : ends[i] === String(rowIDParts[i]) // Todo: Use schema to determine each
+            )) {
+                foundEnd = true;
+            }
+
+            const rowID = rowIDParts.join('-');
+            outArr.push(addChildren(trElem,
+                checkedFieldIndexes.map((idx, j) => {
+                    const interlinearColIndexes = allInterlinearColIndexes[j];
+                    const showInterlins = showInterlinTitles &&
+                        interlinearColIndexes;
+                    const trVal = (fieldValueAliasMap[idx] !== undefined
+                        ? fieldValueAliasMap[idx][tr[idx]]
+                        : tr[idx]
+                    );
+                    return addAtts(tdElem, {
+                        // anchors
+                        id: 'row' + (i + 1) + 'col' + (j + 1), // Can't have unique IDs if user duplicates a column
+                        dataset: {
+                            col: localizedFieldNames[j],
+                            row: rowID
+                        },
+                        innerHTML:
+                            (showInterlins
+                                ? '<span class="interlintitle">' +
+                                    localizedFieldNames[idx] +
+                                    '</span>' + colonSpace
+                                : ''
+                            ) +
+                            trVal +
+                            (interlinearColIndexes
+                                ? interlinearSeparator +
+                                    interlinearColIndexes.map((idx) =>
+                                        (showInterlins
+                                            ? '<span class="interlintitle">' +
+                                                localizedFieldNames[idx] +
+                                                '</span>' + colonSpace
+                                            : '') +
+                                        trVal
+                                    ).join(interlinearSeparator)
+                                : ''
+                        )
+                    });
+                })
+                /*
+                // Todo: Optimize Jamilih to build strings; also to preprocess
+                //        files like this to convert Jamilih to complete string
+                //        concatenation as somewhat faster
+                // Todo: Add ranges within applicable browse field set
+                    (also need to cache JSON into IndexedDB or at
+                        least localStorage for now)
+                    start1-1, etc.
+                    end1-1, etc.
+                    rand
+                        random within specific part of browse field range
+                        (e.g., within a specific book)?
+                    context (highlight?)
+                */
+
+                // Todo: localizeParamNames (preference)?
+                // Todo: Support `text()` with `querySelector`
+                // Todo: Later: Speech controls
+                // Todo: Later: search1, etc.
+                // Todo: Later: auto-fields
+                // Todo: Later: Handle transpose, in header, footer, and body
+                // Todo: Later: Support JSON types for `outputmode`, opening
+                //     new window with content-type set
+            ));
+        });
+
         jml('div', [
             Templates.resultsDisplay.styles({
                 $p, $pRaw, $pRawEsc, $pEscArbitrary,
@@ -351,106 +485,15 @@ body {
                             })
                         )
                     ]) : ''),
-                    addChildren(tbodyElem, [
-                        ...tableData.map((tr, i) => {
-                            const rowID = applicableBrowseFieldSet.map((abfs) => {
-                                const idx = localizedFieldNames.indexOf(abfs.fieldName);
-                                // This works to put alias in anchor but this includes
-                                //   our ending parenthetical, the alias may be harder
-                                //   to remember and/or automated than original (e.g.,
-                                //   for a number representing a book), and there could
-                                //   be multiple aliases for a value; we may wish to
-                                //   switch this (and also for other browse field-based
-                                //   items).
-                                return fieldValueAliasMap[idx] !== undefined
-                                    ? fieldValueAliasMap[idx][tr[idx]]
-                                    : tr[idx];
-                                // return tr[idx];
-                            }).join('-');
-                            return addChildren(trElem,
-                                checkedFieldIndexes.map((idx, j) => {
-                                    const interlinearColIndexes = allInterlinearColIndexes[j];
-                                    const showInterlins = showInterlinTitles &&
-                                        interlinearColIndexes;
-                                    const trVal = (fieldValueAliasMap[idx] !== undefined
-                                        ? fieldValueAliasMap[idx][tr[idx]]
-                                        : tr[idx]
-                                    );
-                                    return addAtts(tdElem, {
-                                        // anchors
-                                        id: 'row' + (i + 1) + 'col' + (j + 1), // Can't have unique IDs if user duplicates a column
-                                        dataset: {
-                                            col: localizedFieldNames[j],
-                                            row: rowID
-                                        },
-                                        innerHTML:
-                                            (showInterlins
-                                                ? '<span class="interlintitle">' +
-                                                    localizedFieldNames[idx] +
-                                                    '</span>' + colonSpace
-                                                : ''
-                                            ) +
-                                            trVal +
-                                            (interlinearColIndexes
-                                                ? interlinearSeparator +
-                                                    interlinearColIndexes.map((idx) =>
-                                                        (showInterlins
-                                                            ? '<span class="interlintitle">' +
-                                                                localizedFieldNames[idx] +
-                                                                '</span>' + colonSpace
-                                                            : '') +
-                                                        trVal
-                                                    ).join(interlinearSeparator)
-                                                : ''
-                                        )
-                                    });
-                                })
-                                /*
-                                // Todo: Optimize Jamilih to build strings; also to preprocess
-                                //        files like this to convert Jamilih to complete string
-                                //        concatenation as somewhat faster
-                                // Todo: Add ranges within applicable browse field set
-                                    (also need to cache JSON into IndexedDB or at
-                                        least localStorage for now)
-                                    start1-1, etc.
-                                    end1-1, etc.
-                                    rand
-                                        random within specific part of browse field range
-                                        (e.g., within a specific book)?
-                                    context (highlight?)
-                                */
-
-                                // Todo: localizeParamNames (preference)?
-                                // Todo: Support `text()` with `querySelector`
-                                // Todo: Later: Speech controls
-                                // Todo: Later: search1, etc.
-                                // Todo: Later: auto-fields
-                                // Todo: Later: Handle transpose, in header, footer, and body
-                                // Todo: Later: Support JSON types for `outputmode`, opening
-                                //     new window with content-type set
-                            );
-                        })
-                    ])
+                    addChildren(tbodyElem, outArr)
                 ])
             ])
         ], document.body);
 
-        // Todo: Repeats some code in workDisplay; probably need to reuse
-        //   these functions more in this file
-        const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
-        const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true)
-            ? $p.get('i18n', true) === '1'
-            : prefI18n === 'true' || (
-                prefI18n !== 'false' && this.localizeParamNames
-            );
-        const iil = localizeParamNames
-            ? key => l(['params', 'indexed', key])
-            : key => key;
-
         // Check if user added this (e.g., even to end of URL with
         //   other anchor params)
         let anchor;
-        const anchorRowCol = $p.get(iil('anchorrowcol'), true);
+        const anchorRowCol = ilRaw('anchorrowcol');
         if (anchorRowCol) {
             anchor = document.querySelector('#' + anchorRowCol);
         }

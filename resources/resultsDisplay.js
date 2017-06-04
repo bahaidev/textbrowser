@@ -66,6 +66,10 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
                 });
                 if (fieldValueAliasMap) {
                     Object.entries(fieldValueAliasMap).forEach(([key, val]) => {
+                        if (Array.isArray(val)) {
+                            fieldValueAliasMap[key] = val.map((v) => v + ' (' + key + ')');
+                            return;
+                        }
                         fieldValueAliasMap[key] = val + ' (' + key + ')';
                     });
                     return preferAlias !== false ? fieldValueAliasMap : undefined;
