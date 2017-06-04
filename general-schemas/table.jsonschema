@@ -12,6 +12,10 @@
             "type": "string"
         },
         "type": {"$ref": "#/definitions/typeArray"},
+        "additionalItems": {
+            "type": "boolean",
+            "enum": [false]
+        },
         "items": {
             "type": "object",
             "properties": {
