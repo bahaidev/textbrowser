@@ -785,7 +785,11 @@ Templates.workDisplay = {
                 ]],
                 ['h2', [heading]],
                 ['br'],
-                ['form', {id: 'browse', name: il('browse')}, [
+                ['form', {id: 'browse', $on: {
+                    submit: function (e) {
+                        e.preventDefault();
+                    }
+                }, name: il('browse')}, [
                     ['table', {align: 'center'}, content],
                     ['br'],
                     ['div', {style: 'margin-left: 20px'}, [
@@ -847,7 +851,7 @@ Templates.workDisplay = {
                     ]],
                     ['p', {align: 'center'}, [
                         le('submitgo', 'input', 'value', {
-                            type: 'button',
+                            type: 'submit',
                             $on: {
                                 click: () => {
                                     // Todo:
