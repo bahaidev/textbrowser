@@ -395,6 +395,7 @@ body {
                 //      numbers if possible where not and schema-detect type
                 //      for faster sorting--integer parsing only on URL params
                 //      per schema)
+                // Todo: Cache sort (and inform user when first caching)
                 // Todo: Field value aliases as objects (e.g., Bible)
 
                 // Todo: Optimize Jamilih to build strings; also to preprocess
