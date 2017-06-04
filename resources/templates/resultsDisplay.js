@@ -375,7 +375,6 @@ body {
                         trVal = trVal.join(l('comma-space'));
                     }
                     return addAtts(tdElem, {
-                        // anchors
                         id: 'row' + (i + 1) + 'col' + (j + 1), // Can't have unique IDs if user duplicates a column
                         dataset: {
                             col: localizedFieldNames[j],
@@ -404,12 +403,12 @@ body {
                     });
                 })
 
-                // Todo: Field value aliases as objects (e.g., Bible)
-                // Todo: Indicate need for pre-sorting on relevant browser fields
-                //      for out-of-order ranges (also change to
-                //      numbers if possible where not and schema-detect type
-                //      for faster sorting--integer parsing only on URL params
-                //      per schema)
+                // Todo: Allow field to indicate need for pre-sorting on
+                //      relevant browser fields for out-of-order ranges (also
+                //      change to numbers if possible where not and schema-detect
+                //      type for faster sorting--integer parsing only on URL
+                //      params per schema); see todo above on
+                //      `String`/`parseInt`
 
                 // Todo: rand
                 //      random within specific part of browse field range
