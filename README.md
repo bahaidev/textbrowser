@@ -380,6 +380,7 @@ shows its usage (assuming paths relative to a package containing
     <http://bahai.works/MediaWiki:Common.js>, allowing different
     speech voices for different rows or columns (or just let user
     add CSS to columns to mark).
+1.  Random across works in group or all groups
 
 ## To-dos (medium priority)
 
