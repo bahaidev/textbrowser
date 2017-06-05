@@ -105,7 +105,9 @@
     "none": "None",
     "both": "Both",
     "comma-space": ", ",
+    "comma": ",",
     "colon-space": ": ",
+    "colon": ":",
 
     "param_values": {
         "colors": {

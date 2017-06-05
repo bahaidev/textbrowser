@@ -1,5 +1,38 @@
 /* globals Templates, jml */
+(() => {
+const $ = (sel) => document.querySelector(sel);
+
 Templates.resultsDisplay = {
+    caption: ({heading, ranges}) => {
+        return heading + ' ' + ranges;
+    },
+    startSeparator: ({l}) => {
+        return l('colon');
+    },
+    innerBrowseFieldSeparator: ({l}) => {
+        return l('comma-space');
+    },
+    ranges: ({l, startRange, endVals, rangeNames}) => {
+        return startRange +
+            // l('to').toLowerCase() + ' ' +
+            '-' +
+            endVals.join(
+                Templates.resultsDisplay.startSeparator({l})
+            ) + ' (' + rangeNames + ')';
+    },
+    fieldValueAlias: ({key, value}) => {
+        return value + ' (' + key + ')';
+    },
+    anchorRowCol: ({anchorRowCol}) => {
+        return $('#' + anchorRowCol);
+    },
+    anchors: ({escapedRow, escapedCol}) => {
+        const sel = 'td[data-row="' + escapedRow + '"]' +
+            (escapedCol
+                ? ('[data-col="' + escapedCol + '"]')
+                : '');
+        return $(sel);
+    },
     styles: ({
         $p, $pRaw, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, escapeCSS,
         tableWithFixedHeaderAndFooter, checkedFieldIndexes, hasCaption
@@ -147,110 +180,10 @@ body {
         escapeQuotedCSS, escapeCSS, escapeHTML,
         heading, l, browseFieldSets, presorts,
         localizedFieldNames, fieldValueAliasMap,
+        starts, ends, applicableBrowseFieldNames,
+        caption, hasCaption,
         interlinearSeparator = '<br /><br />'
     }) => {
-        // Todo: Repeats some code in workDisplay; probably need to reuse
-        //   these functions more in this file
-        const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
-        const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true)
-            ? $p.get('i18n', true) === '1'
-            : prefI18n === 'true' || (
-                prefI18n !== 'false' && this.localizeParamNames
-            );
-        const il = localizeParamNames
-            ? key => l(['params', key])
-            : key => key;
-        const iil = localizeParamNames
-            ? key => l(['params', 'indexed', key])
-            : key => key;
-        const ilRaw = localizeParamNames
-            ? (key, suffix = '') => $p.get(il(key) + suffix, true)
-            : (key, suffix = '') => $p.get(key + suffix, true);
-        const iilRaw = localizeParamNames
-            ? (key, suffix = '') => $p.get(iil(key) + suffix, true)
-            : (key, suffix = '') => $p.get(key + suffix, true);
-
-        let caption;
-        const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
-            typeof iilRaw('start', (i + 1) + '-1') === 'string'
-        );
-        const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
-        const applicableBrowseFieldNames = applicableBrowseFieldSet.map((abfs) =>
-            abfs.fieldName
-        );
-        const presort = presorts[browseFieldSetIdx];
-        // Todo: Ought to be checking against an aliased table
-        if (presort) {
-            tableData = tableData.sort((rowA, rowB) => {
-                let precedence;
-                applicableBrowseFieldNames.some((fieldName) => {
-                    const idx = localizedFieldNames.indexOf(fieldName);
-                    const rowAFirst = rowA[idx] < rowB[idx];
-                    const rowBFirst = rowA[idx] > rowB[idx];
-                    precedence = rowBFirst ? 1 : -1;
-                    return rowAFirst || rowBFirst; // Keep going if 0
-                });
-                return precedence;
-            });
-        }
-
-        const buildRangePoint = (startOrEnd) =>
-            applicableBrowseFieldNames.map((bfn, j) =>
-                // Todo: i18nize?
-                $p.get(
-                    startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
-                    true
-                )
-            );
-        const starts = buildRangePoint('start');
-        const ends = buildRangePoint('end');
-
-        const hasCaption = $pRaw('caption') !== '0';
-        if (hasCaption) {
-            /*
-            // Works but displays in parentheses browse fields which
-            //  may be non-applicable
-            const buildRangePoint = (startOrEnd) => escapeHTML(
-                browseFieldSets.reduce((txt, bfs, i) =>
-                    (txt ? txt + ' (' : '') + bfs.map((bf, j) =>
-                        (j > 0 ? l('comma-space') : '') + bf + ' ' +
-                            $pRaw(startOrEnd + (i + 1) + '-' + (j + 1))
-                    ).join('') + (txt ? ')' : ''), '')
-            );
-            */
-            /*
-            // Works but overly long
-            const buildRangePoint = (startOrEnd) => escapeHTML(
-                applicableBrowseFieldSet.map((bf, j) =>
-                    (j > 0 ? l('comma-space') : '') + bf + ' ' +
-                        $pRaw(startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1))
-                ).join('')
-            );
-            */
-            const buildRanges = () => {
-                const endVals = [];
-                const startStr = starts.reduce((str, fieldValue, i) => {
-                    const ret = str + fieldValue;
-                    if (fieldValue === ends[i]) {
-                        return ret +
-                            (i > 0 ? ',' : '') + // e.g., for "Genesis 7, 5-8"
-                            ' '; // e.g., for 2nd space in "Surah 2 5-8"
-                    }
-                    endVals.push(ends[i]);
-                    return ret + ':';
-                }, '').slice(0, -1);
-
-                const rangeNames = applicableBrowseFieldNames.join(l('comma-space'));
-                return escapeHTML(
-                    startStr +
-                    // l('to').toLowerCase() + ' ' +
-                    '-' +
-                    endVals.join(':') + ' (' + rangeNames + ')'
-                );
-            };
-            caption = heading + ' ' + buildRanges();
-        }
-
         const tableElems = ({
             table: [
                 ['table', {'class': 'table', border: $pRaw('border') || '0'}],
@@ -473,7 +406,8 @@ body {
                             : ''
                     ]) : ''),
                     /*
-                    // Works but quirky, e.g., `color` doesn't work (as also confirmed per https://quirksmode.org/css/css2/columns.html)
+                    // Works but quirky, e.g., `color` doesn't work (as also
+                    //  confirmed per https://quirksmode.org/css/css2/columns.html)
                     addChildren(colgroupElem,
                         checkedFieldIndexes.map((idx, i) =>
                             addAtts(colElem, {style: $pRaw('css' + (i + 1))})
@@ -526,44 +460,6 @@ body {
                 ])
             ])
         ], document.body);
-
-        // Check if user added this (e.g., even to end of URL with
-        //   other anchor params)
-        let anchor;
-        const anchorRowCol = ilRaw('anchorrowcol');
-        if (anchorRowCol) {
-            anchor = document.querySelector('#' + anchorRowCol);
-        }
-        if (!anchor) {
-            const anchors = [];
-            let anchorField = '';
-            for (let i = 1, breakout; !breakout && !anchors.length; i++) {
-                for (let j = 1; ; j++) {
-                    const anchorText = 'anchor' + i + '-' + j;
-                    const anchor = $p.get(anchorText, true);
-                    if (!anchor) {
-                        if (anchors.length) {
-                            breakout = true;
-                        }
-                        break;
-                    }
-                    anchorField = $p.get(iil('anchorfield') + i, true);
-                    anchors.push(anchor);
-                    // anchors.push({anchorText, anchor});
-                }
-            }
-
-            if (anchors.length) {
-                const escapeSelectorAttValue = (str) => (str || '').replace(/["\\]/g, '\\$&');
-                const sel = 'td[data-row="' + escapeSelectorAttValue(anchors.join('-')) + '"]' +
-                    (anchorField
-                        ? ('[data-col="' + escapeSelectorAttValue(anchorField) + '"]')
-                        : '');
-                anchor = document.querySelector(sel);
-            }
-        }
-        if (anchor) {
-            anchor.scrollIntoView();
-        }
     }
 };
+})();
