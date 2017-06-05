@@ -563,7 +563,7 @@ Templates.workDisplay = {
                             click: () => {
                                 const url = serializeParamsAsURL(
                                     getDataForSerializingParamsAsURL(),
-                                    'result'
+                                    'randomResult'
                                 );
                                 $('#randomURL').value = url;
                             }

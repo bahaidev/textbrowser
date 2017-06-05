@@ -215,7 +215,7 @@ shows its usage (assuming paths relative to a package containing
 
 1. Todo: implement random
     1. random within specific part of browse field range (e.g., within a specific book)?
-    1. with context (highlight?)
+    1. with context
 
 ## To-dos (high priority)
 

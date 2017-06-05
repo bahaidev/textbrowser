@@ -137,14 +137,17 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             case 'saveSettings': {
                 // In case it was added previously on
                 //    this page, let's remove it.
-                paramsCopy.delete(il('random'));
+                paramsCopy.delete(il('rand'));
                 break;
             }
+            case 'randomResult':
             case 'result': {
                 // In case it was added previously on this page,
                 //    let's put random again toward the end.
-                paramsCopy.delete(il('random'));
-                paramsCopy.set(il('random'), l('yes'));
+                if (type === 'randomResult' || random.checked) {
+                    paramsCopy.delete(il('rand'));
+                    paramsCopy.set(il('rand'), l('yes'));
+                }
                 paramsCopy.set(il('result'), l('yes'));
                 break;
             }
