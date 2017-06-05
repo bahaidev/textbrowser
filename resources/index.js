@@ -227,6 +227,7 @@ TextBrowser.prototype.getBrowseFieldData = function ({
         }
 
         const fieldSets = browseFieldObject.set;
+        const presort = browseFieldObject.presort;
         // Todo: Deal with ['td', [['h3', [ld(browseFieldObject.name)]]]] as kind of fieldset
 
         const browseFields = fieldSets.map((field) =>
@@ -234,7 +235,7 @@ TextBrowser.prototype.getBrowseFieldData = function ({
                 field, schemaItems, metadataObj, getFieldAliasOrName, getMetaProp
             })
         );
-        cb({browseFields, i}); // eslint-disable-line standard/no-callback-literal
+        cb({browseFields, i, presort}); // eslint-disable-line standard/no-callback-literal
     });
 };
 

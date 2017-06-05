@@ -32,6 +32,9 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "presort": {
+                    "type": "boolean"
                 }
             }
         }

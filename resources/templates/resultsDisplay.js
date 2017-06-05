@@ -145,8 +145,8 @@ body {
     main: ({
         tableData, schemaItems, $p, $pRaw, $pRawEsc, $pEscArbitrary,
         escapeQuotedCSS, escapeCSS, escapeHTML,
-        heading, l, browseFieldSets, localizedFieldNames,
-        fieldValueAliasMap,
+        heading, l, browseFieldSets, presorts,
+        localizedFieldNames, fieldValueAliasMap,
         interlinearSeparator = '<br /><br />'
     }) => {
         // Todo: Repeats some code in workDisplay; probably need to reuse
@@ -175,8 +175,27 @@ body {
             typeof iilRaw('start', (i + 1) + '-1') === 'string'
         );
         const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
+        const applicableBrowseFieldNames = applicableBrowseFieldSet.map((abfs) =>
+            abfs.fieldName
+        );
+        const presort = presorts[browseFieldSetIdx];
+        // Todo: Ought to be checking against an aliased table
+        if (presort) {
+            tableData = tableData.sort((rowA, rowB) => {
+                let precedence;
+                applicableBrowseFieldNames.some((fieldName) => {
+                    const idx = localizedFieldNames.indexOf(fieldName);
+                    const rowAFirst = rowA[idx] < rowB[idx];
+                    const rowBFirst = rowA[idx] > rowB[idx];
+                    precedence = rowBFirst ? 1 : -1;
+                    return rowAFirst || rowBFirst; // Keep going if 0
+                });
+                return precedence;
+            });
+        }
+
         const buildRangePoint = (startOrEnd) =>
-            applicableBrowseFieldSet.map((bf, j) =>
+            applicableBrowseFieldNames.map((bfn, j) =>
                 // Todo: i18nize?
                 $p.get(
                     startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
@@ -221,8 +240,7 @@ body {
                     return ret + ':';
                 }, '').slice(0, -1);
 
-                const rangeNames = applicableBrowseFieldSet.map((abfs) =>
-                    abfs.fieldName).join(l('comma-space'));
+                const rangeNames = applicableBrowseFieldNames.join(l('comma-space'));
                 return escapeHTML(
                     startStr +
                     // l('to').toLowerCase() + ' ' +
@@ -311,8 +329,8 @@ body {
 
         const outArr = [];
         tableData.some((tr, i) => {
-            const rowIDParts = applicableBrowseFieldSet.map((abfs) => {
-                const idx = localizedFieldNames.indexOf(abfs.fieldName);
+            const rowIDParts = applicableBrowseFieldNames.map((fieldName) => {
+                const idx = localizedFieldNames.indexOf(fieldName);
                 // This works to put alias in anchor but this includes
                 //   our ending parenthetical, the alias may be harder
                 //   to remember and/or automated than original (e.g.,
@@ -524,7 +542,7 @@ body {
                     const anchorText = 'anchor' + i + '-' + j;
                     const anchor = $p.get(anchorText, true);
                     if (!anchor) {
-                        if (j === 1) {
+                        if (anchors.length) {
                             breakout = true;
                         }
                         break;

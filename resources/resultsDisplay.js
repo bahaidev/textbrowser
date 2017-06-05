@@ -55,9 +55,11 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         JsonRefs.resolveRefs(fileData.file).then(({resolved: {data: tableData}}) => {
             const schemaItems = schemaObj.items.items;
             const browseFieldSets = [];
+            const presorts = [];
             this.getBrowseFieldData({metadataObj, getMetaProp, schemaItems, getFieldAliasOrName}, ({
-                browseFields
+                browseFields, presort
             }) => {
+                presorts.push(presort);
                 browseFieldSets.push(browseFields);
             });
             const fieldValueAliasMap = schemaItems.map(({title: field}) => {
@@ -89,8 +91,8 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             Templates.resultsDisplay.main({
                 tableData, schemaItems, $p, $pRaw, $pRawEsc, $pEscArbitrary,
                 escapeQuotedCSS, escapeCSS, escapeHTML,
-                heading, l, browseFieldSets, localizedFieldNames,
-                fieldValueAliasMap,
+                heading, l, browseFieldSets, presorts,
+                localizedFieldNames, fieldValueAliasMap,
                 interlinearSeparator: this.interlinearSeparator
             });
         });
