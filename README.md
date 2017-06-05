@@ -1,27 +1,35 @@
-Due to changes in PHP (and the code being very old), the
-code currently in this repository is not working and needs a rewrite.
-
-However, I have begun a rewrite in client-side JavaScript so that
-it can work offline as well as online.
-
-----
-
 # Text Browser
 
-This software currently allows for multi-linear texts (represented in
-user-customizable JSON tables. These texts are accessible from a main
-interface (currently requiring a whitelist though it may be made
-customizable in the future for open-ended usage/dynamic server-side
-generation of available files), with each text being given its own
-customizable interface to allow browsing of the contents of the text,
-utilizing JSON Schema and metadata JSON associated with the files.
+Text Browser supports power-user browsing of arbitrary multi-linear
+texts (if represented as user-customizable JSON tables adhering to
+a simple [JSON Schema](http://json-schema.org/documentation.html)
+schema and with ample [meta-data JSON](https://github.com/brettz9/textbrowser/blob/master/general-schemas/metadata.jsonschema)
+information to indicate how it is to be browsed).
+
+The splash page for the texts is an internationalized interface
+(also driven by a JSON file) that allows for selection of desired
+interface language, followed by a screen to choose from among
+designated texts, with each text being given its own
+interface to allow browsing of the contents of the text.
+The interface offers fine grained control to the user for how
+they wish the output to be displayed, both in terms of styling
+and positioning, with its features particularly shining with
+parallel texts (e.g., multiple translations or commentaries
+that one wishes to view together).
 
 Despite the name of the project referring to "text", this project
-can be used for any tabular data.
+can be used for browsing any tabular data.
+
+It is designed to run with client-side JavaScript alone with the intent
+that the web software will be able to work fully offline in the browser
+as well as online. Currently, it can be run on a server (it comes with a
+script to run the code on a simple static Node.js server--which can be
+easily set up on your local machine as well).
 
 ## Installation
 
-The intent of this repository is for it to be used as a dependency.
+The intent of this repository is for it to be used as a [npm](https://www.npmjs.com/)
+dependency.
 
 Add the following to your application's `package.json`:
 
@@ -32,7 +40,8 @@ Add the following to your application's `package.json`:
 ```
 
 If you instead merely wish to test the current repository, adding your
-own data files within it, you can install its dependencies via:
+own data files within it after cloning the repository, you can install
+its dependencies via:
 
 ```console
 npm install
@@ -42,9 +51,9 @@ npm install
 
 NOTE: The following needs to be modified according to new usage, invoke
 this file from `index.html` with locations for `files.json` and optionally
-`languages.json`; also get rid of references to files-sample.json as
+`languages.json`; also get rid of references to `files-sample.json` as
 including it there; reference metadata and schema samples inside the
-Baha'i repo too)
+Baha'i repo too).
 
 1.  Location: <https://bitbucket.org/brettz9/bahaiwritings>
 
@@ -392,7 +401,8 @@ shows its usage (assuming paths relative to a package containing
 1.  Build library (for browser or Node) to utilize `site.json` file to add
     site-wide navigation bar headers, breadcrumbs,
     link rel=next/prev/contents/etc., sitemap, and page title (supplied
-    argument of the current page)? Also about text and removecookies.
+    argument of the current page)? Also about text and removecookies/
+    choose a different language.
 1.  Node.js (and/or PHP)
     1.  Optionally allow server push and/or WebSockets updates
         1.  Allow centralized copies or distributed versioning,
@@ -429,6 +439,8 @@ shows its usage (assuming paths relative to a package containing
 
 ## To-dos (Lower priority)
 
+1.  Restore option from work page to have a checkbox on whether to go to "Advanced mode",
+    opening the styling options by default or not.
 1.  Change AppCache to
     [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
     as the former is apparently being deprecated
@@ -463,11 +475,6 @@ shows its usage (assuming paths relative to a package containing
     1.  Start browser testing: <https://www.npmjs.com/package/testcafe> (or
         possibly <http://nightwatchjs.org/>)
 
-## History
-
-One PHP-based version was released in 2005-12-22 and was my
-first project used in aiding my learning programming.
-
 ## Testing
 
 You will first need to run `npm install`.
@@ -492,3 +499,23 @@ use:
 ```shell
 npm run start-no-open
 ```
+
+You can also use this latter option to run the browser tests
+(from <http://127.0.0.1:8080/test/>).
+
+## History
+
+One PHP/MySQL-based version was released in 2005-12-22 and was my
+first project used in aiding my learning programming.
+
+It was hosted at http://bahai-library.com/browser/ and https://bahai9.com/browse0.php
+
+On Baha'i Libary Online, the Web Archive indicates its presence as far back as 17 May 2006:
+
+- http://web.archive.org/web/20060517012851/http://bahai-library.com:80/browser/browse0.php
+- http://web.archive.org/web/20060505010948/http://bahai-library.com:80/browser/browse0.php?langu=en
+- http://web.archive.org/web/20060430170322/http://bahai-library.com:80/browser/browse.php?langu=en&file=Bible
+
+## About
+
+The [BADI](https://groups.yahoo.com/neo/groups/badi/info) mailing list was created to foster collaboration among Baha'i-inspired open source projects as this.
