@@ -655,7 +655,7 @@ Templates.workDisplay = {
             [
                 ...(function () {
                     const addBrowseFieldSet = (setType) =>
-                        browseFields.reduce((rowContent, {fieldName, aliases, fieldSchema: {minimum}}, j) => {
+                        browseFields.reduce((rowContent, {fieldName, aliases, fieldSchema: {minimum, maximum}}, j) => {
                             const name = iil(setType) + (i + 1) + '-' + (j + 1);
                             const id = name;
                             rowContent['#'].push(
@@ -686,6 +686,7 @@ Templates.workDisplay = {
                                             name, id,
                                             type: 'number',
                                             min: minimum,
+                                            max: maximum,
                                             value: $p.get(name)
                                         }],
                                     nbsp.repeat(3)
@@ -710,7 +711,7 @@ Templates.workDisplay = {
                 ['td', {colspan: 4 * browseFields.length + 2 + 1, align: 'center'}, [
                     ['table', [
                         ['tr', [
-                            browseFields.reduce((rowContent, {fieldName, aliases, fieldSchema: {minimum}}, j) => {
+                            browseFields.reduce((rowContent, {fieldName, aliases, fieldSchema: {minimum, maximum}}, j) => {
                                 const name = iil('anchor') + (i + 1) + '-' + (j + 1);
                                 const id = name;
                                 rowContent['#'].push(
@@ -730,6 +731,7 @@ Templates.workDisplay = {
                                                 name, id,
                                                 type: 'number',
                                                 min: minimum,
+                                                max: maximum,
                                                 value: $p.get(name)
                                             }],
                                         nbsp.repeat(2)
