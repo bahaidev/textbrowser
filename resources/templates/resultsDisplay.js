@@ -311,9 +311,6 @@ body {
 
         const outArr = [];
         tableData.some((tr, i) => {
-            if (foundEnd) {
-                return true;
-            }
             const rowIDParts = applicableBrowseFieldSet.map((abfs) => {
                 const idx = localizedFieldNames.indexOf(abfs.fieldName);
                 // This works to put alias in anchor but this includes
@@ -356,6 +353,8 @@ body {
                     );
             })) {
                 foundEnd = true;
+            } else if (foundEnd) { // If no longer matching, return
+                return true;
             }
 
             const rowID = rowIDParts.join('-');
