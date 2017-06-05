@@ -1,5 +1,8 @@
 # Text Browser
 
+*Note that this project, while now preliminarily functional, is in its
+early stages.*
+
 Text Browser supports power-user browsing of arbitrary multi-linear
 texts (if represented as user-customizable JSON tables adhering to
 a simple [JSON Schema](http://json-schema.org/documentation.html)
