@@ -209,6 +209,30 @@ shows its usage (assuming paths relative to a package containing
 
 ## To-dos (immediate priority)
 
+1. Todo: implement random
+    1. random within specific part of browse field range (e.g., within a specific book)?
+    1. with context (highlight?)
+1.  Unless `format: "html"`, should be escaped!
+
+## To-dos (high priority)
+
+1.  Ongoing: Once stabilized, target "textbrowser" dependency mentioned above
+    by tagged version instead of `master`.
+1.  Waiting ([JSON UI Schema](https://github.com/json-schema-org/json-schema-spec/issues/67)
+    or [JSON Schema Annotation and Documentation Extension](https://github.com/json-schema-org/json-schema-spec/issues/136)):
+    i18n: Utilize more standard mechanism instead of our `localeKey`; might also use
+    substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
+    and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
+1. Waiting: ES6 Modules in browser or if need Babel routine: Switch to imports over script tags and
+    functions passing main functions as arguments
+
+1.  For Results display page (`browse9.php` equivalent)
+    1.  Handle defaults for empty boxes if not already
+    1.  Test all locales and works and combos
+    1.  Allow tables to be re-sortable via JavaScript which allows
+          sorting by multiple columns with various data, etc.
+1.  Add prior transpose functionality
+1.  See todos in code
 1.  Plugins/Automated fields
     1.  Include extensibility mechanism
         1.  Admin/files-driven and ideally user-driven (though security issue for
@@ -313,29 +337,6 @@ shows its usage (assuming paths relative to a package containing
             1.  See bahaiwritings project re: using Firefox's [Browser API](https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API)
                 to allow independent navigation controls for each iframe (and
                 side-by-side viewing of verses/lines and commentary)
-1.  For as-yet-not-reimplemented results display page (`browse9.php` equivalent)
-    1.  Handle defaults for empty boxes if not already
-    1.  Test all locales and works and combos
-    1.  Utilize `prefer_alias`
-    1.  Allow tables to be re-sortable via JavaScript which allows
-          sorting by multiple columns with various data, etc.
-    1.  Prevent XSS in field and page CSS fields
-    1.  Unless `format: "html"`, should be escaped!
-    1.  Review work display page fields and schemas/metadata to ensure all
-        being used in results
-1.  Once stabilized, target "textbrowser" dependency mentioned above
-    by tagged version instead of `master`.
-
-## To-dos (high priority)
-
-1.  Waiting ([JSON UI Schema](https://github.com/json-schema-org/json-schema-spec/issues/67)
-    or [JSON Schema Annotation and Documentation Extension](https://github.com/json-schema-org/json-schema-spec/issues/136)):
-    i18n: Utilize more standard mechanism instead of our `localeKey`; might also use
-    substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
-    and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
-1. Waiting: ES6 Modules in browser or if need Babel routine: Switch to imports over script tags and
-    functions passing main functions as arguments
-
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize, e.g., with JSONEditor)!
 1.  Develop footnote targeting mechanism to hide/reveal footnotes inline
@@ -351,7 +352,7 @@ shows its usage (assuming paths relative to a package containing
         filtering; use "search" in locale to add this filtering to UI)
     1.  Option for highlighting search terms (with own styles), and/or if context
         is specified, to highlight rows with search results and alternatively
-        style context rows
+        style context rows (distinguish from random context?)
     1.  Optional links to go to previous/next results if only loading a subset
         of available content (allow customization of size of chunking in
         preferences as well as on the fly)

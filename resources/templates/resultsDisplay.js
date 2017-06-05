@@ -289,11 +289,6 @@ body {
                     });
                 })
 
-                // Todo: rand
-                //      random within specific part of browse field range
-                //      (e.g., within a specific book)?
-                // Todo: context (highlight?)
-
                 // Todo: localizeParamNames (preference)?
                 // Todo: Schema-detect type for faster sorting--integer
                 //     parsing only on URL params per schema); see todo above on
