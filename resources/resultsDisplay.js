@@ -2,6 +2,99 @@
 TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
     l, lang, localeFromFileData, fallbackLanguages, $p, imfLocales, getMetaProp
 }) {
+    const getCellValue = ({
+        fieldValueAliasMap
+    }) => ({
+        tr, idx
+    }) => {
+        let tdVal = (fieldValueAliasMap[idx] !== undefined
+            ? fieldValueAliasMap[idx][tr[idx]]
+            : tr[idx]
+        );
+        if (tdVal && typeof tdVal === 'object') {
+            tdVal = Object.values(tdVal);
+        }
+        if (Array.isArray(tdVal)) {
+            tdVal = tdVal.join(l('comma-space'));
+        }
+        return tdVal;
+    };
+    const determineEnd = ({
+        fieldValueAliasMap, localizedFieldNames, applicableBrowseFieldNames, starts, ends
+    }) => ({
+        tr, foundState
+    }) => {
+        const rowIDParts = applicableBrowseFieldNames.map((fieldName) => {
+            const idx = localizedFieldNames.indexOf(fieldName);
+            // This works to put alias in anchor but this includes
+            //   our ending parenthetical, the alias may be harder
+            //   to remember and/or automated than original (e.g.,
+            //   for a number representing a book), and there could
+            //   be multiple aliases for a value; we may wish to
+            //   switch this (and also for other browse field-based
+            //   items).
+            return fieldValueAliasMap[idx] !== undefined
+                ? fieldValueAliasMap[idx][tr[idx]]
+                : tr[idx];
+            // return tr[idx];
+        });
+
+        // Todo: Use schema to determine each and use `parseInt`
+        //   on other value instead of `String` conversions
+        if (!foundState.start) {
+            if (starts.some((part, i) => {
+                const rowIDPart = rowIDParts[i];
+                return Array.isArray(rowIDPart)
+                    ? !rowIDPart.some((rip) => starts[i] === String(rip))
+                    : (rowIDPart && typeof rowIDPart === 'object'
+                        ? !Object.values(rowIDPart).some((rip) => starts[i] === String(rip))
+                        : starts[i] !== String(rowIDPart)
+                    );
+            })) {
+                return false;
+            }
+            foundState.start = true;
+        }
+        // This doesn't go in an `else` for the above in case the start is the end
+        if (ends.every((part, i) => {
+            const rowIDPart = rowIDParts[i];
+            return Array.isArray(rowIDPart)
+                ? rowIDPart.some((rip) => ends[i] === String(rip))
+                : (rowIDPart && typeof rowIDPart === 'object'
+                    ? Object.values(rowIDPart).some((rip) => ends[i] === String(rip))
+                    : ends[i] === String(rowIDPart)
+                );
+        })) {
+            foundState.end = true;
+        } else if (foundState.end) { // If no longer matching, return
+            return true;
+        }
+        return rowIDParts.join('-'); // rowID;
+    };
+    const getCheckedAndInterlinearFieldInfo = ({
+        localizedFieldNames
+    }) => () => {
+        let i = 1;
+        let field, checked;
+        let checkedFields = [];
+        do {
+            field = $p.get('field' + i, true);
+            checked = $p.get('checked' + i, true);
+            i++;
+            if (field && checked === l('yes')) {
+                checkedFields.push(field);
+            }
+        } while (field);
+        checkedFields = checkedFields.filter((cf) => localizedFieldNames.includes(cf));
+        const checkedFieldIndexes = checkedFields.map((cf) => localizedFieldNames.indexOf(cf));
+        const allInterlinearColIndexes = checkedFieldIndexes.map((cfi, i) => {
+            const interlin = $p.get('interlin' + (i + 1), true);
+            return interlin && interlin.split(/\s*,\s*/).map((col) =>
+                parseInt(col, 10) - 1
+            ).filter((n) => !Number.isNaN(n));
+        });
+        return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
+    };
     const getCaption = ({starts, ends, applicableBrowseFieldNames, heading}) => {
         let caption;
         const hasCaption = $pRaw('caption') !== '0';
@@ -261,14 +354,21 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             const [hasCaption, caption] = getCaption({
                 starts, ends, applicableBrowseFieldNames, heading
             });
+            const showInterlinTitles = $pRaw('interlintitle') === '1';
 
             Templates.resultsDisplay.main({
-                tableData, schemaItems, $p, $pRaw, $pRawEsc, $pEscArbitrary,
+                tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
                 escapeQuotedCSS, escapeCSS, escapeHTML,
-                heading, l, browseFieldSets, presorts,
-                localizedFieldNames, fieldValueAliasMap,
-                starts, ends, applicableBrowseFieldNames,
-                caption, hasCaption,
+                l, localizedFieldNames,
+                caption, hasCaption, showInterlinTitles,
+                determineEnd: determineEnd({
+                    fieldValueAliasMap, localizedFieldNames, applicableBrowseFieldNames,
+                    starts, ends
+                }),
+                getCellValue: getCellValue({fieldValueAliasMap}),
+                getCheckedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
+                    localizedFieldNames
+                }),
                 interlinearSeparator: this.interlinearSeparator
             });
 

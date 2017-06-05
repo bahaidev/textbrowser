@@ -33,6 +33,12 @@ Templates.resultsDisplay = {
                 : '');
         return $(sel);
     },
+    interlinearTitle: ({l, val}) => {
+        const colonSpace = l('colon-space');
+        return '<span class="interlintitle">' +
+            val +
+            '</span>' + colonSpace;
+    },
     styles: ({
         $p, $pRaw, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, escapeCSS,
         tableWithFixedHeaderAndFooter, checkedFieldIndexes, hasCaption
@@ -176,12 +182,11 @@ body {
         ]];
     },
     main: ({
-        tableData, schemaItems, $p, $pRaw, $pRawEsc, $pEscArbitrary,
+        tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
         escapeQuotedCSS, escapeCSS, escapeHTML,
-        heading, l, browseFieldSets, presorts,
-        localizedFieldNames, fieldValueAliasMap,
-        starts, ends, applicableBrowseFieldNames,
-        caption, hasCaption,
+        l, localizedFieldNames,
+        caption, hasCaption, showInterlinTitles,
+        determineEnd, getCellValue, getCheckedAndInterlinearFieldInfo,
         interlinearSeparator = '<br /><br />'
     }) => {
         const tableElems = ({
@@ -220,25 +225,8 @@ body {
             tableElem, trElem, tdElem, thElem, captionElem, theadElem, tbodyElem, tfootElem
         ] = tableElems; // colgroupElem, colElem
 
-        let i = 1;
-        let field, checked;
-        let checkedFields = [];
-        do {
-            field = $p.get('field' + i, true);
-            checked = $p.get('checked' + i, true);
-            i++;
-            if (field && checked === l('yes')) {
-                checkedFields.push(field);
-            }
-        } while (field);
-        checkedFields = checkedFields.filter((cf) => localizedFieldNames.includes(cf));
-        const checkedFieldIndexes = checkedFields.map((cf) => localizedFieldNames.indexOf(cf));
-        const allInterlinearColIndexes = checkedFieldIndexes.map((cfi, i) => {
-            const interlin = $p.get('interlin' + (i + 1), true);
-            return interlin && interlin.split(/\s*,\s*/).map((col) =>
-                parseInt(col, 10) - 1
-            ).filter((n) => !Number.isNaN(n));
-        });
+        const [checkedFields, checkedFieldIndexes, allInterlinearColIndexes] =
+            getCheckedAndInterlinearFieldInfo();
 
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
         const tableWrap = (children) =>
@@ -254,76 +242,24 @@ body {
             return el;
         };
         const addAtts = (el, newAtts) => [el[0], Object.assign({}, el[1], newAtts)];
-        const showInterlinTitles = $pRaw('interlintitle') === '1';
-        const colonSpace = l('colon-space');
 
-        let foundStart = false;
-        let foundEnd = false;
-
+        const foundState = {
+            start: false,
+            end: false
+        };
         const outArr = [];
         tableData.some((tr, i) => {
-            const rowIDParts = applicableBrowseFieldNames.map((fieldName) => {
-                const idx = localizedFieldNames.indexOf(fieldName);
-                // This works to put alias in anchor but this includes
-                //   our ending parenthetical, the alias may be harder
-                //   to remember and/or automated than original (e.g.,
-                //   for a number representing a book), and there could
-                //   be multiple aliases for a value; we may wish to
-                //   switch this (and also for other browse field-based
-                //   items).
-                return fieldValueAliasMap[idx] !== undefined
-                    ? fieldValueAliasMap[idx][tr[idx]]
-                    : tr[idx];
-                // return tr[idx];
-            });
-
-            // Todo: Use schema to determine each and use `parseInt`
-            //   on other value instead of `String` conversions
-            if (!foundStart) {
-                if (starts.some((part, i) => {
-                    const rowIDPart = rowIDParts[i];
-                    return Array.isArray(rowIDPart)
-                        ? !rowIDPart.some((rip) => starts[i] === String(rip))
-                        : (rowIDPart && typeof rowIDPart === 'object'
-                            ? !Object.values(rowIDPart).some((rip) => starts[i] === String(rip))
-                            : starts[i] !== String(rowIDPart)
-                        );
-                })) {
-                    return;
-                }
-                foundStart = true;
-            }
-            // This doesn't go in an `else` for the above in case the start is the end
-            if (ends.every((part, i) => {
-                const rowIDPart = rowIDParts[i];
-                return Array.isArray(rowIDPart)
-                    ? rowIDPart.some((rip) => ends[i] === String(rip))
-                    : (rowIDPart && typeof rowIDPart === 'object'
-                        ? Object.values(rowIDPart).some((rip) => ends[i] === String(rip))
-                        : ends[i] === String(rowIDPart)
-                    );
-            })) {
-                foundEnd = true;
-            } else if (foundEnd) { // If no longer matching, return
-                return true;
+            const rowID = determineEnd({tr, foundState});
+            if (typeof rowID === 'boolean') {
+                return rowID;
             }
 
-            const rowID = rowIDParts.join('-');
             outArr.push(addChildren(trElem,
                 checkedFieldIndexes.map((idx, j) => {
                     const interlinearColIndexes = allInterlinearColIndexes[j];
                     const showInterlins = showInterlinTitles &&
                         interlinearColIndexes;
-                    let trVal = (fieldValueAliasMap[idx] !== undefined
-                        ? fieldValueAliasMap[idx][tr[idx]]
-                        : tr[idx]
-                    );
-                    if (trVal && typeof trVal === 'object') {
-                        trVal = Object.values(trVal);
-                    }
-                    if (Array.isArray(trVal)) {
-                        trVal = trVal.join(l('comma-space'));
-                    }
+                    const tdVal = getCellValue({tr, idx});
                     return addAtts(tdElem, {
                         id: 'row' + (i + 1) + 'col' + (j + 1), // Can't have unique IDs if user duplicates a column
                         dataset: {
@@ -332,36 +268,26 @@ body {
                         },
                         innerHTML:
                             (showInterlins
-                                ? '<span class="interlintitle">' +
-                                    localizedFieldNames[idx] +
-                                    '</span>' + colonSpace
+                                ? Templates.resultsDisplay.interlinearTitle({
+                                    l, val: localizedFieldNames[idx]
+                                })
                                 : ''
                             ) +
-                            trVal +
+                            tdVal +
                             (interlinearColIndexes
                                 ? interlinearSeparator +
                                     interlinearColIndexes.map((idx) =>
                                         (showInterlins
-                                            ? '<span class="interlintitle">' +
-                                                localizedFieldNames[idx] +
-                                                '</span>' + colonSpace
+                                            ? Templates.resultsDisplay.interlinearTitle({
+                                                l, val: localizedFieldNames[idx]
+                                            })
                                             : '') +
-                                        trVal
+                                        tdVal
                                     ).join(interlinearSeparator)
                                 : ''
                         )
                     });
                 })
-
-                // Todo: Fix range algorithm to keep checking (e.g., for
-                //    multiple matches of "0") until no longer true
-
-                // Todo: Allow field to indicate need for pre-sorting on
-                //      relevant browser fields for out-of-order ranges (also
-                //      change to numbers if possible where not and schema-detect
-                //      type for faster sorting--integer parsing only on URL
-                //      params per schema); see todo above on
-                //      `String`/`parseInt`
 
                 // Todo: rand
                 //      random within specific part of browse field range
@@ -369,7 +295,9 @@ body {
                 // Todo: context (highlight?)
 
                 // Todo: localizeParamNames (preference)?
-
+                // Todo: Schema-detect type for faster sorting--integer
+                //     parsing only on URL params per schema); see todo above on
+                //      `String`/`parseInt`
                 // Todo: Optimize Jamilih to build strings; also to preprocess
                 //        files like this to convert Jamilih to complete string
                 //        concatenation as somewhat faster
