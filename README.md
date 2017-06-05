@@ -1,7 +1,12 @@
 # Text Browser
 
 *Please note that this project, while now preliminarily functional,
-is in its early stages.*
+is in its early stages. Its currently slow loading times (particularly
+for large files) relates to the fact that the code is currently
+downloading the files in full an then processing them; the next
+step is for us to inform the user we are downloading the files and
+then add them into IndexedDB; eventually, we also hope to provide an
+option to pre-process live on the server (probably Node.js).*
 
 Text Browser supports power-user browsing of arbitrary multi-linear
 texts (if represented as user-customizable JSON tables adhering to
