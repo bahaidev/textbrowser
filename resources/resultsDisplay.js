@@ -3,7 +3,7 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
     l, lang, localeFromFileData, fallbackLanguages, $p, imfLocales, getMetaProp
 }) {
     const getCellValue = ({
-        fieldValueAliasMap
+        fieldValueAliasMap, escapeColumnIndexes
     }) => ({
         tr, idx
     }) => {
@@ -17,7 +17,10 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         if (Array.isArray(tdVal)) {
             tdVal = tdVal.join(l('comma-space'));
         }
-        return tdVal;
+        return ((escapeColumnIndexes[idx] || !this.trustFormatHTML) &&
+            typeof tdVal === 'string')
+            ? escapeHTML(tdVal)
+            : tdVal;
     };
     const determineEnd = ({
         fieldValueAliasMap, localizedFieldNames, applicableBrowseFieldNames, starts, ends
@@ -308,6 +311,7 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             });
 
             const localizedFieldNames = schemaItems.map((si) => getFieldAliasOrName(si.title));
+            const escapeColumnIndexes = schemaItems.map((si) => si.format !== 'html');
 
             // Todo: Repeats some code in workDisplay; probably need to reuse
             //   these functions more in `Templates.resultsDisplay` too
@@ -365,7 +369,9 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
                     fieldValueAliasMap, localizedFieldNames, applicableBrowseFieldNames,
                     starts, ends
                 }),
-                getCellValue: getCellValue({fieldValueAliasMap}),
+                getCellValue: getCellValue({
+                    fieldValueAliasMap, escapeColumnIndexes, escapeHTML
+                }),
                 getCheckedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
                     localizedFieldNames
                 }),

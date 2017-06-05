@@ -7,7 +7,8 @@ window.addEventListener('DOMContentLoaded', () => {
         // site: 'site.json' // Default
         files: 'files.json', // Change as needed to your `files.json` location
         namespace: 'myapp', // Used for namespacing localStorage
-        allowPlugins: true // Enables `files.json`-specified plugins
+        allowPlugins: true, // Enables `files.json`-specified plugins
+        trustFormatHTML: true // Needed if allowing for raw HTML fields (don't use for untrusted schemas)
     });
     tb.init();
 });

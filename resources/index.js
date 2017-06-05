@@ -15,6 +15,7 @@ function TextBrowser (options) {
     this.files = options.files || 'files.json';
     this.namespace = options.namespace || 'textbrowser';
     this.allowPlugins = options.allowPlugins;
+    this.trustFormatHTML = options.trustFormatHTML;
     this.localizeParamNames = options.localizeParamNames === undefined
         ? true
         : options.localizeParamNames;

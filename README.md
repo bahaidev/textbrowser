@@ -175,6 +175,10 @@ shows its usage (assuming paths relative to a package containing
 
     -   `allowPlugins` - Enables `files.json`-specified plugins
 
+    -   `trustFormatHTML` - If `true`, inserts fields with `"format": "html"`
+        as HTML without escaping; off by default in case schema is untrusted,
+        but if trusted, you will probably want this set to `true`.
+
     -   `localizeParamNames` - Boolean as to whether to localize parameter
         names by default (can be overridden by the user in preferences).
 
@@ -212,7 +216,6 @@ shows its usage (assuming paths relative to a package containing
 1. Todo: implement random
     1. random within specific part of browse field range (e.g., within a specific book)?
     1. with context (highlight?)
-1.  Unless `format: "html"`, should be escaped!
 
 ## To-dos (high priority)
 
