@@ -56,7 +56,7 @@ const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
 const getDataForSerializingParamsAsURL = () => ({
     form: $('form#browse'),
-    random: $('#rand'),
+    random: $('#rand') || {}, // Todo: We don't need any default once random functionality is completed
     checkboxes: $$('input[type=checkbox]')
 });
 

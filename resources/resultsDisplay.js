@@ -360,9 +360,7 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             });
             const showInterlinTitles = $pRaw('interlintitle') === '1';
 
-            if (ilRaw('rand') === 'yes') {
-                console.log('random');
-            }
+            console.log('rand', ilRaw('rand') === 'yes');
 
             Templates.resultsDisplay.main({
                 tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,

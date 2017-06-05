@@ -164,9 +164,11 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
             });
         });
 
+        /*
         Templates.workDisplay.addRandomFormFields({
             il, l, ld, le, $p, serializeParamsAsURL, content
         });
+        */
 
         // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
         const heading = getMetaProp(metadataObj, 'heading');

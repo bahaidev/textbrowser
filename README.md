@@ -224,12 +224,6 @@ shows its usage (assuming paths relative to a package containing
 -   (To document; for now, see the `/general-schemas` directory and for
   usage examples, as well as the subdirectories within <https://bitbucket.org/brettz9/bahaiwritings>)
 
-## To-dos (immediate priority)
-
-1. Todo: implement random
-    1. random within specific part of browse field range (e.g., within a specific book)?
-    1. with context
-
 ## To-dos (high priority)
 
 1.  Ongoing: Once stabilized, target "textbrowser" dependency mentioned above
@@ -242,12 +236,15 @@ shows its usage (assuming paths relative to a package containing
 1. Waiting: ES6 Modules in browser or if need Babel routine: Switch to imports over script tags and
     functions passing main functions as arguments
 
+1. Uncomment and complete random code
+    1. random within specific part of browse field range (e.g., within a specific book)?
+    1. with context
+1.  Add prior transpose functionality
 1.  For Results display page (`browse9.php` equivalent)
     1.  Handle defaults for empty boxes if not already
     1.  Test all locales and works and combos
     1.  Allow tables to be re-sortable via JavaScript which allows
           sorting by multiple columns with various data, etc.
-1.  Add prior transpose functionality
 1.  See todos in code
 1.  Plugins/Automated fields
     1.  Include extensibility mechanism
