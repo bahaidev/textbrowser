@@ -238,6 +238,7 @@ shows its usage (assuming paths relative to a package containing
 
 1. Uncomment and complete random code
     1. random within specific part of browse field range (e.g., within a specific book)?
+        1. Have special meta-data for per book/chapter maximums (Bible/Qur'an) to allow accurate and also for random verses?
     1. with context
 1.  Add prior transpose functionality
 1.  For Results display page (`browse9.php` equivalent)
