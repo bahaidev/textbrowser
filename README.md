@@ -6,7 +6,8 @@ is in its early stages.*
 Text Browser supports power-user browsing of arbitrary multi-linear
 texts (if represented as user-customizable JSON tables adhering to
 a simple [JSON Schema](http://json-schema.org/documentation.html)
-schema and with ample [meta-data JSON](https://github.com/brettz9/textbrowser/blob/master/general-schemas/metadata.jsonschema)
+schema and with ample
+[meta-data JSON](https://github.com/brettz9/textbrowser/blob/master/general-schemas/metadata.jsonschema)
 information to indicate how it is to be browsed).
 
 The splash page for the texts is an internationalized interface
@@ -31,8 +32,8 @@ easily set up on your local machine as well).
 
 ## Installation
 
-The intent of this repository is for it to be used as a [npm](https://www.npmjs.com/)
-dependency.
+The intent of this repository is for it to be used as a
+[npm](https://www.npmjs.com/) dependency.
 
 Add the following to your application's `package.json`:
 
