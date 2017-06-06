@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.0.1",
+  "version": "0.3.1",
   "description": "Multilinear text browser",
   "main": "resources/index.js",
   "scripts": {
