@@ -239,12 +239,14 @@ The recommended project directory structure (which are used by default by the
 
 ## JSON Formats
 
-(This section is currently undergoing clean-up, explaining particular
-fields in use.)
-
 The sections below begin with where you can find the JSON schema which
 defines the format and an example file. They then follow with a
 plain language description of the format.
+
+One meta-property shared among `files.json` and metadata files is
+`localeKey` which is a non-standard means of pointing to a key
+for substitution. It may be replaced in the future by the slightly
+more cumbersome though standards-track JSON references.
 
 ### Work-Specific JSON
 
@@ -310,7 +312,61 @@ is required so as for you to indicate for the app how the multilinear text
 is to be browsed (e.g., which fields can be used as sequential
 chapter/paragraph/verse numbers, how its columns should be translated, etc.).
 
-Todo: explain properties
+This file has two main properties, `table` and `fields`.
+
+`table` has two properties, `browse_fields` and `default_view`.
+
+`browse_fields` is a name-set object or an array of string field names or
+name-set objects. Name-set objects have an optional `name` string, a `set`
+array of field name strings, and an optional `presort` boolean to
+indicate whether the table must first sort the elements (in order of
+listing); the default is to follow the original array order.
+
+The keys of `default_view` are field names which point to a string or
+integer, or array thereof. These are *not currently in use*, but are intended
+to indicate the values that will be used for a default range when a user makes
+a form submission without supplying a range.
+
+For `fields`, the `lang` string property indicates the language code for the
+content of this field. It is used for letting the user quickly enable
+fields which match their desired locale language(s). It might be used for
+HTML `lang` values in the future to properly display fonts for languages
+that leverage it, such as the CJK languages.
+
+One other set of types for `fields` are `name` and `alias` strings (or
+`localeKey` pointing to strings). The `name` points to the regular
+name for the column, whereas `alias` is currently used to point to an
+alias name of the field (more specifically to an alternate name after
+converting its values via `fieldvalue-aliases`). The boolean or string
+`prefer_alias` property in turn determines whether this alias will be
+used by default (currently if it is `false`, it is not used at all).
+This functionality might be moved into a plug-in in the future.
+
+Also in `fields`, `fieldvalue-aliases` can after any `localeKey` processing,
+be an object of field name keys pointing to an array of alias names (as
+strings or integers) or to an object whose keys indicating the type of
+alias and string values. This can provide alternate values for what is
+actually present in the data table (e.g., replacing numeric codes with
+human-readable strings).
+
+For `fields`, the `primary_text_field` and `orig_lang_field` booleans
+and `orig_langs` array of string language codes are *not currently in use*
+but intended to indicate the main work under consideration (as opposed
+to translations), whether it is the source of translations or a target
+translation, and what its source languages are (if not itself marked as
+an original language).
+
+The `roman` property of `fields` is intended to indicate Roman numerals.
+It is *not currently in use* and where not automated from Arabic numerals,
+it might be indicated in the future via a language code and more generic
+`numeric` property (so as to support multiple non-Arabic counting systems
+which are hard-coded as opposed to built via an automated plug-in).
+
+As with other files, there is also a `localization-strings` key object, keyed
+to language code, which is keyed to an object of keys (which can be strings
+(e.g., `heading` or `alias`), arrays of strings, or other objects of keys,
+including specifically for JSON metadata, `fieldnames`, `fieldaliases`,
+`fieldvalue`, and `fieldvalue-aliases`).
 
 ### Application-Wide JSON files
 
@@ -321,6 +377,9 @@ following files to indicate behavior for the text-browsing application as a whol
 
 This format is defined by [this](https://github.com/brettz9/textbrowser/blob/master/general-schemas/files.jsonschema).
 See [this file](https://bitbucket.org/brettz9/bahaiwritings/src/5f2602f122134d2013e013a477ae94ee29548a13/files.json?at=master&fileviewer=file-view-default) for an example.
+
+(This section is currently undergoing clean-up, explaining particular
+fields in use.)
 
 Points to your data files (e.g., any kept in `data/`).
     Is an object with a `groups` property set to an array of file groups where
@@ -343,21 +402,37 @@ Todo: explain properties, including:
 
 #### `languages.json` and `locales/en-US.json`, etc.
 
-*TextBrowser* comes with its own `languages.json` file (at
-[`appdata/languages.json`](https://github.com/brettz9/textbrowser/blob/master/appdata/languages.json)) which is used by default. It adheres to [this schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/languages.jsonschema)
+Although we hope you may contribute back to our project any project-independent
+changes you may need of the generic localizations within `locales/` and
+`appdata/languages.json`, if you need to provide your own interface
+localization, you may supply a `languages` property when creating the
+`TextBrowser` object to point to a languages JSON file of your own
+choosing (see the [JavaScript API](#JavaScript API)).
 
-The `languages.json` file in turn points to locale files (at
-`locales/`, e.g., `locales/en-US.json`). These locale files adhere to
+*TextBrowser* comes with the `languages.json` file at
+[`appdata/languages.json`](https://github.com/brettz9/textbrowser/blob/master/appdata/languages.json) which, as mentioned, is used by default. It adheres to
+[this schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/languages.jsonschema)
+
+If you need to implement your own, the properties include the string
+`localeFileBasePath` and the property `languages` which is an array
+of objects containing the properties, `name`, `code`, `direction`,
+and `locale` (the latter leads to a locale file).
+
+As with other files, there is a `localization-strings` object, keyed to
+language code, which is keyed to an object of keys (which can be strings,
+arrays of strings, or other objects of keys).
+
+The locale files referenced by the `locale` property within `languages.json`
+(by default, those at `locales/`, e.g., `locales/en-US.json`), adhere to
 [this schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/locale.jsonschema).
 
-Localization of specific file names and content, specific file groups, and for your site navigation, on the other hand, are handled in the other relevant sections of this document.
+Locales are an object of keys (which may be strings, arrays of strings, or
+are themselves objects).
 
-Although we hope you may contribute back to our project any of the generic
-localizations within `locales/` and `appdata/languages.json`, if you need
-to provide your own interface localization, you may supply a `languages`
-property when creating the `TextBrowser` object to point to a languages
-JSON file of your own choosing (see the
-[JavaScript API](#JavaScript API)).
+Note that localization of specific file names and content, specific file
+groups, and for your site navigation, on the other hand, are handled in
+the other relevant sections of this document (see the `localization-strings`
+property within metadata files, `files.json`, and `site.json`, respectively).
 
 #### `site.json`
 
@@ -365,10 +440,16 @@ JSON file of your own choosing (see the
 
 This file expects a top-level `site` array property indicating nesting of the
 site's page hierarchy (intended to be used for site map generation). The file
-also expects a `navigation` property to indicate the subset of this site
-available on the navigation bar. Besides creating a navigation bar, it is
+also expects a `navigation` property (with the same allowable values, or even
+a JSON reference pointing to `site`) to indicate the subset of this site
+available on the navigation bar (an array with strings or nested child
+arrays of strings). Besides creating a navigation bar, it is
 also intended to be used to generate breadcrumbs, `<link rel=next/prev>` links,
 and a sitemap.
+
+As with other files, there is a `localization-strings` object, keyed to language
+code, which is keyed to an object of keys (which can be strings, arrays of
+strings, or other objects of keys).
 
 <!-- ## Plugin Format -->
 <!-- Add once implemented; e.g., Each plugin file designated within `files.json` expects a JSONP call to `JSONP.executeCallback()` with an object with the following methods -->
@@ -465,6 +546,7 @@ upon for monkey-patching.
 1.  Locales
     1.  Check `localizeParamNames` (preference)?
     1.  Test all locales and works and combos
+1.  Use `lang` on metadata fields (`<col>`?) for the HTML `lang` attribute
 1.  Default field(s) and default value(s) for when no text is entered and a reasonable
     sample is desired to be shown. Use `default_view` already spec'd in metadata schema
     and used in files.

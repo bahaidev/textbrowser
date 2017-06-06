@@ -103,9 +103,6 @@
                                 "format": "language-code"
                             }
                         },
-                        "hasFieldvalue": {
-                            "type": "boolean"
-                        },
                         "roman": {
                             "type": "boolean"
                         },
