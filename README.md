@@ -68,11 +68,12 @@ The following are user-facing features/goals:
     but we hope to provide user-facing preselected choices in the future).
 -  Allow categorization of content by language so that users can quickly
     enable only such content languages in which they are interested
--  Allow user to not only bookmark/share links of the results page but even
-    of a particular view of the work page.
+-  Allow user to not only bookmark/share links of the results page and even
+    of a particular view of the work page. Functionality should be
+    available as much as possible via URL parameters.
 -  Allow column-specific styling
 -  Allow generic page styling of text, as form controls or CSS for
-    experienced users
+    experienced users.
 -  Allow fine-grained control of the table display beyond border styling
     (e.g., whether to show a caption summarizing the work/selection, whether
     to show a header and if so, whether it should be fixed and/or styled, or
@@ -112,6 +113,11 @@ The following are developer-facing features/goals:
     well as avoiding ugly, angular HTML almost entirely!). While the results
     display for users leverages CSS classes, we still need to remove some
     inline styling for better structural (HTML) vs. styling (CSS) separation.
+-  The thorough use of query strings allow for other tools to more easily
+    tap into our API, and the control of styling (including of whether to show
+    table headers) deliberately allows for third-party sites to embed
+    content directly from *TextBrowser*-driven sites (including sites which
+    might provide up-to-date, proofread, canonical sources of data).
 -  We aim to leverage modern syntax, especially JavaScript, allowing
     derivative projects to polyfill if they wish to support older browsers.
     Besides aiming for better forward-compatibility, this allows us to use
