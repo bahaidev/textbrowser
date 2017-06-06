@@ -191,7 +191,7 @@ Templates.workDisplay = {
     }, [
         ['h3', [ld('advancedformatting')]],
         ['label', [
-            ld('textcolor'),
+            ld('textcolor'), nbsp.repeat(2),
             ['select', {name: il('colorName')}, colors.map((color, i) => {
                 const atts = {value: l(['param_values', 'colors', color])};
                 if ($p.get('colorName') === l(['param_values', 'colors', color]) ||
@@ -202,7 +202,7 @@ Templates.workDisplay = {
             })]
         ]],
         ['label', [
-            nbsp, ld('or_entercolor'),
+            nbsp, ld('or_entercolor'), nbsp.repeat(2),
             ['input', {
                 name: il('color'),
                 type: 'text',
@@ -212,7 +212,7 @@ Templates.workDisplay = {
         ]],
         ['br'], ['br'],
         ['label', [
-            ld('backgroundcolor'),
+            ld('backgroundcolor'), nbsp.repeat(2),
             ['select', {name: il('bgcolorName')}, colors.map((color, i) => {
                 const atts = {value: l(['param_values', 'colors', color])};
                 if ($p.get('bgcolorName') === l(['param_values', 'colors', color]) ||
@@ -223,7 +223,7 @@ Templates.workDisplay = {
             })]
         ]],
         ['label', [
-            nbsp, ld('or_entercolor'),
+            nbsp, ld('or_entercolor'), nbsp.repeat(2),
             ['input', {
                 name: il('bgcolor'),
                 type: 'text',
@@ -233,7 +233,7 @@ Templates.workDisplay = {
         ]],
         ['br'], ['br'],
         ['label', [
-            ld('text_font'),
+            ld('text_font'), nbsp.repeat(2),
             // Todo: remove hard-coded direction if i81nizing; also i18nize fontSeq param
             ['select', {name: il('fontSeq'), dir: 'ltr'}, fonts.map((fontSeq, i) => {
                 const atts = {value: fontSeq};
@@ -245,7 +245,7 @@ Templates.workDisplay = {
         ]],
         ['br'], ['br'],
         ['label', [
-            ld('font_style'), nbsp,
+            ld('font_style'), nbsp.repeat(2),
             ['select', {name: il('fontstyle')}, [
                 'italic',
                 'normal',
@@ -282,7 +282,7 @@ Templates.workDisplay = {
         ['br'],
         ['label', [
             // Todo: i18n and allow for normal/bold pulldown and float input?
-            ld('font_weight'), ' (normal, bold, 100-900, etc.): ',
+            ld('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp.repeat(2),
             ['input', {
                 name: il('fontweight'),
                 type: 'text',
@@ -292,7 +292,7 @@ Templates.workDisplay = {
         ]],
         ['br'],
         ['label', [
-            ld('font_size'), ' (14pt, 14px, small, 75%, etc.): ',
+            ld('font_size'), ' (14pt, 14px, small, 75%, etc.):', nbsp.repeat(2),
             ['input', {
                 name: il('fontsize'),
                 type: 'text',
@@ -449,7 +449,7 @@ Templates.workDisplay = {
             ]]
         ]],
         ['label', [
-            ld('interlintitle_css'),
+            ld('interlintitle_css'), nbsp.repeat(2),
             ['input', {
                 name: il('interlintitle_css'),
                 type: 'text',
@@ -505,7 +505,7 @@ Templates.workDisplay = {
         ]],
         ['br'],
         le('outputmode_tips', 'label', 'title', {}, [
-            ld('outputmode'),
+            ld('outputmode'), nbsp.repeat(2),
             // Todo: Could i18nize, but would need smaller values
             ['select', {name: il('outputmode')}, [
                 'table',

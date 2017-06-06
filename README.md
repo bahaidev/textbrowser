@@ -108,15 +108,6 @@ default paths) is as follows:
     `index-sample.html` as is or modified as desired. Note that it
     may be sufficient to modify `resources/user.css` and `resources/user.js`.
 
--   ***textbrowser.appcache*** - Offline AppCache manifest. You may base
-    this off of `textbrowser-sample.appcache`, being sure to add your
-    own data files for offline caching. If you are using `user.css` or
-    `user.js`, be sure to uncomment in the copied file (HTML currently
-    only allows one cache file apparently as per
-    <https://html.spec.whatwg.org/multipage/semantics.html#attr-html-manifest>,
-    so we apparently cannot add to this dynamically nor use data: URLs.) This
-    is in the process of being changed to service workers.
-
 -   ***resources/user.css*** - Add any custom CSS you wish to apply
     for `index.html`.
 
@@ -161,7 +152,7 @@ the above instructions:
     at the root of TextBrowser.
 
 1.  Change paths. The path prefix `node_modules/textbrowser` in your
-  `index.html` and `textbrowser.appcache` will need to be stripped in
+  `index.html` will need to be stripped in
   this environment. You will also need to change the `languages` property
   in the `resources/user.js` call to the *TextBrowser* constructor to point
   to `languages-tb.json` instead of `languages.json` or otherwise supply
@@ -268,6 +259,7 @@ upon for monkey-patching.
 1.  Cache JSON into IndexedDB or ideally at least
     `localStorage` for now) and inform user when first caching
     1.  Cache/index presorts (e.g., for Rodwell vs. Traditional Surah numbering)
+    1.  Start Service workers code?
 
 ## To-dos (high priority)
 
@@ -502,7 +494,7 @@ upon for monkey-patching.
 
 ## To-dos (Lower priority)
 
-1.  Change AppCache to
+1.  Adapt old AppCache code to
     [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
     as the former is apparently being deprecated
 1.  Preferences
