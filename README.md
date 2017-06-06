@@ -41,10 +41,11 @@ to date has only been tested in Chrome.
 The following are user-facing features/goals:
 
 -  Have the interface be fully internationalized (i18n) to support translation
-    into other languages and well localized (l10n) into such languages, including
-    for right-to-left languages. Internationalization even optionally applies
-    to parameter names, though this functionality (and some other i18n features
-    in general are not thoroughly tested at present).
+    into other languages and well localized (l10n) into such languages,
+    including for right-to-left languages. Internationalization even
+    optionally applies to parameter names, though this functionality
+    (and some other i18n features in general are not thoroughly tested at
+    present).
 -  Allow texts to be grouped on a work selection page with separate
     introductory messages for each work.
 -  Allow browsing by a range of verses
@@ -86,7 +87,9 @@ The following are administrator-facing features/goals:
 
 -  Allow most functionality to work for administrators out of the box via a
     declarative style (via well-used and readable JSON files) without need
-    for custom scripting.
+    for custom scripting. Though the project originated to meet the need of
+    Bahá'í texts, any document and even data with sequential fields
+    that can be put into a tabular structure can be browsed.
 -  Allow for translations within separate locale files
 -  Allows for easy conversion of table structures (e.g., SQL, JSON) into our
     simple JSON array format
