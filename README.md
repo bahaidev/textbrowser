@@ -126,7 +126,6 @@ The following are developer-facing features/goals:
     schema validation. We are still in need of a choice of UI testing
     framework and tests (as well as for unit tests).
 
-
 ## Installation
 
 The repository is intended to be used as a
@@ -139,6 +138,8 @@ Add the following to your application's `package.json`:
     "textbrowser": "0.2.0"
 }
 ```
+
+Then run `npm install` on your project path.
 
 You can also target the latest code in `master` with the following:
 
@@ -153,8 +154,6 @@ and run `npm cache clean textbrowser`.)
 
 ## Usage
 
-(This section is currently undergoing clean-up.)
-
 The following instructions are aimed at those adding *TextBrowser* as a
 dependency of their own project.
 
@@ -165,20 +164,89 @@ project.
 
 Projects derivative to *TextBrowser* will need to adhere to the following:
 
-1.  Add the *TextBrowser* dependency per the `Usage` section
+1.  Add the *TextBrowser* dependency per the [Installation](#Installation) section.
 
-The recommended project directory structure (which works with the
-default paths) is as follows:
+1.  Prepare JSON data files, JSON Schema files, and JSON meta-data files
+    to represent your texts. See the section
+    [JSON Formats](#JSON Formats).
+    To provide a common naming mechanism across projects and to avoid
+    the need to tweak the default `TextBrowser` JavaScript class set-up, a
+    [specific directory structure](#Recommended Project Directory Structure)
+    is recommended for hosting these files.
+
+1.  Prepare JSON files to indicate the specific grouping of files you wish
+    to make available and optionally the interface languages you wish to
+    make available (and for which you have locales). See the
+    [recommended directory structure](#Recommended Project Directory Structure)
+    section for more.
+
+1.  Create an HTML page (see `index-sample.html` for an example) which includes
+    *TextBrowser*'s own project scripts and your own script to instantiate
+    the `TextBrowser` class (and if you did not follow the
+    [recommended directory structure](#Recommended Project Directory Structure),
+    you will need to point to the above-mentioned JSON
+    files). Page titles are set dynamically for each page, so there is no
+    need to provide a `<title>`.
+
+## Recommended Project Directory Structure
+
+The recommended project directory structure (which are used by default by the
+`TextBrowser` JavaScript API) is as follows:
 
 -   ***package.json*** - Should indicate `textbrowser` as a dependency as per
-    the "Installation" section above.
+    the [Installation](#Installation) section above.
+-   ***node_modules*** - *TextBrowser* and its dependencies will be
+    added here via npm install as well as any dependencies you indicate
+    within `package.json`.
+-   ***index.html*** - The main application code. One can use
+    `index-sample.html` as is or modified as desired. Note that it
+    may be sufficient to modify `resources/user.css` and `resources/user.js`.
+-   ***resources/user.css*** - Add any custom CSS you wish to apply
+    for `index.html`. (This convention allows you to get custom styling
+    without modifying the sample index file.)
+-   ***resources/user.js*** - Add any JavaScript you wish to use. (This
+    convention allows you to get custom styling without modifying the
+    sample index file.) Unless already invoked in `index.html`, you should
+    call the `TextBrowser` constructor here. See *TextBrowser*'s
+    `resources/user-sample.js` for a pattern you can copy and optionally
+    adapt.
+-   ***plugins/*** - While *not yet in use*, this is the convention we wish
+    to begin enforcing for hosting plugins (e.g., for automated columns).
+    <!-- See [Plugin Format](#Plugin Format) -->
+-   ***data/*** - Directory recommended as a convention for holding data
+    files. It is also recommended that child directories be named for each
+    file group, and within each file group, have the JSON data files
+    as well as "schema" and "metadata" subdirectories containing the
+    specific JSON schemas for each data file and the
+    TextBrowser-specific meta-data files. See [JSON Formats](#JSON Formats).
+-   ***files.json*** - See [JSON Formats](#JSON Formats).
+-   ***site.json*** - See [JSON Formats](#JSON Formats). *(Not yet utilized in the app.)*
+-   ***locales/*** - Only needed if providing an alternate to *TextBrowser*'s
+    own built-in `locales/`. It is recommended to rely on the default
+    files and not add any custom files (contributing back here any
+    localization fixes or additions you may have done!). See
+    [JSON Formats](#JSON Formats).
+-   ***languages.json*** - As with `locales/`, only needed if providing an
+    alternate to *TextBrowser*'s own built-in `appdata/languages.json` file.
+    It is recommended to rely on the default and not add any custom file. See
+    [JSON Formats](#JSON Formats).
 
--   ***site.json*** - Not yet utilized in the app. Has top-level `site` array
+## JSON Formats
+
+(This section is currently undergoing clean-up.)
+
+JSON Schema, JSON Metadata, and JSON Data Format
+files.json, site.json, languages.json
+locales/
+
+todo: explain fields currently in use
+
+-   ***site.json*** - Expects a top-level `site` array property
     indicating nesting of the site's page hierarchy (usable for site map
-    generation). Also has `navigation` to indicate the subset of this site
-    available on the navigation bar. Can also be used to generate
-    breadcrumbs, `<link rel=next/prev>` links, and a sitemap.
-
+    generation). Also expects a `navigation` property to indicate the subset
+    of this site available on the navigation bar. Is also intended to be used
+    to generate breadcrumbs, `<link rel=next/prev>` links, and a sitemap. *(Not
+    yet utilized in the app, however.)*
 -   ***files.json*** - Points to your data files (e.g., any kept in `data/`).
     Is an object with a `groups` property set to an array of file groups where
     each group has the property `name` for a file group display name as a
@@ -194,23 +262,6 @@ default paths) is as follows:
     root of the file and if present will be prefixed to any file-group-specific
     base paths and the file. You may wish to validate your `files.json` with
     `general-schemas/files.jsonschema`, but this is not required.
-
--   ***index.html*** - The main application code. One can use
-    `index-sample.html` as is or modified as desired. Note that it
-    may be sufficient to modify `resources/user.css` and `resources/user.js`.
-
--   ***resources/user.css*** - Add any custom CSS you wish to apply
-    for `index.html`.
-
--   ***resources/user.js*** - Add any JavaScript you wish to use. Unless
-    already invoked in `index.html`, you should call the `TextBrowser`
-    constructor here. See TextBrowser's `resources/user-sample.js` for
-    a pattern you can copy and optionally adapt.
-
--   ***node_modules*** - *TextBrowser* and its dependencies will be
-    added here via bower install as well as any dependencies you indicate
-    within `package.json`.
-
 -   ***data/*** - Directory recommended as a convention for holding data
     files. It is also recommended that child directories be named for each
     file group, and within each file group, have the JSON data files
@@ -222,39 +273,16 @@ default paths) is as follows:
     `general-schemas/metadata.jsonschema`). See the "JSON Schema and
     metadata files and fields in use" section.
 
-New language information should be added to TextBrowser's
-`/appdata/languages.json` (and the copy of this file,
-`languages-tb.json`, which only differs in its `localeFileBasePath`)
-and new translations to a new file in TextBrowser's `/locales`. This
-information should be generic to the application, so please
-contribute back through pull requests if you have new locales
-to offer. However, you may also supply a `languages` property
-pointing to a languages file of your own choosing. See
-`general-schemas/languages.jsonschema` and
-`general-schemas/locale.jsonschema` for the composition of these file(s).
-
-For those wishing to test files within the TextBrowser project itself
-(not generally recommended), you can follow the follow tweaks to
-the above instructions:
-
-1.  You should not need to alter `package.json` though you may install
-    other dependencies if you update paths accordingly. You may
-    alternatively add data files to the reserved `data` directory
-    at the root of TextBrowser.
-
-1.  Change paths. The path prefix `node_modules/textbrowser` in your
-  `index.html` will need to be stripped in
-  this environment. You will also need to change the `languages` property
-  in the `resources/user.js` call to the *TextBrowser* constructor to point
-  to `languages-tb.json` instead of `languages.json` or otherwise supply
-  a languages file which resolves to the correct path).
-
-## JSON Schema and Metadata Files and Fields in Use
-
-(This section is currently undergoing clean-up.)
+    -   ***plugins/*** - indicate scripts in metadata *(Not yet in use)* <!-- See [Plugin Format](#Plugin Format) -->
 
 - (See the `/general-schemas` directory and for
 usage examples, as well as the subdirectories within <https://bitbucket.org/brettz9/bahaiwritings>)
+
+However, you may also supply a `languages` property
+pointing to a languages file of your own choosing (probably `languages.json`
+at your project root) and pointing to `locales` (probably `locales/en-US.json`, etc. at your project root). See
+`general-schemas/languages.jsonschema` and
+`general-schemas/locale.jsonschema` for the composition of these file(s).
 
 1.  
 (driven by a
@@ -276,6 +304,9 @@ and it also points to
 adequate to indicate how the multilinear text is to be browsed (e.g., which
 fields can be used as sequential chapter/paragraph/verse numbers, how
 its columns should be translated, etc.).
+
+<!-- ## Plugin Format -->
+<!-- Add once implemented; e.g., Each plugin file designated within `files.json` expects a JSONP call to `JSONP.executeCallback()` with an object with the following methods -->
 
 ## JavaScript API
 
