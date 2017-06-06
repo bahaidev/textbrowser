@@ -34,6 +34,8 @@ that the web software will be able to work fully offline in the browser
 as well as online. Currently, it must be run on a server though any static
 server will do (it comes with a script to run the code on a simple Node.js
 static file server--which can be easily set up on a local machine as well).
+(It can't be run from a `file://` URL (at least in Chrome), however, due to
+more recent browser-added file access restrictions in such an environment.)
 
 The syntax used in the code currently only works in a modern browser and
 to date has only been tested in Chrome.
