@@ -7,7 +7,9 @@ downloading the files in full and then processing them; the next
 step is for us, while informing the user we are downloading the files,
 is to add them into IndexedDB; eventually, we also hope to provide an
 option to pre-process live on the server (probably Node.js), but
-we are attempting to follow the "offline first" motto.*
+we are attempting to follow the "offline first" motto, though even
+full offline support is not yet completely available, as we are not
+yet making use of the ServiceWorker API.*
 
 *TextBrowser* supports power-user browsing of arbitrary multi-linear
 texts.
@@ -94,10 +96,12 @@ The following are administrator-facing features/goals:
 -  Allow for translations within separate locale files
 -  Allows for easy conversion of table structures (e.g., SQL, JSON) into our
     simple JSON array format
--  Allow for standard means (as with our use of JSON Schema) to designate
-    type information that can be used by the program for automated display
-    as well as optimization. Where a standard means does not exist, we provide
-    a declarative meta-data file to house this information.
+-  Allow for standard means (as with our use of
+    [JSON Schema](http://json-schema.org/documentation.html))
+    to designate type information that can be used by the program for
+    automated display as well as optimization. Where a standard means
+    does not exist, we provide a declarative meta-data file to house
+    this information.
 -  It is a goal for us to support plug-ins for extensibility, including
     declarative specification without need for scripting, but such support
     is currently lacking (though some work internally has begun).
@@ -176,7 +180,9 @@ Projects derivative to *TextBrowser* will need to adhere to the following:
 
 1.  Prepare JSON files to indicate the specific grouping of files you wish
     to make available and optionally the interface languages you wish to
-    make available (and for which you have locales). See the
+    make available (and for which you have locales), and after it may be
+    ready, and if you wish, the JSON files to indicate your site hierarchy.
+    See the
     [recommended directory structure](#Recommended Project Directory Structure)
     section for more.
 
@@ -235,16 +241,33 @@ The recommended project directory structure (which are used by default by the
 
 (This section is currently undergoing clean-up.)
 
-JSON Schema, JSON Metadata, and JSON Data Format
-files.json, site.json, languages.json
-locales/
+### JSON Data
 
--   ***site.json*** - Expects a top-level `site` array property
-    indicating nesting of the site's page hierarchy (usable for site map
-    generation). Also expects a `navigation` property to indicate the subset
-    of this site available on the navigation bar. Is also intended to be used
-    to generate breadcrumbs, `<link rel=next/prev>` links, and a sitemap. *(Not
-    yet utilized in the app, however.)*
+JSON data files (e.g.,
+[this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/peace.json?at=master&fileviewer=file-view-default))
+include 3 fields (per the simple [schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema) to which they adhere):
+
+1. A `schema` JSON reference pointer to your data's JSON schema. See [JSON Schema](#JSON Schema).
+2. A `metadata` JSON reference pointer to your data's JSON metadata. See [JSON Metadata](#JSON Metadata).
+3. A `data` property which is an an array of arrays containing your tabular text itself. This property must adhere to the specific JSON schema mentioned above for this file.
+
+### JSON Schema
+
+This document must be a valid [JSON Schema](http://json-schema.org/documentation.html) and
+must, moreover, adhere to the [table format schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table.jsonschema).
+
+This simple document, besides including the text content, designates a more precise JSON schema to indicate precise column types (e.g.,
+[this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/schemas/Bible.jsonschema?at=master&fileviewer=file-view-default)).
+
+### JSON Metadata
+
+[Meta-data JSON](https://github.com/brettz9/textbrowser/blob/master/general-schemas/metadata.jsonschema) (e.g.,
+[this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/metadata/Bible.metadata?at=master&fileviewer=file-view-default))
+is required so as for you to indicate for the app how the multilinear text
+is to be browsed (e.g., which fields can be used as sequential
+chapter/paragraph/verse numbers, how its columns should be translated, etc.).
+
+
 -   ***files.json*** - Points to your data files (e.g., any kept in `data/`).
     Is an object with a `groups` property set to an array of file groups where
     each group has the property `name` for a file group display name as a
@@ -269,38 +292,27 @@ locales/
     TextBrowser-specific meta-data files (adhering to
     `general-schemas/metadata.jsonschema`).
 
+    - (See the `/general-schemas` directory and for
+    usage examples, as well as the subdirectories within <https://bitbucket.org/brettz9/bahaiwritings>)
+
+    However, you may also supply a `languages` property
+    pointing to a languages file of your own choosing (probably `languages.json`
+    at your project root) and pointing to `locales` (probably `locales/en-US.json`, etc. at your project root). See
+    `general-schemas/languages.jsonschema` and
+    `general-schemas/locale.jsonschema` for the composition of these file(s).
+
+    (driven by a
+    [JSON file](https://github.com/brettz9/textbrowser/blob/master/general-schemas/languages.jsonschema) (e.g.,
+    [the default](https://github.com/brettz9/textbrowser/blob/master/appdata/languages.json)))
+
+    -   ***site.json*** - Expects a top-level `site` array property
+        indicating nesting of the site's page hierarchy (usable for site map
+        generation). Also expects a `navigation` property to indicate the subset
+        of this site available on the navigation bar. Is also intended to be used
+        to generate breadcrumbs, `<link rel=next/prev>` links, and a sitemap. *(Not
+        yet utilized in the app, however.)*
+
     -   ***plugins/*** - indicate scripts in metadata *(Not yet in use)* <!-- See [Plugin Format](#Plugin Format) -->
-
-- (See the `/general-schemas` directory and for
-usage examples, as well as the subdirectories within <https://bitbucket.org/brettz9/bahaiwritings>)
-
-However, you may also supply a `languages` property
-pointing to a languages file of your own choosing (probably `languages.json`
-at your project root) and pointing to `locales` (probably `locales/en-US.json`, etc. at your project root). See
-`general-schemas/languages.jsonschema` and
-`general-schemas/locale.jsonschema` for the composition of these file(s).
-
-1.  
-(driven by a
-[JSON file](https://github.com/brettz9/textbrowser/blob/master/general-schemas/languages.jsonschema) (e.g.,
-[the default](https://github.com/brettz9/textbrowser/blob/master/appdata/languages.json)))
-
-Texts are expected to be in a simple, JSON
-[table format](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table.jsonschema)
-within a document (e.g.,
-[this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/peace.json?at=master&fileviewer=file-view-default))
-adhering to a simple
-[JSON Schema](http://json-schema.org/documentation.html)
-[schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema).
-This simple document, besides including the text content, designates a more precise JSON schema to indicate precise column types (e.g.,
-[this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/schemas/Bible.jsonschema?at=master&fileviewer=file-view-default)),
-and it also points to
-[meta-data JSON](https://github.com/brettz9/textbrowser/blob/master/general-schemas/metadata.jsonschema) (e.g.,
-[this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/metadata/Bible.metadata?at=master&fileviewer=file-view-default))
-adequate to indicate how the multilinear text is to be browsed (e.g., which
-fields can be used as sequential chapter/paragraph/verse numbers, how
-its columns should be translated, etc.).
-
 
 todo: explain fields currently in use
 
