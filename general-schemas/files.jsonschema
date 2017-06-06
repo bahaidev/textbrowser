@@ -17,10 +17,10 @@
     },
     "type": "object",
     "properties": {
-        "baseDirectory": {
+        "schemaBaseDirectory": {
             "type": "string"
         },
-        "schemaBaseDirectory": {
+        "metadataBaseDirectory": {
             "type": "string"
         },
         "plugins": {
@@ -162,9 +162,6 @@
                     "id": {"type": "string"},
                     "name": {"$ref": "#/definitions/localeKey"},
                     "directions": {"$ref": "#/definitions/localeKey"},
-                    "baseDirectory": {
-                        "type": "string"
-                    },
                     "schemaBaseDirectory": {
                         "type": "string"
                     },

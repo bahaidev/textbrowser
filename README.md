@@ -246,7 +246,7 @@ plain language description of the format.
 One meta-property shared among `files.json` and metadata files is
 `localeKey` which is a non-standard means of pointing to a key
 for substitution. It may be replaced in the future by the slightly
-more cumbersome though standards-track JSON references.
+more cumbersome though standards-track [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)s.
 
 ### Work-Specific JSON
 
@@ -378,27 +378,47 @@ following files to indicate behavior for the text-browsing application as a whol
 This format is defined by [this](https://github.com/brettz9/textbrowser/blob/master/general-schemas/files.jsonschema).
 See [this file](https://bitbucket.org/brettz9/bahaiwritings/src/5f2602f122134d2013e013a477ae94ee29548a13/files.json?at=master&fileviewer=file-view-default) for an example.
 
-(This section is currently undergoing clean-up, explaining particular
-fields in use.)
+It allows you to point the application to the data files you desire for inclusion (e.g., any kept in `data/`).
 
-Points to your data files (e.g., any kept in `data/`).
-    Is an object with a `groups` property set to an array of file groups where
-    each group has the property `name` for a file group display name as a
-    string or localization key; an optional `directions` string or localization
-    key; an optional `baseDirectory`, `schemaBaseDirectory`, and
-    `metadataBaseDirectory` for base paths; and a `files` array property with
-    each file containing the properties, `name` for the file name as a string
-    or localization key; `file` for file contents (recommended as a
-    [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)
-    object which will be resolved relative to any `baseDirectory` properties);
-    and `schemaFile`, and `metadataFile` file paths (relative to the respective
-    base paths). The same base directory properties are also available at the
-    root of the file and if present will be prefixed to any file-group-specific
-    base paths and the file. You may wish to validate your `files.json` with
-    `general-schemas/files.jsonschema`, but this is not required.
+The optional string properties `schemaBaseDirectory` and
+`metadataBaseDirectory` at root apply to all groups.
 
-Todo: explain properties, including:
-    -   ***plugins/*** - indicate scripts in metadata *(Not yet in use)* <!-- See [Plugin Format](#Plugin Format) -->
+`groups` is a root array property whose items are file group objects whose
+keys include the `id` string, the `name` string, the `directions` string
+(for indicating instructions), as well as optional, group-scoped,
+`schemaBaseDirectory` and `metadataBaseDirectory` properties.
+
+The `files` array property contains object items with the following properties:
+a `name` string or localization key (or a file group display name), `schemaFile` and `metadataFile` string file paths (resolved relative to the respective base path
+properties), and `file` which is
+an reference to a specific JSON data file [table-container.jsonschema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema)).
+
+As with other files, there is also a `localization-strings` key object, keyed
+to language code, which is keyed to an object of keys (which can be strings,
+arrays of strings, or other objects of keys, including specifically for
+`files.json`, the object property `workNames` whose keys are work names, and
+`plugins` whose keys are plugins and whose object values have a `fieldname`
+key).
+
+The `plugins` object property indicates scripts in metadata and is *not yet in use*.
+
+Its keys are plug-in names and whose value objects have the required property `path`,
+and the optional properties `onByDefault` boolean and `lang` language code string.
+<!-- See [Plugin Format](#Plugin Format) for the structure of the plug-in pointed
+to by the path. -->
+
+The `plugin-field-mapping` object property similarly is *not yet in use*, but
+whose keys are intended as groups and whose object key values include works as
+keys and whose key values include field names as keys and whose key values
+includes field arguments, namely:
+
+- `placement` (the string `"end"` or a number to indicate placement relative
+    to other properties; this might be changed to a string indicating field
+    name)
+- `applicable-fields` an object property whose properties are field names
+    pointing to an object key value with properties that may vary with plug-in,
+    but which specifically reserve a `targetLanguage` language code string property
+    and a `onByDefault` boolean property.
 
 #### `languages.json` and `locales/en-US.json`, etc.
 
@@ -441,7 +461,8 @@ property within metadata files, `files.json`, and `site.json`, respectively).
 This file expects a top-level `site` array property indicating nesting of the
 site's page hierarchy (intended to be used for site map generation). The file
 also expects a `navigation` property (with the same allowable values, or even
-a JSON reference pointing to `site`) to indicate the subset of this site
+a [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)
+pointing to `site`) to indicate the subset of this site
 available on the navigation bar (an array with strings or nested child
 arrays of strings). Besides creating a navigation bar, it is
 also intended to be used to generate breadcrumbs, `<link rel=next/prev>` links,
