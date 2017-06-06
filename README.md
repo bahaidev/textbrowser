@@ -239,27 +239,70 @@ The recommended project directory structure (which are used by default by the
 
 ## JSON Formats
 
-(This section is currently undergoing clean-up.)
+(This section is currently undergoing clean-up, explaining particular
+fields in use.)
 
-### JSON Data
+The sections below begin with where you can find the JSON schema which
+defines the format and an example file. They then follow with a
+plain language description of the format.
 
-JSON data files (e.g.,
-[this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/peace.json?at=master&fileviewer=file-view-default))
-include 3 fields (per the simple [schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema) to which they adhere):
+### Work-Specific JSON
 
-1. A `schema` JSON reference pointer to your data's JSON schema. See [JSON Schema](#JSON Schema).
-2. A `metadata` JSON reference pointer to your data's JSON metadata. See [JSON Metadata](#JSON Metadata).
-3. A `data` property which is an an array of arrays containing your tabular text itself. This property must adhere to the specific JSON schema mentioned above for this file.
+JSON data files, the individual JSON schema file against which the data
+file can be validated (and enhanced in a standard manner with type
+information), and our custom JSON metadata format file for indicating
+information such as designating fields for browsing ranges, are covered
+in this section.
 
-### JSON Schema
+#### JSON Data
 
-This document must be a valid [JSON Schema](http://json-schema.org/documentation.html) and
-must, moreover, adhere to the [table format schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table.jsonschema).
+JSON data files to represent your data (e.g.,
+[this file](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/peace.json?at=master&fileviewer=file-view-default))
+expect 3 fields (per the simple [schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema) and its simple [array-of-arrays subschema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/array-of-arrays.jsonschema) to which they adhere):
+
+1. A `schema` JSON reference pointer to your data's JSON schema.
+    See [JSON Schema](#JSON Schema).
+2. A `metadata` JSON reference pointer to your data's JSON metadata.
+    See [JSON Metadata](#JSON Metadata).
+3. A `data` property which is an an array of arrays containing your tabular
+    text itself. This property must adhere to the specific JSON schema
+    referenced in the `schema` property above for this file.
+
+#### JSON Schema
+
+This document must itself be a valid
+[JSON Schema](http://json-schema.org/documentation.html)
+and must, moreover, adhere to the [table format schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table.jsonschema).
 
 This simple document, besides including the text content, designates a more precise JSON schema to indicate precise column types (e.g.,
 [this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/schemas/Bible.jsonschema?at=master&fileviewer=file-view-default)).
 
-### JSON Metadata
+This schema is expected to designate an array of arrays, with the items
+of the inner arrays being more flexible JSON schemas representing individual
+fields of your works, but expecting a `type` and `title` in all cases.
+
+It may, for integers, optionally also have `minimum` and `maximum` properties
+which can be used to set numeric inputs (assuming the min or max is not
+dependent on another value, as often will be paragraph numbers within
+chapters).
+
+For strings, an optional `"format": "html"` can be present, though raw HTML in
+the so-designated fields will only be output in the results display as HTML
+if the `TextBrowser` option `trustFormatHTML` is set to `true`. This
+is for security reasons in case an untrusted schema is being deployed, but
+one will probably normally wish to set this to `true` for trusted data.
+
+Also for string type fields may one use `enum`, and its values are
+currently used to determine field values (looking in the metadata
+file under the localized `fieldvalue` object whose key is the column in which
+the value occurs) which are used in place of the original content within
+pull-down menus for selecting verse ranges and in the corresponding
+column for the field of the results display. (The `fieldvalue-aliases`
+property of the specific field key of the main `fields` property will
+also be checked in that file for indicating optional aliases of the given
+field value.)
+
+#### JSON Metadata
 
 [Meta-data JSON](https://github.com/brettz9/textbrowser/blob/master/general-schemas/metadata.jsonschema) (e.g.,
 [this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/metadata/Bible.metadata?at=master&fileviewer=file-view-default))
@@ -267,8 +310,19 @@ is required so as for you to indicate for the app how the multilinear text
 is to be browsed (e.g., which fields can be used as sequential
 chapter/paragraph/verse numbers, how its columns should be translated, etc.).
 
+Todo: explain properties
 
--   ***files.json*** - Points to your data files (e.g., any kept in `data/`).
+### Application-Wide JSON files
+
+Besides the JSON files directly representing your works, you will need the
+following files to indicate behavior for the text-browsing application as a whole.
+
+#### `files.json`
+
+This format is defined by [this](https://github.com/brettz9/textbrowser/blob/master/general-schemas/files.jsonschema).
+See [this file](https://bitbucket.org/brettz9/bahaiwritings/src/5f2602f122134d2013e013a477ae94ee29548a13/files.json?at=master&fileviewer=file-view-default) for an example.
+
+Points to your data files (e.g., any kept in `data/`).
     Is an object with a `groups` property set to an array of file groups where
     each group has the property `name` for a file group display name as a
     string or localization key; an optional `directions` string or localization
@@ -283,38 +337,38 @@ chapter/paragraph/verse numbers, how its columns should be translated, etc.).
     root of the file and if present will be prefixed to any file-group-specific
     base paths and the file. You may wish to validate your `files.json` with
     `general-schemas/files.jsonschema`, but this is not required.
--   ***data/*** - JSON data files
-    (adhering to `general-schemas/table-container.jsonschema` and its
-    subschema `array-of-arrays.jsonschema`)
 
-    specific JSON schemas for each data file (adhering to `general-schemas/table.jsonschema`)
-
-    TextBrowser-specific meta-data files (adhering to
-    `general-schemas/metadata.jsonschema`).
-
-    - (See the `/general-schemas` directory and for
-    usage examples, as well as the subdirectories within <https://bitbucket.org/brettz9/bahaiwritings>)
-
-    However, you may also supply a `languages` property
-    pointing to a languages file of your own choosing (probably `languages.json`
-    at your project root) and pointing to `locales` (probably `locales/en-US.json`, etc. at your project root). See
-    `general-schemas/languages.jsonschema` and
-    `general-schemas/locale.jsonschema` for the composition of these file(s).
-
-    (driven by a
-    [JSON file](https://github.com/brettz9/textbrowser/blob/master/general-schemas/languages.jsonschema) (e.g.,
-    [the default](https://github.com/brettz9/textbrowser/blob/master/appdata/languages.json)))
-
-    -   ***site.json*** - Expects a top-level `site` array property
-        indicating nesting of the site's page hierarchy (usable for site map
-        generation). Also expects a `navigation` property to indicate the subset
-        of this site available on the navigation bar. Is also intended to be used
-        to generate breadcrumbs, `<link rel=next/prev>` links, and a sitemap. *(Not
-        yet utilized in the app, however.)*
-
+Todo: explain properties, including:
     -   ***plugins/*** - indicate scripts in metadata *(Not yet in use)* <!-- See [Plugin Format](#Plugin Format) -->
 
-todo: explain fields currently in use
+#### `languages.json` and `locales/en-US.json`, etc.
+
+*TextBrowser* comes with its own `languages.json` file (at
+[`appdata/languages.json`](https://github.com/brettz9/textbrowser/blob/master/appdata/languages.json)) which is used by default. It adheres to [this schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/languages.jsonschema)
+
+The `languages.json` file in turn points to locale files (at
+`locales/`, e.g., `locales/en-US.json`). These locale files adhere to
+[this schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/locale.jsonschema).
+
+Localization of specific file names and content, specific file groups, and for your site navigation, on the other hand, are handled in the other relevant sections of this document.
+
+Although we hope you may contribute back to our project any of the generic
+localizations within `locales/` and `appdata/languages.json`, if you need
+to provide your own interface localization, you may supply a `languages`
+property when creating the `TextBrowser` object to point to a languages
+JSON file of your own choosing (see the
+[JavaScript API](#JavaScript API)).
+
+#### `site.json`
+
+*(This file is not yet utilized in the app, so there is no need for it now!)*
+
+This file expects a top-level `site` array property indicating nesting of the
+site's page hierarchy (intended to be used for site map generation). The file
+also expects a `navigation` property to indicate the subset of this site
+available on the navigation bar. Besides creating a navigation bar, it is
+also intended to be used to generate breadcrumbs, `<link rel=next/prev>` links,
+and a sitemap.
 
 <!-- ## Plugin Format -->
 <!-- Add once implemented; e.g., Each plugin file designated within `files.json` expects a JSONP call to `JSONP.executeCallback()` with an object with the following methods -->
