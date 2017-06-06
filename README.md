@@ -36,6 +36,88 @@ static file server--which can be easily set up on a local machine as well).
 The syntax used in the code currently only works in a modern browser and
 to date has only been tested in Chrome.
 
+## Features / Design Goals
+
+The following are user-facing features/goals:
+
+-  Have the interface be fully internationalized (i18n) to support translation
+    into other languages and well localized (l10n) into such languages, including
+    for right-to-left languages. Internationalization even optionally applies
+    to parameter names, though this functionality (and some other i18n features
+    in general are not thoroughly tested at present).
+-  Allow texts to be grouped on a work selection page with separate
+    introductory messages for each work.
+-  Allow browsing by a range of verses
+-  Allow browsing by alternate mechanisms (e.g., by different ordering schemes
+    on the same text)
+-  Allow precise and canonical pointing to a specific row or even cell
+    within a work (designation of anchors) by graphical means (without the
+    user needing to dig through HTML).
+-  Provide enumerated choices as pull-downs and numeric choices within
+    numerically-aware input fields (including for max and min values).
+-  Ability to selectively disable any column
+-  Ability to reorder (and even repeat) columns
+-  In addition to parallel text functionality where different translations,
+    commentaries, etc. are assigned their own separate columns in the results
+    table, allow users to designate that any field have any other field(s)
+    repeating within its cell (i.e., interlinear as opposed to parallel
+    display). Also provides a styling option on whether to repeat column
+    names and the option to style them (currently, the administrator can
+    also choose exactly how to separate these within cells from one another,
+    but we hope to provide user-facing preselected choices in the future).
+-  Allow categorization of content by language so that users can quickly
+    enable only such content languages in which they are interested
+-  Allow user to not only bookmark/share links of the results page but even
+    of a particular view of the work page.
+-  Allow column-specific styling
+-  Allow generic page styling of text, as form controls or CSS for
+    experienced users
+-  Allow fine-grained control of the table display beyond border styling
+    (e.g., whether to show a caption summarizing the work/selection, whether
+    to show a header and if so, whether it should be fixed and/or styled, or
+    or whether the "table" is even an HTML table or instead HTML `<div>`'s,
+    etc.--JSON export is hoped for the future).
+-  Ease of navigation within a site (as via breadcrumbs) and accessibility
+    (e.g., for the visually impaired) is also desired, but we are hoping
+    for expertise to provide a review and ideally assistance. We do have
+    some code begun internally.
+
+The following are administrator-facing features/goals:
+
+-  Allow most functionality to work for administrators out of the box via a
+    declarative style (via well-used and readable JSON files) without need
+    for custom scripting.
+-  Allow for translations within separate locale files
+-  Allows for easy conversion of table structures (e.g., SQL, JSON) into our
+    simple JSON array format
+-  Allow for standard means (as with our use of JSON Schema) to designate
+    type information that can be used by the program for automated display
+    as well as optimization. Where a standard means does not exist, we provide
+    a declarative meta-data file to house this information.
+-  It is a goal for us to support plug-ins for extensibility, including
+    declarative specification without need for scripting, but such support
+    is currently lacking (though some work internally has begun).
+-  It is a goal for us to support declarative means for indicating site
+    hierarchy and navigation. This is not implemented, but we do have some
+    code begun internally.
+
+The following are developer-facing features/goals:
+
+-  Strong separation of concerns, with "design logic" separate from
+    "business logic". We are using [Jamilih](https://github.com/brettz9/jamilih)-based
+    templating to allow for templating functions in Vanilla JavaScript (as
+    well as avoiding ugly, angular HTML almost entirely!). While the results
+    display for users leverages CSS classes, we still need to remove some
+    inline styling for better structural (HTML) vs. styling (CSS) separation.
+-  We aim to leverage modern syntax, especially JavaScript, allowing
+    derivative projects to polyfill if they wish to support older browsers.
+    Besides aiming for better forward-compatibility, this allows us to use
+    standard, well-known patterns, as well as more readable, succinct code.
+-  We hope for good test-driven development, but currently this is limited to
+    schema validation. We are still in need of a choice of UI testing
+    framework and tests (as well as for unit tests).
+
+
 ## Installation
 
 The repository is intended to be used as a
@@ -158,7 +240,7 @@ the above instructions:
   to `languages-tb.json` instead of `languages.json` or otherwise supply
   a languages file which resolves to the correct path).
 
-## JSON Schema and metadata files and fields in use
+## JSON Schema and Metadata Files and Fields in Use
 
 (This section is currently undergoing clean-up.)
 
@@ -245,7 +327,8 @@ as a `npm` dependency).
         `Templates.resultsDisplay.interlinearTitle` (and optionally
         setting `interlinearSeparator` to an empty string if you use that
         function to handle the separation), but please note that this API
-        could change.
+        could change. It is also desired for us to allow users to have
+        some predefined choices.
 
 As per [semantic versioning](http://semver.org/) used by `npm`,
 our API should continue to work until an increment in the major release
@@ -254,24 +337,22 @@ number.
 The rest of the API used internally is unstable and should not be relied
 upon for monkey-patching.
 
-## To-dos (immediate)
+## To-dos (Immediate)
 
 1.  Cache JSON into IndexedDB or ideally at least
     `localStorage` for now) and inform user when first caching
     1.  Cache/index presorts (e.g., for Rodwell vs. Traditional Surah numbering)
     1.  Start Service workers code?
 
-## To-dos (high priority)
+## To-dos (High Priority)
 
-1.  Ongoing: Once stabilized, target "textbrowser" dependency mentioned above
-    by tagged version instead of `master`.
 1.  Waiting ([JSON UI Schema](https://github.com/json-schema-org/json-schema-spec/issues/67)
     or [JSON Schema Annotation and Documentation Extension](https://github.com/json-schema-org/json-schema-spec/issues/136)):
     i18n: Utilize more standard mechanism instead of our `localeKey`; might also use
     substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
     and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
-1. Waiting: ES6 Modules in browser or if need Babel routine: Switch to imports over script tags and
-    functions passing main functions as arguments
+1.  Waiting: ES6 Modules in browser or if need Babel routine: Switch to
+    imports over script tags and functions passing main functions as arguments
 
 1.  Use schema-detection of type for sorting--integer
     parsing only on URL params per schema); see `resultsDisplay.js` with to-do
@@ -279,7 +360,9 @@ upon for monkey-patching.
 1.  Locales
     1.  Check `localizeParamNames` (preference)?
     1.  Test all locales and works and combos
-1.  Handle defaults for empty boxes if not already
+1.  Default field(s) and default value(s) for when no text is entered and a reasonable
+    sample is desired to be shown. Use `default_view` already spec'd in metadata schema
+    and used in files.
 1.  Add prior transpose functionality (affects header, footer, and body)
 1.  Uncomment and complete random code
     1. random within specific part of browse field range (e.g., within a specific book)?
@@ -434,11 +517,17 @@ upon for monkey-patching.
         to identify by text content too if not a full blown query/transformation
         language)?
 
-## To-dos (medium priority)
+## To-dos (Medium Priority)
 
 1.  Separate formatting within Jamilih code to CSS; unit test and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)
+1.  Utilize meta-data properties, `primary_text_field`, `orig_lang_field`,
+    `orig_langs`, e.g., to allow for user to display main language and
+    originals but not others? Use `hasFieldvalue` and `roman` (for
+    non-automated Roman fields--could designate as Latin language, but
+    need a way to know are numerals for sorting if Arabic numerals not
+    provided)?
 1.  URL (sorted) params keyed to `outerHTML` of page for caching
 1.  Incorporate speech synthesis from
     <http://bahai.works/MediaWiki:Common.js>, allowing different
@@ -487,10 +576,8 @@ upon for monkey-patching.
     1.  Add tooltips and table summaries, etc. back (see locale file for
         these and reapply any other unused) and add any missing ones
         describing how to use the elements
-1.  Option to allow main browse field(s) to be reflected in heading instead of
-     as a column to save space (e.g., Genesis or Genesis-Exodus as caption at top)
-1.  Default field(s) and default value(s) for when no text is entered and a reasonable
-    sample is desired to be shown.
+1.  Give option to user (as opposed to admin) for preset interlinear choices
+    (e.g., separate by line breaks or page breaks)
 
 ## To-dos (Lower priority)
 
