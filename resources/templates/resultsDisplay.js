@@ -288,25 +288,6 @@ body {
                         )
                     });
                 })
-
-                // Todo: localizeParamNames (preference)?
-                // Todo: Schema-detect type for faster sorting--integer
-                //     parsing only on URL params per schema); see todo above on
-                //      `String`/`parseInt`
-                // Todo: Optimize Jamilih to build strings; also to preprocess
-                //        files like this to convert Jamilih to complete string
-                //        concatenation as somewhat faster
-                // Todo: Cache JSON into IndexedDB or ideally at least
-                //        localStorage for now)
-                // Todo: Cache sort (and inform user when first caching)
-
-                // Todo: Later: Handle transpose, in header, footer, and body
-                // Todo: Later: Support `text()` with `querySelector`
-                // Todo: Later: Speech controls
-                // Todo: Later: search1, etc.
-                // Todo: Later: auto-fields
-                // Todo: Later: Support JSON types for `outputmode`, opening
-                //     new window with content-type set
             ));
         });
 

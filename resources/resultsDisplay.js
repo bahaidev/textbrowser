@@ -93,6 +93,8 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         const allInterlinearColIndexes = checkedFieldIndexes.map((cfi, i) => {
             const interlin = $p.get('interlin' + (i + 1), true);
             return interlin && interlin.split(/\s*,\s*/).map((col) =>
+                // Todo: Avoid this when known to be integer or if string, though allow
+                //    string to be treated as number if config is set.
                 parseInt(col, 10) - 1
             ).filter((n) => !Number.isNaN(n));
         });

@@ -1,46 +1,55 @@
-# Text Browser
+# TextBrowser
 
 *Please note that this project, while now preliminarily functional,
 is in its early stages. Its currently slow loading times (particularly
 for large files) relates to the fact that the code is currently
-downloading the files in full an then processing them; the next
-step is for us to inform the user we are downloading the files and
-then add them into IndexedDB; eventually, we also hope to provide an
-option to pre-process live on the server (probably Node.js).*
+downloading the files in full and then processing them; the next
+step is for us, while informing the user we are downloading the files,
+is to add them into IndexedDB; eventually, we also hope to provide an
+option to pre-process live on the server (probably Node.js), but
+we are attempting to follow the "offline first" motto.*
 
-Text Browser supports power-user browsing of arbitrary multi-linear
-texts (if represented as user-customizable JSON tables adhering to
-a simple [JSON Schema](http://json-schema.org/documentation.html)
-schema and with ample
-[meta-data JSON](https://github.com/brettz9/textbrowser/blob/master/general-schemas/metadata.jsonschema)
-information to indicate how it is to be browsed).
+*TextBrowser* supports power-user browsing of arbitrary multi-linear
+texts.
 
 The splash page for the texts is an internationalized interface
-(also driven by a JSON file) that allows for selection of desired
-interface language, followed by a screen to choose from among
-designated texts, with each text being given its own
-interface to allow browsing of the contents of the text.
-The interface offers fine grained control to the user for how
-they wish the output to be displayed, both in terms of styling
-and positioning, with its features particularly shining with
-parallel texts (e.g., multiple translations or commentaries
-that one wishes to view together).
+that allows for selection by the user of their desired interface language,
+followed by a screen to choose from among designated texts, with each text
+being given its own page to allow browsing of the contents of the text.
+
+The text interface offers fine grained control to the *user* for how they
+wish the output of that text to be displayed, both in terms of styling and
+positioning, with its features particularly shining with multilinear/parallel
+texts (e.g., multiple translations or commentaries that one views
+side-by-side), allowing columns to be displayed in separated columns and/or
+interlinearly (one verse vertically beneath the corresponding alternate).
 
 Despite the name of the project referring to "text", this project
-can be used for browsing any tabular data.
+can be used for browsing any tabular data with sequential items.
 
-It is designed to run with client-side JavaScript alone with the intent
+It is designed to run solely with client-side JavaScript with the intent
 that the web software will be able to work fully offline in the browser
-as well as online. Currently, it can be run on a server (it comes with a
-script to run the code on a simple static Node.js server--which can be
-easily set up on your local machine as well).
+as well as online. Currently, it must be run on a server though any static
+server will do (it comes with a script to run the code on a simple Node.js
+static file server--which can be easily set up on a local machine as well).
+
+The syntax used in the code currently only works in a modern browser and
+to date has only been tested in Chrome.
 
 ## Installation
 
-The intent of this repository is for it to be used as a
+The repository is intended to be used as a
 [npm](https://www.npmjs.com/) dependency.
 
 Add the following to your application's `package.json`:
+
+```json
+"dependencies": {
+    "textbrowser": "0.2.0"
+}
+```
+
+You can also target the latest code in `master` with the following:
 
 ```json
 "dependencies": {
@@ -48,32 +57,24 @@ Add the following to your application's `package.json`:
 }
 ```
 
-If you instead merely wish to test the current repository, adding your
-own data files within it after cloning the repository, you can install
-its dependencies via:
-
-```console
-npm install
-```
+(To update, you can remove `node_modules/textbrowser/` from your project
+and run `npm cache clean textbrowser`.)
 
 ## Usage
 
-NOTE: The following needs to be modified according to new usage, invoke
-this file from `index.html` with locations for `files.json` and optionally
-`languages.json`; also get rid of references to `files-sample.json` as
-including it there; reference metadata and schema samples inside the
-Baha'i repo too).
-
-1.  Location: <https://bitbucket.org/brettz9/bahaiwritings>
+(This section is currently undergoing clean-up.)
 
 The following instructions are aimed at those adding *TextBrowser* as a
-dependency of their own project. Notes follow for those seeking to
-add their files within this repository.
+dependency of their own project.
 
 If you would like to see a sample package implementing the
 following, see the
 [bahaiwritings](https://bitbucket.org/brettz9/bahaiwritings)
 project.
+
+Projects derivative to *TextBrowser* will need to adhere to the following:
+
+1.  Add the *TextBrowser* dependency per the `Usage` section
 
 The recommended project directory structure (which works with the
 default paths) is as follows:
@@ -85,7 +86,7 @@ default paths) is as follows:
     indicating nesting of the site's page hierarchy (usable for site map
     generation). Also has `navigation` to indicate the subset of this site
     available on the navigation bar. Can also be used to generate
-    breadcrumbs, &lt;link rel=next/prev&gt; links, and a sitemap.
+    breadcrumbs, `<link rel=next/prev>` links, and a sitemap.
 
 -   ***files.json*** - Points to your data files (e.g., any kept in `data/`).
     Is an object with a `groups` property set to an array of file groups where
@@ -104,8 +105,8 @@ default paths) is as follows:
     `general-schemas/files.jsonschema`, but this is not required.
 
 -   ***index.html*** - The main application code. One can use
-  `index-sample.html` as is or modified as desired. Note that it
-  may be sufficient to modify `resources/user.css` and `resources/user.js`.
+    `index-sample.html` as is or modified as desired. Note that it
+    may be sufficient to modify `resources/user.css` and `resources/user.js`.
 
 -   ***textbrowser.appcache*** - Offline AppCache manifest. You may base
     this off of `textbrowser-sample.appcache`, being sure to add your
@@ -115,10 +116,6 @@ default paths) is as follows:
     <https://html.spec.whatwg.org/multipage/semantics.html#attr-html-manifest>,
     so we apparently cannot add to this dynamically nor use data: URLs.) This
     is in the process of being changed to service workers.
-
--   ***.htaccess*** - If using Apache, you may wish to have this file
-    copied from TextBrowser's `.htaccess-sample` in order to serve the
-    proper Content Type for the AppCache file.
 
 -   ***resources/user.css*** - Add any custom CSS you wish to apply
     for `index.html`.
@@ -170,64 +167,107 @@ the above instructions:
   to `languages-tb.json` instead of `languages.json` or otherwise supply
   a languages file which resolves to the correct path).
 
-## API
+## JSON Schema and metadata files and fields in use
 
-The API can be adapted as needed. The file in `resources/user-sample.js`
-shows its usage (assuming paths relative to a package containing
-*TextBrowser* as a dependency).
+(This section is currently undergoing clean-up.)
+
+- (See the `/general-schemas` directory and for
+usage examples, as well as the subdirectories within <https://bitbucket.org/brettz9/bahaiwritings>)
+
+1.  
+(driven by a
+[JSON file](https://github.com/brettz9/textbrowser/blob/master/general-schemas/languages.jsonschema) (e.g.,
+[the default](https://github.com/brettz9/textbrowser/blob/master/appdata/languages.json)))
+
+Texts are expected to be in a simple, JSON
+[table format](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table.jsonschema)
+within a document (e.g.,
+[this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/peace.json?at=master&fileviewer=file-view-default))
+adhering to a simple
+[JSON Schema](http://json-schema.org/documentation.html)
+[schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema).
+This simple document, besides including the text content, designates a more precise JSON schema to indicate precise column types (e.g.,
+[this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/schemas/Bible.jsonschema?at=master&fileviewer=file-view-default)),
+and it also points to
+[meta-data JSON](https://github.com/brettz9/textbrowser/blob/master/general-schemas/metadata.jsonschema) (e.g.,
+[this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/metadata/Bible.metadata?at=master&fileviewer=file-view-default))
+adequate to indicate how the multilinear text is to be browsed (e.g., which
+fields can be used as sequential chapter/paragraph/verse numbers, how
+its columns should be translated, etc.).
+
+## JavaScript API
+
+The following indicates the JavaScript options that can tweak your
+application's behavior beyond that determined by your JSON and schema files.
+
+See `resources/user-sample.js` for an example (where the sample paths
+are assumed to be relative to a package that contains *TextBrowser*
+as a `npm` dependency).
 
 -   ***TextBrowser(options)*** - Constructor which takes an options object
     with the following optional properties:
 
     -   `files` - Path for the `files.json` containing meta-data on the files
-        to be made available via the interface. file Defaults to 'files.json'.
+        to be made available via the interface. Defaults to `"files.json"`.
 
     -   `languages` - Path for the `languages.json` file containing meta-data
         on the languages to be displayed in the interface. Defaults to
-        'node_modules/textbrowser/appdata/languages.json'.
+        `"node_modules/textbrowser/appdata/languages.json"`.
 
     -   `site` - Path for the `site.json` containing meta-data on the site.
+        (Not currently in use, but is intended for providing surrounding
+        navigation information such as breadcrumbs.)
 
     -   `namespace` - Namespace to use as a prefix for all `localStorage`.
-        Defaults to "textbrowser".
+        Defaults to `"textbrowser"` but this could clash with other TextBrowser
+        projects on the same host, so you should change for your project.
+        (This setting might be used in the future for IndexedDB database
+        names or such as well as with `localStorage`.)
 
-    -   `allowPlugins` - Enables `files.json`-specified plugins
+    -   `allowPlugins` - Enables `files.json`-specified plugins to be run.
+        Defaults to `false` as it causes scripts to be run, but if you trust
+        your JSON source files, you will presumably wish to enable this
+        to get the full functionality designated within the JSON (and add
+        the script files designated in `files.json` to your project).
 
-    -   `trustFormatHTML` - If `true`, inserts fields with `"format": "html"`
-        as HTML without escaping; off by default in case schema is untrusted,
-        but if trusted, you will probably want this set to `true`.
+    -   `trustFormatHTML` - If `true`, inserts fields designated by your
+        JSON schema as `"format": "html"` as HTML without escaping; this
+        option is off by default in case the source is untrusted,
+        but if your `files.json`-indicated files are trusted, you will
+        probably want to this set to `true`.
 
     -   `localizeParamNames` - Boolean as to whether to localize parameter
         names by default (can be overridden by the user in preferences).
+        (This has not been fully tested.)
 
     -   `hideFormattingSection` - Boolean as to whether to hide the formatting
         section by default (can be overridden by the user in preferences).
+        This section might be changed to a plugin in the future in which case
+        you'd just avoid designating it within `files.json`.
 
     -   `interlinearSeparator` - HTML code to be injected between each
         interlinear entry; this is not exposed to the user for
-        security reasons (preventing cross-site scripting attacks));
-        defaults to `<br /><br />` though one may set to another string
-        such as `<hr />`
+        security reasons (preventing [cross-site scripting](https://en.wikipedia.org/wiki/Cross-site_scripting)
+        attacks); defaults to `<br /><br />` though one may set to
+        another string such as `<hr />`. If you need greater control,
+        you might consider monkey-patching the simple templating function
+        `Templates.resultsDisplay.interlinearTitle` (and optionally
+        setting `interlinearSeparator` to an empty string if you use that
+        function to handle the separation), but please note that this API
+        could change.
 
--   ***init*** - Default implementation merely invokes `displayLanguages`.
+As per [semantic versioning](http://semver.org/) used by `npm`,
+our API should continue to work until an increment in the major release
+number.
 
--   ***displayLanguages*** - Retrieves the `options.language` JSON file
-  of languages and set the `langData` property with the JSON retrieved.
-  Also invokes `paramChange` and sets up an `onhashchange` listener to
-  invoke `paramChange`.
+The rest of the API used internally is unstable and should not be relied
+upon for monkey-patching.
 
--   ***getDirectionForLanguageCode*** - Utility for getting the directionality
-  of a language code utilizing information in the JSON file supplied as
-  `options.languages`. Utilized by `paramChange`.
+## To-dos (immediate)
 
--   ***paramChange*** - Contains the main code for handling display of
-  languages, works, or results. Will probably be broken up further
-  in the future.
-
-## JSON Schema and metadata files and fields in use
-
--   (To document; for now, see the `/general-schemas` directory and for
-  usage examples, as well as the subdirectories within <https://bitbucket.org/brettz9/bahaiwritings>)
+1.  Cache JSON into IndexedDB or ideally at least
+    `localStorage` for now) and inform user when first caching
+    1.  Cache/index presorts (e.g., for Rodwell vs. Traditional Surah numbering)
 
 ## To-dos (high priority)
 
@@ -241,17 +281,23 @@ shows its usage (assuming paths relative to a package containing
 1. Waiting: ES6 Modules in browser or if need Babel routine: Switch to imports over script tags and
     functions passing main functions as arguments
 
-1. Uncomment and complete random code
+1.  Use schema-detection of type for sorting--integer
+    parsing only on URL params per schema); see `resultsDisplay.js` with to-do
+    by `parseInt` (and also see `String()` conversions)
+1.  Locales
+    1.  Check `localizeParamNames` (preference)?
+    1.  Test all locales and works and combos
+1.  Handle defaults for empty boxes if not already
+1.  Add prior transpose functionality (affects header, footer, and body)
+1.  Uncomment and complete random code
     1. random within specific part of browse field range (e.g., within a specific book)?
         1. Have special meta-data for per book/chapter maximums (Bible/Qur'an) to allow accurate and also for random verses?
-    1. with context
-1.  Add prior transpose functionality
-1.  For Results display page (`browse9.php` equivalent)
-    1.  Handle defaults for empty boxes if not already
-    1.  Test all locales and works and combos
-    1.  Allow tables to be re-sortable via JavaScript which allows
-          sorting by multiple columns with various data, etc.
-1.  See todos in code
+    1.  with context
+    1.  Leverage this code for random to implement random feature across
+        works within group or across all groups
+1.  Optimize Jamilih to build strings (for performance and also for
+    server) and utilize here; also to preprocess files like our templates
+    to convert Jamilih to complete string concatenation as is somewhat faster
 1.  Plugins/Automated fields
     1.  Include extensibility mechanism
         1.  Admin/files-driven and ideally user-driven (though security issue for
@@ -278,6 +324,7 @@ shows its usage (assuming paths relative to a package containing
             If doing so for individual fields in field lists, should support adding, e.g., pull-downs,
             even multiple ones for arguments (e.g., a web search plugin could specify the desired
             search engine)
+    1.  Caching for automated field content like translations (with ability to rebuild)
     1.  Specific automated fields
         1. Previously implemented:
             1.  Option to show renamed fields (like "Book #" -> "Book Name" for Bible) before
@@ -365,6 +412,8 @@ shows its usage (assuming paths relative to a package containing
 1.  Search/Sorting
     1.  Add to preferences system for saved/favorite, recent
         searches/browses, etc.
+    1.  Specific filtering by textbox next to checked field selection
+        (commented out in workDisplay as not working yet in resultsDisplay)
     1.  Schema-aware and metadata-aware column sorting options (e.g., sort by
         order and ASC/DESC) with user customizability (i.e., presorting along
         with dynamic client-side after-load sorting, with or without search
@@ -392,24 +441,31 @@ shows its usage (assuming paths relative to a package containing
         `&anchor=.myClass` with `text()` from [HTTPQuery](https://github.com/brettz9/httpquery)
         to identify by text content too if not a full blown query/transformation
         language)?
-1.  Separate formatting within Jamilih code to CSS; unit test and performance
-    by being able to use a natively stringifying version of Jamilih
-    (once complete)
-1.  Caching for automated field content like translations (with ability to rebuild)
-1.  Incorporate speech synthesis from
-    <http://bahai.works/MediaWiki:Common.js>, allowing different
-    speech voices for different rows or columns (or just let user
-    add CSS to columns to mark).
-1.  Random across works in group or all groups
 
 ## To-dos (medium priority)
 
+1.  Separate formatting within Jamilih code to CSS; unit test and performance
+    by being able to use a natively stringifying version of Jamilih
+    (once complete)
 1.  URL (sorted) params keyed to `outerHTML` of page for caching
+1.  Incorporate speech synthesis from
+    <http://bahai.works/MediaWiki:Common.js>, allowing different
+    speech voices for different rows or columns (or just let user
+    add CSS to columns to mark). Could optionally display speech
+    controls on results display page
+1.  Callback options to replace or receive the results from each screen for
+    further manipulation (e.g., to add navigation, pending or different from
+    the intended `sites.json` behavior).
+1.  Allow tables to be re-sortable via JavaScript which allows
+    sorting by multiple columns with various data, etc.
 1.  Build library (for browser or Node) to utilize `site.json` file to add
     site-wide navigation bar headers, breadcrumbs,
-    link rel=next/prev/contents/etc., sitemap, and page title (supplied
+    `<link rel=next/prev/contents/etc.>`, sitemap, and page title (supplied
     argument of the current page)? Also about text and removecookies/
-    choose a different language.
+    choose a different language, and ability to optionally turn off in
+    results display (e.g., so a table's results can be embedded off-site).
+1.  Support JSON types for `outputmode`, opening
+    new window with content-type set
 1.  Node.js (and/or PHP)
     1.  Optionally allow server push and/or WebSockets updates
         1.  Allow centralized copies or distributed versioning,
@@ -446,8 +502,6 @@ shows its usage (assuming paths relative to a package containing
 
 ## To-dos (Lower priority)
 
-1.  Restore option from work page to have a checkbox on whether to go to "Advanced mode",
-    opening the styling options by default or not.
 1.  Change AppCache to
     [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
     as the former is apparently being deprecated
@@ -478,21 +532,31 @@ shows its usage (assuming paths relative to a package containing
     `document.domain` is only for subdomains).
 1.  `indexedDB` for JSON data
 1.  Restore `tabindex` usage
+1.  Restore option from work page to have a checkbox on whether to go to "Advanced mode",
+    opening the styling options by default or not.
 1.  Testing
     1.  Start browser testing: <https://www.npmjs.com/package/testcafe> (or
-        possibly <http://nightwatchjs.org/>)
+        possibly <http://nightwatchjs.org/>); headless Chrome?
 
 ## Testing
 
-You will first need to run `npm install`.
+If you instead merely wish to test the current repository, you can:
 
-The syntax used in the tests currently only works in a modern browser.
-Note that this may lock up your browser as the validator loads all of
-the files:
-
+1. Clone the repository. Note, however, that we may periodically
+rebase the code, making it harder for one to keep up to date in this manner.
+2. Install the package's dependencies via:
+```shell
+npm install
+```
+3. Test via:
 ```shell
 npm test
 ```
+
+Note, however, that much of testing will depend on a particular
+application. The [bahaiwritings](https://bitbucket.org/brettz9/bahaiwritings/)
+project hosts validation of specific files expected by TextBrowser, such as
+`files.json` and specific schemas and meta-data files needed for that project.
 
 If you merely wish to see the app running in a server, you can run:
 
@@ -500,8 +564,8 @@ If you merely wish to see the app running in a server, you can run:
 npm start
 ```
 
-If you do not wish to automatically open a tab each time the command is run,
-use:
+If you do not wish to automatically open a tab each time the command is
+run, use:
 
 ```shell
 npm run start-no-open
@@ -509,6 +573,22 @@ npm run start-no-open
 
 You can also use this latter option to run the browser tests
 (from <http://127.0.0.1:8080/test/>).
+
+## Contributing
+
+PRs are most welcome, including for additional languages/locales.
+
+Tests will ideally be run before submission of a PR.
+
+At present we only have schema validation and lack UI and unit
+testing coverage (PR's welcome for this too!).
+
+Note that we hope to create an extensible plug-in system, so
+enhancements to the core ought to be confined to the
+main project goals and be oriented toward reuse across all
+projects, relegating any specialized tools to plugins (though
+we can set up the wiki to point to your plugins once a plugin
+system may be in place).
 
 ## History
 
@@ -525,4 +605,8 @@ On Baha'i Libary Online, the Web Archive indicates its presence as far back as 1
 
 ## About
 
-The [BADI](https://groups.yahoo.com/neo/groups/badi/info) mailing list was created to foster collaboration among Baha'i-inspired open source projects as this.
+This initiative is associated with the
+[BADI](https://groups.yahoo.com/neo/groups/badi/info)
+mailing list created to foster collaboration among open source projects
+and initiatives such as this which are Baha'i-inspired but will or may be
+of interest to the wider software community as well.
