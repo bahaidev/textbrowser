@@ -135,15 +135,11 @@ The following are developer-facing features/goals:
 The repository is intended to be used as a
 [npm](https://www.npmjs.com/) dependency.
 
-Add the following to your application's `package.json`:
+Run the following from your project root.
 
-```json
-"dependencies": {
-    "textbrowser": "0.2.0"
-}
+```install
+npm install textbrower --save
 ```
-
-Then run `npm install` on your project path.
 
 You can also target the latest code in `master` with the following:
 
@@ -152,6 +148,8 @@ You can also target the latest code in `master` with the following:
     "textbrowser": "git@github.com:brettz9/textbrowser.git#master"
 }
 ```
+
+And then run `npm install` on your project path.
 
 (To update, you can remove `node_modules/textbrowser/` from your project
 and run `npm cache clean textbrowser`.)
