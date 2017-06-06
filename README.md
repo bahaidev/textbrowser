@@ -213,12 +213,12 @@ The recommended project directory structure (which are used by default by the
 -   ***plugins/*** - While *not yet in use*, this is the convention we wish
     to begin enforcing for hosting plugins (e.g., for automated columns).
     <!-- See [Plugin Format](#Plugin Format) -->
--   ***data/*** - Directory recommended as a convention for holding data
+-   ***data/*** - Directory recommended as a convention for holding JSON data
     files. It is also recommended that child directories be named for each
     file group, and within each file group, have the JSON data files
     as well as "schema" and "metadata" subdirectories containing the
     specific JSON schemas for each data file and the
-    TextBrowser-specific meta-data files. See [JSON Formats](#JSON Formats).
+    *TextBrowser*-specific meta-data files. See [JSON Formats](#JSON Formats).
 -   ***files.json*** - See [JSON Formats](#JSON Formats).
 -   ***site.json*** - See [JSON Formats](#JSON Formats). *(Not yet utilized in the app.)*
 -   ***locales/*** - Only needed if providing an alternate to *TextBrowser*'s
@@ -238,8 +238,6 @@ The recommended project directory structure (which are used by default by the
 JSON Schema, JSON Metadata, and JSON Data Format
 files.json, site.json, languages.json
 locales/
-
-todo: explain fields currently in use
 
 -   ***site.json*** - Expects a top-level `site` array property
     indicating nesting of the site's page hierarchy (usable for site map
@@ -262,16 +260,14 @@ todo: explain fields currently in use
     root of the file and if present will be prefixed to any file-group-specific
     base paths and the file. You may wish to validate your `files.json` with
     `general-schemas/files.jsonschema`, but this is not required.
--   ***data/*** - Directory recommended as a convention for holding data
-    files. It is also recommended that child directories be named for each
-    file group, and within each file group, have the JSON data files
+-   ***data/*** - JSON data files
     (adhering to `general-schemas/table-container.jsonschema` and its
-    subschema `array-of-arrays.jsonschema`) as well as "schema" and
-    "metadata" directories containing the specific JSON schemas for each
-    data file (adhering to `general-schemas/table.jsonschema`) and the
+    subschema `array-of-arrays.jsonschema`)
+
+    specific JSON schemas for each data file (adhering to `general-schemas/table.jsonschema`)
+
     TextBrowser-specific meta-data files (adhering to
-    `general-schemas/metadata.jsonschema`). See the "JSON Schema and
-    metadata files and fields in use" section.
+    `general-schemas/metadata.jsonschema`).
 
     -   ***plugins/*** - indicate scripts in metadata *(Not yet in use)* <!-- See [Plugin Format](#Plugin Format) -->
 
@@ -304,6 +300,9 @@ and it also points to
 adequate to indicate how the multilinear text is to be browsed (e.g., which
 fields can be used as sequential chapter/paragraph/verse numbers, how
 its columns should be translated, etc.).
+
+
+todo: explain fields currently in use
 
 <!-- ## Plugin Format -->
 <!-- Add once implemented; e.g., Each plugin file designated within `files.json` expects a JSONP call to `JSONP.executeCallback()` with an object with the following methods -->
