@@ -35,7 +35,7 @@ TextBrowser.prototype.displayLanguages = function () {
         this.paramChange();
 
         // INIT/ADD EVENTS
-        window.addEventListener('hashchange', this.paramChange.bind(this), false);
+        window.addEventListener('hashchange', () => this.paramChange(), false);
     }, (err) => {
         alert(err);
     });
