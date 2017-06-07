@@ -5,19 +5,21 @@ CACHE:
 index.html
 
 files.json
+# site.json
 
-# Uncomment these if using in index.html:
-# resources/user.js
-# resources/user.css
+# Comment out if not using in index.html:
+resources/user.js
+resources/user.css
 
 # Textbrowser files
 node_modules/textbrowser/appdata/languages.json
 
+# Only needed atm for browser validation
 node_modules/textbrowser/general-schemas/files.jsonschema
 node_modules/textbrowser/general-schemas/languages.jsonschema
 node_modules/textbrowser/general-schemas/locale.jsonschema
 node_modules/textbrowser/general-schemas/metadata.jsonschema
-# node_modules/textbrowser/general-schemas/table.jsonschema # Not currently using for validation or meta-data
+node_modules/textbrowser/general-schemas/table.jsonschema # Not currently using for validation or meta-data
 
 node_modules/textbrowser/locales/ar.json
 node_modules/textbrowser/locales/en-US.json
@@ -27,25 +29,38 @@ node_modules/textbrowser/locales/ru.json
 node_modules/textbrowser/resources/index.css
 node_modules/textbrowser/resources/index.js
 
+node_modules/textbrowser/resources/templates/index.js
+node_modules/textbrowser/resources/templates/languageSelect.js
+node_modules/textbrowser/resources/templates/workSelect.js
+node_modules/textbrowser/resources/templates/workDisplay.js
+node_modules/textbrowser/resources/templates/resultsDisplay.js
+node_modules/textbrowser/resources/IntlURLSearchParams.js
+
+node_modules/textbrowser/resources/index.js
+node_modules/textbrowser/resources/workSelect.js
+node_modules/textbrowser/resources/workDisplay.js
+node_modules/textbrowser/resources/resultsDisplay.js
+
 # Textbrowser dependency files
 
-node_modules/form-serialize/index.js
-node_modules/simple-get-json/index.js
-node_modules/imf/index.js
+node_modules/urlsearchparams/urlsearchparams.js
+node_modules/jamilih/jml.js
 
 # Might want to change to uncomment these instead of the following line:
 # 1. node_modules/intl-messageformat/dist/intl-messageformat.min.js
 # 2. individual locale files: node_modules/intl-messageformat/dist/locale-data/en.js, etc.
 node_modules/intl-messageformat/dist/intl-messageformat-with-locales.min.js
 
-node_modules/jamilih/jml.js
+node_modules/simple-get-json/index.js
+node_modules/imf/index.js
 
 # Uncomment the next line and comment out the following in production
-# node_modules/json-refs/browser/json-refs-min.js
-node_modules/json-refs/browser/json-refs.js
+# node_modules/json-refs/browser/json-refs-standalone-min.js
+node_modules/json-refs/browser/json-refs-standalone.js
 
-node_modules/path-loader/browser/path-loader-min.js
-node_modules/traverse/traverse.js
+node_modules/form-serialize/index.js
+
+node_modules/jsonpadding/index.js
 
 # Add user data files here:
 
