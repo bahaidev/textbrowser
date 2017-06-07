@@ -561,6 +561,9 @@ upon for monkey-patching.
 1.  Waiting: ES6 Modules in browser or if need Babel routine: Switch to
     imports over script tags and functions passing main functions as arguments
 
+1.  Adapt old AppCache code to
+    [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
+    as the former has been deprecated
 1.  Use schema-detection of type for sorting--integer
     parsing only on URL params per schema); see `resultsDisplay.js` with to-do
     by `parseInt` (and also see `String()` conversions)
@@ -789,9 +792,6 @@ upon for monkey-patching.
 
 ## To-dos (Lower priority)
 
-1.  Adapt old AppCache code to
-    [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
-    as the former is apparently being deprecated
 1.  Preferences
     1.  Change Preferences to be set before work or with work but specific to it
     1.  Change Preferences to disallow URL overriding
