@@ -111,7 +111,23 @@ The following are administrator-facing features/goals:
     hierarchy and navigation. This is not implemented, but we do have some
     code begun internally.
 
-The following are developer-facing features/goals:
+The following are third-party-site-facing features/goals:
+
+-  The thorough use of query strings (even to customize the work selection
+    page as well as the results page) allow for other tools to more easily
+    tap into our API, and the control of styling (including of whether to show
+    table headers) deliberately allows for third-party sites to embed
+    content directly from *TextBrowser*-driven sites (including sites which
+    might wish to provide up-to-date, proofread, canonical sources of data
+    without duplicating or introducing the possibility of copy-paste error).
+    Blogs, discussion forums, and wikis might, for example, provide widgets
+    (a popup to our site especially once we may have implemented our to-do
+    for canonical syntax selection available through `postMessage`?) which
+    could be used to embed a specific range and/or styling of text in a post.
+    These advantages of widely-used query strings also go for people sharing
+    links or bookmarking for themselves.
+
+The following are *TextBrowser*-developer-facing features/goals:
 
 -  Strong separation of concerns, with "design logic" separate from
     "business logic". We are using [Jamilih](https://github.com/brettz9/jamilih)-based
@@ -119,11 +135,6 @@ The following are developer-facing features/goals:
     well as avoiding ugly, angular HTML almost entirely!). While the results
     display for users leverages CSS classes, we still need to remove some
     inline styling for better structural (HTML) vs. styling (CSS) separation.
--  The thorough use of query strings allow for other tools to more easily
-    tap into our API, and the control of styling (including of whether to show
-    table headers) deliberately allows for third-party sites to embed
-    content directly from *TextBrowser*-driven sites (including sites which
-    might provide up-to-date, proofread, canonical sources of data).
 -  We aim to leverage modern syntax, especially JavaScript, allowing
     derivative projects to polyfill if they wish to support older browsers.
     Besides aiming for better forward-compatibility, this allows us to use
@@ -651,13 +662,19 @@ upon for monkey-patching.
         1.  Allow automated algorithm to merge, remove rows (e.g., intro
             section of text with same "0" number)
         1.  Splitting columns by line break, etc.
+        1.  Means on results display page to highlight (including
+            discontiguous) selections and convert this into a new selection
+            and/or syntax (generic to *TextBrowser* and/or canonical, ideally
+            human-readable based on JSON-supplied information; e.g., for the
+            Bible, `Matt. 5:10-12`); use with `postMessage` to-do to supply
+            syntax back to another site
         1.  Add an "overlay" column like interlinear, but which overlays by
             tooltip if any data is present; can also use metadata if the overlay
             is within-cell (and this metadata can also be used for putting
             overlay data in its own column too, albeit with only partial
             mapping to the other columns, e.g., if our "Baha'i translation"
             had not already been put into its own column, a metadata mapping
-            may only have been for two discontinuous sentences out of a
+            may only have been for two discontiguous sentences out of a
             paragraph, but could still show such sentences reassembled (with
             some kind of separator) in a paragraph-based cell)
             1.  Deal with other metadata/automated (besides overlays) which is
