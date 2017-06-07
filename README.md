@@ -230,6 +230,11 @@ The recommended project directory structure (which are used by default by the
 -   ***plugins/*** - While *not yet in use*, this is the convention we wish
     to begin enforcing for hosting plugins (e.g., for automated columns).
     <!-- See [Plugin Format](#Plugin Format) -->
+-   ***sw.js*** - Although you can change the name of this file via
+    `serviceWorkerPath` (see [JavaScript API](#JavaScript API)), this
+    file should be at or higher than the files you are caching (including
+    *TextBrowser*'s). Copying `sw-sample.js` as `sw.js` at your project
+    root is the recommended approach.
 -   ***data/*** - Directory recommended as a convention for holding JSON data
     files. It is also recommended that child directories be named for each
     file group, and within each file group, have the JSON data files
@@ -498,6 +503,10 @@ as a `npm` dependency).
 -   ***TextBrowser(options)*** - Constructor which takes an options object
     with the following optional properties:
 
+    -   `staticFilesToCache` - Array of files additional to those of *TextBrowser*
+        which you will need offline. Defaults to the minimum recommended files:
+        `['index.html', 'files.json', 'site.json', 'resources/user.js', 'resources/user.css']`
+
     -   `files` - Path for the `files.json` containing meta-data on the files
         to be made available via the interface. Defaults to `"files.json"`.
 
@@ -509,11 +518,11 @@ as a `npm` dependency).
         (Only used currently for localization, but is intended for providing
         surrounding navigation information such as breadcrumbs.)
 
-    -   `namespace` - Namespace to use as a prefix for all `localStorage`.
-        Defaults to `"textbrowser"` but this could clash with other TextBrowser
-        projects on the same host, so you should change for your project.
-        (This setting might be used in the future for IndexedDB database
-        names or such as well as with `localStorage`.)
+    -   `namespace` - Namespace to use as a prefix for all `localStorage`
+        or `indexedDB` usage. Defaults to `"textbrowser"` but this could
+        clash with other *TextBrowser* projects on the same origin, so you
+        should change for your project. (This setting might be used in
+        the future for any other namespacing.)
 
     -   `allowPlugins` - Enables `files.json`-specified plugins to be run.
         Defaults to `false` as it causes scripts to be run, but if you trust
@@ -526,6 +535,12 @@ as a `npm` dependency).
         option is off by default in case the source is untrusted,
         but if your `files.json`-indicated files are trusted, you will
         probably want to this set to `true`.
+
+    -   `requestPersistentStorage` - Defaults to `true`. Set this to
+        `false` if you don't want to even ask for permission to store
+        the data files persistently. Note that this can really degrade
+        performance, especially with large data files, as the whole data
+        file must otherwise be downloaded for each result display.
 
     -   `localizeParamNames` - Boolean as to whether to localize parameter
         names by default (can be overridden by the user in preferences).
@@ -548,19 +563,19 @@ as a `npm` dependency).
         could change. It is also desired for us to allow users to have
         some predefined choices.
 
+    -   `serviceWorkerPath` - Service worker path which defaults to
+        `"sw.js"` (which, if you are including *TextBrowser* via npm,
+        will be within your own project root). This should probably not
+        be adjusted (and if you do want to adjust it, it may be better
+        to file an issue or PR to allow us to provide choices among
+        various default-available service worker/caching patterns).
+
 As per [semantic versioning](http://semver.org/) used by `npm`,
 our API should continue to work until an increment in the major release
 number.
 
 The rest of the API used internally is unstable and should not be relied
 upon for monkey-patching.
-
-## To-dos (Immediate)
-
-1.  Cache JSON into IndexedDB or ideally at least
-    `localStorage` for now) and inform user when first caching
-    1.  Cache/index presorts (e.g., for Rodwell vs. Traditional Surah numbering)
-    1.  Start Service workers code?
 
 ## To-dos (High Priority)
 
@@ -569,19 +584,16 @@ upon for monkey-patching.
     i18n: Utilize more standard mechanism instead of our `localeKey`; might also use
     substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
     and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
-1.  Waiting: ES6 Modules in browser or if need Babel routine: Switch to
-    imports over script tags and functions passing main functions as arguments
+1.  Waiting: ES6 Modules in browser: Switch to imports over script tags and
+    functions passing main functions as arguments
 
-1.  Adapt old AppCache code to
-    [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)
-    as the former has been deprecated
 1.  Use schema-detection of type for sorting--integer
     parsing only on URL params per schema); see `resultsDisplay.js` with to-do
     by `parseInt` (and also see `String()` conversions)
+1.  Get file names to be namespaced to group name to avoid name clashes
 1.  Locales
     1.  Check `localizeParamNames` (preference)?
     1.  Test all locales and works and combos
-1.  Use `lang` on metadata fields (`<col>`?) for the HTML `lang` attribute
 1.  Default field(s) and default value(s) for when no text is entered and a reasonable
     sample is desired to be shown. Use `default_view` already spec'd in metadata schema
     and used in files.
@@ -776,13 +788,15 @@ upon for monkey-patching.
 1.  Support JSON types for `outputmode`, opening
     new window with content-type set
 1.  Node.js (and/or PHP)
-    1.  Optionally allow server push and/or WebSockets updates
+    1.  Optionally allow server push and/or WebSockets updates of
+        content and software
         1.  Allow centralized copies or distributed versioning,
             including single copy storage
     1.  Delivery of HTML content by same URL so third parties can
         consume without JavaScript
+    1.  [Progressive enhancement is faster](https://jakearchibald.com/2013/progressive-enhancement-is-faster/)
     1.  Serve JSON files immediately and then
-        inject config for `index.js` to avoid reloading
+        inject config for `index.js` to avoid reloading?
     1.  Make tools to build `languages.json` based on available
         locale files, and build `files.json` based on a target directory.
     1.  [HTTPQuery](https://github.com/brettz9/httpquery) headers

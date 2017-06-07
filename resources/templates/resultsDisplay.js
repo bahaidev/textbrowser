@@ -184,7 +184,7 @@ body {
     main: ({
         tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
         escapeQuotedCSS, escapeCSS, escapeHTML,
-        l, localizedFieldNames,
+        l, localizedFieldNames, fieldLangs,
         caption, hasCaption, showInterlinTitles,
         determineEnd, getCellValue, getCheckedAndInterlinearFieldInfo,
         interlinearSeparator = '<br /><br />'
@@ -262,6 +262,7 @@ body {
                     const tdVal = getCellValue({tr, idx});
                     return addAtts(tdElem, {
                         id: 'row' + (i + 1) + 'col' + (j + 1), // Can't have unique IDs if user duplicates a column
+                        lang: fieldLangs[j],
                         dataset: {
                             col: localizedFieldNames[j],
                             row: rowID

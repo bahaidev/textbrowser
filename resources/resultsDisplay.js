@@ -285,89 +285,135 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         console.log('pluginKeys', pluginKeys);
         console.log('pluginFieldMappings', pluginFieldMappings);
         console.log('pluginObjects', pluginObjects);
-
-        document.title = l({
+        document.title = lf({
             key: 'browserfile-resultsdisplay',
             values: {
-                work: this.fileData
-                    ? l({key: ['tablealias', $p.get('work')], fallback: true})
+                work: fileData
+                    ? getMetaProp(metadataObj, 'alias')
                     : ''
             },
             fallback: true
         });
 
         const heading = getMetaProp(metadataObj, 'heading');
-        // Todo: Needs to actually take params into account!
-        JsonRefs.resolveRefs(fileData.file).then(({resolved: {data: tableData}}) => {
-            const schemaItems = schemaObj.items.items;
-            const browseFieldSets = [];
-            const presorts = [];
-            this.getBrowseFieldData({
-                metadataObj, getMetaProp, schemaItems, getFieldAliasOrName
-            }, ({browseFields, presort}) => {
-                presorts.push(presort);
-                browseFieldSets.push(browseFields);
-            });
-            const fieldValueAliasMap = getFieldValueAliasMap({
-                schemaItems, metadataObj, getFieldAliasOrName
-            });
+        const schemaItems = schemaObj.items.items;
+        const setNames = [];
+        const presorts = [];
+        const browseFieldSets = [];
+        this.getBrowseFieldData({
+            metadataObj, getMetaProp, schemaItems, getFieldAliasOrName
+        }, ({setName, browseFields, presort}) => {
+            setNames.push(setName);
+            presorts.push(presort);
+            browseFieldSets.push(browseFields);
+        });
 
-            const localizedFieldNames = schemaItems.map((si) => getFieldAliasOrName(si.title));
-            const escapeColumnIndexes = schemaItems.map((si) => si.format !== 'html');
+        const fieldValueAliasMap = getFieldValueAliasMap({
+            schemaItems, metadataObj, getFieldAliasOrName
+        });
 
-            // Todo: Repeats some code in workDisplay; probably need to reuse
-            //   these functions more in `Templates.resultsDisplay` too
-            const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
-            const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true)
-                ? $p.get('i18n', true) === '1'
-                : prefI18n === 'true' || (
-                    prefI18n !== 'false' && this.localizeParamNames
-                );
-            const il = localizeParamNames
-                ? key => l(['params', key])
-                : key => key;
-            const iil = localizeParamNames
-                ? key => l(['params', 'indexed', key])
-                : key => key;
-            const ilRaw = localizeParamNames
-                ? (key, suffix = '') => $p.get(il(key) + suffix, true)
-                : (key, suffix = '') => $p.get(key + suffix, true);
-            const iilRaw = localizeParamNames
-                ? (key, suffix = '') => $p.get(iil(key) + suffix, true)
-                : (key, suffix = '') => $p.get(key + suffix, true);
+        const localizedFieldNames = schemaItems.map((si) => getFieldAliasOrName(si.title));
+        const escapeColumnIndexes = schemaItems.map((si) => si.format !== 'html');
+        const fieldLangs = schemaItems.map((si) => metadataObj.fields[si.title].lang);
 
-            const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
-                typeof iilRaw('start', (i + 1) + '-1') === 'string'
+        // Todo: Repeats some code in workDisplay; probably need to reuse
+        //   these functions more in `Templates.resultsDisplay` too
+        const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
+        const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true)
+            ? $p.get('i18n', true) === '1'
+            : prefI18n === 'true' || (
+                prefI18n !== 'false' && this.localizeParamNames
             );
-            const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
-            const applicableBrowseFieldNames = applicableBrowseFieldSet.map((abfs) =>
-                abfs.fieldName
+        const il = localizeParamNames
+            ? key => l(['params', key])
+            : key => key;
+        const iil = localizeParamNames
+            ? key => l(['params', 'indexed', key])
+            : key => key;
+        const ilRaw = localizeParamNames
+            ? (key, suffix = '') => $p.get(il(key) + suffix, true)
+            : (key, suffix = '') => $p.get(key + suffix, true);
+        const iilRaw = localizeParamNames
+            ? (key, suffix = '') => $p.get(iil(key) + suffix, true)
+            : (key, suffix = '') => $p.get(key + suffix, true);
+
+        const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
+            typeof iilRaw('start', (i + 1) + '-1') === 'string'
+        );
+        const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
+        const applicableBrowseFieldSetName = setNames[browseFieldSetIdx];
+        const applicableBrowseFieldNames = applicableBrowseFieldSet.map((abfs) =>
+            abfs.fieldName
+        );
+
+        const fieldSchemaTypes = applicableBrowseFieldSet.map((abfs) => abfs.fieldSchema.type);
+        const buildRangePoint = (startOrEnd) =>
+            applicableBrowseFieldNames.map((bfn, j) =>
+                // Todo: i18nize?
+                $p.get(
+                    startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
+                    true
+                )
             );
-            const presort = presorts[browseFieldSetIdx];
-            runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
+        const starts = buildRangePoint('start');
+        const ends = buildRangePoint('end');
 
-            const buildRangePoint = (startOrEnd) =>
-                applicableBrowseFieldNames.map((bfn, j) =>
-                    // Todo: i18nize?
-                    $p.get(
-                        startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
-                        true
-                    )
-                );
-            const starts = buildRangePoint('start');
-            const ends = buildRangePoint('end');
+        const [hasCaption, caption] = getCaption({
+            starts, ends, applicableBrowseFieldNames, heading
+        });
+        const showInterlinTitles = $pRaw('interlintitle') === '1';
 
-            const [hasCaption, caption] = getCaption({
-                starts, ends, applicableBrowseFieldNames, heading
-            });
-            const showInterlinTitles = $pRaw('interlintitle') === '1';
+        console.log('rand', ilRaw('rand') === 'yes');
 
-            console.log('rand', ilRaw('rand') === 'yes');
+        navigator.storage.persisted().then((persistent) => {
+            if (persistent && navigator.serviceWorker.controller) {
+                return new Promise((resolve, reject) => {
+                    // Todo: Fetch the work in code based on the non-localized `datafileName`
+                    const dbName = this.namespace + '-textbrowser-cache-data';
+                    const req = indexedDB.open(dbName);
+                    req.onsuccess = ({target: {result: db}}) => {
+                        const unlocalizedWorkName = fileData.name;
+                        const storeName = 'files-to-cache-' + unlocalizedWorkName;
+                        const trans = db.transaction(storeName);
+                        const store = trans.objectStore(storeName);
+                        const index = store.index('browseFields-' + applicableBrowseFieldSetName); // Get among browse field sets by index number within URL params
 
+                        // console.log('dbName', dbName);
+                        // console.log('storeName', storeName);
+                        // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
+
+                        const stripToRawFieldValue = (v, i) => {
+                            const val = typeof v === 'string'
+                                ? v.replace(/^.* \((.*?)\)$/, '$1')
+                                : v;
+                            return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
+                        };
+
+                        const startsRaw = starts.map((start, i) => stripToRawFieldValue(start, i));
+                        const endsRaw = ends.map((end, i) => stripToRawFieldValue(end, i));
+
+                        const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
+                        r.onsuccess = ({target: {result}}) => {
+                            const converted = result.map((r) => r.value);
+                            resolve(converted);
+                        };
+                    };
+                });
+            } else {
+                return JsonRefs.resolveRefs(fileData.file).then(({
+                    resolved: {data: tableData}
+                }) => {
+                    // No need for this in indexedDB given indexes
+                    const presort = presorts[browseFieldSetIdx];
+                    runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
+                    return tableData;
+                });
+            }
+        }).then((tableData) => {
             Templates.resultsDisplay.main({
                 tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
                 escapeQuotedCSS, escapeCSS, escapeHTML,
-                l, localizedFieldNames,
+                l, localizedFieldNames, fieldLangs,
                 caption, hasCaption, showInterlinTitles,
                 determineEnd: determineEnd({
                     fieldValueAliasMap, localizedFieldNames, applicableBrowseFieldNames,
