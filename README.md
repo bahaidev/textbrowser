@@ -237,7 +237,7 @@ The recommended project directory structure (which are used by default by the
     specific JSON schemas for each data file and the
     *TextBrowser*-specific meta-data files. See [JSON Formats](#JSON Formats).
 -   ***files.json*** - See [JSON Formats](#JSON Formats).
--   ***site.json*** - See [JSON Formats](#JSON Formats). *(Not yet utilized in the app.)*
+-   ***site.json*** - See [JSON Formats](#JSON Formats).
 -   ***locales/*** - Only needed if providing an alternate to *TextBrowser*'s
     own built-in `locales/`. It is recommended to rely on the default
     files and not add any custom files (contributing back here any
@@ -467,7 +467,7 @@ property within metadata files, `files.json`, and `site.json`, respectively).
 
 #### `site.json`
 
-*(This file is not yet utilized in the app, so there is no need for it now!)*
+*(This file is not yet fully utilized in the app)*
 
 This file expects a top-level `site` array property indicating nesting of the
 site's page hierarchy (intended to be used for site map generation). The file
@@ -506,8 +506,8 @@ as a `npm` dependency).
         `"node_modules/textbrowser/appdata/languages.json"`.
 
     -   `site` - Path for the `site.json` containing meta-data on the site.
-        (Not currently in use, but is intended for providing surrounding
-        navigation information such as breadcrumbs.)
+        (Only used currently for localization, but is intended for providing
+        surrounding navigation information such as breadcrumbs.)
 
     -   `namespace` - Namespace to use as a prefix for all `localStorage`.
         Defaults to `"textbrowser"` but this could clash with other TextBrowser
