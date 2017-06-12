@@ -587,6 +587,7 @@ upon for monkey-patching.
 1.  Waiting: ES6 Modules in browser: Switch to imports over script tags and
     functions passing main functions as arguments
 
+1.  Fix `anchor` to work with aliases (utilize `prefer_alias` / `fieldValueAliasMap`)
 1.  Use schema-detection of type for sorting--integer
     parsing only on URL params per schema); see `resultsDisplay.js` with to-do
     by `parseInt` (and also see `String()` conversions)
