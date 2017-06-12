@@ -3,12 +3,12 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
     l, lang, localeFromFileData, fallbackLanguages, $p, imfLocales, getMetaProp
 }) {
     const getCellValue = ({
-        fieldValueAliasMap, escapeColumnIndexes
+        fieldValueAliasMapPreferred, escapeColumnIndexes
     }) => ({
         tr, idx
     }) => {
-        let tdVal = (fieldValueAliasMap[idx] !== undefined
-            ? fieldValueAliasMap[idx][tr[idx]]
+        let tdVal = (fieldValueAliasMapPreferred[idx] !== undefined
+            ? fieldValueAliasMapPreferred[idx][tr[idx]]
             : tr[idx]
         );
         if (tdVal && typeof tdVal === 'object') {
@@ -212,7 +212,7 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             });
         }
     };
-    const getFieldValueAliasMap = ({schemaItems, metadataObj, getFieldAliasOrName}) => {
+    const getFieldValueAliasMap = ({schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias}) => {
         return schemaItems.map(({title: field}) => {
             const {preferAlias, fieldValueAliasMap} = this.getFieldNameAndValueAliases({
                 field, schemaItems, metadataObj, getFieldAliasOrName, getMetaProp
@@ -226,7 +226,7 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
                         return;
                     }
                     if (val && typeof val === 'object') {
-                        if (typeof preferAlias === 'string') {
+                        if (usePreferAlias && typeof preferAlias === 'string') {
                             fieldValueAliasMap[key] =
                                 Templates.resultsDisplay.fieldValueAlias({
                                     key, value: val[preferAlias]
@@ -309,7 +309,10 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         });
 
         const fieldValueAliasMap = getFieldValueAliasMap({
-            schemaItems, metadataObj, getFieldAliasOrName
+            schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias: false
+        });
+        const fieldValueAliasMapPreferred = getFieldValueAliasMap({
+            schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias: true
         });
 
         const localizedFieldNames = schemaItems.map((si) => getFieldAliasOrName(si.title));
@@ -420,7 +423,7 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
                     starts, ends
                 }),
                 getCellValue: getCellValue({
-                    fieldValueAliasMap, escapeColumnIndexes, escapeHTML
+                    fieldValueAliasMapPreferred, escapeColumnIndexes, escapeHTML
                 }),
                 getCheckedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
                     localizedFieldNames

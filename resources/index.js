@@ -236,7 +236,7 @@ TextBrowser.prototype.getFieldNameAndValueAliases = function ({
                 );
             });
         }
-        ret.fieldValueAliasMap = fieldValueAliasMap;
+        ret.fieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap));
         // ret.aliases.sort();
     }
     ret.fieldSchema = fieldSchema;

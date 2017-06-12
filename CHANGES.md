@@ -1,3 +1,7 @@
+# 0.4.1
+
+-   Fix issue with aliases
+
 # 0.4.0
 
 -   Optimization: Add service worker code to cache files and use it and
