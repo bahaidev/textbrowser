@@ -23,10 +23,12 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             : tdVal;
     };
     const determineEnd = ({
-        fieldValueAliasMap, localizedFieldNames, applicableBrowseFieldNames, starts, ends
+        fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,
+        applicableBrowseFieldNames, starts, ends
     }) => ({
         tr, foundState
     }) => {
+        const rowIDPartsPreferred = [];
         const rowIDParts = applicableBrowseFieldNames.map((fieldName) => {
             const idx = localizedFieldNames.indexOf(fieldName);
             // This works to put alias in anchor but this includes
@@ -36,9 +38,12 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
             //   be multiple aliases for a value; we may wish to
             //   switch this (and also for other browse field-based
             //   items).
-            return fieldValueAliasMap[idx] !== undefined
-                ? fieldValueAliasMap[idx][tr[idx]]
-                : tr[idx];
+            if (fieldValueAliasMap[idx] !== undefined) {
+                rowIDPartsPreferred.push(fieldValueAliasMapPreferred[idx][tr[idx]]);
+                return fieldValueAliasMap[idx][tr[idx]];
+            }
+            rowIDPartsPreferred.push(tr[idx]);
+            return tr[idx];
             // return tr[idx];
         });
 
@@ -72,7 +77,7 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         } else if (foundState.end) { // If no longer matching, return
             return true;
         }
-        return rowIDParts.join('-'); // rowID;
+        return rowIDPartsPreferred.join('-'); // rowID;
     };
     const getCheckedAndInterlinearFieldInfo = ({
         localizedFieldNames
@@ -176,11 +181,11 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
                         break;
                     }
                     anchorField = $p.get(iil('anchorfield') + i, true);
+                    // Todo: Convert `anchor` to fieldValueAliasMapPreferred
                     anchors.push(anchor);
                     // anchors.push({anchorText, anchor});
                 }
             }
-
             if (anchors.length) {
                 const escapeSelectorAttValue = (str) => (str || '').replace(/["\\]/g, '\\$&');
                 const escapedRow = escapeSelectorAttValue(anchors.join('-'));
@@ -419,7 +424,8 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
                 l, localizedFieldNames, fieldLangs,
                 caption, hasCaption, showInterlinTitles,
                 determineEnd: determineEnd({
-                    fieldValueAliasMap, localizedFieldNames, applicableBrowseFieldNames,
+                    fieldValueAliasMap, fieldValueAliasMapPreferred,
+                    localizedFieldNames, applicableBrowseFieldNames,
                     starts, ends
                 }),
                 getCellValue: getCellValue({
