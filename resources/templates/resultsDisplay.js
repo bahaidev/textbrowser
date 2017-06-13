@@ -3,16 +3,16 @@
 const $ = (sel) => document.querySelector(sel);
 
 Templates.resultsDisplay = {
-    caption: ({heading, ranges}) => {
+    caption ({heading, ranges}) {
         return heading + ' ' + ranges;
     },
-    startSeparator: ({l}) => {
+    startSeparator ({l}) {
         return l('colon');
     },
-    innerBrowseFieldSeparator: ({l}) => {
+    innerBrowseFieldSeparator ({l}) {
         return l('comma-space');
     },
-    ranges: ({l, startRange, endVals, rangeNames}) => {
+    ranges ({l, startRange, endVals, rangeNames}) {
         return startRange +
             // l('to').toLowerCase() + ' ' +
             '-' +
@@ -20,29 +20,32 @@ Templates.resultsDisplay = {
                 Templates.resultsDisplay.startSeparator({l})
             ) + ' (' + rangeNames + ')';
     },
-    fieldValueAlias: ({key, value}) => {
+    fieldValueAlias ({key, value}) {
         return value + ' (' + key + ')';
     },
-    anchorRowCol: ({anchorRowCol}) => {
+    anchorRowCol ({anchorRowCol}) {
         return $('#' + anchorRowCol);
     },
-    anchors: ({escapedRow, escapedCol}) => {
+    anchors ({escapedRow, escapedCol}) {
         const sel = 'td[data-row="' + escapedRow + '"]' +
             (escapedCol
                 ? ('[data-col="' + escapedCol + '"]')
                 : '');
         return $(sel);
     },
-    interlinearTitle: ({l, val}) => {
+    interlinearSegment ({lang, html}) {
+        return `<span lang="${lang}">${html}</span>`;
+    },
+    interlinearTitle ({l, val}) {
         const colonSpace = l('colon-space');
         return '<span class="interlintitle">' +
             val +
             '</span>' + colonSpace;
     },
-    styles: ({
+    styles ({
         $p, $pRaw, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, escapeCSS,
         tableWithFixedHeaderAndFooter, checkedFieldIndexes, hasCaption
-    }) => {
+    }) {
         const colorEsc = !$p.has('color', true) || $p.get('color', true) === '#'
             ? $pEscArbitrary('colorName')
             : $pEscArbitrary('color');
@@ -181,14 +184,14 @@ body {
                 : '')
         ]];
     },
-    main: ({
+    main ({
         tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
         escapeQuotedCSS, escapeCSS, escapeHTML,
         l, localizedFieldNames, fieldLangs,
         caption, hasCaption, showInterlinTitles,
         determineEnd, getCellValue, getCheckedAndInterlinearFieldInfo,
         interlinearSeparator = '<br /><br />'
-    }) => {
+    }) {
         const tableElems = ({
             table: [
                 ['table', {'class': 'table', border: $pRaw('border') || '0'}],
@@ -262,29 +265,34 @@ body {
                     const tdVal = getCellValue({tr, idx});
                     return addAtts(tdElem, {
                         id: 'row' + (i + 1) + 'col' + (j + 1), // Can't have unique IDs if user duplicates a column
-                        lang: fieldLangs[j],
+                        lang: fieldLangs[idx],
                         dataset: {
-                            col: localizedFieldNames[j],
+                            col: localizedFieldNames[idx],
                             row: rowID
                         },
                         innerHTML:
                             (showInterlins
-                                ? Templates.resultsDisplay.interlinearTitle({
-                                    l, val: localizedFieldNames[idx]
+                                ? Templates.resultsDisplay.interlinearSegment({
+                                    lang: fieldLangs[idx],
+                                    html: Templates.resultsDisplay.interlinearTitle({
+                                        l, val: localizedFieldNames[idx]
+                                    }) + tdVal
                                 })
-                                : ''
+                                : tdVal
                             ) +
-                            tdVal +
                             (interlinearColIndexes
                                 ? interlinearSeparator +
-                                    interlinearColIndexes.map((idx) =>
-                                        (showInterlins
-                                            ? Templates.resultsDisplay.interlinearTitle({
-                                                l, val: localizedFieldNames[idx]
+                                    interlinearColIndexes.map((idx) => {
+                                        const tdVal = getCellValue({tr, idx}); // Need to get a new one
+                                        return (showInterlins
+                                            ? Templates.resultsDisplay.interlinearSegment({
+                                                lang: fieldLangs[idx],
+                                                html: Templates.resultsDisplay.interlinearTitle({
+                                                    l, val: localizedFieldNames[idx]
+                                                }) + tdVal
                                             })
-                                            : '') +
-                                        tdVal
-                                    ).join(interlinearSeparator)
+                                            : tdVal);
+                                    }).join(interlinearSeparator)
                                 : ''
                         )
                     });
