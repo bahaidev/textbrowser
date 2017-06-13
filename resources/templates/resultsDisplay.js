@@ -55,7 +55,7 @@ Templates.resultsDisplay = {
 
         const tableHeight = '100%';
 
-        const topToCaptionStart = 0;
+        const topToCaptionStart = 1;
         const captionSizeDelta = (hasCaption ? 2 : 0) + 0;
         const topToHeadingsStart = topToCaptionStart + captionSizeDelta;
         const headingsDelta = 1;
