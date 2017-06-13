@@ -188,9 +188,10 @@ TextBrowser.prototype.getDirectionForLanguageCode = function (code) {
 TextBrowser.prototype.getFieldNameAndValueAliases = function ({
     field, schemaItems, metadataObj, getFieldAliasOrName, getMetaProp
 }) {
-    const fieldSchema = schemaItems.find((item) =>
+    const fieldSchemaIndex = schemaItems.findIndex((item) =>
         item.title === field
     );
+    const fieldSchema = schemaItems[fieldSchemaIndex];
 
     const ret = {
         fieldName: getFieldAliasOrName(field)
@@ -240,6 +241,7 @@ TextBrowser.prototype.getFieldNameAndValueAliases = function ({
         // ret.aliases.sort();
     }
     ret.fieldSchema = fieldSchema;
+    ret.fieldSchemaIndex = fieldSchemaIndex;
     ret.preferAlias = fieldInfo.prefer_alias;
     ret.lang = fieldInfo.lang;
     return ret;

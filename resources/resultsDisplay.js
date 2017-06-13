@@ -157,7 +157,7 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         }
         return [hasCaption, caption];
     };
-    const setAnchor = ({ilRaw, iil, max}) => {
+    const setAnchor = ({applicableBrowseFieldSchemaIndexes, getRawFieldValue, fieldValueAliasMapPreferred, ilRaw, iil, max}) => {
         // Check if user added this (e.g., even to end of URL with
         //   other anchor params)
         let anchor;
@@ -181,8 +181,12 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
                         break;
                     }
                     anchorField = $p.get(iil('anchorfield') + i, true);
-                    // Todo: Convert `anchor` to fieldValueAliasMapPreferred
-                    anchors.push(anchor);
+
+                    const x = applicableBrowseFieldSchemaIndexes[j - 1];
+                    const rawVal = getRawFieldValue(anchor);
+                    const raw = fieldValueAliasMapPreferred[x] &&
+                        fieldValueAliasMapPreferred[x][rawVal];
+                    anchors.push(raw || anchor);
                     // anchors.push({anchorText, anchor});
                 }
             }
@@ -283,6 +287,10 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
     const escapeCSS = escapeHTML;
     const $pRawEsc = (param) => escapeHTML($pRaw(param));
     const $pEscArbitrary = (param) => escapeHTML($p.get(param, true));
+    const getRawFieldValue = (v) => typeof v === 'string'
+        ? v.replace(/^.* \((.*?)\)$/, '$1')
+        : v;
+    let applicableBrowseFieldSchemaIndexes;
 
     this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p, getMetaProp}).then((
         [fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
@@ -353,6 +361,9 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         const applicableBrowseFieldNames = applicableBrowseFieldSet.map((abfs) =>
             abfs.fieldName
         );
+        applicableBrowseFieldSchemaIndexes = applicableBrowseFieldSet.map((abfs) =>
+            abfs.fieldSchemaIndex
+        );
 
         const fieldSchemaTypes = applicableBrowseFieldSet.map((abfs) => abfs.fieldSchema.type);
         const buildRangePoint = (startOrEnd) =>
@@ -391,9 +402,7 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
                         // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
 
                         const stripToRawFieldValue = (v, i) => {
-                            const val = typeof v === 'string'
-                                ? v.replace(/^.* \((.*?)\)$/, '$1')
-                                : v;
+                            const val = getRawFieldValue(v);
                             return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
                         };
 
@@ -436,8 +445,7 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
                 }),
                 interlinearSeparator: this.interlinearSeparator
             });
-
-            setAnchor({ilRaw, iil, max: browseFieldSets.length});
+            setAnchor({applicableBrowseFieldSchemaIndexes, getRawFieldValue, fieldValueAliasMapPreferred, ilRaw, iil, max: browseFieldSets.length});
         });
     });
 };

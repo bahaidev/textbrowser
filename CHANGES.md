@@ -1,3 +1,7 @@
+# 0.4.2
+
+-   Fix `anchor` to work with aliases (utilizing `prefer_alias`)
+
 # 0.4.1
 
 -   Fix issue with aliases
