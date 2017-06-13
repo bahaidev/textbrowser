@@ -807,8 +807,10 @@ upon for monkey-patching.
         1.  Allow centralized copies or distributed versioning,
             including single copy storage
     1.  Delivery of HTML content by same URL so third parties can
-        consume without JavaScript
-    1.  [Progressive enhancement is faster](https://jakearchibald.com/2013/progressive-enhancement-is-faster/)
+        consume without JavaScript and optimized when not offline
+        1.  [Progressive enhancement is faster](https://jakearchibald.com/2013/progressive-enhancement-is-faster/)
+        1.  Use [IndexedDBShim](https://github.com/axemclion/IndexedDBShim)
+            (with service worker shim?) to optimize on server
     1.  Serve JSON files immediately and then
         inject config for `index.js` to avoid reloading?
     1.  Make tools to build `languages.json` based on available
