@@ -1,3 +1,7 @@
+# 0.6.1
+
+-   Fix interlinear and checked interaction issue
+
 # 0.6.0
 
 -   Enhancement: Add `showEmptyInterlinear` and `showTitleOnSingleInterlinear`
