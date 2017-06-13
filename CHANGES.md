@@ -1,6 +1,7 @@
 # 0.6.1
 
 -   Fix interlinear and checked interaction issue
+-   Better caption display
 
 # 0.6.0
 
