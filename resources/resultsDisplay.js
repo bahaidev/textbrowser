@@ -19,8 +19,8 @@ TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
         }
         return ((escapeColumnIndexes[idx] || !this.trustFormatHTML) &&
             typeof tdVal === 'string')
-            ? escapeHTML(tdVal)
-            : tdVal;
+            ? {tdVal: escapeHTML(tdVal), htmlEscaped: true}
+            : {tdVal};
     };
     const determineEnd = ({
         fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,

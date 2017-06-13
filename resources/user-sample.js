@@ -9,6 +9,8 @@ window.addEventListener('DOMContentLoaded', () => {
         // localizeParamNames: true, // Not well-tested
         // hideFormattingSection: true,
         // requestPersistentStorage: false,
+        // showEmptyInterlinear: false,
+        // showTitleOnSingleInterlinear: false,
         files: 'files.json', // Change as needed to your `files.json` location
         namespace: 'myapp', // Used for namespacing localStorage
         allowPlugins: true, // Enables `files.json`-specified plugins

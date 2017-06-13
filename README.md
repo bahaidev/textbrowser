@@ -570,6 +570,13 @@ as a `npm` dependency).
         to file an issue or PR to allow us to provide choices among
         various default-available service worker/caching patterns).
 
+    -   `showEmptyInterlinear` - Whether to show empty interlinear entries
+        (with a title)
+
+    -   `showTitleOnSingleInterlinear` - If only the main item is present in
+        an interlinear-enabled column, this determines whether a title (if
+        enabled) will be shown.
+
 As per [semantic versioning](http://semver.org/) used by `npm`,
 our API should continue to work until an increment in the major release
 number.
@@ -599,6 +606,8 @@ upon for monkey-patching.
     sample is desired to be shown. Use `default_view` already spec'd in metadata schema
     and used in files.
 1.  Add prior transpose functionality (affects header, footer, and body)
+1.  Expose interlinear `showEmptyInterlinear` and `showTitleOnSingleInterlinear` to the
+    user interface
 1.  Uncomment and complete random code
     1. random within specific part of browse field range (e.g., within a specific book)?
         1. Have special meta-data for per book/chapter maximums (Bible/Qur'an) to allow accurate and also for random verses?

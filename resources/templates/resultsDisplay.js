@@ -251,6 +251,25 @@ body {
             end: false
         };
         const outArr = [];
+
+        const showEmptyInterlinear = this.showEmptyInterlinear;
+        const showTitleOnSingleInterlinear = this.showTitleOnSingleInterlinear;
+
+        const checkEmpty = (tdVal, htmlEscaped) => {
+            if (!showEmptyInterlinear) {
+                if (!htmlEscaped) {
+                    tdVal = new DOMParser().parseFromString(tdVal, 'text/html').body;
+                    [...tdVal.querySelectorAll('br')].forEach((br) => {
+                        br.parentNode.removeChild(br);
+                    });
+                    tdVal = tdVal.innerHTML;
+                }
+                if (!tdVal.trim()) {
+                    return true;
+                }
+            }
+        };
+
         tableData.some((tr, i) => {
             const rowID = determineEnd({tr, foundState});
             if (typeof rowID === 'boolean') {
@@ -262,7 +281,25 @@ body {
                     const interlinearColIndexes = allInterlinearColIndexes[j];
                     const showInterlins = showInterlinTitles &&
                         interlinearColIndexes;
-                    const tdVal = getCellValue({tr, idx});
+                    const {tdVal, htmlEscaped} = getCellValue({tr, idx});
+                    const interlins = showInterlins && interlinearColIndexes.map((idx) => {
+                        const {tdVal, htmlEscaped} = getCellValue({tr, idx}); // Need to get a new one
+                        let cellIsEmpty;
+                        console.log('showEmptyInterlinear', showEmptyInterlinear, htmlEscaped);
+                        const isEmpty = checkEmpty(tdVal, htmlEscaped);
+                        if (isEmpty) {
+                            return '';
+                        }
+
+                        return (showInterlins && !cellIsEmpty
+                            ? Templates.resultsDisplay.interlinearSegment({
+                                lang: fieldLangs[idx],
+                                html: Templates.resultsDisplay.interlinearTitle({
+                                    l, val: localizedFieldNames[idx]
+                                }) + tdVal
+                            })
+                            : tdVal);
+                    }).filter((cell) => cell !== '');
                     return addAtts(tdElem, {
                         id: 'row' + (i + 1) + 'col' + (j + 1), // Can't have unique IDs if user duplicates a column
                         lang: fieldLangs[idx],
@@ -271,7 +308,8 @@ body {
                             row: rowID
                         },
                         innerHTML:
-                            (showInterlins
+                            (showInterlins && !checkEmpty(tdVal, htmlEscaped) &&
+                                (showTitleOnSingleInterlinear || interlins.length)
                                 ? Templates.resultsDisplay.interlinearSegment({
                                     lang: fieldLangs[idx],
                                     html: Templates.resultsDisplay.interlinearTitle({
@@ -280,19 +318,9 @@ body {
                                 })
                                 : tdVal
                             ) +
-                            (interlinearColIndexes
+                            (interlinearColIndexes && interlins.length
                                 ? interlinearSeparator +
-                                    interlinearColIndexes.map((idx) => {
-                                        const tdVal = getCellValue({tr, idx}); // Need to get a new one
-                                        return (showInterlins
-                                            ? Templates.resultsDisplay.interlinearSegment({
-                                                lang: fieldLangs[idx],
-                                                html: Templates.resultsDisplay.interlinearTitle({
-                                                    l, val: localizedFieldNames[idx]
-                                                }) + tdVal
-                                            })
-                                            : tdVal);
-                                    }).join(interlinearSeparator)
+                                    interlins.join(interlinearSeparator)
                                 : ''
                         )
                     });

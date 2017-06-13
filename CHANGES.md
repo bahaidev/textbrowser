@@ -1,3 +1,15 @@
+# 0.6.0
+
+-   Enhancement: Add `showEmptyInterlinear` and `showTitleOnSingleInterlinear`
+    for further control of interlinear behavior
+
+# 0.5.0
+
+-   Fix: Interlinear content
+-   Fix: `lang` and anchor when interlinear are used
+-   Enhancement: Wrap interlinear segments in language-aware span
+-   Refactoring: Use abbreviated method forms
+
 # 0.4.2
 
 -   Fix `anchor` to work with aliases (utilizing `prefer_alias`)

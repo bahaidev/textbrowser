@@ -23,6 +23,9 @@ function TextBrowser (options) {
         : options.localizeParamNames;
     this.hideFormattingSection = Boolean(options.hideFormattingSection);
     this.interlinearSeparator = options.interlinearSeparator;
+    // Todo: Make these user facing options
+    this.showEmptyInterlinear = options.showEmptyInterlinear;
+    this.showTitleOnSingleInterlinear = options.showTitleOnSingleInterlinear;
 }
 
 TextBrowser.prototype.init = function () {
