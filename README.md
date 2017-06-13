@@ -693,6 +693,7 @@ upon for monkey-patching.
             human-readable based on JSON-supplied information; e.g., for the
             Bible, `Matt. 5:10-12`); use with `postMessage` to-do to supply
             syntax back to another site
+        1.  Correct any field easily by links within TB to editing interface
         1.  Add an "overlay" column like interlinear, but which overlays by
             tooltip if any data is present; can also use metadata if the overlay
             is within-cell (and this metadata can also be used for putting
