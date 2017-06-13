@@ -594,6 +594,9 @@ upon for monkey-patching.
 1.  Waiting: ES6 Modules in browser: Switch to imports over script tags and
     functions passing main functions as arguments
 
+1.  Fix sometime obscuring of headings
+1.  Avoid setting inputs to empty string on load (prevents using back button
+    to get at old values)
 1.  Document need of setting certain locale strings, including `sites.json`.
 1.  Use schema-detection of type for sorting--integer
     parsing only on URL params per schema); see `resultsDisplay.js` with to-do
