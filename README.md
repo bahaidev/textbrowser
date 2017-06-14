@@ -646,6 +646,9 @@ upon for monkey-patching.
             If doing so for individual fields in field lists, should support adding, e.g., pull-downs,
             even multiple ones for arguments (e.g., a web search plugin could specify the desired
             search engine)
+        1.  Asycnchronous means of retrieving (and then caching, optionally on an
+            interval) automated data; use of single Promise to each plug-in for
+            whole table (or if necessary `Promise.all` on each row)?
     1.  Caching for automated field content like translations (with ability to rebuild)
     1.  Specific automated fields
         1. Previously implemented:
