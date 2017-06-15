@@ -940,6 +940,10 @@ On Baha'i Libary Online, the Web Archive indicates its presence as far back as 1
 - http://web.archive.org/web/20060505010948/http://bahai-library.com:80/browser/browse0.php?langu=en
 - http://web.archive.org/web/20060430170322/http://bahai-library.com:80/browser/browse.php?langu=en&file=Bible
 
+It was broken (or offline) for long periods of time after an upgrade of PHP
+applied to the server broke the old code and for which I did not find time
+to work around.
+
 ## About
 
 This initiative is associated with the
