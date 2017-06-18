@@ -591,8 +591,11 @@ upon for monkey-patching.
     i18n: Utilize more standard mechanism instead of our `localeKey`; might also use
     substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
     and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
-1.  Waiting: ES6 Modules in browser: Switch to imports over script tags and
+1.  Waiting: [ES6 Modules in browser](https://jakearchibald.com/2017/es-modules-in-browsers/)
+    to be available without flags: Switch to imports over script tags and
     functions passing main functions as arguments
+    1.  Apply <https://www.gnu.org/software/librejs/free-your-javascript.html> labels
+        to provide machine-automated detection of licenses.
 
 1.  Fix sometime obscuring of headings
 1.  Avoid setting inputs to empty string on load (prevents using back button
