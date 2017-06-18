@@ -595,7 +595,10 @@ upon for monkey-patching.
     to be available without flags: Switch to imports over script tags and
     functions passing main functions as arguments
     1.  Apply <https://www.gnu.org/software/librejs/free-your-javascript.html> labels
-        to provide machine-automated detection of licenses.
+        to provide machine-automated detection of licenses. (Adapt [LibreJS](https://www.gnu.org/software/librejs/) to work with WebExtensions,
+        to support `<link>` in addition to visible links, and, if it is not already,
+        make blocking of sites without open source code optional but notify one by
+        icon so that one might know that a page is using (or not using) open source.)
 
 1.  Fix sometime obscuring of headings
 1.  Avoid setting inputs to empty string on load (prevents using back button
