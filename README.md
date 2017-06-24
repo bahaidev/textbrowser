@@ -584,25 +584,19 @@ number.
 The rest of the API used internally is unstable and should not be relied
 upon for monkey-patching.
 
-## To-dos (High Priority)
+## To-dos (Highest priority)
 
-1.  Waiting ([JSON UI Schema](https://github.com/json-schema-org/json-schema-spec/issues/67)
-    or [JSON Schema Annotation and Documentation Extension](https://github.com/json-schema-org/json-schema-spec/issues/136)):
-    i18n: Utilize more standard mechanism instead of our `localeKey`; might also use
-    substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
-    and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
-1.  Waiting: [ES6 Modules in browser](https://jakearchibald.com/2017/es-modules-in-browsers/)
-    to be available without flags: Switch to imports over script tags and
-    functions passing main functions as arguments
-    1.  Apply <https://www.gnu.org/software/librejs/free-your-javascript.html> labels
-        to provide machine-automated detection of licenses. (Adapt [LibreJS](https://www.gnu.org/software/librejs/) to work with WebExtensions,
-        to support `<link>` in addition to visible links, and, if it is not already,
-        make blocking of sites without open source code optional but notify one by
-        icon so that one might know that a page is using (or not using) open source.)
-
-1.  Fix sometime obscuring of headings
+1.  Node.js (or PHP?)
+    1.  Delivery of HTML content by same URL so third parties can
+        consume without JavaScript and optimized when not offline
+        1.  [Progressive enhancement is faster](https://jakearchibald.com/2013/progressive-enhancement-is-faster/)
+        1.  Use [IndexedDBShim](https://github.com/axemclion/IndexedDBShim)
+            (with service worker shim?) to optimize on server
+        1.  Serve JSON files immediately and then
+            inject config for `index.js` to avoid reloading?
 1.  Avoid setting inputs to empty string on load (prevents using back button
     to get at old values)
+1.  Fix sometime obscuring of headings
 1.  Document need of setting certain locale strings, including `sites.json`.
 1.  Use schema-detection of type for sorting--integer
     parsing only on URL params per schema); see `resultsDisplay.js` with to-do
@@ -614,18 +608,6 @@ upon for monkey-patching.
 1.  Default field(s) and default value(s) for when no text is entered and a reasonable
     sample is desired to be shown. Use `default_view` already spec'd in metadata schema
     and used in files.
-1.  Add prior transpose functionality (affects header, footer, and body)
-1.  Expose interlinear `showEmptyInterlinear` and `showTitleOnSingleInterlinear` to the
-    user interface
-1.  Uncomment and complete random code
-    1. random within specific part of browse field range (e.g., within a specific book)?
-        1. Have special meta-data for per book/chapter maximums (Bible/Qur'an) to allow accurate and also for random verses?
-    1.  with context
-    1.  Leverage this code for random to implement random feature across
-        works within group or across all groups
-1.  Optimize Jamilih to build strings (for performance and also for
-    server) and utilize here; also to preprocess files like our templates
-    to convert Jamilih to complete string concatenation as is somewhat faster
 1.  Plugins/Automated fields
     1.  Include extensibility mechanism
         1.  Admin/files-driven and ideally user-driven (though security issue for
@@ -741,6 +723,35 @@ upon for monkey-patching.
             1.  See bahaiwritings project re: using Firefox's [Browser API](https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API)
                 to allow independent navigation controls for each iframe (and
                 side-by-side viewing of verses/lines and commentary)
+
+## To-dos (High Priority)
+
+1.  Waiting ([JSON UI Schema](https://github.com/json-schema-org/json-schema-spec/issues/67)
+    or [JSON Schema Annotation and Documentation Extension](https://github.com/json-schema-org/json-schema-spec/issues/136)):
+    i18n: Utilize more standard mechanism instead of our `localeKey`; might also use
+    substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
+    and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
+1.  Waiting: [ES6 Modules in browser](https://jakearchibald.com/2017/es-modules-in-browsers/)
+    to be available without flags: Switch to imports over script tags and
+    functions passing main functions as arguments
+    1.  Apply <https://www.gnu.org/software/librejs/free-your-javascript.html> labels
+        to provide machine-automated detection of licenses. (Adapt [LibreJS](https://www.gnu.org/software/librejs/) to work with WebExtensions,
+        to support `<link>` in addition to visible links, and, if it is not already,
+        make blocking of sites without open source code optional but notify one by
+        icon so that one might know that a page is using (or not using) open source.)
+
+1.  Add prior transpose functionality (affects header, footer, and body)
+1.  Expose interlinear `showEmptyInterlinear` and `showTitleOnSingleInterlinear` to the
+    user interface
+1.  Uncomment and complete random code
+    1. random within specific part of browse field range (e.g., within a specific book)?
+        1. Have special meta-data for per book/chapter maximums (Bible/Qur'an) to allow accurate and also for random verses?
+    1.  with context
+    1.  Leverage this code for random to implement random feature across
+        works within group or across all groups
+1.  Optimize Jamilih to build strings (for performance and also for
+    server) and utilize here; also to preprocess files like our templates
+    to convert Jamilih to complete string concatenation as is somewhat faster
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize, e.g., with JSONEditor)!
 1.  Develop footnote targeting mechanism to hide/reveal footnotes inline
@@ -815,13 +826,6 @@ upon for monkey-patching.
         content and software
         1.  Allow centralized copies or distributed versioning,
             including single copy storage
-    1.  Delivery of HTML content by same URL so third parties can
-        consume without JavaScript and optimized when not offline
-        1.  [Progressive enhancement is faster](https://jakearchibald.com/2013/progressive-enhancement-is-faster/)
-        1.  Use [IndexedDBShim](https://github.com/axemclion/IndexedDBShim)
-            (with service worker shim?) to optimize on server
-    1.  Serve JSON files immediately and then
-        inject config for `index.js` to avoid reloading?
     1.  Make tools to build `languages.json` based on available
         locale files, and build `files.json` based on a target directory.
     1.  [HTTPQuery](https://github.com/brettz9/httpquery) headers
