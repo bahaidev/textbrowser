@@ -590,10 +590,13 @@ upon for monkey-patching.
     1.  Delivery of HTML content by same URL so third parties can
         consume without JavaScript and optimized when not offline
         1.  [Progressive enhancement is faster](https://jakearchibald.com/2013/progressive-enhancement-is-faster/)
-        1.  Use [IndexedDBShim](https://github.com/axemclion/IndexedDBShim)
-            (with service worker shim?) to optimize on server
+            1.  Optimize Jamilih to build strings (for performance and also for
+                server) and utilize here; also to preprocess files like our templates
+                to convert Jamilih to complete string concatenation as is somewhat faster
         1.  Serve JSON files immediately and then
             inject config for `index.js` to avoid reloading?
+        1.  Use [IndexedDBShim](https://github.com/axemclion/IndexedDBShim)
+            (with service worker shim?) to optimize on server
 1.  Avoid setting inputs to empty string on load (prevents using back button
     to get at old values)
 1.  Fix sometime obscuring of headings
@@ -749,9 +752,6 @@ upon for monkey-patching.
     1.  with context
     1.  Leverage this code for random to implement random feature across
         works within group or across all groups
-1.  Optimize Jamilih to build strings (for performance and also for
-    server) and utilize here; also to preprocess files like our templates
-    to convert Jamilih to complete string concatenation as is somewhat faster
 1.  As with table/array-of-arrays schema, develop schema for
     outlines (and utilize, e.g., with JSONEditor)!
 1.  Develop footnote targeting mechanism to hide/reveal footnotes inline
