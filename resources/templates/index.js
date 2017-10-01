@@ -1,9 +1,16 @@
-/* globals jml */
-/* exported Templates */
-(() => {
-const $ = (sel) => document.querySelector(sel);
+import jml from '../../../jamilih/jml-es6.js';
+
+import languageSelect from './languageSelect.js';
+import workSelect from './workSelect.js';
+import workDisplay from './workDisplay.js';
+import resultsDisplay from './resultsDisplay.js';
+import {$} from './utils/dom.js';
 
 const Templates = {
+    languageSelect,
+    workSelect,
+    workDisplay,
+    resultsDisplay,
     defaultBody () {
         $('html').style.height = '100%'; // Todo: Set in CSS
         return jml('body', {style: 'height: 100%;'});
@@ -135,5 +142,4 @@ Templates.permissions = {
         ];
     }
 };
-window.Templates = Templates;
-})();
+export default Templates;

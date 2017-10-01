@@ -1,5 +1,6 @@
-/* globals jml, Templates */
-Templates.languageSelect = {
+import jml from '../../../jamilih/jml-es6.js';
+
+export default {
     main ({langs, getLanguageFromCode, followParams, $p}) {
         jml('div', {'class': 'focus', id: 'languageSelectionContainer'}, [
             ['select', {

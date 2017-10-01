@@ -1,5 +1,7 @@
-/* globals TextBrowser, Templates, JsonRefs */
-TextBrowser.prototype.resultsDisplay = function resultsDisplay ({
+/* globals JsonRefs */
+import Templates from './templates/index.js';
+
+export default function resultsDisplay ({
     l, lang, localeFromFileData, fallbackLanguages, $p, imfLocales, getMetaProp
 }) {
     const getCellValue = ({

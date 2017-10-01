@@ -45,3 +45,4 @@ IntlURLSearchParams.prototype.append = function (param, value, skip) {
 IntlURLSearchParams.prototype.toString = function () {
     return this.params.toString();
 };
+export default IntlURLSearchParams;

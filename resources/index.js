@@ -1,7 +1,10 @@
-/* global IMF, getJSON, JsonRefs, JSONP, IntlURLSearchParams, Templates */
-/* exported TextBrowser */
-(() => {
-'use strict';
+/* global IMF, getJSON, JsonRefs, JSONP */
+
+import Templates from './templates/index.js';
+import IntlURLSearchParams from './IntlURLSearchParams.js';
+import workSelect from './workSelect.js';
+import workDisplay from './workDisplay.js';
+import resultsDisplay from './resultsDisplay.js';
 
 function s (obj) { alert(JSON.stringify(obj)); } // eslint-disable-line no-unused-vars
 
@@ -27,6 +30,10 @@ function TextBrowser (options) {
     this.showEmptyInterlinear = options.showEmptyInterlinear;
     this.showTitleOnSingleInterlinear = options.showTitleOnSingleInterlinear;
 }
+
+TextBrowser.prototype.workSelect = workSelect;
+TextBrowser.prototype.workDisplay = workDisplay;
+TextBrowser.prototype.resultsDisplay = resultsDisplay;
 
 TextBrowser.prototype.init = function () {
     this.displayLanguages();
@@ -531,25 +538,24 @@ TextBrowser.prototype.paramChange = function () {
                                 );
                             });
                         }
-                    })
-                    .then(() => resolve(l))
-                    .catch((err) => {
-                        if (err && typeof err === 'object') {
-                            const {message, errorType, dbError} = err;
-                            if (message === 'versionchange') {
-                                Templates.permissions.versionChange();
-                                return;
+                    }).then(() => resolve(l))
+                        .catch((err) => {
+                            if (err && typeof err === 'object') {
+                                const {message, errorType, dbError} = err;
+                                if (message === 'versionchange') {
+                                    Templates.permissions.versionChange();
+                                    return;
+                                }
+                                if (dbError) {
+                                    Templates.permissions.dbError({
+                                        errorType,
+                                        escapedErrorMessage: escapeHTML(message)
+                                    });
+                                    return;
+                                }
                             }
-                            if (dbError) {
-                                Templates.permissions.dbError({
-                                    errorType,
-                                    escapedErrorMessage: escapeHTML(message)
-                                });
-                                return;
-                            }
-                        }
-                        Templates.permissions.errorRegistering(escapeHTML(err && err.message));
-                    });
+                            Templates.permissions.errorRegistering(escapeHTML(err && err.message));
+                        });
                 };
                 const l = getSiteI18n();
                 const [requestPermissionsDialog, browserNotGrantingPersistenceAlert] = // , errorRegisteringNotice
@@ -624,5 +630,4 @@ TextBrowser.prototype.paramChange = function () {
     });
 };
 
-window.TextBrowser = TextBrowser;
-})();
+export default TextBrowser;

@@ -6,11 +6,10 @@
     <link rel="stylesheet" href="node_modules/textbrowser/resources/index.css" />
     <link rel="stylesheet" href="resources/user.css" />
 
-    <!-- URLSearchParams -->
-    <script src="node_modules/urlsearchparams/urlsearchparams.js"></script>
-
-    <!-- jamilih -->
-    <script src="node_modules/jamilih/jml.js"></script>
+    <!--
+    TODO: Refactor the node_modules code below that are reasonably under
+            our control to export as ES6 Modules
+    -->
 
     <!-- imf (also using getJSON directly in textbrowser) -->
     <script src="node_modules/intl-messageformat/dist/intl-messageformat-with-locales.min.js"></script>
@@ -26,23 +25,8 @@
     <!-- jsonpadding (JSONP) -->
     <script src="node_modules/jsonpadding/index.js"></script>
 
-    <!-- Main textbrowser script support -->
-    <script src="node_modules/textbrowser/resources/templates/index.js"></script>
-    <script src="node_modules/textbrowser/resources/templates/languageSelect.js"></script>
-    <script src="node_modules/textbrowser/resources/templates/workSelect.js"></script>
-    <script src="node_modules/textbrowser/resources/templates/workDisplay.js"></script>
-    <script src="node_modules/textbrowser/resources/templates/resultsDisplay.js"></script>
-    <script src="node_modules/textbrowser/resources/IntlURLSearchParams.js"></script>
-
     <!-- Site-specific customization -->
-    <script src="resources/user.js"></script>
+    <script type="module" src="resources/user.js"></script>
 </head><body>
-
-<!-- Main textbrowser script (relying on DOM) -->
-<script src="node_modules/textbrowser/resources/index.js"></script>
-<script src="node_modules/textbrowser/resources/workSelect.js"></script>
-<script src="node_modules/textbrowser/resources/workDisplay.js"></script>
-<script src="node_modules/textbrowser/resources/resultsDisplay.js"></script>
-
 </body>
 </html>

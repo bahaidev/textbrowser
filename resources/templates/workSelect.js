@@ -1,5 +1,6 @@
-/* globals jml, Templates */
-Templates.workSelect = ({groups, lf, getNextAlias, $p, followParams}) =>
+import jml from '../../../jamilih/jml-es6.js';
+
+export default ({groups, lf, getNextAlias, $p, followParams}) =>
     jml(
         'div',
         {'class': 'focus'},

@@ -53,8 +53,7 @@ const textbrowserStaticResourceFiles = [
 
     // Textbrowser dependency files
 
-    'node_modules/urlsearchparams/urlsearchparams.js',
-    'node_modules/jamilih/jml.js',
+    'node_modules/jamilih/jml-es6.js',
 
     // Might want to change to uncomment these instead of the following line:
     // 1. 'node_modules/intl-messageformat/dist/intl-messageformat.min.js',

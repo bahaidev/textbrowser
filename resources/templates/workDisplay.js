@@ -1,58 +1,7 @@
-/* globals Templates, jml */
-const nbsp = '\u00a0';
-const colors = [
-    'aqua',
-    'black',
-    'blue',
-    'fuchsia',
-    'gray',
-    'green',
-    'lime',
-    'maroon',
-    'navy',
-    'olive',
-    'purple',
-    'red',
-    'silver',
-    'teal',
-    'white',
-    'yellow'
-];
-const fonts = [
-    'Helvetica, sans-serif',
-    'Verdana, sans-serif',
-    'Gill Sans, sans-serif',
-    'Avantgarde, sans-serif',
-    'Helvetica Narrow, sans-serif',
-    'sans-serif',
-    'Times, serif',
-    'Times New Roman, serif',
-    'Palatino, serif',
-    'Bookman, serif',
-    'New Century Schoolbook, serif',
-    'serif',
-    'Andale Mono, monospace',
-    'Courier New, monospace',
-    'Courier, monospace',
-    'Lucidatypewriter, monospace',
-    'Fixed, monospace',
-    'monospace',
-    'Comic Sans, Comic Sans MS, cursive',
-    'Zapf Chancery, cursive',
-    'Coronetscript, cursive',
-    'Florence, cursive',
-    'Parkavenue, cursive',
-    'cursive',
-    'Impact, fantasy',
-    'Arnoldboecklin, fantasy',
-    'Oldtown, fantasy',
-    'Blippo, fantasy',
-    'Brushstroke, fantasy',
-    'fantasy'
-];
-
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+import jml from '../../../jamilih/jml-es6.js';
+import Templates from './index.js';
+import {colors, fonts} from './utils/html.js';
+import {nbsp, $, $$} from './utils/dom.js';
 
 const getDataForSerializingParamsAsURL = () => ({
     form: $('form#browse'),
@@ -60,7 +9,7 @@ const getDataForSerializingParamsAsURL = () => ({
     checkboxes: $$('input[type=checkbox]')
 });
 
-Templates.workDisplay = {
+export default {
     bdo: ({fallbackDirection, message}) =>
         // Displaying as div with inline display instead of span since
         //    Firefox puts punctuation at left otherwise (bdo dir

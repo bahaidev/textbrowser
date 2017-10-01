@@ -1,7 +1,8 @@
-/* globals TextBrowser, Templates, IMF, formSerialize */
+/* globals IMF, formSerialize */
 
-(() => {
-TextBrowser.prototype.workDisplay = function workDisplay ({
+import Templates from './templates/index.js';
+
+export default function workDisplay ({
     lang, preferredLocale, localeFromLangData, fallbackLanguages, getMetaProp, $p,
     localeFromFileData
 }, l) {
@@ -212,4 +213,3 @@ TextBrowser.prototype.workDisplay = function workDisplay ({
         alert(err);
     });
 };
-})();

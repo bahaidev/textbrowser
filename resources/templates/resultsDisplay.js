@@ -1,8 +1,8 @@
-/* globals Templates, jml */
-(() => {
-const $ = (sel) => document.querySelector(sel);
+import jml from '../../../jamilih/jml-es6.js';
+import Templates from './index.js';
+import {$} from './utils/dom.js';
 
-Templates.resultsDisplay = {
+export default {
     caption ({heading, ranges}) {
         return heading + ' ' + ranges;
     },
@@ -95,11 +95,11 @@ Templates.resultsDisplay = {
     letter-spacing: ${$pEscArbitrary('letterspacing')};
     line-height: ${$pEscArbitrary('lineheight')};
     ${colorEsc ? `color: ${escapeCSS(colorEsc)} !important;` : ''
-        // Marked `!important` as will be overridden by default fixed table colors
-    }
+    // Marked `!important` as will be overridden by default fixed table colors
+}
     ${bgcolorEsc ? `background-color: ${escapeCSS(bgcolorEsc)} !important;` : ''
-        // Marked `!important` as will be overridden by default fixed table colors
-    }
+    // Marked `!important` as will be overridden by default fixed table colors
+}
 }
 ${escapeCSS($pEscArbitrary('pagecss') || '')}
 ` +
@@ -322,7 +322,7 @@ body {
                                 ? interlinearSeparator +
                                     interlins.join(interlinearSeparator)
                                 : ''
-                        )
+                            )
                     });
                 })
             ));
@@ -403,4 +403,3 @@ body {
         ], document.body);
     }
 };
-})();

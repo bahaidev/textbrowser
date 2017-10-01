@@ -1,7 +1,7 @@
 {
   "extends": "standard",
   "parserOptions": {
-      "sourceType": "script"
+      "sourceType": "module"
   },
   "plugins": ["compat"],
   "settings": {

@@ -1,5 +1,7 @@
-/* globals TextBrowser, Templates, IMF, getJSON */
-TextBrowser.prototype.workSelect = function workSelect ({
+/* globals IMF, getJSON */
+import Templates from './templates/index.js';
+
+export default function workSelect ({
     lang, localeFromFileData, fallbackLanguages, getMetaProp, $p, followParams
 } /* , l, defineFormatter */) {
     // We use getJSON instead of JsonRefs as we do not necessarily need to
@@ -10,7 +12,7 @@ TextBrowser.prototype.workSelect = function workSelect ({
                 (fileGroup.metadataBaseDirectory || '') + '/';
             return fileGroup.files.reduce((ar, fileData) =>
                 ar.concat(metadataBaseDir + fileData.metadataFile),
-                arr);
+            arr);
         }, []));
     }).then((metadataObjs) => {
         const imfFile = IMF({ // eslint-disable-line new-cap

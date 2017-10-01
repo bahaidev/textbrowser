@@ -734,15 +734,16 @@ upon for monkey-patching.
     i18n: Utilize more standard mechanism instead of our `localeKey`; might also use
     substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
     and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
-1.  Waiting: [ES6 Modules in browser](https://jakearchibald.com/2017/es-modules-in-browsers/)
-    to be available without flags: Switch to imports over script tags and
-    functions passing main functions as arguments
+
+1.  [ES6 Modules in browser](https://jakearchibald.com/2017/es-modules-in-browsers/):
+    Complete switch to imports over script tags (by updating depednencies to use ES6
+    modules too and then use them); can also avoid function-passing main functions
+    as arguments
     1.  Apply <https://www.gnu.org/software/librejs/free-your-javascript.html> labels
         to provide machine-automated detection of licenses. (Adapt [LibreJS](https://www.gnu.org/software/librejs/) to work with WebExtensions,
         to support `<link>` in addition to visible links, and, if it is not already,
         make blocking of sites without open source code optional but notify one by
         icon so that one might know that a page is using (or not using) open source.)
-
 1.  Add prior transpose functionality (affects header, footer, and body)
 1.  Expose interlinear `showEmptyInterlinear` and `showTitleOnSingleInterlinear` to the
     user interface
