@@ -1,4 +1,4 @@
-import TextBrowser from './node_modules/textbrowser/resources/index.js';
+import TextBrowser from '../node_modules/textbrowser/resources/index.js';
 
 const tb = new TextBrowser({
     // languages: 'node_modules/bahaiwritings/appdata/languages.json', // Default
