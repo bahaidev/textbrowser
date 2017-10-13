@@ -46,7 +46,6 @@ export default function resultsDisplay ({
             }
             rowIDPartsPreferred.push(tr[idx]);
             return tr[idx];
-            // return tr[idx];
         });
 
         // Todo: Use schema to determine each and use `parseInt`
@@ -83,7 +82,7 @@ export default function resultsDisplay ({
     };
     const getCheckedAndInterlinearFieldInfo = ({
         localizedFieldNames
-    }) => () => {
+    }) => {
         let i = 1;
         let field, checked;
         let checkedFields = [];
@@ -292,7 +291,6 @@ export default function resultsDisplay ({
     const getRawFieldValue = (v) => typeof v === 'string'
         ? v.replace(/^.* \((.*?)\)$/, '$1')
         : v;
-    let applicableBrowseFieldSchemaIndexes;
 
     this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p, getMetaProp}).then((
         [fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
@@ -363,7 +361,7 @@ export default function resultsDisplay ({
         const applicableBrowseFieldNames = applicableBrowseFieldSet.map((abfs) =>
             abfs.fieldName
         );
-        applicableBrowseFieldSchemaIndexes = applicableBrowseFieldSet.map((abfs) =>
+        const applicableBrowseFieldSchemaIndexes = applicableBrowseFieldSet.map((abfs) =>
             abfs.fieldSchemaIndex
         );
 
@@ -387,13 +385,19 @@ export default function resultsDisplay ({
         console.log('rand', ilRaw('rand') === 'yes');
 
         navigator.storage.persisted().then((persistent) => {
-            if (persistent && navigator.serviceWorker.controller) {
+            const unlocalizedWorkName = fileData.name;
+            const stripToRawFieldValue = (v, i) => {
+                const val = getRawFieldValue(v);
+                return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
+            };
+            const startsRaw = starts.map(stripToRawFieldValue);
+            const endsRaw = ends.map(stripToRawFieldValue);
+            if (!this.skipIndexedDB && persistent && navigator.serviceWorker.controller) {
                 return new Promise((resolve, reject) => {
                     // Todo: Fetch the work in code based on the non-localized `datafileName`
                     const dbName = this.namespace + '-textbrowser-cache-data';
                     const req = indexedDB.open(dbName);
                     req.onsuccess = ({target: {result: db}}) => {
-                        const unlocalizedWorkName = fileData.name;
                         const storeName = 'files-to-cache-' + unlocalizedWorkName;
                         const trans = db.transaction(storeName);
                         const store = trans.objectStore(storeName);
@@ -403,14 +407,6 @@ export default function resultsDisplay ({
                         // console.log('storeName', storeName);
                         // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
 
-                        const stripToRawFieldValue = (v, i) => {
-                            const val = getRawFieldValue(v);
-                            return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
-                        };
-
-                        const startsRaw = starts.map((start, i) => stripToRawFieldValue(start, i));
-                        const endsRaw = ends.map((end, i) => stripToRawFieldValue(end, i));
-
                         const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
                         r.onsuccess = ({target: {result}}) => {
                             const converted = result.map((r) => r.value);
@@ -419,14 +415,30 @@ export default function resultsDisplay ({
                     };
                 });
             } else {
-                return JsonRefs.resolveRefs(fileData.file).then(({
-                    resolved: {data: tableData}
-                }) => {
-                    // No need for this in indexedDB given indexes
-                    const presort = presorts[browseFieldSetIdx];
-                    runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
-                    return tableData;
-                });
+                // No need for presorting in indexedDB, given indexes
+                const presort = presorts[browseFieldSetIdx];
+                // Given that we are not currently wishing to add complexity to
+                //   our server-side code (though should be easy if using Node.js),
+                //   we retrieve the whole file and then sort where presorting is
+                //   needed
+                if (presort || this.noDynamic) {
+                    return JsonRefs.resolveRefs(fileData.file).then(({
+                        resolved: {data: tableData}
+                    }) => {
+                        runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
+                        return tableData;
+                    });
+                } else {
+                    return fetch(
+                        Object.entries({
+                            unlocalizedWorkName, startsRaw, endsRaw
+                        }).reduce((url, [arg, argVal]) => {
+                            return url + '&' + arg + '=' + encodeURIComponent(
+                                JSON.stringify(argVal)
+                            );
+                        }, 'textbrowser?')
+                    ).then((r) => r.json());
+                }
             }
         }).then((tableData) => {
             Templates.resultsDisplay.main({
@@ -442,7 +454,7 @@ export default function resultsDisplay ({
                 getCellValue: getCellValue({
                     fieldValueAliasMapPreferred, escapeColumnIndexes, escapeHTML
                 }),
-                getCheckedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
+                checkedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
                     localizedFieldNames
                 }),
                 interlinearSeparator: this.interlinearSeparator

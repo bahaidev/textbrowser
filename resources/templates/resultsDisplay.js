@@ -189,7 +189,7 @@ body {
         escapeQuotedCSS, escapeCSS, escapeHTML,
         l, localizedFieldNames, fieldLangs,
         caption, hasCaption, showInterlinTitles,
-        determineEnd, getCellValue, getCheckedAndInterlinearFieldInfo,
+        determineEnd, getCellValue, checkedAndInterlinearFieldInfo,
         interlinearSeparator = '<br /><br />'
     }) {
         const tableElems = ({
@@ -229,7 +229,7 @@ body {
         ] = tableElems; // colgroupElem, colElem
 
         const [checkedFields, checkedFieldIndexes, allInterlinearColIndexes] =
-            getCheckedAndInterlinearFieldInfo();
+            checkedAndInterlinearFieldInfo;
 
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
         const tableWrap = (children) =>

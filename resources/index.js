@@ -29,6 +29,8 @@ function TextBrowser (options) {
     // Todo: Make these user facing options
     this.showEmptyInterlinear = options.showEmptyInterlinear;
     this.showTitleOnSingleInterlinear = options.showTitleOnSingleInterlinear;
+    this.noDynamic = options.noDynamic;
+    this.skipIndexedDB = options.skipIndexedDB;
 }
 
 TextBrowser.prototype.workSelect = workSelect;

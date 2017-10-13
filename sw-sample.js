@@ -215,7 +215,8 @@ self.addEventListener('activate', e => {
 
                             tableRows.forEach((tableRow, i) => {
                                 // Todo: Optionally send notice when complete
-                                // To take advantage of indexes on our arrays, we need to transform them to objects!
+                                // To take advantage of indexes on our arrays, we
+                                //   need to transform them to objects! See https://github.com/w3c/IndexedDB/issues/209
                                 const objRow = {
                                     value: tableRow
                                 };

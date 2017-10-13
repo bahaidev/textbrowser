@@ -577,6 +577,12 @@ as a `npm` dependency).
         an interlinear-enabled column, this determines whether a title (if
         enabled) will be shown.
 
+    -   `noDynamic` - If there is no server-side component to expedite
+        non-indexedDB queries
+
+    -   `skipIndexedDB` - If one wishes to force avoiding indexedDB even
+        when permitted by user (for testing)
+
 As per [semantic versioning](http://semver.org/) used by `npm`,
 our API should continue to work until an increment in the major release
 number.
