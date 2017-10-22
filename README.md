@@ -617,6 +617,11 @@ upon for monkey-patching.
 1.  Default field(s) and default value(s) for when no text is entered and a reasonable
     sample is desired to be shown. Use `default_view` already spec'd in metadata schema
     and used in files.
+1.  Indicate min/max as placeholder text (`Max: 100`?)
+1.  Rename "Field" to "Column anchor"
+1.  Move "Go" to right (or immediate bottom) of paragraph selections
+1.  Renaming/linking to fuller descriptions or graphics explaining
+    options/preferences regarding locale, interlinear, CSS
 1.  Plugins/Automated fields
     1.  Include extensibility mechanism
         1.  Admin/files-driven and ideally user-driven (though security issue for
@@ -800,6 +805,8 @@ upon for monkey-patching.
 
 ## To-dos (Medium Priority)
 
+1.  Preview styling changes (or move all controls to results page for
+    immediate real feedback)
 1.  Separate formatting within Jamilih code to CSS; unit test and performance
     by being able to use a natively stringifying version of Jamilih
     (once complete)
