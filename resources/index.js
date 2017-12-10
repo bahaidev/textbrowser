@@ -98,7 +98,7 @@ TextBrowser.prototype.getWorkData = function ({
         window.location.href.replace(/(index\.html)?#.*$/, '');
 
     return this.getFilesData().then((filesObj) => {
-        const imfFile = IMF({ // eslint-disable-line new-cap
+        const imfFile = IMF({
             locales: lang.map(localeFromFileData),
             fallbackLocales: fallbackLanguages.map(localeFromFileData)
         });
