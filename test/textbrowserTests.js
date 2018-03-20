@@ -12,6 +12,7 @@ function cloneJSON (obj) {
 let appBase = '../';
 
 if (typeof exports !== 'undefined') {
+    require('babel-polyfill');
     Ajv = require('ajv');
     JsonRefs = require('json-refs');
     jsonpatch = require('fast-json-patch');
@@ -52,10 +53,10 @@ function validate (testName, schema, data, extraSchemas = [], additionalOptions 
 }
 
 const textbrowserTests = {
-    'locales tests': function (test) {
+    'locales tests' (test) {
         test.expect(5); // eslint-disable-line no-magic-numbers
         Promise.all(
-            [getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-06-schema.json'))].concat(
+            [getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-07-schema.json'))].concat(
                 [
                     'locale.jsonschema',
                     'en-US.json',
@@ -83,16 +84,19 @@ const textbrowserTests = {
             });
 
             const diff = jsonpatch.compare(schema, schema2);
+            if (diff.length) {
+                console.log('diff', diff);
+            }
             test.strictEqual(diff.length, 0);
 
             test.done();
         });
     },
-    'languages.json test': function (test) {
+    'languages.json test' (test) {
         test.expect(3); // eslint-disable-line no-magic-numbers
         Promise.all([
             JsonRefs.resolveRefsAt(path.join(__dirname, appdataBase, 'languages.json')),
-            getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-06-schema.json')),
+            getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-07-schema.json')),
             getJSON(path.join(__dirname, schemaBase, 'languages.jsonschema')),
             getJSON(path.join(__dirname, schemaBase, 'locale.jsonschema'))
         ]).then(function ([{resolved: data}, jsonSchema, schema, localeSchema]) {
@@ -112,6 +116,9 @@ const textbrowserTests = {
                     validateSchema: false
                 });
                 const diff = jsonpatch.compare(schema, schema2);
+                if (diff.length) {
+                    console.log(`diff for schema at index ${i}`, diff);
+                }
                 test.strictEqual(diff.length, 0);
             });
             test.done();

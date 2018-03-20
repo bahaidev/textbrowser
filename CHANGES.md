@@ -1,3 +1,14 @@
+# 0.9.0
+
+- Fix: Use JSONP as module
+- Testing: Update tests to use babel-polyfill (not run automatically by
+    simple-get-json)
+- Testing: Use updated JSON Schema drafts (which apparently fix some bugs as
+    tests now passing)
+- npm: Update `package-lock.json`, `yarn.lock`
+- npm: Add babel-polyfill to devDeps; bump simple-get-json version (no need
+    to include babel-polyfill in repo ourselves)
+
 # 0.8.2
 
 - npm: Include changes in `package-lock.json` and `yarn.lock`

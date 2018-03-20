@@ -67,7 +67,7 @@ const textbrowserStaticResourceFiles = [
     // 'node_modules/json-refs/browser/json-refs-standalone-min.js',
     'node_modules/json-refs/browser/json-refs-standalone.js',
     'node_modules/form-serialize/src/index.js',
-    'node_modules/jsonpadding/index.js'
+    'node_modules/jsonpadding/dist/JSONP.es6.js'
 ];
 
 self.addEventListener('message', ({data: {

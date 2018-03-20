@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.8.2",
+  "version": "0.9.0",
   "description": "Multilinear text browser",
   "main": "resources/index.js",
   "scripts": {
@@ -14,12 +14,12 @@
     "url": "git+https://github.com/brettz9/textbrowser.git"
   },
   "dependencies": {
-    "imf": "2.1.1",
     "form-serialize": "https://github.com/brettz9/form-serialize#browser-deserialize-rollup",
+    "imf": "2.1.1",
     "jamilih": "0.30.0",
-    "jsonpadding": "0.5.0",
     "json-refs": "https://github.com/brettz9/json-refs#browser",
-    "simple-get-json": "3.2.2"
+    "jsonpadding": "0.5.0",
+    "simple-get-json": "3.2.3"
   },
   "devDependencies": {
     "ajv": "6.3.0",

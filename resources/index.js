@@ -1,6 +1,7 @@
-/* global JsonRefs, JSONP */
+/* global JsonRefs */
 import getJSON from 'simple-get-json';
 import IMF from 'imf';
+import JSONP from 'jsonpadding';
 
 import Templates from './templates/index.js';
 import IntlURLSearchParams from './IntlURLSearchParams.js';
