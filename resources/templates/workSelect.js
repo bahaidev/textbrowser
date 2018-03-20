@@ -1,4 +1,4 @@
-import jml from '../../../jamilih/jml-es6.js';
+import jml from 'jamilih';
 
 export default ({groups, lf, getNextAlias, $p, followParams}) =>
     jml(

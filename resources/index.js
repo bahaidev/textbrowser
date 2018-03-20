@@ -1,4 +1,4 @@
-/* global JsonRefs */
+import JsonRefs from 'json-refs';
 import getJSON from 'simple-get-json';
 import IMF from 'imf';
 import JSONP from 'jsonpadding';

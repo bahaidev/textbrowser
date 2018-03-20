@@ -747,9 +747,9 @@ upon for monkey-patching.
     and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
 
 1.  [ES6 Modules in browser](https://jakearchibald.com/2017/es-modules-in-browsers/):
-    Complete switch to imports over script tags (by updating depednencies to use ES6
-    modules too and then use them); can also avoid function-passing main functions
-    as arguments
+    Complete switch to imports over script tags (by updating dependencies to use ES6
+    modules too and then use them; json-refs is only left); can also avoid
+    function-passing main functions as arguments
     1.  Apply <https://www.gnu.org/software/librejs/free-your-javascript.html> labels
         to provide machine-automated detection of licenses. (Adapt [LibreJS](https://www.gnu.org/software/librejs/) to work with WebExtensions,
         to support `<link>` in addition to visible links, and, if it is not already,

@@ -37,37 +37,7 @@ const textbrowserStaticResourceFiles = [
     'node_modules/textbrowser/locales/ru.json',
 
     'node_modules/textbrowser/resources/index.css',
-    'node_modules/textbrowser/resources/index.js',
-
-    'node_modules/textbrowser/resources/templates/index.js',
-    'node_modules/textbrowser/resources/templates/languageSelect.js',
-    'node_modules/textbrowser/resources/templates/workSelect.js',
-    'node_modules/textbrowser/resources/templates/workDisplay.js',
-    'node_modules/textbrowser/resources/templates/resultsDisplay.js',
-    'node_modules/textbrowser/resources/IntlURLSearchParams.js',
-
-    'node_modules/textbrowser/resources/index.js',
-    'node_modules/textbrowser/resources/workSelect.js',
-    'node_modules/textbrowser/resources/workDisplay.js',
-    'node_modules/textbrowser/resources/resultsDisplay.js',
-
-    // Textbrowser dependency files
-
-    'node_modules/jamilih/jml-es6.js',
-
-    // Might want to change to uncomment these instead of the following line:
-    // 1. 'node_modules/intl-messageformat/dist/intl-messageformat.min.js',
-    // 2. individual locale files: 'node_modules/intl-messageformat/dist/locale-data/en.js', etc.
-    'node_modules/intl-messageformat/dist/intl-messageformat-with-locales.min.js',
-
-    'node_modules/simple-get-json/index.js',
-    'node_modules/imf/dist/index-es6.js',
-
-    // Uncomment the next line and comment out the following in production
-    // 'node_modules/json-refs/browser/json-refs-standalone-min.js',
-    'node_modules/json-refs/browser/json-refs-standalone.js',
-    'node_modules/form-serialize/src/index.js',
-    'node_modules/jsonpadding/dist/JSONP.es6.js'
+    'node_modules/textbrowser/dist/index.js'
 ];
 
 self.addEventListener('message', ({data: {

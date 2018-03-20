@@ -1,6 +1,6 @@
 import IMF from 'imf';
 
-import {serialize as formSerialize} from '../node_modules/form-serialize/src/index.js';
+import {serialize as formSerialize} from 'form-serialize';
 
 import Templates from './templates/index.js';
 

@@ -1,12 +1,14 @@
 {
   "name": "textbrowser",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "Multilinear text browser",
-  "main": "resources/index.js",
+  "main": "dist/index-umd.min.js",
+  "module": "resources/index.js",
   "scripts": {
     "node": "nodeunit test/textbrowserTests.js",
-    "eslint": "eslint './*.js' 'resources/**/*.js' 'test/*.js'",
-    "test": "npm run eslint && node server http://127.0.0.1/test/ 8081",
+    "rollup": "rollup -c",
+    "eslint": "eslint .",
+    "test": "npm run eslint && npm run rollup && node server http://127.0.0.1/test/ 8081",
     "start-no-open": "node server 0"
   },
   "repository": {
@@ -23,6 +25,9 @@
   },
   "devDependencies": {
     "ajv": "6.3.0",
+    "babel-core": "6.26.0",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
     "eslint": "4.19.0",
     "eslint-config-standard": "11.0.0",
     "eslint-plugin-compat": "2.2.0",
@@ -35,7 +40,16 @@
     "node-static": "0.7.10",
     "nodeunit": "0.11.2",
     "opn": "5.3.0",
-    "remark-lint": "6.0.1"
+    "remark-lint": "6.0.1",
+    "rollup": "0.57.1",
+    "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-json": "^2.3.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-re": "^1.0.6",
+    "rollup-plugin-uglify": "^3.0.0",
+    "uglify-es": "^3.3.9"
   },
   "engines": {},
   "author": "Brett Zamir",

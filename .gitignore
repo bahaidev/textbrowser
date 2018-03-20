@@ -1,11 +1,9 @@
 node_modules
+dist
 
-.htaccess
 /index.html
-data
+
 appdata/files.json
 
 resources/user.js
 resources/user.css
-
-textbrowser.appcache

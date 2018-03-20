@@ -1,3 +1,9 @@
+# 0.10.0
+
+- Use Rollup (with Babel and uglify), as can state dependencies more
+    succinctly and convert json-refs (and use opportunity for applying Babel)
+- Linting: Use `.eslintignore`
+
 # 0.9.0
 
 - Fix: Use JSONP as module

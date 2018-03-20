@@ -1,4 +1,4 @@
-/* globals JsonRefs */
+import JsonRefs from 'json-refs';
 import Templates from './templates/index.js';
 
 export default function resultsDisplay ({

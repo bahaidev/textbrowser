@@ -1,4 +1,4 @@
-import jml from '../../../jamilih/jml-es6.js';
+import jml from 'jamilih';
 import Templates from './index.js';
 import {$} from './utils/dom.js';
 
