@@ -1,3 +1,7 @@
+# 0.8.2
+
+- npm: Include changes in `package-lock.json` and `yarn.lock`
+
 # 0.8.1
 
 - npm: Bump simple-get-json to 3.2.2 (fix to use babel-polyfill)

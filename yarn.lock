@@ -2739,6 +2739,12 @@ simple-get-json@3.2.1:
   dependencies:
     local-xmlhttprequest "1.5"
 
+simple-get-json@3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/simple-get-json/-/simple-get-json-3.2.2.tgz#c76bf7e5331541dd6b2ffaa236c605f84efccbb7"
+  dependencies:
+    local-xmlhttprequest "1.5"
+
 slash@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-1.0.0.tgz#c41f2f6c39fc16d1cd17ad4b5d896114ae470d55"
