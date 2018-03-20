@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Multilinear text browser",
   "main": "resources/index.js",
   "scripts": {
@@ -19,7 +19,7 @@
     "jamilih": "0.30.0",
     "jsonpadding": "0.5.0",
     "json-refs": "https://github.com/brettz9/json-refs#browser",
-    "simple-get-json": "3.2.1"
+    "simple-get-json": "3.2.2"
   },
   "devDependencies": {
     "ajv": "6.3.0",

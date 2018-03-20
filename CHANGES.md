@@ -1,3 +1,7 @@
+# 0.8.1
+
+- npm: Bump simple-get-json to 3.2.2 (fix to use babel-polyfill)
+
 # 0.8.0
 
 - Update deps (and their imports)
