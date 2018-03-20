@@ -1,4 +1,6 @@
-/* globals IMF, getJSON */
+import getJSON from 'simple-get-json';
+import IMF from 'imf';
+
 import Templates from './templates/index.js';
 
 export default function workSelect ({

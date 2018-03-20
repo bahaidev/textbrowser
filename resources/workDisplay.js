@@ -1,4 +1,6 @@
-/* globals IMF, formSerialize */
+import IMF from 'imf';
+
+import {serialize as formSerialize} from '../node_modules/form-serialize/src/index.js';
 
 import Templates from './templates/index.js';
 

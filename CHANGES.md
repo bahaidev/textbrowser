@@ -1,3 +1,8 @@
+# 0.8.0
+
+- Update deps (and their imports)
+- Use ES6 Modules/Rollup
+
 # 0.7.0
 
 - Refactoring (Breaking): Switch to ES6 Modules (except for some dependencies)

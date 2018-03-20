@@ -66,7 +66,7 @@ const textbrowserStaticResourceFiles = [
     // Uncomment the next line and comment out the following in production
     // 'node_modules/json-refs/browser/json-refs-standalone-min.js',
     'node_modules/json-refs/browser/json-refs-standalone.js',
-    'node_modules/form-serialize/index.js',
+    'node_modules/form-serialize/src/index.js',
     'node_modules/jsonpadding/index.js'
 ];
 
