@@ -491,8 +491,7 @@ strings, or other objects of keys).
 <!-- ## Plugin Format -->
 <!-- Add once implemented;
     e.g., Each plugin file designated within
-    `files.json` expects an `export` directive with an object with
-    the following methods -->
+    `files.json` expects an `insertField` `export` directive, etc. -->
 
 ## JavaScript API
 
