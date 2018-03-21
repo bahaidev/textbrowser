@@ -37,7 +37,7 @@ const textbrowserStaticResourceFiles = [
     'node_modules/textbrowser/locales/ru.json',
 
     'node_modules/textbrowser/resources/index.css',
-    'node_modules/textbrowser/dist/index.js'
+    'node_modules/textbrowser/dist/index-es.js'
 ];
 
 self.addEventListener('message', ({data: {
