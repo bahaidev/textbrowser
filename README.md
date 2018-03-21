@@ -489,7 +489,10 @@ code, which is keyed to an object of keys (which can be strings, arrays of
 strings, or other objects of keys).
 
 <!-- ## Plugin Format -->
-<!-- Add once implemented; e.g., Each plugin file designated within `files.json` expects a JSONP call to `JSONP.executeCallback()` with an object with the following methods -->
+<!-- Add once implemented;
+    e.g., Each plugin file designated within
+    `files.json` expects an `export` directive with an object with
+    the following methods -->
 
 ## JavaScript API
 

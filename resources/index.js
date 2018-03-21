@@ -1,7 +1,6 @@
 import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 import getJSON from 'simple-get-json';
 import IMF from 'imf';
-import JSONP from 'jsonpadding';
 
 import Templates from './templates/index.js';
 import IntlURLSearchParams from './IntlURLSearchParams.js';
@@ -186,7 +185,11 @@ TextBrowser.prototype.getWorkData = function ({
                 metadataObj,
                 getPlugins ? pluginsInWork : null, // Non-promise
                 getPlugins ? pluginFieldMappingForWork : null, // Non-promise
-                getPlugins ? JSONP(pluginPaths) : null
+                getPlugins ? Promise.all(
+                    pluginPaths.map((pluginPath) => {
+                        return import(pluginPath);
+                    })
+                ) : null
             ]);
         });
     });

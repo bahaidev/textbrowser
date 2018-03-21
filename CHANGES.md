@@ -1,3 +1,8 @@
+# 0.12.0
+
+- Breaking change: Expect plugins to use dynamic `import`
+- Linting: Switch to `babel-eslint` parser to handle `import`
+
 # 0.11.1
 
 - Update `package-lock.json`
