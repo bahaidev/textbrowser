@@ -1,4 +1,4 @@
-/* globals Promise, module, require */
+/* eslint-env node */
 /* exported textbrowserTests */
 var JsonRefs, jsonpatch, Ajv, getJSON, __dirname, path; // eslint-disable-line no-var
 
