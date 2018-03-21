@@ -1,3 +1,7 @@
+# 0.12.1
+
+- Build: Ensure rollup can complete and update builds
+
 # 0.12.0
 
 - Breaking change: Expect plugins to use dynamic `import`

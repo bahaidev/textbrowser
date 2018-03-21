@@ -1,12 +1,12 @@
 {
   "name": "textbrowser",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "Multilinear text browser",
   "main": "dist/index-umd.min.js",
   "module": "resources/index.js",
   "scripts": {
     "node": "nodeunit test/textbrowserTests.js",
-    "rollup": "rollup -c",
+    "rollup": "rollup -c --experimentalDynamicImport",
     "eslint": "eslint .",
     "test": "npm run eslint && npm run rollup && node server http://127.0.0.1/test/ 8081",
     "start-no-open": "node server 0"
@@ -27,6 +27,7 @@
     "babel-core": "6.26.0",
     "babel-eslint": "^8.2.2",
     "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-syntax-dynamic-import": "6.18.0",
     "babel-preset-env": "^1.6.1",
     "eslint": "4.19.0",
     "eslint-config-standard": "11.0.0",
