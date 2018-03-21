@@ -594,6 +594,8 @@ upon for monkey-patching.
 
 ## To-dos (Highest priority)
 
+1.  Avoid `datalist` showing past selections on separate book! (change element
+    ID to reflect work?)
 1.  Node.js (or PHP?)
     1.  Delivery of HTML content by same URL so third parties can
         consume without JavaScript and optimized when not offline
