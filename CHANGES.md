@@ -1,3 +1,12 @@
+# 0.11.0
+
+- Fixes for user-sample file
+- Testing: Fix to use babel-polyfill
+- .gitignore: Add files that may be used for locally testing textbrowser
+    within its folder
+- Avoid builtins overhead and problems with Rollup by directly requiring
+    json-refs browser file
+
 # 0.10.0
 
 - Use Rollup (with Babel and uglify), as can state dependencies more

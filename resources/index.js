@@ -1,4 +1,4 @@
-import JsonRefs from 'json-refs';
+import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 import getJSON from 'simple-get-json';
 import IMF from 'imf';
 import JSONP from 'jsonpadding';

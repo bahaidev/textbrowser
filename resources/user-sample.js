@@ -1,7 +1,7 @@
-import TextBrowser from '../node_modules/textbrowser/resources/index.js';
+import TextBrowser from '../node_modules/textbrowser/dist/index-es.js';
 
 const tb = new TextBrowser({
-    // languages: 'node_modules/bahaiwritings/appdata/languages.json', // Default
+    // languages: 'node_modules/textbrowser/appdata/languages.json', // Default
     // serviceWorkerPath: 'sw.js', // Default
     // site: 'site.json', // Default
     // localizeParamNames: true, // Not well-tested

@@ -2,8 +2,8 @@ node_modules
 dist
 
 /index.html
-
-appdata/files.json
+/site.json
+/files.json
 
 resources/user.js
 resources/user.css

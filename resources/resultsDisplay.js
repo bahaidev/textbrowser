@@ -1,4 +1,4 @@
-import JsonRefs from 'json-refs';
+import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 import Templates from './templates/index.js';
 
 export default function resultsDisplay ({
