@@ -1,3 +1,7 @@
+# 0.11.1
+
+- Update `package-lock.json`
+
 # 0.11.0
 
 - Fixes for user-sample file
