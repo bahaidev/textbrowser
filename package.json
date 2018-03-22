@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "description": "Multilinear text browser",
   "main": "dist/index-umd.min.js",
   "module": "resources/index.js",
@@ -47,8 +47,6 @@
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-commonjs": "^9.1.0",
     "rollup-plugin-json": "^2.3.0",
-    "rollup-plugin-node-builtins": "^2.1.2",
-    "rollup-plugin-node-globals": "^1.2.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-postprocess": "^1.0.2",
     "rollup-plugin-re": "^1.0.6",

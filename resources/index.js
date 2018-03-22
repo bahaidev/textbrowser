@@ -1,5 +1,3 @@
-/* globals __dirname */
-// Todo: Replace `__dirname` if gets replaced by `import.meta` (moduleURL?); https://github.com/tc39/proposal-import-meta
 import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 import getJSON from 'simple-get-json';
 import IMF from 'imf';
@@ -17,7 +15,11 @@ function TextBrowser (options) {
     if (!(this instanceof TextBrowser)) {
         return new TextBrowser(options);
     }
-    this.languages = options.languages || new URL('../appdata/languages.json', __dirname).href;
+    // Todo: Replace the `languages` default with `import.meta`
+    //  (`new URL('../appdata/languages.json', moduleURL).href`?) once
+    //  implemented; https://github.com/tc39/proposal-import-meta
+    const moduleURL = 'node_modules/textbrowser/resources/index.js';
+    this.languages = options.languages || new URL('../appdata/languages.json', moduleURL).href;
     this.serviceWorkerPath = options.serviceWorkerPath || 'sw.js';
     this.site = options.site || 'site.json';
     this.files = options.files || 'files.json';
@@ -37,7 +39,7 @@ function TextBrowser (options) {
     this.noDynamic = options.noDynamic;
     this.skipIndexedDB = options.skipIndexedDB;
     this.stylesheets = (options.stylesheets || ['@builtin']).map((s) => {
-        return s === '@builtin' ? new URL('index.css', __dirname).href : s;
+        return s === '@builtin' ? new URL('index.css', moduleURL).href : s;
     });
 }
 

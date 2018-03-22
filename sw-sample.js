@@ -16,9 +16,9 @@ const defaultUserStaticFiles = [
     'resources/user.js',
     'resources/user.css'
 ];
-// Todo: We could supply `new URL(fileName, __dirname).href` to
+// Todo: We could supply `new URL(fileName, moduleURL).href` to
 //   get these as reliable full paths without hard-coding or needing to
-//   actually be in `node_modules/textbrowser`...
+//   actually be in `node_modules/textbrowser`; see `resources/index.js`
 const textbrowserStaticResourceFiles = [
     'node_modules/textbrowser/appdata/languages.json',
 

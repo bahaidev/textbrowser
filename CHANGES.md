@@ -1,3 +1,7 @@
+# 0.12.3
+
+- Fix: Replace `__dirname` with hard-coded `moduleURL` for now
+
 # 0.12.2
 
 - Enhancement: Use `loadStylesheets` to avoid user needing to hard-code ours

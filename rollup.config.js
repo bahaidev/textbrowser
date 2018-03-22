@@ -2,7 +2,7 @@ import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 // import builtins from 'rollup-plugin-node-builtins';
-import nodeGlobals from 'rollup-plugin-node-globals';
+// import nodeGlobals from 'rollup-plugin-node-globals';
 import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-re';
 import uglify from 'rollup-plugin-uglify';
@@ -46,7 +46,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
             }),
             json(),
             babel(),
-            nodeGlobals(),
+            // nodeGlobals(),
             // builtins(),
             resolve(),
             commonjs(),
