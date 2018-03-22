@@ -20,7 +20,7 @@
     "imf": "3.0.0",
     "jamilih": "0.30.0",
     "json-refs": "https://github.com/brettz9/json-refs#browser",
-    "load-stylesheets": "0.1.1",
+    "load-stylesheets": "0.2.0",
     "simple-get-json": "3.2.3"
   },
   "devDependencies": {
