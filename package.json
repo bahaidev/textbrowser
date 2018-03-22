@@ -1,12 +1,12 @@
 {
   "name": "textbrowser",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "description": "Multilinear text browser",
   "main": "dist/index-umd.min.js",
   "module": "resources/index.js",
   "scripts": {
     "node": "nodeunit test/textbrowserTests.js",
-    "rollup": "rollup -c --experimentalDynamicImport",
+    "rollup": "rollup -c",
     "eslint": "eslint .",
     "test": "npm run eslint && npm run rollup && node server http://127.0.0.1/test/ 8081",
     "start-no-open": "node server 0"
@@ -20,6 +20,7 @@
     "imf": "3.0.0",
     "jamilih": "0.30.0",
     "json-refs": "https://github.com/brettz9/json-refs#browser",
+    "load-stylesheets": "0.1.1",
     "simple-get-json": "3.2.3"
   },
   "devDependencies": {
@@ -47,7 +48,9 @@
     "rollup-plugin-commonjs": "^9.1.0",
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.2.0",
     "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-postprocess": "^1.0.2",
     "rollup-plugin-re": "^1.0.6",
     "rollup-plugin-uglify": "^3.0.0",
     "uglify-es": "^3.3.9"

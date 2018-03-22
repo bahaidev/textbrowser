@@ -1,6 +1,9 @@
+/* globals __dirname */
+// Todo: Replace `__dirname` if gets replaced by `import.meta` (moduleURL?); https://github.com/tc39/proposal-import-meta
 import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 import getJSON from 'simple-get-json';
 import IMF from 'imf';
+import loadStylesheets from 'load-stylesheets';
 
 import Templates from './templates/index.js';
 import IntlURLSearchParams from './IntlURLSearchParams.js';
@@ -14,7 +17,7 @@ function TextBrowser (options) {
     if (!(this instanceof TextBrowser)) {
         return new TextBrowser(options);
     }
-    this.languages = options.languages || 'node_modules/textbrowser/appdata/languages.json';
+    this.languages = options.languages || new URL('../appdata/languages.json', __dirname).href;
     this.serviceWorkerPath = options.serviceWorkerPath || 'sw.js';
     this.site = options.site || 'site.json';
     this.files = options.files || 'files.json';
@@ -33,13 +36,17 @@ function TextBrowser (options) {
     this.showTitleOnSingleInterlinear = options.showTitleOnSingleInterlinear;
     this.noDynamic = options.noDynamic;
     this.skipIndexedDB = options.skipIndexedDB;
+    this.stylesheets = (options.stylesheets || ['@builtin']).map((s) => {
+        return s === '@builtin' ? new URL('index.css', __dirname).href : s;
+    });
 }
 
 TextBrowser.prototype.workSelect = workSelect;
 TextBrowser.prototype.workDisplay = workDisplay;
 TextBrowser.prototype.resultsDisplay = resultsDisplay;
 
-TextBrowser.prototype.init = function () {
+TextBrowser.prototype.init = async function () {
+    this._stylesheetElements = await loadStylesheets(this.stylesheets);
     this.displayLanguages();
 };
 

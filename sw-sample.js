@@ -16,6 +16,9 @@ const defaultUserStaticFiles = [
     'resources/user.js',
     'resources/user.css'
 ];
+// Todo: We could supply `new URL(fileName, __dirname).href` to
+//   get these as reliable full paths without hard-coding or needing to
+//   actually be in `node_modules/textbrowser`...
 const textbrowserStaticResourceFiles = [
     'node_modules/textbrowser/appdata/languages.json',
 

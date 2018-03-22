@@ -1,3 +1,12 @@
+# 0.12.2
+
+- Enhancement: Use `loadStylesheets` to avoid user needing to hard-code ours
+    (and theirs) non-modularly
+- Enhancement: Have `init` return a Promise resolving when stylesheets loaded
+- Enhancement: Use `__dirname` to be replaced by Rollup
+    (`document.currentScript.src` would not necessarily be relative to this
+    repo is bundled into another project)
+
 # 0.12.1
 
 - Build: Ensure rollup can complete and update builds

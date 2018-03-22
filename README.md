@@ -165,7 +165,7 @@ You can also target the latest code in `master` with the following:
 And then run `npm install` on your project path.
 
 (To update, you can remove `node_modules/textbrowser/` from your project
-and run `npm cache clean textbrowser`.)
+and reinstall.)
 
 ## Usage
 
@@ -514,7 +514,7 @@ as a `npm` dependency).
 
     -   `languages` - Path for the `languages.json` file containing meta-data
         on the languages to be displayed in the interface. Defaults to
-        `"node_modules/textbrowser/appdata/languages.json"`.
+        the `TextBrowser` project's `"appdata/languages.json"`.
 
     -   `site` - Path for the `site.json` containing meta-data on the site.
         (Only used currently for localization, but is intended for providing
