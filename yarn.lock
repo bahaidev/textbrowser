@@ -2452,9 +2452,9 @@ load-json-file@^2.0.0:
     pify "^2.0.0"
     strip-bom "^3.0.0"
 
-load-stylesheets@0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/load-stylesheets/-/load-stylesheets-0.2.0.tgz#3bebf898c88d76ffed7c95de5348e911cbd46bb0"
+load-stylesheets@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/load-stylesheets/-/load-stylesheets-0.3.0.tgz#8abb1d3102cbfff31c1e7e2ac72d31d40e7985e8"
 
 local-xmlhttprequest@1.5:
   version "1.5.1"
