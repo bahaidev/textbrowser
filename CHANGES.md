@@ -1,3 +1,7 @@
+# 0.12.4
+
+- Fix: Ensure base URL is an absolute URL
+
 # 0.12.3
 
 - Fix: Replace `__dirname` with hard-coded `moduleURL` for now

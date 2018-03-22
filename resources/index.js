@@ -18,7 +18,7 @@ function TextBrowser (options) {
     // Todo: Replace the `languages` default with `import.meta`
     //  (`new URL('../appdata/languages.json', moduleURL).href`?) once
     //  implemented; https://github.com/tc39/proposal-import-meta
-    const moduleURL = 'node_modules/textbrowser/resources/index.js';
+    const moduleURL = location;
     this.languages = options.languages || new URL('../appdata/languages.json', moduleURL).href;
     this.serviceWorkerPath = options.serviceWorkerPath || 'sw.js';
     this.site = options.site || 'site.json';
@@ -39,7 +39,8 @@ function TextBrowser (options) {
     this.noDynamic = options.noDynamic;
     this.skipIndexedDB = options.skipIndexedDB;
     this.stylesheets = (options.stylesheets || ['@builtin']).map((s) => {
-        return s === '@builtin' ? new URL('index.css', moduleURL).href : s;
+        // If `moduleURL` implemented, simplify to `new URL('index.css', moduleURL).href`
+        return s === '@builtin' ? new URL('../resources/index.css', moduleURL).href : s;
     });
 }
 
