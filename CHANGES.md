@@ -1,3 +1,7 @@
+# 0.12.5
+
+- Fix: Ensure paths are relative to this repo
+
 # 0.12.4
 
 - Fix: Ensure base URL is an absolute URL
