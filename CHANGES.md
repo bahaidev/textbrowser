@@ -1,3 +1,8 @@
+# 0.12.6
+
+- Upgrade `loadStylesheets`
+- Docs: Document `stylesheets` in README
+
 # 0.12.5
 
 - Fix: Ensure paths are relative to this repo

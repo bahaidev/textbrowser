@@ -512,6 +512,14 @@ as a `npm` dependency).
     -   `files` - Path for the `files.json` containing meta-data on the files
         to be made available via the interface. Defaults to `"files.json"`.
 
+    -   `stylesheets` - Array of stylesheet paths and/or of two-item arrays
+        with stylesheet path and
+        [loadStylesheets](https://github.com/brettz9/load-stylesheets)
+        options. A string path may also be `@builtin` which attempts to load
+        the default stylesheet without need for path (but due to current
+        browser limitations with a lack of import meta-data, we cannot
+        provide this accurately for all configurations at the moment).
+
     -   `languages` - Path for the `languages.json` file containing meta-data
         on the languages to be displayed in the interface. Defaults to
         the `TextBrowser` project's `"appdata/languages.json"`.
@@ -962,7 +970,7 @@ first project used in aiding my learning programming.
 
 It was hosted at http://bahai-library.com/browser/ and https://bahai9.com/browse0.php
 
-On Baha'i Libary Online, the Web Archive indicates its presence as far back as 17 May 2006:
+On Bahá'í Libary Online, the Web Archive indicates its presence as far back as 17 May 2006:
 
 - http://web.archive.org/web/20060517012851/http://bahai-library.com:80/browser/browse0.php
 - http://web.archive.org/web/20060505010948/http://bahai-library.com:80/browser/browse0.php?langu=en
