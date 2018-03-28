@@ -48,7 +48,9 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
             babel(),
             // nodeGlobals(),
             // builtins(),
-            resolve(),
+            resolve({
+                // browser: true // Should investigate why this is not working
+            }),
             commonjs(),
             postProcess([ // Revert
                 [/return window.importer\(/, 'return import(']
