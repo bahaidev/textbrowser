@@ -3,20 +3,20 @@ import IMF from 'imf';
 
 import Templates from './templates/index.js';
 
-export default function workSelect ({
+export default async function workSelect ({
     lang, localeFromFileData, fallbackLanguages, getMetaProp, $p, followParams
 } /* , l, defineFormatter */) {
     // We use getJSON instead of JsonRefs as we do not necessarily need to
     //    resolve the file contents here
-    this.getFilesData().then((dbs) => {
-        return getJSON(dbs.groups.reduce((arr, fileGroup) => {
+    try {
+        const dbs = await this.getFilesData();
+        const metadataObjs = await getJSON(dbs.groups.reduce((arr, fileGroup) => {
             const metadataBaseDir = (dbs.metadataBaseDirectory || '') +
                 (fileGroup.metadataBaseDirectory || '') + '/';
             return fileGroup.files.reduce((ar, fileData) =>
                 ar.concat(metadataBaseDir + fileData.metadataFile),
             arr);
         }, []));
-    }).then((metadataObjs) => {
         const imfFile = IMF({ // eslint-disable-line new-cap
             locales: lang.map(localeFromFileData),
             fallbackLocales: fallbackLanguages.map(localeFromFileData)
@@ -42,7 +42,7 @@ export default function workSelect ({
             return getMetaProp(metadataObj, 'alias');
         };
         Templates.workSelect({groups: this.fileData.groups, lf, getNextAlias, $p, followParams});
-    }).catch((err) => {
+    } catch (err) {
         alert(err);
-    });
+    }
 };

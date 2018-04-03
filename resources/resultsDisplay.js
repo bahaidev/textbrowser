@@ -1,7 +1,7 @@
 import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 import Templates from './templates/index.js';
 
-export default function resultsDisplay ({
+export default async function resultsDisplay ({
     l, lang, localeFromFileData, fallbackLanguages, $p, imfLocales, getMetaProp
 }) {
     const getCellValue = ({
@@ -292,174 +292,176 @@ export default function resultsDisplay ({
         ? v.replace(/^.* \((.*?)\)$/, '$1')
         : v;
 
-    this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p, getMetaProp}).then((
-        [fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
-    ) => {
-        console.log('pluginKeys', pluginKeys);
-        console.log('pluginFieldMappings', pluginFieldMappings);
-        console.log('pluginObjects', pluginObjects);
-        document.title = lf({
-            key: 'browserfile-resultsdisplay',
-            values: {
-                work: fileData
-                    ? getMetaProp(metadataObj, 'alias')
-                    : ''
-            },
-            fallback: true
-        });
+    const [
+        fileData, lf, getFieldAliasOrName, schemaObj, metadataObj,
+        pluginKeys, pluginFieldMappings, pluginObjects
+    ] = await this.getWorkData({
+        lang, localeFromFileData, fallbackLanguages,
+        $p, getMetaProp
+    });
+    console.log('pluginKeys', pluginKeys);
+    console.log('pluginFieldMappings', pluginFieldMappings);
+    console.log('pluginObjects', pluginObjects);
+    document.title = lf({
+        key: 'browserfile-resultsdisplay',
+        values: {
+            work: fileData
+                ? getMetaProp(metadataObj, 'alias')
+                : ''
+        },
+        fallback: true
+    });
 
-        const heading = getMetaProp(metadataObj, 'heading');
-        const schemaItems = schemaObj.items.items;
-        const setNames = [];
-        const presorts = [];
-        const browseFieldSets = [];
-        this.getBrowseFieldData({
-            metadataObj, getMetaProp, schemaItems, getFieldAliasOrName
-        }, ({setName, browseFields, presort}) => {
-            setNames.push(setName);
-            presorts.push(presort);
-            browseFieldSets.push(browseFields);
-        });
+    const heading = getMetaProp(metadataObj, 'heading');
+    const schemaItems = schemaObj.items.items;
+    const setNames = [];
+    const presorts = [];
+    const browseFieldSets = [];
+    this.getBrowseFieldData({
+        metadataObj, getMetaProp, schemaItems, getFieldAliasOrName
+    }, ({setName, browseFields, presort}) => {
+        setNames.push(setName);
+        presorts.push(presort);
+        browseFieldSets.push(browseFields);
+    });
 
-        const fieldValueAliasMap = getFieldValueAliasMap({
-            schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias: false
-        });
-        const fieldValueAliasMapPreferred = getFieldValueAliasMap({
-            schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias: true
-        });
+    const fieldValueAliasMap = getFieldValueAliasMap({
+        schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias: false
+    });
+    const fieldValueAliasMapPreferred = getFieldValueAliasMap({
+        schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias: true
+    });
 
-        const localizedFieldNames = schemaItems.map((si) => getFieldAliasOrName(si.title));
-        const escapeColumnIndexes = schemaItems.map((si) => si.format !== 'html');
-        const fieldLangs = schemaItems.map((si) => metadataObj.fields[si.title].lang);
+    const localizedFieldNames = schemaItems.map((si) => getFieldAliasOrName(si.title));
+    const escapeColumnIndexes = schemaItems.map((si) => si.format !== 'html');
+    const fieldLangs = schemaItems.map((si) => metadataObj.fields[si.title].lang);
 
-        // Todo: Repeats some code in workDisplay; probably need to reuse
-        //   these functions more in `Templates.resultsDisplay` too
-        const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
-        const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true)
-            ? $p.get('i18n', true) === '1'
-            : prefI18n === 'true' || (
-                prefI18n !== 'false' && this.localizeParamNames
-            );
-        const il = localizeParamNames
-            ? key => l(['params', key])
-            : key => key;
-        const iil = localizeParamNames
-            ? key => l(['params', 'indexed', key])
-            : key => key;
-        const ilRaw = localizeParamNames
-            ? (key, suffix = '') => $p.get(il(key) + suffix, true)
-            : (key, suffix = '') => $p.get(key + suffix, true);
-        const iilRaw = localizeParamNames
-            ? (key, suffix = '') => $p.get(iil(key) + suffix, true)
-            : (key, suffix = '') => $p.get(key + suffix, true);
-
-        const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
-            typeof iilRaw('start', (i + 1) + '-1') === 'string'
+    // Todo: Repeats some code in workDisplay; probably need to reuse
+    //   these functions more in `Templates.resultsDisplay` too
+    const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
+    const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true)
+        ? $p.get('i18n', true) === '1'
+        : prefI18n === 'true' || (
+            prefI18n !== 'false' && this.localizeParamNames
         );
-        const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
-        const applicableBrowseFieldSetName = setNames[browseFieldSetIdx];
-        const applicableBrowseFieldNames = applicableBrowseFieldSet.map((abfs) =>
-            abfs.fieldName
+    const il = localizeParamNames
+        ? key => l(['params', key])
+        : key => key;
+    const iil = localizeParamNames
+        ? key => l(['params', 'indexed', key])
+        : key => key;
+    const ilRaw = localizeParamNames
+        ? (key, suffix = '') => $p.get(il(key) + suffix, true)
+        : (key, suffix = '') => $p.get(key + suffix, true);
+    const iilRaw = localizeParamNames
+        ? (key, suffix = '') => $p.get(iil(key) + suffix, true)
+        : (key, suffix = '') => $p.get(key + suffix, true);
+
+    const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
+        typeof iilRaw('start', (i + 1) + '-1') === 'string'
+    );
+    const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
+    const applicableBrowseFieldSetName = setNames[browseFieldSetIdx];
+    const applicableBrowseFieldNames = applicableBrowseFieldSet.map((abfs) =>
+        abfs.fieldName
+    );
+    const applicableBrowseFieldSchemaIndexes = applicableBrowseFieldSet.map((abfs) =>
+        abfs.fieldSchemaIndex
+    );
+
+    const fieldSchemaTypes = applicableBrowseFieldSet.map((abfs) => abfs.fieldSchema.type);
+    const buildRangePoint = (startOrEnd) =>
+        applicableBrowseFieldNames.map((bfn, j) =>
+            // Todo: i18nize?
+            $p.get(
+                startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
+                true
+            )
         );
-        const applicableBrowseFieldSchemaIndexes = applicableBrowseFieldSet.map((abfs) =>
-            abfs.fieldSchemaIndex
-        );
+    const starts = buildRangePoint('start');
+    const ends = buildRangePoint('end');
 
-        const fieldSchemaTypes = applicableBrowseFieldSet.map((abfs) => abfs.fieldSchema.type);
-        const buildRangePoint = (startOrEnd) =>
-            applicableBrowseFieldNames.map((bfn, j) =>
-                // Todo: i18nize?
-                $p.get(
-                    startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
-                    true
-                )
-            );
-        const starts = buildRangePoint('start');
-        const ends = buildRangePoint('end');
+    const [hasCaption, caption] = getCaption({
+        starts, ends, applicableBrowseFieldNames, heading
+    });
+    const showInterlinTitles = $pRaw('interlintitle') === '1';
 
-        const [hasCaption, caption] = getCaption({
-            starts, ends, applicableBrowseFieldNames, heading
-        });
-        const showInterlinTitles = $pRaw('interlintitle') === '1';
+    console.log('rand', ilRaw('rand') === 'yes');
 
-        console.log('rand', ilRaw('rand') === 'yes');
+    navigator.storage.persisted().then(async (persistent) => {
+        const unlocalizedWorkName = fileData.name;
+        const stripToRawFieldValue = (v, i) => {
+            const val = getRawFieldValue(v);
+            return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
+        };
+        const startsRaw = starts.map(stripToRawFieldValue);
+        const endsRaw = ends.map(stripToRawFieldValue);
+        if (!this.skipIndexedDB && persistent && navigator.serviceWorker.controller) {
+            return new Promise((resolve, reject) => {
+                // Todo: Fetch the work in code based on the non-localized `datafileName`
+                const dbName = this.namespace + '-textbrowser-cache-data';
+                const req = indexedDB.open(dbName);
+                req.onsuccess = ({target: {result: db}}) => {
+                    const storeName = 'files-to-cache-' + unlocalizedWorkName;
+                    const trans = db.transaction(storeName);
+                    const store = trans.objectStore(storeName);
+                    const index = store.index('browseFields-' + applicableBrowseFieldSetName); // Get among browse field sets by index number within URL params
 
-        navigator.storage.persisted().then((persistent) => {
-            const unlocalizedWorkName = fileData.name;
-            const stripToRawFieldValue = (v, i) => {
-                const val = getRawFieldValue(v);
-                return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
-            };
-            const startsRaw = starts.map(stripToRawFieldValue);
-            const endsRaw = ends.map(stripToRawFieldValue);
-            if (!this.skipIndexedDB && persistent && navigator.serviceWorker.controller) {
-                return new Promise((resolve, reject) => {
-                    // Todo: Fetch the work in code based on the non-localized `datafileName`
-                    const dbName = this.namespace + '-textbrowser-cache-data';
-                    const req = indexedDB.open(dbName);
-                    req.onsuccess = ({target: {result: db}}) => {
-                        const storeName = 'files-to-cache-' + unlocalizedWorkName;
-                        const trans = db.transaction(storeName);
-                        const store = trans.objectStore(storeName);
-                        const index = store.index('browseFields-' + applicableBrowseFieldSetName); // Get among browse field sets by index number within URL params
+                    // console.log('dbName', dbName);
+                    // console.log('storeName', storeName);
+                    // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
 
-                        // console.log('dbName', dbName);
-                        // console.log('storeName', storeName);
-                        // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
-
-                        const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
-                        r.onsuccess = ({target: {result}}) => {
-                            const converted = result.map((r) => r.value);
-                            resolve(converted);
-                        };
+                    const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
+                    r.onsuccess = ({target: {result}}) => {
+                        const converted = result.map((r) => r.value);
+                        resolve(converted);
                     };
-                });
-            } else {
-                // No need for presorting in indexedDB, given indexes
-                const presort = presorts[browseFieldSetIdx];
-                // Given that we are not currently wishing to add complexity to
-                //   our server-side code (though should be easy if using Node.js),
-                //   we retrieve the whole file and then sort where presorting is
-                //   needed
-                if (presort || this.noDynamic) {
-                    return JsonRefs.resolveRefs(fileData.file).then(({
-                        resolved: {data: tableData}
-                    }) => {
-                        runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
-                        return tableData;
-                    });
-                } else {
-                    return fetch(
-                        Object.entries({
-                            unlocalizedWorkName, startsRaw, endsRaw
-                        }).reduce((url, [arg, argVal]) => {
-                            return url + '&' + arg + '=' + encodeURIComponent(
-                                JSON.stringify(argVal)
-                            );
-                        }, 'textbrowser?')
-                    ).then((r) => r.json());
-                }
-            }
-        }).then((tableData) => {
-            Templates.resultsDisplay.main({
-                tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
-                escapeQuotedCSS, escapeCSS, escapeHTML,
-                l, localizedFieldNames, fieldLangs,
-                caption, hasCaption, showInterlinTitles,
-                determineEnd: determineEnd({
-                    fieldValueAliasMap, fieldValueAliasMapPreferred,
-                    localizedFieldNames, applicableBrowseFieldNames,
-                    starts, ends
-                }),
-                getCellValue: getCellValue({
-                    fieldValueAliasMapPreferred, escapeColumnIndexes, escapeHTML
-                }),
-                checkedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
-                    localizedFieldNames
-                }),
-                interlinearSeparator: this.interlinearSeparator
+                };
             });
-            setAnchor({applicableBrowseFieldSchemaIndexes, getRawFieldValue, fieldValueAliasMapPreferred, ilRaw, iil, max: browseFieldSets.length});
+        } else {
+            // No need for presorting in indexedDB, given indexes
+            const presort = presorts[browseFieldSetIdx];
+            // Given that we are not currently wishing to add complexity to
+            //   our server-side code (though should be easy if using Node.js),
+            //   we retrieve the whole file and then sort where presorting is
+            //   needed
+            if (presort || this.noDynamic) {
+                const {
+                    resolved: {data: tableData}
+                } = await JsonRefs.resolveRefs(fileData.file);
+                runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
+                return tableData;
+            } else {
+                return (await fetch(
+                    Object.entries({
+                        unlocalizedWorkName, startsRaw, endsRaw
+                    }).reduce((url, [arg, argVal]) => {
+                        return url + '&' + arg + '=' + encodeURIComponent(
+                            JSON.stringify(argVal)
+                        );
+                    }, 'textbrowser?')
+                )).json();
+            }
+        }
+    }).then((tableData) => {
+        Templates.resultsDisplay.main({
+            tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
+            escapeQuotedCSS, escapeCSS, escapeHTML,
+            l, localizedFieldNames, fieldLangs,
+            caption, hasCaption, showInterlinTitles,
+            determineEnd: determineEnd({
+                fieldValueAliasMap, fieldValueAliasMapPreferred,
+                localizedFieldNames, applicableBrowseFieldNames,
+                starts, ends
+            }),
+            getCellValue: getCellValue({
+                fieldValueAliasMapPreferred, escapeColumnIndexes, escapeHTML
+            }),
+            checkedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
+                localizedFieldNames
+            }),
+            interlinearSeparator: this.interlinearSeparator
         });
+        setAnchor({applicableBrowseFieldSchemaIndexes, getRawFieldValue, fieldValueAliasMapPreferred, ilRaw, iil, max: browseFieldSets.length});
     });
 };

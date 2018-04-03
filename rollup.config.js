@@ -9,6 +9,8 @@ import uglify from 'rollup-plugin-uglify';
 import {minify} from 'uglify-es';
 import postProcess from 'rollup-plugin-postprocess';
 
+// Todo: Monitor https://github.com/rollup/rollup/issues/1978
+//        to suppress (known) circular dependency warnings
 function getRollupObject ({minifying, format = 'umd'} = {}) {
     const nonMinified = {
         input: 'resources/index.js',

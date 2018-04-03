@@ -1,3 +1,7 @@
+# 0.13.0
+
+- Refactoring: `async`/`await`
+
 # 0.12.6
 
 - Upgrade `loadStylesheets`

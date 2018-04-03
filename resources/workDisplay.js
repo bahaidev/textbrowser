@@ -4,7 +4,7 @@ import {serialize as formSerialize} from 'form-serialize';
 
 import Templates from './templates/index.js';
 
-export default function workDisplay ({
+export default async function workDisplay ({
     lang, preferredLocale, localeFromLangData, fallbackLanguages, getMetaProp, $p,
     localeFromFileData
 }, l) {
@@ -186,14 +186,21 @@ export default function workDisplay ({
         });
     }
 
-    this.getWorkData({lang, localeFromFileData, fallbackLanguages, $p, getMetaProp}).then((
-        [fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginKeys, pluginFieldMappings, pluginObjects]
-    ) => {
+    try {
+        const [
+            fileData, lf, getFieldAliasOrName, schemaObj,
+            metadataObj, pluginKeys, pluginFieldMappings,
+            pluginObjects
+        ] = await this.getWorkData({
+            lang, localeFromFileData, fallbackLanguages,
+            $p, getMetaProp
+        });
+
         if (pluginObjects) {
             // console.log('aaap', pluginObjects[0].insertField());
-            /*
             console.log('pluginKeys', pluginKeys);
             console.log('pluginFieldMappings', pluginFieldMappings);
+            /*
             console.log('pluginObjects', pluginObjects);
 
             "plugins": {
@@ -211,7 +218,7 @@ export default function workDisplay ({
             fallback: true
         });
         _displayWork.call(this, l, schemaObj, metadataObj, getFieldAliasOrName);
-    }).catch((err) => {
+    } catch (err) {
         alert(err);
-    });
+    }
 };
