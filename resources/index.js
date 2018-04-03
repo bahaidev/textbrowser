@@ -122,7 +122,9 @@ TextBrowser.prototype.getWorkData = function ({
         // Todo: Allow use of dbs and fileGroup together in base directories?
         const getMetadata = (file, property, cb) =>
             JsonRefs
-                .resolveRefsAt(getCurrDir() + file + (property ? '#/' + property : ''))
+                .resolveRefsAt(
+                    getCurrDir() + file + (property ? '#/' + property : '')
+                )
                 .then(({resolved}) => resolved)
                 .catch((err) => {
                     alert('catch:' + err);
@@ -153,13 +155,20 @@ TextBrowser.prototype.getWorkData = function ({
             metadataProperty = 'metadata';
         }
 
-        let getPlugins, pluginsInWork, pluginFieldsForWork, pluginPaths, pluginFieldMappingForWork;
+        let getPlugins, pluginsInWork, pluginFieldsForWork,
+            pluginPaths, pluginFieldMappingForWork;
         if (this.allowPlugins) {
-            const possiblePluginFieldMappingForWork = filesObj['plugin-field-mapping'][fileGroup.id][fileData.name];
+            const pluginFieldMapping = filesObj['plugin-field-mapping'];
+            const pluginFieldMappingID = pluginFieldMapping[fileGroup.id];
+            const possiblePluginFieldMappingForWork = pluginFieldMappingID[fileData.name];
             if (possiblePluginFieldMappingForWork) {
                 pluginFieldsForWork = Object.keys(possiblePluginFieldMappingForWork);
-                pluginsInWork = Object.keys(filesObj.plugins).filter((p) => pluginFieldsForWork.includes(p));
-                pluginFieldMappingForWork = pluginsInWork.map((p) => possiblePluginFieldMappingForWork[p]);
+                pluginsInWork = Object.keys(filesObj.plugins).filter((p) => {
+                    return pluginFieldsForWork.includes(p);
+                });
+                pluginFieldMappingForWork = pluginsInWork.map((p) => {
+                    return possiblePluginFieldMappingForWork[p];
+                });
                 pluginPaths = pluginsInWork.map((p) => filesObj.plugins[p].path);
                 getPlugins = this.allowPlugins && pluginsInWork;
             }
@@ -204,7 +213,8 @@ TextBrowser.prototype.getWorkData = function ({
     });
 };
 
-// Need for directionality even if language specified (and we don't want to require it as a param)
+// Need for directionality even if language specified (and we don't want
+//   to require it as a param)
 TextBrowser.prototype.getDirectionForLanguageCode = function (code) {
     const langs = this.langData.languages;
     return langs.find((lang) =>
@@ -228,27 +238,34 @@ TextBrowser.prototype.getFieldNameAndValueAliases = function ({
     let fieldValueAliasMap = fieldInfo && fieldInfo['fieldvalue-aliases'];
     if (fieldValueAliasMap) {
         if (fieldValueAliasMap.localeKey) {
-            fieldValueAliasMap = getMetaProp(metadataObj, fieldValueAliasMap.localeKey.split('/'), true);
+            fieldValueAliasMap = getMetaProp(
+                metadataObj,
+                fieldValueAliasMap.localeKey.split('/'),
+                true
+            );
         }
         ret.aliases = [];
-        // Todo: We could use `prefer_alias` but algorithm below may cover needed cases
+        // Todo: We could use `prefer_alias` but algorithm below may cover
+        //    needed cases
         if (fieldSchema.enum && fieldSchema.enum.length) {
             fieldSchema.enum.forEach((enm) => {
                 ret.aliases.push(
                     getMetaProp(metadataObj, ['fieldvalue', field, enm], true)
                 );
                 if (enm in fieldValueAliasMap &&
-                    // Todo: We could allow numbers here too, but crowds pull-down
+                    // Todo: We could allow numbers here too, but crowds
+                    //         pull-down
                     typeof fieldValueAliasMap[enm] === 'string') {
                     ret.aliases.push(...fieldValueAliasMap[enm]);
                 }
             });
         } else {
-            // Todo: We might iterate over all values (in case some not included in fv map)
+            // Todo: We might iterate over all values (in case some not
+            //         included in fv map)
             // Todo: Check `fieldSchema` for integer or string type
             Object.entries(fieldValueAliasMap).forEach(([key, aliases]) => {
-                // We'll preserve the numbers since probably more useful if stored
-                //   with data (as opposed to enums)
+                // We'll preserve the numbers since probably more useful if
+                //   stored with data (as opposed to enums)
                 if (!Array.isArray(aliases)) {
                     aliases = Object.values(aliases);
                 }
@@ -257,7 +274,9 @@ TextBrowser.prototype.getFieldNameAndValueAliases = function ({
                     ...(
                         aliases.filter((v) =>
                             aliases.every((x) =>
-                                x === v || !(x.toLowerCase().startsWith(v.toLowerCase()))
+                                x === v || !(
+                                    x.toLowerCase().startsWith(v.toLowerCase())
+                                )
                             )
                         ).map((v) => v + ' (' + key + ')')
                     )
@@ -288,11 +307,13 @@ TextBrowser.prototype.getBrowseFieldData = function ({
         const setName = browseFieldSetObject.name;
         const fieldSets = browseFieldSetObject.set;
         const presort = browseFieldSetObject.presort;
-        // Todo: Deal with ['td', [['h3', [ld(browseFieldObject.name)]]]] as kind of fieldset
+        // Todo: Deal with ['td', [['h3', [ld(browseFieldObject.name)]]]]
+        //          as kind of fieldset
 
         const browseFields = fieldSets.map((field) =>
             this.getFieldNameAndValueAliases({
-                field, schemaItems, metadataObj, getFieldAliasOrName, getMetaProp
+                field, schemaItems, metadataObj,
+                getFieldAliasOrName, getMetaProp
             })
         );
         cb({setName, browseFields, i, presort}); // eslint-disable-line standard/no-callback-literal
@@ -303,7 +324,7 @@ TextBrowser.prototype.getBrowseFieldData = function ({
 TextBrowser.prototype.paramChange = function () {
     const langs = this.langData.languages;
 
-    document.body.parentNode.replaceChild(Templates.defaultBody(), document.body);
+    document.body.replaceWith(Templates.defaultBody());
 
     // Todo: Could give option to i18nize 'lang' or omit
     const $p = this.$p = new IntlURLSearchParams();
@@ -316,8 +337,9 @@ TextBrowser.prototype.paramChange = function () {
 
     const languageParam = $p.get('lang', true);
 
-    // Todo: We could (unless overridden by another button) assume the browser language
-    //         based on fallbackLanguages instead of giving a choice
+    // Todo: We could (unless overridden by another button) assume the
+    //         browser language based on fallbackLanguages instead
+    //         of giving a choice
     const navLangs = navigator.languages.filter(localePass);
     const fallbackLanguages = navLangs.length
         ? navLangs
@@ -354,7 +376,9 @@ TextBrowser.prototype.paramChange = function () {
             //        fallback if an object is returned from a language because
             //        that language is missing content and is only thus returning
             //        an object)
-            prop = (allowObjects || typeof strings === 'string') ? strings : undefined;
+            prop = (allowObjects || typeof strings === 'string')
+                ? strings
+                : undefined;
             return prop;
         });
         return prop;
@@ -373,7 +397,10 @@ TextBrowser.prototype.paramChange = function () {
         return imfSite.getFormatter();
     };
     navigator.storage.persisted().then((persistent) => {
-        console.log('navigator.serviceWorker.controller', navigator.serviceWorker.controller);
+        console.log(
+            'navigator.serviceWorker.controller',
+            navigator.serviceWorker.controller
+        );
         if (
             // User may not want to persist, so comment out so we don't bother with dialog
             // !persistent // ||
@@ -388,7 +415,13 @@ TextBrowser.prototype.paramChange = function () {
         ) {
             return new Promise((resolve, reject) => {
                 // Duplicated in resultsDisplay
-                const escapeHTML = (s) => !s ? '' : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/, '&gt;');
+                const escapeHTML = (s) => {
+                    return !s
+                        ? ''
+                        : s.replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/, '&gt;');
+                };
                 // Todo: We could run the dialog code below for every page if
                 //    `Notification.permission === 'default'` (i.e., not choice
                 //    yet made by user), but user may avoid denying with intent
@@ -413,10 +446,15 @@ TextBrowser.prototype.paramChange = function () {
                             // Todo: We could go forward with worker, caching files, and
                             //    indexedDB regardless of permissions, but this way
                             //    we can continue to gauge performance differences for now
-                            localStorage.setItem(this.namespace + '-refused', 'true');
+                            localStorage.setItem(
+                                this.namespace + '-refused',
+                                'true'
+                            );
                             return;
                         }
-                        Templates.permissions.addLogEntry({text: 'Beginning install...'});
+                        Templates.permissions.addLogEntry({
+                            text: 'Beginning install...'
+                        });
 
                         // denied|default|granted
                         switch (requestPermissionsDialog.returnValue) {
@@ -434,7 +472,9 @@ TextBrowser.prototype.paramChange = function () {
                                 if (!persistent) {
                                     return Templates.permissions.browserNotGrantingPersistence();
                                 }
-                                Templates.permissions.addLogEntry({text: 'Received work files'});
+                                Templates.permissions.addLogEntry({
+                                    text: 'Received work files'
+                                });
 
                                 // Todo: We might wish to allow avoiding the other locale files
                                 //   and if only one chosen, switch to the work selection page
@@ -456,7 +496,10 @@ TextBrowser.prototype.paramChange = function () {
                                 (whose approval we've asked for already) when all files are complete,
                                 */
 
-                                console.log('--ready to register service worker', this.serviceWorkerPath);
+                                console.log(
+                                    '--ready to register service worker',
+                                    this.serviceWorkerPath
+                                );
                                 // `persist` will grandfather non-persisted caches, so if we don't end up
                                 //    using `install` event for dynamic items, we could put the service worker
                                 //    registration at the beginning of the file without waiting for persistence
@@ -465,11 +508,16 @@ TextBrowser.prototype.paramChange = function () {
                                 return navigator.serviceWorker.register(
                                     this.serviceWorkerPath
                                 ).then((r) => new Promise((resolve, reject) => {
-                                    Templates.permissions.addLogEntry({text: 'Worker registered'});
+                                    Templates.permissions.addLogEntry({
+                                        text: 'Worker registered'
+                                    });
                                     navigator.serviceWorker.onmessage = (e) => {
-                                        console.log('msg1', e.data, r);
-                                        if (e.data === 'finishedActivate') {
-                                            Templates.permissions.addLogEntry({text: 'Finished activation...'});
+                                        const {data} = e;
+                                        console.log('msg1', data, r);
+                                        if (data === 'finishedActivate') {
+                                            Templates.permissions.addLogEntry({
+                                                text: 'Finished activation...'
+                                            });
                                             // Still not controlled even after activation is
                                             //    ready, so refresh page
 
@@ -481,8 +529,8 @@ TextBrowser.prototype.paramChange = function () {
                                             // resolve(); // This will cause jankiness and unnecessarily show languages selection
                                             return;
                                         }
-                                        if (e.data.activationError) {
-                                            const {message, dbError, errorType} = e.data;
+                                        if (data.activationError) {
+                                            const {message, dbError, errorType} = data;
                                             const err = new Error(message);
                                             err.dbError = dbError;
                                             err.errorType = errorType;
@@ -490,8 +538,12 @@ TextBrowser.prototype.paramChange = function () {
                                             return;
                                         }
                                         if (r.active) { // Just use `e.source`?
-                                            Templates.permissions.addLogEntry({text: 'Finished caching'});
-                                            Templates.permissions.addLogEntry({text: 'Beginning activation (database resources)...'});
+                                            Templates.permissions.addLogEntry({
+                                                text: 'Finished caching'
+                                            });
+                                            Templates.permissions.addLogEntry({
+                                                text: 'Beginning activation (database resources)...'
+                                            });
                                             console.log('active1', e);
                                             r.active.postMessage({
                                                 type: 'activate',
@@ -512,7 +564,9 @@ TextBrowser.prototype.paramChange = function () {
                                                     : ''
                                                 ) + $ref
                                         );
-                                        Templates.permissions.addLogEntry({text: 'Beginning caching of files...'});
+                                        Templates.permissions.addLogEntry({
+                                            text: 'Beginning caching of files...'
+                                        });
                                         r.installing.postMessage({
                                             type: 'install',
                                             namespace: this.namespace,
@@ -571,7 +625,9 @@ TextBrowser.prototype.paramChange = function () {
                                     return;
                                 }
                             }
-                            Templates.permissions.errorRegistering(escapeHTML(err && err.message));
+                            Templates.permissions.errorRegistering(
+                                escapeHTML(err && err.message)
+                            );
                         });
                 };
                 const l = getSiteI18n();
@@ -595,7 +651,8 @@ TextBrowser.prototype.paramChange = function () {
         if (!languageParam) {
             const languageSelect = (l) => {
                 $p.l10n = l;
-                // Also can use l('chooselanguage'), but assumes locale as with page title
+                // Also can use l('chooselanguage'), but assumes locale
+                //   as with page title
                 document.title = l('browser-title');
                 Templates.languageSelect.main({
                     langs, getLanguageFromCode, followParams, $p
@@ -606,7 +663,7 @@ TextBrowser.prototype.paramChange = function () {
             return;
         }
         const localeCallback = (/* l, defineFormatter */ ...args) => {
-            const l10n = args[0];
+            const [l10n] = args;
             this.l10n = l10n;
             $p.l10n = l10n;
 
@@ -614,34 +671,40 @@ TextBrowser.prototype.paramChange = function () {
             const result = $p.get('result');
             if (!work) {
                 this.workSelect({
-                    lang, localeFromFileData, fallbackLanguages, getMetaProp, $p, followParams
+                    lang, localeFromFileData, fallbackLanguages,
+                    getMetaProp, $p, followParams
                 }, ...args);
                 return;
             }
             if (!result) {
                 this.workDisplay({
-                    lang, preferredLocale, localeFromFileData, fallbackLanguages, getMetaProp,
+                    lang, preferredLocale, localeFromFileData,
+                    fallbackLanguages, getMetaProp,
                     $p, localeFromLangData
                 }, ...args);
                 return;
             }
             this.resultsDisplay({
-                l: l10n, imfLocales: imf.locales, $p, lang, localeFromFileData, fallbackLanguages,
+                l: l10n,
+                imfLocales: imf.locales,
+                $p, lang,
+                localeFromFileData, fallbackLanguages,
                 getMetaProp
             }, ...args);
         };
         // Todo: Change to Promise!
         const imf = IMF({
             languages: lang,
-            fallbackLanguages: fallbackLanguages,
-            localeFileResolver: (code) =>
+            fallbackLanguages,
+            localeFileResolver (code) {
                 // Todo: For editing of locales, we might instead resolve all
                 //    `$ref` (as with <https://github.com/whitlockjc/json-refs>) and
                 //    replace IMF() loadLocales behavior with our own now resolved
                 //    locales; see https://github.com/jdorn/json-editor/issues/132
-                this.langData.localeFileBasePath + langs.find((l) =>
+                return this.langData.localeFileBasePath + langs.find((l) =>
                     l.code === code
-                ).locale.$ref,
+                ).locale.$ref;
+            },
             callback: localeCallback
         });
     });
