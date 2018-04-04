@@ -256,6 +256,7 @@ self.addEventListener('activate', e => {
     }));
 });
 
+// We cannot make this async as `e.respondWith` must be called synchronously
 self.addEventListener('fetch', (e) => {
     console.log('fetching');
     e.respondWith(
