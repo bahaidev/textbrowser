@@ -602,9 +602,8 @@ upon for monkey-patching.
 
 ## To-dos (Highest priority)
 
-1.  Ensure user informed about loading status even if entry page is not
-    languages page and that navigating to another page while loading is
-    in progress will display an appropriate "loading" message? 
+1.  Have language select, work select, and work display be part of
+    IndexedDB too?
 1.  Avoid `datalist` showing past selections on separate book! (change element
     ID to reflect work?)
 1.  Node.js (or PHP?)
