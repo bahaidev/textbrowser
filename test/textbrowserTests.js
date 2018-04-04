@@ -53,76 +53,77 @@ function validate (testName, schema, data, extraSchemas = [], additionalOptions 
 }
 
 const textbrowserTests = {
-    'locales tests' (test) {
+    async 'locales tests' (test) {
         test.expect(5); // eslint-disable-line no-magic-numbers
-        Promise.all(
-            [getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-07-schema.json'))].concat(
-                [
-                    'locale.jsonschema',
-                    'en-US.json',
-                    'ar.json',
-                    'fa.json',
-                    'ru.json'
-                ].map((file, i) => getJSON(
-                    path.join(__dirname, i ? localesBase : schemaBase, file)
-                ))
-            )
-        ).then(function ([jsonSchema, schema, ...locales]) {
-            locales.forEach(function (locale) {
-                const valid = validate('locales tests', schema, locale);
-                test.strictEqual(valid, true);
-            });
+        const [jsonSchema, schema, ...locales] = await Promise.all([
+            getJSON(path.join(
+                __dirname,
+                appBase + 'node_modules/json-metaschema/draft-07-schema.json'
+            )),
+            ...[
+                'locale.jsonschema',
+                'en-US.json',
+                'ar.json',
+                'fa.json',
+                'ru.json'
+            ].map((file, i) => getJSON(
+                path.join(__dirname, i ? localesBase : schemaBase, file)
+            ))
+        ]);
+        locales.forEach(function (locale) {
+            const valid = validate('locales tests', schema, locale);
+            test.strictEqual(valid, true);
+        });
 
+        validate('Schema test', jsonSchema, schema, undefined, {
+            validateSchema: false
+        });
+
+        const schema2 = cloneJSON(schema);
+        validate('Schema test 2', jsonSchema, schema2, undefined, {
+            removeAdditional: 'all',
+            validateSchema: false
+        });
+
+        const diff = jsonpatch.compare(schema, schema2);
+        if (diff.length) {
+            console.log('diff', diff);
+        }
+        test.strictEqual(diff.length, 0);
+
+        test.done();
+    },
+    async 'languages.json test' (test) {
+        test.expect(3); // eslint-disable-line no-magic-numbers
+        const results = await Promise.all([
+            JsonRefs.resolveRefsAt(path.join(__dirname, appdataBase, 'languages.json')),
+            getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-07-schema.json')),
+            getJSON(path.join(__dirname, schemaBase, 'languages.jsonschema')),
+            getJSON(path.join(__dirname, schemaBase, 'locale.jsonschema'))
+        ]);
+        const [{resolved: data}, jsonSchema, schema, localeSchema] = results;
+        const extraSchemas = [['locale.jsonschema', localeSchema]];
+        const valid = validate('languages.json test', schema, data, extraSchemas);
+        test.strictEqual(valid, true);
+
+        const schemas = results.slice(2);
+        schemas.forEach((schema, i) => {
             validate('Schema test', jsonSchema, schema, undefined, {
                 validateSchema: false
             });
 
             const schema2 = cloneJSON(schema);
-            validate('Schema test 2', jsonSchema, schema2, undefined, {
+            validate('Schema test 2', jsonSchema, schema2, extraSchemas, {
                 removeAdditional: 'all',
                 validateSchema: false
             });
-
             const diff = jsonpatch.compare(schema, schema2);
             if (diff.length) {
-                console.log('diff', diff);
+                console.log(`diff for schema at index ${i}`, diff);
             }
             test.strictEqual(diff.length, 0);
-
-            test.done();
         });
-    },
-    'languages.json test' (test) {
-        test.expect(3); // eslint-disable-line no-magic-numbers
-        Promise.all([
-            JsonRefs.resolveRefsAt(path.join(__dirname, appdataBase, 'languages.json')),
-            getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-07-schema.json')),
-            getJSON(path.join(__dirname, schemaBase, 'languages.jsonschema')),
-            getJSON(path.join(__dirname, schemaBase, 'locale.jsonschema'))
-        ]).then(function ([{resolved: data}, jsonSchema, schema, localeSchema]) {
-            const extraSchemas = [['locale.jsonschema', localeSchema]];
-            const valid = validate('languages.json test', schema, data, extraSchemas);
-            test.strictEqual(valid, true);
-
-            const schemas = arguments[0].slice(2);
-            schemas.forEach((schema, i) => {
-                validate('Schema test', jsonSchema, schema, undefined, {
-                    validateSchema: false
-                });
-
-                const schema2 = cloneJSON(schema);
-                validate('Schema test 2', jsonSchema, schema2, extraSchemas, {
-                    removeAdditional: 'all',
-                    validateSchema: false
-                });
-                const diff = jsonpatch.compare(schema, schema2);
-                if (diff.length) {
-                    console.log(`diff for schema at index ${i}`, diff);
-                }
-                test.strictEqual(diff.length, 0);
-            });
-            test.done();
-        });
+        test.done();
     }
 };
 
