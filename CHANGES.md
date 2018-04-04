@@ -1,3 +1,11 @@
+# 0.13.2
+
+- Fix: `this` scoping issue for langData
+- Fix: Sample service worker `async` issues
+- Refactoring: Have `init` return now promise-based `displayLanguages`
+    if we want it to signal everything rendered (incomplete)
+- Refactoring: Use `async`/`await` with `getJSON`
+
 # 0.13.1
 
 - Fix: Ensure is doing a browser build (now that imf is fixed to do so)

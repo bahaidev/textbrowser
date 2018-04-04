@@ -1928,9 +1928,9 @@ ignore@^3.3.3, ignore@^3.3.6:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.7.tgz#612289bfb3c220e186a58118618d5be8c1bab021"
 
-imf@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/imf/-/imf-3.0.0.tgz#d5ac2972804fefe283d7b31249ee59d889732c80"
+imf@3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/imf/-/imf-3.0.1.tgz#ecbfabc9f1c707b4475735a43505d0c5d5b548ba"
   dependencies:
     intl-messageformat "2.2.0"
     simple-get-json "3.2.3"

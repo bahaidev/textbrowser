@@ -118,8 +118,10 @@ self.addEventListener('activate', e => {
             const r = await fetch(filesJSONPath);
             const {groups} = await r.json();
 
-            const addJSONFetch = async (arr, path) => {
-                arr.push((await fetch(path)).json());
+            const addJSONFetch = (arr, path) => {
+                arr.push(
+                    (async () => (await fetch(path)).json())()
+                );
             };
 
             const dataFileNames = [];
@@ -140,9 +142,10 @@ self.addEventListener('activate', e => {
             const promises = await Promise.all([
                 ...dataFiles, ...schemaFiles, ...metadataFiles
             ]);
+            const chunked = arrayChunk(promises, dataFiles.length);
             const [
                 dataFileResponses, schemaFileResponses, metadataFileResponses
-            ] = arrayChunk(promises, 3);
+            ] = chunked;
 
             console.log('--files fetched');
             const dbName = namespace + '-textbrowser-cache-data';
@@ -253,9 +256,9 @@ self.addEventListener('activate', e => {
     }));
 });
 
-self.addEventListener('fetch', async (e) => {
+self.addEventListener('fetch', (e) => {
     console.log('fetching');
     e.respondWith(
-        (await caches.match(e.request)) || fetch(e.request)
+        (async () => (await caches.match(e.request)) || fetch(e.request))()
     );
 });

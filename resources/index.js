@@ -49,21 +49,25 @@ TextBrowser.prototype.resultsDisplay = resultsDisplay;
 
 TextBrowser.prototype.init = async function () {
     this._stylesheetElements = await loadStylesheets(this.stylesheets);
-    this.displayLanguages();
+    return this.displayLanguages();
 };
 
-TextBrowser.prototype.displayLanguages = function () {
+TextBrowser.prototype.displayLanguages = async function () {
     // We use getJSON instead of JsonRefs as we do not need to resolve the locales here
-    getJSON([this.languages, this.site], (langData, siteData) => {
+    try {
+        const [langData, siteData] = await getJSON([this.languages, this.site]);
         this.langData = langData;
         this.siteData = siteData;
-        this.paramChange();
+
+        const p = this.paramChange();
 
         // INIT/ADD EVENTS
         window.addEventListener('hashchange', () => this.paramChange(), false);
-    }, (err) => {
+
+        return p;
+    } catch (err) {
         alert(err);
-    });
+    }
 };
 
 TextBrowser.prototype.getFilesData = async function () {
@@ -684,11 +688,11 @@ TextBrowser.prototype.paramChange = async function () {
             getMetaProp
         }, ...args);
     };
-    // Todo: Change to Promise!
+    // Todo: Change to Promise and return!
     const imf = IMF({
         languages: lang,
         fallbackLanguages,
-        localeFileResolver (code) {
+        localeFileResolver: (code) => {
             // Todo: For editing of locales, we might instead resolve all
             //    `$ref` (as with <https://github.com/whitlockjc/json-refs>) and
             //    replace IMF() loadLocales behavior with our own now resolved
