@@ -51,7 +51,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
             // nodeGlobals(),
             // builtins(),
             resolve({
-                // browser: true // Should investigate why this is not working
+                browser: true // Should investigate why this is not working
             }),
             commonjs(),
             postProcess([ // Revert

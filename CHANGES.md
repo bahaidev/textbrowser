@@ -1,3 +1,8 @@
+# 0.13.1
+
+- Fix: Ensure is doing a browser build (now that imf is fixed to do so)
+- npm: Ensure ESLint and Rollup are run for Node tests
+
 # 0.13.0
 
 - Refactoring: `async`/`await`
