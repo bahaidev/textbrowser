@@ -560,6 +560,9 @@ TextBrowser.prototype.paramChange = async function () {
                             if (r.installing) {
                                 console.log('installingggg');
                                 const langPathParts = this.languages.split('/');
+                                // Todo: We might give option to only download
+                                //        one locale and avoid language splash
+                                //        page
                                 const localeFiles = langs.map(
                                     ({locale: {$ref}}) =>
                                         (langPathParts.length > 1
