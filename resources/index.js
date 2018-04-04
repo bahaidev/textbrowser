@@ -587,8 +587,10 @@ TextBrowser.prototype.paramChange = async function () {
                                 });
                                 */
                             }
-                            // If ready, we'll continue
-                            resolve(navigator.serviceWorker.ready);
+                            // If activated, we'll continue
+                            if (navigator.serviceWorker.controller) {
+                                resolve();
+                            }
                         });
                         return ready;
                         /*

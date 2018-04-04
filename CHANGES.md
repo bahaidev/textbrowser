@@ -1,3 +1,8 @@
+# 0.13.3
+
+- Fix: Don't continue past loading screen until service worker
+    is fully activated
+
 # 0.13.2
 
 - Fix: `this` scoping issue for langData
