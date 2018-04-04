@@ -179,7 +179,8 @@ project.
 
 Projects derivative to *TextBrowser* will need to adhere to the following:
 
-1.  Add the *TextBrowser* dependency per the [Installation](#Installation) section.
+1.  Add the *TextBrowser* dependency per the [Installation](#Installation)
+    section.
 
 1.  Prepare JSON data files, JSON Schema files, and JSON meta-data files
     to represent your texts. See the section
@@ -387,14 +388,16 @@ including specifically for JSON metadata, `fieldnames`, `fieldaliases`,
 ### Application-Wide JSON files
 
 Besides the JSON files directly representing your works, you will need the
-following files to indicate behavior for the text-browsing application as a whole.
+following files to indicate behavior for the text-browsing application as a
+whole.
 
 #### `files.json`
 
 This format is defined by [this](https://github.com/brettz9/textbrowser/blob/master/general-schemas/files.jsonschema).
 See [this file](https://bitbucket.org/brettz9/bahaiwritings/src/5f2602f122134d2013e013a477ae94ee29548a13/files.json?at=master&fileviewer=file-view-default) for an example.
 
-It allows you to point the application to the data files you desire for inclusion (e.g., any kept in `data/`).
+It allows you to point the application to the data files you desire for
+inclusion (e.g., any kept in `data/`).
 
 The optional string properties `schemaBaseDirectory` and
 `metadataBaseDirectory` at root apply to all groups.
@@ -405,9 +408,10 @@ keys include the `id` string, the `name` string, the `directions` string
 `schemaBaseDirectory` and `metadataBaseDirectory` properties.
 
 The `files` array property contains object items with the following properties:
-a `name` string or localization key (or a file group display name), `schemaFile` and `metadataFile` string file paths (resolved relative to the respective base path
-properties), and `file` which is
-an reference to a specific JSON data file [table-container.jsonschema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema)).
+a `name` string or localization key (or a file group display name),
+`schemaFile` and `metadataFile` string file paths (resolved relative to the
+respective base path properties), and `file` which is an reference to a
+specific JSON data file [table-container.jsonschema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema)).
 
 As with other files, there is also a `localization-strings` key object, keyed
 to language code, which is keyed to an object of keys (which can be strings,
@@ -416,10 +420,12 @@ arrays of strings, or other objects of keys, including specifically for
 `plugins` whose keys are plugins and whose object values have a `fieldname`
 key).
 
-The `plugins` object property indicates scripts in metadata and is *not yet in use*.
+The `plugins` object property indicates scripts in metadata and is
+*not yet in use*.
 
-Its keys are plug-in names and whose value objects have the required property `path`,
-and the optional properties `onByDefault` boolean and `lang` language code string.
+Its keys are plug-in names and whose value objects have the required property
+`path`, and the optional properties `onByDefault` boolean and `lang` language
+code string.
 <!-- See [Plugin Format](#Plugin Format) for the structure of the plug-in pointed
 to by the path. -->
 
@@ -433,8 +439,8 @@ includes field arguments, namely:
     name)
 - `applicable-fields` an object property whose properties are field names
     pointing to an object key value with properties that may vary with plug-in,
-    but which specifically reserve a `targetLanguage` language code string property
-    and a `onByDefault` boolean property.
+    but which specifically reserve a `targetLanguage` language code string
+    property and a `onByDefault` boolean property.
 
 #### `languages.json` and `locales/en-US.json`, etc.
 
@@ -484,9 +490,9 @@ arrays of strings). Besides creating a navigation bar, it is
 also intended to be used to generate breadcrumbs, `<link rel=next/prev>` links,
 and a sitemap.
 
-As with other files, there is a `localization-strings` object, keyed to language
-code, which is keyed to an object of keys (which can be strings, arrays of
-strings, or other objects of keys).
+As with other files, there is a `localization-strings` object, keyed to
+language code, which is keyed to an object of keys (which can be strings,
+arrays of strings, or other objects of keys).
 
 <!-- ## Plugin Format -->
 <!-- Add once implemented;
@@ -505,8 +511,9 @@ as a `npm` dependency).
 -   ***TextBrowser(options)*** - Constructor which takes an options object
     with the following optional properties:
 
-    -   `staticFilesToCache` - Array of files additional to those of *TextBrowser*
-        which you will need offline. Defaults to the minimum recommended files:
+    -   `staticFilesToCache` - Array of files additional to those of
+        *TextBrowser* which you will need offline. Defaults to the minimum
+        recommended files:
         `['index.html', 'files.json', 'site.json', 'resources/user.js', 'resources/user.css']`
 
     -   `files` - Path for the `files.json` containing meta-data on the files
@@ -602,47 +609,50 @@ upon for monkey-patching.
 
 ## To-dos (Highest priority)
 
-1.  Have language select, work select, and work display be part of
-    IndexedDB too?
+1.  Have **IndexedDB handle all pages** language select, work select, and
+    work display be part of too?
 1.  Avoid `datalist` showing past selections on separate book! (change element
     ID to reflect work?)
-1.  Node.js (or PHP?)
+1.  **Node.js** (or PHP?)
     1.  Delivery of HTML content by same URL so third parties can
         consume without JavaScript and optimized when not offline
         1.  [Progressive enhancement is faster](https://jakearchibald.com/2013/progressive-enhancement-is-faster/)
             1.  Optimize Jamilih to build strings (for performance and also for
-                server) and utilize here; also to preprocess files like our templates
-                to convert Jamilih to complete string concatenation as is somewhat faster
+                server) and utilize here; also to preprocess files like our
+                templates to convert Jamilih to complete string concatenation
+                as is somewhat faster
         1.  Serve JSON files immediately and then
             inject config for `index.js` to avoid reloading?
         1.  Use [IndexedDBShim](https://github.com/axemclion/IndexedDBShim)
             (with service worker shim?) to optimize on server
-1.  Avoid setting inputs to empty string on load (prevents using back button
-    to get at old values)
-1.  Fix sometime obscuring of headings
-1.  Document need of setting certain locale strings, including `sites.json`.
+1.  **Avoid setting inputs to empty string** on load (prevents using back
+    button to get at old values)
+1.  Fix sometime **obscuring of headings**
+1.  **Document**
+    1. Need of setting certain locale strings, including `sites.json`.
 1.  Use schema-detection of type for sorting--integer
     parsing only on URL params per schema); see `resultsDisplay.js` with to-do
     by `parseInt` (and also see `String()` conversions)
 1.  Get file names to be namespaced to group name to avoid name clashes
-1.  Locales
+1.  **Locales**
     1.  Check `localizeParamNames` (preference)?
     1.  Test all locales and works and combos
-1.  Default field(s) and default value(s) for when no text is entered and a reasonable
-    sample is desired to be shown. Use `default_view` already spec'd in metadata schema
-    and used in files.
-1.  Indicate min/max as placeholder text (`Max: 100`?)
-1.  Rename "Field" to "Column anchor"
-1.  Move "Go" to right (or immediate bottom) of paragraph selections
+1.  **Default field(s) and default value(s)** for when no text is entered and
+    a reasonable sample is desired to be shown. Use `default_view` already
+    spec'd in metadata schema and used in files.
+1.  Indicate min/max as **placeholder text** (`Max: 100`?)
+1.  **Rename "Field"** to "Column anchor"
+1.  **Move "Go"** to right (or immediate bottom) of paragraph selections
 1.  Renaming/linking to fuller descriptions or graphics explaining
     options/preferences regarding locale, interlinear, CSS
-1.  Plugins/Automated fields
-    1.  Include extensibility mechanism
-        1.  Admin/files-driven and ideally user-driven (though security issue for
-            additive approach); could let plugin itself accept user input
+1.  **Plugins/Automated** fields
+    1.  Include **extensibility mechanism**
+        1.  Admin/files-driven and ideally user-driven (though security issue
+            for additive approach); could let plugin itself accept user input
         1.  Additive or reductive (omitting/merging)
             1.  Columns or rows
-                1.  Admin-controlled merging/omission of columns like interlinear
+                1.  Admin-controlled merging/omission of columns like
+                    interlinear
                 1.  Merging rows with same number
                 1.  Metadata for default field column placement and table/field
                     applicability
@@ -650,33 +660,40 @@ upon for monkey-patching.
         1.  Modifying existing content or not
             1.  Splitting columns (e.g., by line break)
             1.  Splitting rows by element (e.g., `<hr />`)
-                1.  With optional `rowspan`/`colspan` for non-split portions of row/column
+                1.  With optional `rowspan`/`colspan` for non-split portions
+                    of row/column
             1.  Overlays
         1.  Levels of applicability
             1.  Automated whole document/table-level or column-level
-                changes (e.g., word counts) or even row-level/cell-level (including language code)
+                changes (e.g., word counts) or even row-level/cell-level
+                (including language code)
             1.  Spans across section
         1.  Provide example plugins of each type for this version if possible
-        1.  Define all possible areas as plugins? e.g., Move search/CSS/interlinear, advanced
-            formatting, or even browse fields and/or field lists and/or search as a whole to plugins?
-            If doing so for individual fields in field lists, should support adding, e.g., pull-downs,
-            even multiple ones for arguments (e.g., a web search plugin could specify the desired
-            search engine)
-        1.  Asycnchronous means of retrieving (and then caching, optionally on an
-            interval) automated data; use of single Promise to each plug-in for
-            whole table (or if necessary `Promise.all` on each row)?
-    1.  Caching for automated field content like translations (with ability to rebuild)
-    1.  Specific automated fields
+        1.  Define all possible areas as plugins? e.g., Move
+            search/CSS/interlinear, advanced formatting, or even browse fields
+            and/or field lists and/or search as a whole to plugins?
+            If doing so for individual fields in field lists, should support
+            adding, e.g., pull-downs, even multiple ones for arguments
+            (e.g., a web search plugin could specify the desired search engine)
+        1.  Asycnchronous means of retrieving (and then caching, optionally on
+            an interval) automated data; use of single Promise to each plug-in
+            for whole table (or if necessary `Promise.all` on each row)?
+    1.  **Caching for automated field content** like translations (with ability
+        to rebuild)
+    1.  Specific **automated fields**
         1. Previously implemented:
-            1.  Option to show renamed fields (like "Book #" -> "Book Name" for Bible) before
-                renaming (reimplement as additive plug-in but with one field on
-                by default and the other off); already has placeholder in `files.json` - add to `field-alias.js`; already added to new version but need to reimplement as plugin
-            1. Synopsis, Roman numerals, Chinese numbers, word-by-word translation,
-                auto-romanized Persian/Arabic, Persian with English tooltips,
-                English with Persian/Arabic tooltips, ISBN for Collins (use JSON Schema
-                `format` for link detection--might also reimplement ISBN to make use of
-                JSON Schema format);
-                text-to-(Google search, Google define, Wikipedia, etc. edit pages)-links
+            1.  Option to show renamed fields (like "Book #" -> "Book Name"
+                for Bible) before renaming (reimplement as additive plug-in
+                but with one field on by default and the other off); already
+                has placeholder in `files.json` - add to `field-alias.js`;
+                already added to new version but need to reimplement as plugin
+            1. Synopsis, Roman numerals, Chinese numbers, word-by-word
+                translation, auto-romanized Persian/Arabic, Persian with
+                English tooltips, English with Persian/Arabic tooltips, ISBN
+                for Collins (use JSON Schema `format` for link detection--might
+                also reimplement ISBN to make use of JSON Schema format);
+                text-to-(Google search, Google define, Wikipedia, etc.
+                edit pages)-links
         1.  Auto-links by verse to relevant forums, wikis, blogs, or personal
             notes pertaining to a given verse
             1.  Built-in (including offline or only offline) note-taking
@@ -694,15 +711,15 @@ upon for monkey-patching.
             some surfacing, as better ensures future compatibility/portability
         1.  Automated field to split up rows based on presence of `<hr />` or
             `<a id=>`, etc., with the ability to browse by such numbers (would
-            ideally tap into browsing autocomplete code indicating min/max too).
-            Optionally get `rowspan`s (or even `colspan`s) for additional
-            columns (e.g., a field spanning by whole pages of a book and another
-            field spanning only by paragraphs) - use some kind of counter and
-            don't display the HTML until finished cycling??; also figure out
-            how to reassemble if the minute fields are not needed (e.g., if
-            the user only wants to see the text by paragraph and not anything
-            related to by page); will provide a new browsing column and also
-            divide certain existing one(s)
+            ideally tap into browsing autocomplete code indicating min/max
+            too). Optionally get `rowspan`s (or even `colspan`s) for additional
+            columns (e.g., a field spanning by whole pages of a book and
+            another field spanning only by paragraphs) - use some kind of
+            counter and don't display the HTML until finished cycling??; also
+            figure out how to reassemble if the minute fields are not needed
+            (e.g., if the user only wants to see the text by paragraph and
+            not anything related to by page); will provide a new browsing
+            column and also divide certain existing one(s)
         1.  Allow automated algorithm to merge, remove rows (e.g., intro
             section of text with same "0" number)
         1.  Splitting columns by line break, etc.
@@ -714,21 +731,22 @@ upon for monkey-patching.
             syntax back to another site
         1.  Correct any field easily by links within TB to editing interface
         1.  Add an "overlay" column like interlinear, but which overlays by
-            tooltip if any data is present; can also use metadata if the overlay
-            is within-cell (and this metadata can also be used for putting
-            overlay data in its own column too, albeit with only partial
-            mapping to the other columns, e.g., if our "Baha'i translation"
-            had not already been put into its own column, a metadata mapping
-            may only have been for two discontiguous sentences out of a
-            paragraph, but could still show such sentences reassembled (with
-            some kind of separator) in a paragraph-based cell)
+            tooltip if any data is present; can also use metadata if the
+            overlay is within-cell (and this metadata can also be used for
+            putting overlay data in its own column too, albeit with only
+            partial mapping to the other columns, e.g., if our "Baha'i
+            translation" had not already been put into its own column, a
+            metadata mapping may only have been for two discontiguous
+            sentences out of a paragraph, but could still show such sentences
+            reassembled (with some kind of separator) in a paragraph-based
+            cell)
             1.  Deal with other metadata/automated (besides overlays) which is
-                intended to allow collapsing of ranges (above paragraph cells, but
-                may overlap); do as multiple tbodies but needs to be done
+                intended to allow collapsing of ranges (above paragraph cells,
+                but may overlap); do as multiple tbodies but needs to be done
                 dynamically since may wish alternate (and nestable) collapsing
                 (e.g., collection->book->chapter, user-contributed metadata
-                sections, etc.); allow collapsing/expanding of all fields by one
-                click button outside table (or by level); allow automated
+                sections, etc.); allow collapsing/expanding of all fields by
+                one click button outside table (or by level); allow automated
                 collapsing based on sequentially exact values (e.g., until
                 rows stop having a column with value "1")
             1.  Allow collapsing even within cells (as with overlays) (like
@@ -742,13 +760,15 @@ upon for monkey-patching.
                 which do not map exclusively by cell boundaries (or
                 relatively within them).
             1.  Allow types of overlays (or "mashes") such as underlays (adding
-                invisible metadata), onlays/"mash ons" (replacing text in place),
-                as well as regular overlays (adding text via mouseover); let
-                these be alterable as possible by the user (e.g., text might
-                be desirable to replace existing text or put it as a mouseover)
+                invisible metadata), onlays/"mash ons" (replacing text in
+                place), as well as regular overlays (adding text via
+                mouseover); let these be alterable as possible by the user
+                (e.g., text might be desirable to replace existing text or
+                put it as a mouseover)
             1.  Allow for dynamic addition of JSON overlay sources or metadata
                 to work selection/work display files?
-            1.  See bahaiwritings project re: using Firefox's [Browser API](https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API)
+            1.  See bahaiwritings project re: using Firefox's
+                [Browser API](https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API)
                 to allow independent navigation controls for each iframe (and
                 side-by-side viewing of verses/lines and commentary)
 
@@ -756,25 +776,30 @@ upon for monkey-patching.
 
 1.  Waiting ([JSON UI Schema](https://github.com/json-schema-org/json-schema-spec/issues/67)
     or [JSON Schema Annotation and Documentation Extension](https://github.com/json-schema-org/json-schema-spec/issues/136)):
-    i18n: Utilize more standard mechanism instead of our `localeKey`; might also use
-    substitutable JSON References (see <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
+    i18n: Utilize more standard mechanism instead of our `localeKey`;
+    might also use substitutable JSON References (see
+    <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
     and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
 
 1.  [ES6 Modules in browser](https://jakearchibald.com/2017/es-modules-in-browsers/):
-    Complete switch to imports over script tags (by updating dependencies to use ES6
-    modules too and then use them; json-refs is only left); can also avoid
-    function-passing main functions as arguments
-    1.  Apply <https://www.gnu.org/software/librejs/free-your-javascript.html> labels
-        to provide machine-automated detection of licenses. (Adapt [LibreJS](https://www.gnu.org/software/librejs/) to work with WebExtensions,
-        to support `<link>` in addition to visible links, and, if it is not already,
-        make blocking of sites without open source code optional but notify one by
-        icon so that one might know that a page is using (or not using) open source.)
+    Complete switch to imports over script tags (by updating dependencies to
+    use ES6 modules too and then use them; json-refs is only left); can also
+    avoid function-passing main functions as arguments
+    1.  Apply <https://www.gnu.org/software/librejs/free-your-javascript.html>
+        labels to provide machine-automated detection of licenses. (Adapt
+        [LibreJS](https://www.gnu.org/software/librejs/) to work with
+        WebExtensions, to support `<link>` in addition to visible links, and,
+        if it is not already, make blocking of sites without open source code
+        optional but notify one by icon so that one might know that a page is
+        using (or not using) open source.)
 1.  Add prior transpose functionality (affects header, footer, and body)
-1.  Expose interlinear `showEmptyInterlinear` and `showTitleOnSingleInterlinear` to the
-    user interface
+1.  Expose interlinear `showEmptyInterlinear` and
+    `showTitleOnSingleInterlinear` to the user interface
 1.  Uncomment and complete random code
-    1. random within specific part of browse field range (e.g., within a specific book)?
-        1. Have special meta-data for per book/chapter maximums (Bible/Qur'an) to allow accurate and also for random verses?
+    1. random within specific part of browse field range (e.g., within a
+        specific book)?
+        1. Have special meta-data for per book/chapter maximums (Bible/Qur'an)
+            to allow accurate and also for random verses?
     1.  with context
     1.  Leverage this code for random to implement random feature across
         works within group or across all groups
@@ -793,9 +818,9 @@ upon for monkey-patching.
         order and ASC/DESC) with user customizability (i.e., presorting along
         with dynamic client-side after-load sorting, with or without search
         filtering; use "search" in locale to add this filtering to UI)
-    1.  Option for highlighting search terms (with own styles), and/or if context
-        is specified, to highlight rows with search results and alternatively
-        style context rows (distinguish from random context?)
+    1.  Option for highlighting search terms (with own styles), and/or if
+        context is specified, to highlight rows with search results and
+        alternatively style context rows (distinguish from random context?)
     1.  Optional links to go to previous/next results if only loading a subset
         of available content (allow customization of size of chunking in
         preferences as well as on the fly)
@@ -814,8 +839,8 @@ upon for monkey-patching.
         original source HTML or XML document); also highlighting as
         part of page anchor ala original XPath schemes (e.g.,
         `&anchor=.myClass` with `text()` from [HTTPQuery](https://github.com/brettz9/httpquery)
-        to identify by text content too if not a full blown query/transformation
-        language)?
+        to identify by text content too if not a full blown
+        query/transformation language)?
 
 ## To-dos (Medium Priority)
 
@@ -881,9 +906,11 @@ upon for monkey-patching.
 ## To-dos (Lower priority)
 
 1.  Preferences
-    1.  Change Preferences to be set before work or with work but specific to it
+    1.  Change Preferences to be set before work or with work but specific
+        to it
     1.  Change Preferences to disallow URL overriding
-    1.  Change preferred languages preference to be dynamic with work column languages
+    1.  Change preferred languages preference to be dynamic with work
+        column languages
         1.  Preference to remember enabled checkboxes and formatting
 1.  Change to utilize history.pushState?
     <https://developer.mozilla.org/en-US/docs/Web/API/History_API>
@@ -907,8 +934,8 @@ upon for monkey-patching.
     `document.domain` is only for subdomains).
 1.  `indexedDB` for JSON data
 1.  Restore `tabindex` usage
-1.  Restore option from work page to have a checkbox on whether to go to "Advanced mode",
-    opening the styling options by default or not.
+1.  Restore option from work page to have a checkbox on whether to go to
+    "Advanced mode", opening the styling options by default or not.
 1.  Testing
     1.  Start browser testing: <https://www.npmjs.com/package/testcafe> (or
         possibly <http://nightwatchjs.org/>); headless Chrome?
@@ -970,13 +997,15 @@ system may be in place).
 One PHP/MySQL-based version was released in 2005-12-22 and was my
 first project used in aiding my learning programming.
 
-It was hosted at http://bahai-library.com/browser/ and https://bahai9.com/browse0.php
+It was hosted at <http://bahai-library.com/browser/> and
+<https://bahai9.com/browse0.php>
 
-On Bahá'í Libary Online, the Web Archive indicates its presence as far back as 17 May 2006:
+On Bahá'í Libary Online, the Web Archive indicates its presence as far back
+as 17 May 2006:
 
-- http://web.archive.org/web/20060517012851/http://bahai-library.com:80/browser/browse0.php
-- http://web.archive.org/web/20060505010948/http://bahai-library.com:80/browser/browse0.php?langu=en
-- http://web.archive.org/web/20060430170322/http://bahai-library.com:80/browser/browse.php?langu=en&file=Bible
+- <http://web.archive.org/web/20060517012851/http://bahai-library.com:80/browser/browse0.php>
+- <http://web.archive.org/web/20060505010948/http://bahai-library.com:80/browser/browse0.php?langu=en>
+- <http://web.archive.org/web/20060430170322/http://bahai-library.com:80/browser/browse.php?langu=en&file=Bible>
 
 It was broken (or offline) for long periods of time after an upgrade of PHP
 applied to the server broke the old code and for which I did not find time
