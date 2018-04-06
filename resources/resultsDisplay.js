@@ -1,8 +1,23 @@
+/* eslint-env browser */
 import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 import Templates from './templates/index.js';
+import {escapeHTML} from './utils/sanitize.js';
+import {getMetaProp, getFieldNameAndValueAliases, getBrowseFieldData} from './utils/Metadata.js';
+import {getWorkData} from './utils/WorkInfo.js';
 
-export default async function resultsDisplay ({
-    l, lang, localeFromFileData, fallbackLanguages, $p, imfLocales, getMetaProp
+export const resultsDisplayClient = async function resultsDisplayClient (args) {
+    const persistent = await navigator.storage.persisted();
+    const skipIndexedDB = this.skipIndexedDB || !persistent || !navigator.serviceWorker.controller;
+    const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
+
+    return resultsDisplayServerOrClient.call(this, {
+        ...args, skipIndexedDB, prefI18n
+    });
+};
+
+export const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient ({
+    l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, prefI18n,
+    files, allowPlugins
 }) {
     const getCellValue = ({
         fieldValueAliasMapPreferred, escapeColumnIndexes
@@ -54,10 +69,10 @@ export default async function resultsDisplay ({
             if (starts.some((part, i) => {
                 const rowIDPart = rowIDParts[i];
                 return Array.isArray(rowIDPart)
-                    ? !rowIDPart.some((rip) => starts[i] === String(rip))
+                    ? !rowIDPart.some((rip) => part === String(rip))
                     : (rowIDPart && typeof rowIDPart === 'object'
-                        ? !Object.values(rowIDPart).some((rip) => starts[i] === String(rip))
-                        : starts[i] !== String(rowIDPart)
+                        ? !Object.values(rowIDPart).some((rip) => part === String(rip))
+                        : part !== String(rowIDPart)
                     );
             })) {
                 return false;
@@ -68,10 +83,10 @@ export default async function resultsDisplay ({
         if (ends.every((part, i) => {
             const rowIDPart = rowIDParts[i];
             return Array.isArray(rowIDPart)
-                ? rowIDPart.some((rip) => ends[i] === String(rip))
+                ? rowIDPart.some((rip) => part === String(rip))
                 : (rowIDPart && typeof rowIDPart === 'object'
-                    ? Object.values(rowIDPart).some((rip) => ends[i] === String(rip))
-                    : ends[i] === String(rowIDPart)
+                    ? Object.values(rowIDPart).some((rip) => part === String(rip))
+                    : part === String(rowIDPart)
                 );
         })) {
             foundState.end = true;
@@ -130,8 +145,9 @@ export default async function resultsDisplay ({
                 ).join('')
             );
             */
-            const startSep = Templates.resultsDisplay.startSeparator({l});
-            const innerBrowseFieldSeparator = Templates.resultsDisplay.innerBrowseFieldSeparator({l});
+            const startSep = Templates.resultsDisplayServerOrClient.startSeparator({l});
+            const innerBrowseFieldSeparator = Templates.resultsDisplayServerOrClient
+                .innerBrowseFieldSeparator({l});
 
             const buildRanges = () => {
                 const endVals = [];
@@ -150,21 +166,24 @@ export default async function resultsDisplay ({
 
                 const rangeNames = applicableBrowseFieldNames.join(innerBrowseFieldSeparator);
                 return escapeHTML(
-                    Templates.resultsDisplay.ranges({l, startRange, endVals, rangeNames})
+                    Templates.resultsDisplayServerOrClient.ranges({l, startRange, endVals, rangeNames})
                 );
             };
             const ranges = buildRanges();
-            caption = Templates.resultsDisplay.caption({heading, ranges});
+            caption = Templates.resultsDisplayServerOrClient.caption({heading, ranges});
         }
         return [hasCaption, caption];
     };
-    const setAnchor = ({applicableBrowseFieldSchemaIndexes, getRawFieldValue, fieldValueAliasMapPreferred, ilRaw, iil, max}) => {
+    const setAnchor = ({
+        applicableBrowseFieldSchemaIndexes, getRawFieldValue,
+        fieldValueAliasMapPreferred, ilRaw, iil, max
+    }) => {
         // Check if user added this (e.g., even to end of URL with
         //   other anchor params)
         let anchor;
         const anchorRowCol = ilRaw('anchorrowcol');
         if (anchorRowCol) {
-            anchor = Templates.resultsDisplay.anchorRowCol({anchorRowCol});
+            anchor = Templates.resultsDisplayClient.anchorRowCol({anchorRowCol});
         }
         if (!anchor) {
             const anchors = [];
@@ -197,7 +216,7 @@ export default async function resultsDisplay ({
                 const escapedCol = anchorField
                     ? escapeSelectorAttValue(anchorField)
                     : undefined;
-                anchor = Templates.resultsDisplay.anchors({
+                anchor = Templates.resultsDisplayClient.anchors({
                     escapedRow, escapedCol
                 });
             }
@@ -222,29 +241,31 @@ export default async function resultsDisplay ({
             });
         }
     };
-    const getFieldValueAliasMap = ({schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias}) => {
+    const getFieldValueAliasMap = ({
+        schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias
+    }) => {
         return schemaItems.map(({title: field}) => {
-            const {preferAlias, fieldValueAliasMap} = this.getFieldNameAndValueAliases({
-                field, schemaItems, metadataObj, getFieldAliasOrName, getMetaProp
+            const {preferAlias, fieldValueAliasMap} = getFieldNameAndValueAliases({
+                field, schemaItems, metadataObj, getFieldAliasOrName, lang
             });
             if (fieldValueAliasMap) {
                 Object.entries(fieldValueAliasMap).forEach(([key, val]) => {
                     if (Array.isArray(val)) {
                         fieldValueAliasMap[key] = val.map((value) =>
-                            Templates.resultsDisplay.fieldValueAlias({key, value})
+                            Templates.resultsDisplayServerOrClient.fieldValueAlias({key, value})
                         );
                         return;
                     }
                     if (val && typeof val === 'object') {
                         if (usePreferAlias && typeof preferAlias === 'string') {
                             fieldValueAliasMap[key] =
-                                Templates.resultsDisplay.fieldValueAlias({
+                                Templates.resultsDisplayServerOrClient.fieldValueAlias({
                                     key, value: val[preferAlias]
                                 });
                         } else {
                             Object.entries(val).forEach(([k, value]) => {
                                 fieldValueAliasMap[key][k] =
-                                    Templates.resultsDisplay.fieldValueAlias({
+                                    Templates.resultsDisplayServerOrClient.fieldValueAlias({
                                         key, value
                                     });
                             });
@@ -252,7 +273,7 @@ export default async function resultsDisplay ({
                         return;
                     }
                     fieldValueAliasMap[key] =
-                        Templates.resultsDisplay.fieldValueAlias({key, value: val});
+                        Templates.resultsDisplayServerOrClient.fieldValueAlias({key, value: val});
                 });
                 return preferAlias !== false ? fieldValueAliasMap : undefined;
             }
@@ -284,7 +305,6 @@ export default async function resultsDisplay ({
         return key; // || p; // $p.get(param, true);
     };
     const escapeQuotedCSS = (s) => s.replace(/"/g, '\\"');
-    const escapeHTML = (s) => !s ? '' : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/, '&gt;');
     const escapeCSS = escapeHTML;
     const $pRawEsc = (param) => escapeHTML($pRaw(param));
     const $pEscArbitrary = (param) => escapeHTML($p.get(param, true));
@@ -295,9 +315,9 @@ export default async function resultsDisplay ({
     const [
         fileData, lf, getFieldAliasOrName, schemaObj, metadataObj,
         pluginKeys, pluginFieldMappings, pluginObjects
-    ] = await this.getWorkData({
-        lang, localeFromFileData, fallbackLanguages,
-        $p, getMetaProp
+    ] = await getWorkData({
+        files, allowPlugins,
+        lang, fallbackLanguages, $p
     });
     console.log('pluginKeys', pluginKeys);
     console.log('pluginFieldMappings', pluginFieldMappings);
@@ -306,23 +326,24 @@ export default async function resultsDisplay ({
         key: 'browserfile-resultsdisplay',
         values: {
             work: fileData
-                ? getMetaProp(metadataObj, 'alias')
+                ? getMetaProp(lang, metadataObj, 'alias')
                 : ''
         },
         fallback: true
     });
 
-    const heading = getMetaProp(metadataObj, 'heading');
+    const heading = getMetaProp(lang, metadataObj, 'heading');
     const schemaItems = schemaObj.items.items;
     const setNames = [];
     const presorts = [];
     const browseFieldSets = [];
-    this.getBrowseFieldData({
-        metadataObj, getMetaProp, schemaItems, getFieldAliasOrName
-    }, ({setName, browseFields, presort}) => {
-        setNames.push(setName);
-        presorts.push(presort);
-        browseFieldSets.push(browseFields);
+    getBrowseFieldData({
+        metadataObj, schemaItems, getFieldAliasOrName, lang,
+        callback ({setName, browseFields, presort}) {
+            setNames.push(setName);
+            presorts.push(presort);
+            browseFieldSets.push(browseFields);
+        }
     });
 
     const fieldValueAliasMap = getFieldValueAliasMap({
@@ -337,8 +358,7 @@ export default async function resultsDisplay ({
     const fieldLangs = schemaItems.map((si) => metadataObj.fields[si.title].lang);
 
     // Todo: Repeats some code in workDisplay; probably need to reuse
-    //   these functions more in `Templates.resultsDisplay` too
-    const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
+    //   these functions more in `Templates.resultsDisplayServerOrClient` too
     const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true)
         ? $p.get('i18n', true) === '1'
         : prefI18n === 'true' || (
@@ -388,80 +408,85 @@ export default async function resultsDisplay ({
 
     console.log('rand', ilRaw('rand') === 'yes');
 
-    navigator.storage.persisted().then(async (persistent) => {
-        const unlocalizedWorkName = fileData.name;
-        const stripToRawFieldValue = (v, i) => {
-            const val = getRawFieldValue(v);
-            return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
-        };
-        const startsRaw = starts.map(stripToRawFieldValue);
-        const endsRaw = ends.map(stripToRawFieldValue);
-        if (!this.skipIndexedDB && persistent && navigator.serviceWorker.controller) {
-            return new Promise((resolve, reject) => {
-                // Todo: Fetch the work in code based on the non-localized `datafileName`
-                const dbName = this.namespace + '-textbrowser-cache-data';
-                const req = indexedDB.open(dbName);
-                req.onsuccess = ({target: {result: db}}) => {
-                    const storeName = 'files-to-cache-' + unlocalizedWorkName;
-                    const trans = db.transaction(storeName);
-                    const store = trans.objectStore(storeName);
-                    const index = store.index('browseFields-' + applicableBrowseFieldSetName); // Get among browse field sets by index number within URL params
+    const stripToRawFieldValue = (v, i) => {
+        const val = getRawFieldValue(v);
+        return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
+    };
+    const unlocalizedWorkName = fileData.name;
+    const startsRaw = starts.map(stripToRawFieldValue);
+    const endsRaw = ends.map(stripToRawFieldValue);
 
-                    // console.log('dbName', dbName);
-                    // console.log('storeName', storeName);
-                    // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
+    let tableData;
+    if (!skipIndexedDB) {
+        tableData = await new Promise((resolve, reject) => {
+            // Todo: Fetch the work in code based on the non-localized `datafileName`
+            const dbName = this.namespace + '-textbrowser-cache-data';
+            const req = indexedDB.open(dbName);
+            req.onsuccess = ({target: {result: db}}) => {
+                const storeName = 'files-to-cache-' + unlocalizedWorkName;
+                const trans = db.transaction(storeName);
+                const store = trans.objectStore(storeName);
+                // Get among browse field sets by index number within URL params
+                const index = store.index(
+                    'browseFields-' + applicableBrowseFieldSetName
+                );
 
-                    const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
-                    r.onsuccess = ({target: {result}}) => {
-                        const converted = result.map((r) => r.value);
-                        resolve(converted);
-                    };
+                // console.log('dbName', dbName);
+                // console.log('storeName', storeName);
+                // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
+
+                const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
+                r.onsuccess = ({target: {result}}) => {
+                    const converted = result.map((r) => r.value);
+                    resolve(converted);
                 };
-            });
-        } else {
-            // No need for presorting in indexedDB, given indexes
-            const presort = presorts[browseFieldSetIdx];
-            // Given that we are not currently wishing to add complexity to
-            //   our server-side code (though should be easy if using Node.js),
-            //   we retrieve the whole file and then sort where presorting is
-            //   needed
-            if (presort || this.noDynamic) {
-                const {
-                    resolved: {data: tableData}
-                } = await JsonRefs.resolveRefs(fileData.file);
-                runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
-                return tableData;
-            } else {
-                return (await fetch(
-                    Object.entries({
-                        unlocalizedWorkName, startsRaw, endsRaw
-                    }).reduce((url, [arg, argVal]) => {
-                        return url + '&' + arg + '=' + encodeURIComponent(
-                            JSON.stringify(argVal)
-                        );
-                    }, 'textbrowser?')
-                )).json();
-            }
-        }
-    }).then((tableData) => {
-        Templates.resultsDisplay.main({
-            tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
-            escapeQuotedCSS, escapeCSS, escapeHTML,
-            l, localizedFieldNames, fieldLangs,
-            caption, hasCaption, showInterlinTitles,
-            determineEnd: determineEnd({
-                fieldValueAliasMap, fieldValueAliasMapPreferred,
-                localizedFieldNames, applicableBrowseFieldNames,
-                starts, ends
-            }),
-            getCellValue: getCellValue({
-                fieldValueAliasMapPreferred, escapeColumnIndexes, escapeHTML
-            }),
-            checkedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
-                localizedFieldNames
-            }),
-            interlinearSeparator: this.interlinearSeparator
+            };
         });
-        setAnchor({applicableBrowseFieldSchemaIndexes, getRawFieldValue, fieldValueAliasMapPreferred, ilRaw, iil, max: browseFieldSets.length});
+    } else {
+        // No need for presorting in indexedDB, given indexes
+        const presort = presorts[browseFieldSetIdx];
+        // Given that we are not currently wishing to add complexity to
+        //   our server-side code (though should be easy if using Node.js),
+        //   we retrieve the whole file and then sort where presorting is
+        //   needed
+        if (presort || this.noDynamic) {
+            ({
+                resolved: {data: tableData}
+            } = await JsonRefs.resolveRefs(fileData.file));
+            runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
+        } else {
+            tableData = (await fetch(
+                Object.entries({
+                    unlocalizedWorkName, startsRaw, endsRaw
+                }).reduce((url, [arg, argVal]) => {
+                    return url + '&' + arg + '=' + encodeURIComponent(
+                        JSON.stringify(argVal)
+                    );
+                }, 'textbrowser?prefI18n=' + encodeURIComponent(prefI18n))
+            )).json();
+        }
+    }
+    Templates.resultsDisplayClient.main({
+        tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
+        escapeQuotedCSS, escapeCSS, escapeHTML,
+        l, localizedFieldNames, fieldLangs,
+        caption, hasCaption, showInterlinTitles,
+        determineEnd: determineEnd({
+            fieldValueAliasMap, fieldValueAliasMapPreferred,
+            localizedFieldNames, applicableBrowseFieldNames,
+            starts, ends
+        }),
+        getCellValue: getCellValue({
+            fieldValueAliasMapPreferred, escapeColumnIndexes, escapeHTML
+        }),
+        checkedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
+            localizedFieldNames
+        }),
+        interlinearSeparator: this.interlinearSeparator
+    });
+    setAnchor({
+        applicableBrowseFieldSchemaIndexes, getRawFieldValue,
+        fieldValueAliasMapPreferred, ilRaw, iil,
+        max: browseFieldSets.length
     });
 };

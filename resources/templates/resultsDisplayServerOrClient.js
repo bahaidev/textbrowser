@@ -1,6 +1,5 @@
-import jml from 'jamilih';
+/* globals console, DOMParser */
 import Templates from './index.js';
-import {$} from './utils/dom.js';
 
 export default {
     caption ({heading, ranges}) {
@@ -17,21 +16,11 @@ export default {
             // l('to').toLowerCase() + ' ' +
             '-' +
             endVals.join(
-                Templates.resultsDisplay.startSeparator({l})
+                Templates.resultsDisplayServerOrClient.startSeparator({l})
             ) + ' (' + rangeNames + ')';
     },
     fieldValueAlias ({key, value}) {
         return value + ' (' + key + ')';
-    },
-    anchorRowCol ({anchorRowCol}) {
-        return $('#' + anchorRowCol);
-    },
-    anchors ({escapedRow, escapedCol}) {
-        const sel = 'td[data-row="' + escapedRow + '"]' +
-            (escapedCol
-                ? ('[data-col="' + escapedCol + '"]')
-                : '');
-        return $(sel);
     },
     interlinearSegment ({lang, html}) {
         return `<span lang="${lang}">${html}</span>`;
@@ -186,6 +175,7 @@ body {
     },
     main ({
         tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
+        // Todo: escaping should be done in business logic!
         escapeQuotedCSS, escapeCSS, escapeHTML,
         l, localizedFieldNames, fieldLangs,
         caption, hasCaption, showInterlinTitles,
@@ -221,8 +211,7 @@ body {
             'json-object': 'json'
         }[$pRaw('outputmode')]);
         if (tableElems === 'json') {
-            alert('JSON support is currently not available');
-            return;
+            throw new Error('JSON support is currently not available');
         }
         const [
             tableElem, trElem, tdElem, thElem, captionElem, theadElem, tbodyElem, tfootElem
@@ -244,7 +233,7 @@ body {
             el.push(children);
             return el;
         };
-        const addAtts = (el, newAtts) => [el[0], Object.assign({}, el[1], newAtts)];
+        const addAtts = ([el, atts], newAtts) => [el, Object.assign({}, atts, newAtts)];
 
         const foundState = {
             start: false,
@@ -260,7 +249,7 @@ body {
                 if (!htmlEscaped) {
                     tdVal = new DOMParser().parseFromString(tdVal, 'text/html').body;
                     [...tdVal.querySelectorAll('br')].forEach((br) => {
-                        br.parentNode.removeChild(br);
+                        br.remove();
                     });
                     tdVal = tdVal.innerHTML;
                 }
@@ -283,7 +272,8 @@ body {
                         interlinearColIndexes;
                     const {tdVal, htmlEscaped} = getCellValue({tr, idx});
                     const interlins = showInterlins && interlinearColIndexes.map((idx) => {
-                        const {tdVal, htmlEscaped} = getCellValue({tr, idx}); // Need to get a new one
+                        // Need to get a new one
+                        const {tdVal, htmlEscaped} = getCellValue({tr, idx});
                         let cellIsEmpty;
                         console.log('showEmptyInterlinear', showEmptyInterlinear, htmlEscaped);
                         const isEmpty = checkEmpty(tdVal, htmlEscaped);
@@ -292,16 +282,17 @@ body {
                         }
 
                         return (showInterlins && !cellIsEmpty
-                            ? Templates.resultsDisplay.interlinearSegment({
+                            ? Templates.resultsDisplayServerOrClient.interlinearSegment({
                                 lang: fieldLangs[idx],
-                                html: Templates.resultsDisplay.interlinearTitle({
+                                html: Templates.resultsDisplayServerOrClient.interlinearTitle({
                                     l, val: localizedFieldNames[idx]
                                 }) + tdVal
                             })
                             : tdVal);
                     }).filter((cell) => cell !== '');
                     return addAtts(tdElem, {
-                        id: 'row' + (i + 1) + 'col' + (j + 1), // Can't have unique IDs if user duplicates a column
+                        // Can't have unique IDs if user duplicates a column
+                        id: 'row' + (i + 1) + 'col' + (j + 1),
                         lang: fieldLangs[idx],
                         dataset: {
                             col: localizedFieldNames[idx],
@@ -310,9 +301,9 @@ body {
                         innerHTML:
                             (showInterlins && !checkEmpty(tdVal, htmlEscaped) &&
                                 (showTitleOnSingleInterlinear || interlins.length)
-                                ? Templates.resultsDisplay.interlinearSegment({
+                                ? Templates.resultsDisplayServerOrClient.interlinearSegment({
                                     lang: fieldLangs[idx],
-                                    html: Templates.resultsDisplay.interlinearTitle({
+                                    html: Templates.resultsDisplayServerOrClient.interlinearTitle({
                                         l, val: localizedFieldNames[idx]
                                     }) + tdVal
                                 })
@@ -328,8 +319,8 @@ body {
             ));
         });
 
-        jml('div', [
-            Templates.resultsDisplay.styles({
+        return ['div', [
+            Templates.resultsDisplayServerOrClient.styles({
                 $p, $pRaw, $pRawEsc, $pEscArbitrary,
                 escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter,
                 checkedFieldIndexes, hasCaption
@@ -367,11 +358,14 @@ body {
                                 );
                                 return addChildren(thElem, [
                                     cf,
-                                    (tableWithFixedHeaderAndFooter ? ['div', {class: 'zupa1'}, [
-                                        ['div', {class: 'th-inner'}, [
-                                            ['span', [cf]]
+                                    (tableWithFixedHeaderAndFooter
+                                        ? ['div', {class: 'zupa1'}, [
+                                            ['div', {class: 'th-inner'}, [
+                                                ['span', [cf]]
+                                            ]]
                                         ]]
-                                    ]] : '')
+                                        : ''
+                                    )
                                 ]);
                             })
                         )
@@ -388,11 +382,14 @@ body {
                                 );
                                 return addChildren(thElem, [
                                     cf,
-                                    (tableWithFixedHeaderAndFooter ? ['div', {class: 'zupa1'}, [
-                                        ['div', {class: 'th-inner'}, [
-                                            ['span', [cf]]
+                                    (tableWithFixedHeaderAndFooter
+                                        ? ['div', {class: 'zupa1'}, [
+                                            ['div', {class: 'th-inner'}, [
+                                                ['span', [cf]]
+                                            ]]
                                         ]]
-                                    ]] : '')
+                                        : ''
+                                    )
                                 ]);
                             })
                         )
@@ -400,6 +397,6 @@ body {
                     addChildren(tbodyElem, outArr)
                 ])
             ])
-        ], document.body);
+        ]];
     }
 };

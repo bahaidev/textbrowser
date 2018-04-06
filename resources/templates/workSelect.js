@@ -1,3 +1,4 @@
+/* eslint-env browser */
 import jml from 'jamilih';
 
 export default ({groups, lf, getNextAlias, $p, followParams}) =>

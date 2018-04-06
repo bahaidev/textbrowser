@@ -574,7 +574,7 @@ as a `npm` dependency).
         attacks); defaults to `<br /><br />` though one may set to
         another string such as `<hr />`. If you need greater control,
         you might consider monkey-patching the simple templating function
-        `Templates.resultsDisplay.interlinearTitle` (and optionally
+        `Templates.resultsDisplayServerOrClient.interlinearTitle` (and optionally
         setting `interlinearSeparator` to an empty string if you use that
         function to handle the separation), but please note that this API
         could change. It is also desired for us to allow users to have
@@ -631,8 +631,9 @@ upon for monkey-patching.
 1.  **Document**
     1. Need of setting certain locale strings, including `sites.json`.
 1.  Use schema-detection of type for sorting--integer
-    parsing only on URL params per schema); see `resultsDisplay.js` with to-do
-    by `parseInt` (and also see `String()` conversions)
+    parsing only on URL params per schema); see
+    `resultsDisplayServerOrClient.js` with to-do by `parseInt` (and
+    also see `String()` conversions)
 1.  Get file names to be namespaced to group name to avoid name clashes
 1.  **Locales**
     1.  Check `localizeParamNames` (preference)?

@@ -1,15 +1,20 @@
+/* eslint-env browser */
 import getJSON from 'simple-get-json';
 import IMF from 'imf';
 
+import {getMetaProp} from './utils/Metadata.js';
 import Templates from './templates/index.js';
 
 export default async function workSelect ({
-    lang, localeFromFileData, fallbackLanguages, getMetaProp, $p, followParams
+    files, lang, fallbackLanguages, $p, followParams
 } /* , l, defineFormatter */) {
     // We use getJSON instead of JsonRefs as we do not necessarily need to
     //    resolve the file contents here
     try {
-        const dbs = await this.getFilesData();
+        const dbs = await getJSON(files);
+        const localeFromFileData = (lan) =>
+            dbs['localization-strings'][lan];
+
         const metadataObjs = await getJSON(dbs.groups.reduce((arr, fileGroup) => {
             const metadataBaseDir = (dbs.metadataBaseDirectory || '') +
                 (fileGroup.metadataBaseDirectory || '') + '/';
@@ -39,9 +44,9 @@ export default async function workSelect ({
         const metadataObjsIter = metadataObjs[Symbol.iterator]();
         const getNextAlias = () => {
             const metadataObj = metadataObjsIter.next().value;
-            return getMetaProp(metadataObj, 'alias');
+            return getMetaProp(lang, metadataObj, 'alias');
         };
-        Templates.workSelect({groups: this.fileData.groups, lf, getNextAlias, $p, followParams});
+        Templates.workSelect({groups: dbs.groups, lf, getNextAlias, $p, followParams});
     } catch (err) {
         alert(err);
     }

@@ -1,3 +1,4 @@
+/* eslint-env browser */
 import jml from 'jamilih';
 import Templates from './index.js';
 import {colors, fonts} from './utils/html.js';
@@ -713,7 +714,7 @@ export default {
         l, namespace, heading, fallbackDirection, imfl, langs, fields, localizeParamNames,
         serializeParamsAsURL,
         hideFormattingSection, $p,
-        getMetaProp, metadataObj, il, le, ld, iil, getPreferredLanguages, fieldMatchesLocale,
+        metadataObj, il, le, ld, iil, getPreferredLanguages, fieldMatchesLocale,
         getFieldAliasOrName, preferredLocale, schemaItems, content
     }) => {
         const lo = (key, atts) =>

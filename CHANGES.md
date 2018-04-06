@@ -1,3 +1,15 @@
+# 0.14.0
+
+- Node.js server (untested)
+- Change: If not persistent (e.g., as user revoked) but worker already set up,
+    try asking again (until they refuse)
+- Refactoring: Break out `requestPermissions`, `prepareForServiceWorker`,
+    `registerServiceWorker`, and `getWorkFiles`/`getFilePaths` into own
+    functions; split `resultsDisplay` into client and server-or-client
+    versions; break out metadata functions to utility; split off
+    `getIMFFallbackResults` to allow different server/client versions
+- Refactoring: Minor optimizations, await/async, factor out common `escapeHTML`
+
 # 0.13.3
 
 - Fix: Don't continue past loading screen until service worker

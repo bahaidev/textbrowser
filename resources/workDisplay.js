@@ -1,12 +1,13 @@
+/* eslint-env browser */
 import IMF from 'imf';
 
 import {serialize as formSerialize} from 'form-serialize';
+import {getMetaProp} from './utils/Metadata.js';
 
 import Templates from './templates/index.js';
 
 export default async function workDisplay ({
-    lang, preferredLocale, localeFromLangData, fallbackLanguages, getMetaProp, $p,
-    localeFromFileData
+    lang, preferredLocale, localeFromLangData, fallbackLanguages, $p
 }, l) {
     const that = this;
     const langs = this.langData.languages;
@@ -160,11 +161,12 @@ export default async function workDisplay ({
 
         const fields = schemaItems.map((schemaItem) => schemaItem.title);
         this.getBrowseFieldData({
-            metadataObj, getMetaProp, schemaItems, getFieldAliasOrName
-        }, ({browseFields, i}) => {
-            Templates.workDisplay.addBrowseFields({
-                browseFields, fields, getFieldAliasOrName, ld, i, iil, $p, content
-            });
+            metadataObj, schemaItems, getFieldAliasOrName,
+            callback ({browseFields, i}) {
+                Templates.workDisplay.addBrowseFields({
+                    browseFields, fields, getFieldAliasOrName, ld, i, iil, $p, content
+                });
+            }
         });
 
         /*
@@ -174,13 +176,13 @@ export default async function workDisplay ({
         */
 
         // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
-        const heading = getMetaProp(metadataObj, 'heading');
+        const heading = getMetaProp(lang, metadataObj, 'heading');
         Templates.workDisplay.main({
             l, namespace: that.namespace, heading,
             imfl, fallbackDirection,
             langs, fields, localizeParamNames,
             serializeParamsAsURL, hideFormattingSection, $p,
-            getMetaProp, metadataObj, il, le, ld, iil,
+            metadataObj, il, le, ld, iil,
             getPreferredLanguages, fieldMatchesLocale,
             getFieldAliasOrName, preferredLocale, schemaItems, content
         });
@@ -192,8 +194,7 @@ export default async function workDisplay ({
             metadataObj, pluginKeys, pluginFieldMappings,
             pluginObjects
         ] = await this.getWorkData({
-            lang, localeFromFileData, fallbackLanguages,
-            $p, getMetaProp
+            lang, fallbackLanguages, $p
         });
 
         if (pluginObjects) {
@@ -212,7 +213,7 @@ export default async function workDisplay ({
             key: 'browserfile-workdisplay',
             values: {
                 work: fileData
-                    ? getMetaProp(metadataObj, 'alias')
+                    ? getMetaProp(lang, metadataObj, 'alias')
                     : ''
             },
             fallback: true

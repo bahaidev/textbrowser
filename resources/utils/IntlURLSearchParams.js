@@ -17,10 +17,10 @@ function IntlURLSearchParams (config) {
     this.l10n = config.l10n;
     let params = config.params;
     if (!params) {
-        params = location.hash.slice(1);
+        params = location.hash.slice(1); // eslint-disable-line no-undef
     }
     if (typeof params === 'string') {
-        params = new URLSearchParams(params);
+        params = new URLSearchParams(params); // eslint-disable-line no-undef
     }
     this.params = params;
 }

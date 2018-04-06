@@ -1,16 +1,19 @@
+/* eslint-env browser */
 import jml from 'jamilih';
 
 import languageSelect from './languageSelect.js';
 import workSelect from './workSelect.js';
 import workDisplay from './workDisplay.js';
-import resultsDisplay from './resultsDisplay.js';
+import resultsDisplayServerOrClient from './resultsDisplayServerOrClient.js';
+import resultsDisplayClient from './resultsDisplayClient.js';
 import {$} from './utils/dom.js';
 
 const Templates = {
     languageSelect,
     workSelect,
     workDisplay,
-    resultsDisplay,
+    resultsDisplayServerOrClient,
+    resultsDisplayClient,
     defaultBody () {
         $('html').style.height = '100%'; // Todo: Set in CSS
         return jml('body', {style: 'height: 100%;'});
@@ -23,7 +26,7 @@ Templates.permissions = {
     addLogEntry ({text}) {
         const container = $('#installationLogContainer');
         container.hidden = false;
-        $('#installationLog').appendChild(document.createTextNode(text + '\n'));
+        $('#installationLog').append(text + '\n');
     },
     exitDialogs () {
         const container = $('#dialogContainer');
@@ -51,26 +54,29 @@ Templates.permissions = {
         $('#browserNotGrantingPersistence').showModal();
     },
     main ({l, ok, refuse, close, closeBrowserNotGranting}) {
-        const requestPermissionsDialog = jml(
-            'dialog', {
-                id: 'willRequestStoragePermissions',
-                $on: {close}
-            }, [
-                ['section', [
-                    l('will-request-storage-permissions')
-                ]],
-                ['br'],
-                ['div', {class: 'focus'}, [
-                    ['button', {$on: {click: ok}}, [
-                        l('OK')
+        let requestPermissionsDialog = '';
+        if (ok) {
+            requestPermissionsDialog = jml(
+                'dialog', {
+                    id: 'willRequestStoragePermissions',
+                    $on: {close}
+                }, [
+                    ['section', [
+                        l('will-request-storage-permissions')
                     ]],
-                    ['br'], ['br'],
-                    ['button', {$on: {click: refuse}}, [
-                        l('refuse-request-storage-permissions')
+                    ['br'],
+                    ['div', {class: 'focus'}, [
+                        ['button', {$on: {click: ok}}, [
+                            l('OK')
+                        ]],
+                        ['br'], ['br'],
+                        ['button', {$on: {click: refuse}}, [
+                            l('refuse-request-storage-permissions')
+                        ]]
                     ]]
-                ]]
-            ]
-        );
+                ]
+            );
+        }
         const errorRegisteringNotice = jml(
             'dialog', {
                 id: 'errorRegistering'
@@ -80,21 +86,24 @@ Templates.permissions = {
                 ]]
             ]
         );
-        const browserNotGrantingPersistenceAlert = jml(
-            'dialog', {
-                id: 'browserNotGrantingPersistence'
-            }, [
-                ['section', [
-                    l('browser-not-granting-persistence')
-                ]],
-                ['br'],
-                ['div', {class: 'focus'}, [
-                    ['button', {$on: {click: closeBrowserNotGranting}}, [
-                        l('OK')
+        let browserNotGrantingPersistenceAlert = '';
+        if (closeBrowserNotGranting) {
+            browserNotGrantingPersistenceAlert = jml(
+                'dialog', {
+                    id: 'browserNotGrantingPersistence'
+                }, [
+                    ['section', [
+                        l('browser-not-granting-persistence')
+                    ]],
+                    ['br'],
+                    ['div', {class: 'focus'}, [
+                        ['button', {$on: {click: closeBrowserNotGranting}}, [
+                            l('OK')
+                        ]]
                     ]]
-                ]]
-            ]
-        );
+                ]
+            );
+        }
         const versionChangeNotice = jml(
             'dialog', {
                 id: 'versionChange'

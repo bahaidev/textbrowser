@@ -22,7 +22,7 @@ if (typeof exports !== 'undefined') {
     path = {
         join: (...args) => args.join('')
     };
-    appBase = location.protocol + '//' + location.host + '/';
+    appBase = location.protocol + '//' + location.host + '/'; // eslint-disable-line no-undef
     __dirname = ''; // eslint-disable-line no-global-assign
 }
 

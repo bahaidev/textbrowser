@@ -1,13 +1,22 @@
 import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
-// import builtins from 'rollup-plugin-node-builtins';
+import builtins from 'rollup-plugin-node-builtins';
 // import nodeGlobals from 'rollup-plugin-node-globals';
 import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-re';
 import uglify from 'rollup-plugin-uglify';
 import {minify} from 'uglify-es';
 import postProcess from 'rollup-plugin-postprocess';
+
+const importerReplace = {
+    // Temporarily hide this from parser (using the Babel
+    //   syntax plugin or experimental Rollup flag didn't
+    //   seem to work)
+    include: ['resources/utils/WorkInfo.js'],
+    test: 'return import(',
+    replace: 'return window.importer('
+};
 
 // Todo: Monitor https://github.com/rollup/rollup/issues/1978
 //        to suppress (known) circular dependency warnings
@@ -25,14 +34,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
         plugins: [
             replace({
                 // ... do replace before commonjs
-                patterns: [{
-                    // Temporarily hide this from parser (using the Babel
-                    //   syntax plugin or experimental Rollup flag didn't
-                    //   seem to work)
-                    include: ['resources/index.js'],
-                    test: 'return import(',
-                    replace: 'return window.importer('
-                }, {
+                patterns: [importerReplace, {
                     // regexp match with resolved path
                     match: /formidable(\/|\\)lib/,
                     // string or regexp
@@ -69,5 +71,21 @@ export default [
     getRollupObject(),
     getRollupObject({minifying: true}),
     getRollupObject({minifying: false, format: 'es'}),
-    getRollupObject({minifying: true, format: 'es'})
+    getRollupObject({minifying: true, format: 'es'}),
+    {
+        input: 'server/main.js',
+        output: {
+            format: 'cjs',
+            file: `server/main-cjs.js`
+        },
+        plugins: [
+            replace({
+                // ... do replace before commonjs
+                patterns: [importerReplace]
+            }),
+            builtins(),
+            resolve(),
+            commonjs()
+        ]
+    }
 ];
