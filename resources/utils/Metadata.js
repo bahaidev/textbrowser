@@ -1,3 +1,4 @@
+// Keep this as the last import for Rollup
 import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 
 const getCurrDir = () =>

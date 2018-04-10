@@ -1,9 +1,10 @@
 /* eslint-env browser */
-import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 import Templates from './templates/index.js';
 import {escapeHTML} from './utils/sanitize.js';
 import {getMetaProp, getFieldNameAndValueAliases, getBrowseFieldData} from './utils/Metadata.js';
 import {getWorkData} from './utils/WorkInfo.js';
+// Keep this as the last import for Rollup
+import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 
 export const resultsDisplayClient = async function resultsDisplayClient (args) {
     const persistent = await navigator.storage.persisted();

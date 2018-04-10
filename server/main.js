@@ -9,9 +9,6 @@ import {setServiceWorkerDefaults} from '../resources/utils/ServiceWorker.js';
 import setGlobalVars from 'indexeddbshim/src/setGlobalVars.js';
 import fetch from 'node-fetch';
 
-const domain = 'localhost';
-const port = 8000;
-
 // Todo (low): See
 //   https://gist.github.com/brettz9/0993fbde6f7352b2bb05f38078cefb29
 //   on idea for adapting node-serviceworker to consume entire service-worker
@@ -21,6 +18,8 @@ const port = 8000;
 const optionDefinitions = [
     // Node-server-specific
     {name: 'nodeActivate', type: Boolean},
+    {name: 'port', type: Number},
+    {name: 'domain', type: String},
 
     // Results display (main)
     //      `namespace`: (but set below)
@@ -46,9 +45,14 @@ const optionDefinitions = [
 ];
 const userParams = require('command-line-args')(optionDefinitions);
 
+const domain = userParams.domain || 'localhost';
+const port = userParams.port || 8000;
+
 const userParamsWithDefaults = setServiceWorkerDefaults(userParams, {
     files: `http://${domain}{port === 80 ? '' : ':' + port}/files.json`, // `files` must be absolute path for node-fetch
     nodeActivate: undefined,
+    port: undefined,
+    domain: undefined,
     skipIndexedDB: false, // Not relevant here
     noDynamic: false, // Not relevant here
     logger: {
