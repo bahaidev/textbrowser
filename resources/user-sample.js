@@ -14,6 +14,7 @@ const tb = new TextBrowser({
     stylesheets: ['@builtin', 'resources/user.css'], // Add other paths for your CSS
     namespace: 'myapp', // Used for namespacing localStorage
     allowPlugins: true, // Enables `files.json`-specified plugins
+    // dynamicBasePath: '',
     trustFormatHTML: true, // Needed if allowing for raw HTML fields (don't use for untrusted schemas)
     // , interlinearSeparator: '<hr />' // Defaults to `<br /><br />`
     staticFilesToCache: [

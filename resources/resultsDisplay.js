@@ -6,19 +6,113 @@ import {getWorkData} from './utils/WorkInfo.js';
 // Keep this as the last import for Rollup
 import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 
+const getRawFieldValue = (v) => typeof v === 'string'
+    ? v.replace(/^.* \((.*?)\)$/, '$1')
+    : v;
+
+const setAnchor = ({
+    applicableBrowseFieldSet,
+    fieldValueAliasMapPreferred, ilRaw, iil, max, $p
+}) => {
+    const applicableBrowseFieldSchemaIndexes = applicableBrowseFieldSet.map((abfs) =>
+        abfs.fieldSchemaIndex
+    );
+    // Check if user added this (e.g., even to end of URL with
+    //   other anchor params)
+    let anchor;
+    const anchorRowCol = ilRaw('anchorrowcol');
+    if (anchorRowCol) {
+        anchor = Templates.resultsDisplayClient.anchorRowCol({anchorRowCol});
+    }
+    if (!anchor) {
+        const anchors = [];
+        let anchorField = '';
+        for (let i = 1, breakout; !breakout && !anchors.length; i++) {
+            for (let j = 1; ; j++) {
+                const anchorText = 'anchor' + i + '-' + j;
+                const anchor = $p.get(anchorText, true);
+                if (!anchor) {
+                    if (i === max || // No more field sets to check
+                        anchors.length // Already had anchors found
+                    ) {
+                        breakout = true;
+                    }
+                    break;
+                }
+                anchorField = $p.get(iil('anchorfield') + i, true);
+
+                const x = applicableBrowseFieldSchemaIndexes[j - 1];
+                const rawVal = getRawFieldValue(anchor);
+                const raw = fieldValueAliasMapPreferred[x] &&
+                    fieldValueAliasMapPreferred[x][rawVal];
+                anchors.push(raw || anchor);
+                // anchors.push({anchorText, anchor});
+            }
+        }
+        if (anchors.length) {
+            const escapeSelectorAttValue = (str) => (str || '').replace(/["\\]/g, '\\$&');
+            const escapedRow = escapeSelectorAttValue(anchors.join('-'));
+            const escapedCol = anchorField
+                ? escapeSelectorAttValue(anchorField)
+                : undefined;
+            anchor = Templates.resultsDisplayClient.anchors({
+                escapedRow, escapedCol
+            });
+        }
+    }
+    if (anchor) {
+        anchor.scrollIntoView();
+    }
+};
+
 export const resultsDisplayClient = async function resultsDisplayClient (args) {
     const persistent = await navigator.storage.persisted();
     const skipIndexedDB = this.skipIndexedDB || !persistent || !navigator.serviceWorker.controller;
     const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
 
-    return resultsDisplayServerOrClient.call(this, {
+    const {
+        browseFieldSets,
+        applicableBrowseFieldSet,
+        lang, metadataObj, fileData,
+        fieldValueAliasMapPreferred, lf, iil, ilRaw,
+        templateArgs
+    } = await resultsDisplayServerOrClient.call(this, {
         ...args, skipIndexedDB, prefI18n
     });
+    document.title = lf({
+        key: 'browserfile-resultsdisplay',
+        values: {
+            work: fileData
+                ? getMetaProp(lang, metadataObj, 'alias')
+                : ''
+        },
+        fallback: true
+    });
+    Templates.resultsDisplayClient.main(templateArgs);
+    setAnchor({
+        applicableBrowseFieldSet,
+        fieldValueAliasMapPreferred, iil, ilRaw,
+        $p: args.$p,
+        max: browseFieldSets.length
+    });
+};
+
+export const resultsDisplayServer = async function resultsDisplayServer (args) {
+    const {
+        templateArgs
+    } = await resultsDisplayServerOrClient.call(this, {
+        ...args
+    });
+    return templateArgs.tableData;
+    // The following Works to get Jamilih JSON which we could use with
+    //    `jml.toHTML()`, whether for `innerHTML` or adding as the
+    //     initial HTML
+    // return Templates.resultsDisplayServerOrClient.main(templateArgs);
 };
 
 export const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient ({
     l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, prefI18n,
-    files, allowPlugins
+    files, allowPlugins, basePath = '', dynamicBasePath = ''
 }) {
     const getCellValue = ({
         fieldValueAliasMapPreferred, escapeColumnIndexes
@@ -175,57 +269,6 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         }
         return [hasCaption, caption];
     };
-    const setAnchor = ({
-        applicableBrowseFieldSchemaIndexes, getRawFieldValue,
-        fieldValueAliasMapPreferred, ilRaw, iil, max
-    }) => {
-        // Check if user added this (e.g., even to end of URL with
-        //   other anchor params)
-        let anchor;
-        const anchorRowCol = ilRaw('anchorrowcol');
-        if (anchorRowCol) {
-            anchor = Templates.resultsDisplayClient.anchorRowCol({anchorRowCol});
-        }
-        if (!anchor) {
-            const anchors = [];
-            let anchorField = '';
-            for (let i = 1, breakout; !breakout && !anchors.length; i++) {
-                for (let j = 1; ; j++) {
-                    const anchorText = 'anchor' + i + '-' + j;
-                    const anchor = $p.get(anchorText, true);
-                    if (!anchor) {
-                        if (i === max || // No more field sets to check
-                            anchors.length // Already had anchors found
-                        ) {
-                            breakout = true;
-                        }
-                        break;
-                    }
-                    anchorField = $p.get(iil('anchorfield') + i, true);
-
-                    const x = applicableBrowseFieldSchemaIndexes[j - 1];
-                    const rawVal = getRawFieldValue(anchor);
-                    const raw = fieldValueAliasMapPreferred[x] &&
-                        fieldValueAliasMapPreferred[x][rawVal];
-                    anchors.push(raw || anchor);
-                    // anchors.push({anchorText, anchor});
-                }
-            }
-            if (anchors.length) {
-                const escapeSelectorAttValue = (str) => (str || '').replace(/["\\]/g, '\\$&');
-                const escapedRow = escapeSelectorAttValue(anchors.join('-'));
-                const escapedCol = anchorField
-                    ? escapeSelectorAttValue(anchorField)
-                    : undefined;
-                anchor = Templates.resultsDisplayClient.anchors({
-                    escapedRow, escapedCol
-                });
-            }
-        }
-        if (anchor) {
-            anchor.scrollIntoView();
-        }
-    };
     const runPresort = ({presort, tableData, applicableBrowseFieldNames, localizedFieldNames}) => {
         // Todo: Ought to be checking against an aliased table
         if (presort) {
@@ -309,29 +352,19 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     const escapeCSS = escapeHTML;
     const $pRawEsc = (param) => escapeHTML($pRaw(param));
     const $pEscArbitrary = (param) => escapeHTML($p.get(param, true));
-    const getRawFieldValue = (v) => typeof v === 'string'
-        ? v.replace(/^.* \((.*?)\)$/, '$1')
-        : v;
 
     const [
         fileData, lf, getFieldAliasOrName, schemaObj, metadataObj,
         pluginKeys, pluginFieldMappings, pluginObjects
     ] = await getWorkData({
-        files, allowPlugins,
-        lang, fallbackLanguages, $p
+        files: files || this.files,
+        allowPlugins: allowPlugins || this.allowPlugins,
+        lang, fallbackLanguages, $p,
+        basePath
     });
     console.log('pluginKeys', pluginKeys);
     console.log('pluginFieldMappings', pluginFieldMappings);
     console.log('pluginObjects', pluginObjects);
-    document.title = lf({
-        key: 'browserfile-resultsdisplay',
-        values: {
-            work: fileData
-                ? getMetaProp(lang, metadataObj, 'alias')
-                : ''
-        },
-        fallback: true
-    });
 
     const heading = getMetaProp(lang, metadataObj, 'heading');
     const schemaItems = schemaObj.items.items;
@@ -385,9 +418,6 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     const applicableBrowseFieldSetName = setNames[browseFieldSetIdx];
     const applicableBrowseFieldNames = applicableBrowseFieldSet.map((abfs) =>
         abfs.fieldName
-    );
-    const applicableBrowseFieldSchemaIndexes = applicableBrowseFieldSet.map((abfs) =>
-        abfs.fieldSchemaIndex
     );
 
     const fieldSchemaTypes = applicableBrowseFieldSet.map((abfs) => abfs.fieldSchema.type);
@@ -456,18 +486,18 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             } = await JsonRefs.resolveRefs(fileData.file));
             runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
         } else {
-            tableData = (await fetch(
-                Object.entries({
-                    unlocalizedWorkName, startsRaw, endsRaw
-                }).reduce((url, [arg, argVal]) => {
-                    return url + '&' + arg + '=' + encodeURIComponent(
-                        JSON.stringify(argVal)
-                    );
-                }, 'textbrowser?prefI18n=' + encodeURIComponent(prefI18n))
-            )).json();
+            /*
+            const jsonURL = Object.entries({
+                prefI18n, unlocalizedWorkName, startsRaw, endsRaw
+            }).reduce((url, [arg, argVal]) => {
+                return url + '&' + arg + '=' + encodeURIComponent((argVal));
+            }, `${dynamicBasePath}textbrowser?`);
+            */
+            const jsonURL = `${dynamicBasePath}textbrowser?${$p.toString()}`;
+            tableData = await (await fetch(jsonURL)).json();
         }
     }
-    Templates.resultsDisplayClient.main({
+    const templateArgs = {
         tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
         escapeQuotedCSS, escapeCSS, escapeHTML,
         l, localizedFieldNames, fieldLangs,
@@ -484,10 +514,11 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             localizedFieldNames
         }),
         interlinearSeparator: this.interlinearSeparator
-    });
-    setAnchor({
-        applicableBrowseFieldSchemaIndexes, getRawFieldValue,
-        fieldValueAliasMapPreferred, ilRaw, iil,
-        max: browseFieldSets.length
-    });
+    };
+    return {
+        applicableBrowseFieldSet, fieldValueAliasMapPreferred,
+        lf, iil, ilRaw, browseFieldSets,
+        lang, metadataObj, fileData,
+        templateArgs
+    };
 };

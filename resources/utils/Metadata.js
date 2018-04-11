@@ -30,11 +30,23 @@ export const getMetaProp = function getMetaProp (lang, metadataObj, properties, 
 //  filesSchema.properties.groups.items.properties.files.items.properties.
 //      file.anyOf.splice(1, 1, {$ref: schemaFile});
 // Todo: Allow use of dbs and fileGroup together in base directories?
-export const getMetadata = async (file, property, cb) => {
+export const getMetadata = async (file, property, basePath) => {
     try {
         return (await JsonRefs
             .resolveRefsAt(
-                getCurrDir() + file + (property ? '#/' + property : '')
+                (basePath || getCurrDir()) + file + (property ? '#/' + property : ''),
+                {
+                    loaderOptions: {
+                        processContent (res, callback) {
+                            callback(undefined, JSON.parse( // eslint-disable-line standard/no-callback-literal
+                                res.text ||
+                                // `.metadata` not a recognized extension, so
+                                //    convert to string for JSON in Node
+                                res.body.toString()
+                            ));
+                        }
+                    }
+                }
             )).resolved;
     } catch (err) {
         throw err;

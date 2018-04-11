@@ -14,7 +14,7 @@ const arrayChunk = (arr, size) => {
 };
 
 activateCallback = async function activateCallback ({
-    namespace, files, filesJSONPath = files
+    namespace, files, filesJSONPath = files, basePath = ''
 }) {
     // Now we know we have the files cached, we can postpone
     //  the `indexedDB` processing (which will work offline
@@ -26,7 +26,7 @@ activateCallback = async function activateCallback ({
 
     const addJSONFetch = (arr, path) => {
         arr.push(
-            (async () => (await fetch(path)).json())()
+            (async () => (await fetch(basePath + path)).json())()
         );
     };
 

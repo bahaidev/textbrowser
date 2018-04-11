@@ -32,7 +32,7 @@ export const getFilePaths = function getFilePaths (filesObj, fileGroup, fileData
 };
 
 export const getWorkData = async function ({
-    lang, fallbackLanguages, $p, files, allowPlugins
+    lang, fallbackLanguages, $p, files, allowPlugins, basePath
 }) {
     const filesObj = await getJSON(files);
     const localeFromFileData = (lan) =>
@@ -85,7 +85,7 @@ export const getWorkData = async function ({
             getPlugins = pluginsInWork;
         }
     }
-    const metadataObj = await getMetadata(metadataFile, metadataProperty);
+    const metadataObj = await getMetadata(metadataFile, metadataProperty, basePath);
     const getFieldAliasOrName = function getFieldAliasOrName (field) {
         const fieldObj = metadataObj.fields && metadataObj.fields[field];
         let fieldName;
@@ -111,7 +111,7 @@ export const getWorkData = async function ({
     };
     return Promise.all([
         fileData, lf, getFieldAliasOrName, // Pass on non-promises
-        getMetadata(schemaFile, schemaProperty),
+        getMetadata(schemaFile, schemaProperty, basePath),
         metadataObj,
         ...(getPlugins
             ? [

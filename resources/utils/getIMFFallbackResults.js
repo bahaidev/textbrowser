@@ -5,6 +5,7 @@ export default function getIMFFallbackResults ({
     $p,
     lang, langs, langData, fallbackLanguages,
     resultsDisplay,
+    basePath = '',
     localeCallback = false
 }) {
     if (!lang) {
@@ -21,7 +22,8 @@ export default function getIMFFallbackResults ({
                 lang,
                 fallbackLanguages,
                 imfLocales: imf.locales,
-                $p
+                $p,
+                basePath
             }, ...args);
         };
         const imf = IMF({
@@ -32,7 +34,7 @@ export default function getIMFFallbackResults ({
                 //    `$ref` (as with <https://github.com/whitlockjc/json-refs>) and
                 //    replace IMF() loadLocales behavior with our own now resolved
                 //    locales; see https://github.com/jdorn/json-editor/issues/132
-                return langData.localeFileBasePath + langs.find((l) =>
+                return basePath + (langData.localeFileBasePath) + langs.find((l) =>
                     l.code === code
                 ).locale.$ref;
             },

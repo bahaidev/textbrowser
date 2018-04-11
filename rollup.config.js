@@ -66,12 +66,14 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
     }
     return nonMinified;
 };
-
+// console.log('typeof', typeof getRollupObject); // Keep for ESLint
 export default [
+    /**/
     getRollupObject(),
     getRollupObject({minifying: true}),
     getRollupObject({minifying: false, format: 'es'}),
     getRollupObject({minifying: true, format: 'es'}),
+    /**/
     {
         input: 'server/main.js',
         output: {
@@ -87,6 +89,7 @@ export default [
                     replace: "const JsonRefs = require('json-refs');"
                 }]
             }),
+            json(),
             builtins(),
             resolve(),
             commonjs()

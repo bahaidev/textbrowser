@@ -547,6 +547,9 @@ as a `npm` dependency).
         to get the full functionality designated within the JSON (and add
         the script files designated in `files.json` to your project).
 
+    -   `dynamicBasePath` - Base bath for the server hosting the TextBrowser
+        content. Defaults to the current site.
+
     -   `trustFormatHTML` - If `true`, inserts fields designated by your
         JSON schema as `"format": "html"` as HTML without escaping; this
         option is off by default in case the source is untrusted,

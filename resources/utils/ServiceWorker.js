@@ -4,17 +4,16 @@ import getJSON from 'simple-get-json';
 import {getWorkFiles} from './WorkInfo.js';
 
 export const setServiceWorkerDefaults = (target, source) => {
-    target.languages = source.languages || (typeof __dirname !== 'undefined')
-        ? require('path').resolve(__dirname, '../../appdata/languages.json') // eslint-disable-line no-undef
-        : new URL(
-            '../appdata/languages.json',
-            // Todo: Substitute with moduleURL once implemented
-            new URL('node_modules/textbrowser/resources/index.js', location)
-        ).href;
+    target.languages = source.languages || new URL(
+        '../appdata/languages.json',
+        // Todo: Substitute with moduleURL once implemented
+        new URL('node_modules/textbrowser/resources/index.js', location)
+    ).href;
     target.serviceWorkerPath = source.serviceWorkerPath || 'sw.js';
     target.files = source.files || 'files.json';
     target.namespace = source.namespace || 'textbrowser';
     target.staticFilesToCache = source.staticFilesToCache; // Defaults in worker file (as `userStaticFiles`)
+    return target;
 };
 
 // Keep in this file as may wish to avoid using for server (while still

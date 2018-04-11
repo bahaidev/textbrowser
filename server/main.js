@@ -2,12 +2,14 @@
 
 import 'url-search-params-polyfill';
 import IntlURLSearchParams from '../resources/utils/IntlURLSearchParams.js';
-import {resultsDisplayServerOrClient} from '../resources/resultsDisplay.js';
+import {resultsDisplayServer} from '../resources/resultsDisplay.js';
 import getIMFFallbackResults from '../resources/utils/getIMFFallbackResults.js';
 import getJSON from 'simple-get-json';
 import {setServiceWorkerDefaults} from '../resources/utils/ServiceWorker.js';
-import setGlobalVars from 'indexeddbshim/src/setGlobalVars.js';
+// import setGlobalVars from 'indexeddbshim/src/node-UnicodeIdentifiers.js';
 import fetch from 'node-fetch';
+
+const setGlobalVars = require('indexeddbshim/dist/indexeddbshim-UnicodeIdentifiers-node.js');
 
 // Todo (low): See
 //   https://gist.github.com/brettz9/0993fbde6f7352b2bb05f38078cefb29
@@ -19,7 +21,6 @@ const optionDefinitions = [
     // Node-server-specific
     {name: 'nodeActivate', type: Boolean},
     {name: 'port', type: Number},
-    {name: 'domain', type: String},
 
     // Results display (main)
     //      `namespace`: (but set below)
@@ -37,6 +38,7 @@ const optionDefinitions = [
     {name: 'showTitleOnSingleInterlinear', type: Boolean},
 
     // Service worker
+    {name: 'basePath', type: String},
     {name: 'serviceWorkerPath', type: String, defaultOption: true},
     {name: 'languages', type: String},
     {name: 'files', type: String},
@@ -45,14 +47,16 @@ const optionDefinitions = [
 ];
 const userParams = require('command-line-args')(optionDefinitions);
 
-const domain = userParams.domain || 'localhost';
+const basePath = userParams.basePath;
 const port = userParams.port || 8000;
 
-const userParamsWithDefaults = setServiceWorkerDefaults(userParams, {
-    files: `http://${domain}{port === 80 ? '' : ':' + port}/files.json`, // `files` must be absolute path for node-fetch
+const userParamsWithDefaults = setServiceWorkerDefaults({...userParams}, {
+    basePath,
+    files: userParams.files || `${basePath}files.json`, // `files` must be absolute path for node-fetch
+    languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
+    serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js`,
     nodeActivate: undefined,
     port: undefined,
-    domain: undefined,
     skipIndexedDB: false, // Not relevant here
     noDynamic: false, // Not relevant here
     logger: {
@@ -67,28 +71,57 @@ const userParamsWithDefaults = setServiceWorkerDefaults(userParams, {
         }
     }
 });
+console.log('userParamsWithDefaults', userParamsWithDefaults);
+
+setGlobalVars(null, {
+    checkOrigin: false
+}); // Adds `indexedDB` and `IDBKeyRange` to global in Node
 
 if (userParams.nodeActivate) {
     global.fetch = fetch;
-    setGlobalVars(); // Adds `indexedDB` and `IDBKeyRange` to global in Node
-    const activateCallback = require('resources/activateCallback.js');
-    activateCallback(userParamsWithDefaults);
+    const activateCallback = require('../resources/activateCallback.js');
+    (async () => {
+        await activateCallback(userParamsWithDefaults);
+        console.log('Activated');
+    })();
 }
+console.log('past activate check');
 
 const http = require('http');
 const url = require('url');
 
 global.DOMParser = require('dom-parser'); // potentially used within resultsDisplay.js
 
+const statik = require('node-static');
+const fileServer = new statik.Server(); // Pass path; otherwise uses current directory
+
 const srv = http.createServer(async (req, res) => {
+    // console.log('URL::', url.parse(req.url));
+    const {pathname, query} = url.parse(req.url);
+    if (pathname !== '/textbrowser' || !query) {
+        req.addListener('end', function () {
+            fileServer.serve(req, res);
+        }).resume();
+        /*
+        res.writeHead(404, {'Content-Type': 'text/html'});
+        res.end('<h1>File not found</h1>');
+        */
+        return;
+    }
+    const languages = req.headers['accept-language'].replace(/;q=.*?$/, '').split(',');
+    global.navigator = {
+        language: languages[0],
+        languages
+    };
     const $p = new IntlURLSearchParams({
-        params: url.parse(req.url).query
+        params: query
     });
 
     getIMFFallbackResults({
         $p,
+        basePath: `${basePath}`,
         langData: await getJSON(userParamsWithDefaults.languages),
-        resultsDisplay (resultsArgs, ...args) {
+        async resultsDisplay (resultsArgs, ...args) {
             res.writeHead(200, {'Content-Type': 'application/json'});
             resultsArgs = {
                 ...resultsArgs,
@@ -96,8 +129,10 @@ const srv = http.createServer(async (req, res) => {
                 prefI18n: $p.get('prefI18n', true)
             };
             // Todo: Move sw-sample.js to bahaiwritings and test
-            resultsDisplayServerOrClient.call(userParamsWithDefaults, resultsArgs, ...args);
-            res.end('okay');
+            const result = await resultsDisplayServer.call(
+                userParamsWithDefaults, resultsArgs, ...args
+            );
+            res.end(JSON.stringify(result));
         }
     });
 });

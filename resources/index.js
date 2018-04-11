@@ -139,6 +139,7 @@ function TextBrowser (options) {
     setServiceWorkerDefaults(this, options);
 
     this.allowPlugins = options.allowPlugins;
+    this.dynamicBasePath = options.dynamicBasePath;
     this.trustFormatHTML = options.trustFormatHTML;
     this.requestPersistentStorage = options.requestPersistentStorage;
     this.localizeParamNames = options.localizeParamNames === undefined
@@ -338,6 +339,7 @@ TextBrowser.prototype.paramChange = async function () {
         resultsDisplay: (opts) => {
             return this.resultsDisplayClient({
                 ...opts,
+                dynamicBasePath: this.dynamicBasePath,
                 files: this.files,
                 allowPlugins: this.allowPlugins
             });
