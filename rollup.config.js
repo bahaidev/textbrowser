@@ -77,6 +77,7 @@ export default [
     {
         input: 'server/main.js',
         output: {
+            banner: '#!/usr/bin/env node',
             format: 'cjs',
             file: `server/main-cjs.js`
         },

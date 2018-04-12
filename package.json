@@ -3,6 +3,9 @@
   "version": "0.14.0",
   "description": "Multilinear text browser",
   "main": "dist/index-umd.min.js",
+  "bin": {
+    "textbrowser": "./server/main-cjs.js"
+  },
   "module": "resources/index.js",
   "scripts": {
     "node": "npm run eslint && npm run rollup && nodeunit test/textbrowserTests.js",
