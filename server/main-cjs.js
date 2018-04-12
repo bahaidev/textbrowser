@@ -6601,11 +6601,18 @@ const resultsDisplayServer = async function resultsDisplayServer (args) {
     } = await resultsDisplayServerOrClient$1.call(this, {
         ...args
     });
-    return templateArgs.tableData;
-    // The following Works to get Jamilih JSON which we could use with
-    //    `jml.toHTML()`, whether for `innerHTML` or adding as the
-    //     initial HTML
-    // return Templates.resultsDisplayServerOrClient.main(templateArgs);
+    // Todo: Should really reconcile this with client-side output options
+    //         (as should also have option there to get JSON, Jamilih, etc.
+    //         output)
+    switch (args.serverOutput) {
+    case 'json': default:
+        return templateArgs.tableData;
+    case 'jamilih':
+        return Templates.resultsDisplayServerOrClient.main(templateArgs);
+    case 'html':
+        const jamilih = Templates.resultsDisplayServerOrClient.main(templateArgs);
+        return jml.toHTML(...jamilih);
+    }
 };
 
 const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClient ({
@@ -8699,8 +8706,8 @@ const optionDefinitions = [
 ];
 const userParams = require('command-line-args')(optionDefinitions);
 
-const basePath = userParams.basePath;
-const port = userParams.port || 8000;
+const port = 'port' in userParams ? userParams.port : 8000;
+const basePath = userParams.basePath || `http://localhost${port ? ':' + port : ''}/`;
 
 const userParamsWithDefaults = setServiceWorkerDefaults({...userParams}, {
     basePath,
@@ -8774,17 +8781,23 @@ const srv = http$1.createServer(async (req, res) => {
         basePath: `${basePath}`,
         langData: await getJSON(userParamsWithDefaults.languages),
         async resultsDisplay (resultsArgs, ...args) {
-            res.writeHead(200, {'Content-Type': 'application/json'});
+            const serverOutput = $p.get('serverOutput', true);
+            const isHTML = serverOutput === 'html';
+            res.writeHead(200, {'Content-Type': isHTML
+                ? 'text/html;charset=utf8'
+                : 'application/json;charset=utf8'
+            });
             resultsArgs = {
                 ...resultsArgs,
                 skipIndexedDB: false,
+                serverOutput,
                 prefI18n: $p.get('prefI18n', true)
             };
             // Todo: Move sw-sample.js to bahaiwritings and test
             const result = await resultsDisplayServer.call(
                 userParamsWithDefaults, resultsArgs, ...args
             );
-            res.end(JSON.stringify(result));
+            res.end(isHTML ? result : JSON.stringify(result));
         }
     });
 });

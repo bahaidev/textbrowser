@@ -47,8 +47,8 @@ const optionDefinitions = [
 ];
 const userParams = require('command-line-args')(optionDefinitions);
 
-const basePath = userParams.basePath;
-const port = userParams.port || 8000;
+const port = 'port' in userParams ? userParams.port : 8000;
+const basePath = userParams.basePath || `http://localhost${port ? ':' + port : ''}/`;
 
 const userParamsWithDefaults = setServiceWorkerDefaults({...userParams}, {
     basePath,
@@ -122,17 +122,23 @@ const srv = http.createServer(async (req, res) => {
         basePath: `${basePath}`,
         langData: await getJSON(userParamsWithDefaults.languages),
         async resultsDisplay (resultsArgs, ...args) {
-            res.writeHead(200, {'Content-Type': 'application/json'});
+            const serverOutput = $p.get('serverOutput', true);
+            const isHTML = serverOutput === 'html';
+            res.writeHead(200, {'Content-Type': isHTML
+                ? 'text/html;charset=utf8'
+                : 'application/json;charset=utf8'
+            });
             resultsArgs = {
                 ...resultsArgs,
                 skipIndexedDB: false,
+                serverOutput,
                 prefI18n: $p.get('prefI18n', true)
             };
             // Todo: Move sw-sample.js to bahaiwritings and test
             const result = await resultsDisplayServer.call(
                 userParamsWithDefaults, resultsArgs, ...args
             );
-            res.end(JSON.stringify(result));
+            res.end(isHTML ? result : JSON.stringify(result));
         }
     });
 });

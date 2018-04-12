@@ -1,3 +1,11 @@
+# 0.15.0
+
+- Fix: Multiple fixes for Node.js server
+- Let Node.js server's `basePath` default to `localhost` and
+    user-supplied or default port
+- Enhancement: Make Node.js server a binary
+- Enhancement: Provide server output options (Jamilih or HTML as well as JSON)
+
 # 0.14.0
 
 - Node.js server (untested)

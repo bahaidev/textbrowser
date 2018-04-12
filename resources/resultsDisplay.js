@@ -5,6 +5,7 @@ import {getMetaProp, getFieldNameAndValueAliases, getBrowseFieldData} from './ut
 import {getWorkData} from './utils/WorkInfo.js';
 // Keep this as the last import for Rollup
 import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
+import jml from 'jamilih';
 
 const getRawFieldValue = (v) => typeof v === 'string'
     ? v.replace(/^.* \((.*?)\)$/, '$1')
@@ -103,11 +104,18 @@ export const resultsDisplayServer = async function resultsDisplayServer (args) {
     } = await resultsDisplayServerOrClient.call(this, {
         ...args
     });
-    return templateArgs.tableData;
-    // The following Works to get Jamilih JSON which we could use with
-    //    `jml.toHTML()`, whether for `innerHTML` or adding as the
-    //     initial HTML
-    // return Templates.resultsDisplayServerOrClient.main(templateArgs);
+    // Todo: Should really reconcile this with client-side output options
+    //         (as should also have option there to get JSON, Jamilih, etc.
+    //         output)
+    switch (args.serverOutput) {
+    case 'json': default:
+        return templateArgs.tableData;
+    case 'jamilih':
+        return Templates.resultsDisplayServerOrClient.main(templateArgs);
+    case 'html':
+        const jamilih = Templates.resultsDisplayServerOrClient.main(templateArgs);
+        return jml.toHTML(...jamilih);
+    }
 };
 
 export const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient ({
