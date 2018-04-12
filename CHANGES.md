@@ -1,3 +1,11 @@
+# 0.16.0
+
+- Default to absence of `checked` params meaning present (must set
+    explicitly to "No")
+- Make `outputmode` check default to `table` (and avoid problems if
+    user messes with value)
+- Avoid Chrome DevTools error
+
 # 0.15.0
 
 - Fix: Multiple fixes for Node.js server

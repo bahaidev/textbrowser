@@ -182,7 +182,7 @@ body {
         determineEnd, getCellValue, checkedAndInterlinearFieldInfo,
         interlinearSeparator = '<br /><br />'
     }) {
-        const tableElems = ({
+        const tableOptions = {
             table: [
                 ['table', {'class': 'table', border: $pRaw('border') || '0'}],
                 ['tr', {'class': 'tr'}],
@@ -209,7 +209,13 @@ body {
             ],
             'json-array': 'json',
             'json-object': 'json'
-        }[$pRaw('outputmode')]);
+        };
+        const outputmode = $p.get('outputmode', true); // Why not $pRaw?
+        const tableElems = tableOptions[ // eslint-disable-line standard/computed-property-even-spacing
+            Object.keys(tableOptions).includes(outputmode) // Exclude __proto__ or whatever
+                ? outputmode
+                : 'table' // Default
+        ];
         if (tableElems === 'json') {
             throw new Error('JSON support is currently not available');
         }

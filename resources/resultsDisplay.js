@@ -208,7 +208,9 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             field = $p.get('field' + i, true);
             checked = $p.get('checked' + i, true);
             i++;
-            if (field && checked === l('yes')) {
+            if (field && (
+                checked === l('yes') || checked === null // Default to "on"
+            )) {
                 checkedFields.push(field);
             }
         } while (field);

@@ -138,6 +138,10 @@ self.addEventListener('activate', e => {
 
 // We cannot make this async as `e.respondWith` must be called synchronously
 self.addEventListener('fetch', (e) => {
+    // DevTools opening will trigger these o-i-c requests
+    if (e.request.cache === 'only-if-cached' && e.request.mode !== 'same-origin') {
+        return;
+    }
     console.log('fetching');
     e.respondWith(
         (async () => (await caches.match(e.request)) || fetch(e.request))()
