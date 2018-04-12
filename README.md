@@ -644,7 +644,8 @@ upon for monkey-patching.
 1.  **Default field(s) and default value(s)** for when no text is entered and
     a reasonable sample is desired to be shown. Use `default_view` already
     spec'd in metadata schema and used in files.
-    1. Also have `&checked1=Yes` omitted (since now defaulting to this)
+    1. Also have `&checked1=Yes` omitted when generating results display
+        (since now defaulting to this)
 1.  Indicate min/max as **placeholder text** (`Max: 100`?)
 1.  **Rename "Field"** to "Column anchor"
 1.  **Move "Go"** to right (or immediate bottom) of paragraph selections
