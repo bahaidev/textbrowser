@@ -6621,7 +6621,7 @@ const resultsDisplayServer = async function resultsDisplayServer (args) {
 };
 
 const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClient ({
-    l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, prefI18n,
+    l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, noIndexedDB, prefI18n,
     files, allowPlugins, basePath = '', dynamicBasePath = ''
 }) {
     const getCellValue = ({
@@ -6996,7 +6996,15 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     const endsRaw = ends.map(stripToRawFieldValue);
 
     let tableData;
-    if (!skipIndexedDB) {
+    // Site owner may have configured to skip (e.g., testing)
+    if (!skipIndexedDB &&
+        // User may have refused, not yet agreed, or are visiting the
+        //   results page directly where we don't ask for the permissions
+        //   needed for persistent IndexedDB currently so that people can
+        //   be brought to a results page without needing to agree to persist
+        //   through notifications (or however)
+        !noIndexedDB
+    ) {
         tableData = await new Promise((resolve, reject) => {
             // Todo: Fetch the work in code based on the non-localized `datafileName`
             const dbName = this.namespace + '-textbrowser-cache-data';
@@ -7025,10 +7033,11 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         // No need for presorting in indexedDB, given indexes
         const presort = presorts[browseFieldSetIdx];
         // Given that we are not currently wishing to add complexity to
-        //   our server-side code (though should be easy if using Node.js),
+        //   our PHP code (though it is not a problem with Node.js),
         //   we retrieve the whole file and then sort where presorting is
         //   needed
-        if (presort || this.noDynamic) {
+        // if (presort || this.noDynamic) {
+        if (this.noDynamic) {
             ({
                 resolved: {data: tableData}
             } = await JsonRefs$1.resolveRefs(fileData.file));

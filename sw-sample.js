@@ -24,6 +24,7 @@ const defaultUserStaticFiles = [
 //   get these as reliable full paths without hard-coding or needing to
 //   actually be in `node_modules/textbrowser`; see `resources/index.js`
 const textbrowserStaticResourceFiles = [
+    'node_modules/babel-polyfill/dist/polyfill.js',
     'node_modules/textbrowser/appdata/languages.json',
 
     /*

@@ -1,8 +1,15 @@
 # ?
 
-- Docs: Remove outdated/invalid to-dos
-- Enhancement: Search box parsing (without UI)
 - Change: Make footer off by default
+- Change: Stop asking persistence permissions on results page (so users can
+    be directed to specific Writings without needing to themselves confirm); in
+    the future, a navigation bar and/or breadcrumbs may allow going to another
+    page where that is possible
+- Change: Avoid slow retrieval for presorts (unless `noDynamic`); Node.js can
+    handle
+- Fix: Ensure babel-polyfill is cached by service worker in sample
+- Enhancement: Search box parsing (without UI)
+- Docs: Remove outdated/invalid to-dos
 
 # 0.16.0
 

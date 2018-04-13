@@ -251,6 +251,17 @@ TextBrowser.prototype.paramChange = async function () {
         });
         return imfSite.getFormatter();
     };
+
+    let siteI18n;
+    const result = $p.get('result');
+
+    // Todo: For now, we won't give opportunity to store offline on
+    //    results page. We could add a small button to open a dialog,
+    //    but then it'd show up in each results window, making it less
+    //    embed-friendly. Probably best to implement
+    //    navigation bar/breadcrumbs, with option on work display page on
+    //    whether to show or not; also ensure we have navigation
+    //    bar/breadcrumbs on all non-results pages
     const persistent = await navigator.storage.persisted();
     /*
     console.log(
@@ -258,16 +269,18 @@ TextBrowser.prototype.paramChange = async function () {
         navigator.serviceWorker.controller
     );
     */
-    let siteI18n;
-    if (
+    const refusedIndexedDB =
         // User may have persistence via bookmarks, etc. but just not
         //     want commital on notification
         // Notification.permission === 'default' ||
 
         // We always expect a controller, so is probably first visit
-        !localStorage.getItem(this.namespace + '-refused') && // Not show if refused before
-        (!navigator.serviceWorker.controller || !persistent)
-    ) {
+        localStorage.getItem(this.namespace + '-refused');
+
+    const tryRegistrationOrPersistence = !refusedIndexedDB && // Not show if refused before
+        (!navigator.serviceWorker.controller || !persistent);
+
+    if (!result && tryRegistrationOrPersistence) {
         siteI18n = getSiteI18n();
         // Note: In Chrome on 127.0.0.1 (but not localhost!),
         //        this always appears to be `true`, despite having
@@ -279,7 +292,7 @@ TextBrowser.prototype.paramChange = async function () {
             //   but we do need a worker
             Templates.permissions.main({l: siteI18n});
             await prepareForServiceWorker.call(this, langs);
-        } else {
+        } else { // Keep asking if not persistent (unless refused)
             await requestPermissions.call(this, langs, siteI18n);
         }
         Templates.permissions.exitDialogs();
@@ -312,7 +325,6 @@ TextBrowser.prototype.paramChange = async function () {
         $p.l10n = l10n;
 
         const work = $p.get('work');
-        const result = $p.get('result');
         if (!work) {
             workSelect({
                 files: this.files,
@@ -337,8 +349,11 @@ TextBrowser.prototype.paramChange = async function () {
         langData: this.langData,
         fallbackLanguages,
         resultsDisplay: (opts) => {
+            const noIndexedDB = refusedIndexedDB ||
+                !navigator.serviceWorker.controller; // No worker from which IndexedDB is available;
             return this.resultsDisplayClient({
                 ...opts,
+                noIndexedDB,
                 dynamicBasePath: this.dynamicBasePath,
                 files: this.files,
                 allowPlugins: this.allowPlugins
