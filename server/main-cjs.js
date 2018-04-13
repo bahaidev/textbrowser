@@ -8830,7 +8830,7 @@ const srv = http$1.createServer(async (req, res) => {
 
     getIMFFallbackResults({
         $p,
-        basePath: `${basePath}`,
+        basePath,
         langData: await getJSON(userParamsWithDefaults.languages),
         async resultsDisplay (resultsArgs, ...args) {
             const serverOutput = $p.get('serverOutput', true);
@@ -8853,4 +8853,8 @@ const srv = http$1.createServer(async (req, res) => {
         }
     });
 });
-srv.listen(port);
+if (!userParams.basePath) {
+    srv.listen(port);
+} else {
+    srv.listen(port, userParams.basePath);
+}

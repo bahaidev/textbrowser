@@ -1,4 +1,4 @@
-# ?
+# 0.17.0
 
 - Change: Make footer off by default
 - Change: Stop asking persistence permissions on results page (so users can
@@ -7,7 +7,8 @@
     page where that is possible
 - Change: Avoid slow retrieval for presorts (unless `noDynamic`); Node.js can
     handle
-- Fix: Ensure babel-polyfill is cached by service worker in sample
+- Fix (server): Allow `basePath` to be non-localhost
+- Fix (client): Ensure babel-polyfill is cached by service worker in sample
 - Enhancement: Search box parsing (without UI)
 - Docs: Remove outdated/invalid to-dos
 
