@@ -2,11 +2,11 @@ import jml from 'jamilih';
 
 export default {
     main ({langs, getLanguageFromCode, followParams, $p}) {
-        jml('div', {'class': 'focus', id: 'languageSelectionContainer'}, [
+        jml('div', {class: 'focus', id: 'languageSelectionContainer'}, [
             ['select', {
                 size: langs.length,
                 $on: {
-                    change: ({target: {selectedOptions}}) => {
+                    change ({target: {selectedOptions}}) {
                         $p.set('lang', selectedOptions[0].value, true);
                         followParams();
                     }

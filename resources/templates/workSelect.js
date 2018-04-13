@@ -4,7 +4,7 @@ import jml from 'jamilih';
 export default ({groups, lf, getNextAlias, $p, followParams}) =>
     jml(
         'div',
-        {'class': 'focus'},
+        {class: 'focus'},
         groups.map((group, i) =>
             ['div', [
                 i > 0 ? ['br', 'br', 'br'] : '',
@@ -13,12 +13,12 @@ export default ({groups, lf, getNextAlias, $p, followParams}) =>
                 ]],
                 ['br'],
                 ['select', {
-                    'class': 'file',
+                    class: 'file',
                     dataset: {
                         name: group.name.localeKey
                     },
                     $on: {
-                        change: ({target: {value}}) => {
+                        change ({target: {value}}) {
                             /*
                             // If using click, but click doesn't always fire
                             if (e.target.nodeName.toLowerCase() === 'select') {
