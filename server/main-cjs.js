@@ -8749,7 +8749,7 @@ const optionDefinitions = [
     {name: 'showTitleOnSingleInterlinear', type: Boolean},
 
     // Service worker
-    {name: 'basePath', type: String},
+    {name: 'domain', type: String},
     {name: 'serviceWorkerPath', type: String, defaultOption: true},
     {name: 'languages', type: String},
     {name: 'files', type: String},
@@ -8759,7 +8759,8 @@ const optionDefinitions = [
 const userParams = require('command-line-args')(optionDefinitions);
 
 const port = 'port' in userParams ? userParams.port : 8000;
-const basePath = userParams.basePath || `http://localhost${port ? ':' + port : ''}/`;
+const domain = userParams.domain || `localhost`;
+const basePath = `http://${domain}${port ? ':' + port : ''}/`;
 
 const userParamsWithDefaults = setServiceWorkerDefaults({...userParams}, {
     basePath,
@@ -8853,8 +8854,8 @@ const srv = http$1.createServer(async (req, res) => {
         }
     });
 });
-if (!userParams.basePath) {
+if (!userParams.domain) {
     srv.listen(port);
 } else {
-    srv.listen(port, userParams.basePath);
+    srv.listen(port, userParams.domain);
 }

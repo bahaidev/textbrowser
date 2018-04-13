@@ -1,3 +1,7 @@
+# 0.17.1
+
+- Change (server): Supply just `domain`, with `basePath` being derived
+
 # 0.17.0
 
 - Change: Make footer off by default
