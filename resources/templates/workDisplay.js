@@ -58,7 +58,7 @@ export default {
                 ['td', [String(idx)]],
                 le('check-columns-to-browse', 'td', 'title', {}, [
                     le('yes', 'input', 'value', {
-                        'class': 'fieldSelector',
+                        class: 'fieldSelector',
                         id: checkedIndex,
                         name: iil('checked') + idx,
                         checked: $p.get(checkedIndex) === l('no')
@@ -102,7 +102,7 @@ export default {
                 le('check_all', 'input', 'value', {
                     type: 'button',
                     $on: {
-                        click: () => {
+                        click () {
                             $$('.fieldSelector').forEach((checkbox) => {
                                 checkbox.checked = true;
                             });
@@ -112,7 +112,7 @@ export default {
                 le('uncheck_all', 'input', 'value', {
                     type: 'button',
                     $on: {
-                        click: () => {
+                        click () {
                             $$('.fieldSelector').forEach((checkbox) => {
                                 checkbox.checked = false;
                             });
@@ -122,7 +122,7 @@ export default {
                 le('checkmark_locale_fields_only', 'input', 'value', {
                     type: 'button',
                     $on: {
-                        click: () => {
+                        click () {
                             fields.forEach((fld, i) => {
                                 const idx = i + 1;
                                 // The following is redundant with 'fld' but may need to
@@ -510,7 +510,7 @@ export default {
                     le('view-random-URL', 'input', 'value', {
                         type: 'button',
                         $on: {
-                            click: () => {
+                            click () {
                                 const url = serializeParamsAsURL(
                                     getDataForSerializingParamsAsURL(),
                                     'randomResult'
@@ -536,7 +536,7 @@ export default {
                     id: 'localizeParamNames',
                     type: 'checkbox',
                     checked: localizeParamNames,
-                    $on: {change: ({target: {checked}}) => {
+                    $on: {change ({target: {checked}}) {
                         localStorage.setItem(
                             namespace + '-localizeParamNames', checked
                         );
@@ -551,7 +551,7 @@ export default {
                     id: 'hideFormattingSection',
                     type: 'checkbox',
                     checked: hideFormattingSection,
-                    $on: {change: ({target: {checked}}) => {
+                    $on: {change ({target: {checked}}) {
                         $('#advancedformatting').style.display = checked
                             ? 'none'
                             : 'block';
@@ -568,7 +568,7 @@ export default {
                 multiple: 'multiple',
                 size: langs.length,
                 $on: {
-                    change: ({target: {selectedOptions}}) => {
+                    change ({target: {selectedOptions}}) {
                         // Todo: EU disclaimer re: storage?
                         localStorage.setItem(namespace + '-langCodes', JSON.stringify(
                             Array.from(selectedOptions).map((opt) =>
@@ -622,7 +622,7 @@ export default {
                                             list: 'dl-' + id, value: $p.get(name),
                                             $on: setType === 'start'
                                                 ? {
-                                                    change: function (e) {
+                                                    change (e) {
                                                         $$('input.browseField').forEach((bf) => {
                                                             if (bf.id.includes((i + 1) + '-' + (j + 1))) {
                                                                 bf.value = e.target.value;
@@ -721,7 +721,7 @@ export default {
             ['option', atts, [
                 l({
                     key,
-                    fallback: ({message}) => {
+                    fallback ({message}) {
                         atts.dir = fallbackDirection;
                         return message;
                     }
@@ -731,10 +731,10 @@ export default {
         //   also adds direction
         jml(
             'div',
-            {'class': 'focus'},
+            {class: 'focus'},
             [
                 ['div', {style: 'float: left;'}, [
-                    ['button', {$on: {click: () => {
+                    ['button', {$on: {click () {
                         const prefs = $('#preferences');
                         prefs.hidden = !prefs.hidden;
                     }}}, [l('Preferences')]],
@@ -745,7 +745,7 @@ export default {
                 ['h2', [heading]],
                 ['br'],
                 ['form', {id: 'browse', $on: {
-                    submit: function (e) {
+                    submit (e) {
                         e.preventDefault();
                     }
                 }, name: il('browse')}, [
@@ -764,7 +764,7 @@ export default {
                                     le('save-settings-URL', 'input', 'value', {
                                         type: 'button',
                                         $on: {
-                                            click: () => {
+                                            click () {
                                                 const url = serializeParamsAsURL(
                                                     getDataForSerializingParamsAsURL(),
                                                     'saveSettings'
@@ -812,12 +812,12 @@ export default {
                         le('submitgo', 'input', 'value', {
                             type: 'submit',
                             $on: {
-                                click: () => {
+                                click () {
                                     const url = serializeParamsAsURL(
                                         getDataForSerializingParamsAsURL(),
                                         'result'
                                     );
-                                    window.location.href = url;
+                                    location.href = url;
                                 }
                             }
                         })

@@ -184,28 +184,28 @@ body {
     }) {
         const tableOptions = {
             table: [
-                ['table', {'class': 'table', border: $pRaw('border') || '0'}],
-                ['tr', {'class': 'tr'}],
-                ['td', {'class': 'td'}],
-                ['th', {'class': 'th'}],
-                ['caption', {'class': 'caption'}],
-                ['thead', {'class': 'thead'}],
-                ['tbody', {'class': 'tbody'}],
-                ['tfoot', {'class': 'tfoot'}]
-                // ['colgroup', {'class': 'colgroup'}],
-                // ['col', {'class': 'col'}]
+                ['table', {class: 'table', border: $pRaw('border') || '0'}],
+                ['tr', {class: 'tr'}],
+                ['td', {class: 'td'}],
+                ['th', {class: 'th'}],
+                ['caption', {class: 'caption'}],
+                ['thead', {class: 'thead'}],
+                ['tbody', {class: 'tbody'}],
+                ['tfoot', {class: 'tfoot'}]
+                // ['colgroup', {class: 'colgroup'}],
+                // ['col', {class: 'col'}]
             ],
             div: [
-                ['div', {'class': 'table', style: 'display: table;'}],
-                ['div', {'class': 'tr', style: 'display: table-row;'}],
-                ['div', {'class': 'td', style: 'display: table-cell;'}],
-                ['div', {'class': 'th', style: 'display: table-cell;'}],
-                ['div', {'class': 'caption', style: 'display: table-caption;'}],
-                ['div', {'class': 'thead', style: 'display: table-header-group;'}],
-                ['div', {'class': 'tbody', style: 'display: table-row-group;'}],
-                ['div', {'class': 'tfoot', style: 'display: table-footer-group;'}]
-                // ['div', {'class': 'colgroup', style: 'display: table-column-group;'}],
-                // ['div', {'class': 'col', style: 'display: table-column;'}]
+                ['div', {class: 'table', style: 'display: table;'}],
+                ['div', {class: 'tr', style: 'display: table-row;'}],
+                ['div', {class: 'td', style: 'display: table-cell;'}],
+                ['div', {class: 'th', style: 'display: table-cell;'}],
+                ['div', {class: 'caption', style: 'display: table-caption;'}],
+                ['div', {class: 'thead', style: 'display: table-header-group;'}],
+                ['div', {class: 'tbody', style: 'display: table-row-group;'}],
+                ['div', {class: 'tfoot', style: 'display: table-footer-group;'}]
+                // ['div', {class: 'colgroup', style: 'display: table-column-group;'}],
+                // ['div', {class: 'col', style: 'display: table-column;'}]
             ],
             'json-array': 'json',
             'json-object': 'json'
@@ -229,8 +229,8 @@ body {
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
         const tableWrap = (children) =>
             tableWithFixedHeaderAndFooter
-                ? ['div', {'class': 'anchor-table-header zupa'}, [
-                    ['div', {'class': 'anchor-table-body'}, children]
+                ? ['div', {class: 'anchor-table-header zupa'}, [
+                    ['div', {class: 'anchor-table-body'}, children]
                 ]]
                 : ['div', children];
 
