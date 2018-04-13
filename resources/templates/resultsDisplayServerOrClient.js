@@ -376,7 +376,7 @@ body {
                             })
                         )
                     ]) : ''),
-                    ($pRaw('footer') !== '0' ? addChildren(tfootElem, [
+                    ($pRaw('footer') && $pRaw('footer') !== '0' ? addChildren(tfootElem, [
                         addChildren(trElem,
                             checkedFields.map((cf, i) => {
                                 const interlinearColIndexes = allInterlinearColIndexes[i];

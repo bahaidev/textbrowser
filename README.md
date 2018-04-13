@@ -840,6 +840,12 @@ upon for monkey-patching.
             to use in conjunction with bookmark keywords (in which case
             it particularly ought to be available through a single param
             without need for system allowing expansion)
+            1. The latter has already been implemented but without a UI,
+                and with the limitations that 0's don't change to 1's if
+                not present as a minimum (e.g., if no 0 for Chapter
+                number, then won't show anything), currently requiring
+                `${fieldAlias}(${fieldNumber})`, e.g., for the Bible,
+                `Joel (29)`, not just `Joel` OR `29`. 
     1.  Ability to run XPath/`querySelector`-like queries against
         `format: "html"` fields relative to specific cells (or against
         original source HTML or XML document); also highlighting as

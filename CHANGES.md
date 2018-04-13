@@ -1,3 +1,9 @@
+# ?
+
+- Docs: Remove outdated/invalid to-dos
+- Enhancement: Search box parsing (without UI)
+- Change: Make footer off by default
+
 # 0.16.0
 
 - Default to absence of `checked` params meaning present (must set

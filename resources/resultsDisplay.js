@@ -421,6 +421,43 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         ? (key, suffix = '') => $p.get(iil(key) + suffix, true)
         : (key, suffix = '') => $p.get(key + suffix, true);
 
+    // Now that we know `browseFieldSets`, we can parse `startEnd`
+    const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) =>
+        typeof iilRaw('startEnd', (i + 1)) === 'string'
+    );
+    if (browseFieldSetStartEndIdx !== -1) {
+        // Todo: i18nize (by work and/or by whole app?)
+        const rangeSep = '-';
+        const partSep = ':';
+
+        // Search box functionality (Todo: not yet in UI)
+        // Todo: At least avoid need for book text AND book number in Bible
+        // Todo: Change query beginning at 0 to 1 if none present?
+        // Todo: Support i18nized or canonical aliases (but don't
+        //         over-trim in such cases)
+        const rawSearch = (iilRaw('startEnd', browseFieldSetStartEndIdx + 1) || '').trim();
+        const [startFull, endFull] = rawSearch.split(rangeSep);
+        if (endFull !== undefined) {
+            const startPartVals = startFull.split(partSep);
+            const endPartVals = endFull.split(partSep);
+            const startEndDiff = startPartVals.length - endPartVals.length;
+            if (startEndDiff > 0) { // e.g., 5:42:7 - 8 only gets verses 7-8
+                endPartVals.unshift(...startPartVals.slice(0, startEndDiff));
+            } else if (startEndDiff < 0) { // e.g., 5 - 6:2:1 gets all of book 5 to 6:2:1
+                // Todo: We should fill with '0' but since that often
+                //    doesn't find anything, we default for now to '1'.
+                startPartVals.push(...Array(-startEndDiff).fill('1'));
+            }
+            console.log('startPartVals', startPartVals);
+            console.log('endPartVals', endPartVals);
+            startPartVals.forEach((startPartVal, i) => {
+                const endPartVal = endPartVals[i];
+                $p.set(`start${browseFieldSetStartEndIdx + 1}-${i + 1}`, startPartVal, true);
+                $p.set(`end${browseFieldSetStartEndIdx + 1}-${i + 1}`, endPartVal, true);
+            });
+        }
+    }
+
     const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
         typeof iilRaw('start', (i + 1) + '-1') === 'string'
     );
@@ -433,7 +470,6 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     const fieldSchemaTypes = applicableBrowseFieldSet.map((abfs) => abfs.fieldSchema.type);
     const buildRangePoint = (startOrEnd) =>
         applicableBrowseFieldNames.map((bfn, j) =>
-            // Todo: i18nize?
             $p.get(
                 startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
                 true

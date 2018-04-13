@@ -172,6 +172,7 @@
             "toggle": "toggle",
             "start": "start",
             "end": "end",
+            "startEnd": "startEnd",
             "anchor": "anchor",
             "anchorfield": "anchorfield"
         },

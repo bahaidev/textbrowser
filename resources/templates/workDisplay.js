@@ -813,7 +813,6 @@ export default {
                             type: 'submit',
                             $on: {
                                 click: () => {
-                                    // Todo:
                                     const url = serializeParamsAsURL(
                                         getDataForSerializingParamsAsURL(),
                                         'result'
