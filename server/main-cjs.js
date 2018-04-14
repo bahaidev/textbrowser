@@ -2058,11 +2058,11 @@ jml.setXMLSerializer(XMLSerializer$1);
 
 var languageSelect = {
     main ({langs, getLanguageFromCode, followParams, $p}) {
-        jml('div', {'class': 'focus', id: 'languageSelectionContainer'}, [
+        jml('div', {class: 'focus', id: 'languageSelectionContainer'}, [
             ['select', {
                 size: langs.length,
                 $on: {
-                    change: ({target: {selectedOptions}}) => {
+                    change ({target: {selectedOptions}}) {
                         $p.set('lang', selectedOptions[0].value, true);
                         followParams();
                     }
@@ -2089,7 +2089,7 @@ var languageSelect = {
 var workSelect = ({groups, lf, getNextAlias, $p, followParams}) =>
     jml(
         'div',
-        {'class': 'focus'},
+        {class: 'focus'},
         groups.map((group, i) =>
             ['div', [
                 i > 0 ? ['br', 'br', 'br'] : '',
@@ -2098,12 +2098,12 @@ var workSelect = ({groups, lf, getNextAlias, $p, followParams}) =>
                 ]],
                 ['br'],
                 ['select', {
-                    'class': 'file',
+                    class: 'file',
                     dataset: {
                         name: group.name.localeKey
                     },
                     $on: {
-                        change: ({target: {value}}) => {
+                        change ({target: {value}}) {
                             /*
                             // If using click, but click doesn't always fire
                             if (e.target.nodeName.toLowerCase() === 'select') {
@@ -2240,7 +2240,7 @@ var workDisplay = {
                 ['td', [String(idx)]],
                 le('check-columns-to-browse', 'td', 'title', {}, [
                     le('yes', 'input', 'value', {
-                        'class': 'fieldSelector',
+                        class: 'fieldSelector',
                         id: checkedIndex,
                         name: iil('checked') + idx,
                         checked: $p.get(checkedIndex) === l('no')
@@ -2284,7 +2284,7 @@ var workDisplay = {
                 le('check_all', 'input', 'value', {
                     type: 'button',
                     $on: {
-                        click: () => {
+                        click () {
                             $$('.fieldSelector').forEach((checkbox) => {
                                 checkbox.checked = true;
                             });
@@ -2294,7 +2294,7 @@ var workDisplay = {
                 le('uncheck_all', 'input', 'value', {
                     type: 'button',
                     $on: {
-                        click: () => {
+                        click () {
                             $$('.fieldSelector').forEach((checkbox) => {
                                 checkbox.checked = false;
                             });
@@ -2304,7 +2304,7 @@ var workDisplay = {
                 le('checkmark_locale_fields_only', 'input', 'value', {
                     type: 'button',
                     $on: {
-                        click: () => {
+                        click () {
                             fields.forEach((fld, i) => {
                                 const idx = i + 1;
                                 // The following is redundant with 'fld' but may need to
@@ -2692,7 +2692,7 @@ var workDisplay = {
                     le('view-random-URL', 'input', 'value', {
                         type: 'button',
                         $on: {
-                            click: () => {
+                            click () {
                                 const url = serializeParamsAsURL(
                                     getDataForSerializingParamsAsURL(),
                                     'randomResult'
@@ -2718,7 +2718,7 @@ var workDisplay = {
                     id: 'localizeParamNames',
                     type: 'checkbox',
                     checked: localizeParamNames,
-                    $on: {change: ({target: {checked}}) => {
+                    $on: {change ({target: {checked}}) {
                         localStorage.setItem(
                             namespace + '-localizeParamNames', checked
                         );
@@ -2733,7 +2733,7 @@ var workDisplay = {
                     id: 'hideFormattingSection',
                     type: 'checkbox',
                     checked: hideFormattingSection,
-                    $on: {change: ({target: {checked}}) => {
+                    $on: {change ({target: {checked}}) {
                         $('#advancedformatting').style.display = checked
                             ? 'none'
                             : 'block';
@@ -2750,7 +2750,7 @@ var workDisplay = {
                 multiple: 'multiple',
                 size: langs.length,
                 $on: {
-                    change: ({target: {selectedOptions}}) => {
+                    change ({target: {selectedOptions}}) {
                         // Todo: EU disclaimer re: storage?
                         localStorage.setItem(namespace + '-langCodes', JSON.stringify(
                             Array.from(selectedOptions).map((opt) =>
@@ -2804,7 +2804,7 @@ var workDisplay = {
                                             list: 'dl-' + id, value: $p.get(name),
                                             $on: setType === 'start'
                                                 ? {
-                                                    change: function (e) {
+                                                    change (e) {
                                                         $$('input.browseField').forEach((bf) => {
                                                             if (bf.id.includes((i + 1) + '-' + (j + 1))) {
                                                                 bf.value = e.target.value;
@@ -2903,7 +2903,7 @@ var workDisplay = {
             ['option', atts, [
                 l({
                     key,
-                    fallback: ({message}) => {
+                    fallback ({message}) {
                         atts.dir = fallbackDirection;
                         return message;
                     }
@@ -2913,10 +2913,10 @@ var workDisplay = {
         //   also adds direction
         jml(
             'div',
-            {'class': 'focus'},
+            {class: 'focus'},
             [
                 ['div', {style: 'float: left;'}, [
-                    ['button', {$on: {click: () => {
+                    ['button', {$on: {click () {
                         const prefs = $('#preferences');
                         prefs.hidden = !prefs.hidden;
                     }}}, [l('Preferences')]],
@@ -2927,7 +2927,7 @@ var workDisplay = {
                 ['h2', [heading]],
                 ['br'],
                 ['form', {id: 'browse', $on: {
-                    submit: function (e) {
+                    submit (e) {
                         e.preventDefault();
                     }
                 }, name: il('browse')}, [
@@ -2946,7 +2946,7 @@ var workDisplay = {
                                     le('save-settings-URL', 'input', 'value', {
                                         type: 'button',
                                         $on: {
-                                            click: () => {
+                                            click () {
                                                 const url = serializeParamsAsURL(
                                                     getDataForSerializingParamsAsURL(),
                                                     'saveSettings'
@@ -2994,12 +2994,12 @@ var workDisplay = {
                         le('submitgo', 'input', 'value', {
                             type: 'submit',
                             $on: {
-                                click: () => {
+                                click () {
                                     const url = serializeParamsAsURL(
                                         getDataForSerializingParamsAsURL(),
                                         'result'
                                     );
-                                    window.location.href = url;
+                                    location.href = url;
                                 }
                             }
                         })
@@ -3196,28 +3196,28 @@ body {
     }) {
         const tableOptions = {
             table: [
-                ['table', {'class': 'table', border: $pRaw('border') || '0'}],
-                ['tr', {'class': 'tr'}],
-                ['td', {'class': 'td'}],
-                ['th', {'class': 'th'}],
-                ['caption', {'class': 'caption'}],
-                ['thead', {'class': 'thead'}],
-                ['tbody', {'class': 'tbody'}],
-                ['tfoot', {'class': 'tfoot'}]
-                // ['colgroup', {'class': 'colgroup'}],
-                // ['col', {'class': 'col'}]
+                ['table', {class: 'table', border: $pRaw('border') || '0'}],
+                ['tr', {class: 'tr'}],
+                ['td', {class: 'td'}],
+                ['th', {class: 'th'}],
+                ['caption', {class: 'caption'}],
+                ['thead', {class: 'thead'}],
+                ['tbody', {class: 'tbody'}],
+                ['tfoot', {class: 'tfoot'}]
+                // ['colgroup', {class: 'colgroup'}],
+                // ['col', {class: 'col'}]
             ],
             div: [
-                ['div', {'class': 'table', style: 'display: table;'}],
-                ['div', {'class': 'tr', style: 'display: table-row;'}],
-                ['div', {'class': 'td', style: 'display: table-cell;'}],
-                ['div', {'class': 'th', style: 'display: table-cell;'}],
-                ['div', {'class': 'caption', style: 'display: table-caption;'}],
-                ['div', {'class': 'thead', style: 'display: table-header-group;'}],
-                ['div', {'class': 'tbody', style: 'display: table-row-group;'}],
-                ['div', {'class': 'tfoot', style: 'display: table-footer-group;'}]
-                // ['div', {'class': 'colgroup', style: 'display: table-column-group;'}],
-                // ['div', {'class': 'col', style: 'display: table-column;'}]
+                ['div', {class: 'table', style: 'display: table;'}],
+                ['div', {class: 'tr', style: 'display: table-row;'}],
+                ['div', {class: 'td', style: 'display: table-cell;'}],
+                ['div', {class: 'th', style: 'display: table-cell;'}],
+                ['div', {class: 'caption', style: 'display: table-caption;'}],
+                ['div', {class: 'thead', style: 'display: table-header-group;'}],
+                ['div', {class: 'tbody', style: 'display: table-row-group;'}],
+                ['div', {class: 'tfoot', style: 'display: table-footer-group;'}]
+                // ['div', {class: 'colgroup', style: 'display: table-column-group;'}],
+                // ['div', {class: 'col', style: 'display: table-column;'}]
             ],
             'json-array': 'json',
             'json-object': 'json'
@@ -3241,8 +3241,8 @@ body {
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
         const tableWrap = (children) =>
             tableWithFixedHeaderAndFooter
-                ? ['div', {'class': 'anchor-table-header zupa'}, [
-                    ['div', {'class': 'anchor-table-body'}, children]
+                ? ['div', {class: 'anchor-table-header zupa'}, [
+                    ['div', {class: 'anchor-table-body'}, children]
                 ]]
                 : ['div', children];
 
@@ -7158,12 +7158,18 @@ function getIMFFallbackResults ({
 /* globals console, location, URL */
 
 const setServiceWorkerDefaults = (target, source) => {
+    // Todo: Substitute with moduleURL once implemented
+    const moduleURL = typeof URL === 'undefined'
+        ? null
+        : new URL('node_modules/textbrowser/resources/index.js', location);
     target.languages = source.languages || new URL(
         '../appdata/languages.json',
-        // Todo: Substitute with moduleURL once implemented
-        new URL('node_modules/textbrowser/resources/index.js', location)
+        moduleURL
     ).href;
-    target.serviceWorkerPath = source.serviceWorkerPath || 'sw.js';
+    target.serviceWorkerPath = source.serviceWorkerPath || new URL(
+        '../sw-sample.js',
+        moduleURL
+    ).href;
     target.files = source.files || 'files.json';
     target.namespace = source.namespace || 'textbrowser';
     target.staticFilesToCache = source.staticFilesToCache; // Defaults in worker file (as `userStaticFiles`)
@@ -8766,7 +8772,7 @@ const userParamsWithDefaults = setServiceWorkerDefaults({...userParams}, {
     basePath,
     files: userParams.files || `${basePath}files.json`, // `files` must be absolute path for node-fetch
     languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
-    serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js`,
+    serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}node_modules/textbrowser/sw-sample.js`,
     nodeActivate: undefined,
     port: undefined,
     skipIndexedDB: false, // Not relevant here

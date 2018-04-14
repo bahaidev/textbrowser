@@ -4,12 +4,18 @@ import getJSON from 'simple-get-json';
 import {getWorkFiles} from './WorkInfo.js';
 
 export const setServiceWorkerDefaults = (target, source) => {
+    // Todo: Substitute with moduleURL once implemented
+    const moduleURL = typeof URL === 'undefined'
+        ? null
+        : new URL('node_modules/textbrowser/resources/index.js', location);
     target.languages = source.languages || new URL(
         '../appdata/languages.json',
-        // Todo: Substitute with moduleURL once implemented
-        new URL('node_modules/textbrowser/resources/index.js', location)
+        moduleURL
     ).href;
-    target.serviceWorkerPath = source.serviceWorkerPath || 'sw.js';
+    target.serviceWorkerPath = source.serviceWorkerPath || new URL(
+        '../sw-sample.js',
+        moduleURL
+    ).href;
     target.files = source.files || 'files.json';
     target.namespace = source.namespace || 'textbrowser';
     target.staticFilesToCache = source.staticFilesToCache; // Defaults in worker file (as `userStaticFiles`)

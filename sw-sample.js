@@ -1,7 +1,7 @@
 /* eslint-env browser, serviceworker */
 /* globals activateCallback */
 // Todo: Replace with ES6 modules once browsers support
-importScripts('node_modules/textbrowser/resources/activateCallback.js');
+importScripts('resources/activateCallback.js');
 
 /*
 (async () => {
@@ -14,38 +14,39 @@ clients.forEach((client) => {
 */
 
 const defaultUserStaticFiles = [
-    'index.html',
-    'files.json',
-    'site.json',
-    'resources/user.js',
-    'resources/user.css'
+    '../../index.html',
+    '../../files.json',
+    '../../site.json',
+    '../../resources/user.js',
+    '../../resources/user.css'
 ];
 // Todo: We could supply `new URL(fileName, moduleURL).href` to
 //   get these as reliable full paths without hard-coding or needing to
 //   actually be in `node_modules/textbrowser`; see `resources/index.js`
 const textbrowserStaticResourceFiles = [
-    'node_modules/babel-polyfill/dist/polyfill.js',
-    'node_modules/textbrowser/appdata/languages.json',
+    '../babel-polyfill/dist/polyfill.js',
+    'appdata/languages.json',
+    'sw-sample.js',
 
     /*
     // Only needed atm for browser validation
-    'node_modules/textbrowser/general-schemas/files.jsonschema',
-    'node_modules/textbrowser/general-schemas/languages.jsonschema',
-    'node_modules/textbrowser/general-schemas/locale.jsonschema',
-    'node_modules/textbrowser/general-schemas/metadata.jsonschema',
-    'node_modules/textbrowser/general-schemas/table.jsonschema', // Not currently using for validation or meta-data
+    'general-schemas/files.jsonschema',
+    'general-schemas/languages.jsonschema',
+    'general-schemas/locale.jsonschema',
+    'general-schemas/metadata.jsonschema',
+    'general-schemas/table.jsonschema', // Not currently using for validation or meta-data
     */
 
     // Todo: Ought to make these locales only conditionally required and
     //      then only show those specified in languages menu or go directly
     //      to work selection
-    'node_modules/textbrowser/locales/ar.json',
-    'node_modules/textbrowser/locales/en-US.json',
-    'node_modules/textbrowser/locales/fa.json',
-    'node_modules/textbrowser/locales/ru.json',
+    'locales/ar.json',
+    'locales/en-US.json',
+    'locales/fa.json',
+    'locales/ru.json',
 
-    'node_modules/textbrowser/resources/index.css',
-    'node_modules/textbrowser/dist/index-es.js'
+    'resources/index.css',
+    'dist/index-es.js'
 ];
 
 self.addEventListener('message', async ({data: {

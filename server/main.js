@@ -55,7 +55,7 @@ const userParamsWithDefaults = setServiceWorkerDefaults({...userParams}, {
     basePath,
     files: userParams.files || `${basePath}files.json`, // `files` must be absolute path for node-fetch
     languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
-    serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js`,
+    serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}node_modules/textbrowser/sw-sample.js`,
     nodeActivate: undefined,
     port: undefined,
     skipIndexedDB: false, // Not relevant here
