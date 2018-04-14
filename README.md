@@ -785,6 +785,8 @@ upon for monkey-patching.
     <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
     and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
 
+1.  Refactoring: Try to use `deserialize` of `form-serialize` fork for initial population
+    or hash change?
 1.  [ES6 Modules in browser](https://jakearchibald.com/2017/es-modules-in-browsers/):
     Complete switch to imports over script tags (by updating dependencies to
     use ES6 modules too and then use them; json-refs is only left); can also
