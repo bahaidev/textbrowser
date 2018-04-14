@@ -7,9 +7,7 @@ downloading the files in full and then processing them; the next
 step is for us, while informing the user we are downloading the files,
 is to add them into IndexedDB; eventually, we also hope to provide an
 option to pre-process live on the server (probably Node.js), but
-we are attempting to follow the "offline first" motto, though even
-full offline support is not yet completely available, as we are not
-yet making use of the ServiceWorker API.*
+we are attempting to follow the "offline first" motto.*
 
 *TextBrowser* supports power-user browsing of arbitrary multi-linear
 texts.
@@ -514,7 +512,7 @@ as a `npm` dependency).
     -   `staticFilesToCache` - Array of files additional to those of
         *TextBrowser* which you will need offline. Defaults to the minimum
         recommended files:
-        `['index.html', 'files.json', 'site.json', 'resources/user.js', 'resources/user.css']`
+        `['/',  'index.html', 'files.json', 'site.json', 'resources/user.js', 'resources/user.css']`
 
     -   `files` - Path for the `files.json` containing meta-data on the files
         to be made available via the interface. Defaults to `"files.json"`.
@@ -845,7 +843,7 @@ upon for monkey-patching.
                 not present as a minimum (e.g., if no 0 for Chapter
                 number, then won't show anything), currently requiring
                 `${fieldAlias}(${fieldNumber})`, e.g., for the Bible,
-                `Joel (29)`, not just `Joel` OR `29`. 
+                `Joel (29)`, not just `Joel` OR `29`.
     1.  Ability to run XPath/`querySelector`-like queries against
         `format: "html"` fields relative to specific cells (or against
         original source HTML or XML document); also highlighting as

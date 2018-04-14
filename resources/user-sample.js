@@ -21,6 +21,7 @@ const tb = new TextBrowser({
         // Populate here your own (non-data) files to be made available
         //    offline (*TextBrowser*'s own will be added automatically)
         // The following are added by default
+        '/',
         'index.html',
         'files.json',
         'site.json',
