@@ -160,11 +160,15 @@ export default async function workDisplay ({
         }
 
         const fields = schemaItems.map((schemaItem) => schemaItem.title);
+        const fieldAliasesOrNames = fields.map((field) => {
+            return getFieldAliasOrName(field) || field;
+        });
         this.getBrowseFieldData({
             metadataObj, schemaItems, getFieldAliasOrName,
             callback ({browseFields, i}) {
                 Templates.workDisplay.addBrowseFields({
-                    browseFields, fields, getFieldAliasOrName, ld, i, iil, $p, content
+                    browseFields, fieldAliasesOrNames,
+                    ld, i, iil, $p, content
                 });
             }
         });

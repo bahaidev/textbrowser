@@ -4,6 +4,9 @@ import Templates from './index.js';
 import {colors, fonts} from './utils/html.js';
 import {nbsp, $, $$} from './utils/dom.js';
 
+const nbsp2 = nbsp.repeat(2);
+const nbsp3 = nbsp.repeat(3);
+
 const getDataForSerializingParamsAsURL = () => ({
     form: $('form#browse'),
     random: $('#rand') || {}, // Todo: We don't need any default once random functionality is completed
@@ -141,7 +144,7 @@ export default {
     }, [
         ['h3', [ld('advancedformatting')]],
         ['label', [
-            ld('textcolor'), nbsp.repeat(2),
+            ld('textcolor'), nbsp2,
             ['select', {name: il('colorName')}, colors.map((color, i) => {
                 const atts = {value: l(['param_values', 'colors', color])};
                 if ($p.get('colorName') === l(['param_values', 'colors', color]) ||
@@ -152,7 +155,7 @@ export default {
             })]
         ]],
         ['label', [
-            nbsp, ld('or_entercolor'), nbsp.repeat(2),
+            nbsp, ld('or_entercolor'), nbsp2,
             ['input', {
                 name: il('color'),
                 type: 'text',
@@ -162,7 +165,7 @@ export default {
         ]],
         ['br'], ['br'],
         ['label', [
-            ld('backgroundcolor'), nbsp.repeat(2),
+            ld('backgroundcolor'), nbsp2,
             ['select', {name: il('bgcolorName')}, colors.map((color, i) => {
                 const atts = {value: l(['param_values', 'colors', color])};
                 if ($p.get('bgcolorName') === l(['param_values', 'colors', color]) ||
@@ -173,7 +176,7 @@ export default {
             })]
         ]],
         ['label', [
-            nbsp, ld('or_entercolor'), nbsp.repeat(2),
+            nbsp, ld('or_entercolor'), nbsp2,
             ['input', {
                 name: il('bgcolor'),
                 type: 'text',
@@ -183,7 +186,7 @@ export default {
         ]],
         ['br'], ['br'],
         ['label', [
-            ld('text_font'), nbsp.repeat(2),
+            ld('text_font'), nbsp2,
             // Todo: remove hard-coded direction if i81nizing; also i18nize fontSeq param
             ['select', {name: il('fontSeq'), dir: 'ltr'}, fonts.map((fontSeq, i) => {
                 const atts = {value: fontSeq};
@@ -195,7 +198,7 @@ export default {
         ]],
         ['br'], ['br'],
         ['label', [
-            ld('font_style'), nbsp.repeat(2),
+            ld('font_style'), nbsp2,
             ['select', {name: il('fontstyle')}, [
                 'italic',
                 'normal',
@@ -211,7 +214,7 @@ export default {
         ]],
         ['br'],
         ['div', [
-            ld('font_variant'), nbsp.repeat(3),
+            ld('font_variant'), nbsp3,
             ['label', [
                 ['input', {
                     name: il('fontvariant'),
@@ -232,7 +235,7 @@ export default {
         ['br'],
         ['label', [
             // Todo: i18n and allow for normal/bold pulldown and float input?
-            ld('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp.repeat(2),
+            ld('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp2,
             ['input', {
                 name: il('fontweight'),
                 type: 'text',
@@ -242,7 +245,7 @@ export default {
         ]],
         ['br'],
         ['label', [
-            ld('font_size'), ' (14pt, 14px, small, 75%, etc.):', nbsp.repeat(2),
+            ld('font_size'), ' (14pt, 14px, small, 75%, etc.):', nbsp2,
             ['input', {
                 name: il('fontsize'),
                 type: 'text',
@@ -297,7 +300,7 @@ export default {
             ld('tableformatting')
         ]),
         ['div', [
-            ld('header_wstyles'), nbsp.repeat(2),
+            ld('header_wstyles'), nbsp2,
             ...([
                 ['yes', ld(['param_values', 'y'])],
                 ['no', ld(['param_values', 'n'])],
@@ -310,12 +313,12 @@ export default {
                         value: val,
                         checked: $p.get('header') === val ||
                             (!$p.has('header') && i === 1) ? 'checked' : undefined}],
-                    ld(key), (i === arr.length - 1 ? '' : nbsp.repeat(3))
+                    ld(key), (i === arr.length - 1 ? '' : nbsp3)
                 ]]
             ))
         ]],
         ['div', [
-            ld('footer_wstyles'), nbsp.repeat(2),
+            ld('footer_wstyles'), nbsp2,
             ...([
                 ['yes', ld(['param_values', 'y'])],
                 ['no', ld(['param_values', 'n'])],
@@ -328,7 +331,7 @@ export default {
                         value: val,
                         checked: $p.get('footer') === val ||
                             (!$p.has('footer') && i === 2) ? 'checked' : undefined}],
-                    ld(key), (i === arr.length - 1 ? '' : nbsp.repeat(3))
+                    ld(key), (i === arr.length - 1 ? '' : nbsp3)
                 ]]
             ))
         ]],
@@ -338,11 +341,11 @@ export default {
                 type: 'checkbox',
                 value: l('yes'),
                 checked: $p.get('headerfooterfixed') === l('yes') ? 'checked' : undefined}],
-            nbsp.repeat(2), ld('headerfooterfixed-wishtoscroll')
+            nbsp2, ld('headerfooterfixed-wishtoscroll')
         ]],
         ['br'],
         ['div', [
-            ld('caption_wstyles'), nbsp.repeat(2),
+            ld('caption_wstyles'), nbsp2,
             ...([
                 ['yes', ld(['param_values', 'y'])],
                 ['no', ld(['param_values', 'n'])],
@@ -355,20 +358,20 @@ export default {
                         value: val,
                         checked: $p.get('caption') === val ||
                             (!$p.has('caption') && i === 2) ? 'checked' : undefined}],
-                    ld(key), (i === arr.length - 1 ? '' : nbsp.repeat(3))
+                    ld(key), (i === arr.length - 1 ? '' : nbsp3)
                 ]]
             ))
         ]],
         ['br'],
         ['div', [
-            ld('table_wborder'), nbsp.repeat(2),
+            ld('table_wborder'), nbsp2,
             ['label', [
                 ['input', {
                     name: il('border'),
                     type: 'radio',
                     value: '1',
                     checked: $p.get('border') === '0' ? undefined : 'checked'}],
-                ld('yes'), nbsp.repeat(3)
+                ld('yes'), nbsp3
             ]],
             ['label', [
                 ['input', {
@@ -380,14 +383,14 @@ export default {
             ]]
         ]],
         ['div', [
-            ld('interlin_repeat_field_names'), nbsp.repeat(2),
+            ld('interlin_repeat_field_names'), nbsp2,
             ['label', [
                 ['input', {
                     name: il('interlintitle'),
                     type: 'radio',
                     value: '1',
                     checked: $p.get('interlintitle') === '0' ? undefined : 'checked'}],
-                ld('yes'), nbsp.repeat(3)
+                ld('yes'), nbsp3
             ]],
             ['label', [
                 ['input', {
@@ -399,7 +402,7 @@ export default {
             ]]
         ]],
         ['label', [
-            ld('interlintitle_css'), nbsp.repeat(2),
+            ld('interlintitle_css'), nbsp2,
             ['input', {
                 name: il('interlintitle_css'),
                 type: 'text',
@@ -416,7 +419,7 @@ export default {
                 type: 'checkbox',
                 value: l('yes'),
                 checked: $p.get('transpose') === l('yes') ? 'checked' : undefined}],
-            nbsp.repeat(2), ld('transpose')
+            nbsp2, ld('transpose')
         ]],
         */
         ['br'],
@@ -425,14 +428,14 @@ export default {
         ]),
         /*
         ['label', [
-            ld('speech_controls'), nbsp.repeat(2),
+            ld('speech_controls'), nbsp2,
             ['label', [
                 ['input', {
                     name: il('speech'),
                     type: 'radio',
                     value: '1',
                     checked: $p.get('speech') === '1' ? 'checked' : undefined}],
-                ld('yes'), nbsp.repeat(3)
+                ld('yes'), nbsp3
             ]],
             ['label', [
                 ['input', {
@@ -446,7 +449,7 @@ export default {
         ['br'],
         */
         ['label', [
-            ld('page_css'), nbsp.repeat(2),
+            ld('page_css'), nbsp2,
             ['textarea', {
                 name: il('pagecss'),
                 title: l('page_css_tips'),
@@ -455,7 +458,7 @@ export default {
         ]],
         ['br'],
         le('outputmode_tips', 'label', 'title', {}, [
-            ld('outputmode'), nbsp.repeat(2),
+            ld('outputmode'), nbsp2,
             // Todo: Could i18nize, but would need smaller values
             ['select', {name: il('outputmode')}, [
                 'table',
@@ -486,7 +489,7 @@ export default {
                 ['td', {colspan: 12, align: 'center'}, [
                     // Todo: Could allow random with fixed starting and/or ending range
                     ['label', [
-                        ld('rnd'), nbsp.repeat(3),
+                        ld('rnd'), nbsp3,
                         ['input', {
                             id: 'rand',
                             name: il('rand'),
@@ -495,7 +498,7 @@ export default {
                             checked: ($p.get('rand') === l('yes') ? 'checked' : undefined)
                         }]
                     ]],
-                    nbsp.repeat(3),
+                    nbsp3,
                     ['label', [
                         ld('verses-context'), nbsp,
                         ['input', {
@@ -506,7 +509,7 @@ export default {
                             value: $p.get('context')
                         }]
                     ]],
-                    nbsp.repeat(3),
+                    nbsp3,
                     le('view-random-URL', 'input', 'value', {
                         type: 'button',
                         $on: {
@@ -590,7 +593,7 @@ export default {
             })]
         ]]
     ]],
-    addBrowseFields: ({browseFields, fields, getFieldAliasOrName, ld, i, iil, $p, content}) => {
+    addBrowseFields: ({browseFields, fieldAliasesOrNames, ld, i, iil, $p, content}) => {
         const addRowContent = (rowContent) => {
             if (!rowContent || !rowContent.length) { return; }
             content.push(['tr', rowContent]);
@@ -603,7 +606,7 @@ export default {
                 ]
                 : '',
             [
-                ...(function () {
+                ...(() => {
                     const addBrowseFieldSet = (setType) =>
                         browseFields.reduce((rowContent, {fieldName, aliases, fieldSchema: {minimum, maximum}}, j) => {
                             const name = iil(setType) + (i + 1) + '-' + (j + 1);
@@ -621,15 +624,13 @@ export default {
                                             name, id, class: 'browseField',
                                             list: 'dl-' + id, value: $p.get(name),
                                             $on: setType === 'start'
-                                                ? {
-                                                    change (e) {
-                                                        $$('input.browseField').forEach((bf) => {
-                                                            if (bf.id.includes((i + 1) + '-' + (j + 1))) {
-                                                                bf.value = e.target.value;
-                                                            }
-                                                        });
-                                                    }
-                                                }
+                                                ? {change (e) {
+                                                    $$('input.browseField').forEach((bf) => {
+                                                        if (bf.id.includes((i + 1) + '-' + (j + 1))) {
+                                                            bf.value = e.target.value;
+                                                        }
+                                                    });
+                                                }}
                                                 : undefined
                                         }]
                                         : ['input', {
@@ -639,7 +640,7 @@ export default {
                                             max: maximum,
                                             value: $p.get(name)
                                         }],
-                                    nbsp.repeat(3)
+                                    nbsp3
                                 ]]
                             );
                             return rowContent;
@@ -648,11 +649,11 @@ export default {
                         addBrowseFieldSet('start'),
                         ['td', [
                             ['b', [ld('to')]],
-                            nbsp.repeat(3)
+                            nbsp3
                         ]],
                         addBrowseFieldSet('end')
                     ];
-                }()),
+                })(),
                 ['td', [
                     browseFields.length > 1 ? ld('versesendingdataoptional') : ''
                 ]]
@@ -684,21 +685,20 @@ export default {
                                                 max: maximum,
                                                 value: $p.get(name)
                                             }],
-                                        nbsp.repeat(2)
+                                        nbsp2
                                     ]]
                                 );
                                 return rowContent;
                             }, {'#': [
                                 ['td', {style: 'font-weight: bold; vertical-align: bottom;'}, [
-                                    ld('anchored-at') + nbsp.repeat(3)
+                                    ld('anchored-at') + nbsp3
                                 ]]
                             ]}),
                             ['td', [
                                 ['label', [
-                                    ld('field') + nbsp.repeat(2),
+                                    ld('field') + nbsp2,
                                     ['select', {name: iil('anchorfield') + (i + 1), size: '1'},
-                                        fields.map((field, j) => {
-                                            const fn = getFieldAliasOrName(field) || field;
+                                        fieldAliasesOrNames.map((fn, j) => {
                                             return ['option', [fn]];
                                         })
                                     ]
