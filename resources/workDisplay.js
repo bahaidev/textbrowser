@@ -32,7 +32,7 @@ export default async function workDisplay ({
 
     function _displayWork ({
         metadataObj, getFieldAliasOrName, schemaObj,
-        pluginKeys, pluginFieldMappings, pluginObjects
+        pluginsInWork, pluginFieldMappings, pluginObjects
     }) {
         const il = localizeParamNames
             ? key => l(['params', key])
@@ -74,21 +74,6 @@ export default async function workDisplay ({
 
         const fields = schemaItems.map((schemaItem) => schemaItem.title);
 
-        // Todo: Get automated working with fieldInfo, fieldMatchesLocale;
-        //        splice plugins into fieldInfo and alternative for
-        //        getting alias
-        if (pluginObjects) {
-            // console.log('aaap', pluginObjects[0].insertField());
-            console.log('pluginKeys', pluginKeys);
-            console.log('pluginFieldMappings', pluginFieldMappings);
-            console.log('pluginObjects', pluginObjects);
-            /*
-
-            "plugins": {
-                "synopsis": "plugins/synopsis.js"
-            },
-            */
-        }
         const fieldInfo = fields.map((field) => {
             return {
                 field,
@@ -99,6 +84,54 @@ export default async function workDisplay ({
             namespace: this.namespace,
             metadataObj, preferredLocale, schemaItems
         });
+
+        // Todo: Get automated working with fieldInfo, fieldMatchesLocale;
+        //        splice plugins into fieldInfo and alternative for
+        //        getting alias
+        if (pluginObjects) {
+            pluginFieldMappings.forEach((pluginFieldMapping, i) => {
+                const {
+                    placement,
+                    'applicable-fields': applicableFields
+                } = pluginFieldMapping;
+                const [pluginName, onByDefault] = pluginsInWork[i];
+                const {field = pluginName} = pluginObjects;
+                const fieldAliasOrName = pluginObjects.getFieldAliasOrName
+                    ? pluginObjects.getFieldAliasOrName({
+                        lang: this.lang,
+                        applicableFields
+                    })
+                    : field;
+                fieldInfo.splice(
+                    placement === 'end'
+                        ? Infinity // push
+                        : placement,
+                    0,
+                    {
+                        field,
+                        fieldAliasOrName,
+                        onByDefault,
+                        /*
+                        {fieldXYZ: {
+                            targetLanguage: "en"|["en"], // E.g., translating from Persian to English
+                            onByDefault: true // Overrides plugin default
+                        }}
+                        */
+                        applicableFields
+                    }
+                );
+            });
+            // console.log('aaap', pluginObjects[0].insertField());
+            console.log('pluginKeys', pluginsInWork);
+            console.log('pluginFieldMappings', pluginFieldMappings);
+            console.log('pluginObjects', pluginObjects);
+            /*
+
+            "plugins": {
+                "synopsis": "plugins/synopsis.js"
+            },
+            */
+        }
 
         const content = [];
         this.getBrowseFieldData({

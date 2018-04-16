@@ -365,14 +365,14 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
 
     const {
         fileData, lf, getFieldAliasOrName, schemaObj, metadataObj,
-        pluginKeys, pluginFieldMappings, pluginObjects
+        pluginsInWork, pluginFieldMappings, pluginObjects
     } = await getWorkData({
         files: files || this.files,
         allowPlugins: allowPlugins || this.allowPlugins,
         lang, fallbackLanguages, $p,
         basePath
     });
-    console.log('pluginKeys', pluginKeys);
+    console.log('pluginsInWork', pluginsInWork);
     console.log('pluginFieldMappings', pluginFieldMappings);
     console.log('pluginObjects', pluginObjects);
 

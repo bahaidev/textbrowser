@@ -78,8 +78,19 @@
                                                     "type": "object",
                                                     "properties": {
                                                         "targetLanguage": {
-                                                            "type": "string",
-                                                            "format": "language-code"
+                                                            "anyOf": [
+                                                                {
+                                                                    "type": "string",
+                                                                    "format": "language-code"
+                                                                },
+                                                                {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string",
+                                                                        "format": "language-code"
+                                                                    }
+                                                                }
+                                                            ]
                                                         },
                                                         "onByDefault": {
                                                             "type": "boolean"

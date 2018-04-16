@@ -6590,13 +6590,13 @@ const getWorkData = async function ({
         const possiblePluginFieldMappingForWork = pluginFieldMappingID[fileData.name];
         if (possiblePluginFieldMappingForWork) {
             pluginFieldsForWork = Object.keys(possiblePluginFieldMappingForWork);
-            pluginsInWork = Object.keys(filesObj.plugins).filter((p) => {
+            pluginsInWork = Object.entries(filesObj.plugins).filter(([p]) => {
                 return pluginFieldsForWork.includes(p);
             });
-            pluginFieldMappingForWork = pluginsInWork.map((p) => {
+            pluginFieldMappingForWork = pluginsInWork.map(([p]) => {
                 return possiblePluginFieldMappingForWork[p];
             });
-            pluginPaths = pluginsInWork.map((p) => filesObj.plugins[p].path);
+            pluginPaths = pluginsInWork.map(([, pluginObj]) => pluginObj.path);
             getPlugins = pluginsInWork;
         }
     }
@@ -6624,29 +6624,22 @@ const getWorkData = async function ({
         }
         return fieldName;
     };
-    const [
-        schemaObj,
-        pluginKeys, pluginFieldMappings,
-        pluginObjects
-    ] = await Promise.all([
+    const pluginFieldMappings = pluginFieldMappingForWork;
+
+    const [schemaObj, pluginObjects] = await Promise.all([
         getMetadata(schemaFile, schemaProperty, basePath),
-        ...(getPlugins
-            ? [
-                pluginsInWork, // Non-promise
-                pluginFieldMappingForWork, // Non-promise
-                Promise.all(
-                    pluginPaths.map((pluginPath) => {
-                        return window.importer(pluginPath);
-                    })
-                )
-            ]
-            : Array(3).fill(null)
-        )
+        getPlugins
+            ? Promise.all(
+                pluginPaths.map((pluginPath) => {
+                    return window.importer(pluginPath);
+                })
+            )
+            : null
     ]);
     return {
         fileData, lf, getFieldAliasOrName, metadataObj,
         schemaObj,
-        pluginKeys, pluginFieldMappings,
+        pluginsInWork, pluginFieldMappings,
         pluginObjects
     };
 };
@@ -6926,14 +6919,14 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
 
     const {
         fileData, lf, getFieldAliasOrName, schemaObj, metadataObj,
-        pluginKeys, pluginFieldMappings, pluginObjects
+        pluginsInWork, pluginFieldMappings, pluginObjects
     } = await getWorkData({
         files: files || this.files,
         allowPlugins: allowPlugins || this.allowPlugins,
         lang, fallbackLanguages, $p,
         basePath
     });
-    console.log('pluginKeys', pluginKeys);
+    console.log('pluginsInWork', pluginsInWork);
     console.log('pluginFieldMappings', pluginFieldMappings);
     console.log('pluginObjects', pluginObjects);
 
