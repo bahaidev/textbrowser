@@ -1,3 +1,18 @@
+// Todo: remember this locales choice by cookie?
+export const getPreferredLanguages = (lngs) => {
+    const langArr = [];
+    lngs.forEach((lng) => {
+        // Todo: Check for multiple separate hyphenated
+        //   groupings (for each supplied language)
+        const higherLocale = lng.replace(/-.*$/, '');
+        if (higherLocale === lng) {
+            langArr.push(lng);
+        } else {
+            langArr.push(lng, higherLocale);
+        }
+    });
+    return langArr;
+};
 export default function ({langData, $p}) {
     const langs = langData.languages;
     const localePass = (lcl) =>

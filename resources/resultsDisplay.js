@@ -363,10 +363,10 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     const $pRawEsc = (param) => escapeHTML($pRaw(param));
     const $pEscArbitrary = (param) => escapeHTML($p.get(param, true));
 
-    const [
+    const {
         fileData, lf, getFieldAliasOrName, schemaObj, metadataObj,
         pluginKeys, pluginFieldMappings, pluginObjects
-    ] = await getWorkData({
+    } = await getWorkData({
         files: files || this.files,
         allowPlugins: allowPlugins || this.allowPlugins,
         lang, fallbackLanguages, $p,

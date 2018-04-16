@@ -7,7 +7,8 @@ import Templates from './templates/index.js';
 
 export default async function workSelect ({
     files, lang, fallbackLanguages, $p, followParams
-} /* , l, defineFormatter */) {
+    /* , l, defineFormatter */
+}) {
     // We use getJSON instead of JsonRefs as we do not necessarily need to
     //    resolve the file contents here
     try {

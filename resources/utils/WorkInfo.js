@@ -109,10 +109,12 @@ export const getWorkData = async function ({
         }
         return fieldName;
     };
-    return Promise.all([
-        fileData, lf, getFieldAliasOrName, // Pass on non-promises
+    const [
+        schemaObj,
+        pluginKeys, pluginFieldMappings,
+        pluginObjects
+    ] = await Promise.all([
         getMetadata(schemaFile, schemaProperty, basePath),
-        metadataObj,
         ...(getPlugins
             ? [
                 pluginsInWork, // Non-promise
@@ -126,4 +128,10 @@ export const getWorkData = async function ({
             : Array(3).fill(null)
         )
     ]);
+    return {
+        fileData, lf, getFieldAliasOrName, metadataObj,
+        schemaObj,
+        pluginKeys, pluginFieldMappings,
+        pluginObjects
+    };
 };

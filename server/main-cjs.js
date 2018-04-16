@@ -2186,9 +2186,14 @@ const $$ = (sel) => [...document.querySelectorAll(sel)];
 
 /* eslint-env browser */
 
+const nbsp2 = nbsp.repeat(2);
+const nbsp3 = nbsp.repeat(3);
+
 const getDataForSerializingParamsAsURL = () => ({
     form: $('form#browse'),
-    random: $('#rand') || {}, // Todo: We don't need any default once random functionality is completed
+    // Todo: We don't need any default once random
+    //    functionality is completed
+    random: $('#rand') || {},
     checkboxes: $$('input[type=checkbox]')
 });
 
@@ -2199,7 +2204,7 @@ var workDisplay = {
         //    seemed to have issues in Firefox)
         ['div', {style: 'display: inline; direction: ' + fallbackDirection}, [message]],
     columnsTable: ({
-        ld, fields, $p, le, iil, l, getFieldAliasOrName,
+        ld, fieldInfo, $p, le, iil, l, getFieldAliasOrName,
         metadataObj, preferredLocale, schemaItems, getPreferredLanguages,
         fieldMatchesLocale
     }) => ['table', {
@@ -2229,7 +2234,7 @@ var workDisplay = {
             ]]
             */
         ]],
-        ...fields.map((fieldName, i) => {
+        ...fieldInfo.map((__, i) => {
             const idx = i + 1;
             const checkedIndex = 'checked' + idx;
             const fieldIndex = 'field' + idx;
@@ -2243,22 +2248,23 @@ var workDisplay = {
                         class: 'fieldSelector',
                         id: checkedIndex,
                         name: iil('checked') + idx,
-                        checked: $p.get(checkedIndex) === l('no')
-                            ? undefined
-                            : 'checked',
+                        checked: $p.get(checkedIndex) !== l('no'),
                         type: 'checkbox'
                     })
                 ]),
                 le('check-sequence', 'td', 'title', {}, [
                     ['select', {name: iil('field') + idx, id: fieldIndex, size: '1'},
-                        fields.map((field, j) => {
+                        fieldInfo.map(({field}, j) => {
                             const fn = getFieldAliasOrName(field) || field;
                             const matchedFieldParam = fieldParam && fieldParam === field;
-                            return (matchedFieldParam || (!$p.has(fieldIndex) && j === i))
-                                ? ['option', {
-                                    dataset: {name: field}, value: fn, selected: 'selected'
-                                }, [fn]]
-                                : ['option', {dataset: {name: field}, value: fn}, [fn]];
+                            return ['option', {
+                                dataset: {name: field},
+                                value: fn,
+                                selected: (
+                                    matchedFieldParam ||
+                                    (j === i && !$p.has(fieldIndex))
+                                )
+                            }, [fn]];
                         })
                     ]
                 ]),
@@ -2305,12 +2311,12 @@ var workDisplay = {
                     type: 'button',
                     $on: {
                         click () {
-                            fields.forEach((fld, i) => {
+                            fieldInfo.forEach(({field}, i) => {
                                 const idx = i + 1;
-                                // The following is redundant with 'fld' but may need to
+                                // The following is redundant with 'field' but may need to
                                 //     retrieve later out of order?
-                                const field = $('#field' + idx).selectedOptions[0].dataset.name;
-                                $('#checked' + idx).checked = fieldMatchesLocale(field);
+                                const fld = $('#field' + idx).selectedOptions[0].dataset.name;
+                                $('#checked' + idx).checked = fieldMatchesLocale(fld);
                             });
                         }
                     }
@@ -2323,7 +2329,7 @@ var workDisplay = {
     }, [
         ['h3', [ld('advancedformatting')]],
         ['label', [
-            ld('textcolor'), nbsp.repeat(2),
+            ld('textcolor'), nbsp2,
             ['select', {name: il('colorName')}, colors.map((color, i) => {
                 const atts = {value: l(['param_values', 'colors', color])};
                 if ($p.get('colorName') === l(['param_values', 'colors', color]) ||
@@ -2334,7 +2340,7 @@ var workDisplay = {
             })]
         ]],
         ['label', [
-            nbsp, ld('or_entercolor'), nbsp.repeat(2),
+            nbsp, ld('or_entercolor'), nbsp2,
             ['input', {
                 name: il('color'),
                 type: 'text',
@@ -2344,7 +2350,7 @@ var workDisplay = {
         ]],
         ['br'], ['br'],
         ['label', [
-            ld('backgroundcolor'), nbsp.repeat(2),
+            ld('backgroundcolor'), nbsp2,
             ['select', {name: il('bgcolorName')}, colors.map((color, i) => {
                 const atts = {value: l(['param_values', 'colors', color])};
                 if ($p.get('bgcolorName') === l(['param_values', 'colors', color]) ||
@@ -2355,7 +2361,7 @@ var workDisplay = {
             })]
         ]],
         ['label', [
-            nbsp, ld('or_entercolor'), nbsp.repeat(2),
+            nbsp, ld('or_entercolor'), nbsp2,
             ['input', {
                 name: il('bgcolor'),
                 type: 'text',
@@ -2365,7 +2371,7 @@ var workDisplay = {
         ]],
         ['br'], ['br'],
         ['label', [
-            ld('text_font'), nbsp.repeat(2),
+            ld('text_font'), nbsp2,
             // Todo: remove hard-coded direction if i81nizing; also i18nize fontSeq param
             ['select', {name: il('fontSeq'), dir: 'ltr'}, fonts.map((fontSeq, i) => {
                 const atts = {value: fontSeq};
@@ -2377,7 +2383,7 @@ var workDisplay = {
         ]],
         ['br'], ['br'],
         ['label', [
-            ld('font_style'), nbsp.repeat(2),
+            ld('font_style'), nbsp2,
             ['select', {name: il('fontstyle')}, [
                 'italic',
                 'normal',
@@ -2393,13 +2399,15 @@ var workDisplay = {
         ]],
         ['br'],
         ['div', [
-            ld('font_variant'), nbsp.repeat(3),
+            ld('font_variant'), nbsp3,
             ['label', [
                 ['input', {
                     name: il('fontvariant'),
                     type: 'radio',
                     value: l('normal'),
-                    checked: $p.get('fontvariant') === ld(['param_values', 'fontvariant', 'smallcaps']) ? undefined : 'checked'}],
+                    checked: $p.get('fontvariant') !==
+                        ld(['param_values', 'fontvariant', 'smallcaps'])
+                }],
                 ld(['param_values', 'fontvariant', 'normal']), nbsp
             ]],
             ['label', [
@@ -2407,14 +2415,16 @@ var workDisplay = {
                     name: il('fontvariant'),
                     type: 'radio',
                     value: l('smallcaps'),
-                    checked: $p.get('fontvariant') === ld(['param_values', 'fontvariant', 'smallcaps']) ? 'checked' : undefined}],
+                    checked: $p.get('fontvariant') ===
+                        ld(['param_values', 'fontvariant', 'smallcaps'])
+                }],
                 ld(['param_values', 'fontvariant', 'smallcaps']), nbsp
             ]]
         ]],
         ['br'],
         ['label', [
             // Todo: i18n and allow for normal/bold pulldown and float input?
-            ld('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp.repeat(2),
+            ld('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp2,
             ['input', {
                 name: il('fontweight'),
                 type: 'text',
@@ -2424,7 +2434,7 @@ var workDisplay = {
         ]],
         ['br'],
         ['label', [
-            ld('font_size'), ' (14pt, 14px, small, 75%, etc.):', nbsp.repeat(2),
+            ld('font_size'), ' (14pt, 14px, small, 75%, etc.):', nbsp2,
             ['input', {
                 name: il('fontsize'),
                 type: 'text',
@@ -2479,7 +2489,7 @@ var workDisplay = {
             ld('tableformatting')
         ]),
         ['div', [
-            ld('header_wstyles'), nbsp.repeat(2),
+            ld('header_wstyles'), nbsp2,
             ...([
                 ['yes', ld(['param_values', 'y'])],
                 ['no', ld(['param_values', 'n'])],
@@ -2491,13 +2501,14 @@ var workDisplay = {
                         type: 'radio',
                         value: val,
                         checked: $p.get('header') === val ||
-                            (!$p.has('header') && i === 1) ? 'checked' : undefined}],
-                    ld(key), (i === arr.length - 1 ? '' : nbsp.repeat(3))
+                            (!$p.has('header') && i === 1)
+                    }],
+                    ld(key), (i === arr.length - 1 ? '' : nbsp3)
                 ]]
             ))
         ]],
         ['div', [
-            ld('footer_wstyles'), nbsp.repeat(2),
+            ld('footer_wstyles'), nbsp2,
             ...([
                 ['yes', ld(['param_values', 'y'])],
                 ['no', ld(['param_values', 'n'])],
@@ -2509,8 +2520,9 @@ var workDisplay = {
                         type: 'radio',
                         value: val,
                         checked: $p.get('footer') === val ||
-                            (!$p.has('footer') && i === 2) ? 'checked' : undefined}],
-                    ld(key), (i === arr.length - 1 ? '' : nbsp.repeat(3))
+                            (!$p.has('footer') && i === 2)
+                    }],
+                    ld(key), (i === arr.length - 1 ? '' : nbsp3)
                 ]]
             ))
         ]],
@@ -2519,12 +2531,13 @@ var workDisplay = {
                 name: il('headerfooterfixed'),
                 type: 'checkbox',
                 value: l('yes'),
-                checked: $p.get('headerfooterfixed') === l('yes') ? 'checked' : undefined}],
-            nbsp.repeat(2), ld('headerfooterfixed-wishtoscroll')
+                checked: $p.get('headerfooterfixed') === l('yes')
+            }],
+            nbsp2, ld('headerfooterfixed-wishtoscroll')
         ]],
         ['br'],
         ['div', [
-            ld('caption_wstyles'), nbsp.repeat(2),
+            ld('caption_wstyles'), nbsp2,
             ...([
                 ['yes', ld(['param_values', 'y'])],
                 ['no', ld(['param_values', 'n'])],
@@ -2536,52 +2549,56 @@ var workDisplay = {
                         type: 'radio',
                         value: val,
                         checked: $p.get('caption') === val ||
-                            (!$p.has('caption') && i === 2) ? 'checked' : undefined}],
-                    ld(key), (i === arr.length - 1 ? '' : nbsp.repeat(3))
+                            (!$p.has('caption') && i === 2)
+                    }],
+                    ld(key), (i === arr.length - 1 ? '' : nbsp3)
                 ]]
             ))
         ]],
         ['br'],
         ['div', [
-            ld('table_wborder'), nbsp.repeat(2),
+            ld('table_wborder'), nbsp2,
             ['label', [
                 ['input', {
                     name: il('border'),
                     type: 'radio',
                     value: '1',
-                    checked: $p.get('border') === '0' ? undefined : 'checked'}],
-                ld('yes'), nbsp.repeat(3)
+                    checked: $p.get('border') !== '0'
+                }],
+                ld('yes'), nbsp3
             ]],
             ['label', [
                 ['input', {
                     name: il('border'),
                     type: 'radio',
                     value: '0',
-                    checked: $p.get('border') === '0' ? 'checked' : undefined}],
+                    checked: $p.get('border') === '0'}],
                 ld('no')
             ]]
         ]],
         ['div', [
-            ld('interlin_repeat_field_names'), nbsp.repeat(2),
+            ld('interlin_repeat_field_names'), nbsp2,
             ['label', [
                 ['input', {
                     name: il('interlintitle'),
                     type: 'radio',
                     value: '1',
-                    checked: $p.get('interlintitle') === '0' ? undefined : 'checked'}],
-                ld('yes'), nbsp.repeat(3)
+                    checked: $p.get('interlintitle') !== '0'
+                }],
+                ld('yes'), nbsp3
             ]],
             ['label', [
                 ['input', {
                     name: il('interlintitle'),
                     type: 'radio',
                     value: '0',
-                    checked: $p.get('interlintitle') === '0' ? 'checked' : undefined}],
+                    checked: $p.get('interlintitle') === '0'
+                }],
                 ld('no')
             ]]
         ]],
         ['label', [
-            ld('interlintitle_css'), nbsp.repeat(2),
+            ld('interlintitle_css'), nbsp2,
             ['input', {
                 name: il('interlintitle_css'),
                 type: 'text',
@@ -2597,8 +2614,9 @@ var workDisplay = {
                 name: il('transpose'),
                 type: 'checkbox',
                 value: l('yes'),
-                checked: $p.get('transpose') === l('yes') ? 'checked' : undefined}],
-            nbsp.repeat(2), ld('transpose')
+                checked: $p.get('transpose') === l('yes')
+            }],
+            nbsp2, ld('transpose')
         ]],
         */
         ['br'],
@@ -2607,28 +2625,30 @@ var workDisplay = {
         ]),
         /*
         ['label', [
-            ld('speech_controls'), nbsp.repeat(2),
+            ld('speech_controls'), nbsp2,
             ['label', [
                 ['input', {
                     name: il('speech'),
                     type: 'radio',
                     value: '1',
-                    checked: $p.get('speech') === '1' ? 'checked' : undefined}],
-                ld('yes'), nbsp.repeat(3)
+                    checked: $p.get('speech') === '1'
+                }],
+                ld('yes'), nbsp3
             ]],
             ['label', [
                 ['input', {
                     name: il('speech'),
                     type: 'radio',
                     value: '0',
-                    checked: $p.get('speech') === '1' ? undefined : 'checked'}],
+                    checked: $p.get('speech') !== '1'
+                }],
                 ld('no')
             ]]
         ]],
         ['br'],
         */
         ['label', [
-            ld('page_css'), nbsp.repeat(2),
+            ld('page_css'), nbsp2,
             ['textarea', {
                 name: il('pagecss'),
                 title: l('page_css_tips'),
@@ -2637,7 +2657,7 @@ var workDisplay = {
         ]],
         ['br'],
         le('outputmode_tips', 'label', 'title', {}, [
-            ld('outputmode'), nbsp.repeat(2),
+            ld('outputmode'), nbsp2,
             // Todo: Could i18nize, but would need smaller values
             ['select', {name: il('outputmode')}, [
                 'table',
@@ -2668,16 +2688,16 @@ var workDisplay = {
                 ['td', {colspan: 12, align: 'center'}, [
                     // Todo: Could allow random with fixed starting and/or ending range
                     ['label', [
-                        ld('rnd'), nbsp.repeat(3),
+                        ld('rnd'), nbsp3,
                         ['input', {
                             id: 'rand',
                             name: il('rand'),
                             type: 'checkbox',
                             value: l('yes'),
-                            checked: ($p.get('rand') === l('yes') ? 'checked' : undefined)
+                            checked: $p.get('rand') === l('yes')
                         }]
                     ]],
-                    nbsp.repeat(3),
+                    nbsp3,
                     ['label', [
                         ld('verses-context'), nbsp,
                         ['input', {
@@ -2688,7 +2708,7 @@ var workDisplay = {
                             value: $p.get('context')
                         }]
                     ]],
-                    nbsp.repeat(3),
+                    nbsp3,
                     le('view-random-URL', 'input', 'value', {
                         type: 'button',
                         $on: {
@@ -2772,7 +2792,7 @@ var workDisplay = {
             })]
         ]]
     ]],
-    addBrowseFields: ({browseFields, fields, getFieldAliasOrName, ld, i, iil, $p, content}) => {
+    addBrowseFields: ({browseFields, fieldInfo, ld, i, iil, $p, content}) => {
         const addRowContent = (rowContent) => {
             if (!rowContent || !rowContent.length) { return; }
             content.push(['tr', rowContent]);
@@ -2785,9 +2805,11 @@ var workDisplay = {
                 ]
                 : '',
             [
-                ...(function () {
+                ...(() => {
                     const addBrowseFieldSet = (setType) =>
-                        browseFields.reduce((rowContent, {fieldName, aliases, fieldSchema: {minimum, maximum}}, j) => {
+                        browseFields.reduce((rowContent, {
+                            fieldName, aliases, fieldSchema: {minimum, maximum}
+                        }, j) => {
                             const name = iil(setType) + (i + 1) + '-' + (j + 1);
                             const id = name;
                             rowContent['#'].push(
@@ -2798,30 +2820,28 @@ var workDisplay = {
                                     aliases ? ['datalist', {id: 'dl-' + id},
                                         aliases.map((alias) => ['option', [alias]])
                                     ] : '',
-                                    aliases
-                                        ? ['input', {
-                                            name, id, class: 'browseField',
-                                            list: 'dl-' + id, value: $p.get(name),
-                                            $on: setType === 'start'
-                                                ? {
-                                                    change (e) {
-                                                        $$('input.browseField').forEach((bf) => {
-                                                            if (bf.id.includes((i + 1) + '-' + (j + 1))) {
-                                                                bf.value = e.target.value;
-                                                            }
-                                                        });
+                                    aliases ? ['input', {
+                                        name, id, class: 'browseField',
+                                        list: 'dl-' + id, value: $p.get(name),
+                                        $on: setType === 'start'
+                                            ? {change (e) {
+                                                $$('input.browseField').forEach((bf) => {
+                                                    if (bf.id.includes((i + 1) + '-' +
+                                                        (j + 1))
+                                                    ) {
+                                                        bf.value = e.target.value;
                                                     }
-                                                }
-                                                : undefined
-                                        }]
-                                        : ['input', {
-                                            name, id,
-                                            type: 'number',
-                                            min: minimum,
-                                            max: maximum,
-                                            value: $p.get(name)
-                                        }],
-                                    nbsp.repeat(3)
+                                                });
+                                            }}
+                                            : undefined
+                                    }] : ['input', {
+                                        name, id,
+                                        type: 'number',
+                                        min: minimum,
+                                        max: maximum,
+                                        value: $p.get(name)
+                                    }],
+                                    nbsp3
                                 ]]
                             );
                             return rowContent;
@@ -2830,11 +2850,11 @@ var workDisplay = {
                         addBrowseFieldSet('start'),
                         ['td', [
                             ['b', [ld('to')]],
-                            nbsp.repeat(3)
+                            nbsp3
                         ]],
                         addBrowseFieldSet('end')
                     ];
-                }()),
+                })(),
                 ['td', [
                     browseFields.length > 1 ? ld('versesendingdataoptional') : ''
                 ]]
@@ -2843,7 +2863,11 @@ var workDisplay = {
                 ['td', {colspan: 4 * browseFields.length + 2 + 1, align: 'center'}, [
                     ['table', [
                         ['tr', [
-                            browseFields.reduce((rowContent, {fieldName, aliases, fieldSchema: {minimum, maximum}}, j) => {
+                            browseFields.reduce((
+                                rowContent, {
+                                    fieldName, aliases, fieldSchema: {minimum, maximum}
+                                }, j
+                            ) => {
                                 const name = iil('anchor') + (i + 1) + '-' + (j + 1);
                                 const id = name;
                                 rowContent['#'].push(
@@ -2866,22 +2890,21 @@ var workDisplay = {
                                                 max: maximum,
                                                 value: $p.get(name)
                                             }],
-                                        nbsp.repeat(2)
+                                        nbsp2
                                     ]]
                                 );
                                 return rowContent;
                             }, {'#': [
                                 ['td', {style: 'font-weight: bold; vertical-align: bottom;'}, [
-                                    ld('anchored-at') + nbsp.repeat(3)
+                                    ld('anchored-at') + nbsp3
                                 ]]
                             ]}),
                             ['td', [
                                 ['label', [
-                                    ld('field') + nbsp.repeat(2),
+                                    ld('field') + nbsp2,
                                     ['select', {name: iil('anchorfield') + (i + 1), size: '1'},
-                                        fields.map((field, j) => {
-                                            const fn = getFieldAliasOrName(field) || field;
-                                            return ['option', [fn]];
+                                        fieldInfo.map(({fieldAliasOrName}) => {
+                                            return ['option', [fieldAliasOrName]];
                                         })
                                     ]
                                 ]]
@@ -2893,7 +2916,7 @@ var workDisplay = {
         ].forEach(addRowContent);
     },
     main: ({
-        l, namespace, heading, fallbackDirection, imfl, langs, fields, localizeParamNames,
+        l, namespace, heading, fallbackDirection, imfl, langs, fieldInfo, localizeParamNames,
         serializeParamsAsURL,
         hideFormattingSection, $p,
         metadataObj, il, le, ld, iil, getPreferredLanguages, fieldMatchesLocale,
@@ -2939,9 +2962,9 @@ var workDisplay = {
                             ['tr', {valign: 'top'}, [
                                 ['td', [
                                     Templates.workDisplay.columnsTable({
-                                        ld, fields, $p, le, iil, l, getFieldAliasOrName,
-                                        metadataObj, preferredLocale, schemaItems, getPreferredLanguages,
-                                        fieldMatchesLocale
+                                        ld, fieldInfo, $p, le, iil, l, getFieldAliasOrName,
+                                        metadataObj, preferredLocale, schemaItems,
+                                        getPreferredLanguages, fieldMatchesLocale
                                     }),
                                     le('save-settings-URL', 'input', 'value', {
                                         type: 'button',
@@ -3599,6 +3622,34 @@ const escapeHTML = (s) => {
             .replace(/>/, '&gt;');
 };
 
+// Todo: remember this locales choice by cookie?
+function getLanguageInfo ({langData, $p}) {
+    const langs = langData.languages;
+    const localePass = (lcl) =>
+        langs.some(({code}) => code === lcl) ? lcl : false;
+    const languageParam = $p.get('lang', true);
+    // Todo: We could (unless overridden by another button) assume the
+    //         browser language based on fallbackLanguages instead
+    //         of giving a choice
+    const navLangs = navigator.languages.filter(localePass);
+    const fallbackLanguages = navLangs.length
+        ? navLangs
+        : [localePass(navigator.language) || 'en-US'];
+    // We need a default to display a default title
+    const language = languageParam || fallbackLanguages[0];
+
+    const preferredLangs = language.split('.');
+    const lang = preferredLangs.concat(fallbackLanguages);
+
+    return {
+        lang,
+        langs,
+        languageParam,
+        fallbackLanguages
+    };
+}
+
+/* eslint-env browser */
 // Keep this as the last import for Rollup
 const JsonRefs = require('json-refs');
 
@@ -6573,10 +6624,12 @@ const getWorkData = async function ({
         }
         return fieldName;
     };
-    return Promise.all([
-        fileData, lf, getFieldAliasOrName, // Pass on non-promises
+    const [
+        schemaObj,
+        pluginKeys, pluginFieldMappings,
+        pluginObjects
+    ] = await Promise.all([
         getMetadata(schemaFile, schemaProperty, basePath),
-        metadataObj,
         ...(getPlugins
             ? [
                 pluginsInWork, // Non-promise
@@ -6590,6 +6643,12 @@ const getWorkData = async function ({
             : Array(3).fill(null)
         )
     ]);
+    return {
+        fileData, lf, getFieldAliasOrName, metadataObj,
+        schemaObj,
+        pluginKeys, pluginFieldMappings,
+        pluginObjects
+    };
 };
 
 /* eslint-env browser */
@@ -6865,10 +6924,10 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     const $pRawEsc = (param) => escapeHTML($pRaw(param));
     const $pEscArbitrary = (param) => escapeHTML($p.get(param, true));
 
-    const [
+    const {
         fileData, lf, getFieldAliasOrName, schemaObj, metadataObj,
         pluginKeys, pluginFieldMappings, pluginObjects
-    ] = await getWorkData({
+    } = await getWorkData({
         files: files || this.files,
         allowPlugins: allowPlugins || this.allowPlugins,
         lang, fallbackLanguages, $p,
@@ -7079,32 +7138,6 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         templateArgs
     };
 };
-
-function getLanguageInfo ({langData, $p}) {
-    const langs = langData.languages;
-    const localePass = (lcl) =>
-        langs.some(({code}) => code === lcl) ? lcl : false;
-    const languageParam = $p.get('lang', true);
-    // Todo: We could (unless overridden by another button) assume the
-    //         browser language based on fallbackLanguages instead
-    //         of giving a choice
-    const navLangs = navigator.languages.filter(localePass);
-    const fallbackLanguages = navLangs.length
-        ? navLangs
-        : [localePass(navigator.language) || 'en-US'];
-    // We need a default to display a default title
-    const language = languageParam || fallbackLanguages[0];
-
-    const preferredLangs = language.split('.');
-    const lang = preferredLangs.concat(fallbackLanguages);
-
-    return {
-        lang,
-        langs,
-        languageParam,
-        fallbackLanguages
-    };
-}
 
 function getIMFFallbackResults ({
     $p,

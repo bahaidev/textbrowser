@@ -1,3 +1,5 @@
+/* eslint-env browser */
+import {getPreferredLanguages} from './getLanguageInfo.js';
 // Keep this as the last import for Rollup
 import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 
@@ -151,4 +153,41 @@ export const getBrowseFieldData = function ({
         );
         callback({setName, browseFields, i, presort}); // eslint-disable-line standard/no-callback-literal
     });
+};
+
+export const getFieldMatchesLocale = function ({
+    namespace, metadataObj, preferredLocale, schemaItems
+}) {
+    return function (field) {
+        const metaFieldInfo = metadataObj && metadataObj.fields &&
+            metadataObj.fields[field];
+        let metaLang;
+        if (metaFieldInfo) {
+            metaLang = metadataObj.fields[field].lang;
+        }
+        const localeStrings = metadataObj &&
+            metadataObj['localization-strings'];
+
+        // If this is a localized field (e.g., enum), we don't want
+        //  to avoid as may be translated (should check though)
+        const hasFieldValue = localeStrings &&
+            Object.keys(localeStrings).some(lng => {
+                const fv = localeStrings[lng] &&
+                    localeStrings[lng].fieldvalue;
+                return fv && fv[field];
+            });
+
+        // Todo: Add to this optionally with one-off tag input box
+        // Todo: Switch to fallbackLanguages so can default to
+        //    navigator.languages?
+        const langCodes = localStorage.getItem(namespace + '-langCodes');
+        const preferredLanguages = getPreferredLanguages(
+            (langCodes && JSON.parse(langCodes)) || [preferredLocale]
+        );
+        return hasFieldValue ||
+            (metaLang && preferredLanguages.includes(metaLang)) ||
+            schemaItems.some(item =>
+                item.title === field && item.type !== 'string'
+            );
+    };
 };

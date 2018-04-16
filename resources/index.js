@@ -319,26 +319,27 @@ TextBrowser.prototype.paramChange = async function () {
         languageSelect(l);
         return;
     }
-    const localeCallback = (/* l, defineFormatter */ ...args) => {
-        const [l10n] = args;
-        this.l10n = l10n;
-        $p.l10n = l10n;
+    const localeCallback = (l /* defineFormatter */) => {
+        this.l10n = l;
+        $p.l10n = l;
 
         const work = $p.get('work');
         if (!work) {
             workSelect({
+                // l,
                 files: this.files,
                 lang, fallbackLanguages,
                 $p, followParams
-            }, ...args);
+            });
             return true;
         }
         if (!result) {
             this.workDisplay({
+                l,
                 lang, preferredLocale,
                 fallbackLanguages,
                 $p, localeFromLangData
-            }, ...args);
+            });
             return true;
         }
         return false;

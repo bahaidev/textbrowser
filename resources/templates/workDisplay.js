@@ -22,7 +22,7 @@ export default {
         //    seemed to have issues in Firefox)
         ['div', {style: 'display: inline; direction: ' + fallbackDirection}, [message]],
     columnsTable: ({
-        ld, fields, $p, le, iil, l, getFieldAliasOrName,
+        ld, fieldInfo, $p, le, iil, l, getFieldAliasOrName,
         metadataObj, preferredLocale, schemaItems, getPreferredLanguages,
         fieldMatchesLocale
     }) => ['table', {
@@ -52,7 +52,7 @@ export default {
             ]]
             */
         ]],
-        ...fields.map((__, i) => {
+        ...fieldInfo.map((__, i) => {
             const idx = i + 1;
             const checkedIndex = 'checked' + idx;
             const fieldIndex = 'field' + idx;
@@ -72,7 +72,7 @@ export default {
                 ]),
                 le('check-sequence', 'td', 'title', {}, [
                     ['select', {name: iil('field') + idx, id: fieldIndex, size: '1'},
-                        fields.map((field, j) => {
+                        fieldInfo.map(({field}, j) => {
                             const fn = getFieldAliasOrName(field) || field;
                             const matchedFieldParam = fieldParam && fieldParam === field;
                             return ['option', {
@@ -80,7 +80,7 @@ export default {
                                 value: fn,
                                 selected: (
                                     matchedFieldParam ||
-                                    (!$p.has(fieldIndex) && j === i)
+                                    (j === i && !$p.has(fieldIndex))
                                 )
                             }, [fn]];
                         })
@@ -129,12 +129,12 @@ export default {
                     type: 'button',
                     $on: {
                         click () {
-                            fields.forEach((fld, i) => {
+                            fieldInfo.forEach(({field}, i) => {
                                 const idx = i + 1;
-                                // The following is redundant with 'fld' but may need to
+                                // The following is redundant with 'field' but may need to
                                 //     retrieve later out of order?
-                                const field = $('#field' + idx).selectedOptions[0].dataset.name;
-                                $('#checked' + idx).checked = fieldMatchesLocale(field);
+                                const fld = $('#field' + idx).selectedOptions[0].dataset.name;
+                                $('#checked' + idx).checked = fieldMatchesLocale(fld);
                             });
                         }
                     }
@@ -610,7 +610,7 @@ export default {
             })]
         ]]
     ]],
-    addBrowseFields: ({browseFields, fieldAliasesOrNames, ld, i, iil, $p, content}) => {
+    addBrowseFields: ({browseFields, fieldInfo, ld, i, iil, $p, content}) => {
         const addRowContent = (rowContent) => {
             if (!rowContent || !rowContent.length) { return; }
             content.push(['tr', rowContent]);
@@ -721,8 +721,8 @@ export default {
                                 ['label', [
                                     ld('field') + nbsp2,
                                     ['select', {name: iil('anchorfield') + (i + 1), size: '1'},
-                                        fieldAliasesOrNames.map((fn, j) => {
-                                            return ['option', [fn]];
+                                        fieldInfo.map(({fieldAliasOrName}) => {
+                                            return ['option', [fieldAliasOrName]];
                                         })
                                     ]
                                 ]]
@@ -734,7 +734,7 @@ export default {
         ].forEach(addRowContent);
     },
     main: ({
-        l, namespace, heading, fallbackDirection, imfl, langs, fields, localizeParamNames,
+        l, namespace, heading, fallbackDirection, imfl, langs, fieldInfo, localizeParamNames,
         serializeParamsAsURL,
         hideFormattingSection, $p,
         metadataObj, il, le, ld, iil, getPreferredLanguages, fieldMatchesLocale,
@@ -780,7 +780,7 @@ export default {
                             ['tr', {valign: 'top'}, [
                                 ['td', [
                                     Templates.workDisplay.columnsTable({
-                                        ld, fields, $p, le, iil, l, getFieldAliasOrName,
+                                        ld, fieldInfo, $p, le, iil, l, getFieldAliasOrName,
                                         metadataObj, preferredLocale, schemaItems,
                                         getPreferredLanguages, fieldMatchesLocale
                                     }),

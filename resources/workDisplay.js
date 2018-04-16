@@ -1,14 +1,16 @@
 /* eslint-env browser */
 import IMF from 'imf';
+import getSerializeParamsAsURL from './utils/getSerializeParamsAsURL.js';
 
-import {serialize as formSerialize} from 'form-serialize';
-import {getMetaProp} from './utils/Metadata.js';
+import {getPreferredLanguages} from './utils/getLanguageInfo.js';
+import {getMetaProp, getFieldMatchesLocale} from './utils/Metadata.js';
 
 import Templates from './templates/index.js';
 
 export default async function workDisplay ({
+    l,
     lang, preferredLocale, localeFromLangData, fallbackLanguages, $p
-}, l) {
+}) {
     const that = this;
     const langs = this.langData.languages;
 
@@ -28,7 +30,10 @@ export default async function workDisplay ({
             prefFormatting !== 'false' && this.hideFormattingSection
         );
 
-    function _displayWork (l, schemaObj, metadataObj, getFieldAliasOrName) {
+    function _displayWork ({
+        metadataObj, getFieldAliasOrName, schemaObj,
+        pluginKeys, pluginFieldMappings, pluginObjects
+    }) {
         const il = localizeParamNames
             ? key => l(['params', key])
             : key => key;
@@ -65,109 +70,42 @@ export default async function workDisplay ({
                     Templates.workDisplay.bdo({fallbackDirection, message})
             });
 
-        // Todo: remember this locales choice by cookie?
-        const getPreferredLanguages = (lngs) => {
-            const langArr = [];
-            lngs.forEach((lng) => {
-                // Todo: Check for multiple separate hyphenated
-                //   groupings (for each supplied language)
-                const higherLocale = lng.replace(/-.*$/, '');
-                if (higherLocale === lng) {
-                    langArr.push(lng);
-                } else {
-                    langArr.push(lng, higherLocale);
-                }
-            });
-            return langArr;
-        };
-
-        function fieldMatchesLocale (field) {
-            const metaFieldInfo = metadataObj && metadataObj.fields &&
-                metadataObj.fields[field];
-            let metaLang;
-            if (metaFieldInfo) {
-                metaLang = metadataObj.fields[field].lang;
-            }
-            const localeStrings = metadataObj &&
-                metadataObj['localization-strings'];
-
-            // If this is a localized field (e.g., enum), we don't want
-            //  to avoid as may be translated (should check though)
-            const hasFieldValue = localeStrings &&
-                Object.keys(localeStrings).some(lng => {
-                    const fv = localeStrings[lng] &&
-                        localeStrings[lng].fieldvalue;
-                    return fv && fv[field];
-                });
-
-            // Todo: Add to this optionally with one-off tag input box
-            // Todo: Switch to fallbackLanguages so can default to
-            //    navigator.languages?
-            const langCodes = localStorage.getItem(that.namespace + '-langCodes');
-            const preferredLanguages = getPreferredLanguages(
-                (langCodes && JSON.parse(langCodes)) || [preferredLocale]
-            );
-            return hasFieldValue ||
-                (metaLang && preferredLanguages.includes(metaLang)) ||
-                schemaItems.some(item =>
-                    item.title === field && item.type !== 'string'
-                );
-        }
-
         const schemaItems = schemaObj.items.items;
-        const content = [];
-
-        function serializeParamsAsURL ({form, random, checkboxes}, type) {
-            const paramsCopy = new URLSearchParams($p.params);
-            const formParamsHash = formSerialize(form, {hash: true});
-
-            Object.keys(formParamsHash).forEach((key) => {
-                paramsCopy.set(key, formParamsHash[key]);
-            });
-
-            // Follow the same style (and order) for checkboxes
-            paramsCopy.delete(il('rand'));
-            paramsCopy.set(il('rand'), random.checked ? l('yes') : l('no'));
-
-            // We want checkboxes to typically show by default, so we cannot use the
-            //    standard serialization
-            checkboxes.forEach((checkbox) => {
-                // Let's ensure the checked items are all together (at the end)
-                paramsCopy.delete(checkbox.name);
-                paramsCopy.set(checkbox.name, checkbox.checked ? l('yes') : l('no'));
-            });
-
-            switch (type) {
-            case 'saveSettings': {
-                // In case it was added previously on
-                //    this page, let's remove it.
-                paramsCopy.delete(il('rand'));
-                break;
-            }
-            case 'randomResult':
-            case 'result': {
-                // In case it was added previously on this page,
-                //    let's put random again toward the end.
-                if (type === 'randomResult' || random.checked) {
-                    paramsCopy.delete(il('rand'));
-                    paramsCopy.set(il('rand'), l('yes'));
-                }
-                paramsCopy.set(il('result'), l('yes'));
-                break;
-            }
-            }
-            return window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
-        }
 
         const fields = schemaItems.map((schemaItem) => schemaItem.title);
-        const fieldAliasesOrNames = fields.map((field) => {
-            return getFieldAliasOrName(field) || field;
+
+        // Todo: Get automated working with fieldInfo, fieldMatchesLocale;
+        //        splice plugins into fieldInfo and alternative for
+        //        getting alias
+        if (pluginObjects) {
+            // console.log('aaap', pluginObjects[0].insertField());
+            console.log('pluginKeys', pluginKeys);
+            console.log('pluginFieldMappings', pluginFieldMappings);
+            console.log('pluginObjects', pluginObjects);
+            /*
+
+            "plugins": {
+                "synopsis": "plugins/synopsis.js"
+            },
+            */
+        }
+        const fieldInfo = fields.map((field) => {
+            return {
+                field,
+                fieldAliasOrName: getFieldAliasOrName(field) || field
+            };
         });
+        const fieldMatchesLocale = getFieldMatchesLocale({
+            namespace: this.namespace,
+            metadataObj, preferredLocale, schemaItems
+        });
+
+        const content = [];
         this.getBrowseFieldData({
             metadataObj, schemaItems, getFieldAliasOrName,
             callback ({browseFields, i}) {
                 Templates.workDisplay.addBrowseFields({
-                    browseFields, fieldAliasesOrNames,
+                    browseFields, fieldInfo,
                     ld, i, iil, $p, content
                 });
             }
@@ -178,13 +116,14 @@ export default async function workDisplay ({
             il, l, ld, le, $p, serializeParamsAsURL, content
         });
         */
+        const serializeParamsAsURL = getSerializeParamsAsURL({l, il, $p});
 
         // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
         const heading = getMetaProp(lang, metadataObj, 'heading');
         Templates.workDisplay.main({
             l, namespace: that.namespace, heading,
             imfl, fallbackDirection,
-            langs, fields, localizeParamNames,
+            langs, fieldInfo, localizeParamNames,
             serializeParamsAsURL, hideFormattingSection, $p,
             metadataObj, il, le, ld, iil,
             getPreferredLanguages, fieldMatchesLocale,
@@ -193,26 +132,10 @@ export default async function workDisplay ({
     }
 
     try {
-        const [
-            fileData, lf, getFieldAliasOrName, schemaObj,
-            metadataObj, pluginKeys, pluginFieldMappings,
-            pluginObjects
-        ] = await this.getWorkData({
+        const {lf, fileData, metadataObj, ...args} = await this.getWorkData({
             lang, fallbackLanguages, $p
         });
 
-        if (pluginObjects) {
-            // console.log('aaap', pluginObjects[0].insertField());
-            console.log('pluginKeys', pluginKeys);
-            console.log('pluginFieldMappings', pluginFieldMappings);
-            /*
-            console.log('pluginObjects', pluginObjects);
-
-            "plugins": {
-                "synopsis": "plugins/synopsis.js"
-            },
-            */
-        }
         document.title = lf({
             key: 'browserfile-workdisplay',
             values: {
@@ -222,7 +145,7 @@ export default async function workDisplay ({
             },
             fallback: true
         });
-        _displayWork.call(this, l, schemaObj, metadataObj, getFieldAliasOrName);
+        _displayWork.call(this, {metadataObj, ...args});
     } catch (err) {
         alert(err);
     }
