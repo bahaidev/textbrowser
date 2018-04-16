@@ -9,7 +9,9 @@ const nbsp3 = nbsp.repeat(3);
 
 const getDataForSerializingParamsAsURL = () => ({
     form: $('form#browse'),
-    random: $('#rand') || {}, // Todo: We don't need any default once random functionality is completed
+    // Todo: We don't need any default once random
+    //    functionality is completed
+    random: $('#rand') || {},
     checkboxes: $$('input[type=checkbox]')
 });
 
@@ -220,7 +222,10 @@ export default {
                     name: il('fontvariant'),
                     type: 'radio',
                     value: l('normal'),
-                    checked: $p.get('fontvariant') === ld(['param_values', 'fontvariant', 'smallcaps']) ? undefined : 'checked'}],
+                    checked: $p.get('fontvariant') ===
+                        ld(['param_values', 'fontvariant', 'smallcaps'])
+                        ? undefined : 'checked'
+                }],
                 ld(['param_values', 'fontvariant', 'normal']), nbsp
             ]],
             ['label', [
@@ -228,7 +233,10 @@ export default {
                     name: il('fontvariant'),
                     type: 'radio',
                     value: l('smallcaps'),
-                    checked: $p.get('fontvariant') === ld(['param_values', 'fontvariant', 'smallcaps']) ? 'checked' : undefined}],
+                    checked: $p.get('fontvariant') ===
+                        ld(['param_values', 'fontvariant', 'smallcaps'])
+                        ? 'checked' : undefined
+                }],
                 ld(['param_values', 'fontvariant', 'smallcaps']), nbsp
             ]]
         ]],
@@ -608,7 +616,9 @@ export default {
             [
                 ...(() => {
                     const addBrowseFieldSet = (setType) =>
-                        browseFields.reduce((rowContent, {fieldName, aliases, fieldSchema: {minimum, maximum}}, j) => {
+                        browseFields.reduce((rowContent, {
+                            fieldName, aliases, fieldSchema: {minimum, maximum}
+                        }, j) => {
                             const name = iil(setType) + (i + 1) + '-' + (j + 1);
                             const id = name;
                             rowContent['#'].push(
@@ -619,27 +629,27 @@ export default {
                                     aliases ? ['datalist', {id: 'dl-' + id},
                                         aliases.map((alias) => ['option', [alias]])
                                     ] : '',
-                                    aliases
-                                        ? ['input', {
-                                            name, id, class: 'browseField',
-                                            list: 'dl-' + id, value: $p.get(name),
-                                            $on: setType === 'start'
-                                                ? {change (e) {
-                                                    $$('input.browseField').forEach((bf) => {
-                                                        if (bf.id.includes((i + 1) + '-' + (j + 1))) {
-                                                            bf.value = e.target.value;
-                                                        }
-                                                    });
-                                                }}
-                                                : undefined
-                                        }]
-                                        : ['input', {
-                                            name, id,
-                                            type: 'number',
-                                            min: minimum,
-                                            max: maximum,
-                                            value: $p.get(name)
-                                        }],
+                                    aliases ? ['input', {
+                                        name, id, class: 'browseField',
+                                        list: 'dl-' + id, value: $p.get(name),
+                                        $on: setType === 'start'
+                                            ? {change (e) {
+                                                $$('input.browseField').forEach((bf) => {
+                                                    if (bf.id.includes((i + 1) + '-' +
+                                                        (j + 1))
+                                                    ) {
+                                                        bf.value = e.target.value;
+                                                    }
+                                                });
+                                            }}
+                                            : undefined
+                                    }] : ['input', {
+                                        name, id,
+                                        type: 'number',
+                                        min: minimum,
+                                        max: maximum,
+                                        value: $p.get(name)
+                                    }],
                                     nbsp3
                                 ]]
                             );
@@ -662,7 +672,11 @@ export default {
                 ['td', {colspan: 4 * browseFields.length + 2 + 1, align: 'center'}, [
                     ['table', [
                         ['tr', [
-                            browseFields.reduce((rowContent, {fieldName, aliases, fieldSchema: {minimum, maximum}}, j) => {
+                            browseFields.reduce((
+                                rowContent, {
+                                    fieldName, aliases, fieldSchema: {minimum, maximum}
+                                }, j
+                            ) => {
                                 const name = iil('anchor') + (i + 1) + '-' + (j + 1);
                                 const id = name;
                                 rowContent['#'].push(
@@ -758,8 +772,8 @@ export default {
                                 ['td', [
                                     Templates.workDisplay.columnsTable({
                                         ld, fields, $p, le, iil, l, getFieldAliasOrName,
-                                        metadataObj, preferredLocale, schemaItems, getPreferredLanguages,
-                                        fieldMatchesLocale
+                                        metadataObj, preferredLocale, schemaItems,
+                                        getPreferredLanguages, fieldMatchesLocale
                                     }),
                                     le('save-settings-URL', 'input', 'value', {
                                         type: 'button',
