@@ -787,6 +787,8 @@ upon for monkey-patching.
 
 1.  Refactoring: Try to use `deserialize` of `form-serialize` fork for initial population
     or hash change?
+1.  We should try to allow `onByDefault` and `placement` for non-plugin
+    fields also
 1.  [ES6 Modules in browser](https://jakearchibald.com/2017/es-modules-in-browsers/):
     Complete switch to imports over script tags (by updating dependencies to
     use ES6 modules too and then use them; json-refs is only left); can also

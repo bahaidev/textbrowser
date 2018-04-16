@@ -85,41 +85,74 @@ export default async function workDisplay ({
             metadataObj, preferredLocale, schemaItems
         });
 
-        // Todo: Get automated working with fieldInfo, fieldMatchesLocale;
-        //        splice plugins into fieldInfo and alternative for
-        //        getting alias
+        // Todo: Test
+        // Todo: Get automated working with fieldMatchesLocale;
+        // Todo: Utilize onByDefault with enabled checkboxes
+        // Todo: Utilize fieldInfo in result
         if (pluginObjects) {
             pluginFieldMappings.forEach((pluginFieldMapping, i) => {
                 const {
                     placement,
+                    /*
+                    {fieldXYZ: {
+                        targetLanguage: "en"|["en"], // E.g., translating from Persian to English
+                        onByDefault: true // Overrides plugin default
+                    }}
+                    */
                     'applicable-fields': applicableFields
                 } = pluginFieldMapping;
-                const [pluginName, onByDefault] = pluginsInWork[i];
-                const {field = pluginName} = pluginObjects;
-                const fieldAliasOrName = pluginObjects.getFieldAliasOrName
-                    ? pluginObjects.getFieldAliasOrName({
-                        lang: this.lang,
-                        applicableFields
-                    })
-                    : field;
-                fieldInfo.splice(
-                    placement === 'end'
-                        ? Infinity // push
-                        : placement,
-                    0,
-                    {
-                        field,
-                        fieldAliasOrName,
-                        onByDefault,
-                        /*
-                        {fieldXYZ: {
-                            targetLanguage: "en"|["en"], // E.g., translating from Persian to English
-                            onByDefault: true // Overrides plugin default
-                        }}
-                        */
-                        applicableFields
-                    }
-                );
+                const [pluginName, onByDefaultDefault] = pluginsInWork[i];
+                const processField = ({applicableField, targetLanguage, onByDefault} = {}) => {
+                    const {field = pluginName} = pluginObjects.getField
+                        ? pluginObjects.getField({
+                            applicableField,
+                            targetLanguage
+                        })
+                        : pluginObjects;
+                    const fieldAliasOrName = pluginObjects.getFieldAliasOrName
+                        ? pluginObjects.getFieldAliasOrName({
+                            lang: this.lang, // array with first item as preferred
+                            applicableField,
+                            targetLanguage
+                        })
+                        : field;
+                    fieldInfo.splice(
+                        // Todo: Allow default placement overriding for
+                        //    non-plugins
+                        placement === 'end'
+                            ? Infinity // push
+                            : placement,
+                        0,
+                        {
+                            field,
+                            fieldAliasOrName,
+                            // Plug-in specific (todo: allow specifying
+                            //    for non-plugins)
+                            onByDefault: typeof onByDefault === 'boolean'
+                                ? onByDefault
+                                : onByDefaultDefault || false,
+                            // Conventions for use by plug-ins but
+                            //     textbrowser only passes on
+                            applicableField,
+                            targetLanguage
+                        }
+                    );
+                };
+                if (applicableFields) {
+                    Object.entries(applicableFields).forEach(([applicableField, {
+                        targetLanguage, onByDefault
+                    }]) => {
+                        if (Array.isArray(targetLanguage)) {
+                            targetLanguage.forEach((targetLanguage) => {
+                                processField({applicableField, targetLanguage, onByDefault});
+                            });
+                        } else {
+                            processField({applicableField, targetLanguage, onByDefault});
+                        }
+                    });
+                } else {
+                    processField();
+                }
             });
             // console.log('aaap', pluginObjects[0].insertField());
             console.log('pluginKeys', pluginsInWork);
