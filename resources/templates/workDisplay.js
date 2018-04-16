@@ -22,8 +22,8 @@ export default {
         //    seemed to have issues in Firefox)
         ['div', {style: 'display: inline; direction: ' + fallbackDirection}, [message]],
     columnsTable: ({
-        ld, fieldInfo, $p, le, iil, l, getFieldAliasOrName,
-        metadataObj, preferredLocale, schemaItems, getPreferredLanguages,
+        ld, fieldInfo, $p, le, iil, l,
+        metadataObj, preferredLocale, schemaItems,
         fieldMatchesLocale
     }) => ['table', {
         border: '1', cellpadding: '5', align: 'center'
@@ -72,17 +72,17 @@ export default {
                 ]),
                 le('check-sequence', 'td', 'title', {}, [
                     ['select', {name: iil('field') + idx, id: fieldIndex, size: '1'},
-                        fieldInfo.map(({field}, j) => {
-                            const fn = getFieldAliasOrName(field) || field;
+                        fieldInfo.map(({field, fieldAliasOrName, onByDefault}, j) => {
                             const matchedFieldParam = fieldParam && fieldParam === field;
                             return ['option', {
                                 dataset: {name: field},
-                                value: fn,
+                                value: fieldAliasOrName,
                                 selected: (
                                     matchedFieldParam ||
-                                    (j === i && !$p.has(fieldIndex))
+                                    onByDefault === true ||
+                                    (j === i && !$p.has(fieldIndex) && onByDefault !== false)
                                 )
-                            }, [fn]];
+                            }, [fieldAliasOrName]];
                         })
                     ]
                 ]),
@@ -737,8 +737,8 @@ export default {
         l, namespace, heading, fallbackDirection, imfl, langs, fieldInfo, localizeParamNames,
         serializeParamsAsURL,
         hideFormattingSection, $p,
-        metadataObj, il, le, ld, iil, getPreferredLanguages, fieldMatchesLocale,
-        getFieldAliasOrName, preferredLocale, schemaItems, content
+        metadataObj, il, le, ld, iil, fieldMatchesLocale,
+        preferredLocale, schemaItems, content
     }) => {
         const lo = (key, atts) =>
             ['option', atts, [
@@ -780,9 +780,9 @@ export default {
                             ['tr', {valign: 'top'}, [
                                 ['td', [
                                     Templates.workDisplay.columnsTable({
-                                        ld, fieldInfo, $p, le, iil, l, getFieldAliasOrName,
+                                        ld, fieldInfo, $p, le, iil, l,
                                         metadataObj, preferredLocale, schemaItems,
-                                        getPreferredLanguages, fieldMatchesLocale
+                                        fieldMatchesLocale
                                     }),
                                     le('save-settings-URL', 'input', 'value', {
                                         type: 'button',

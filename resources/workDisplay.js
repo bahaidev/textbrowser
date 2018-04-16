@@ -2,7 +2,6 @@
 import IMF from 'imf';
 import getSerializeParamsAsURL from './utils/getSerializeParamsAsURL.js';
 
-import {getPreferredLanguages} from './utils/getLanguageInfo.js';
 import {getMetaProp, getFieldMatchesLocale} from './utils/Metadata.js';
 
 import Templates from './templates/index.js';
@@ -82,13 +81,16 @@ export default async function workDisplay ({
         });
         const fieldMatchesLocale = getFieldMatchesLocale({
             namespace: this.namespace,
-            metadataObj, preferredLocale, schemaItems
+            metadataObj, preferredLocale, schemaItems,
+            pluginsInWork, pluginFieldMappings, pluginObjects
         });
 
-        // Todo: Test
-        // Todo: Get automated working with fieldMatchesLocale;
-        // Todo: Utilize onByDefault with enabled checkboxes
-        // Todo: Utilize fieldInfo in result
+        // Todo: Test presence of field, i18nization with `getFieldAliasOrName`,
+        //          `onByDefault` with enabled checkboxes, `getTargetLanguage`,
+        //          placement
+        // Todo: In results, init and show plugin fields and anchor if they
+        //         are chosen as (i18nized) anchor columns; remove any unused
+        //         insert method already in plugin files
         if (pluginObjects) {
             pluginFieldMappings.forEach((pluginFieldMapping, i) => {
                 const {
@@ -102,15 +104,18 @@ export default async function workDisplay ({
                     'applicable-fields': applicableFields
                 } = pluginFieldMapping;
                 const [pluginName, onByDefaultDefault] = pluginsInWork[i];
+                const escapePluginComponent = (pluginName) => {
+                    return pluginName.replace(/\^/g, '^^') // Escape our escape
+                        .replace(/-/g, '^0');
+                };
                 const processField = ({applicableField, targetLanguage, onByDefault} = {}) => {
-                    const {field = pluginName} = pluginObjects.getField
-                        ? pluginObjects.getField({
-                            applicableField,
-                            targetLanguage
-                        })
-                        : pluginObjects;
-                    const fieldAliasOrName = pluginObjects.getFieldAliasOrName
-                        ? pluginObjects.getFieldAliasOrName({
+                    const field = escapePluginComponent(pluginName) +
+                        (applicableField ? '-' + escapePluginComponent(applicableField) : '') +
+                        (targetLanguage ? '-' + escapePluginComponent(targetLanguage) : '');
+                    const idx = pluginsInWork.indexOf(pluginName);
+                    const plugin = pluginObjects[idx];
+                    const fieldAliasOrName = plugin.getFieldAliasOrName
+                        ? plugin.getFieldAliasOrName({
                             lang: this.lang, // array with first item as preferred
                             applicableField,
                             targetLanguage
@@ -124,15 +129,16 @@ export default async function workDisplay ({
                             : placement,
                         0,
                         {
-                            field,
+                            field: `${this.namespace}-plugin-${field}`,
                             fieldAliasOrName,
                             // Plug-in specific (todo: allow specifying
                             //    for non-plugins)
                             onByDefault: typeof onByDefault === 'boolean'
                                 ? onByDefault
                                 : onByDefaultDefault || false,
-                            // Conventions for use by plug-ins but
-                            //     textbrowser only passes on
+                            // Two conventions for use by plug-ins but
+                            //     textbrowser only passes on (might
+                            //     not need here)
                             applicableField,
                             targetLanguage
                         }
@@ -192,8 +198,8 @@ export default async function workDisplay ({
             langs, fieldInfo, localizeParamNames,
             serializeParamsAsURL, hideFormattingSection, $p,
             metadataObj, il, le, ld, iil,
-            getPreferredLanguages, fieldMatchesLocale,
-            getFieldAliasOrName, preferredLocale, schemaItems, content
+            fieldMatchesLocale,
+            preferredLocale, schemaItems, content
         });
     }
 

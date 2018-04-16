@@ -1,5 +1,11 @@
+/* eslint-env browser */
 // Todo: remember this locales choice by cookie?
-export const getPreferredLanguages = (lngs) => {
+export const getPreferredLanguages = ({namespace, preferredLocale}) => {
+    // Todo: Add to this optionally with one-off tag input box
+    // Todo: Switch to fallbackLanguages so can default to
+    //    navigator.languages?
+    const langCodes = localStorage.getItem(namespace + '-langCodes');
+    const lngs = (langCodes && JSON.parse(langCodes)) || [preferredLocale];
     const langArr = [];
     lngs.forEach((lng) => {
         // Todo: Check for multiple separate hyphenated
