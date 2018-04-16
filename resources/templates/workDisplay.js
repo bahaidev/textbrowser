@@ -52,7 +52,7 @@ export default {
             ]]
             */
         ]],
-        ...fields.map((fieldName, i) => {
+        ...fields.map((__, i) => {
             const idx = i + 1;
             const checkedIndex = 'checked' + idx;
             const fieldIndex = 'field' + idx;
@@ -66,9 +66,7 @@ export default {
                         class: 'fieldSelector',
                         id: checkedIndex,
                         name: iil('checked') + idx,
-                        checked: $p.get(checkedIndex) === l('no')
-                            ? undefined
-                            : 'checked',
+                        checked: $p.get(checkedIndex) !== l('no'),
                         type: 'checkbox'
                     })
                 ]),
@@ -77,11 +75,14 @@ export default {
                         fields.map((field, j) => {
                             const fn = getFieldAliasOrName(field) || field;
                             const matchedFieldParam = fieldParam && fieldParam === field;
-                            return (matchedFieldParam || (!$p.has(fieldIndex) && j === i))
-                                ? ['option', {
-                                    dataset: {name: field}, value: fn, selected: 'selected'
-                                }, [fn]]
-                                : ['option', {dataset: {name: field}, value: fn}, [fn]];
+                            return ['option', {
+                                dataset: {name: field},
+                                value: fn,
+                                selected: (
+                                    matchedFieldParam ||
+                                    (!$p.has(fieldIndex) && j === i)
+                                )
+                            }, [fn]];
                         })
                     ]
                 ]),
@@ -222,9 +223,8 @@ export default {
                     name: il('fontvariant'),
                     type: 'radio',
                     value: l('normal'),
-                    checked: $p.get('fontvariant') ===
+                    checked: $p.get('fontvariant') !==
                         ld(['param_values', 'fontvariant', 'smallcaps'])
-                        ? undefined : 'checked'
                 }],
                 ld(['param_values', 'fontvariant', 'normal']), nbsp
             ]],
@@ -235,7 +235,6 @@ export default {
                     value: l('smallcaps'),
                     checked: $p.get('fontvariant') ===
                         ld(['param_values', 'fontvariant', 'smallcaps'])
-                        ? 'checked' : undefined
                 }],
                 ld(['param_values', 'fontvariant', 'smallcaps']), nbsp
             ]]
@@ -320,7 +319,8 @@ export default {
                         type: 'radio',
                         value: val,
                         checked: $p.get('header') === val ||
-                            (!$p.has('header') && i === 1) ? 'checked' : undefined}],
+                            (!$p.has('header') && i === 1)
+                    }],
                     ld(key), (i === arr.length - 1 ? '' : nbsp3)
                 ]]
             ))
@@ -338,7 +338,8 @@ export default {
                         type: 'radio',
                         value: val,
                         checked: $p.get('footer') === val ||
-                            (!$p.has('footer') && i === 2) ? 'checked' : undefined}],
+                            (!$p.has('footer') && i === 2)
+                    }],
                     ld(key), (i === arr.length - 1 ? '' : nbsp3)
                 ]]
             ))
@@ -348,7 +349,8 @@ export default {
                 name: il('headerfooterfixed'),
                 type: 'checkbox',
                 value: l('yes'),
-                checked: $p.get('headerfooterfixed') === l('yes') ? 'checked' : undefined}],
+                checked: $p.get('headerfooterfixed') === l('yes')
+            }],
             nbsp2, ld('headerfooterfixed-wishtoscroll')
         ]],
         ['br'],
@@ -365,7 +367,8 @@ export default {
                         type: 'radio',
                         value: val,
                         checked: $p.get('caption') === val ||
-                            (!$p.has('caption') && i === 2) ? 'checked' : undefined}],
+                            (!$p.has('caption') && i === 2)
+                    }],
                     ld(key), (i === arr.length - 1 ? '' : nbsp3)
                 ]]
             ))
@@ -378,7 +381,8 @@ export default {
                     name: il('border'),
                     type: 'radio',
                     value: '1',
-                    checked: $p.get('border') === '0' ? undefined : 'checked'}],
+                    checked: $p.get('border') !== '0'
+                }],
                 ld('yes'), nbsp3
             ]],
             ['label', [
@@ -386,7 +390,7 @@ export default {
                     name: il('border'),
                     type: 'radio',
                     value: '0',
-                    checked: $p.get('border') === '0' ? 'checked' : undefined}],
+                    checked: $p.get('border') === '0'}],
                 ld('no')
             ]]
         ]],
@@ -397,7 +401,8 @@ export default {
                     name: il('interlintitle'),
                     type: 'radio',
                     value: '1',
-                    checked: $p.get('interlintitle') === '0' ? undefined : 'checked'}],
+                    checked: $p.get('interlintitle') !== '0'
+                }],
                 ld('yes'), nbsp3
             ]],
             ['label', [
@@ -405,7 +410,8 @@ export default {
                     name: il('interlintitle'),
                     type: 'radio',
                     value: '0',
-                    checked: $p.get('interlintitle') === '0' ? 'checked' : undefined}],
+                    checked: $p.get('interlintitle') === '0'
+                }],
                 ld('no')
             ]]
         ]],
@@ -426,7 +432,8 @@ export default {
                 name: il('transpose'),
                 type: 'checkbox',
                 value: l('yes'),
-                checked: $p.get('transpose') === l('yes') ? 'checked' : undefined}],
+                checked: $p.get('transpose') === l('yes')
+            }],
             nbsp2, ld('transpose')
         ]],
         */
@@ -442,7 +449,8 @@ export default {
                     name: il('speech'),
                     type: 'radio',
                     value: '1',
-                    checked: $p.get('speech') === '1' ? 'checked' : undefined}],
+                    checked: $p.get('speech') === '1'
+                }],
                 ld('yes'), nbsp3
             ]],
             ['label', [
@@ -450,7 +458,8 @@ export default {
                     name: il('speech'),
                     type: 'radio',
                     value: '0',
-                    checked: $p.get('speech') === '1' ? undefined : 'checked'}],
+                    checked: $p.get('speech') !== '1'
+                }],
                 ld('no')
             ]]
         ]],
@@ -503,7 +512,7 @@ export default {
                             name: il('rand'),
                             type: 'checkbox',
                             value: l('yes'),
-                            checked: ($p.get('rand') === l('yes') ? 'checked' : undefined)
+                            checked: $p.get('rand') === l('yes')
                         }]
                     ]],
                     nbsp3,
