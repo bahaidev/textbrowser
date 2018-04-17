@@ -87,10 +87,10 @@ export default async function workDisplay ({
             pluginsForWork
         });
 
+        // Todo: Test using plugin `lang` as default for peace statement (Chinese numbers)
+        // Todo: Default to content language of applicable-field for locale support detection
         // Todo: Test i18nization with plugin `getFieldAliasOrName`,
         //          plugin `getTargetLanguage`
-        // Todo: Use plugin `lang` as default (Chinese numbers)
-        // Todo: Default to content language of applicable-field for locale support detection
 
         // Todo: In results, init and show plugin fields and anchor if they
         //         are chosen as (i18nized) anchor columns; remove any unused
@@ -100,11 +100,24 @@ export default async function workDisplay ({
             const lang = this.lang; // array with first item as preferred
             pluginsForWork.iterateMappings(({
                 plugin,
-                pluginName, onByDefaultDefault,
+                pluginName, pluginLang,
+                onByDefaultDefault,
                 placement, applicableFields
             }) => {
                 const processField = ({applicableField, targetLanguage, onByDefault} = {}) => {
-                    const field = escapePlugin({pluginName, applicableField, targetLanguage});
+                    const plugin = pluginsForWork.getPluginObject(pluginName);
+                    if (plugin.getTargetLanguage) {
+                        targetLanguage = plugin.getTargetLanguage({
+                            applicableField,
+                            targetLanguage,
+                            pluginLang // Lang in JSON which will be default without this method
+                        });
+                    }
+                    const field = escapePlugin({
+                        pluginName,
+                        applicableField,
+                        targetLanguage: targetLanguage || pluginLang
+                    });
                     if (targetLanguage === '{locale}') {
                         targetLanguage = preferredLocale;
                     }

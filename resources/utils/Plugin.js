@@ -45,13 +45,16 @@ export class PluginsForWork {
             */
             'applicable-fields': applicableFields
         }, i) => {
-            const [pluginName, onByDefaultDefault] = this.pluginsInWork[i];
+            const [pluginName, {
+                onByDefault: onByDefaultDefault, lang: pluginLang
+            }] = this.pluginsInWork[i];
             const plugin = this.getPluginObject(pluginName);
             cb({ // eslint-disable-line standard/no-callback-literal
                 plugin,
                 placement,
                 applicableFields,
                 pluginName,
+                pluginLang,
                 onByDefaultDefault
             });
         });

@@ -164,18 +164,9 @@ export const getFieldMatchesLocale = function ({
             namespace, preferredLocale
         });
         if (pluginsForWork.isPluginField({namespace, field})) {
-            let targetLanguage;
-            const [
-                pluginName, applicableField, targetLanguageDefault
-            ] = pluginsForWork.getPluginFieldParts({namespace, field});
-            const plugin = pluginsForWork.getPluginObject(pluginName);
-            if (plugin.getTargetLanguage) {
-                targetLanguage = plugin.getTargetLanguage({
-                    field, targetLanguage, applicableField
-                });
-            }
+            const [, , targetLanguage] = pluginsForWork.getPluginFieldParts({namespace, field});
             return targetLanguage &&
-                preferredLanguages.includes(targetLanguage || targetLanguageDefault);
+                preferredLanguages.includes(targetLanguage);
         }
         const metaFieldInfo = metadataObj && metadataObj.fields &&
             metadataObj.fields[field];
