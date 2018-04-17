@@ -3,12 +3,13 @@ import IMF from 'imf';
 import getSerializeParamsAsURL from './utils/getSerializeParamsAsURL.js';
 
 import {getMetaProp, getFieldMatchesLocale} from './utils/Metadata.js';
+import {escapePlugin} from './utils/Plugin.js';
 
 import Templates from './templates/index.js';
 
 export default async function workDisplay ({
     l,
-    lang, preferredLocale, localeFromLangData, fallbackLanguages, $p
+    lang, preferredLocale, languages, fallbackLanguages, $p
 }) {
     const that = this;
     const langs = this.langData.languages;
@@ -31,7 +32,7 @@ export default async function workDisplay ({
 
     function _displayWork ({
         metadataObj, getFieldAliasOrName, schemaObj,
-        pluginsInWork, pluginFieldMappings, pluginObjects
+        pluginsForWork
     }) {
         const il = localizeParamNames
             ? key => l(['params', key])
@@ -40,6 +41,7 @@ export default async function workDisplay ({
             ? key => l(['params', 'indexed', key])
             : key => key;
 
+        const localeFromLangData = languages.localeFromLangData.bind(languages);
         const imfLang = IMF({
             locales: lang.map(localeFromLangData),
             fallbackLocales: fallbackLanguages.map(localeFromLangData)
@@ -82,7 +84,7 @@ export default async function workDisplay ({
         const fieldMatchesLocale = getFieldMatchesLocale({
             namespace: this.namespace,
             metadataObj, preferredLocale, schemaItems,
-            pluginsInWork, pluginFieldMappings, pluginObjects
+            pluginsForWork
         });
 
         // Todo: Test presence of field, i18nization with `getFieldAliasOrName`,
@@ -91,36 +93,32 @@ export default async function workDisplay ({
         // Todo: In results, init and show plugin fields and anchor if they
         //         are chosen as (i18nized) anchor columns; remove any unused
         //         insert method already in plugin files
-        if (pluginObjects) {
-            pluginFieldMappings.forEach((pluginFieldMapping, i) => {
-                const {
-                    placement,
-                    /*
-                    {fieldXYZ: {
-                        targetLanguage: "en"|["en"], // E.g., translating from Persian to English
-                        onByDefault: true // Overrides plugin default
-                    }}
-                    */
-                    'applicable-fields': applicableFields
-                } = pluginFieldMapping;
-                const [pluginName, onByDefaultDefault] = pluginsInWork[i];
-                const escapePluginComponent = (pluginName) => {
-                    return pluginName.replace(/\^/g, '^^') // Escape our escape
-                        .replace(/-/g, '^0');
-                };
+        if (pluginsForWork) {
+            console.log('pluginsForWork', pluginsForWork);
+            const lang = this.lang; // array with first item as preferred
+            pluginsForWork.iterateMappings(({
+                plugin,
+                pluginName, onByDefaultDefault,
+                placement, applicableFields
+            }) => {
+                // Todo: Figure Why field^alias is not being selected (and not
+                //          being escaped in output)?
+                // Todo: Only add field with `{locale}` if an accepted locale
+                //          exists per the plug-in
+                // Todo: Use plugin `lang` as default
+                // Todo: Default to content language of applicable-field
+                // Todo (possible): Let $locale or * indicate all fields to be translated where possible?
                 const processField = ({applicableField, targetLanguage, onByDefault} = {}) => {
-                    const field = escapePluginComponent(pluginName) +
-                        (applicableField ? '-' + escapePluginComponent(applicableField) : '') +
-                        (targetLanguage ? '-' + escapePluginComponent(targetLanguage) : '');
-                    const idx = pluginsInWork.indexOf(pluginName);
-                    const plugin = pluginObjects[idx];
+                    const field = escapePlugin({pluginName, applicableField, targetLanguage});
                     const fieldAliasOrName = plugin.getFieldAliasOrName
                         ? plugin.getFieldAliasOrName({
-                            lang: this.lang, // array with first item as preferred
+                            lang,
                             applicableField,
                             targetLanguage
                         })
-                        : field;
+                        : `${pluginName} (${applicableField} -> ${
+                            languages.getLanguageFromCode(targetLanguage)
+                        })`;
                     fieldInfo.splice(
                         // Todo: Allow default placement overriding for
                         //    non-plugins
@@ -144,32 +142,10 @@ export default async function workDisplay ({
                         }
                     );
                 };
-                if (applicableFields) {
-                    Object.entries(applicableFields).forEach(([applicableField, {
-                        targetLanguage, onByDefault
-                    }]) => {
-                        if (Array.isArray(targetLanguage)) {
-                            targetLanguage.forEach((targetLanguage) => {
-                                processField({applicableField, targetLanguage, onByDefault});
-                            });
-                        } else {
-                            processField({applicableField, targetLanguage, onByDefault});
-                        }
-                    });
-                } else {
+                if (!pluginsForWork.processTargetLanguages(processField)) {
                     processField();
                 }
             });
-            // console.log('aaap', pluginObjects[0].insertField());
-            console.log('pluginKeys', pluginsInWork);
-            console.log('pluginFieldMappings', pluginFieldMappings);
-            console.log('pluginObjects', pluginObjects);
-            /*
-
-            "plugins": {
-                "synopsis": "plugins/synopsis.js"
-            },
-            */
         }
 
         const content = [];

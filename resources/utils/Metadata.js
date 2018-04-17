@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import {getPreferredLanguages} from './getLanguageInfo.js';
+import {getPreferredLanguages} from './Languages.js';
 // Keep this as the last import for Rollup
 import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
 
@@ -157,38 +157,25 @@ export const getBrowseFieldData = function ({
 
 export const getFieldMatchesLocale = function ({
     namespace, metadataObj, preferredLocale, schemaItems,
-    pluginsInWork, pluginFieldMappings, pluginObjects
+    pluginsForWork
 }) {
     return function (field) {
         const preferredLanguages = getPreferredLanguages({
             namespace, preferredLocale
         });
-        if (field.startsWith(`${this.namespace}-plugin-`)) {
-            const unescapePluginComponent = (pluginName) => {
-                return pluginName.replace(
-                    /(\^+)0/g,
-                    (n0, esc) => esc.length % 2
-                        ? esc.slice(1) + '-'
-                        : n0
-                ).replace(/\^\^/g, '^');
-            };
-            field = field.replace(`${this.namespace}-plugin-`, '');
-            let pluginName, applicableField, targetLanguage;
-            if (field.includes('-')) {
-                ([pluginName, applicableField, targetLanguage] = field.split('-'));
-                targetLanguage = unescapePluginComponent(targetLanguage);
-            } else {
-                pluginName = field;
-            }
-            pluginName = unescapePluginComponent(pluginName);
-            const idx = pluginsInWork.indexOf(pluginName);
-            const plugin = pluginObjects[idx];
+        if (pluginsForWork.isPluginField({namespace, field})) {
+            let targetLanguage;
+            const [
+                pluginName, applicableField, targetLanguageDefault
+            ] = pluginsForWork.getPluginFieldParts({namespace, field});
+            const plugin = pluginsForWork.getPluginObject(pluginName);
             if (plugin.getTargetLanguage) {
                 targetLanguage = plugin.getTargetLanguage({
                     field, targetLanguage, applicableField
                 });
             }
-            return targetLanguage && preferredLanguages.includes(targetLanguage);
+            return targetLanguage &&
+                preferredLanguages.includes(targetLanguage || targetLanguageDefault);
         }
         const metaFieldInfo = metadataObj && metadataObj.fields &&
             metadataObj.fields[field];

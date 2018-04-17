@@ -365,16 +365,14 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
 
     const {
         fileData, lf, getFieldAliasOrName, schemaObj, metadataObj,
-        pluginsInWork, pluginFieldMappings, pluginObjects
+        pluginsForWork
     } = await getWorkData({
         files: files || this.files,
         allowPlugins: allowPlugins || this.allowPlugins,
         lang, fallbackLanguages, $p,
         basePath
     });
-    console.log('pluginsInWork', pluginsInWork);
-    console.log('pluginFieldMappings', pluginFieldMappings);
-    console.log('pluginObjects', pluginObjects);
+    console.log('pluginsForWork', pluginsForWork);
 
     const heading = getMetaProp(lang, metadataObj, 'heading');
     const schemaItems = schemaObj.items.items;

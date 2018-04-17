@@ -9,7 +9,7 @@ import {getWorkFiles, getWorkData} from './utils/WorkInfo.js';
 import {registerServiceWorker, setServiceWorkerDefaults} from './utils/ServiceWorker.js';
 
 import {escapeHTML} from './utils/sanitize.js';
-import getLanguageInfo from './utils/getLanguageInfo.js';
+import {Languages} from './utils/Languages.js';
 
 import Templates from './templates/index.js';
 import IntlURLSearchParams from './utils/IntlURLSearchParams.js';
@@ -224,20 +224,18 @@ TextBrowser.prototype.paramChange = async function () {
         location.hash = '#' + $p.toString();
     };
 
+    const languages = new Languages({
+        langData: this.langData
+    });
+
     const {
         lang, langs, languageParam, fallbackLanguages
-    } = getLanguageInfo({$p, langData: this.langData});
+    } = languages.getLanguageInfo({$p});
     this.lang = lang;
 
     const [preferredLocale] = lang;
     const direction = this.getDirectionForLanguageCode(preferredLocale);
     document.dir = direction;
-
-    const localeFromLangData = (lan) =>
-        this.langData['localization-strings'][lan];
-
-    const getLanguageFromCode = (code) =>
-        localeFromLangData(code).languages[code];
 
     // This check goes further than `Notification.permission === 'granted'`
     //   to see whether the browser actually considers the notification
@@ -312,7 +310,7 @@ TextBrowser.prototype.paramChange = async function () {
             //   as with page title
             document.title = l('browser-title');
             Templates.languageSelect.main({
-                langs, getLanguageFromCode, followParams, $p
+                langs, languages, followParams, $p
             });
         };
         const l = siteI18n || getSiteI18n();
@@ -338,7 +336,7 @@ TextBrowser.prototype.paramChange = async function () {
                 l,
                 lang, preferredLocale,
                 fallbackLanguages,
-                $p, localeFromLangData
+                $p, languages
             });
             return true;
         }

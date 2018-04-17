@@ -2057,7 +2057,7 @@ jml.setDocument(win$1.document);
 jml.setXMLSerializer(XMLSerializer$1);
 
 var languageSelect = {
-    main ({langs, getLanguageFromCode, followParams, $p}) {
+    main ({langs, languages, followParams, $p}) {
         jml('div', {class: 'focus', id: 'languageSelectionContainer'}, [
             ['select', {
                 size: langs.length,
@@ -2068,7 +2068,7 @@ var languageSelect = {
                     }
                 }
             }, langs.map(({code}) =>
-                ['option', {value: code}, [getLanguageFromCode(code)]]
+                ['option', {value: code}, [languages.getLanguageFromCode(code)]]
             )]
         ], document.body);
     }
@@ -3623,30 +3623,41 @@ const escapeHTML = (s) => {
 };
 
 /* eslint-env browser */
-function getLanguageInfo ({langData, $p}) {
-    const langs = langData.languages;
-    const localePass = (lcl) =>
-        langs.some(({code}) => code === lcl) ? lcl : false;
-    const languageParam = $p.get('lang', true);
-    // Todo: We could (unless overridden by another button) assume the
-    //         browser language based on fallbackLanguages instead
-    //         of giving a choice
-    const navLangs = navigator.languages.filter(localePass);
-    const fallbackLanguages = navLangs.length
-        ? navLangs
-        : [localePass(navigator.language) || 'en-US'];
-    // We need a default to display a default title
-    const language = languageParam || fallbackLanguages[0];
+class Languages {
+    constructor ({langData}) {
+        this.langData = langData;
+    }
+    localeFromLangData (lan) {
+        return this.langData['localization-strings'][lan];
+    }
+    getLanguageFromCode (code) {
+        return this.localeFromLangData(code).languages[code];
+    }
+    getLanguageInfo ({$p}) {
+        const langs = this.langData.languages;
+        const localePass = (lcl) =>
+            langs.some(({code}) => code === lcl) ? lcl : false;
+        const languageParam = $p.get('lang', true);
+        // Todo: We could (unless overridden by another button) assume the
+        //         browser language based on fallbackLanguages instead
+        //         of giving a choice
+        const navLangs = navigator.languages.filter(localePass);
+        const fallbackLanguages = navLangs.length
+            ? navLangs
+            : [localePass(navigator.language) || 'en-US'];
+        // We need a default to display a default title
+        const language = languageParam || fallbackLanguages[0];
 
-    const preferredLangs = language.split('.');
-    const lang = preferredLangs.concat(fallbackLanguages);
+        const preferredLangs = language.split('.');
+        const lang = preferredLangs.concat(fallbackLanguages);
 
-    return {
-        lang,
-        langs,
-        languageParam,
-        fallbackLanguages
-    };
+        return {
+            lang,
+            langs,
+            languageParam,
+            fallbackLanguages
+        };
+    }
 }
 
 /* eslint-env browser */
@@ -6533,6 +6544,83 @@ if (typeof global !== 'undefined') {
     global.IntlMessageFormat = intlMessageformat;
 }
 
+const unescapePluginComponent = (pluginName) => {
+    return pluginName.replace(
+        /(\^+)0/g,
+        (n0, esc) => esc.length % 2
+            ? esc.slice(1) + '-'
+            : n0
+    ).replace(/\^\^/g, '^');
+};
+
+class PluginsForWork {
+    constructor ({pluginsInWork, pluginFieldMappings, pluginObjects}) {
+        this.pluginsInWork = pluginsInWork;
+        this.pluginFieldMappings = pluginFieldMappings;
+        this.pluginObjects = pluginObjects;
+    }
+    getPluginObject (pluginName) {
+        const idx = this.pluginsInWork.findIndex(([name]) => {
+            return name === pluginName;
+        });
+        const plugin = this.pluginObjects[idx];
+        return plugin;
+    }
+    iterateMappings (cb) {
+        this.pluginFieldMappings.forEach(({
+            placement,
+            /*
+            {fieldXYZ: {
+                targetLanguage: "en"|["en"], // E.g., translating from Persian to English
+                onByDefault: true // Overrides plugin default
+            }}
+            */
+            'applicable-fields': applicableFields
+        }, i) => {
+            const [pluginName, onByDefaultDefault] = this.pluginsInWork[i];
+            const plugin = this.getPluginObject(pluginName);
+            cb({ // eslint-disable-line standard/no-callback-literal
+                plugin,
+                placement,
+                applicableFields,
+                pluginName,
+                onByDefaultDefault
+            });
+        });
+    }
+    processTargetLanguages (cb) {
+        if (!this.applicableFields) {
+            return false;
+        }
+        Object.entries(this.applicableFields).forEach(([applicableField, {
+            targetLanguage, onByDefault
+        }]) => {
+            if (Array.isArray(targetLanguage)) {
+                targetLanguage.forEach((targetLanguage) => {
+                    cb({applicableField, targetLanguage, onByDefault}); // eslint-disable-line standard/no-callback-literal
+                });
+            } else {
+                cb({applicableField, targetLanguage, onByDefault}); // eslint-disable-line standard/no-callback-literal
+            }
+        });
+    }
+    isPluginField ({namespace, field}) {
+        return field.startsWith(`${namespace}-plugin-`);
+    }
+    getPluginFieldParts ({namespace, field}) {
+        field = field.replace(`${this.namespace}-plugin-`, '');
+        let pluginName, applicableField, targetLanguage;
+        if (field.includes('-')) {
+            ([pluginName, applicableField, targetLanguage] = field.split('-'));
+            targetLanguage = unescapePluginComponent(targetLanguage);
+        } else {
+            pluginName = field;
+        }
+        pluginName = unescapePluginComponent(pluginName);
+        return [pluginName, applicableField, targetLanguage];
+    }
+}
+
 const getFilePaths = function getFilePaths (filesObj, fileGroup, fileData) {
     const baseDir = (filesObj.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
     const schemaBaseDir = (filesObj.schemaBaseDirectory || '') +
@@ -6636,11 +6724,13 @@ const getWorkData = async function ({
             )
             : null
     ]);
+    const pluginsForWork = new PluginsForWork({
+        pluginsInWork, pluginFieldMappings, pluginObjects
+    });
     return {
         fileData, lf, getFieldAliasOrName, metadataObj,
         schemaObj,
-        pluginsInWork, pluginFieldMappings,
-        pluginObjects
+        pluginsForWork
     };
 };
 
@@ -6919,16 +7009,14 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
 
     const {
         fileData, lf, getFieldAliasOrName, schemaObj, metadataObj,
-        pluginsInWork, pluginFieldMappings, pluginObjects
+        pluginsForWork
     } = await getWorkData({
         files: files || this.files,
         allowPlugins: allowPlugins || this.allowPlugins,
         lang, fallbackLanguages, $p,
         basePath
     });
-    console.log('pluginsInWork', pluginsInWork);
-    console.log('pluginFieldMappings', pluginFieldMappings);
-    console.log('pluginObjects', pluginObjects);
+    console.log('pluginsForWork', pluginsForWork);
 
     const heading = getMetaProp(lang, metadataObj, 'heading');
     const schemaItems = schemaObj.items.items;
@@ -7140,7 +7228,8 @@ function getIMFFallbackResults ({
     localeCallback = false
 }) {
     if (!lang) {
-        ({lang, langs, fallbackLanguages} = getLanguageInfo({$p, langData}));
+        const languages = new Languages({langData});
+        ({lang, langs, fallbackLanguages} = languages.getLanguageInfo({$p, langData}));
     }
     return new Promise((resolve, reject) => {
         const resultsCallback = (...args) => {

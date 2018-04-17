@@ -1,7 +1,7 @@
 import jml from 'jamilih';
 
 export default {
-    main ({langs, getLanguageFromCode, followParams, $p}) {
+    main ({langs, languages, followParams, $p}) {
         jml('div', {class: 'focus', id: 'languageSelectionContainer'}, [
             ['select', {
                 size: langs.length,
@@ -12,7 +12,7 @@ export default {
                     }
                 }
             }, langs.map(({code}) =>
-                ['option', {value: code}, [getLanguageFromCode(code)]]
+                ['option', {value: code}, [languages.getLanguageFromCode(code)]]
             )]
         ], document.body);
     }

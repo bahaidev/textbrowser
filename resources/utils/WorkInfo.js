@@ -1,6 +1,7 @@
 import getJSON from 'simple-get-json';
 import IMF from 'imf';
 import {getMetaProp, getMetadata} from './Metadata.js';
+import {PluginsForWork} from './Plugin.js';
 
 export const getWorkFiles = async function getWorkFiles (files = this.files) {
     const filesObj = await getJSON(files);
@@ -121,10 +122,12 @@ export const getWorkData = async function ({
             )
             : null
     ]);
+    const pluginsForWork = new PluginsForWork({
+        pluginsInWork, pluginFieldMappings, pluginObjects
+    });
     return {
         fileData, lf, getFieldAliasOrName, metadataObj,
         schemaObj,
-        pluginsInWork, pluginFieldMappings,
-        pluginObjects
+        pluginsForWork
     };
 };
