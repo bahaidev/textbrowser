@@ -919,6 +919,8 @@ upon for monkey-patching.
 
 ## To-dos (Lower priority)
 
+1.  In schema, let `$locale` or `*` indicate all fields to be translated
+    where possible?
 1.  Preferences
     1.  Change Preferences to be set before work or with work but specific
         to it

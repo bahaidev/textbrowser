@@ -4,6 +4,9 @@ export const escapePluginComponent = (pluginName) => {
 };
 
 export const unescapePluginComponent = (pluginName) => {
+    if (!pluginName) {
+        return pluginName;
+    }
     return pluginName.replace(
         /(\^+)0/g,
         (n0, esc) => esc.length % 2
@@ -53,11 +56,11 @@ export class PluginsForWork {
             });
         });
     }
-    processTargetLanguages (cb) {
-        if (!this.applicableFields) {
+    processTargetLanguages (applicableFields, cb) {
+        if (!applicableFields) {
             return false;
         }
-        Object.entries(this.applicableFields).forEach(([applicableField, {
+        Object.entries(applicableFields).forEach(([applicableField, {
             targetLanguage, onByDefault
         }]) => {
             if (Array.isArray(targetLanguage)) {
@@ -68,20 +71,19 @@ export class PluginsForWork {
                 cb({applicableField, targetLanguage, onByDefault}); // eslint-disable-line standard/no-callback-literal
             }
         });
+        return true;
     }
     isPluginField ({namespace, field}) {
         return field.startsWith(`${namespace}-plugin-`);
     }
     getPluginFieldParts ({namespace, field}) {
-        field = field.replace(`${this.namespace}-plugin-`, '');
+        field = field.replace(`${namespace}-plugin-`, '');
         let pluginName, applicableField, targetLanguage;
         if (field.includes('-')) {
             ([pluginName, applicableField, targetLanguage] = field.split('-'));
-            targetLanguage = unescapePluginComponent(targetLanguage);
         } else {
             pluginName = field;
         }
-        pluginName = unescapePluginComponent(pluginName);
-        return [pluginName, applicableField, targetLanguage];
+        return [pluginName, applicableField, targetLanguage].map(unescapePluginComponent);
     }
 };

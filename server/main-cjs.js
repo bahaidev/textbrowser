@@ -2234,7 +2234,7 @@ var workDisplay = {
             ]]
             */
         ]],
-        ...fieldInfo.map((__, i) => {
+        ...fieldInfo.map((fieldInfoItem, i) => {
             const idx = i + 1;
             const checkedIndex = 'checked' + idx;
             const fieldIndex = 'field' + idx;
@@ -2248,21 +2248,21 @@ var workDisplay = {
                         class: 'fieldSelector',
                         id: checkedIndex,
                         name: iil('checked') + idx,
-                        checked: $p.get(checkedIndex) !== l('no'),
+                        checked: $p.get(checkedIndex) !== l('no') &&
+                            fieldInfoItem.onByDefault !== false,
                         type: 'checkbox'
                     })
                 ]),
                 le('check-sequence', 'td', 'title', {}, [
                     ['select', {name: iil('field') + idx, id: fieldIndex, size: '1'},
-                        fieldInfo.map(({field, fieldAliasOrName, onByDefault}, j) => {
+                        fieldInfo.map(({field, fieldAliasOrName}, j) => {
                             const matchedFieldParam = fieldParam && fieldParam === field;
                             return ['option', {
                                 dataset: {name: field},
                                 value: fieldAliasOrName,
                                 selected: (
                                     matchedFieldParam ||
-                                    onByDefault === true ||
-                                    (j === i && !$p.has(fieldIndex) && onByDefault !== false)
+                                    (j === i && !$p.has(fieldIndex))
                                 )
                             }, [fieldAliasOrName]];
                         })
@@ -6545,6 +6545,9 @@ if (typeof global !== 'undefined') {
 }
 
 const unescapePluginComponent = (pluginName) => {
+    if (!pluginName) {
+        return pluginName;
+    }
     return pluginName.replace(
         /(\^+)0/g,
         (n0, esc) => esc.length % 2
@@ -6588,11 +6591,11 @@ class PluginsForWork {
             });
         });
     }
-    processTargetLanguages (cb) {
-        if (!this.applicableFields) {
+    processTargetLanguages (applicableFields, cb) {
+        if (!applicableFields) {
             return false;
         }
-        Object.entries(this.applicableFields).forEach(([applicableField, {
+        Object.entries(applicableFields).forEach(([applicableField, {
             targetLanguage, onByDefault
         }]) => {
             if (Array.isArray(targetLanguage)) {
@@ -6603,21 +6606,20 @@ class PluginsForWork {
                 cb({applicableField, targetLanguage, onByDefault}); // eslint-disable-line standard/no-callback-literal
             }
         });
+        return true;
     }
     isPluginField ({namespace, field}) {
         return field.startsWith(`${namespace}-plugin-`);
     }
     getPluginFieldParts ({namespace, field}) {
-        field = field.replace(`${this.namespace}-plugin-`, '');
+        field = field.replace(`${namespace}-plugin-`, '');
         let pluginName, applicableField, targetLanguage;
         if (field.includes('-')) {
             ([pluginName, applicableField, targetLanguage] = field.split('-'));
-            targetLanguage = unescapePluginComponent(targetLanguage);
         } else {
             pluginName = field;
         }
-        pluginName = unescapePluginComponent(pluginName);
-        return [pluginName, applicableField, targetLanguage];
+        return [pluginName, applicableField, targetLanguage].map(unescapePluginComponent);
     }
 }
 

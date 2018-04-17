@@ -87,9 +87,11 @@ export default async function workDisplay ({
             pluginsForWork
         });
 
-        // Todo: Test presence of field, i18nization with `getFieldAliasOrName`,
-        //          `onByDefault` with enabled checkboxes, `getTargetLanguage`,
-        //          placement
+        // Todo: Test i18nization with plugin `getFieldAliasOrName`,
+        //          plugin `getTargetLanguage`
+        // Todo: Use plugin `lang` as default (Chinese numbers)
+        // Todo: Default to content language of applicable-field for locale support detection
+
         // Todo: In results, init and show plugin fields and anchor if they
         //         are chosen as (i18nized) anchor columns; remove any unused
         //         insert method already in plugin files
@@ -101,24 +103,24 @@ export default async function workDisplay ({
                 pluginName, onByDefaultDefault,
                 placement, applicableFields
             }) => {
-                // Todo: Figure Why field^alias is not being selected (and not
-                //          being escaped in output)?
-                // Todo: Only add field with `{locale}` if an accepted locale
-                //          exists per the plug-in
-                // Todo: Use plugin `lang` as default
-                // Todo: Default to content language of applicable-field
-                // Todo (possible): Let $locale or * indicate all fields to be translated where possible?
                 const processField = ({applicableField, targetLanguage, onByDefault} = {}) => {
                     const field = escapePlugin({pluginName, applicableField, targetLanguage});
+                    if (targetLanguage === '{locale}') {
+                        targetLanguage = preferredLocale;
+                    }
                     const fieldAliasOrName = plugin.getFieldAliasOrName
                         ? plugin.getFieldAliasOrName({
                             lang,
                             applicableField,
                             targetLanguage
                         })
-                        : `${pluginName} (${applicableField} -> ${
-                            languages.getLanguageFromCode(targetLanguage)
-                        })`;
+                        : applicableField
+                            ? `${pluginName} (${applicableField}` + (targetLanguage
+                                ? ` -> ${
+                                    languages.getLanguageFromCode(targetLanguage)
+                                }`
+                                : '') + ')'
+                            : pluginName;
                     fieldInfo.splice(
                         // Todo: Allow default placement overriding for
                         //    non-plugins
@@ -142,7 +144,7 @@ export default async function workDisplay ({
                         }
                     );
                 };
-                if (!pluginsForWork.processTargetLanguages(processField)) {
+                if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
                     processField();
                 }
             });

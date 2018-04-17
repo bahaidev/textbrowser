@@ -52,7 +52,7 @@ export default {
             ]]
             */
         ]],
-        ...fieldInfo.map((__, i) => {
+        ...fieldInfo.map((fieldInfoItem, i) => {
             const idx = i + 1;
             const checkedIndex = 'checked' + idx;
             const fieldIndex = 'field' + idx;
@@ -66,21 +66,21 @@ export default {
                         class: 'fieldSelector',
                         id: checkedIndex,
                         name: iil('checked') + idx,
-                        checked: $p.get(checkedIndex) !== l('no'),
+                        checked: $p.get(checkedIndex) !== l('no') &&
+                            fieldInfoItem.onByDefault !== false,
                         type: 'checkbox'
                     })
                 ]),
                 le('check-sequence', 'td', 'title', {}, [
                     ['select', {name: iil('field') + idx, id: fieldIndex, size: '1'},
-                        fieldInfo.map(({field, fieldAliasOrName, onByDefault}, j) => {
+                        fieldInfo.map(({field, fieldAliasOrName}, j) => {
                             const matchedFieldParam = fieldParam && fieldParam === field;
                             return ['option', {
                                 dataset: {name: field},
                                 value: fieldAliasOrName,
                                 selected: (
                                     matchedFieldParam ||
-                                    onByDefault === true ||
-                                    (j === i && !$p.has(fieldIndex) && onByDefault !== false)
+                                    (j === i && !$p.has(fieldIndex))
                                 )
                             }, [fieldAliasOrName]];
                         })
