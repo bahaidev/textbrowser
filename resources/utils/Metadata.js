@@ -177,8 +177,11 @@ export class Metadata {
                 namespace, preferredLocale
             });
             if (pluginsForWork.isPluginField({namespace, field})) {
-                const [, , targetLanguage] = pluginsForWork.getPluginFieldParts({namespace, field});
-                return targetLanguage &&
+                let [, , targetLanguage] = pluginsForWork.getPluginFieldParts({namespace, field});
+                if (targetLanguage === '{locale}') {
+                    targetLanguage = preferredLocale;
+                }
+                return !targetLanguage ||
                     preferredLanguages.includes(targetLanguage);
             }
             const metaLang = this.getFieldLang(field);

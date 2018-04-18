@@ -89,12 +89,6 @@ export default async function workDisplay ({
             pluginsForWork
         });
 
-        // Todo: Test locale-detection:
-        //          defaulting to content language of applicable-field or using plugin
-        //          `lang` as default for peace statement (Chinese numbers)
-        // Todo: Test i18nization with plugin `getFieldAliasOrName`,
-        //          plugin `getTargetLanguage`
-
         // Todo: In results, init and show plugin fields and anchor if they
         //         are chosen as (i18nized) anchor columns; remove any unused
         //         insert method already in plugin files
