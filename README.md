@@ -610,6 +610,8 @@ upon for monkey-patching.
 
 ## To-dos (Highest priority)
 
+1.  **Move plug-in set-up** to run so setting indexedDB within
+    `activateCallback.js`
 1.  Have **IndexedDB handle all pages** language select, work select, and
     work display be part of too?
 1.  Avoid `datalist` showing past selections on separate book! (change element
