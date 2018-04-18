@@ -7383,17 +7383,29 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             tableData = await (await fetch(jsonURL)).json();
         }
     }
+    // Todo: Ensure working in server-side mode
     if (pluginsForWork) {
-        fieldInfo.forEach(({plugin, placement, applicableField, fieldLang, meta}, i) => {
+        fieldInfo.forEach(({plugin, placement, applicableField, fieldLang, meta}, j) => {
             const applicableFieldIdx = fieldInfo.findIndex(({field}) => {
                 return field === applicableField;
             });
             if (!plugin) {
                 return;
             }
-            tableData.forEach((tr, j) => {
+            tableData.forEach((tr, i) => {
                 // Todo: We should pass on other arguments (like `meta` but on `applicableFields`)
-                tr.splice(placement, 0, `${i}-${j}`); // plugin.getCellData({tableData, i, j, applicableField, applicableFieldIdx, fieldLang, meta}));
+                tr.splice(
+                    placement,
+                    0,
+                    null // `${i}-${j}`);
+                );
+            });
+            // Now safe to pass (and set) `j` value as tr array expanded
+            tableData.forEach((tr, i) => {
+                tr[j] = plugin.getCellData({
+                    tableData, i, j, applicableField,
+                    applicableFieldIdx, fieldLang, meta
+                });
             });
             console.log('applicableFieldIdx', applicableFieldIdx);
         });
