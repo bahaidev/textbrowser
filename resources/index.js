@@ -201,9 +201,13 @@ TextBrowser.prototype.getWorkData = function (opts) {
 //   to require it as a param)
 TextBrowser.prototype.getDirectionForLanguageCode = function (code) {
     const langs = this.langData.languages;
-    return langs.find((lang) =>
+    const exactMatch = langs.find((lang) =>
         lang.code === code
-    ).direction;
+    );
+    return (exactMatch && exactMatch.direction) ||
+        langs.find((lang) =>
+            lang.code.startsWith(code + '-')
+        );
 };
 
 TextBrowser.prototype.getFieldNameAndValueAliases = function (args) {

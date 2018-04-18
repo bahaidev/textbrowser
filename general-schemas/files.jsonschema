@@ -38,6 +38,14 @@
                         "lang": {
                             "type": "string",
                             "format": "language-code"
+                        },
+                        "meta": {
+                            "type": "object",
+                            "patternProperties": {
+                                ".*": {
+                                    "type": "string"
+                                }
+                            }
                         }
                     },
                     "required": ["path"]

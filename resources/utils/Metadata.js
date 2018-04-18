@@ -155,41 +155,50 @@ export const getBrowseFieldData = function ({
     });
 };
 
-export const getFieldMatchesLocale = function ({
-    namespace, metadataObj, preferredLocale, schemaItems,
-    pluginsForWork
-}) {
-    return function (field) {
-        const preferredLanguages = getPreferredLanguages({
-            namespace, preferredLocale
-        });
-        if (pluginsForWork.isPluginField({namespace, field})) {
-            const [, , targetLanguage] = pluginsForWork.getPluginFieldParts({namespace, field});
-            return targetLanguage &&
-                preferredLanguages.includes(targetLanguage);
-        }
-        const metaFieldInfo = metadataObj && metadataObj.fields &&
-            metadataObj.fields[field];
-        let metaLang;
-        if (metaFieldInfo) {
-            metaLang = metadataObj.fields[field].lang;
-        }
-        const localeStrings = metadataObj &&
-            metadataObj['localization-strings'];
+// Todo: Incorporate other methods into this class
+export class Metadata {
+    constructor ({metadataObj}) {
+        this.metadataObj = metadataObj;
+    }
 
-        // If this is a localized field (e.g., enum), we don't want
-        //  to avoid as may be translated (should check though)
-        const hasFieldValue = localeStrings &&
-            Object.keys(localeStrings).some(lng => {
-                const fv = localeStrings[lng] &&
-                    localeStrings[lng].fieldvalue;
-                return fv && fv[field];
+    getFieldLang (field) {
+        const {metadataObj} = this;
+        const fields = metadataObj && metadataObj.fields;
+        return fields && fields[field] && fields[field].lang;
+    }
+
+    getFieldMatchesLocale ({
+        namespace, preferredLocale, schemaItems,
+        pluginsForWork
+    }) {
+        const {metadataObj} = this;
+        return function (field) {
+            const preferredLanguages = getPreferredLanguages({
+                namespace, preferredLocale
             });
+            if (pluginsForWork.isPluginField({namespace, field})) {
+                const [, , targetLanguage] = pluginsForWork.getPluginFieldParts({namespace, field});
+                return targetLanguage &&
+                    preferredLanguages.includes(targetLanguage);
+            }
+            const metaLang = this.getFieldLang(field);
+            const localeStrings = metadataObj &&
+                metadataObj['localization-strings'];
 
-        return hasFieldValue ||
-            (metaLang && preferredLanguages.includes(metaLang)) ||
-            schemaItems.some(item =>
-                item.title === field && item.type !== 'string'
-            );
-    };
+            // If this is a localized field (e.g., enum), we don't want
+            //  to avoid as may be translated (should check though)
+            const hasFieldValue = localeStrings &&
+                Object.keys(localeStrings).some(lng => {
+                    const fv = localeStrings[lng] &&
+                        localeStrings[lng].fieldvalue;
+                    return fv && fv[field];
+                });
+
+            return hasFieldValue ||
+                (metaLang && preferredLanguages.includes(metaLang)) ||
+                schemaItems.some(item =>
+                    item.title === field && item.type !== 'string'
+                );
+        };
+    }
 };

@@ -19,6 +19,7 @@ export const getPreferredLanguages = ({namespace, preferredLocale}) => {
     });
     return langArr;
 };
+
 export class Languages {
     constructor ({langData}) {
         this.langData = langData;
@@ -28,6 +29,17 @@ export class Languages {
     }
     getLanguageFromCode (code) {
         return this.localeFromLangData(code).languages[code];
+    }
+    getFieldNameFromPluginNameAndLocales ({
+        pluginName, locales, lf, targetLanguage, applicableFieldI18N, meta
+    }) {
+        return lf(['plugins', pluginName, 'fieldname'], {
+            ...meta,
+            applicableField: applicableFieldI18N,
+            targetLanguage: targetLanguage
+                ? this.getLanguageFromCode(targetLanguage)
+                : ''
+        });
     }
     getLanguageInfo ({$p}) {
         const langs = this.langData.languages;

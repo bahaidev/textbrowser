@@ -46,7 +46,7 @@ export class PluginsForWork {
             'applicable-fields': applicableFields
         }, i) => {
             const [pluginName, {
-                onByDefault: onByDefaultDefault, lang: pluginLang
+                onByDefault: onByDefaultDefault, lang: pluginLang, meta
             }] = this.pluginsInWork[i];
             const plugin = this.getPluginObject(pluginName);
             cb({ // eslint-disable-line standard/no-callback-literal
@@ -55,7 +55,8 @@ export class PluginsForWork {
                 applicableFields,
                 pluginName,
                 pluginLang,
-                onByDefaultDefault
+                onByDefaultDefault,
+                meta
             });
         });
     }

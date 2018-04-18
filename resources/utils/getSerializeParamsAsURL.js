@@ -1,4 +1,5 @@
 /* eslint-env browser */
+// Todo: Reimplement this with `formSerialize.deserialize` as possible
 import {serialize as formSerialize} from 'form-serialize';
 export default function ({l, il, $p}) {
     return function serializeParamsAsURL ({form, random, checkboxes}, type) {

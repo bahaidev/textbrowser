@@ -3623,6 +3623,7 @@ const escapeHTML = (s) => {
 };
 
 /* eslint-env browser */
+
 class Languages {
     constructor ({langData}) {
         this.langData = langData;
@@ -3632,6 +3633,17 @@ class Languages {
     }
     getLanguageFromCode (code) {
         return this.localeFromLangData(code).languages[code];
+    }
+    getFieldNameFromPluginNameAndLocales ({
+        pluginName, locales, lf, targetLanguage, applicableFieldI18N, meta
+    }) {
+        return lf(['plugins', pluginName, 'fieldname'], {
+            ...meta,
+            applicableField: applicableFieldI18N,
+            targetLanguage: targetLanguage
+                ? this.getLanguageFromCode(targetLanguage)
+                : ''
+        });
     }
     getLanguageInfo ({$p}) {
         const langs = this.langData.languages;
@@ -6580,14 +6592,18 @@ class PluginsForWork {
             */
             'applicable-fields': applicableFields
         }, i) => {
-            const [pluginName, onByDefaultDefault] = this.pluginsInWork[i];
+            const [pluginName, {
+                onByDefault: onByDefaultDefault, lang: pluginLang, meta
+            }] = this.pluginsInWork[i];
             const plugin = this.getPluginObject(pluginName);
             cb({ // eslint-disable-line standard/no-callback-literal
                 plugin,
                 placement,
                 applicableFields,
                 pluginName,
-                onByDefaultDefault
+                pluginLang,
+                onByDefaultDefault,
+                meta
             });
         });
     }

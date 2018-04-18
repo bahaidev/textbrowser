@@ -2,7 +2,7 @@
 import IMF from 'imf';
 import getSerializeParamsAsURL from './utils/getSerializeParamsAsURL.js';
 
-import {getMetaProp, getFieldMatchesLocale} from './utils/Metadata.js';
+import {getMetaProp, Metadata} from './utils/Metadata.js';
 import {escapePlugin} from './utils/Plugin.js';
 
 import Templates from './templates/index.js';
@@ -31,7 +31,7 @@ export default async function workDisplay ({
         );
 
     function _displayWork ({
-        metadataObj, getFieldAliasOrName, schemaObj,
+        lf, metadataObj, getFieldAliasOrName, schemaObj,
         pluginsForWork
     }) {
         const il = localizeParamNames
@@ -81,14 +81,17 @@ export default async function workDisplay ({
                 fieldAliasOrName: getFieldAliasOrName(field) || field
             };
         });
-        const fieldMatchesLocale = getFieldMatchesLocale({
+        const metadata = new Metadata({metadataObj});
+
+        const fieldMatchesLocale = metadata.getFieldMatchesLocale({
             namespace: this.namespace,
-            metadataObj, preferredLocale, schemaItems,
+            preferredLocale, schemaItems,
             pluginsForWork
         });
 
-        // Todo: Test using plugin `lang` as default for peace statement (Chinese numbers)
-        // Todo: Default to content language of applicable-field for locale support detection
+        // Todo: Test locale-detection:
+        //          defaulting to content language of applicable-field or using plugin
+        //          `lang` as default for peace statement (Chinese numbers)
         // Todo: Test i18nization with plugin `getFieldAliasOrName`,
         //          plugin `getTargetLanguage`
 
@@ -97,43 +100,56 @@ export default async function workDisplay ({
         //         insert method already in plugin files
         if (pluginsForWork) {
             console.log('pluginsForWork', pluginsForWork);
-            const lang = this.lang; // array with first item as preferred
+            const {lang} = this; // array with first item as preferred
             pluginsForWork.iterateMappings(({
                 plugin,
                 pluginName, pluginLang,
                 onByDefaultDefault,
-                placement, applicableFields
+                placement, applicableFields, meta
             }) => {
                 const processField = ({applicableField, targetLanguage, onByDefault} = {}) => {
                     const plugin = pluginsForWork.getPluginObject(pluginName);
+                    const applicableFieldLang = metadata.getFieldLang(applicableField);
                     if (plugin.getTargetLanguage) {
                         targetLanguage = plugin.getTargetLanguage({
                             applicableField,
                             targetLanguage,
-                            pluginLang // Lang in JSON which will be default without this method
+                            // Default lang for plug-in (from files.json)
+                            pluginLang,
+                            // Default lang when no target language or
+                            //   plugin lang; using the lang of the applicable
+                            //   field
+                            applicableFieldLang
                         });
                     }
                     const field = escapePlugin({
                         pluginName,
                         applicableField,
-                        targetLanguage: targetLanguage || pluginLang
+                        targetLanguage: targetLanguage || pluginLang ||
+                            applicableFieldLang
                     });
                     if (targetLanguage === '{locale}') {
                         targetLanguage = preferredLocale;
                     }
+                    const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', applicableField]);
                     const fieldAliasOrName = plugin.getFieldAliasOrName
                         ? plugin.getFieldAliasOrName({
-                            lang,
+                            locales: lang,
+                            lf,
+                            targetLanguage,
                             applicableField,
-                            targetLanguage
+                            applicableFieldI18N,
+                            meta,
+                            targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
                         })
-                        : applicableField
-                            ? `${pluginName} (${applicableField}` + (targetLanguage
-                                ? ` -> ${
-                                    languages.getLanguageFromCode(targetLanguage)
-                                }`
-                                : '') + ')'
-                            : pluginName;
+                        : languages.getFieldNameFromPluginNameAndLocales({
+                            pluginName,
+                            locales: lang,
+                            lf,
+                            targetLanguage,
+                            applicableFieldI18N,
+                            meta
+                        });
                     fieldInfo.splice(
                         // Todo: Allow default placement overriding for
                         //    non-plugins
@@ -148,7 +164,7 @@ export default async function workDisplay ({
                             //    for non-plugins)
                             onByDefault: typeof onByDefault === 'boolean'
                                 ? onByDefault
-                                : onByDefaultDefault || false,
+                                : (onByDefaultDefault || false),
                             // Two conventions for use by plug-ins but
                             //     textbrowser only passes on (might
                             //     not need here)
@@ -208,7 +224,7 @@ export default async function workDisplay ({
             },
             fallback: true
         });
-        _displayWork.call(this, {metadataObj, ...args});
+        _displayWork.call(this, {lf, metadataObj, ...args});
     } catch (err) {
         alert(err);
     }
