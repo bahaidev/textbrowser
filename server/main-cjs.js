@@ -6877,14 +6877,14 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             : {tdVal};
     };
     const determineEnd = ({
-        fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,
+        fieldValueAliasMap, fieldValueAliasMapPreferred, nonPluginLocalizedFieldNames,
         applicableBrowseFieldNames, starts, ends
     }) => ({
         tr, foundState
     }) => {
         const rowIDPartsPreferred = [];
         const rowIDParts = applicableBrowseFieldNames.map((fieldName) => {
-            const idx = localizedFieldNames.indexOf(fieldName);
+            const idx = nonPluginLocalizedFieldNames.indexOf(fieldName);
             // This works to put alias in anchor but this includes
             //   our ending parenthetical, the alias may be harder
             //   to remember and/or automated than original (e.g.,
@@ -7013,13 +7013,13 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         }
         return [hasCaption, caption];
     };
-    const runPresort = ({presort, tableData, applicableBrowseFieldNames, localizedFieldNames}) => {
+    const runPresort = ({presort, tableData, applicableBrowseFieldNames, nonPluginLocalizedFieldNames}) => {
         // Todo: Ought to be checking against an aliased table
         if (presort) {
             tableData.sort((rowA, rowB) => {
                 let precedence;
                 applicableBrowseFieldNames.some((fieldName) => {
-                    const idx = localizedFieldNames.indexOf(fieldName);
+                    const idx = nonPluginLocalizedFieldNames.indexOf(fieldName);
                     const rowAFirst = rowA[idx] < rowB[idx];
                     const rowBFirst = rowA[idx] > rowB[idx];
                     precedence = rowBFirst ? 1 : -1;
@@ -7138,6 +7138,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             fieldLang: metadataObj.fields[field].lang
         };
     });
+    const nonPluginLocalizedFieldNames = fieldInfo.map((fi) => fi.fieldAliasOrName);
 
     // Todo: COMPLETE
     // Todo: In results, init and show plugin fields and anchor if they
@@ -7364,7 +7365,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             ({
                 resolved: {data: tableData}
             } = await JsonRefs$1.resolveRefs(fileData.file));
-            runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
+            runPresort({presort, tableData, applicableBrowseFieldNames, nonPluginLocalizedFieldNames});
         } else {
             /*
             const jsonURL = Object.entries({
@@ -7384,7 +7385,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         caption, hasCaption, showInterlinTitles,
         determineEnd: determineEnd({
             fieldValueAliasMap, fieldValueAliasMapPreferred,
-            localizedFieldNames, applicableBrowseFieldNames,
+            nonPluginLocalizedFieldNames, applicableBrowseFieldNames,
             starts, ends
         }),
         getCellValue: getCellValue({
