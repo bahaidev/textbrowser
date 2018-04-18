@@ -172,7 +172,7 @@ export class Metadata {
         pluginsForWork
     }) {
         const {metadataObj} = this;
-        return function (field) {
+        return (field) => {
             const preferredLanguages = getPreferredLanguages({
                 namespace, preferredLocale
             });
