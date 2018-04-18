@@ -147,14 +147,14 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             : {tdVal};
     };
     const determineEnd = ({
-        fieldValueAliasMap, fieldValueAliasMapPreferred, nonPluginLocalizedFieldNames,
+        fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,
         applicableBrowseFieldNames, starts, ends
     }) => ({
         tr, foundState
     }) => {
         const rowIDPartsPreferred = [];
         const rowIDParts = applicableBrowseFieldNames.map((fieldName) => {
-            const idx = nonPluginLocalizedFieldNames.indexOf(fieldName);
+            const idx = localizedFieldNames.indexOf(fieldName);
             // This works to put alias in anchor but this includes
             //   our ending parenthetical, the alias may be harder
             //   to remember and/or automated than original (e.g.,
@@ -283,13 +283,13 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         }
         return [hasCaption, caption];
     };
-    const runPresort = ({presort, tableData, applicableBrowseFieldNames, nonPluginLocalizedFieldNames}) => {
+    const runPresort = ({presort, tableData, applicableBrowseFieldNames, localizedFieldNames}) => {
         // Todo: Ought to be checking against an aliased table
         if (presort) {
             tableData.sort((rowA, rowB) => {
                 let precedence;
                 applicableBrowseFieldNames.some((fieldName) => {
-                    const idx = nonPluginLocalizedFieldNames.indexOf(fieldName);
+                    const idx = localizedFieldNames.indexOf(fieldName);
                     const rowAFirst = rowA[idx] < rowB[idx];
                     const rowBFirst = rowA[idx] > rowB[idx];
                     precedence = rowBFirst ? 1 : -1;
@@ -300,9 +300,12 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         }
     };
     const getFieldValueAliasMap = ({
-        schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias
+        schemaItems, fieldInfo, metadataObj, getFieldAliasOrName, usePreferAlias
     }) => {
-        return schemaItems.map(({title: field}) => {
+        return fieldInfo.map(({field, plugin}) => {
+            if (plugin) {
+                return;
+            }
             const {preferAlias, fieldValueAliasMap} = getFieldNameAndValueAliases({
                 field, schemaItems, metadataObj, getFieldAliasOrName, lang
             });
@@ -393,22 +396,14 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         }
     });
 
-    const fieldValueAliasMap = getFieldValueAliasMap({
-        schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias: false
-    });
-    const fieldValueAliasMapPreferred = getFieldValueAliasMap({
-        schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias: true
-    });
-
     const fieldInfo = schemaItems.map(({title: field, format}) => {
         return {
-            // field,
+            field,
             fieldAliasOrName: getFieldAliasOrName(field) || field,
             escapeColumn: format !== 'html',
             fieldLang: metadataObj.fields[field].lang
         };
     });
-    const nonPluginLocalizedFieldNames = fieldInfo.map((fi) => fi.fieldAliasOrName);
 
     // Todo: COMPLETE
     // Todo: In results, init and show plugin fields and anchor if they
@@ -425,6 +420,9 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             onByDefaultDefault,
             placement, applicableFields, meta
         }) => {
+            placement = placement === 'end'
+                ? Infinity // push
+                : placement;
             const processField = ({applicableField, targetLanguage, onByDefault} = {}) => {
                 const plugin = pluginsForWork.getPluginObject(pluginName);
                 const applicableFieldLang = metadata.getFieldLang(applicableField);
@@ -466,11 +464,12 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                 fieldInfo.splice(
                     // Todo: Allow default placement overriding for
                     //    non-plugins
-                    placement === 'end'
-                        ? Infinity // push
-                        : placement,
+                    placement,
                     0,
                     {
+                        plugin,
+                        meta,
+                        placement,
                         // field: `${this.namespace}-plugin-${field}`,
                         fieldAliasOrName,
                         escapeColumn: plugin.escapeColumn !== false,
@@ -496,6 +495,12 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     const localizedFieldNames = fieldInfo.map((fi) => fi.fieldAliasOrName);
     const escapeColumnIndexes = fieldInfo.map((fi) => fi.escapeColumn);
     const fieldLangs = fieldInfo.map((fi) => fi.fieldLang);
+    const fieldValueAliasMap = getFieldValueAliasMap({
+        schemaItems, fieldInfo, metadataObj, getFieldAliasOrName, usePreferAlias: false
+    });
+    const fieldValueAliasMapPreferred = getFieldValueAliasMap({
+        schemaItems, fieldInfo, metadataObj, getFieldAliasOrName, usePreferAlias: true
+    });
 
     // Todo: Repeats some code in workDisplay; probably need to reuse
     //   these functions more in `Templates.resultsDisplayServerOrClient` too
@@ -635,7 +640,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             ({
                 resolved: {data: tableData}
             } = await JsonRefs.resolveRefs(fileData.file));
-            runPresort({presort, tableData, applicableBrowseFieldNames, nonPluginLocalizedFieldNames});
+            runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
         } else {
             /*
             const jsonURL = Object.entries({
@@ -648,6 +653,21 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             tableData = await (await fetch(jsonURL)).json();
         }
     }
+    if (pluginsForWork) {
+        fieldInfo.forEach(({plugin, placement, applicableField, fieldLang, meta}, i) => {
+            const applicableFieldIdx = fieldInfo.findIndex(({field}) => {
+                return field === applicableField;
+            });
+            if (!plugin) {
+                return;
+            }
+            tableData.forEach((tr, j) => {
+                // Todo: We should pass on other arguments (like `meta` but on `applicableFields`)
+                tr.splice(placement, 0, `${i}-${j}`); // plugin.getCellData({tableData, i, j, applicableField, applicableFieldIdx, fieldLang, meta}));
+            });
+            console.log('applicableFieldIdx', applicableFieldIdx);
+        });
+    }
     const templateArgs = {
         tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
         escapeQuotedCSS, escapeCSS, escapeHTML,
@@ -655,7 +675,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         caption, hasCaption, showInterlinTitles,
         determineEnd: determineEnd({
             fieldValueAliasMap, fieldValueAliasMapPreferred,
-            nonPluginLocalizedFieldNames, applicableBrowseFieldNames,
+            localizedFieldNames, applicableBrowseFieldNames,
             starts, ends
         }),
         getCellValue: getCellValue({
