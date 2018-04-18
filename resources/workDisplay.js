@@ -73,25 +73,14 @@ export default async function workDisplay ({
 
         const schemaItems = schemaObj.items.items;
 
-        const fields = schemaItems.map((schemaItem) => schemaItem.title);
-
-        const fieldInfo = fields.map((field) => {
+        const fieldInfo = schemaItems.map(({title: field}) => {
             return {
                 field,
                 fieldAliasOrName: getFieldAliasOrName(field) || field
             };
         });
+
         const metadata = new Metadata({metadataObj});
-
-        const fieldMatchesLocale = metadata.getFieldMatchesLocale({
-            namespace: this.namespace,
-            preferredLocale, schemaItems,
-            pluginsForWork
-        });
-
-        // Todo: In results, init and show plugin fields and anchor if they
-        //         are chosen as (i18nized) anchor columns; remove any unused
-        //         insert method already in plugin files
         if (pluginsForWork) {
             console.log('pluginsForWork', pluginsForWork);
             const {lang} = this; // array with first item as preferred
@@ -164,7 +153,7 @@ export default async function workDisplay ({
                             //     textbrowser only passes on (might
                             //     not need here)
                             applicableField,
-                            targetLanguage
+                            fieldLang: targetLanguage
                         }
                     );
                 };
@@ -173,6 +162,12 @@ export default async function workDisplay ({
                 }
             });
         }
+
+        const fieldMatchesLocale = metadata.getFieldMatchesLocale({
+            namespace: this.namespace,
+            preferredLocale, schemaItems,
+            pluginsForWork
+        });
 
         const content = [];
         this.getBrowseFieldData({

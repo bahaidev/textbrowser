@@ -118,10 +118,11 @@ const srv = http.createServer(async (req, res) => {
         params: query
     });
 
+    const langData = await getJSON(userParamsWithDefaults.languages);
     getIMFFallbackResults({
         $p,
         basePath,
-        langData: await getJSON(userParamsWithDefaults.languages),
+        langData,
         async resultsDisplay (resultsArgs, ...args) {
             const serverOutput = $p.get('serverOutput', true);
             const isHTML = serverOutput === 'html';
@@ -133,6 +134,7 @@ const srv = http.createServer(async (req, res) => {
                 ...resultsArgs,
                 skipIndexedDB: false,
                 serverOutput,
+                langData,
                 prefI18n: $p.get('prefI18n', true)
             };
             // Todo: Move sw-sample.js to bahaiwritings and test

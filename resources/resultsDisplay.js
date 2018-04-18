@@ -1,7 +1,10 @@
 /* eslint-env browser */
 import Templates from './templates/index.js';
 import {escapeHTML} from './utils/sanitize.js';
-import {getMetaProp, getFieldNameAndValueAliases, getBrowseFieldData} from './utils/Metadata.js';
+import {
+    getMetaProp, Metadata, getFieldNameAndValueAliases, getBrowseFieldData
+} from './utils/Metadata.js';
+import {Languages} from './utils/Languages.js';
 import {getWorkData} from './utils/WorkInfo.js';
 // Keep this as the last import for Rollup
 import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
@@ -120,8 +123,9 @@ export const resultsDisplayServer = async function resultsDisplayServer (args) {
 
 export const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient ({
     l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, noIndexedDB, prefI18n,
-    files, allowPlugins, basePath = '', dynamicBasePath = ''
+    files, allowPlugins, langData, basePath = '', dynamicBasePath = ''
 }) {
+    const languages = new Languages({langData});
     const getCellValue = ({
         fieldValueAliasMapPreferred, escapeColumnIndexes
     }) => ({
@@ -376,6 +380,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
 
     const heading = getMetaProp(lang, metadataObj, 'heading');
     const schemaItems = schemaObj.items.items;
+
     const setNames = [];
     const presorts = [];
     const browseFieldSets = [];
@@ -395,9 +400,101 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias: true
     });
 
-    const localizedFieldNames = schemaItems.map((si) => getFieldAliasOrName(si.title));
-    const escapeColumnIndexes = schemaItems.map((si) => si.format !== 'html');
-    const fieldLangs = schemaItems.map((si) => metadataObj.fields[si.title].lang);
+    const fieldInfo = schemaItems.map(({title: field, format}) => {
+        return {
+            // field,
+            fieldAliasOrName: getFieldAliasOrName(field) || field,
+            escapeColumn: format !== 'html',
+            fieldLang: metadataObj.fields[field].lang
+        };
+    });
+
+    // Todo: COMPLETE
+    // Todo: In results, init and show plugin fields and anchor if they
+    //         are chosen as (i18nized) anchor columns; remove any unused
+    //         insert method already in plugin files
+    const [preferredLocale] = lang;
+    const metadata = new Metadata({metadataObj});
+    if (pluginsForWork) {
+        console.log('pluginsForWork', pluginsForWork);
+        const {lang} = this; // array with first item as preferred
+        pluginsForWork.iterateMappings(({
+            plugin,
+            pluginName, pluginLang,
+            onByDefaultDefault,
+            placement, applicableFields, meta
+        }) => {
+            const processField = ({applicableField, targetLanguage, onByDefault} = {}) => {
+                const plugin = pluginsForWork.getPluginObject(pluginName);
+                const applicableFieldLang = metadata.getFieldLang(applicableField);
+                if (plugin.getTargetLanguage) {
+                    targetLanguage = plugin.getTargetLanguage({
+                        applicableField,
+                        targetLanguage,
+                        // Default lang for plug-in (from files.json)
+                        pluginLang,
+                        // Default lang when no target language or
+                        //   plugin lang; using the lang of the applicable
+                        //   field
+                        applicableFieldLang
+                    });
+                }
+                if (targetLanguage === '{locale}') {
+                    targetLanguage = preferredLocale;
+                }
+                const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', applicableField]);
+                const fieldAliasOrName = plugin.getFieldAliasOrName
+                    ? plugin.getFieldAliasOrName({
+                        locales: lang,
+                        lf,
+                        targetLanguage,
+                        applicableField,
+                        applicableFieldI18N,
+                        meta,
+                        targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
+                    })
+                    : languages.getFieldNameFromPluginNameAndLocales({
+                        pluginName,
+                        locales: lang,
+                        lf,
+                        targetLanguage,
+                        applicableFieldI18N,
+                        // Todo: Should have way to i18nize meta
+                        meta
+                    });
+                fieldInfo.splice(
+                    // Todo: Allow default placement overriding for
+                    //    non-plugins
+                    placement === 'end'
+                        ? Infinity // push
+                        : placement,
+                    0,
+                    {
+                        // field: `${this.namespace}-plugin-${field}`,
+                        fieldAliasOrName,
+                        escapeColumn: plugin.escapeColumn !== false,
+                        // Plug-in specific (todo: allow specifying
+                        //    for non-plugins)
+                        onByDefault: typeof onByDefault === 'boolean'
+                            ? onByDefault
+                            : (onByDefaultDefault || false),
+                        // Two conventions for use by plug-ins but
+                        //     textbrowser only passes on (might
+                        //     not need here)
+                        applicableField,
+                        fieldLang: targetLanguage
+                    }
+                );
+            };
+            if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
+                processField();
+            }
+        });
+    }
+
+    const localizedFieldNames = fieldInfo.map((fi) => fi.fieldAliasOrName);
+    const escapeColumnIndexes = fieldInfo.map((fi) => fi.escapeColumn);
+    const fieldLangs = fieldInfo.map((fi) => fi.fieldLang);
 
     // Todo: Repeats some code in workDisplay; probably need to reuse
     //   these functions more in `Templates.resultsDisplayServerOrClient` too

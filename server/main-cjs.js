@@ -3623,6 +3623,26 @@ const escapeHTML = (s) => {
 };
 
 /* eslint-env browser */
+// Todo: remember this locales choice by cookie?
+const getPreferredLanguages = ({namespace, preferredLocale}) => {
+    // Todo: Add to this optionally with one-off tag input box
+    // Todo: Switch to fallbackLanguages so can default to
+    //    navigator.languages?
+    const langCodes = localStorage.getItem(namespace + '-langCodes');
+    const lngs = (langCodes && JSON.parse(langCodes)) || [preferredLocale];
+    const langArr = [];
+    lngs.forEach((lng) => {
+        // Todo: Check for multiple separate hyphenated
+        //   groupings (for each supplied language)
+        const higherLocale = lng.replace(/-.*$/, '');
+        if (higherLocale === lng) {
+            langArr.push(lng);
+        } else {
+            langArr.push(lng, higherLocale);
+        }
+    });
+    return langArr;
+};
 
 class Languages {
     constructor ({langData}) {
@@ -3827,6 +3847,57 @@ const getBrowseFieldData = function ({
         callback({setName, browseFields, i, presort}); // eslint-disable-line standard/no-callback-literal
     });
 };
+
+// Todo: Incorporate other methods into this class
+class Metadata {
+    constructor ({metadataObj}) {
+        this.metadataObj = metadataObj;
+    }
+
+    getFieldLang (field) {
+        const {metadataObj} = this;
+        const fields = metadataObj && metadataObj.fields;
+        return fields && fields[field] && fields[field].lang;
+    }
+
+    getFieldMatchesLocale ({
+        namespace, preferredLocale, schemaItems,
+        pluginsForWork
+    }) {
+        const {metadataObj} = this;
+        return (field) => {
+            const preferredLanguages = getPreferredLanguages({
+                namespace, preferredLocale
+            });
+            if (pluginsForWork.isPluginField({namespace, field})) {
+                let [, , targetLanguage] = pluginsForWork.getPluginFieldParts({namespace, field});
+                if (targetLanguage === '{locale}') {
+                    targetLanguage = preferredLocale;
+                }
+                return !targetLanguage ||
+                    preferredLanguages.includes(targetLanguage);
+            }
+            const metaLang = this.getFieldLang(field);
+            const localeStrings = metadataObj &&
+                metadataObj['localization-strings'];
+
+            // If this is a localized field (e.g., enum), we don't want
+            //  to avoid as may be translated (should check though)
+            const hasFieldValue = localeStrings &&
+                Object.keys(localeStrings).some(lng => {
+                    const fv = localeStrings[lng] &&
+                        localeStrings[lng].fieldvalue;
+                    return fv && fv[field];
+                });
+
+            return hasFieldValue ||
+                (metaLang && preferredLanguages.includes(metaLang)) ||
+                schemaItems.some(item =>
+                    item.title === field && item.type !== 'string'
+                );
+        };
+    }
+}
 
 async function getJSON (jsonURL, cb, errBack) {
     try {
@@ -6782,8 +6853,9 @@ const resultsDisplayServer = async function resultsDisplayServer (args) {
 
 const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClient ({
     l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, noIndexedDB, prefI18n,
-    files, allowPlugins, basePath = '', dynamicBasePath = ''
+    files, allowPlugins, langData, basePath = '', dynamicBasePath = ''
 }) {
+    const languages = new Languages({langData});
     const getCellValue = ({
         fieldValueAliasMapPreferred, escapeColumnIndexes
     }) => ({
@@ -7038,6 +7110,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
 
     const heading = getMetaProp(lang, metadataObj, 'heading');
     const schemaItems = schemaObj.items.items;
+
     const setNames = [];
     const presorts = [];
     const browseFieldSets = [];
@@ -7057,9 +7130,101 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         schemaItems, metadataObj, getFieldAliasOrName, usePreferAlias: true
     });
 
-    const localizedFieldNames = schemaItems.map((si) => getFieldAliasOrName(si.title));
-    const escapeColumnIndexes = schemaItems.map((si) => si.format !== 'html');
-    const fieldLangs = schemaItems.map((si) => metadataObj.fields[si.title].lang);
+    const fieldInfo = schemaItems.map(({title: field, format}) => {
+        return {
+            // field,
+            fieldAliasOrName: getFieldAliasOrName(field) || field,
+            escapeColumn: format !== 'html',
+            fieldLang: metadataObj.fields[field].lang
+        };
+    });
+
+    // Todo: COMPLETE
+    // Todo: In results, init and show plugin fields and anchor if they
+    //         are chosen as (i18nized) anchor columns; remove any unused
+    //         insert method already in plugin files
+    const [preferredLocale] = lang;
+    const metadata = new Metadata({metadataObj});
+    if (pluginsForWork) {
+        console.log('pluginsForWork', pluginsForWork);
+        const {lang} = this; // array with first item as preferred
+        pluginsForWork.iterateMappings(({
+            plugin,
+            pluginName, pluginLang,
+            onByDefaultDefault,
+            placement, applicableFields, meta
+        }) => {
+            const processField = ({applicableField, targetLanguage, onByDefault} = {}) => {
+                const plugin = pluginsForWork.getPluginObject(pluginName);
+                const applicableFieldLang = metadata.getFieldLang(applicableField);
+                if (plugin.getTargetLanguage) {
+                    targetLanguage = plugin.getTargetLanguage({
+                        applicableField,
+                        targetLanguage,
+                        // Default lang for plug-in (from files.json)
+                        pluginLang,
+                        // Default lang when no target language or
+                        //   plugin lang; using the lang of the applicable
+                        //   field
+                        applicableFieldLang
+                    });
+                }
+                if (targetLanguage === '{locale}') {
+                    targetLanguage = preferredLocale;
+                }
+                const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', applicableField]);
+                const fieldAliasOrName = plugin.getFieldAliasOrName
+                    ? plugin.getFieldAliasOrName({
+                        locales: lang,
+                        lf,
+                        targetLanguage,
+                        applicableField,
+                        applicableFieldI18N,
+                        meta,
+                        targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
+                    })
+                    : languages.getFieldNameFromPluginNameAndLocales({
+                        pluginName,
+                        locales: lang,
+                        lf,
+                        targetLanguage,
+                        applicableFieldI18N,
+                        // Todo: Should have way to i18nize meta
+                        meta
+                    });
+                fieldInfo.splice(
+                    // Todo: Allow default placement overriding for
+                    //    non-plugins
+                    placement === 'end'
+                        ? Infinity // push
+                        : placement,
+                    0,
+                    {
+                        // field: `${this.namespace}-plugin-${field}`,
+                        fieldAliasOrName,
+                        escapeColumn: plugin.escapeColumn !== false,
+                        // Plug-in specific (todo: allow specifying
+                        //    for non-plugins)
+                        onByDefault: typeof onByDefault === 'boolean'
+                            ? onByDefault
+                            : (onByDefaultDefault || false),
+                        // Two conventions for use by plug-ins but
+                        //     textbrowser only passes on (might
+                        //     not need here)
+                        applicableField,
+                        fieldLang: targetLanguage
+                    }
+                );
+            };
+            if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
+                processField();
+            }
+        });
+    }
+
+    const localizedFieldNames = fieldInfo.map((fi) => fi.fieldAliasOrName);
+    const escapeColumnIndexes = fieldInfo.map((fi) => fi.escapeColumn);
+    const fieldLangs = fieldInfo.map((fi) => fi.fieldLang);
 
     // Todo: Repeats some code in workDisplay; probably need to reuse
     //   these functions more in `Templates.resultsDisplayServerOrClient` too
@@ -8962,10 +9127,11 @@ const srv = http$1.createServer(async (req, res) => {
         params: query
     });
 
+    const langData = await getJSON(userParamsWithDefaults.languages);
     getIMFFallbackResults({
         $p,
         basePath,
-        langData: await getJSON(userParamsWithDefaults.languages),
+        langData,
         async resultsDisplay (resultsArgs, ...args) {
             const serverOutput = $p.get('serverOutput', true);
             const isHTML = serverOutput === 'html';
@@ -8977,6 +9143,7 @@ const srv = http$1.createServer(async (req, res) => {
                 ...resultsArgs,
                 skipIndexedDB: false,
                 serverOutput,
+                langData,
                 prefI18n: $p.get('prefI18n', true)
             };
             // Todo: Move sw-sample.js to bahaiwritings and test

@@ -355,6 +355,7 @@ TextBrowser.prototype.paramChange = async function () {
             const noIndexedDB = refusedIndexedDB ||
                 !navigator.serviceWorker.controller; // No worker from which IndexedDB is available;
             return this.resultsDisplayClient({
+                langData: this.langData,
                 ...opts,
                 noIndexedDB,
                 dynamicBasePath: this.dynamicBasePath,
