@@ -7402,9 +7402,10 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             });
             // Now safe to pass (and set) `j` value as tr array expanded
             tableData.forEach((tr, i) => {
+                const applicableFieldText = tr[applicableFieldIdx];
                 tr[j] = plugin.getCellData({
-                    tableData, i, j, applicableField,
-                    applicableFieldIdx, fieldLang, meta
+                    tr, tableData, i, j, applicableField,
+                    applicableFieldIdx, applicableFieldText, fieldLang, meta
                 });
             });
             console.log('applicableFieldIdx', applicableFieldIdx);
