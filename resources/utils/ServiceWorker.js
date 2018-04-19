@@ -140,7 +140,7 @@ export const registerServiceWorker = async ({
                 type: 'install',
                 namespace,
                 localeFiles,
-                userDataFiles, // including plugins, etc.
+                userDataFiles, // Todo: This should include plugins
                 userStaticFiles: staticFilesToCache
             });
             /*
