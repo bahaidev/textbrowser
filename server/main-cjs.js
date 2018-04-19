@@ -3655,10 +3655,11 @@ class Languages {
         return this.localeFromLangData(code).languages[code];
     }
     getFieldNameFromPluginNameAndLocales ({
-        pluginName, locales, lf, targetLanguage, applicableFieldI18N, meta
+        pluginName, locales, lf, targetLanguage, applicableFieldI18N, meta, metaApplicableField
     }) {
         return lf(['plugins', pluginName, 'fieldname'], {
             ...meta,
+            ...metaApplicableField,
             applicableField: applicableFieldI18N,
             targetLanguage: targetLanguage
                 ? this.getLanguageFromCode(targetLanguage)
@@ -6683,14 +6684,14 @@ class PluginsForWork {
             return false;
         }
         Object.entries(applicableFields).forEach(([applicableField, {
-            targetLanguage, onByDefault
+            targetLanguage, onByDefault, meta: metaApplicableField
         }]) => {
             if (Array.isArray(targetLanguage)) {
                 targetLanguage.forEach((targetLanguage) => {
-                    cb({applicableField, targetLanguage, onByDefault}); // eslint-disable-line standard/no-callback-literal
+                    cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line standard/no-callback-literal
                 });
             } else {
-                cb({applicableField, targetLanguage, onByDefault}); // eslint-disable-line standard/no-callback-literal
+                cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line standard/no-callback-literal
             }
         });
         return true;
@@ -7163,7 +7164,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             placement = placement === 'end'
                 ? Infinity // push
                 : placement;
-            const processField = ({applicableField, targetLanguage, onByDefault} = {}) => {
+            const processField = ({applicableField, targetLanguage, onByDefault, metaApplicableField} = {}) => {
                 const plugin = pluginsForWork.getPluginObject(pluginName);
                 const applicableFieldLang = metadata.getFieldLang(applicableField);
                 if (plugin.getTargetLanguage) {
@@ -7190,6 +7191,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
                         applicableField,
                         applicableFieldI18N,
                         meta,
+                        metaApplicableField,
                         targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
                     })
                     : languages.getFieldNameFromPluginNameAndLocales({
@@ -7198,8 +7200,9 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
                         lf,
                         targetLanguage,
                         applicableFieldI18N,
-                        // Todo: Should have way to i18nize meta
-                        meta
+                        // Todo: Should have formal way to i18nize meta
+                        meta,
+                        metaApplicableField
                     });
                 fieldInfo.splice(
                     // Todo: Allow default placement overriding for
@@ -7218,10 +7221,11 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
                         onByDefault: typeof onByDefault === 'boolean'
                             ? onByDefault
                             : (onByDefaultDefault || false),
-                        // Two conventions for use by plug-ins but
+                        // Three conventions for use by plug-ins but
                         //     textbrowser only passes on (might
                         //     not need here)
                         applicableField,
+                        metaApplicableField,
                         fieldLang: targetLanguage
                     }
                 );
@@ -7402,7 +7406,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     }
     // Todo: Ensure working in server-side mode
     if (pluginsForWork) {
-        fieldInfo.forEach(({plugin, placement, applicableField, fieldLang, meta}, j) => {
+        fieldInfo.forEach(({plugin, placement}, j) => {
             if (!plugin) {
                 return;
             }
@@ -7415,7 +7419,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
                 );
             });
         });
-        fieldInfo.forEach(({plugin, placement, applicableField, fieldLang, meta}, j) => {
+        fieldInfo.forEach(({plugin, applicableField, fieldLang, meta, metaApplicableField}, j) => {
             if (!plugin) {
                 return;
             }
@@ -7427,7 +7431,8 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
                 const applicableFieldText = tr[applicableFieldIdx];
                 tr[j] = plugin.getCellData({
                     tr, tableData, i, j, applicableField,
-                    applicableFieldIdx, applicableFieldText, fieldLang, meta
+                    applicableFieldIdx, applicableFieldText, fieldLang,
+                    meta, metaApplicableField
                 });
             });
             console.log('applicableFieldIdx', applicableFieldIdx);

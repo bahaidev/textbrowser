@@ -106,6 +106,14 @@
                                                         },
                                                         "onByDefault": {
                                                             "type": "boolean"
+                                                        },
+                                                        "meta": {
+                                                            "type": "object",
+                                                            "patternProperties": {
+                                                                ".*": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
                                                         }
                                                     },
                                                     "patternProperties": {

@@ -90,7 +90,7 @@ export default async function workDisplay ({
                 onByDefaultDefault,
                 placement, applicableFields, meta
             }) => {
-                const processField = ({applicableField, targetLanguage, onByDefault} = {}) => {
+                const processField = ({applicableField, targetLanguage, onByDefault, metaApplicableField} = {}) => {
                     const plugin = pluginsForWork.getPluginObject(pluginName);
                     const applicableFieldLang = metadata.getFieldLang(applicableField);
                     if (plugin.getTargetLanguage) {
@@ -123,6 +123,7 @@ export default async function workDisplay ({
                             applicableField,
                             applicableFieldI18N,
                             meta,
+                            metaApplicableField,
                             targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
                         })
                         : languages.getFieldNameFromPluginNameAndLocales({
@@ -131,8 +132,9 @@ export default async function workDisplay ({
                             lf,
                             targetLanguage,
                             applicableFieldI18N,
-                            // Todo: Should have way to i18nize meta
-                            meta
+                            // Todo: Should have formal way to i18nize meta
+                            meta,
+                            metaApplicableField
                         });
                     fieldInfo.splice(
                         // Todo: Allow default placement overriding for
@@ -149,10 +151,11 @@ export default async function workDisplay ({
                             onByDefault: typeof onByDefault === 'boolean'
                                 ? onByDefault
                                 : (onByDefaultDefault || false),
-                            // Two conventions for use by plug-ins but
+                            // Three conventions for use by plug-ins but
                             //     textbrowser only passes on (might
                             //     not need here)
                             applicableField,
+                            metaApplicableField,
                             fieldLang: targetLanguage
                         }
                     );

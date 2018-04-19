@@ -31,10 +31,11 @@ export class Languages {
         return this.localeFromLangData(code).languages[code];
     }
     getFieldNameFromPluginNameAndLocales ({
-        pluginName, locales, lf, targetLanguage, applicableFieldI18N, meta
+        pluginName, locales, lf, targetLanguage, applicableFieldI18N, meta, metaApplicableField
     }) {
         return lf(['plugins', pluginName, 'fieldname'], {
             ...meta,
+            ...metaApplicableField,
             applicableField: applicableFieldI18N,
             targetLanguage: targetLanguage
                 ? this.getLanguageFromCode(targetLanguage)

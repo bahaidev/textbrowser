@@ -65,14 +65,14 @@ export class PluginsForWork {
             return false;
         }
         Object.entries(applicableFields).forEach(([applicableField, {
-            targetLanguage, onByDefault
+            targetLanguage, onByDefault, meta: metaApplicableField
         }]) => {
             if (Array.isArray(targetLanguage)) {
                 targetLanguage.forEach((targetLanguage) => {
-                    cb({applicableField, targetLanguage, onByDefault}); // eslint-disable-line standard/no-callback-literal
+                    cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line standard/no-callback-literal
                 });
             } else {
-                cb({applicableField, targetLanguage, onByDefault}); // eslint-disable-line standard/no-callback-literal
+                cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line standard/no-callback-literal
             }
         });
         return true;

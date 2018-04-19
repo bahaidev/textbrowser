@@ -433,7 +433,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             placement = placement === 'end'
                 ? Infinity // push
                 : placement;
-            const processField = ({applicableField, targetLanguage, onByDefault} = {}) => {
+            const processField = ({applicableField, targetLanguage, onByDefault, metaApplicableField} = {}) => {
                 const plugin = pluginsForWork.getPluginObject(pluginName);
                 const applicableFieldLang = metadata.getFieldLang(applicableField);
                 if (plugin.getTargetLanguage) {
@@ -460,6 +460,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                         applicableField,
                         applicableFieldI18N,
                         meta,
+                        metaApplicableField,
                         targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
                     })
                     : languages.getFieldNameFromPluginNameAndLocales({
@@ -468,8 +469,9 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                         lf,
                         targetLanguage,
                         applicableFieldI18N,
-                        // Todo: Should have way to i18nize meta
-                        meta
+                        // Todo: Should have formal way to i18nize meta
+                        meta,
+                        metaApplicableField
                     });
                 fieldInfo.splice(
                     // Todo: Allow default placement overriding for
@@ -488,10 +490,11 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                         onByDefault: typeof onByDefault === 'boolean'
                             ? onByDefault
                             : (onByDefaultDefault || false),
-                        // Two conventions for use by plug-ins but
+                        // Three conventions for use by plug-ins but
                         //     textbrowser only passes on (might
                         //     not need here)
                         applicableField,
+                        metaApplicableField,
                         fieldLang: targetLanguage
                     }
                 );
@@ -672,7 +675,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     }
     // Todo: Ensure working in server-side mode
     if (pluginsForWork) {
-        fieldInfo.forEach(({plugin, placement, applicableField, fieldLang, meta}, j) => {
+        fieldInfo.forEach(({plugin, placement}, j) => {
             if (!plugin) {
                 return;
             }
@@ -685,7 +688,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                 );
             });
         });
-        fieldInfo.forEach(({plugin, placement, applicableField, fieldLang, meta}, j) => {
+        fieldInfo.forEach(({plugin, applicableField, fieldLang, meta, metaApplicableField}, j) => {
             if (!plugin) {
                 return;
             }
@@ -697,7 +700,8 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                 const applicableFieldText = tr[applicableFieldIdx];
                 tr[j] = plugin.getCellData({
                     tr, tableData, i, j, applicableField,
-                    applicableFieldIdx, applicableFieldText, fieldLang, meta
+                    applicableFieldIdx, applicableFieldText, fieldLang,
+                    meta, metaApplicableField
                 });
             });
             console.log('applicableFieldIdx', applicableFieldIdx);
