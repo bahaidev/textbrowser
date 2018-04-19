@@ -652,7 +652,9 @@ upon for monkey-patching.
 1.  Renaming/linking to fuller descriptions or graphics explaining
     options/preferences regarding locale, interlinear, CSS
 1.  **Plugins/Automated** fields
-    1.  Include **extensibility mechanism**
+    1. **Extensibility** (note: Some below may already be implemented)
+        1.  Implement (worker-sandboxed (and parallel async-loading per
+            row/cell?)!)
         1.  Admin/files-driven and ideally user-driven (though security issue
             for additive approach); could let plugin itself accept user input
         1.  Additive or reductive (omitting/merging)
