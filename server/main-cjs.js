@@ -6878,7 +6878,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     };
     const determineEnd = ({
         fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,
-        applicableBrowseFieldNames, starts, ends
+        applicableBrowseFieldNames, startsTextOnly, endsTextOnly
     }) => ({
         tr, foundState
     }) => {
@@ -6894,7 +6894,14 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             //   items).
             if (fieldValueAliasMap[idx] !== undefined) {
                 rowIDPartsPreferred.push(fieldValueAliasMapPreferred[idx][tr[idx]]);
-                return fieldValueAliasMap[idx][tr[idx]];
+                const val = fieldValueAliasMap[idx][tr[idx]];
+                if ( // The original is text so supplied as such in start value
+                    typeof val === 'number' ||
+                    (Array.isArray(val) && val.every((v) => typeof v === 'number'))
+                ) {
+                    return tr[idx];
+                }
+                return val;
             }
             rowIDPartsPreferred.push(tr[idx]);
             return tr[idx];
@@ -6903,7 +6910,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         // Todo: Use schema to determine each and use `parseInt`
         //   on other value instead of `String` conversions
         if (!foundState.start) {
-            if (starts.some((part, i) => {
+            if (startsTextOnly.some((part, i) => {
                 const rowIDPart = rowIDParts[i];
                 return Array.isArray(rowIDPart)
                     ? !rowIDPart.some((rip) => part === String(rip))
@@ -6917,7 +6924,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             foundState.start = true;
         }
         // This doesn't go in an `else` for the above in case the start is the end
-        if (ends.every((part, i) => {
+        if (endsTextOnly.every((part, i) => {
             const rowIDPart = rowIDParts[i];
             return Array.isArray(rowIDPart)
                 ? rowIDPart.some((rip) => part === String(rip))
@@ -7039,6 +7046,9 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             const {preferAlias, fieldValueAliasMap} = getFieldNameAndValueAliases({
                 field, schemaItems, metadataObj, getFieldAliasOrName, lang
             });
+            if (!usePreferAlias) {
+                return preferAlias !== false ? fieldValueAliasMap : undefined;
+            }
             if (fieldValueAliasMap) {
                 Object.entries(fieldValueAliasMap).forEach(([key, val]) => {
                     if (Array.isArray(val)) {
@@ -7321,6 +7331,13 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
     };
     const unlocalizedWorkName = fileData.name;
+
+    const stripToTextOnly = (part) => {
+        return part.replace(/ \(\d+\)$/, ''); // Remove that added to autocomplete aliases used for start/end values
+    };
+    const startsTextOnly = starts.map(stripToTextOnly);
+    const endsTextOnly = ends.map(stripToTextOnly);
+
     const startsRaw = starts.map(stripToRawFieldValue);
     const endsRaw = ends.map(stripToRawFieldValue);
 
@@ -7419,7 +7436,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         determineEnd: determineEnd({
             fieldValueAliasMap, fieldValueAliasMapPreferred,
             localizedFieldNames, applicableBrowseFieldNames,
-            starts, ends
+            startsTextOnly, endsTextOnly
         }),
         getCellValue: getCellValue({
             fieldValueAliasMapPreferred, escapeColumnIndexes, escapeHTML
