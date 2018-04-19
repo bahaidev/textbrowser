@@ -7403,9 +7403,6 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     // Todo: Ensure working in server-side mode
     if (pluginsForWork) {
         fieldInfo.forEach(({plugin, placement, applicableField, fieldLang, meta}, j) => {
-            const applicableFieldIdx = fieldInfo.findIndex(({field}) => {
-                return field === applicableField;
-            });
             if (!plugin) {
                 return;
             }
@@ -7416,6 +7413,14 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
                     0,
                     null // `${i}-${j}`);
                 );
+            });
+        });
+        fieldInfo.forEach(({plugin, placement, applicableField, fieldLang, meta}, j) => {
+            if (!plugin) {
+                return;
+            }
+            const applicableFieldIdx = fieldInfo.findIndex(({field}) => {
+                return field === applicableField;
             });
             // Now safe to pass (and set) `j` value as tr array expanded
             tableData.forEach((tr, i) => {
