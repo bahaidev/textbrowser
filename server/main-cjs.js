@@ -3991,6 +3991,15 @@ var utils = {
 	hop: hop_1
 };
 
+var utils$1 = /*#__PURE__*/Object.freeze({
+	default: utils,
+	__moduleExports: utils,
+	extend: extend_1,
+	hop: hop_1
+});
+
+var src$utils$$ = ( utils$1 && utils ) || utils$1;
+
 var es5 = createCommonjsModule(function (module, exports) {
 
 
@@ -4007,7 +4016,7 @@ var defineProperty = realDefineProp ? Object.defineProperty :
 
     if ('get' in desc && obj.__defineGetter__) {
         obj.__defineGetter__(name, desc.get);
-    } else if (!utils.hop.call(obj, name) || 'value' in desc) {
+    } else if (!src$utils$$.hop.call(obj, name) || 'value' in desc) {
         obj[name] = desc.value;
     }
 };
@@ -4020,7 +4029,7 @@ var objCreate = Object.create || function (proto, props) {
     obj = new F();
 
     for (k in props) {
-        if (utils.hop.call(props, k)) {
+        if (src$utils$$.hop.call(props, k)) {
             defineProperty(obj, k, props[k]);
         }
     }
@@ -4034,6 +4043,13 @@ exports.defineProperty = defineProperty, exports.objCreate = objCreate;
 });
 var es5_1 = es5.defineProperty;
 var es5_2 = es5.objCreate;
+
+var es5$1 = /*#__PURE__*/Object.freeze({
+	default: es5,
+	__moduleExports: es5,
+	defineProperty: es5_1,
+	objCreate: es5_2
+});
 
 var compiler = createCommonjsModule(function (module, exports) {
 exports["default"] = Compiler;
@@ -4236,6 +4252,11 @@ SelectFormat.prototype.getOption = function (value) {
 };
 
 
+});
+
+var compiler$1 = /*#__PURE__*/Object.freeze({
+	default: compiler,
+	__moduleExports: compiler
 });
 
 var parser = createCommonjsModule(function (module, exports) {
@@ -5616,11 +5637,29 @@ exports["default"] = (function() {
 
 });
 
+var parser$1 = /*#__PURE__*/Object.freeze({
+	default: parser,
+	__moduleExports: parser
+});
+
+var require$$0 = ( parser$1 && parser ) || parser$1;
+
 var intlMessageformatParser = createCommonjsModule(function (module, exports) {
 
-exports = module.exports = parser['default'];
+exports = module.exports = require$$0['default'];
 exports['default'] = exports;
 });
+
+var intlMessageformatParser$1 = /*#__PURE__*/Object.freeze({
+	default: intlMessageformatParser,
+	__moduleExports: intlMessageformatParser
+});
+
+var src$es5$$ = ( es5$1 && es5 ) || es5$1;
+
+var src$compiler$$ = ( compiler$1 && compiler ) || compiler$1;
+
+var intl$messageformat$parser$$ = ( intlMessageformatParser$1 && intlMessageformatParser ) || intlMessageformatParser$1;
 
 var core = createCommonjsModule(function (module, exports) {
 
@@ -5642,7 +5681,7 @@ function MessageFormat(message, locales, formats) {
     formats = this._mergeFormats(MessageFormat.formats, formats);
 
     // Defined first because it's used to build the format pattern.
-    es5.defineProperty(this, '_locale',  {value: this._resolveLocale(locales)});
+    src$es5$$.defineProperty(this, '_locale',  {value: this._resolveLocale(locales)});
 
     // Compile the `ast` to a pattern that is highly optimized for repeated
     // `format()` invocations. **Note:** This passes the `locales` set provided
@@ -5672,7 +5711,7 @@ function MessageFormat(message, locales, formats) {
 // Default format options used as the prototype of the `formats` provided to the
 // constructor. These are used when constructing the internal Intl.NumberFormat
 // and Intl.DateTimeFormat instances.
-es5.defineProperty(MessageFormat, 'formats', {
+src$es5$$.defineProperty(MessageFormat, 'formats', {
     enumerable: true,
 
     value: {
@@ -5743,8 +5782,8 @@ es5.defineProperty(MessageFormat, 'formats', {
 });
 
 // Define internal private properties for dealing with locale data.
-es5.defineProperty(MessageFormat, '__localeData__', {value: es5.objCreate(null)});
-es5.defineProperty(MessageFormat, '__addLocaleData', {value: function (data) {
+src$es5$$.defineProperty(MessageFormat, '__localeData__', {value: src$es5$$.objCreate(null)});
+src$es5$$.defineProperty(MessageFormat, '__addLocaleData', {value: function (data) {
     if (!(data && data.locale)) {
         throw new Error(
             'Locale data provided to IntlMessageFormat is missing a ' +
@@ -5756,11 +5795,11 @@ es5.defineProperty(MessageFormat, '__addLocaleData', {value: function (data) {
 }});
 
 // Defines `__parse()` static method as an exposed private.
-es5.defineProperty(MessageFormat, '__parse', {value: intlMessageformatParser["default"].parse});
+src$es5$$.defineProperty(MessageFormat, '__parse', {value: intl$messageformat$parser$$["default"].parse});
 
 // Define public `defaultLocale` property which defaults to English, but can be
 // set by the developer.
-es5.defineProperty(MessageFormat, 'defaultLocale', {
+src$es5$$.defineProperty(MessageFormat, 'defaultLocale', {
     enumerable: true,
     writable  : true,
     value     : undefined
@@ -5774,8 +5813,8 @@ MessageFormat.prototype.resolvedOptions = function () {
 };
 
 MessageFormat.prototype._compilePattern = function (ast, locales, formats, pluralFn) {
-    var compiler$$1 = new compiler["default"](locales, formats, pluralFn);
-    return compiler$$1.compile(ast);
+    var compiler = new src$compiler$$["default"](locales, formats, pluralFn);
+    return compiler.compile(ast);
 };
 
 MessageFormat.prototype._findPluralRuleFunction = function (locale) {
@@ -5814,7 +5853,7 @@ MessageFormat.prototype._format = function (pattern, values) {
         id = part.id;
 
         // Enforce that all required values are provided by the caller.
-        if (!(values && utils.hop.call(values, id))) {
+        if (!(values && src$utils$$.hop.call(values, id))) {
           err = new Error('A value must be provided for: ' + id);
           err.variableId = id;
           throw err;
@@ -5840,12 +5879,12 @@ MessageFormat.prototype._mergeFormats = function (defaults, formats) {
         type, mergedType;
 
     for (type in defaults) {
-        if (!utils.hop.call(defaults, type)) { continue; }
+        if (!src$utils$$.hop.call(defaults, type)) { continue; }
 
-        mergedFormats[type] = mergedType = es5.objCreate(defaults[type]);
+        mergedFormats[type] = mergedType = src$es5$$.objCreate(defaults[type]);
 
-        if (formats && utils.hop.call(formats, type)) {
-            utils.extend(mergedType, formats[type]);
+        if (formats && src$utils$$.hop.call(formats, type)) {
+            src$utils$$.extend(mergedType, formats[type]);
         }
     }
 
@@ -5893,25 +5932,44 @@ MessageFormat.prototype._resolveLocale = function (locales) {
 
 });
 
+var core$1 = /*#__PURE__*/Object.freeze({
+	default: core,
+	__moduleExports: core
+});
+
 var en = createCommonjsModule(function (module, exports) {
 exports["default"] = {"locale":"en","pluralRuleFunction":function (n,ord){var s=String(n).split("."),v0=!s[1],t0=Number(s[0])==n,n10=t0&&s[0].slice(-1),n100=t0&&s[0].slice(-2);if(ord)return n10==1&&n100!=11?"one":n10==2&&n100!=12?"two":n10==3&&n100!=13?"few":"other";return n==1&&v0?"one":"other"}};
 
 
 });
 
+var en$1 = /*#__PURE__*/Object.freeze({
+	default: en,
+	__moduleExports: en
+});
+
+var require$$0$1 = ( core$1 && core ) || core$1;
+
+var src$en$$ = ( en$1 && en ) || en$1;
+
 var main = createCommonjsModule(function (module, exports) {
 
 
-core["default"].__addLocaleData(en["default"]);
-core["default"].defaultLocale = 'en';
+require$$0$1["default"].__addLocaleData(src$en$$["default"]);
+require$$0$1["default"].defaultLocale = 'en';
 
-exports["default"] = core["default"];
+exports["default"] = require$$0$1["default"];
 
 
 });
 
+var main$1 = /*#__PURE__*/Object.freeze({
+	default: main,
+	__moduleExports: main
+});
+
 // GENERATED FILE
-var IntlMessageFormat = core["default"];
+var IntlMessageFormat = require$$0$1["default"];
 
 IntlMessageFormat.__addLocaleData({"locale":"af","pluralRuleFunction":function (n,ord){if(ord)return"other";return n==1?"one":"other"}});
 IntlMessageFormat.__addLocaleData({"locale":"af-NA","parentLocale":"af"});
@@ -6467,9 +6525,11 @@ IntlMessageFormat.__addLocaleData({"locale":"zh-Hant-HK","parentLocale":"zh-Hant
 IntlMessageFormat.__addLocaleData({"locale":"zh-Hant-MO","parentLocale":"zh-Hant-HK"});
 IntlMessageFormat.__addLocaleData({"locale":"zu","pluralRuleFunction":function (n,ord){if(ord)return"other";return n>=0&&n<=1?"one":"other"}});
 
+var require$$0$2 = ( main$1 && main ) || main$1;
+
 var intlMessageformat = createCommonjsModule(function (module, exports) {
 
-var IntlMessageFormat = main['default'];
+var IntlMessageFormat = require$$0$2['default'];
 
 // Add all locale data to `IntlMessageFormat`. This module will be ignored when
 // bundling for the browser with Browserify/Webpack.

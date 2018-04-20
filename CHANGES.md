@@ -1,9 +1,17 @@
-# ?
+# 0.18.0
 
+- Enhancement: Plugins!
+- Enhancement: Add canonical ID and type to rows (usable by plugins,
+    e.g., for consistent storage pertaining to verses)
+- Optimization: Avoid adding `row` dataset property to each cell
 - Schema enhancement: Accept array for plugin applicable-fields-keyed
     `targetLanguage`
+- Schema enhancement: Support `{locale}` in place of a language code for
+    `targetLanguage`
+- Schema enhancement: Allow `meta` for passing arguments from plug-ins
+    to localization-strings
 - Sample worker: Fix offline when `index.html` omitted
-- Enhancement: Plugin work (incomplete)
+- Refactoring: Misc. improvements
 
 # 0.17.1
 
