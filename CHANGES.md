@@ -1,3 +1,11 @@
+# ?
+
+- npm: Move babel-register, babel-preset-env to being
+    peer-dependencies (required for resolution of our dynamic,
+    path-sensitive "import"->require) so user flagged of need
+    to install
+- npm: Move babel-plugin-dynamic-import-node to devDeps
+
 # 0.18.1
 
 - Fix for plug-ins run in Node (avoid running on client if
