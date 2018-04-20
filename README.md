@@ -497,6 +497,12 @@ arrays of strings, or other objects of keys).
     e.g., Each plugin file designated within
     `files.json` expects an `insertField` `export` directive, etc. -->
 
+## Security notes
+
+While some mechanisms exist to escape HTML, there are nevertheless some means
+at present by which a malicious data file could perform XSS attacks. Please
+ensure the data files (and schemas/metadata files) you indicate are trusted.
+
 ## JavaScript API
 
 The following indicates the JavaScript options that can tweak your
