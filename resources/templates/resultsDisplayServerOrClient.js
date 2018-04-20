@@ -274,7 +274,12 @@ body {
 
             const canonicalID = getCanonicalID({tr});
 
-            outArr.push(addChildren(trElem,
+            outArr.push(addChildren(
+                addAtts(trElem, {
+                    row: rowID,
+                    'canonical-type': canonicalBrowseFieldSetName,
+                    'canonical-id': canonicalID
+                }),
                 checkedFieldIndexes.map((idx, j) => {
                     const interlinearColIndexes = allInterlinearColIndexes[j];
                     const showInterlins = showInterlinTitles &&
@@ -304,10 +309,7 @@ body {
                         id: 'row' + (i + 1) + 'col' + (j + 1),
                         lang: fieldLangs[idx],
                         dataset: {
-                            col: localizedFieldNames[idx],
-                            row: rowID,
-                            'canonical-type': canonicalBrowseFieldSetName,
-                            'canonical-id': canonicalID
+                            col: localizedFieldNames[idx]
                         },
                         innerHTML:
                             (showInterlins && !checkEmpty(tdVal, htmlEscaped) &&

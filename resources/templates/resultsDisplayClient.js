@@ -8,9 +8,9 @@ export default {
         return $('#' + anchorRowCol);
     },
     anchors ({escapedRow, escapedCol}) {
-        const sel = 'td[data-row="' + escapedRow + '"]' +
+        const sel = 'tr[data-row="' + escapedRow + '"]' +
             (escapedCol
-                ? ('[data-col="' + escapedCol + '"]')
+                ? ('> td[data-col="' + escapedCol + '"]')
                 : '');
         return $(sel);
     },
