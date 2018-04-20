@@ -701,10 +701,18 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                 tr[j] = plugin.getCellData({
                     tr, tableData, i, j, applicableField,
                     applicableFieldIdx, applicableFieldText, fieldLang,
-                    meta, metaApplicableField
+                    meta, metaApplicableField, $p, thisObj: this
                 });
             });
             console.log('applicableFieldIdx', applicableFieldIdx);
+        });
+        fieldInfo.forEach(({plugin, applicableField, meta, j}) => {
+            if (!plugin) {
+                return;
+            }
+            if (plugin.done) {
+                plugin.done({$p, applicableField, meta, j});
+            }
         });
     }
     const templateArgs = {
