@@ -1,16 +1,11 @@
 # TextBrowser
 
 *Please note that this project, while now preliminarily functional,
-is in its early stages. Its currently slow loading times (particularly
-for large files) relates to the fact that the code is currently
-downloading the files in full and then processing them; the next
-step is for us, while informing the user we are downloading the files,
-is to add them into IndexedDB; eventually, we also hope to provide an
-option to pre-process live on the server (probably Node.js), but
-we are attempting to follow the "offline first" motto.*
+is in its early stages. There are some bugs to iron out such as
+with localization.*
 
 *TextBrowser* supports power-user browsing of arbitrary multi-linear
-texts.
+texts following the "offline first" motto.
 
 The splash page for the texts is an internationalized interface
 that allows for selection by the user of their desired interface language,
