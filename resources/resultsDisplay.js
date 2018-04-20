@@ -75,6 +75,7 @@ export const resultsDisplayClient = async function resultsDisplayClient (args) {
     const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
 
     const {
+        fieldInfo, $p,
         browseFieldSets,
         applicableBrowseFieldSet,
         lang, metadataObj, fileData,
@@ -98,6 +99,14 @@ export const resultsDisplayClient = async function resultsDisplayClient (args) {
         fieldValueAliasMapPreferred, iil, ilRaw,
         $p: args.$p,
         max: browseFieldSets.length
+    });
+    fieldInfo.forEach(({plugin, applicableField, meta, j}) => {
+        if (!plugin) {
+            return;
+        }
+        if (plugin.done) {
+            plugin.done({$p, applicableField, meta, j, thisObj: this});
+        }
     });
 };
 
@@ -717,14 +726,6 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             });
             console.log('applicableFieldIdx', applicableFieldIdx);
         });
-        fieldInfo.forEach(({plugin, applicableField, meta, j}) => {
-            if (!plugin) {
-                return;
-            }
-            if (plugin.done) {
-                plugin.done({$p, applicableField, meta, j, thisObj: this});
-            }
-        });
     }
     const templateArgs = {
         tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
@@ -753,6 +754,8 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         interlinearSeparator: this.interlinearSeparator
     };
     return {
+        fieldInfo,
+        $p,
         applicableBrowseFieldSet, fieldValueAliasMapPreferred,
         lf, iil, ilRaw, browseFieldSets,
         lang, metadataObj, fileData,

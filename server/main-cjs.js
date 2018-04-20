@@ -7457,14 +7457,6 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             });
             console.log('applicableFieldIdx', applicableFieldIdx);
         });
-        fieldInfo.forEach(({plugin, applicableField, meta, j}) => {
-            if (!plugin) {
-                return;
-            }
-            if (plugin.done) {
-                plugin.done({$p, applicableField, meta, j, thisObj: this});
-            }
-        });
     }
     const templateArgs = {
         tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
@@ -7493,6 +7485,8 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         interlinearSeparator: this.interlinearSeparator
     };
     return {
+        fieldInfo,
+        $p,
         applicableBrowseFieldSet, fieldValueAliasMapPreferred,
         lf, iil, ilRaw, browseFieldSets,
         lang, metadataObj, fileData,
