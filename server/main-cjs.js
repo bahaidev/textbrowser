@@ -3214,7 +3214,8 @@ body {
         escapeQuotedCSS, escapeCSS, escapeHTML,
         l, localizedFieldNames, fieldLangs,
         caption, hasCaption, showInterlinTitles,
-        determineEnd, getCellValue, checkedAndInterlinearFieldInfo,
+        determineEnd, getCanonicalID, canonicalBrowseFieldSetName,
+        getCellValue, checkedAndInterlinearFieldInfo,
         interlinearSeparator = '<br /><br />'
     }) {
         const tableOptions = {
@@ -3306,6 +3307,8 @@ body {
                 return rowID;
             }
 
+            const canonicalID = getCanonicalID({tr});
+
             outArr.push(addChildren(trElem,
                 checkedFieldIndexes.map((idx, j) => {
                     const interlinearColIndexes = allInterlinearColIndexes[j];
@@ -3337,7 +3340,9 @@ body {
                         lang: fieldLangs[idx],
                         dataset: {
                             col: localizedFieldNames[idx],
-                            row: rowID
+                            row: rowID,
+                            'canonical-type': canonicalBrowseFieldSetName,
+                            'canonical-id': canonicalID
                         },
                         innerHTML:
                             (showInterlins && !checkEmpty(tdVal, htmlEscaped) &&
@@ -6879,12 +6884,15 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     };
     const determineEnd = ({
         fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,
+        canonicalBrowseFieldNames,
         applicableBrowseFieldNames, startsTextOnly, endsTextOnly
     }) => ({
         tr, foundState
     }) => {
         const rowIDPartsPreferred = [];
-        const rowIDParts = applicableBrowseFieldNames.map((fieldName) => {
+        const rowIDParts = (
+            canonicalBrowseFieldNames || applicableBrowseFieldNames
+        ).map((fieldName) => {
             const idx = localizedFieldNames.indexOf(fieldName);
             // This works to put alias in anchor but this includes
             //   our ending parenthetical, the alias may be harder
@@ -6908,35 +6916,37 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             return tr[idx];
         });
 
-        // Todo: Use schema to determine each and use `parseInt`
-        //   on other value instead of `String` conversions
-        if (!foundState.start) {
-            if (startsTextOnly.some((part, i) => {
+        if (!canonicalBrowseFieldNames) {
+            // Todo: Use schema to determine each and use `parseInt`
+            //   on other value instead of `String` conversions
+            if (!foundState.start) {
+                if (startsTextOnly.some((part, i) => {
+                    const rowIDPart = rowIDParts[i];
+                    return Array.isArray(rowIDPart)
+                        ? !rowIDPart.some((rip) => part === String(rip))
+                        : (rowIDPart && typeof rowIDPart === 'object'
+                            ? !Object.values(rowIDPart).some((rip) => part === String(rip))
+                            : part !== String(rowIDPart)
+                        );
+                })) {
+                    return false;
+                }
+                foundState.start = true;
+            }
+            // This doesn't go in an `else` for the above in case the start is the end
+            if (endsTextOnly.every((part, i) => {
                 const rowIDPart = rowIDParts[i];
                 return Array.isArray(rowIDPart)
-                    ? !rowIDPart.some((rip) => part === String(rip))
+                    ? rowIDPart.some((rip) => part === String(rip))
                     : (rowIDPart && typeof rowIDPart === 'object'
-                        ? !Object.values(rowIDPart).some((rip) => part === String(rip))
-                        : part !== String(rowIDPart)
+                        ? Object.values(rowIDPart).some((rip) => part === String(rip))
+                        : part === String(rowIDPart)
                     );
             })) {
-                return false;
+                foundState.end = true;
+            } else if (foundState.end) { // If no longer matching, return
+                return true;
             }
-            foundState.start = true;
-        }
-        // This doesn't go in an `else` for the above in case the start is the end
-        if (endsTextOnly.every((part, i) => {
-            const rowIDPart = rowIDParts[i];
-            return Array.isArray(rowIDPart)
-                ? rowIDPart.some((rip) => part === String(rip))
-                : (rowIDPart && typeof rowIDPart === 'object'
-                    ? Object.values(rowIDPart).some((rip) => part === String(rip))
-                    : part === String(rowIDPart)
-                );
-        })) {
-            foundState.end = true;
-        } else if (foundState.end) { // If no longer matching, return
-            return true;
         }
         return rowIDPartsPreferred.join('-'); // rowID;
     };
@@ -7312,6 +7322,12 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         abfs.fieldName
     );
 
+    const canonicalBrowseFieldSet = browseFieldSets[0];
+    const canonicalBrowseFieldSetName = setNames[0];
+    const canonicalBrowseFieldNames = canonicalBrowseFieldSet.map((abfs) =>
+        abfs.fieldName
+    );
+
     const fieldSchemaTypes = applicableBrowseFieldSet.map((abfs) => abfs.fieldSchema.type);
     const buildRangePoint = (startOrEnd) =>
         applicableBrowseFieldNames.map((bfn, j) =>
@@ -7442,7 +7458,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
                 return;
             }
             if (plugin.done) {
-                plugin.done({$p, applicableField, meta, j});
+                plugin.done({$p, applicableField, meta, j, thisObj: this});
             }
         });
     }
@@ -7452,8 +7468,16 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         l, localizedFieldNames, fieldLangs,
         caption, hasCaption, showInterlinTitles,
         determineEnd: determineEnd({
+            applicableBrowseFieldNames,
             fieldValueAliasMap, fieldValueAliasMapPreferred,
-            localizedFieldNames, applicableBrowseFieldNames,
+            localizedFieldNames,
+            startsTextOnly, endsTextOnly
+        }),
+        canonicalBrowseFieldSetName,
+        getCanonicalID: determineEnd({
+            canonicalBrowseFieldNames,
+            fieldValueAliasMap, fieldValueAliasMapPreferred,
+            localizedFieldNames,
             startsTextOnly, endsTextOnly
         }),
         getCellValue: getCellValue({

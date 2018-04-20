@@ -179,7 +179,8 @@ body {
         escapeQuotedCSS, escapeCSS, escapeHTML,
         l, localizedFieldNames, fieldLangs,
         caption, hasCaption, showInterlinTitles,
-        determineEnd, getCellValue, checkedAndInterlinearFieldInfo,
+        determineEnd, getCanonicalID, canonicalBrowseFieldSetName,
+        getCellValue, checkedAndInterlinearFieldInfo,
         interlinearSeparator = '<br /><br />'
     }) {
         const tableOptions = {
@@ -271,6 +272,8 @@ body {
                 return rowID;
             }
 
+            const canonicalID = getCanonicalID({tr});
+
             outArr.push(addChildren(trElem,
                 checkedFieldIndexes.map((idx, j) => {
                     const interlinearColIndexes = allInterlinearColIndexes[j];
@@ -302,7 +305,9 @@ body {
                         lang: fieldLangs[idx],
                         dataset: {
                             col: localizedFieldNames[idx],
-                            row: rowID
+                            row: rowID,
+                            'canonical-type': canonicalBrowseFieldSetName,
+                            'canonical-id': canonicalID
                         },
                         innerHTML:
                             (showInterlins && !checkEmpty(tdVal, htmlEscaped) &&

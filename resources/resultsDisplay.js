@@ -148,12 +148,15 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     };
     const determineEnd = ({
         fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,
+        canonicalBrowseFieldNames,
         applicableBrowseFieldNames, startsTextOnly, endsTextOnly
     }) => ({
         tr, foundState
     }) => {
         const rowIDPartsPreferred = [];
-        const rowIDParts = applicableBrowseFieldNames.map((fieldName) => {
+        const rowIDParts = (
+            canonicalBrowseFieldNames || applicableBrowseFieldNames
+        ).map((fieldName) => {
             const idx = localizedFieldNames.indexOf(fieldName);
             // This works to put alias in anchor but this includes
             //   our ending parenthetical, the alias may be harder
@@ -177,35 +180,37 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             return tr[idx];
         });
 
-        // Todo: Use schema to determine each and use `parseInt`
-        //   on other value instead of `String` conversions
-        if (!foundState.start) {
-            if (startsTextOnly.some((part, i) => {
+        if (!canonicalBrowseFieldNames) {
+            // Todo: Use schema to determine each and use `parseInt`
+            //   on other value instead of `String` conversions
+            if (!foundState.start) {
+                if (startsTextOnly.some((part, i) => {
+                    const rowIDPart = rowIDParts[i];
+                    return Array.isArray(rowIDPart)
+                        ? !rowIDPart.some((rip) => part === String(rip))
+                        : (rowIDPart && typeof rowIDPart === 'object'
+                            ? !Object.values(rowIDPart).some((rip) => part === String(rip))
+                            : part !== String(rowIDPart)
+                        );
+                })) {
+                    return false;
+                }
+                foundState.start = true;
+            }
+            // This doesn't go in an `else` for the above in case the start is the end
+            if (endsTextOnly.every((part, i) => {
                 const rowIDPart = rowIDParts[i];
                 return Array.isArray(rowIDPart)
-                    ? !rowIDPart.some((rip) => part === String(rip))
+                    ? rowIDPart.some((rip) => part === String(rip))
                     : (rowIDPart && typeof rowIDPart === 'object'
-                        ? !Object.values(rowIDPart).some((rip) => part === String(rip))
-                        : part !== String(rowIDPart)
+                        ? Object.values(rowIDPart).some((rip) => part === String(rip))
+                        : part === String(rowIDPart)
                     );
             })) {
-                return false;
+                foundState.end = true;
+            } else if (foundState.end) { // If no longer matching, return
+                return true;
             }
-            foundState.start = true;
-        }
-        // This doesn't go in an `else` for the above in case the start is the end
-        if (endsTextOnly.every((part, i) => {
-            const rowIDPart = rowIDParts[i];
-            return Array.isArray(rowIDPart)
-                ? rowIDPart.some((rip) => part === String(rip))
-                : (rowIDPart && typeof rowIDPart === 'object'
-                    ? Object.values(rowIDPart).some((rip) => part === String(rip))
-                    : part === String(rowIDPart)
-                );
-        })) {
-            foundState.end = true;
-        } else if (foundState.end) { // If no longer matching, return
-            return true;
         }
         return rowIDPartsPreferred.join('-'); // rowID;
     };
@@ -581,6 +586,12 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         abfs.fieldName
     );
 
+    const canonicalBrowseFieldSet = browseFieldSets[0];
+    const canonicalBrowseFieldSetName = setNames[0];
+    const canonicalBrowseFieldNames = canonicalBrowseFieldSet.map((abfs) =>
+        abfs.fieldName
+    );
+
     const fieldSchemaTypes = applicableBrowseFieldSet.map((abfs) => abfs.fieldSchema.type);
     const buildRangePoint = (startOrEnd) =>
         applicableBrowseFieldNames.map((bfn, j) =>
@@ -711,7 +722,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                 return;
             }
             if (plugin.done) {
-                plugin.done({$p, applicableField, meta, j});
+                plugin.done({$p, applicableField, meta, j, thisObj: this});
             }
         });
     }
@@ -721,8 +732,16 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         l, localizedFieldNames, fieldLangs,
         caption, hasCaption, showInterlinTitles,
         determineEnd: determineEnd({
+            applicableBrowseFieldNames,
             fieldValueAliasMap, fieldValueAliasMapPreferred,
-            localizedFieldNames, applicableBrowseFieldNames,
+            localizedFieldNames,
+            startsTextOnly, endsTextOnly
+        }),
+        canonicalBrowseFieldSetName,
+        getCanonicalID: determineEnd({
+            canonicalBrowseFieldNames,
+            fieldValueAliasMap, fieldValueAliasMapPreferred,
+            localizedFieldNames,
             startsTextOnly, endsTextOnly
         }),
         getCellValue: getCellValue({
