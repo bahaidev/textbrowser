@@ -429,10 +429,6 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         };
     });
 
-    // Todo: COMPLETE
-    // Todo: In results, init and show plugin fields and anchor if they
-    //         are chosen as (i18nized) anchor columns; remove any unused
-    //         insert method already in plugin files
     const [preferredLocale] = lang;
     const metadata = new Metadata({metadataObj});
     if (pluginsForWork) {
