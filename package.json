@@ -19,6 +19,8 @@
     "url": "git+https://github.com/brettz9/textbrowser.git"
   },
   "dependencies": {
+    "babel-plugin-dynamic-import-node": "^1.2.0",
+    "babel-polyfill": "^6.26.0",
     "command-line-args": "^5.0.2",
     "dom-parser": "^0.1.5",
     "form-serialize": "https://github.com/brettz9/form-serialize#browser-deserialize-rollup",

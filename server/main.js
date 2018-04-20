@@ -8,6 +8,7 @@ import getJSON from 'simple-get-json';
 import {setServiceWorkerDefaults} from '../resources/utils/ServiceWorker.js';
 // import setGlobalVars from 'indexeddbshim/src/node-UnicodeIdentifiers.js';
 import fetch from 'node-fetch';
+import {Languages} from '../resources/utils/Languages.js';
 
 const setGlobalVars = require('indexeddbshim/dist/indexeddbshim-UnicodeIdentifiers-node.js');
 
@@ -96,6 +97,12 @@ global.DOMParser = require('dom-parser'); // potentially used within resultsDisp
 const statik = require('node-static');
 const fileServer = new statik.Server(); // Pass path; otherwise uses current directory
 
+let langData, languagesInstance;
+(async () => {
+langData = await getJSON(userParamsWithDefaults.languages);
+languagesInstance = new Languages({langData});
+})();
+
 const srv = http.createServer(async (req, res) => {
     // console.log('URL::', url.parse(req.url));
     const {pathname, query} = url.parse(req.url);
@@ -118,10 +125,12 @@ const srv = http.createServer(async (req, res) => {
         params: query
     });
 
-    const langData = await getJSON(userParamsWithDefaults.languages);
+    const {lang, langs, fallbackLanguages} = languagesInstance.getLanguageInfo({$p});
+
     getIMFFallbackResults({
         $p,
         basePath,
+        lang, langs, fallbackLanguages,
         langData,
         async resultsDisplay (resultsArgs, ...args) {
             const serverOutput = $p.get('serverOutput', true);
@@ -139,7 +148,9 @@ const srv = http.createServer(async (req, res) => {
             };
             // Todo: Move sw-sample.js to bahaiwritings and test
             const result = await resultsDisplayServer.call(
-                userParamsWithDefaults, resultsArgs, ...args
+                {
+                    ...userParamsWithDefaults, lang, langs, fallbackLanguages
+                }, resultsArgs, ...args
             );
             res.end(isHTML ? result : JSON.stringify(result));
         }

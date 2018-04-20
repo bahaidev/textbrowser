@@ -1,5 +1,4 @@
 import IMF from 'imf';
-import {Languages} from './Languages.js';
 
 export default function getIMFFallbackResults ({
     $p,
@@ -8,10 +7,6 @@ export default function getIMFFallbackResults ({
     basePath = '',
     localeCallback = false
 }) {
-    if (!lang) {
-        const languages = new Languages({langData});
-        ({lang, langs, fallbackLanguages} = languages.getLanguageInfo({$p, langData}));
-    }
     return new Promise((resolve, reject) => {
         const resultsCallback = (...args) => {
             const [l10n] = args;

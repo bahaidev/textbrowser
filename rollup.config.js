@@ -84,13 +84,16 @@ export default [
         plugins: [
             replace({
                 // ... do replace before commonjs
-                patterns: [importerReplace, {
+                patterns: [/* importerReplace, */ {
                     include: ['resources/resultsDisplay.js', 'resources/utils/Metadata.js'],
                     test: "import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';",
                     replace: "const JsonRefs = require('json-refs');"
                 }]
             }),
             json(),
+            babel({
+                plugins: ['dynamic-import-node']
+            }),
             builtins(),
             resolve(),
             commonjs()
