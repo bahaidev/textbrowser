@@ -3311,9 +3311,11 @@ body {
 
             outArr.push(addChildren(
                 addAtts(trElem, {
-                    row: rowID,
-                    'canonical-type': canonicalBrowseFieldSetName,
-                    'canonical-id': canonicalID
+                    dataset: {
+                        row: rowID,
+                        'canonical-type': canonicalBrowseFieldSetName,
+                        'canonical-id': canonicalID
+                    }
                 }),
                 checkedFieldIndexes.map((idx, j) => {
                     const interlinearColIndexes = allInterlinearColIndexes[j];
