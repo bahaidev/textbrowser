@@ -1,3 +1,9 @@
+# 0.18.1
+
+- Fix for plug-ins run in Node (avoid running on client if
+    already run on server)
+- Update `yarn.lock`
+
 # 0.18.0
 
 - Enhancement: Plugins!

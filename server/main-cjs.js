@@ -7432,7 +7432,8 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     const startsRaw = starts.map(stripToRawFieldValue);
     const endsRaw = ends.map(stripToRawFieldValue);
 
-    let tableData;
+    let tableData,
+        usingServerData = false;
     // Site owner may have configured to skip (e.g., testing)
     if (!skipIndexedDB &&
     // User may have refused, not yet agreed, or are visiting the
@@ -7486,10 +7487,10 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             */
             const jsonURL = `${dynamicBasePath}textbrowser?${$p.toString()}`;
             tableData = await (await fetch(jsonURL)).json();
+            usingServerData = true;
         }
     }
-    // Todo: Ensure working in server-side mode
-    if (pluginsForWork) {
+    if (!usingServerData && pluginsForWork) {
         fieldInfo.forEach(({ plugin, placement }, j) => {
             if (!plugin) {
                 return;
