@@ -1,5 +1,6 @@
-# ?
+# 0.18.2
 
+- Server: Ensure basePath and other user params are passed in
 - npm: Move babel-register, babel-preset-env to being
     peer-dependencies (required for resolution of our dynamic,
     path-sensitive "import"->require) so user flagged of need

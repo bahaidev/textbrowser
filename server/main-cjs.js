@@ -9190,26 +9190,29 @@ const port = 'port' in userParams ? userParams.port : 8000;
 const domain = userParams.domain || `localhost`;
 const basePath = `http://${domain}${port ? ':' + port : ''}/`;
 
-const userParamsWithDefaults = setServiceWorkerDefaults(_extends({}, userParams), {
-    basePath,
+const userParamsWithDefaults = _extends({}, userParams, setServiceWorkerDefaults(_extends({}, userParams), {
     files: userParams.files || `${basePath}files.json`, // `files` must be absolute path for node-fetch
     languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
-    serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js`,
+    serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js`
+}), {
+    basePath,
     nodeActivate: undefined,
     port: undefined,
     skipIndexedDB: false, // Not relevant here
-    noDynamic: false, // Not relevant here
+    noDynamic: false // Not relevant here
+    /*
+    Not in use:
     logger: {
-        addLogEntry({ text }) {
+        addLogEntry ({text}) {
             console.log(`Log: ${text}`);
         },
-        dbError({
+        dbError ({
             errorType,
             escapedErrorMessage
         }) {
             throw new Error(`Worker aborted: error type ${errorType}; ${escapedErrorMessage}`);
         }
-    }
+    } */
 });
 console.log('userParamsWithDefaults', userParamsWithDefaults);
 

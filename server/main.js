@@ -52,15 +52,22 @@ const port = 'port' in userParams ? userParams.port : 8000;
 const domain = userParams.domain || `localhost`;
 const basePath = `http://${domain}${port ? ':' + port : ''}/`;
 
-const userParamsWithDefaults = setServiceWorkerDefaults({...userParams}, {
+const userParamsWithDefaults = {
+    ...userParams,
+    ...setServiceWorkerDefaults({
+        ...userParams
+    }, {
+        files: userParams.files || `${basePath}files.json`, // `files` must be absolute path for node-fetch
+        languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
+        serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js`
+    }),
     basePath,
-    files: userParams.files || `${basePath}files.json`, // `files` must be absolute path for node-fetch
-    languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
-    serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js`,
     nodeActivate: undefined,
     port: undefined,
     skipIndexedDB: false, // Not relevant here
-    noDynamic: false, // Not relevant here
+    noDynamic: false // Not relevant here
+    /*
+    Not in use:
     logger: {
         addLogEntry ({text}) {
             console.log(`Log: ${text}`);
@@ -71,8 +78,8 @@ const userParamsWithDefaults = setServiceWorkerDefaults({...userParams}, {
         }) {
             throw new Error(`Worker aborted: error type ${errorType}; ${escapedErrorMessage}`);
         }
-    }
-});
+    } */
+};
 console.log('userParamsWithDefaults', userParamsWithDefaults);
 
 setGlobalVars(null, {
