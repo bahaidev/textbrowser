@@ -69,7 +69,7 @@ export const getWorkData = async function ({
     }
 
     let getPlugins, pluginsInWork, pluginFieldsForWork,
-        pluginPaths, pluginFieldMappingForWork;
+        pluginPaths, pluginFieldMappingForWork = [];
     if (allowPlugins) {
         const pluginFieldMapping = filesObj['plugin-field-mapping'];
         const pluginFieldMappingID = pluginFieldMapping[fileGroup.id];

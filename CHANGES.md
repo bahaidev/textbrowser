@@ -1,3 +1,7 @@
+# 0.18.3
+
+- Fix: Issue when plugins for work were absent
+
 # 0.18.2
 
 - Server: Ensure basePath and other user params are passed in

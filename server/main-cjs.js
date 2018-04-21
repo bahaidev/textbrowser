@@ -5371,7 +5371,7 @@ var en$1 = /*#__PURE__*/Object.freeze({
 	__moduleExports: en
 });
 
-var require$$0$1 = ( core$1 && core ) || core$1;
+var src$core$$ = ( core$1 && core ) || core$1;
 
 var src$en$$ = ( en$1 && en ) || en$1;
 
@@ -5379,10 +5379,10 @@ var main = createCommonjsModule(function (module, exports) {
 
 
 
-require$$0$1["default"].__addLocaleData(src$en$$["default"]);
-require$$0$1["default"].defaultLocale = 'en';
+src$core$$["default"].__addLocaleData(src$en$$["default"]);
+src$core$$["default"].defaultLocale = 'en';
 
-exports["default"] = require$$0$1["default"];
+exports["default"] = src$core$$["default"];
 
 
 });
@@ -5393,7 +5393,7 @@ var main$1 = /*#__PURE__*/Object.freeze({
 });
 
 // GENERATED FILE
-var IntlMessageFormat = require$$0$1["default"];
+var IntlMessageFormat = src$core$$["default"];
 
 IntlMessageFormat.__addLocaleData({ "locale": "af", "pluralRuleFunction": function (n, ord) {
     if (ord) return "other";return n == 1 ? "one" : "other";
@@ -6622,11 +6622,11 @@ IntlMessageFormat.__addLocaleData({ "locale": "zu", "pluralRuleFunction": functi
     if (ord) return "other";return n >= 0 && n <= 1 ? "one" : "other";
   } });
 
-var require$$0$2 = ( main$1 && main ) || main$1;
+var require$$0$1 = ( main$1 && main ) || main$1;
 
 var intlMessageformat = createCommonjsModule(function (module, exports) {
 
-var IntlMessageFormat = require$$0$2['default'];
+var IntlMessageFormat = require$$0$1['default'];
 
 // Add all locale data to `IntlMessageFormat`. This module will be ignored when
 // bundling for the browser with Browserify/Webpack.
@@ -6903,7 +6903,11 @@ const getWorkData = async function ({
         metadataProperty = 'metadata';
     }
 
-    let getPlugins, pluginsInWork, pluginFieldsForWork, pluginPaths, pluginFieldMappingForWork;
+    let getPlugins,
+        pluginsInWork,
+        pluginFieldsForWork,
+        pluginPaths,
+        pluginFieldMappingForWork = [];
     if (allowPlugins) {
         const pluginFieldMapping = filesObj['plugin-field-mapping'];
         const pluginFieldMappingID = pluginFieldMapping[fileGroup.id];
