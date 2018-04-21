@@ -1,3 +1,7 @@
+# 0.18.4
+
+- npm: Publishing issue
+
 # 0.18.3
 
 - Fix: Issue when plugins for work were absent
