@@ -632,6 +632,7 @@ upon for monkey-patching.
 1.  **Avoid setting inputs to empty string** on load (prevents using back
     button to get at old values)
 1.  Icon for click/hover to get **interlinear field explanation**
+1.  Fix for **local notes storage plugin** when in interlinear column
 1.  Fix sometime **obscuring of headings**
 1.  **Document**
     1. Need of setting certain locale strings, including `sites.json`.
