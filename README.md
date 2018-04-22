@@ -633,6 +633,8 @@ upon for monkey-patching.
     button to get at old values)
 1.  Icon for click/hover to get **interlinear field explanation**
 1.  Fix for **local notes storage plugin** when in interlinear column
+1.  Fix for **interlinear not showing** when opting for non-default
+    "Field Title" in pull-down.
 1.  Fix sometime **obscuring of headings**
 1.  **Document**
     1. Need of setting certain locale strings, including `sites.json`.
