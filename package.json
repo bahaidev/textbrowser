@@ -29,7 +29,7 @@
     "form-serialize": "https://github.com/brettz9/form-serialize#browser-deserialize-rollup",
     "imf": "3.0.1",
     "indexeddbshim": "^3.6.1",
-    "jamilih": "0.32.0",
+    "jamilih": "0.33.1",
     "json-refs": "https://github.com/brettz9/json-refs#browser",
     "load-stylesheets": "0.4.0",
     "node-fetch": "^2.1.2",
@@ -67,6 +67,7 @@
     "rollup-plugin-postprocess": "^1.0.2",
     "rollup-plugin-re": "^1.0.7",
     "rollup-plugin-uglify": "^3.0.0",
+    "rtl-detect": "^1.0.2",
     "uglify-es": "^3.3.9"
   },
   "engines": {},

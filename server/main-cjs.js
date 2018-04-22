@@ -795,10 +795,22 @@ const ATTR_MAP = {
 const BOOL_ATTS = ['checked', 'defaultChecked', 'defaultSelected', 'disabled', 'indeterminate', 'open', // Dialog elements
 'readOnly', 'selected'];
 const ATTR_DOM = BOOL_ATTS.concat([// From JsonML
-'async', 'autofocus', 'defaultValue', 'defer', 'formnovalidate', 'hidden', 'ismap', 'multiple', 'novalidate', 'pattern', 'required', 'spellcheck', 'value', 'willvalidate']);
+'accessKey', // HTMLElement
+'async', 'autocapitalize', // HTMLElement
+'autofocus', 'contentEditable', // HTMLElement through ElementContentEditable
+'defaultValue', 'defer', 'draggable', // HTMLElement
+'formnovalidate', 'hidden', // HTMLElement
+'innerText', // HTMLElement
+'inputMode', // HTMLElement through ElementContentEditable
+'ismap', 'multiple', 'novalidate', 'pattern', 'required', 'spellcheck', // HTMLElement
+'translate', // HTMLElement
+'value', 'willvalidate']);
 // Todo: Add more to this as useful for templating
-//   to avoid setting with nullish value
-const NULLABLES = ['lang', 'max', 'min'];
+//   to avoid setting through nullish value
+const NULLABLES = ['dir', // HTMLElement
+'lang', // HTMLElement
+'max', 'min', 'title' // HTMLElement
+];
 
 /**
 * Retrieve the (lower-cased) HTML name of a node
@@ -924,11 +936,13 @@ function _getType(item) {
         if (Array.isArray(item)) {
             return 'array';
         }
-        if (item.nodeType === 1) {
-            return 'element';
-        }
-        if (item.nodeType === 11) {
-            return 'fragment';
+        if ('nodeType' in item) {
+            if (item.nodeType === 1) {
+                return 'element';
+            }
+            if (item.nodeType === 11) {
+                return 'fragment';
+            }
         }
         return 'object';
     }
@@ -1729,7 +1743,7 @@ jml.toJML = function (dom, config) {
         }
         */
 
-        const type = node.nodeType;
+        const type = 'nodeType' in node ? node.nodeType : null;
         namespaces = Object.assign({}, namespaces);
 
         const xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/; // eslint-disable-line no-control-regex
@@ -2652,12 +2666,12 @@ var resultsDisplayServerOrClient = {
     fieldValueAlias({ key, value }) {
         return value + ' (' + key + ')';
     },
-    interlinearSegment({ lang, html }) {
-        return `<span lang="${lang}">${html}</span>`;
+    interlinearSegment({ lang, dir, html }) {
+        return `<span${lang ? ` lang="${lang}"` : ''}${dir ? ` dir="${dir}"` : ''}>${html}</span>`;
     },
     interlinearTitle({ l, val }) {
         const colonSpace = l('colon-space');
-        return '<span class="interlintitle">' + val + '</span>' + colonSpace;
+        return `<span class="interlintitle">${val}</span>${colonSpace}`;
     },
     styles({
         $p, $pRaw, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, escapeCSS,
@@ -2681,7 +2695,7 @@ var resultsDisplayServerOrClient = {
         const topToFooter = `calc(${topToBodyEnd} + ${bodyToFooterPadding})`;
         return ['style', [($pRaw('caption') === 'y' ? tableWithFixedHeaderAndFooter ? '.caption div.inner-caption, ' : '.caption, ' : '') + ($pRaw('header') === 'y' ? tableWithFixedHeaderAndFooter ? `` // `.thead .th, .thead .th div.th-inner, ` // Problems at least in Chrome
         : `.thead .th, ` : '') + ($pRaw('footer') === 'y' ? tableWithFixedHeaderAndFooter ? `` // `.tfoot .th, .tfoot .th div.th-inner, ` // Problems at least in Chrome
-        : `.tfoot .th, ` : '') + '.tbody .td' + ` {
+        : `.tfoot .th, ` : '') + '.tbody td' + ` {
     vertical-align: top;
     font-style: ${$pRawEsc('fontstyle')};
     font-variant: ${$pRawEsc('fontvariant')};
@@ -2746,7 +2760,7 @@ div.inner-caption {
     margin-left: -50%;
     text-align: center;
 }
-` : '') + checkedFieldIndexes.map((idx, i) => ($pRaw('header') === 'y' ? tableWithFixedHeaderAndFooter ? `.thead .th:nth-child(${i + 1}) div.th-inner, ` : `.thead .th:nth-child(${i + 1}), ` : '') + ($pRaw('footer') === 'y' ? tableWithFixedHeaderAndFooter ? `.tfoot .th:nth-child(${i + 1}) div.th-inner, ` : `.tfoot .th:nth-child(${i + 1}), ` : '') + `.tbody .td:nth-child(${i + 1}) ` + `{
+` : '') + checkedFieldIndexes.map((idx, i) => ($pRaw('header') === 'y' ? tableWithFixedHeaderAndFooter ? `.thead .th:nth-child(${i + 1}) div.th-inner, ` : `.thead .th:nth-child(${i + 1}), ` : '') + ($pRaw('footer') === 'y' ? tableWithFixedHeaderAndFooter ? `.tfoot .th:nth-child(${i + 1}) div.th-inner, ` : `.tfoot .th:nth-child(${i + 1}), ` : '') + `.tbody td:nth-child(${i + 1}) ` + `{
     ${$pEscArbitrary('css' + (i + 1))}
 }
 `).join('') + ($pEscArbitrary('interlintitle_css') ? `
@@ -2764,14 +2778,15 @@ body {
         tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
         // Todo: escaping should be done in business logic!
         escapeQuotedCSS, escapeCSS, escapeHTML,
-        l, localizedFieldNames, fieldLangs,
+        l, localizedFieldNames, fieldLangs, fieldDirs,
         caption, hasCaption, showInterlinTitles,
         determineEnd, getCanonicalID, canonicalBrowseFieldSetName,
         getCellValue, checkedAndInterlinearFieldInfo,
         interlinearSeparator = '<br /><br />'
     }) {
         const tableOptions = {
-            table: [['table', { class: 'table', border: $pRaw('border') || '0' }], ['tr', { class: 'tr' }], ['td', { class: 'td' }], ['th', { class: 'th' }], ['caption', { class: 'caption' }], ['thead', { class: 'thead' }], ['tbody', { class: 'tbody' }], ['tfoot', { class: 'tfoot' }]
+            table: [['table', { class: 'table', border: $pRaw('border') || '0' }], ['tr', { class: 'tr' }], ['td'], // , {class: 'td'} // Too much data to add class to each
+            ['th', { class: 'th' }], ['caption', { class: 'caption' }], ['thead', { class: 'thead' }], ['tbody', { class: 'tbody' }], ['tfoot', { class: 'tfoot' }]
             // ['colgroup', {class: 'colgroup'}],
             // ['col', {class: 'col'}]
             ],
@@ -2858,15 +2873,19 @@ body {
 
                     return showInterlins && !cellIsEmpty ? Templates.resultsDisplayServerOrClient.interlinearSegment({
                         lang: fieldLangs[idx],
+                        dir: fieldDirs[idx],
                         html: Templates.resultsDisplayServerOrClient.interlinearTitle({
                             l, val: localizedFieldNames[idx]
                         }) + tdVal
                     }) : tdVal;
                 }).filter(cell => cell !== '');
                 return addAtts(tdElem, {
+                    // We could remove these (and add to <col>) for optimizing delivery,
+                    //    but non-table output couldn't use unless on a hidden element
                     // Can't have unique IDs if user duplicates a column
                     id: 'row' + (i + 1) + 'col' + (j + 1),
                     lang: fieldLangs[idx],
+                    dir: fieldDirs[idx],
                     dataset: {
                         col: localizedFieldNames[idx]
                     },
@@ -3260,6 +3279,184 @@ class Metadata {
         };
     }
 }
+
+/**
+ * Copyright 2015, Yahoo! Inc.
+ * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
+ */
+
+var self$1;
+var RtlDetectLib = self$1 = { // eslint-disable-line consistent-this
+
+    // Private functions - star
+    _escapeRegExpPattern: function (str) {
+        if (typeof str !== 'string') {
+            return str;
+        }
+        return str.replace(/([\.\*\+\^\$\[\]\\\(\)\|\{\}\,\-\:\?])/g, '\\$1'); // eslint-disable-line no-useless-escape
+    },
+    _toLowerCase: function (str, reserveReturnValue) {
+        if (typeof str !== 'string') {
+            return reserveReturnValue && str;
+        }
+        return str.toLowerCase();
+    },
+    _toUpperCase: function (str, reserveReturnValue) {
+        if (typeof str !== 'string') {
+            return reserveReturnValue && str;
+        }
+        return str.toUpperCase();
+    },
+    _trim: function (str, delimiter, reserveReturnValue) {
+        var patterns = [];
+        var regexp;
+        var addPatterns = function (pattern) {
+            // Build trim RegExp pattern and push it to patterns array
+            patterns.push('^' + pattern + '+|' + pattern + '+$');
+        };
+
+        // fix reserveReturnValue value
+        if (typeof delimiter === 'boolean') {
+            reserveReturnValue = delimiter;
+            delimiter = null;
+        }
+
+        if (typeof str !== 'string') {
+            return reserveReturnValue && str;
+        }
+
+        // Trim based on delimiter array values
+        if (Array.isArray(delimiter)) {
+            // Loop through delimiter array
+            delimiter.map(function (item) {
+                // Escape delimiter to be valid RegExp Pattern
+                var pattern = self$1._escapeRegExpPattern(item);
+                // Push pattern to patterns array
+                addPatterns(pattern);
+            });
+        }
+
+        // Trim based on delimiter string value
+        if (typeof delimiter === 'string') {
+            // Escape delimiter to be valid RegExp Pattern
+            var patternDelimiter = self$1._escapeRegExpPattern(delimiter);
+            // push pattern to patterns array
+            addPatterns(patternDelimiter);
+        }
+
+        // If delimiter  is not defined, Trim white spaces
+        if (!delimiter) {
+            // Push white space pattern to patterns array
+            addPatterns('\\s');
+        }
+
+        // Build RegExp pattern
+        var pattern = '(' + patterns.join('|') + ')';
+        // Build RegExp object
+        regexp = new RegExp(pattern, 'g');
+
+        // trim string for all patterns
+        while (str.match(regexp)) {
+            str = str.replace(regexp, '');
+        }
+
+        // Return trim string
+        return str;
+    },
+
+    _parseLocale: function (strLocale) {
+        // parse locale regex object
+        var regex = /^([a-zA-Z]*)([_\-a-zA-Z]*)$/;
+        var matches = regex.exec(strLocale); // exec regex
+        var parsedLocale;
+        var lang;
+        var countryCode;
+
+        if (!strLocale || !matches) {
+            return;
+        }
+
+        // fix countryCode string by trimming '-' and '_'
+        matches[2] = self$1._trim(matches[2], ['-', '_']);
+
+        lang = self$1._toLowerCase(matches[1]);
+        countryCode = self$1._toUpperCase(matches[2]) || countryCode;
+
+        // object with lang, countryCode properties
+        parsedLocale = {
+            lang: lang,
+            countryCode: countryCode
+        };
+
+        // return parsed locale object
+        return parsedLocale;
+    },
+    // Private functions - End
+
+    // Public functions - star
+    isRtlLang: function (strLocale) {
+        var objLocale = self$1._parseLocale(strLocale);
+        if (!objLocale) {
+            return;
+        }
+        // return true if the intel string lang exists in the BID RTL LANGS array else return false
+        return self$1._BIDI_RTL_LANGS.indexOf(objLocale.lang) >= 0;
+    },
+
+    getLangDir: function (strLocale) {
+        // return 'rtl' if the intel string lang exists in the BID RTL LANGS array else return 'ltr'
+        return self$1.isRtlLang(strLocale) ? 'rtl' : 'ltr';
+    }
+
+    // Public functions - End
+};
+
+// Const BIDI_RTL_LANGS Array
+// BIDI_RTL_LANGS ref: http://en.wikipedia.org/wiki/Right-to-left
+// Table of scripts in Unicode: https://en.wikipedia.org/wiki/Script_(Unicode)
+Object.defineProperty(self$1, '_BIDI_RTL_LANGS', {
+    value: ['ae', /* Avestan */
+    'ar', /* 'العربية', Arabic */
+    'arc', /* Aramaic */
+    'bcc', /* 'بلوچی مکرانی', Southern Balochi */
+    'bqi', /* 'بختياري', Bakthiari */
+    'ckb', /* 'Soranî / کوردی', Sorani */
+    'dv', /* Dhivehi */
+    'fa', /* 'فارسی', Persian */
+    'glk', /* 'گیلکی', Gilaki */
+    'he', /* 'עברית', Hebrew */
+    'ku', /* 'Kurdî / كوردی', Kurdish */
+    'mzn', /* 'مازِرونی', Mazanderani */
+    'nqo', /* N'Ko */
+    'pnb', /* 'پنجابی', Western Punjabi */
+    'ps', /* 'پښتو', Pashto, */
+    'sd', /* 'سنڌي', Sindhi */
+    'ug', /* 'Uyghurche / ئۇيغۇرچە', Uyghur */
+    'ur', /* 'اردو', Urdu */
+    'yi' /* 'ייִדיש', Yiddish */
+    ],
+    writable: false,
+    enumerable: true,
+    configurable: false
+});
+
+var rtlDetect = RtlDetectLib;
+
+var rtlDetect$1 = /*#__PURE__*/Object.freeze({
+	default: rtlDetect,
+	__moduleExports: rtlDetect
+});
+
+var rtlDetect$2 = ( rtlDetect$1 && rtlDetect ) || rtlDetect$1;
+
+var rtlDetect_1 = {
+
+  isRtlLang: rtlDetect$2.isRtlLang,
+
+  getLangDir: rtlDetect$2.getLangDir
+
+};
+var rtlDetect_3 = rtlDetect_1.getLangDir;
 
 var getJSON = (async function getJSON(jsonURL, cb, errBack) {
     try {
@@ -5371,7 +5568,7 @@ var en$1 = /*#__PURE__*/Object.freeze({
 	__moduleExports: en
 });
 
-var src$core$$ = ( core$1 && core ) || core$1;
+var require$$0$1 = ( core$1 && core ) || core$1;
 
 var src$en$$ = ( en$1 && en ) || en$1;
 
@@ -5379,10 +5576,10 @@ var main = createCommonjsModule(function (module, exports) {
 
 
 
-src$core$$["default"].__addLocaleData(src$en$$["default"]);
-src$core$$["default"].defaultLocale = 'en';
+require$$0$1["default"].__addLocaleData(src$en$$["default"]);
+require$$0$1["default"].defaultLocale = 'en';
 
-exports["default"] = src$core$$["default"];
+exports["default"] = require$$0$1["default"];
 
 
 });
@@ -5393,7 +5590,7 @@ var main$1 = /*#__PURE__*/Object.freeze({
 });
 
 // GENERATED FILE
-var IntlMessageFormat = src$core$$["default"];
+var IntlMessageFormat = require$$0$1["default"];
 
 IntlMessageFormat.__addLocaleData({ "locale": "af", "pluralRuleFunction": function (n, ord) {
     if (ord) return "other";return n == 1 ? "one" : "other";
@@ -6622,11 +6819,11 @@ IntlMessageFormat.__addLocaleData({ "locale": "zu", "pluralRuleFunction": functi
     if (ord) return "other";return n >= 0 && n <= 1 ? "one" : "other";
   } });
 
-var require$$0$1 = ( main$1 && main ) || main$1;
+var require$$0$2 = ( main$1 && main ) || main$1;
 
 var intlMessageformat = createCommonjsModule(function (module, exports) {
 
-var IntlMessageFormat = require$$0$1['default'];
+var IntlMessageFormat = require$$0$2['default'];
 
 // Add all locale data to `IntlMessageFormat`. This module will be ignored when
 // bundling for the browser with Browserify/Webpack.
@@ -7347,7 +7544,9 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
 
     const localizedFieldNames = fieldInfo.map(fi => fi.fieldAliasOrName);
     const escapeColumnIndexes = fieldInfo.map(fi => fi.escapeColumn);
-    const fieldLangs = fieldInfo.map(fi => fi.fieldLang);
+    const fieldLangs = fieldInfo.map(({ fieldLang }) => {
+        return fieldLang !== preferredLocale ? fieldLang : null;
+    });
     const fieldValueAliasMap = getFieldValueAliasMap({
         schemaItems, fieldInfo, metadataObj, getFieldAliasOrName, usePreferAlias: false
     });
@@ -7524,10 +7723,20 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             console.log('applicableFieldIdx', applicableFieldIdx);
         });
     }
+
+    const localeDir = rtlDetect_3(preferredLocale);
+    const fieldDirs = fieldLangs.map(langCode => {
+        if (!langCode) {
+            return null;
+        }
+        const langDir = rtlDetect_3(langCode);
+        return langDir !== localeDir ? langDir : null;
+    });
+
     const templateArgs = {
         tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
         escapeQuotedCSS, escapeCSS, escapeHTML,
-        l, localizedFieldNames, fieldLangs,
+        l, localizedFieldNames, fieldLangs, fieldDirs,
         caption, hasCaption, showInterlinTitles,
         determineEnd: determineEnd({
             applicableBrowseFieldNames,

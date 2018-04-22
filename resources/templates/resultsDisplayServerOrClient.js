@@ -22,14 +22,16 @@ export default {
     fieldValueAlias ({key, value}) {
         return value + ' (' + key + ')';
     },
-    interlinearSegment ({lang, html}) {
-        return `<span lang="${lang}">${html}</span>`;
+    interlinearSegment ({lang, dir, html}) {
+        return `<span${
+            lang ? ` lang="${lang}"` : ''
+        }${
+            dir ? ` dir="${dir}"` : ''
+        }>${html}</span>`;
     },
     interlinearTitle ({l, val}) {
         const colonSpace = l('colon-space');
-        return '<span class="interlintitle">' +
-            val +
-            '</span>' + colonSpace;
+        return `<span class="interlintitle">${val}</span>${colonSpace}`;
     },
     styles ({
         $p, $pRaw, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, escapeCSS,
@@ -72,7 +74,7 @@ export default {
                     ? `` // `.tfoot .th, .tfoot .th div.th-inner, ` // Problems at least in Chrome
                     : `.tfoot .th, `)
                 : '') +
-            ('.tbody .td') + ` {
+            ('.tbody td') + ` {
     vertical-align: top;
     font-style: ${$pRawEsc('fontstyle')};
     font-variant: ${$pRawEsc('fontvariant')};
@@ -152,7 +154,7 @@ div.inner-caption {
                         ? `.tfoot .th:nth-child(${i + 1}) div.th-inner, `
                         : `.tfoot .th:nth-child(${i + 1}), `)
                     : '') +
-                `.tbody .td:nth-child(${i + 1}) ` +
+                `.tbody td:nth-child(${i + 1}) ` +
 `{
     ${$pEscArbitrary('css' + (i + 1))}
 }
@@ -177,7 +179,7 @@ body {
         tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
         // Todo: escaping should be done in business logic!
         escapeQuotedCSS, escapeCSS, escapeHTML,
-        l, localizedFieldNames, fieldLangs,
+        l, localizedFieldNames, fieldLangs, fieldDirs,
         caption, hasCaption, showInterlinTitles,
         determineEnd, getCanonicalID, canonicalBrowseFieldSetName,
         getCellValue, checkedAndInterlinearFieldInfo,
@@ -187,7 +189,7 @@ body {
             table: [
                 ['table', {class: 'table', border: $pRaw('border') || '0'}],
                 ['tr', {class: 'tr'}],
-                ['td', {class: 'td'}],
+                ['td'], // , {class: 'td'} // Too much data to add class to each
                 ['th', {class: 'th'}],
                 ['caption', {class: 'caption'}],
                 ['thead', {class: 'thead'}],
@@ -300,6 +302,7 @@ body {
                         return (showInterlins && !cellIsEmpty
                             ? Templates.resultsDisplayServerOrClient.interlinearSegment({
                                 lang: fieldLangs[idx],
+                                dir: fieldDirs[idx],
                                 html: Templates.resultsDisplayServerOrClient.interlinearTitle({
                                     l, val: localizedFieldNames[idx]
                                 }) + tdVal
@@ -307,9 +310,12 @@ body {
                             : tdVal);
                     }).filter((cell) => cell !== '');
                     return addAtts(tdElem, {
+                        // We could remove these (and add to <col>) for optimizing delivery,
+                        //    but non-table output couldn't use unless on a hidden element
                         // Can't have unique IDs if user duplicates a column
                         id: 'row' + (i + 1) + 'col' + (j + 1),
                         lang: fieldLangs[idx],
+                        dir: fieldDirs[idx],
                         dataset: {
                             col: localizedFieldNames[idx]
                         },

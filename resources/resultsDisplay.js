@@ -4,6 +4,7 @@ import {escapeHTML} from './utils/sanitize.js';
 import {
     getMetaProp, Metadata, getFieldNameAndValueAliases, getBrowseFieldData
 } from './utils/Metadata.js';
+import {getLangDir} from 'rtl-detect';
 import {Languages} from './utils/Languages.js';
 import {getWorkData} from './utils/WorkInfo.js';
 // Keep this as the last import for Rollup
@@ -517,7 +518,9 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
 
     const localizedFieldNames = fieldInfo.map((fi) => fi.fieldAliasOrName);
     const escapeColumnIndexes = fieldInfo.map((fi) => fi.escapeColumn);
-    const fieldLangs = fieldInfo.map((fi) => fi.fieldLang);
+    const fieldLangs = fieldInfo.map(({fieldLang}) => {
+        return fieldLang !== preferredLocale ? fieldLang : null;
+    });
     const fieldValueAliasMap = getFieldValueAliasMap({
         schemaItems, fieldInfo, metadataObj, getFieldAliasOrName, usePreferAlias: false
     });
@@ -723,10 +726,20 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             console.log('applicableFieldIdx', applicableFieldIdx);
         });
     }
+
+    const localeDir = getLangDir(preferredLocale);
+    const fieldDirs = fieldLangs.map((langCode) => {
+        if (!langCode) {
+            return null;
+        }
+        const langDir = getLangDir(langCode);
+        return langDir !== localeDir ? langDir : null;
+    });
+
     const templateArgs = {
         tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
         escapeQuotedCSS, escapeCSS, escapeHTML,
-        l, localizedFieldNames, fieldLangs,
+        l, localizedFieldNames, fieldLangs, fieldDirs,
         caption, hasCaption, showInterlinTitles,
         determineEnd: determineEnd({
             applicableBrowseFieldNames,

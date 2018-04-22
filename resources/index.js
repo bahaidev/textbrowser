@@ -199,6 +199,7 @@ TextBrowser.prototype.getWorkData = function (opts) {
 
 // Need for directionality even if language specified (and we don't want
 //   to require it as a param)
+// Todo: Use rtl-detect (already included)
 TextBrowser.prototype.getDirectionForLanguageCode = function (code) {
     const langs = this.langData.languages;
     const exactMatch = langs.find((lang) =>
@@ -321,6 +322,8 @@ TextBrowser.prototype.paramChange = async function () {
         languageSelect(l);
         return;
     }
+    document.documentElement.lang = preferredLocale;
+
     const localeCallback = (l /* defineFormatter */) => {
         this.l10n = l;
         $p.l10n = l;
