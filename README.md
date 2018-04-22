@@ -631,6 +631,7 @@ upon for monkey-patching.
             (with service worker shim?) to optimize on server
 1.  **Avoid setting inputs to empty string** on load (prevents using back
     button to get at old values)
+1.  Icon for click/hover to get **interlinear field explanation**
 1.  Fix sometime **obscuring of headings**
 1.  **Document**
     1. Need of setting certain locale strings, including `sites.json`.
