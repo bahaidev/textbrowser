@@ -637,6 +637,8 @@ upon for monkey-patching.
     "Field Title" in pull-down.
 1.  Fix for **"Save settings as URL"** not properly serializing plug-in
     columns
+1.  Allow **localization of URL parameters** to optionally work with any
+    language (or at least the locale and default/English)
 1.  Fix sometime **obscuring of headings**
 1.  **Document**
     1. Need of setting certain locale strings, including `sites.json`.
