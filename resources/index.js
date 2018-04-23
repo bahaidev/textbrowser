@@ -4,6 +4,7 @@ import IMF from 'imf';
 import getIMFFallbackResults from './utils/getIMFFallbackResults.js';
 import loadStylesheets from 'load-stylesheets';
 
+import {dialogs} from './utils/dialogs.js';
 import {getFieldNameAndValueAliases, getBrowseFieldData} from './utils/Metadata.js';
 import {getWorkFiles, getWorkData} from './utils/WorkInfo.js';
 import {registerServiceWorker, setServiceWorkerDefaults} from './utils/ServiceWorker.js';
@@ -17,7 +18,7 @@ import workSelect from './workSelect.js';
 import workDisplay from './workDisplay.js';
 import {resultsDisplayClient} from './resultsDisplay.js';
 
-function s (obj) { alert(JSON.stringify(obj)); } // eslint-disable-line no-unused-vars
+function s (obj) { dialogs.alert(JSON.stringify(obj)); } // eslint-disable-line no-unused-vars
 
 async function prepareForServiceWorker (langs) {
     try {
@@ -179,7 +180,7 @@ TextBrowser.prototype.displayLanguages = async function () {
 
         return p;
     } catch (err) {
-        alert(err);
+        dialogs.alert(err);
     }
 };
 
@@ -193,7 +194,7 @@ TextBrowser.prototype.getWorkData = function (opts) {
             allowPlugins: this.allowPlugins
         });
     } catch (err) {
-        alert('catch:' + err);
+        dialogs.alert('catch:' + err);
     }
 };
 
@@ -266,6 +267,55 @@ TextBrowser.prototype.paramChange = async function () {
     //    whether to show or not; also ensure we have navigation
     //    bar/breadcrumbs on all non-results pages
     const persistent = await navigator.storage.persisted();
+
+    const r = await navigator.serviceWorker.getRegistration(this.serviceWorkerPath);
+    if (r) {
+        const worker = r.installing || r.waiting || r.active;
+        if (!worker) {
+            // Todo: Why wouldn't there be a worker here?
+            console.error('Unexpected error: worker registration received without a worker.');
+            return;
+        }
+        switch (worker.state) {
+        case 'installing':
+            // If it fails, will instead be `redundant`; but will try again:
+            //     1. automatically (?) per https://developers.google.com/web/fundamentals/primers/service-workers/#the_service_worker_life_cycle
+            //     2. upon reattempting registration (?) per https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
+            // Todo: Supply file paths in case not completed and no
+            //    other tabs open to do so (assuming this is possible)
+            // r.installing
+            break;
+        case 'installed':
+            // Waiting ensures only one version of our service worker active
+            // No dedicated "waiting" state so handle here
+            // r.waiting
+            // Todo: Show dialog that currently waiting for old tabs (and
+            //         this one) to close so install can proceed (no ok button)
+            // Todo: Wait for activation to begin and then push as in activating
+            break;
+        // Now fetching will be beyond first service worker and not yet with first
+        case 'activating': // May be called more than once in case fails?
+            // Todo: May not be activated but only activating so pass in
+            //   callback in case no other tabs open to do so (assuming
+            //   this is possible)
+            // r.active
+            break;
+        case 'active':
+            // r.active
+            break;
+        case 'redundant':
+            // What will the worker be? installing?
+            // A new service worker is replacing the current service worker, or
+            //  the current service worker is being discarded due to an install failure
+            // Todo: Try registering/updating again later
+            break;
+        }
+        r.addEventListener('updatefound', () => {
+            // r.installing now available
+            // Todo: Listen for statechange
+        });
+    }
+
     /*
     console.log(
         'navigator.serviceWorker.controller',
@@ -281,7 +331,8 @@ TextBrowser.prototype.paramChange = async function () {
         localStorage.getItem(this.namespace + '-refused');
 
     const tryRegistrationOrPersistence = !refusedIndexedDB && // Not show if refused before
-        (!navigator.serviceWorker.controller || !persistent);
+        (!navigator.serviceWorker.controller || // This is `null` on a force-refresh too
+            !persistent);
 
     if (!result && tryRegistrationOrPersistence) {
         siteI18n = getSiteI18n();
@@ -299,6 +350,54 @@ TextBrowser.prototype.paramChange = async function () {
             await requestPermissions.call(this, langs, siteI18n);
         }
         Templates.permissions.exitDialogs();
+    }
+    const {controller} = navigator.serviceWorker;
+    if (controller) { // `null` if force-reload
+        controller.addEventListener('updatefound', () => {
+            // New service worker has appeared
+            const newWorker = controller.installing;
+
+            newWorker.addEventListener('statechange', () => {
+                const {state} = newWorker;
+                switch (state) {
+                case 'installing': // install event has fired, but not yet complete
+                    console.log('Installing new worker');
+                    break;
+                case 'installed': // install complete
+                case 'redundant': // discarded. Either failed install, or it's been
+                    //                replaced by a newer version
+                    console.log('Installation status', state);
+                    dialogs.alert(
+                        `A new version of this offlinable app has been downloaded.
+
+                        If you have work to complete in this tab, you can dismiss
+                        this dialog now and continue working with the old version.
+
+                        However, when you are finished, you should close this tab
+                        and any other old tabs for this site in order to be able to
+                        begin using the new version.`
+                    );
+                    break;
+                // These shouldn't occur as we are not skipping waiting
+                case 'activating': // the activate event has fired, but not yet complete
+                    console.log('Activating new worker');
+                    break;
+                case 'activated': // fully active
+                    console.log('Activated new worker');
+                    break;
+                default:
+                    throw new Error(`Unknown worker update state: ${state}`);
+                }
+            });
+        });
+
+        // "The browser checks for updates automatically after navigations and
+        //  functional events, but you can also trigger them manually"
+        //  -- https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#manual_updates
+        const hourly = 1000 * 60 * 60;
+        setInterval(() => {
+            controller.update();
+        }, hourly);
     }
     /*
     try {

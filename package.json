@@ -25,6 +25,7 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "command-line-args": "^5.0.2",
+    "dialog-polyfill": "^0.4.9",
     "dom-parser": "^0.1.5",
     "form-serialize": "https://github.com/brettz9/form-serialize#browser-deserialize-rollup",
     "imf": "3.0.1",

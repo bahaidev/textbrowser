@@ -2,6 +2,7 @@
 import {escapeHTML} from './sanitize.js';
 import getJSON from 'simple-get-json';
 import {getWorkFiles} from './WorkInfo.js';
+import {dialogs} from './dialogs.js';
 
 export const setServiceWorkerDefaults = (target, source) => {
     target.languages = source.languages || new URL(
@@ -35,7 +36,7 @@ export const registerServiceWorker = async ({
     //   and if only one chosen, switch to the work selection page
     //   in that language
     /*
-    (Configurable) Strategy options
+    Todo: (Configurable) Strategy options
 
     - Wait and put everything in an `install` `waitUntil` after we've retrieved
     the user JSON, informing the user that they must wait for everything to
@@ -48,7 +49,8 @@ export const registerServiceWorker = async ({
     files, the user's files list and locales should be enough.
 
     For either option, we might possibly (and user-optionally) send a notice
-    (whose approval we've asked for already) when all files are complete,
+    (whose approval we've asked for already) when all files are complete
+    instead of just a dialog,
     */
 
     console.log(
@@ -63,17 +65,33 @@ export const registerServiceWorker = async ({
     const r = await navigator.serviceWorker.register(
         serviceWorkerPath
     );
+
     // We use this promise for rejecting (inside a listener)
     //    to a common catch and to prevent continuation by
     //    failing to return
-    /* const ready = */ await new Promise((resolve, reject) => {
+    /* const ready = */ await new Promise(async (resolve, reject) => {
         logger.addLogEntry({
             text: 'Worker registered'
         });
+        // (Unless skipped in code, will wait between install
+        //    of new and activation of new or existing if still
+        //    some tabs open)
+        if (r.waiting) {
+            await dialogs.alert(
+                `An update is in progress. After finishing any work
+                you have in them, please close any other existing tabs
+                running this web application and then hit ok so that the
+                update may complete.`
+            );
+            location.reload();
+            return;
+        }
+
         navigator.serviceWorker.onmessage = (e) => {
             const {data} = e;
             console.log('msg1', data, r);
-            if (data === 'finishedActivate') {
+            switch (data) {
+            case 'finishedActivate':
                 logger.addLogEntry({
                     text: 'Finished activation...'
                 });
@@ -89,8 +107,25 @@ export const registerServiceWorker = async ({
                 // This will cause jankiness and unnecessarily show languages selection
                 // resolve();
                 return;
+            case 'finishActivate': // Just use `e.source`?
+                logger.addLogEntry({
+                    text: 'Finished caching'
+                });
+                logger.addLogEntry({
+                    text: 'Beginning activation (database resources)...'
+                });
+                console.log('activating', e);
+
+                // r.active is also available for mere "activating"
+                //    as we are now
+                r.active.postMessage({
+                    type: 'activate',
+                    namespace,
+                    filesJSONPath: files
+                });
+                return;
             }
-            if (data.activationError) {
+            if (data && data.activationError) {
                 const {message, dbError, errorType} = data;
                 const err = new Error(message);
                 err.errorType = errorType;
@@ -101,21 +136,6 @@ export const registerServiceWorker = async ({
                     });
                 }
                 reject(err);
-                return;
-            }
-            if (r.active) { // Just use `e.source`?
-                logger.addLogEntry({
-                    text: 'Finished caching'
-                });
-                logger.addLogEntry({
-                    text: 'Beginning activation (database resources)...'
-                });
-                console.log('active1', e);
-                r.active.postMessage({
-                    type: 'activate',
-                    namespace,
-                    filesJSONPath: files
-                });
             }
         };
         // No need to expect a message from the installing event,

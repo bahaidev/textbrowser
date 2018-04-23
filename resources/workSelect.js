@@ -3,6 +3,7 @@ import getJSON from 'simple-get-json';
 import IMF from 'imf';
 
 import {getMetaProp} from './utils/Metadata.js';
+import {dialogs} from './utils/dialogs.js';
 import Templates from './templates/index.js';
 
 export default async function workSelect ({
@@ -49,6 +50,6 @@ export default async function workSelect ({
         };
         Templates.workSelect({groups: dbs.groups, lf, getNextAlias, $p, followParams});
     } catch (err) {
-        alert(err);
+        dialogs.alert(err);
     }
 };

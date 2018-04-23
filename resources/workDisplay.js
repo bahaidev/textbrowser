@@ -4,6 +4,7 @@ import getSerializeParamsAsURL from './utils/getSerializeParamsAsURL.js';
 
 import {getMetaProp, Metadata} from './utils/Metadata.js';
 import {escapePlugin} from './utils/Plugin.js';
+import {dialogs} from './utils/dialogs.js';
 
 import Templates from './templates/index.js';
 
@@ -219,6 +220,6 @@ export default async function workDisplay ({
         });
         _displayWork.call(this, {lf, metadataObj, ...args});
     } catch (err) {
-        alert(err);
+        dialogs.alert(err);
     }
 };

@@ -1,7 +1,7 @@
-/* eslint-env browser */
 import {$} from './utils/dom.js';
 import jml from 'jamilih';
 import Templates from './index.js';
+import {dialogs} from '../utils/dialogs.js';
 
 export default {
     anchorRowCol ({anchorRowCol}) {
@@ -20,7 +20,7 @@ export default {
             html = Templates.resultsDisplayServerOrClient.main(...args);
         } catch (err) {
             if (err.message === 'JSON support is currently not available') {
-                alert(err.message);
+                dialogs.alert(err.message);
             }
         }
         jml(...html, document.body);
