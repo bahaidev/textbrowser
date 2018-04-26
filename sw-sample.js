@@ -9,6 +9,25 @@ const CURRENT_CACHES = {
     prefetch: 'prefetch-cache-v' + CACHE_VERSION
 };
 
+// Parameters should only come fresh from uncontrolled
+async function getOnlyUncontrolled () {
+    const [clientsWithUncontrolled, clientsControlled] = await Promise.all([
+        self.clients.matchAll({
+            includeUncontrolled: true,
+            type: 'window'
+        }),
+        self.clients.matchAll({
+            includeUncontrolled: false,
+            type: 'window'
+        })
+    ]);
+    return clientsWithUncontrolled && clientsWithUncontrolled.filter(({id}) => {
+        return !clientsControlled || !clientsControlled.some((c) => {
+            return c.id === id;
+        });
+    });
+}
+
 /*
 (async () => {
 const clients = await self.clients.matchAll({type: 'window'});
@@ -159,10 +178,7 @@ self.addEventListener('install', e => {
 
                     console.log('--install completing');
 
-                    const clients = await self.clients.matchAll({
-                        includeUncontrolled: false,
-                        type: 'window'
-                    });
+                    const clients = await getOnlyUncontrolled();
                     if (!clients || !clients.length) {
                         // Should we wait instead for the next client?
                         throw new Error(
@@ -184,7 +200,7 @@ self.addEventListener('install', e => {
 let activateCallbackDynamic;
 self.addEventListener('activate', e => {
     console.log('--activate beginning0');
-    const expectedCacheNames = Object.values(CURRENT_CACHES);
+    let expectedCacheNames = Object.values(CURRENT_CACHES);
     e.waitUntil(new Promise(async (resolve, reject) => {
         try {
             console.log('--activate beginning');
@@ -205,15 +221,6 @@ self.addEventListener('activate', e => {
             }, noCallbackTimeout);
 
             const cacheNames = await caches.keys();
-            await Promise.all(
-                cacheNames.map(async (cacheName) => {
-                    if (!expectedCacheNames.includes(cacheName)) {
-                        // If this cache name isn't present in the array of "expected" cache names, then delete it.
-                        console.log('Deleting out of date cache:', cacheName);
-                        await caches.delete(cacheName);
-                    }
-                })
-            );
 
             let activateCompleted = false;
             // We only need this message during activation
@@ -223,11 +230,19 @@ self.addEventListener('activate', e => {
                 }
                 activateInfoReceived = true;
                 try {
+                    const {namespace} = args[0];
+                    expectedCacheNames = expectedCacheNames.map((n) => namespace + n);
+                    await Promise.all(
+                        cacheNames.map(async (cacheName) => {
+                            if (!expectedCacheNames.includes(cacheName)) {
+                                // If this cache name isn't present in the array of "expected" cache names, then delete it.
+                                console.log('Deleting out of date cache:', cacheName);
+                                await caches.delete(cacheName);
+                            }
+                        })
+                    );
                     await activateCallback(...args);
-                    const clients = await self.clients.matchAll({
-                        includeUncontrolled: false,
-                        type: 'window'
-                    });
+                    const clients = await getOnlyUncontrolled();
                     if (clients && clients.length) {
                         clients.forEach((client) => {
                             // Get each tab to reload
@@ -245,10 +260,7 @@ self.addEventListener('activate', e => {
                     reject(err);
                 }
             };
-            const clients = await self.clients.matchAll({
-                includeUncontrolled: false, // There shouldn't be any uncontrolled here by this time anyways (?)
-                type: 'window'
-            });
+            const clients = await getOnlyUncontrolled();
             if (!clients || !clients.length) {
                 // Should we wait instead for the next client?
                 throw new Error(
@@ -264,10 +276,7 @@ self.addEventListener('activate', e => {
             console.error('Error during activation message', err);
 
             const {type: errorType, name, dbError, message} = err;
-            const clients = await self.clients.matchAll({
-                includeUncontrolled: false,
-                type: 'window'
-            });
+            const clients = await getOnlyUncontrolled();
             if (!clients || !clients.length) {
                 console.log('No client found to inform of activation error');
             } else {
@@ -289,10 +298,14 @@ self.addEventListener('fetch', (e) => {
     if (e.request.cache === 'only-if-cached' && e.request.mode !== 'same-origin') {
         return;
     }
-    console.log('fetching');
+    console.log('fetching', e.request.url);
     e.respondWith(
         (async () => {
-            return (await caches.match(e.request)) || fetch(e.request);
+            const cached = await caches.match(e.request);
+            if (!cached) {
+                console.log('no cached found', e.request.url);
+            }
+            return cached || fetch(e.request);
         })()
     );
 });

@@ -2930,7 +2930,161 @@ body {
     }
 };
 
-/* eslint-env browser */
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
+var objectWithoutProperties = function (obj, keys) {
+  var target = {};
+
+  for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;
+    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
+    target[i] = obj[i];
+  }
+
+  return target;
+};
+
+/* globals dialogPolyfill */
+
+const defaultLocale = 'en';
+const localeStrings = {
+    en: {
+        submit: 'Submit',
+        cancel: 'Cancel',
+        ok: 'Ok'
+    }
+};
+
+class Dialog {
+    constructor({ locale, localeObject } = {}) {
+        this.setLocale({ locale, localeObject });
+    }
+    setLocale({ locale = {}, localeObject = {} }) {
+        this.localeStrings = Object.assign({}, localeStrings[defaultLocale], localeStrings[locale], localeObject);
+    }
+    makeDialog({ atts = {}, children = [], close, remove = true }) {
+        if (close) {
+            if (!atts.$on) {
+                atts.$on = {};
+            }
+            if (!atts.$on.close) {
+                atts.$on.close = close;
+            }
+        }
+        const dialog = jml('dialog', atts, children, document.body);
+        dialogPolyfill.registerDialog(dialog);
+        dialog.showModal();
+        if (remove) {
+            dialog.addEventListener('close', () => {
+                dialog.remove();
+            });
+        }
+        return dialog;
+    }
+    makeSubmitDialog(_ref) {
+        let {
+            submit, // Don't pass this on to `args` if present
+            submitClass = 'submit'
+        } = _ref,
+            args = objectWithoutProperties(_ref, ['submit', 'submitClass']);
+
+        const dialog = this.makeCancelDialog(args);
+        $e(dialog, `button.${args.cancelClass || 'cancel'}`).before(jml('button', {
+            class: submitClass,
+            $on: {
+                click(e) {
+                    if (submit) {
+                        submit.call(this, { e, dialog });
+                    }
+                }
+            }
+        }, [this.localeStrings.submit]), nbsp.repeat(2));
+        return dialog;
+    }
+    makeCancelDialog(_ref2) {
+        let {
+            submit, // Don't pass this on to `args` if present
+            cancel,
+            cancelClass = 'cancel', submitClass = 'submit'
+        } = _ref2,
+            args = objectWithoutProperties(_ref2, ['submit', 'cancel', 'cancelClass', 'submitClass']);
+
+        const dialog = this.makeDialog(args);
+        jml('div', { class: submitClass }, [['br'], ['br'], ['button', { class: cancelClass, $on: {
+                click(e) {
+                    e.preventDefault();
+                    if (cancel) {
+                        if (cancel.call(this, { e, dialog }) === false) {
+                            return;
+                        }
+                    }
+                    dialog.close();
+                }
+            } }, [this.localeStrings.cancel]]], dialog);
+        return dialog;
+    }
+    alert(message, ok) {
+        message = typeof message === 'string' ? { message } : message;
+        const { ok: includeOk = ok !== false, message: msg, submitClass = 'submit' } = message;
+        return new Promise((resolve, reject) => {
+            const dialog = jml('dialog', [msg, ...(includeOk ? [['br'], ['br'], ['div', { class: submitClass }, [['button', { $on: { click() {
+                        dialog.close();
+                        resolve();
+                    } } }, [this.localeStrings.ok]]]]] : [])], document.body);
+            dialogPolyfill.registerDialog(dialog);
+            dialog.showModal();
+        });
+    }
+    prompt(message) {
+        message = typeof message === 'string' ? { message } : message;
+        const { message: msg, submit: userSubmit } = message,
+              submitArgs = objectWithoutProperties(message, ['message', 'submit']);
+        return new Promise((resolve, reject) => {
+            const submit = function ({ e, dialog }) {
+                if (userSubmit) {
+                    userSubmit.call(this, { e, dialog });
+                }
+                dialog.close();
+                resolve($e(dialog, 'input').value);
+            };
+            /* const dialog = */this.makeSubmitDialog(_extends({}, submitArgs, {
+                submit,
+                cancel() {
+                    reject(new Error('cancelled'));
+                },
+                children: [['label', [msg, nbsp.repeat(3), ['input']]]]
+            }));
+        });
+    }
+    confirm(message) {
+        message = typeof message === 'string' ? { message } : message;
+        const { message: msg, submitClass = 'submit' } = message;
+        return new Promise((resolve, reject) => {
+            const dialog = jml('dialog', [msg, ['br'], ['br'], ['div', { class: submitClass }, [['button', { $on: { click() {
+                        dialog.close();
+                        resolve();
+                    } } }, [this.localeStrings.ok]], nbsp.repeat(2), ['button', { $on: { click() {
+                        dialog.close();
+                        reject(new Error('cancelled'));
+                    } } }, [this.localeStrings.cancel]]]]], document.body);
+            dialogPolyfill.registerDialog(dialog);
+            dialog.showModal();
+        });
+    }
+}
+const dialogs = new Dialog();
 
 var resultsDisplayClient = {
     anchorRowCol({ anchorRowCol }) {
@@ -2946,7 +3100,7 @@ var resultsDisplayClient = {
             html = Templates.resultsDisplayServerOrClient.main(...args);
         } catch (err) {
             if (err.message === 'JSON support is currently not available') {
-                alert(err.message);
+                dialogs.alert(err.message);
             }
         }
         jml(...html, document.body);
@@ -3035,32 +3189,6 @@ Templates.permissions = {
 
 const escapeHTML = s => {
     return !s ? '' : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/, '&gt;');
-};
-
-var _extends = Object.assign || function (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
-
-    for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
-      }
-    }
-  }
-
-  return target;
-};
-
-var objectWithoutProperties = function (obj, keys) {
-  var target = {};
-
-  for (var i in obj) {
-    if (keys.indexOf(i) >= 0) continue;
-    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
-    target[i] = obj[i];
-  }
-
-  return target;
 };
 
 /* eslint-env browser */
@@ -5585,7 +5713,7 @@ var en$1 = /*#__PURE__*/Object.freeze({
 	__moduleExports: en
 });
 
-var src$core$$ = ( core$1 && core ) || core$1;
+var require$$0$1 = ( core$1 && core ) || core$1;
 
 var src$en$$ = ( en$1 && en ) || en$1;
 
@@ -5593,10 +5721,10 @@ var main = createCommonjsModule(function (module, exports) {
 
 
 
-src$core$$["default"].__addLocaleData(src$en$$["default"]);
-src$core$$["default"].defaultLocale = 'en';
+require$$0$1["default"].__addLocaleData(src$en$$["default"]);
+require$$0$1["default"].defaultLocale = 'en';
 
-exports["default"] = src$core$$["default"];
+exports["default"] = require$$0$1["default"];
 
 
 });
@@ -5607,7 +5735,7 @@ var main$1 = /*#__PURE__*/Object.freeze({
 });
 
 // GENERATED FILE
-var IntlMessageFormat = src$core$$["default"];
+var IntlMessageFormat = require$$0$1["default"];
 
 IntlMessageFormat.__addLocaleData({ "locale": "af", "pluralRuleFunction": function (n, ord) {
     if (ord) return "other";return n == 1 ? "one" : "other";
@@ -6836,11 +6964,11 @@ IntlMessageFormat.__addLocaleData({ "locale": "zu", "pluralRuleFunction": functi
     if (ord) return "other";return n >= 0 && n <= 1 ? "one" : "other";
   } });
 
-var require$$0$1 = ( main$1 && main ) || main$1;
+var require$$0$2 = ( main$1 && main ) || main$1;
 
 var intlMessageformat = createCommonjsModule(function (module, exports) {
 
-var IntlMessageFormat = require$$0$1['default'];
+var IntlMessageFormat = require$$0$2['default'];
 
 // Add all locale data to `IntlMessageFormat`. This module will be ignored when
 // bundling for the browser with Browserify/Webpack.
@@ -7829,136 +7957,6 @@ function getIMFFallbackResults({
         });
     });
 }
-
-/* globals dialogPolyfill */
-
-const defaultLocale = 'en';
-const localeStrings = {
-    en: {
-        submit: 'Submit',
-        cancel: 'Cancel',
-        ok: 'Ok'
-    }
-};
-
-class Dialog {
-    constructor({ locale, localeObject } = {}) {
-        this.setLocale({ locale, localeObject });
-    }
-    setLocale({ locale = {}, localeObject = {} }) {
-        this.localeStrings = Object.assign({}, localeStrings[defaultLocale], localeStrings[locale], localeObject);
-    }
-    makeDialog({ atts = {}, children = [], close, remove = true }) {
-        if (close) {
-            if (!atts.$on) {
-                atts.$on = {};
-            }
-            if (!atts.$on.close) {
-                atts.$on.close = close;
-            }
-        }
-        const dialog = jml('dialog', atts, children, document.body);
-        dialogPolyfill.registerDialog(dialog);
-        dialog.showModal();
-        if (remove) {
-            dialog.addEventListener('close', () => {
-                dialog.remove();
-            });
-        }
-        return dialog;
-    }
-    makeSubmitDialog(_ref) {
-        let {
-            submit, // Don't pass this on to `args` if present
-            submitClass = 'submit'
-        } = _ref,
-            args = objectWithoutProperties(_ref, ['submit', 'submitClass']);
-
-        const dialog = this.makeCancelDialog(args);
-        $e(dialog, `button.${args.cancelClass || 'cancel'}`).before(jml('button', {
-            class: submitClass,
-            $on: {
-                click(e) {
-                    if (submit) {
-                        submit.call(this, { e, dialog });
-                    }
-                }
-            }
-        }, [this.localeStrings.submit]), nbsp.repeat(2));
-        return dialog;
-    }
-    makeCancelDialog(_ref2) {
-        let {
-            submit, // Don't pass this on to `args` if present
-            cancel,
-            cancelClass = 'cancel', submitClass = 'submit'
-        } = _ref2,
-            args = objectWithoutProperties(_ref2, ['submit', 'cancel', 'cancelClass', 'submitClass']);
-
-        const dialog = this.makeDialog(args);
-        jml('div', { class: submitClass }, [['br'], ['br'], ['button', { class: cancelClass, $on: {
-                click(e) {
-                    e.preventDefault();
-                    if (cancel) {
-                        if (cancel.call(this, { e, dialog }) === false) {
-                            return;
-                        }
-                    }
-                    dialog.close();
-                }
-            } }, [this.localeStrings.cancel]]], dialog);
-        return dialog;
-    }
-    alert(message) {
-        message = typeof message === 'string' ? { message } : message;
-        const { message: msg, submitClass = 'submit' } = message;
-        return new Promise((resolve, reject) => {
-            const dialog = jml('dialog', [msg, ['br'], ['br'], ['div', { class: submitClass }, [['button', { $on: { click() {
-                        dialog.close();
-                        resolve();
-                    } } }, [this.localeStrings.ok]]]]], document.body);
-            dialogPolyfill.registerDialog(dialog);
-            dialog.showModal();
-        });
-    }
-    prompt(message) {
-        message = typeof message === 'string' ? { message } : message;
-        const { message: msg, submit: userSubmit } = message,
-              submitArgs = objectWithoutProperties(message, ['message', 'submit']);
-        return new Promise((resolve, reject) => {
-            const submit = function ({ e, dialog }) {
-                if (userSubmit) {
-                    userSubmit.call(this, { e, dialog });
-                }
-                dialog.close();
-                resolve($e(dialog, 'input').value);
-            };
-            /* const dialog = */this.makeSubmitDialog(_extends({}, submitArgs, {
-                submit,
-                cancel() {
-                    reject(new Error('cancelled'));
-                },
-                children: [['label', [msg, nbsp.repeat(3), ['input']]]]
-            }));
-        });
-    }
-    confirm(message) {
-        message = typeof message === 'string' ? { message } : message;
-        const { message: msg, submitClass = 'submit' } = message;
-        return new Promise((resolve, reject) => {
-            const dialog = jml('dialog', [msg, ['br'], ['br'], ['div', { class: submitClass }, [['button', { $on: { click() {
-                        dialog.close();
-                        resolve();
-                    } } }, [this.localeStrings.ok]], nbsp.repeat(2), ['button', { $on: { click() {
-                        dialog.close();
-                        reject(new Error('cancelled'));
-                    } } }, [this.localeStrings.cancel]]]]], document.body);
-            dialogPolyfill.registerDialog(dialog);
-            dialog.showModal();
-        });
-    }
-}
-const dialogs = new Dialog();
 
 /* globals console, location, URL */
 

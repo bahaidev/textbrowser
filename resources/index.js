@@ -7,7 +7,9 @@ import loadStylesheets from 'load-stylesheets';
 import {dialogs} from './utils/dialogs.js';
 import {getFieldNameAndValueAliases, getBrowseFieldData} from './utils/Metadata.js';
 import {getWorkFiles, getWorkData} from './utils/WorkInfo.js';
-import {registerServiceWorker, setServiceWorkerDefaults} from './utils/ServiceWorker.js';
+import {
+    respondToState, listenForWorkerUpdate, registerServiceWorker, setServiceWorkerDefaults
+} from './utils/ServiceWorker.js';
 
 import {escapeHTML} from './utils/sanitize.js';
 import {Languages} from './utils/Languages.js';
@@ -23,7 +25,7 @@ function s (obj) { dialogs.alert(JSON.stringify(obj)); } // eslint-disable-line 
 async function prepareForServiceWorker (langs) {
     try {
         // Todo: No possible resolving after this point? (except
-        //          to reload)
+        //          to reload or if worker somehow active already)
         Templates.permissions.addLogEntry({
             text: 'Beginning install...'
         });
@@ -45,6 +47,7 @@ async function prepareForServiceWorker (langs) {
             logger: Templates.permissions
         });
     } catch (err) {
+        console.log('err', err);
         if (err && typeof err === 'object') {
             const {message} = err;
             if (message === 'versionchange') {
@@ -242,6 +245,13 @@ TextBrowser.prototype.paramChange = async function () {
     const [preferredLocale] = lang;
     const direction = this.getDirectionForLanguageCode(preferredLocale);
     document.dir = direction;
+    const refusedIndexedDB =
+        // User may have persistence via bookmarks, etc. but just not
+        //     want commital on notification
+        // Notification.permission === 'default' ||
+
+        // We always expect a controller, so is probably first visit
+        localStorage.getItem(this.namespace + '-refused');
 
     // This check goes further than `Notification.permission === 'granted'`
     //   to see whether the browser actually considers the notification
@@ -269,144 +279,155 @@ TextBrowser.prototype.paramChange = async function () {
     const persistent = await navigator.storage.persisted();
 
     const r = await navigator.serviceWorker.getRegistration(this.serviceWorkerPath);
-    if (r) {
+
+    const register = async () => {
+        /*
+        console.log(
+            'navigator.serviceWorker.controller',
+            navigator.serviceWorker.controller
+        );
+        */
+        if (result) {
+            return;
+        }
+
+        const tryRegistrationOrPersistence = !refusedIndexedDB && // Not show if refused before
+            (!navigator.serviceWorker.controller || // This is `null` on a force-refresh too
+                !persistent);
+
+        if (tryRegistrationOrPersistence) {
+            siteI18n = getSiteI18n();
+            // Note: In Chrome on 127.0.0.1 (but not localhost!),
+            //        this always appears to be `true`, despite having
+            //        no notifications enabled or bookmarking 127.0.0.1,
+            //        or being on the main page per
+            //        https://developers.google.com/web/updates/2016/06/persistent-storage
+            if (persistent) {
+                // No need to ask permissions (e.g., if user bookmarked site instead),
+                //   but we do need a worker
+                Templates.permissions.main({l: siteI18n});
+                await prepareForServiceWorker.call(this, langs);
+            } else { // Keep asking if not persistent (unless refused)
+                await requestPermissions.call(this, langs, siteI18n);
+            }
+            Templates.permissions.exitDialogs();
+        }
+    };
+
+    const respondToStateOfWorker = async () => {
+        try {
+            return respondToState({
+                r, langs,
+                namespace: this.namespace,
+                files: this.files,
+                languages: this.languages,
+                staticFilesToCache: this.staticFilesToCache,
+                logger: Templates.permissions
+            });
+        } catch (err) {
+            // Todo: We could auto-reload if we tracked whether this
+            //   error occurs immediately upon attempting registration or
+            //   not, but probably would occur after some time
+            return dialogs.alert(`
+There was an unexpected error activating the new version;
+please save any unfinished work, close this tab, and try
+opening this site again.
+
+Please contact a service administrator if the problem
+persists (Error type: worker activation).
+`
+            );
+        }
+    };
+
+    /*
+    try {
+        // Waits indefinitely without rejecting until active worker
+        await navigator.serviceWorker.ready;
+    } catch (err) {
+    }
+    */
+    /*
+    // Present normally if activated, but will be `null` if force-reload
+    const {controller} = navigator.serviceWorker;
+    */
+
+    if (!r) {
+        await register();
+    } else {
         const worker = r.installing || r.waiting || r.active;
         if (!worker) {
             // Todo: Why wouldn't there be a worker here?
             console.error('Unexpected error: worker registration received without a worker.');
+            // If anything, would probably need to register though
+            await register();
             return;
         }
+        // "The browser checks for updates automatically after navigations and
+        //  functional events, but you can also trigger them manually"
+        //  -- https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#manual_updates
+        const hourly = 60 * 60 * 1000;
+        setInterval(() => {
+            r.update();
+        }, hourly);
+
+        console.log('worker.state', worker.state);
+
         switch (worker.state) {
         case 'installing':
             // If it fails, will instead be `redundant`; but will try again:
             //     1. automatically (?) per https://developers.google.com/web/fundamentals/primers/service-workers/#the_service_worker_life_cycle
             //     2. upon reattempting registration (?) per https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
-            // Todo: Supply file paths in case not completed and no
+            // Supply file paths in case not completed and no
             //    other tabs open to do so (assuming this is possible)
-            // r.installing
+            // Will use `r.installing`
+            // We don't await the fulfillment of this promise
+            respondToStateOfWorker();
+            // Don't return as user may continue working until installed (though
+            //    will get message to close tab)
             break;
-        case 'installed':
+        case 'installed': // eslint-disable-line no-fallthrough
             // Waiting ensures only one version of our service worker active
             // No dedicated "waiting" state so handle here
-            // r.waiting
-            // Todo: Show dialog that currently waiting for old tabs (and
-            //         this one) to close so install can proceed (no ok button)
-            // Todo: Wait for activation to begin and then push as in activating
-            break;
+            // Will use `r.waiting`
+            // Show dialog that currently waiting for old tabs (and
+            //         this one) to close so install can proceed
+            // Wait for activation to begin and then push as in activating
+            await respondToStateOfWorker();
+            return;
         // Now fetching will be beyond first service worker and not yet with first
         case 'activating': // May be called more than once in case fails?
-            // Todo: May not be activated but only activating so pass in
+            // May not be activated but only activating so pass in
             //   callback in case no other tabs open to do so (assuming
             //   this is possible)
-            // r.active
-            break;
-        case 'active':
-            // r.active
+            // Will use `r.active`
+            await dialogs.alert(`
+Please wait for a short while as we work to update to a new version.
+`);
+            respondToStateOfWorker();
+            navigator.serviceWorker.onmessage({data: 'finishActivate'});
+            // finishActivate({r, logger, namespace, files});
+            return;
+        case 'activated':
+            // Will use `r.active`
+            // We should be able to use the following to distinguish when
+            //    active but force-reloaded (will be `null` unlike `r.active` apparently)
+            // const {controller} = navigator.serviceWorker;
+            // Todo: Prevent from getting here as we should handle this differently
+            listenForWorkerUpdate({r});
             break;
         case 'redundant':
-            // What will the worker be? installing?
-            // A new service worker is replacing the current service worker, or
-            //  the current service worker is being discarded due to an install failure
-            // Todo: Try registering/updating again later
-            break;
+            // Either:
+            // 1. A new service worker is replacing the current service worker (though
+            //    presumably only if `skipWaiting`)
+            // 2. The current service worker is being discarded due to an install failure
+            // May have been `r.installing` (?)
+            // Todo: Could try registering again later (this will reload after an alert)
+            await respondToStateOfWorker();
+            return;
         }
-        r.addEventListener('updatefound', () => {
-            // r.installing now available
-            // Todo: Listen for statechange
-        });
     }
 
-    /*
-    console.log(
-        'navigator.serviceWorker.controller',
-        navigator.serviceWorker.controller
-    );
-    */
-    const refusedIndexedDB =
-        // User may have persistence via bookmarks, etc. but just not
-        //     want commital on notification
-        // Notification.permission === 'default' ||
-
-        // We always expect a controller, so is probably first visit
-        localStorage.getItem(this.namespace + '-refused');
-
-    const tryRegistrationOrPersistence = !refusedIndexedDB && // Not show if refused before
-        (!navigator.serviceWorker.controller || // This is `null` on a force-refresh too
-            !persistent);
-
-    if (!result && tryRegistrationOrPersistence) {
-        siteI18n = getSiteI18n();
-        // Note: In Chrome on 127.0.0.1 (but not localhost!),
-        //        this always appears to be `true`, despite having
-        //        no notifications enabled or bookmarking 127.0.0.1,
-        //        or being on the main page per
-        //        https://developers.google.com/web/updates/2016/06/persistent-storage
-        if (persistent) {
-            // No need to ask permissions (e.g., if user bookmarked site instead),
-            //   but we do need a worker
-            Templates.permissions.main({l: siteI18n});
-            await prepareForServiceWorker.call(this, langs);
-        } else { // Keep asking if not persistent (unless refused)
-            await requestPermissions.call(this, langs, siteI18n);
-        }
-        Templates.permissions.exitDialogs();
-    }
-    const {controller} = navigator.serviceWorker;
-    if (controller) { // `null` if force-reload
-        controller.addEventListener('updatefound', () => {
-            // New service worker has appeared
-            const newWorker = controller.installing;
-
-            newWorker.addEventListener('statechange', () => {
-                const {state} = newWorker;
-                switch (state) {
-                case 'installing': // install event has fired, but not yet complete
-                    console.log('Installing new worker');
-                    break;
-                case 'installed': // install complete
-                case 'redundant': // discarded. Either failed install, or it's been
-                    //                replaced by a newer version
-                    console.log('Installation status', state);
-                    dialogs.alert(
-                        `A new version of this offlinable app has been downloaded.
-
-                        If you have work to complete in this tab, you can dismiss
-                        this dialog now and continue working with the old version.
-
-                        However, when you are finished, you should close this tab
-                        and any other old tabs for this site in order to be able to
-                        begin using the new version.`
-                    );
-                    break;
-                // These shouldn't occur as we are not skipping waiting
-                case 'activating': // the activate event has fired, but not yet complete
-                    console.log('Activating new worker');
-                    break;
-                case 'activated': // fully active
-                    console.log('Activated new worker');
-                    break;
-                default:
-                    throw new Error(`Unknown worker update state: ${state}`);
-                }
-            });
-        });
-
-        // "The browser checks for updates automatically after navigations and
-        //  functional events, but you can also trigger them manually"
-        //  -- https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#manual_updates
-        const hourly = 1000 * 60 * 60;
-        setInterval(() => {
-            controller.update();
-        }, hourly);
-    }
-    /*
-    try {
-        await navigator.serviceWorker.ready;
-        console.log('444');
-    } catch (err) {
-        console.log('123');
-    }
-    */
     if (!languageParam) {
         const languageSelect = (l) => {
             $p.l10n = l;
