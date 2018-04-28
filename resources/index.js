@@ -394,7 +394,7 @@ persists (Error type: worker activation).
             //         this one) to close so install can proceed
             // Wait for activation to begin and then push as in activating
             await respondToStateOfWorker();
-            return;
+            break;
         // Now fetching will be beyond first service worker and not yet with first
         case 'activating': // May be called more than once in case fails?
             // May not be activated but only activating so pass in
@@ -414,7 +414,23 @@ Please wait for a short while as we work to update to a new version.
             //    active but force-reloaded (will be `null` unlike `r.active` apparently)
             // const {controller} = navigator.serviceWorker;
             // Todo: Prevent from getting here as we should handle this differently
-            listenForWorkerUpdate({r});
+            // May need to pass in arguments if new service worker appears and
+            //    it needs arguments for update
+            const userDataFiles = await getWorkFiles(this.files);
+            listenForWorkerUpdate({
+                r, langs,
+                namespace: this.namespace,
+                files: this.files,
+                userDataFiles,
+                languages: this.languages,
+                staticFilesToCache: this.staticFilesToCache,
+                logger: {
+                    addLogEntry (s) {
+                        // We don't put the log in the page as user using
+                        console.log(s);
+                    }
+                }
+            });
             break;
         case 'redundant':
             // Either:

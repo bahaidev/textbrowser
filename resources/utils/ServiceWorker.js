@@ -4,13 +4,61 @@ import getJSON from 'simple-get-json';
 import {getWorkFiles} from './WorkInfo.js';
 import {dialogs} from './dialogs.js';
 
-export const listenForWorkerUpdate = ({r}) => {
-    r.addEventListener('updatefound', () => {
+function finishInstall ({
+    r, logger, languages, langs, namespace, userDataFiles, staticFilesToCache
+}) {
+    console.log('installingggg', r.installing);
+    const langPathParts = languages.split('/');
+    // Todo: We might give option to only download
+    //        one locale and avoid language splash page
+    const localeFiles = langs.map(
+        ({locale: {$ref}}) =>
+            (langPathParts.length > 1
+                ? langPathParts.slice(0, -1).join('/') + '/'
+                : ''
+            ) + $ref
+    );
+    logger.addLogEntry({
+        text: 'Beginning caching of files...'
+    });
+    r.installing.postMessage({
+        type: 'install',
+        namespace,
+        localeFiles,
+        userDataFiles, // Todo: This should include plugins
+        userStaticFiles: staticFilesToCache
+    });
+    /*
+    const r = await navigator.serviceWorker.ready;
+    console.log('SWWWWW ready!', r.active);
+    r.active.postMessage({
+        type: 'activate',
+        namespace,
+        filesJSONPath: files
+    });
+    */
+    // (Unless skipped in code, will wait between install
+    //    of new and activation of new or existing if still
+    //    some tabs open)
+}
+
+export const listenForWorkerUpdate = ({
+    r, logger, languages, langs, namespace, userDataFiles, staticFilesToCache
+}) => {
+    r.addEventListener('updatefound', (e) => {
         // New service worker has appeared
-        // r.installing now available
+        // r.installing now available (though r.active is also,
+        //    apparently due to prior activation; but not r.waiting)
+        console.log('update found', e);
         const newWorker = r.installing;
 
-        newWorker.addEventListener('statechange', () => {
+        finishInstall({
+            r, logger, languages, langs, namespace, userDataFiles, staticFilesToCache
+        });
+
+        // statechange won't catch this installing event as already installing
+
+        newWorker.addEventListener('statechange', async () => {
             const {state} = newWorker;
             switch (state) {
             case 'installing': // install event has fired, but not yet complete
@@ -19,7 +67,7 @@ export const listenForWorkerUpdate = ({r}) => {
             // Since not skipping waiting, this means waiting finished
             case 'installed': // install complete
                 console.log('Installation status', state);
-                dialogs.alert(`
+                await dialogs.alert(`
 A new version of this offlinable app has been downloaded.
 
 If you have work to complete in this tab, you can dismiss
@@ -36,7 +84,7 @@ begin using the new version.
                 // Shouldn't be replaced since we aren't skipping waiting/claiming,
                 console.log('Installation status', state);
                 // Todo: Try updating again if get redundant here
-                dialogs.alert(`
+                await dialogs.alert(`
 There was an error during installation (to allow offline/speeded
 cache use).
 
@@ -75,73 +123,6 @@ export const respondToState = async ({
     //    to a common catch and to prevent continuation by
     //    failing to return
     return new Promise(async (resolve, reject) => {
-        if (r.waiting) {
-            await dialogs.alert(`
-An update is in progress. After finishing any work
-you have in them, please close any other existing tabs
-running this web application and then hit ok here so
-that the update may complete.
-`
-            );
-            // We might just let the user go on without a reload, but
-            //   as fetch operations would apparently wait to execute,
-            //   it wouldn't be much use, so just reload (to get same
-            //   message again until other tabs closed)
-            // If state has changed, handle below
-            if (!r.installing && !r.active) {
-                location.reload();
-                return;
-            }
-        }
-        const worker = r.installing || r.waiting || r.active;
-        if (worker && worker.state === 'redundant') {
-            // Todo: We could call `register()` below instead (on a timeout)?
-            await dialogs.alert(`
-There was likely an error installing. Click "ok" to try again.
-(Error code: Service worker is redundant)
-`
-            );
-            location.reload();
-            return;
-        }
-        // listenForWorkerUpdate({r});
-
-        function finishInstall () {
-            console.log('installingggg', r.installing);
-            const langPathParts = languages.split('/');
-            // Todo: We might give option to only download
-            //        one locale and avoid language splash page
-            const localeFiles = langs.map(
-                ({locale: {$ref}}) =>
-                    (langPathParts.length > 1
-                        ? langPathParts.slice(0, -1).join('/') + '/'
-                        : ''
-                    ) + $ref
-            );
-            logger.addLogEntry({
-                text: 'Beginning caching of files...'
-            });
-            r.installing.postMessage({
-                type: 'install',
-                namespace,
-                localeFiles,
-                userDataFiles, // Todo: This should include plugins
-                userStaticFiles: staticFilesToCache
-            });
-            /*
-            const r = await navigator.serviceWorker.ready;
-            console.log('SWWWWW ready!', r.active);
-            r.active.postMessage({
-                type: 'activate',
-                namespace,
-                filesJSONPath: files
-            });
-            */
-            // (Unless skipped in code, will wait between install
-            //    of new and activation of new or existing if still
-            //    some tabs open)
-        }
-
         navigator.serviceWorker.onmessage = (e) => {
             const {data} = e;
             console.log('msg1', data, r);
@@ -180,7 +161,9 @@ There was likely an error installing. Click "ok" to try again.
                 });
                 return;
             case 'finishInstall':
-                finishInstall();
+                finishInstall({
+                    r, logger, languages, langs, namespace, userDataFiles, staticFilesToCache
+                });
                 return;
             }
             if (data && data.activationError) {
@@ -196,14 +179,41 @@ There was likely an error installing. Click "ok" to try again.
                 reject(err);
             }
         };
-
+        const worker = r.installing || r.waiting || r.active;
+        if (worker && worker.state === 'redundant') {
+            // Todo: We could call `register()` below instead (on a timeout)?
+            await dialogs.alert(`
+There was likely an error installing. Click "ok" to try again.
+(Error code: Service worker is redundant)
+`
+            );
+            location.reload();
+        // listenForWorkerUpdate({r});
+        } else if (r.installing) {
+            finishInstall({
+                r, logger, languages, langs, namespace, userDataFiles, staticFilesToCache
+            });
         // No need to expect a message from the installing event,
         //   as the `register` call seems to get called if ready
-        if (r.installing) {
-            finishInstall();
-            return;
+        } else if (r.waiting) {
+            await dialogs.alert(`
+An update is in progress. After finishing any work
+you have in them, please close any other existing tabs
+running this web application and then hit ok here so
+that the update may complete.
+`
+            );
+            // We might just let the user go on without a reload, but
+            //   as fetch operations would apparently wait to execute,
+            //   it wouldn't be much use, so just reload (to get same
+            //   message again until other tabs closed)
+            // If state has changed, handle below
+            // if (!r.installing && !r.active) {
+            // location.reload();
+            // return;
+            // }
+            // resolve();
         }
-        resolve();
     });
 };
 
