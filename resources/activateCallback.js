@@ -1,8 +1,6 @@
-/* globals module, console, fetch, indexedDB */
-var activateCallback; // eslint-disable-line no-unused-vars, no-var
+/* eslint-env worker */
 
-(async () => {
-const ceil = Math.ceil;
+const {ceil} = Math;
 const arrayChunk = (arr, size) => {
     return Array.from(
         Array(ceil(arr.length / size)),
@@ -13,15 +11,20 @@ const arrayChunk = (arr, size) => {
     );
 };
 
-activateCallback = async function activateCallback ({
-    namespace, files, filesJSONPath = files, basePath = ''
+// Todo: If fetching fails here (or in install), e.g., because activate event
+//          never completed
+//          to cache, de-register and re-register (?); how to detect if all
+//          files in cache?
+// Todo: Check `oldVersion` and run this first if still too old
+export default async function activateCallback ({
+    namespace, files, log, basePath = ''
 }) {
     // Now we know we have the files cached, we can postpone
     //  the `indexedDB` processing (which will work offline
     //  anyways); also important to avoid conflicts with
     //  already-running versions upon future sw updates
-    console.log('--activate callback called');
-    const r = await fetch(filesJSONPath);
+    log('Activate: Callback called');
+    const r = await fetch(files);
     const {groups} = await r.json();
 
     const addJSONFetch = (arr, path) => {
@@ -53,7 +56,7 @@ activateCallback = async function activateCallback ({
         dataFileResponses, schemaFileResponses, metadataFileResponses
     ] = chunked;
 
-    console.log('--files fetched');
+    log('Activate: Files fetched');
     const dbName = namespace + '-textbrowser-cache-data';
     indexedDB.deleteDatabase(dbName);
     return new Promise((resolve, reject) => {
@@ -61,7 +64,9 @@ activateCallback = async function activateCallback ({
         req.onupgradeneeded = ({target: {result: db}}) => {
             db.onversionchange = () => {
                 db.close();
-                reject(new Error('versionchange'));
+                const err = new Error('versionchange');
+                err.type = 'versionchange';
+                reject(err);
             };
             dataFileResponses.forEach(({data: tableRows}, i) => {
                 const dataFileName = dataFileNames[i];
@@ -92,7 +97,8 @@ activateCallback = async function activateCallback ({
                     );
                     columnIndexes.push(...browseFieldSetIndexes);
 
-                    console.log(
+                    log(
+                        'Activate: Creating index:',
                         dataFileName,
                         'browseFields-' + browseFieldSetName,
                         browseFieldSetIndexes
@@ -117,24 +123,20 @@ activateCallback = async function activateCallback ({
                     uniqueColumnIndexes.forEach((colIdx) => {
                         objRow[colIdx] = tableRow[colIdx.slice(1)];
                     });
-                    // console.log('objRow', objRow);
+                    // log('objRow', objRow);
                     store.put(objRow, i);
                 });
             });
         };
         req.onsuccess = ({target: {result: db}}) => {
-            console.log('database activation set-up complete', db);
+            log('Activate: Database set-up complete', db);
             // Todo: Replace this with `ready()` check
             //   in calling code?
             resolve();
         };
         req.onblocked = req.onerror = ({error = new Error('dbError')}) => {
-            error.dbError = true;
+            error.type = 'dbError';
             reject(error);
         };
     });
 };
-if (typeof module !== 'undefined') {
-    module.exports = activateCallback;
-}
-})();

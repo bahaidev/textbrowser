@@ -17,6 +17,7 @@ const importerReplace = {
     test: 'return import(',
     replace: 'return window.importer('
 };
+const importerRevert = [/return window.importer\(/, 'return import('];
 
 // Todo: Monitor https://github.com/rollup/rollup/issues/1978
 //        to suppress (known) circular dependency warnings
@@ -56,8 +57,8 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
                 browser: true
             }),
             commonjs(),
-            postProcess([ // Revert
-                [/return window.importer\(/, 'return import(']
+            postProcess([
+                importerRevert
             ])
         ]
     };
@@ -73,6 +74,35 @@ export default [
     getRollupObject({minifying: true}),
     getRollupObject({minifying: false, format: 'es'}),
     getRollupObject({minifying: true, format: 'es'}),
+    {
+        input: 'resources/utils/WorkInfo.js',
+        output: {
+            format: 'umd',
+            file: 'dist/WorkInfo-umd.js',
+            name: 'WorkInfo'
+        },
+        plugins: [
+            replace({
+                // ... do replace before commonjs
+                patterns: [importerReplace]
+            }),
+            resolve({
+                browser: true
+            }),
+            commonjs(),
+            postProcess([
+                importerRevert
+            ])
+        ]
+    },
+    {
+        input: 'resources/activateCallback.js',
+        output: {
+            format: 'umd',
+            file: 'dist/activateCallback-umd.js',
+            name: 'activateCallback'
+        }
+    },
     /**/
     {
         input: 'server/main.js',

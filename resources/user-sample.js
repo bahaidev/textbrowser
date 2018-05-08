@@ -15,20 +15,9 @@ const tb = new TextBrowser({
     namespace: 'myapp', // Used for namespacing localStorage
     allowPlugins: true, // Enables `files.json`-specified plugins
     // dynamicBasePath: '',
-    trustFormatHTML: true, // Needed if allowing for raw HTML fields (don't use for untrusted schemas)
+    // skipIndexedDB: false,
+    trustFormatHTML: true // Needed if allowing for raw HTML fields (don't use for untrusted schemas)
     // , interlinearSeparator: '<hr />' // Defaults to `<br /><br />`
-    staticFilesToCache: [
-        // Populate here your own (non-data) files to be made available
-        //    offline (*TextBrowser*'s own will be added automatically)
-        // The following are added by default
-        '/',
-        'index.html',
-        'files.json',
-        'site.json',
-        // Comment out if not using in index.html:
-        'resources/user.js',
-        'resources/user.css'
-    ]
 });
 await tb.init();
 })();

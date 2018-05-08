@@ -198,7 +198,7 @@ function createCommonjsModule(fn, module) {
     USPProto.keys = USPProto.keys || function () {
         var items = [];
         this.forEach(function (item, name) {
-            items.push([name]);
+            items.push(name);
         });
         return makeIterator(items);
     };
@@ -212,7 +212,7 @@ function createCommonjsModule(fn, module) {
     USPProto.values = USPProto.values || function () {
         var items = [];
         this.forEach(function (item) {
-            items.push([item]);
+            items.push(item);
         });
         return makeIterator(items);
     };
@@ -378,8 +378,7 @@ IntlURLSearchParams.prototype.toString = function () {
 */
 const XMLSerializer$1 = function () {};
 const xhtmlNS = 'http://www.w3.org/1999/xhtml';
-const prohibitHTMLOnly = true,
-      emptyElements = '|basefont|frame|isindex' + // Deprecated
+const emptyElements = '|basefont|frame|isindex' + // Deprecated
 '|area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|',
       nonEmptyElements = 'article|aside|audio|bdi|canvas|datalist|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|rp|rt|ruby|section|summary|time|video' + // new in HTML5
 'html|body|p|h1|h2|h3|h4|h5|h6|form|button|fieldset|label|legend|select|option|optgroup|textarea|table|tbody|colgroup|tr|td|tfoot|thead|th|caption|abbr|acronym|address|b|bdo|big|blockquote|center|code|cite|del|dfn|em|font|i|ins|kbd|pre|q|s|samp|small|strike|strong|sub|sup|tt|u|var|ul|ol|li|dd|dl|dt|dir|menu|frameset|iframe|noframes|head|title|a|map|div|span|style|script|noscript|applet|object|',
@@ -404,7 +403,7 @@ const clone = function (obj) {
 };
 const invalidStateError = function () {
     // These are probably only necessary if working with text/html
-    if (prohibitHTMLOnly) {
+    {
         // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
         throw window.DOMException && DOMException.create ? DOMException.create(11)
         // If the (nonstandard) polyfill plugin helper is not loaded (e.g., to reduce overhead and/or modifying a global's property), we'll throw our own light DOMException
@@ -445,13 +444,8 @@ const serializeToString = function (nodeArg) {
     // }
     const that = this,
 
-    // mode = this.$mode || 'html',
-    ieFix = true,
-          // Todo: Make conditional on IE and processing of HTML
-    mozilla = true,
-          // Todo: Detect (since built-in lookupNamespaceURI() appears to always return null now for HTML elements),
+    // Todo: Detect (since built-in lookupNamespaceURI() appears to always return null now for HTML elements),
     namespaces = {},
-          xmlDeclaration = true,
           nodeType = nodeArg.nodeType;
     let emptyElement;
     let htmlElement = true; // Todo: Make conditional on namespace?
@@ -490,7 +484,7 @@ const serializeToString = function (nodeArg) {
                 // ELEMENT
                 tagName = node.tagName;
 
-                if (ieFix) {
+                {
                     tagName = tagName.toLowerCase();
                 }
 
@@ -537,7 +531,7 @@ const serializeToString = function (nodeArg) {
                 string += '<' + tagName;
                 /**/
                 // Do the attributes above cover our namespaces ok? What if unused but in the DOM?
-                if ((mozilla || !node.lookupNamespaceURI || node.lookupNamespaceURI(prefix) !== null) && namespaces[prefix || '$'] === undefined) {
+                if (namespaces[prefix || '$'] === undefined) {
                     namespaces[prefix || '$'] = node.namespaceURI || xhtmlNS;
                     string += ' xmlns' + (prefix ? ':' + prefix : '') + '="' + entify(namespaces[prefix || '$']) + '"';
                 }
@@ -713,7 +707,7 @@ const serializeToString = function (nodeArg) {
         return string;
     }
 
-    if (xmlDeclaration && document.xmlVersion && nodeType === 9) {
+    if (document.xmlVersion && nodeType === 9) {
         // DOCUMENT - Faster to do it here without first calling serializeDOM
         string += '<?xml version="' + document.xmlVersion + '"';
         if (document.xmlEncoding !== undefined && document.xmlEncoding !== null) {
@@ -1683,8 +1677,6 @@ jml.toJML = function (dom, config) {
         dom = new DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
     }
 
-    const prohibitHTMLOnly = true;
-
     const ret = [];
     let parent = ret;
     let parentIdx = 0;
@@ -1694,7 +1686,7 @@ jml.toJML = function (dom, config) {
         function DOMException() {
             return this;
         }
-        if (prohibitHTMLOnly) {
+        {
             // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
             // Since we can't instantiate without this (at least in Mozilla), this mimicks at least (good idea?)
             const e = new DOMException();
@@ -3037,7 +3029,11 @@ class Dialog {
     }
     alert(message, ok) {
         message = typeof message === 'string' ? { message } : message;
-        const { ok: includeOk = ok !== false, message: msg, submitClass = 'submit' } = message;
+        const {
+            ok: includeOk = typeof ok === 'object' ? ok.ok !== false : ok !== false,
+            message: msg,
+            submitClass = 'submit'
+        } = message;
         return new Promise((resolve, reject) => {
             const dialog = jml('dialog', [msg, ...(includeOk ? [['br'], ['br'], ['div', { class: submitClass }, [['button', { $on: { click() {
                         dialog.close();
@@ -3125,8 +3121,14 @@ Templates.permissions = {
         $('#versionChange').showModal();
     },
     addLogEntry({ text }) {
-        const container = $('#installationLogContainer');
-        container.hidden = false;
+        const installationDialog = $('#installationLogContainer');
+        try {
+            installationDialog.showModal();
+            const container = $('#dialogContainer');
+            container.hidden = false;
+        } catch (err) {
+            // May already be open
+        }
         $('#installationLog').append(text + '\n');
     },
     exitDialogs() {
@@ -3136,9 +3138,9 @@ Templates.permissions = {
             container.hidden = true;
         }
     },
-    dbError({ errorType, escapedErrorMessage }) {
-        if (errorType) {
-            jml('span', [errorType, ' ', escapedErrorMessage], $('#dbError'));
+    dbError({ type, escapedErrorMessage }) {
+        if (type) {
+            jml('span', [type, ' ', escapedErrorMessage], $('#dbError'));
         }
         $('#dbError').showModal();
     },
@@ -3152,6 +3154,13 @@ Templates.permissions = {
         $('#browserNotGrantingPersistence').showModal();
     },
     main({ l, ok, refuse, close, closeBrowserNotGranting }) {
+        const installationDialog = jml('dialog', {
+            style: 'text-align: center; height: 100%',
+            id: 'installationLogContainer',
+            class: 'focus'
+        }, [['p', [l('wait-installing')]], ['div', { style: 'height: 80%; overflow: auto;' }, [['pre', { id: 'installationLog' }, []]]]
+        // ['textarea', {readonly: true, style: 'width: 80%; height: 80%;'}]
+        ]);
         let requestPermissionsDialog = '';
         if (ok) {
             requestPermissionsDialog = jml('dialog', {
@@ -3174,16 +3183,9 @@ Templates.permissions = {
         const dbErrorNotice = jml('dialog', {
             id: 'dbError'
         }, [['section', [l('dbError')]]]);
-        jml('div', { id: 'dialogContainer', style: 'height: 100%' }, [['div', {
-            style: 'text-align: center; height: 100%',
-            id: 'installationLogContainer',
-            class: 'focus',
-            hidden: true
-        }, [['p', [l('wait-installing')]], ['div', { style: 'height: 80%; overflow: auto;' }, [['pre', { id: 'installationLog' }, []]]]
-        // ['textarea', {readonly: true, style: 'width: 80%; height: 80%;'}]
-        ]], requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], document.body);
+        jml('div', { id: 'dialogContainer', style: 'height: 100%' }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], document.body);
 
-        return [requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice];
+        return [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice];
     }
 };
 
@@ -3587,18 +3589,11 @@ Object.defineProperty(self$1, '_BIDI_RTL_LANGS', {
 
 var rtlDetect = RtlDetectLib;
 
-var rtlDetect$1 = /*#__PURE__*/Object.freeze({
-	default: rtlDetect,
-	__moduleExports: rtlDetect
-});
-
-var rtlDetect$2 = ( rtlDetect$1 && rtlDetect ) || rtlDetect$1;
-
 var rtlDetect_1 = {
 
-  isRtlLang: rtlDetect$2.isRtlLang,
+  isRtlLang: rtlDetect.isRtlLang,
 
-  getLangDir: rtlDetect$2.getLangDir
+  getLangDir: rtlDetect.getLangDir
 
 };
 var rtlDetect_3 = rtlDetect_1.getLangDir;
@@ -3690,15 +3685,6 @@ var utils = {
 	hop: hop_1
 };
 
-var utils$1 = /*#__PURE__*/Object.freeze({
-	default: utils,
-	__moduleExports: utils,
-	extend: extend_1,
-	hop: hop_1
-});
-
-var src$utils$$ = ( utils$1 && utils ) || utils$1;
-
 var es5 = createCommonjsModule(function (module, exports) {
 
 
@@ -3718,7 +3704,7 @@ var defineProperty = realDefineProp ? Object.defineProperty : function (obj, nam
 
     if ('get' in desc && obj.__defineGetter__) {
         obj.__defineGetter__(name, desc.get);
-    } else if (!src$utils$$.hop.call(obj, name) || 'value' in desc) {
+    } else if (!utils.hop.call(obj, name) || 'value' in desc) {
         obj[name] = desc.value;
     }
 };
@@ -3731,7 +3717,7 @@ var objCreate = Object.create || function (proto, props) {
     obj = new F();
 
     for (k in props) {
-        if (src$utils$$.hop.call(props, k)) {
+        if (utils.hop.call(props, k)) {
             defineProperty(obj, k, props[k]);
         }
     }
@@ -3745,13 +3731,6 @@ exports.defineProperty = defineProperty, exports.objCreate = objCreate;
 });
 var es5_1 = es5.defineProperty;
 var es5_2 = es5.objCreate;
-
-var es5$1 = /*#__PURE__*/Object.freeze({
-	default: es5,
-	__moduleExports: es5,
-	defineProperty: es5_1,
-	objCreate: es5_2
-});
 
 var compiler = createCommonjsModule(function (module, exports) {
 
@@ -3946,11 +3925,6 @@ SelectFormat.prototype.getOption = function (value) {
 };
 
 
-});
-
-var compiler$1 = /*#__PURE__*/Object.freeze({
-	default: compiler,
-	__moduleExports: compiler
 });
 
 var parser = createCommonjsModule(function (module, exports) {
@@ -5399,29 +5373,11 @@ exports["default"] = function () {
 
 });
 
-var parser$1 = /*#__PURE__*/Object.freeze({
-	default: parser,
-	__moduleExports: parser
-});
-
-var require$$0 = ( parser$1 && parser ) || parser$1;
-
 var intlMessageformatParser = createCommonjsModule(function (module, exports) {
 
-exports = module.exports = require$$0['default'];
+exports = module.exports = parser['default'];
 exports['default'] = exports;
 });
-
-var intlMessageformatParser$1 = /*#__PURE__*/Object.freeze({
-	default: intlMessageformatParser,
-	__moduleExports: intlMessageformatParser
-});
-
-var src$es5$$ = ( es5$1 && es5 ) || es5$1;
-
-var src$compiler$$ = ( compiler$1 && compiler ) || compiler$1;
-
-var intl$messageformat$parser$$ = ( intlMessageformatParser$1 && intlMessageformatParser ) || intlMessageformatParser$1;
 
 var core = createCommonjsModule(function (module, exports) {
 
@@ -5443,7 +5399,7 @@ function MessageFormat(message, locales, formats) {
     formats = this._mergeFormats(MessageFormat.formats, formats);
 
     // Defined first because it's used to build the format pattern.
-    src$es5$$.defineProperty(this, '_locale', { value: this._resolveLocale(locales) });
+    es5.defineProperty(this, '_locale', { value: this._resolveLocale(locales) });
 
     // Compile the `ast` to a pattern that is highly optimized for repeated
     // `format()` invocations. **Note:** This passes the `locales` set provided
@@ -5470,7 +5426,7 @@ function MessageFormat(message, locales, formats) {
 // Default format options used as the prototype of the `formats` provided to the
 // constructor. These are used when constructing the internal Intl.NumberFormat
 // and Intl.DateTimeFormat instances.
-src$es5$$.defineProperty(MessageFormat, 'formats', {
+es5.defineProperty(MessageFormat, 'formats', {
     enumerable: true,
 
     value: {
@@ -5541,8 +5497,8 @@ src$es5$$.defineProperty(MessageFormat, 'formats', {
 });
 
 // Define internal private properties for dealing with locale data.
-src$es5$$.defineProperty(MessageFormat, '__localeData__', { value: src$es5$$.objCreate(null) });
-src$es5$$.defineProperty(MessageFormat, '__addLocaleData', { value: function (data) {
+es5.defineProperty(MessageFormat, '__localeData__', { value: es5.objCreate(null) });
+es5.defineProperty(MessageFormat, '__addLocaleData', { value: function (data) {
         if (!(data && data.locale)) {
             throw new Error('Locale data provided to IntlMessageFormat is missing a ' + '`locale` property');
         }
@@ -5551,11 +5507,11 @@ src$es5$$.defineProperty(MessageFormat, '__addLocaleData', { value: function (da
     } });
 
 // Defines `__parse()` static method as an exposed private.
-src$es5$$.defineProperty(MessageFormat, '__parse', { value: intl$messageformat$parser$$["default"].parse });
+es5.defineProperty(MessageFormat, '__parse', { value: intlMessageformatParser["default"].parse });
 
 // Define public `defaultLocale` property which defaults to English, but can be
 // set by the developer.
-src$es5$$.defineProperty(MessageFormat, 'defaultLocale', {
+es5.defineProperty(MessageFormat, 'defaultLocale', {
     enumerable: true,
     writable: true,
     value: undefined
@@ -5569,8 +5525,8 @@ MessageFormat.prototype.resolvedOptions = function () {
 };
 
 MessageFormat.prototype._compilePattern = function (ast, locales, formats, pluralFn) {
-    var compiler = new src$compiler$$["default"](locales, formats, pluralFn);
-    return compiler.compile(ast);
+    var compiler$$1 = new compiler["default"](locales, formats, pluralFn);
+    return compiler$$1.compile(ast);
 };
 
 MessageFormat.prototype._findPluralRuleFunction = function (locale) {
@@ -5611,7 +5567,7 @@ MessageFormat.prototype._format = function (pattern, values) {
         id = part.id;
 
         // Enforce that all required values are provided by the caller.
-        if (!(values && src$utils$$.hop.call(values, id))) {
+        if (!(values && utils.hop.call(values, id))) {
             err = new Error('A value must be provided for: ' + id);
             err.variableId = id;
             throw err;
@@ -5638,14 +5594,14 @@ MessageFormat.prototype._mergeFormats = function (defaults, formats) {
         mergedType;
 
     for (type in defaults) {
-        if (!src$utils$$.hop.call(defaults, type)) {
+        if (!utils.hop.call(defaults, type)) {
             continue;
         }
 
-        mergedFormats[type] = mergedType = src$es5$$.objCreate(defaults[type]);
+        mergedFormats[type] = mergedType = es5.objCreate(defaults[type]);
 
-        if (formats && src$utils$$.hop.call(formats, type)) {
-            src$utils$$.extend(mergedType, formats[type]);
+        if (formats && utils.hop.call(formats, type)) {
+            utils.extend(mergedType, formats[type]);
         }
     }
 
@@ -5690,11 +5646,6 @@ MessageFormat.prototype._resolveLocale = function (locales) {
 
 });
 
-var core$1 = /*#__PURE__*/Object.freeze({
-	default: core,
-	__moduleExports: core
-});
-
 var en = createCommonjsModule(function (module, exports) {
 
 exports["default"] = { "locale": "en", "pluralRuleFunction": function (n, ord) {
@@ -5708,34 +5659,20 @@ exports["default"] = { "locale": "en", "pluralRuleFunction": function (n, ord) {
 
 });
 
-var en$1 = /*#__PURE__*/Object.freeze({
-	default: en,
-	__moduleExports: en
-});
-
-var require$$0$1 = ( core$1 && core ) || core$1;
-
-var src$en$$ = ( en$1 && en ) || en$1;
-
 var main = createCommonjsModule(function (module, exports) {
 
 
 
-require$$0$1["default"].__addLocaleData(src$en$$["default"]);
-require$$0$1["default"].defaultLocale = 'en';
+core["default"].__addLocaleData(en["default"]);
+core["default"].defaultLocale = 'en';
 
-exports["default"] = require$$0$1["default"];
+exports["default"] = core["default"];
 
 
-});
-
-var main$1 = /*#__PURE__*/Object.freeze({
-	default: main,
-	__moduleExports: main
 });
 
 // GENERATED FILE
-var IntlMessageFormat = require$$0$1["default"];
+var IntlMessageFormat = core["default"];
 
 IntlMessageFormat.__addLocaleData({ "locale": "af", "pluralRuleFunction": function (n, ord) {
     if (ord) return "other";return n == 1 ? "one" : "other";
@@ -6964,11 +6901,9 @@ IntlMessageFormat.__addLocaleData({ "locale": "zu", "pluralRuleFunction": functi
     if (ord) return "other";return n >= 0 && n <= 1 ? "one" : "other";
   } });
 
-var require$$0$2 = ( main$1 && main ) || main$1;
-
 var intlMessageformat = createCommonjsModule(function (module, exports) {
 
-var IntlMessageFormat = require$$0$2['default'];
+var IntlMessageFormat = main['default'];
 
 // Add all locale data to `IntlMessageFormat`. This module will be ignored when
 // bundling for the browser with Browserify/Webpack.
@@ -7961,13 +7896,13 @@ function getIMFFallbackResults({
 /* globals console, location, URL */
 
 const setServiceWorkerDefaults = (target, source) => {
+    target.userJSON = source.userJSON || 'resources/user.json';
     target.languages = source.languages || new URL('../appdata/languages.json',
     // Todo: Substitute with moduleURL once implemented
     new URL('node_modules/textbrowser/resources/index.js', location)).href;
-    target.serviceWorkerPath = source.serviceWorkerPath || 'sw.js';
+    target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?pathToUserJSON=${encodeURIComponent(target.userJSON)}`;
     target.files = source.files || 'files.json';
     target.namespace = source.namespace || 'textbrowser';
-    target.staticFilesToCache = source.staticFilesToCache; // Defaults in worker file (as `userStaticFiles`)
     return target;
 };
 
@@ -8137,19 +8072,7 @@ function Body(body) {
 	if (body == null) {
 		// body is undefined or null
 		body = null;
-	} else if (typeof body === 'string') {
-		// body is string
-	} else if (isURLSearchParams(body)) {
-		// body is a URLSearchParams
-	} else if (body instanceof Blob) {
-		// body is blob
-	} else if (Buffer.isBuffer(body)) {
-		// body is buffer
-	} else if (Object.prototype.toString.call(body) === '[object ArrayBuffer]') {
-		// body is array buffer
-	} else if (body instanceof Stream) {
-		// body is stream
-	} else {
+	} else if (typeof body === 'string') ; else if (isURLSearchParams(body)) ; else if (body instanceof Blob) ; else if (Buffer.isBuffer(body)) ; else if (Object.prototype.toString.call(body) === '[object ArrayBuffer]') ; else if (body instanceof Stream) ; else {
 		// none of the above
 		// coerce to string
 		body = String(body);
@@ -8691,9 +8614,7 @@ class Headers {
 
 		// We don't worry about converting prop to ByteString here as append()
 		// will handle it.
-		if (init == null) {
-			// no op
-		} else if (typeof init === 'object') {
+		if (init == null) ; else if (typeof init === 'object') {
 			const method = init[Symbol.iterator];
 			if (method != null) {
 				if (typeof method !== 'function') {
@@ -9516,6 +9437,7 @@ fetch$1.default = fetch$1;
 fetch$1.Promise = global.Promise;
 
 /* eslint-env node */
+// import activateCallback from '../resources/activateCallback.js';
 
 const setGlobalVars = require('indexeddbshim/dist/indexeddbshim-UnicodeIdentifiers-node.js');
 
@@ -9541,7 +9463,7 @@ const optionDefinitions = [
 { name: 'showEmptyInterlinear', type: Boolean }, { name: 'showTitleOnSingleInterlinear', type: Boolean },
 
 // Service worker
-{ name: 'domain', type: String }, { name: 'serviceWorkerPath', type: String, defaultOption: true }, { name: 'languages', type: String }, { name: 'files', type: String }, { name: 'namespace', type: String }, { name: 'staticFilesToCache', type: String, multiple: true }];
+{ name: 'domain', type: String }, { name: 'serviceWorkerPath', type: String, defaultOption: true }, { name: 'userJSON', type: String }, { name: 'languages', type: String }, { name: 'files', type: String }, { name: 'namespace', type: String }];
 const userParams = require('command-line-args')(optionDefinitions);
 
 const port = 'port' in userParams ? userParams.port : 8000;
@@ -9551,7 +9473,7 @@ const basePath = `http://${domain}${port ? ':' + port : ''}/`;
 const userParamsWithDefaults = _extends({}, userParams, setServiceWorkerDefaults(_extends({}, userParams), {
     files: userParams.files || `${basePath}files.json`, // `files` must be absolute path for node-fetch
     languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
-    serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js`
+    serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON)}`
 }), {
     basePath,
     nodeActivate: undefined,
@@ -9565,10 +9487,10 @@ const userParamsWithDefaults = _extends({}, userParams, setServiceWorkerDefaults
             console.log(`Log: ${text}`);
         },
         dbError ({
-            errorType,
+            type,
             escapedErrorMessage
         }) {
-            throw new Error(`Worker aborted: error type ${errorType}; ${escapedErrorMessage}`);
+            throw new Error(`Worker aborted: error type ${type}; ${escapedErrorMessage}`);
         }
     } */
 });
@@ -9580,7 +9502,8 @@ setGlobalVars(null, {
 
 if (userParams.nodeActivate) {
     global.fetch = fetch$1;
-    const activateCallback = require('../resources/activateCallback.js');
+    // const activateCallback = require('../resources/activateCallback.js');
+    const activateCallback = require('../dist/activateCallback-umd.js');
     (async () => {
         await activateCallback(userParamsWithDefaults);
         console.log('Activated');

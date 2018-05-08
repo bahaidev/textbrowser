@@ -510,11 +510,6 @@ as a `npm` dependency).
 -   ***TextBrowser(options)*** - Constructor which takes an options object
     with the following optional properties:
 
-    -   `staticFilesToCache` - Array of files additional to those of
-        *TextBrowser* which you will need offline. Defaults to the minimum
-        recommended files:
-        `['/',  'index.html', 'files.json', 'site.json', 'resources/user.js', 'resources/user.css']`
-
     -   `files` - Path for the `files.json` containing meta-data on the files
         to be made available via the interface. Defaults to `"files.json"`.
 
@@ -601,6 +596,17 @@ as a `npm` dependency).
 
     -   `skipIndexedDB` - If one wishes to force avoiding indexedDB even
         when permitted by user (for testing)
+
+Worker config should be placed in a JSON file. The arguments are:
+
+- `namespace` - See above.
+- `files` - See above.
+- `languages` - See above.
+- `basePath` - Base path to `files.json` fetches.
+-   `userStaticFiles` - Array of files additional to those of
+    *TextBrowser* which you will need offline. Defaults to the minimum
+    recommended files:
+    `['/',  'index.html', 'files.json', 'site.json', 'resources/user.js', 'resources/user.css']`
 
 As per [semantic versioning](http://semver.org/) used by `npm`,
 our API should continue to work until an increment in the major release

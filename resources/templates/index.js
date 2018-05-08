@@ -24,8 +24,14 @@ Templates.permissions = {
         $('#versionChange').showModal();
     },
     addLogEntry ({text}) {
-        const container = $('#installationLogContainer');
-        container.hidden = false;
+        const installationDialog = $('#installationLogContainer');
+        try {
+            installationDialog.showModal();
+            const container = $('#dialogContainer');
+            container.hidden = false;
+        } catch (err) {
+            // May already be open
+        }
         $('#installationLog').append(text + '\n');
     },
     exitDialogs () {
@@ -35,10 +41,10 @@ Templates.permissions = {
             container.hidden = true;
         }
     },
-    dbError ({errorType, escapedErrorMessage}) {
-        if (errorType) {
+    dbError ({type, escapedErrorMessage}) {
+        if (type) {
             jml('span', [
-                errorType, ' ',
+                type, ' ',
                 escapedErrorMessage
             ], $('#dbError'));
         }
@@ -54,6 +60,20 @@ Templates.permissions = {
         $('#browserNotGrantingPersistence').showModal();
     },
     main ({l, ok, refuse, close, closeBrowserNotGranting}) {
+        const installationDialog = jml('dialog', {
+            style: 'text-align: center; height: 100%',
+            id: 'installationLogContainer',
+            class: 'focus'
+        }, [
+            ['p', [
+                l('wait-installing')
+            ]],
+            ['div', {style: 'height: 80%; overflow: auto;'}, [
+                ['pre', {id: 'installationLog'}, [
+                ]]
+            ]]
+            // ['textarea', {readonly: true, style: 'width: 80%; height: 80%;'}]
+        ]);
         let requestPermissionsDialog = '';
         if (ok) {
             requestPermissionsDialog = jml(
@@ -123,21 +143,7 @@ Templates.permissions = {
             ]
         );
         jml('div', {id: 'dialogContainer', style: 'height: 100%'}, [
-            ['div', {
-                style: 'text-align: center; height: 100%',
-                id: 'installationLogContainer',
-                class: 'focus',
-                hidden: true
-            }, [
-                ['p', [
-                    l('wait-installing')
-                ]],
-                ['div', {style: 'height: 80%; overflow: auto;'}, [
-                    ['pre', {id: 'installationLog'}, [
-                    ]]
-                ]]
-                // ['textarea', {readonly: true, style: 'width: 80%; height: 80%;'}]
-            ]],
+            installationDialog,
             requestPermissionsDialog,
             browserNotGrantingPersistenceAlert,
             errorRegisteringNotice,
@@ -146,6 +152,7 @@ Templates.permissions = {
         ], document.body);
 
         return [
+            installationDialog,
             requestPermissionsDialog, browserNotGrantingPersistenceAlert,
             errorRegisteringNotice, versionChangeNotice, dbErrorNotice
         ];

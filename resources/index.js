@@ -22,114 +22,6 @@ import {resultsDisplayClient} from './resultsDisplay.js';
 
 function s (obj) { dialogs.alert(JSON.stringify(obj)); } // eslint-disable-line no-unused-vars
 
-async function prepareForServiceWorker (langs) {
-    try {
-        // Todo: No possible resolving after this point? (except
-        //          to reload or if worker somehow active already)
-        Templates.permissions.addLogEntry({
-            text: 'Beginning install...'
-        });
-        const persistent = await navigator.storage.persist();
-        if (!persistent) {
-            Templates.permissions.browserNotGrantingPersistence();
-            return;
-        }
-        Templates.permissions.addLogEntry({
-            text: 'Received work files'
-        });
-        await registerServiceWorker({
-            serviceWorkerPath: this.serviceWorkerPath,
-            namespace: this.namespace,
-            files: this.files,
-            languages: this.languages,
-            staticFilesToCache: this.staticFilesToCache,
-            langs,
-            logger: Templates.permissions
-        });
-    } catch (err) {
-        console.log('err', err);
-        if (err && typeof err === 'object') {
-            const {message} = err;
-            if (message === 'versionchange') {
-                Templates.permissions.versionChange();
-                return;
-            }
-        }
-        Templates.permissions.errorRegistering(
-            escapeHTML(err && err.message)
-        );
-    }
-}
-
-async function requestPermissions (langs, l) {
-    await new Promise((resolve, reject) => {
-        // Todo: We could run the dialog code below for every page if
-        //    `Notification.permission === 'default'` (i.e., not choice
-        //    yet made by user), but user may avoid denying with intent
-        //    of seeing how it goes. But for users who come directly to
-        //    the work or results page, the slow performance will be
-        //    unexplained so probably better to force a decision.
-        const ok = async () => {
-            // Notification request to be directly in response to user action for Chrome
-            const permissionStatus = await Notification.requestPermission();
-            requestPermissionsDialog.close(permissionStatus);
-        };
-        const refuse = () => {
-            requestPermissionsDialog.close();
-        };
-        const closeBrowserNotGranting = (e) => {
-            browserNotGrantingPersistenceAlert.close();
-        };
-        const close = async () => {
-            function rememberRefusal () {
-                // Todo: We could go forward with worker, caching files, and
-                //    indexedDB regardless of permissions, but this way
-                //    we can continue to gauge performance differences for now
-                localStorage.setItem(
-                    this.namespace + '-refused',
-                    'true'
-                );
-            }
-            try {
-                if (!requestPermissionsDialog.returnValue) {
-                    rememberRefusal();
-                    return;
-                }
-            } catch (err) {
-                Templates.permissions.errorRegistering(
-                    escapeHTML(err && err.message)
-                );
-            }
-
-            // denied|default|granted
-            switch (requestPermissionsDialog.returnValue) {
-            case 'denied':
-                // User may not want notifications but may look into another way
-                //   to persist (e.g., adding to bookmark), so we don't remember
-                //   the refusal unless they refuse in *our* dialog
-                // rememberRefusal();
-                resolve();
-                return;
-            case 'default':
-                resolve();
-                return;
-            case 'granted':
-                if (navigator.serviceWorker.controller) {
-                    resolve();
-                    return;
-                }
-                // Has own error-handling
-                await prepareForServiceWorker.call(this, langs);
-            }
-        };
-        const [requestPermissionsDialog, browserNotGrantingPersistenceAlert] = // , errorRegisteringNotice
-            Templates.permissions.main({
-                l, ok, refuse, close, closeBrowserNotGranting
-            });
-        requestPermissionsDialog.showModal();
-    });
-}
-
 function TextBrowser (options) {
     if (!(this instanceof TextBrowser)) {
         return new TextBrowser(options);
@@ -223,6 +115,111 @@ TextBrowser.prototype.getBrowseFieldData = function (args) {
     return getBrowseFieldData({...args, lang: this.lang});
 };
 
+async function prepareForServiceWorker (langs) {
+    try {
+        // Todo: No possible resolving after this point? (except
+        //          to reload or if worker somehow active already)
+        Templates.permissions.addLogEntry({
+            text: 'Worker registration: Beginning...'
+        });
+        const persistent = await navigator.storage.persist();
+        if (!persistent) {
+            Templates.permissions.browserNotGrantingPersistence();
+            return;
+        }
+        /*
+        Templates.permissions.addLogEntry({
+            text: 'Install: received work files'
+        });
+        */
+        await registerServiceWorker({
+            serviceWorkerPath: this.serviceWorkerPath,
+            logger: Templates.permissions
+        });
+    } catch (err) {
+        console.log('err', err);
+        if (err && typeof err === 'object') {
+            const {errorType} = err;
+            if (errorType === 'versionChange') {
+                Templates.permissions.versionChange();
+                return;
+            }
+        }
+        Templates.permissions.errorRegistering(
+            escapeHTML(err && err.message)
+        );
+    }
+}
+
+async function requestPermissions (langs, l) {
+    await new Promise((resolve, reject) => {
+        // Todo: We could run the dialog code below for every page if
+        //    `Notification.permission === 'default'` (i.e., not choice
+        //    yet made by user), but user may avoid denying with intent
+        //    of seeing how it goes. But for users who come directly to
+        //    the work or results page, the slow performance will be
+        //    unexplained so probably better to force a decision.
+        const ok = async () => {
+            // Notification request to be directly in response to user action for Chrome
+            const permissionStatus = await Notification.requestPermission();
+            requestPermissionsDialog.close(permissionStatus);
+        };
+        const refuse = () => {
+            requestPermissionsDialog.close();
+        };
+        const closeBrowserNotGranting = (e) => {
+            browserNotGrantingPersistenceAlert.close();
+        };
+        const close = async () => {
+            function rememberRefusal () {
+                // Todo: We could go forward with worker, caching files, and
+                //    indexedDB regardless of permissions, but this way
+                //    we can continue to gauge performance differences for now
+                localStorage.setItem(
+                    this.namespace + '-refused',
+                    'true'
+                );
+            }
+            try {
+                if (!requestPermissionsDialog.returnValue) {
+                    rememberRefusal();
+                    return;
+                }
+            } catch (err) {
+                Templates.permissions.errorRegistering(
+                    escapeHTML(err && err.message)
+                );
+            }
+
+            // denied|default|granted
+            switch (requestPermissionsDialog.returnValue) {
+            case 'denied':
+                // User may not want notifications but may look into another way
+                //   to persist (e.g., adding to bookmark), so we don't remember
+                //   the refusal unless they refuse in *our* dialog
+                // rememberRefusal();
+                resolve();
+                return;
+            case 'default':
+                resolve();
+                return;
+            case 'granted':
+                if (navigator.serviceWorker.controller) {
+                    resolve();
+                    return;
+                }
+                // Has own error-handling
+                await prepareForServiceWorker.call(this, langs);
+            }
+        };
+        const [, requestPermissionsDialog, browserNotGrantingPersistenceAlert] = // , errorRegisteringNotice
+            Templates.permissions.main({
+                l, ok, refuse, close, closeBrowserNotGranting
+            });
+        requestPermissionsDialog.showModal();
+    });
+}
+
 TextBrowser.prototype.paramChange = async function () {
     document.body.replaceWith(Templates.defaultBody());
 
@@ -314,36 +311,10 @@ TextBrowser.prototype.paramChange = async function () {
         }
     };
 
-    const respondToStateOfWorker = async () => {
-        try {
-            return respondToState({
-                r, langs,
-                namespace: this.namespace,
-                files: this.files,
-                languages: this.languages,
-                staticFilesToCache: this.staticFilesToCache,
-                logger: Templates.permissions
-            });
-        } catch (err) {
-            // Todo: We could auto-reload if we tracked whether this
-            //   error occurs immediately upon attempting registration or
-            //   not, but probably would occur after some time
-            return dialogs.alert(`
-There was an unexpected error activating the new version;
-please save any unfinished work, close this tab, and try
-opening this site again.
-
-Please contact a service administrator if the problem
-persists (Error type: worker activation).
-`
-            );
-        }
-    };
-
     /*
     try {
         // Waits indefinitely without rejecting until active worker
-        await navigator.serviceWorker.ready;
+        const {active} = await navigator.serviceWorker.ready;
     } catch (err) {
     }
     */
@@ -355,6 +326,7 @@ persists (Error type: worker activation).
     if (!r) {
         await register();
     } else {
+        siteI18n = getSiteI18n();
         const worker = r.installing || r.waiting || r.active;
         if (!worker) {
             // Todo: Why wouldn't there be a worker here?
@@ -363,6 +335,9 @@ persists (Error type: worker activation).
             await register();
             return;
         }
+
+        Templates.permissions.main({l: siteI18n});
+
         // "The browser checks for updates automatically after navigations and
         //  functional events, but you can also trigger them manually"
         //  -- https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#manual_updates
@@ -372,6 +347,28 @@ persists (Error type: worker activation).
         }, hourly);
 
         console.log('worker.state', worker.state);
+        const respondToStateOfWorker = async () => {
+            try {
+                return respondToState({
+                    r, langs,
+                    languages: this.languages,
+                    logger: Templates.permissions
+                });
+            } catch (err) {
+                // Todo: We could auto-reload if we tracked whether this
+                //   error occurs immediately upon attempting registration or
+                //   not, but probably would occur after some time
+                return dialogs.alert(`
+    There was an unexpected error activating the new version;
+    please save any unfinished work, close this tab, and try
+    opening this site again.
+
+    Please contact a service administrator if the problem
+    persists (Error type: worker activation).
+    `
+                );
+            }
+        };
 
         switch (worker.state) {
         case 'installing':
@@ -383,6 +380,15 @@ persists (Error type: worker activation).
             // Will use `r.installing`
             // We don't await the fulfillment of this promise
             respondToStateOfWorker();
+            listenForWorkerUpdate({
+                r,
+                logger: {
+                    addLogEntry (s) {
+                        // We don't put the log in the page as user using
+                        console.log(s);
+                    }
+                }
+            });
             // Don't return as user may continue working until installed (though
             //    will get message to close tab)
             break;
@@ -416,14 +422,8 @@ Please wait for a short while as we work to update to a new version.
             // Todo: Prevent from getting here as we should handle this differently
             // May need to pass in arguments if new service worker appears and
             //    it needs arguments for update
-            const userDataFiles = await getWorkFiles(this.files);
             listenForWorkerUpdate({
-                r, langs,
-                namespace: this.namespace,
-                files: this.files,
-                userDataFiles,
-                languages: this.languages,
-                staticFilesToCache: this.staticFilesToCache,
+                r,
                 logger: {
                     addLogEntry (s) {
                         // We don't put the log in the page as user using
@@ -444,6 +444,7 @@ Please wait for a short while as we work to update to a new version.
         }
     }
 
+    Templates.permissions.exitDialogs();
     if (!languageParam) {
         const languageSelect = (l) => {
             $p.l10n = l;

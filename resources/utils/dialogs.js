@@ -88,7 +88,13 @@ class Dialog {
     }
     alert (message, ok) {
         message = typeof message === 'string' ? {message} : message;
-        const {ok: includeOk = ok !== false, message: msg, submitClass = 'submit'} = message;
+        const {
+            ok: includeOk = typeof ok === 'object'
+                ? ok.ok !== false
+                : ok !== false,
+            message: msg,
+            submitClass = 'submit'
+        } = message;
         return new Promise((resolve, reject) => {
             const dialog = jml('dialog', [
                 msg,

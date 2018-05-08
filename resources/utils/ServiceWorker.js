@@ -1,49 +1,26 @@
 /* globals console, location, URL */
-import {escapeHTML} from './sanitize.js';
-import getJSON from 'simple-get-json';
-import {getWorkFiles} from './WorkInfo.js';
+// import {escapeHTML} from './sanitize.js';
 import {dialogs} from './dialogs.js';
 
-function finishInstall ({
-    r, logger, languages, langs, namespace, userDataFiles, staticFilesToCache
-}) {
-    console.log('installingggg', r.installing);
-    const langPathParts = languages.split('/');
-    // Todo: We might give option to only download
-    //        one locale and avoid language splash page
-    const localeFiles = langs.map(
-        ({locale: {$ref}}) =>
-            (langPathParts.length > 1
-                ? langPathParts.slice(0, -1).join('/') + '/'
-                : ''
-            ) + $ref
-    );
-    logger.addLogEntry({
-        text: 'Beginning caching of files...'
-    });
-    r.installing.postMessage({
-        type: 'install',
-        namespace,
-        localeFiles,
-        userDataFiles, // Todo: This should include plugins
-        userStaticFiles: staticFilesToCache
-    });
-    /*
-    const r = await navigator.serviceWorker.ready;
-    console.log('SWWWWW ready!', r.active);
-    r.active.postMessage({
-        type: 'activate',
-        namespace,
-        filesJSONPath: files
-    });
-    */
-    // (Unless skipped in code, will wait between install
-    //    of new and activation of new or existing if still
-    //    some tabs open)
-}
+export const setServiceWorkerDefaults = (target, source) => {
+    target.userJSON = source.userJSON || 'resources/user.json';
+    target.languages = source.languages || new URL(
+        '../appdata/languages.json',
+        // Todo: Substitute with moduleURL once implemented
+        new URL('node_modules/textbrowser/resources/index.js', location)
+    ).href;
+    target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?pathToUserJSON=${encodeURIComponent(target.userJSON)}`;
+    target.files = source.files || 'files.json';
+    target.namespace = source.namespace || 'textbrowser';
+    return target;
+};
+
+// (Unless skipped in code, will wait between install
+//    of new and activation of new or existing if still
+//    some tabs open)
 
 export const listenForWorkerUpdate = ({
-    r, logger, languages, langs, namespace, userDataFiles, staticFilesToCache
+    r, logger
 }) => {
     r.addEventListener('updatefound', (e) => {
         // New service worker has appeared
@@ -52,20 +29,15 @@ export const listenForWorkerUpdate = ({
         console.log('update found', e);
         const newWorker = r.installing;
 
-        finishInstall({
-            r, logger, languages, langs, namespace, userDataFiles, staticFilesToCache
-        });
-
         // statechange won't catch this installing event as already installing
 
         newWorker.addEventListener('statechange', async () => {
             const {state} = newWorker;
             switch (state) {
-            case 'installing': // install event has fired, but not yet complete
+            case 'installing':
                 console.log('Installing new worker');
                 break;
-            // Since not skipping waiting, this means waiting finished
-            case 'installed': // install complete
+            case 'installed':
                 console.log('Installation status', state);
                 await dialogs.alert(`
 A new version of this offlinable app has been downloaded.
@@ -98,10 +70,10 @@ for offline installation.
                 );
                 break;
             // These shouldn't occur as we are not skipping waiting (?)
-            case 'activating': // the activate event has fired, but not yet complete
+            case 'activating':
                 console.log('Activating new worker');
                 break;
-            case 'activated': // fully active
+            case 'activated':
                 console.log('Activated new worker');
                 break;
             default:
@@ -112,74 +84,84 @@ for offline installation.
 };
 
 export const respondToState = async ({
-    r, logger, languages, langs, namespace, files, userDataFiles, staticFilesToCache
+    r, logger
 }) => {
-    ([langs, userDataFiles] = await Promise.all([
-        langs || (await getJSON(languages)).languages,
-        userDataFiles || await getWorkFiles(files)
-    ]));
-
     // We use this promise for rejecting (inside a listener)
     //    to a common catch and to prevent continuation by
     //    failing to return
     return new Promise(async (resolve, reject) => {
-        navigator.serviceWorker.onmessage = (e) => {
-            const {data} = e;
-            console.log('msg1', data, r);
-            switch (data) {
+        navigator.serviceWorker.onmessage = ({data}) => {
+            const {message, type, name, errorType} = data;
+            console.log('msg1', message, r);
+            switch (type) {
+            case 'log':
+                logger.addLogEntry({
+                    text: message
+                });
+                return;
+            case 'beginInstall':
+                logger.addLogEntry({
+                    text: 'Install: Begun...'
+                });
+                return;
+            case 'finishedInstall':
+                logger.addLogEntry({
+                    text: 'Install: Finished...'
+                });
+                return;
+            case 'beginActivate': // Just use `e.source`?
+                logger.addLogEntry({
+                    text: 'Activate: Caching finished'
+                });
+                logger.addLogEntry({
+                    text: 'Activate: Begin database resources storage...'
+                });
+                // r.active is also available for mere "activating"
+                //    as we are now
+                return;
             case 'finishedActivate':
                 logger.addLogEntry({
-                    text: 'Finished activation...'
+                    text: 'Activate: Finished...'
                 });
                 // Still not controlled even after activation is
                 //    ready, so refresh page
 
                 // Seems to be working (unlike `location.replace`),
                 //  but if problems, could add `true` but as forces
-                //  from server not cache, what will happen here?
+                //  from server not cache, what will happen here? (also
+                //  `controller` may be `null` with force-reload)
                 location.reload();
                 // location.replace(location); // Avoids adding to browser history)
 
                 // This will cause jankiness and unnecessarily show languages selection
                 // resolve();
                 return;
-            case 'finishActivate': // Just use `e.source`?
-                console.log('activating', e);
+            case 'error':
                 logger.addLogEntry({
-                    text: 'Finished caching'
+                    text: message + `${
+                        errorType === 'dbError' ? `Database error ${name}` : ''
+                    }; trying again...`
                 });
-                logger.addLogEntry({
-                    text: 'Beginning activation (database resources)...'
-                });
-
-                // r.active is also available for mere "activating"
-                //    as we are now
-                r.active.postMessage({
-                    type: 'activate',
-                    namespace,
-                    filesJSONPath: files
-                });
-                return;
-            case 'finishInstall':
-                finishInstall({
-                    r, logger, languages, langs, namespace, userDataFiles, staticFilesToCache
-                });
-                return;
-            }
-            if (data && data.activationError) {
-                const {message, dbError, errorType} = data;
-                const err = new Error(message);
-                err.errorType = errorType;
-                if (dbError) {
+                /*
+                if (errorType === 'dbError') {
                     logger.dbError({
-                        errorType,
+                        type: name || errorType,
                         escapedErrorMessage: escapeHTML(message)
                     });
                 }
+                */
+                // Todo: auto-close any dbError dialog if retrying
+                // No longer rejecting as should auto-retry
+                /*
+                const err = new Error(message);
+                err.type = type;
                 reject(err);
+                */
+                break;
             }
         };
         const worker = r.installing || r.waiting || r.active;
+        // Failed or new worker in use
         if (worker && worker.state === 'redundant') {
             // Todo: We could call `register()` below instead (on a timeout)?
             await dialogs.alert(`
@@ -188,57 +170,42 @@ There was likely an error installing. Click "ok" to try again.
 `
             );
             location.reload();
-        // listenForWorkerUpdate({r});
+            // listenForWorkerUpdate({r, logger});
         } else if (r.installing) {
-            finishInstall({
-                r, logger, languages, langs, namespace, userDataFiles, staticFilesToCache
-            });
-        // No need to expect a message from the installing event,
-        //   as the `register` call seems to get called if ready
+            // No need to expect a message from the installing event,
+            //   as the `register` call seems to get called if ready
+            console.log('INSTALLING');
         } else if (r.waiting) {
+            // Todo: Any way to auto-refresh (didn't seem to work
+            //    even as only tab)
             await dialogs.alert(`
 An update is in progress. After finishing any work
-you have in them, please close any other existing tabs
-running this web application and then hit ok here so
-that the update may complete.
-`
+you have in them, please close this and any other existing tabs
+running this web application and then open the site again.
+Please note it may take some time to install and may not show
+any indication it is installing.
+`, {ok: false}
             );
             // We might just let the user go on without a reload, but
             //   as fetch operations would apparently wait to execute,
             //   it wouldn't be much use, so just reload (to get same
             //   message again until other tabs closed)
             // If state has changed, handle below
-            // if (!r.installing && !r.active) {
-            // location.reload();
-            // return;
-            // }
-            // resolve();
+            /*
+            if (!r.installing && !r.active) {
+                location.reload();
+                return;
+            }
+            resolve();
+            */
         }
     });
 };
 
-export const setServiceWorkerDefaults = (target, source) => {
-    target.languages = source.languages || new URL(
-        '../appdata/languages.json',
-        // Todo: Substitute with moduleURL once implemented
-        new URL('node_modules/textbrowser/resources/index.js', location)
-    ).href;
-    target.serviceWorkerPath = source.serviceWorkerPath || 'sw.js';
-    target.files = source.files || 'files.json';
-    target.namespace = source.namespace || 'textbrowser';
-    target.staticFilesToCache = source.staticFilesToCache; // Defaults in worker file (as `userStaticFiles`)
-    return target;
-};
-
 // Keep in this file as may wish to avoid using for server (while still
 //   doing other service worker work)
-// Todo: Avoid `this` below?
 export const registerServiceWorker = async ({
-    languages,
-    langs,
-    userDataFiles,
-    files, staticFilesToCache,
-    serviceWorkerPath, namespace,
+    serviceWorkerPath,
     logger
 }) => {
     // Todo: We might wish to allow avoiding the other locale files
@@ -259,7 +226,9 @@ export const registerServiceWorker = async ({
 
     For either option, we might possibly (and user-optionally) send a notice
     (whose approval we've asked for already) when all files are complete
-    instead of just a dialog,
+    instead of just a dialog. We could also skip waiting if we disabled offline
+    on previously controlled clients (until refresh would get new app files
+    and database queries wouldn't be broken)
     */
 
     console.log(
@@ -269,7 +238,8 @@ export const registerServiceWorker = async ({
     // `persist` will grandfather non-persisted caches, so if we don't end up
     //    using `install` event for dynamic items, we could put the service worker
     //    registration at the beginning of the file without waiting for persistence
-    //    approval (or at least after rendering page to avoid "jankiness"); however,
+    //    approval (or at least after rendering page to avoid visual "jankiness"/
+    //    competititon for network for low-bandwidth sites); however,
     //    as we want to show a dialog about permissions first, we wait until here.
     let r;
     try {
@@ -285,25 +255,11 @@ Please refresh the page if you wish to reattempt.
     }
 
     logger.addLogEntry({
-        text: 'Worker registered'
+        text: 'Worker registration: Complete'
     });
 
+    // Todo: Catch errors?
     return respondToState({
-        r, logger, languages, langs, namespace, files, userDataFiles, staticFilesToCache
+        r, logger
     });
-
-    /*
-    const controller = navigator.serviceWorker.controller ||
-        (await navigator.serviceWorker.ready).active;
-    console.log('r', serviceWorkerPath);
-    const messageChannel = new MessageChannel();
-    messageChannel.port1.onmessage = (e) => {
-        if (e.data.error) {
-            console.log('err', e.data.error);
-        } else {
-            console.log('data', e.data);
-        }
-    };
-    controller.postMessage('test', [messageChannel.port2]);
-    */
 };

@@ -9,6 +9,7 @@ import {setServiceWorkerDefaults} from '../resources/utils/ServiceWorker.js';
 // import setGlobalVars from 'indexeddbshim/src/node-UnicodeIdentifiers.js';
 import fetch from 'node-fetch';
 import {Languages} from '../resources/utils/Languages.js';
+// import activateCallback from '../resources/activateCallback.js';
 
 const setGlobalVars = require('indexeddbshim/dist/indexeddbshim-UnicodeIdentifiers-node.js');
 
@@ -41,10 +42,10 @@ const optionDefinitions = [
     // Service worker
     {name: 'domain', type: String},
     {name: 'serviceWorkerPath', type: String, defaultOption: true},
+    {name: 'userJSON', type: String},
     {name: 'languages', type: String},
     {name: 'files', type: String},
-    {name: 'namespace', type: String},
-    {name: 'staticFilesToCache', type: String, multiple: true}
+    {name: 'namespace', type: String}
 ];
 const userParams = require('command-line-args')(optionDefinitions);
 
@@ -59,7 +60,7 @@ const userParamsWithDefaults = {
     }, {
         files: userParams.files || `${basePath}files.json`, // `files` must be absolute path for node-fetch
         languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
-        serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js`
+        serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON)}`
     }),
     basePath,
     nodeActivate: undefined,
@@ -73,10 +74,10 @@ const userParamsWithDefaults = {
             console.log(`Log: ${text}`);
         },
         dbError ({
-            errorType,
+            type,
             escapedErrorMessage
         }) {
-            throw new Error(`Worker aborted: error type ${errorType}; ${escapedErrorMessage}`);
+            throw new Error(`Worker aborted: error type ${type}; ${escapedErrorMessage}`);
         }
     } */
 };
@@ -88,7 +89,8 @@ setGlobalVars(null, {
 
 if (userParams.nodeActivate) {
     global.fetch = fetch;
-    const activateCallback = require('../resources/activateCallback.js');
+    // const activateCallback = require('../resources/activateCallback.js');
+    const activateCallback = require('../dist/activateCallback-umd.js');
     (async () => {
         await activateCallback(userParamsWithDefaults);
         console.log('Activated');
