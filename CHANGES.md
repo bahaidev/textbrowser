@@ -1,3 +1,21 @@
+# 0.19.0
+
+- Fix: Add `dir` to results cells (if non-default)
+- Fix (Service worker): Safer worker (imports info via URL to avoid (unstable)
+    messaging into worker; retries rather than failing)
+- Optimization: Add global `lang` and only override in cells if non-default
+- Optimization: Avoid adding "td" class to each cell
+- Enhancement (Service worker): Show dialog that waiting on an install
+- Enhancement (Service worker): Try updating every hour
+- Enhancement (Service worker): Log more details to clients
+- Enhancement (Service worker): Handle other service worker eventualities (not
+    well tested)
+- Enhancement: Use dialog element over built-in alerts
+- Refactoring (Dialogs): Allow object for `ok` argument
+- npm: Update deps (jamilih, indexeddbshim, url-search-params-polyfill)
+- npm: Add rtl-detect
+- npm: Update devDeps
+
 # 0.18.4
 
 - npm: Publishing issue
