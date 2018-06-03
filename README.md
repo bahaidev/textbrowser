@@ -617,6 +617,9 @@ upon for monkey-patching.
 
 ## To-dos (Highest priority)
 
+1.  Document and add screen-casts along with one for developers showing
+    JSON format, metadata, and schemas); also use with shortcuts (including
+    Bahá'í library ones)
 1.  **Move plug-in set-up** to run so setting indexedDB within
     `activateCallback.js`
 1.  Have **IndexedDB handle all pages** language select, work select, and
@@ -877,6 +880,11 @@ upon for monkey-patching.
 
 ## To-dos (Medium Priority)
 
+1.  Remove need for separate metadata
+    files per
+    <https://github.com/json-schema-org/json-schema-spec/issues/587#issuecomment-389726603>
+1.  Replace comma-separated interlinear approach with a popup dialog
+    with multiselect
 1.  Preview styling changes (or move all controls to results page for
     immediate real feedback)
 1.  Separate formatting within Jamilih code to CSS; unit test and performance
