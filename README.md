@@ -938,6 +938,8 @@ upon for monkey-patching.
 
 ## To-dos (Lower priority)
 
+1.  Waiting: Avoid superagent warning:
+    <https://github.com/whitlockjc/path-loader/issues/17>
 1.  In schema, let `$locale` or `*` indicate all fields to be translated
     where possible?
 1.  Preferences
