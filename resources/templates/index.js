@@ -36,7 +36,6 @@ Templates.permissions = {
     },
     exitDialogs () {
         const container = $('#dialogContainer');
-        console.log('container', container);
         if (container) {
             container.hidden = true;
         }
