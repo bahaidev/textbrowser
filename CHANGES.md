@@ -1,3 +1,10 @@
+# ?
+
+- npm: Update jamilih (fixing security vulnerability), indexeddbshim,
+    load-stylesheets, and devDeps
+- Testing: Use node-static server/opn-cli instead of our own
+- Build: Update Rollup per new version's API
+
 # 0.19.0
 
 - Fix: Add `dir` to results cells (if non-default)

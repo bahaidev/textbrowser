@@ -5,7 +5,7 @@ import builtins from 'rollup-plugin-node-builtins';
 // import nodeGlobals from 'rollup-plugin-node-globals';
 import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-re';
-import uglify from 'rollup-plugin-uglify';
+import {uglify} from 'rollup-plugin-uglify';
 import {minify} from 'uglify-es';
 import postProcess from 'rollup-plugin-postprocess';
 
