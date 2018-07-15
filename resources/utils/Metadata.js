@@ -112,7 +112,7 @@ export const getFieldNameAndValueAliases = function ({
                                     x.toLowerCase().startsWith(v.toLowerCase())
                                 )
                             )
-                        ).map((v) => v + ' (' + key + ')')
+                        ).map((v) => v + ' (' + key + ')') // Todo: i18nize
                     )
                 );
             });
