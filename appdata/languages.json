@@ -13,20 +13,31 @@
         },
         "fa": {
             "chooselanguage": "زبان انتخاب شده",
+            "all-langs": "All languages",
             "languages": {
-                "fa": "فارسي"
+                "en-US": "English",
+                "ar": "Arabic",
+                "fa": "فارسي",
+                "ru": "Russian"
             }
         },
         "ar": {
             "chooselanguage": "لغتك",
+            "all-langs": "All languages",
             "languages": {
-                "ar": "عربي"
+                "en-US": "English",
+                "ar": "عربي",
+                "fa": "Persian",
+                "ru": "Russian"
             }
         },
         "ru": {
+            "chooselanguage": "Your interface language",
             "all-langs": "Все языки",
             "languages": {
                 "en-US": "Английский",
+                "ar": "Arabic",
+                "fa": "Persian",
                 "ru": "русский"
             }
         }
