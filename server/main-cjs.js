@@ -305,7 +305,7 @@ function createCommonjsModule(fn, module) {
     }
 
     function appendTo(dict, name, value) {
-        var val = typeof value === 'string' ? value : value !== null && typeof value.toString === 'function' ? value.toString() : JSON.stringify(value);
+        var val = typeof value === 'string' ? value : value !== null && value !== undefined && typeof value.toString === 'function' ? value.toString() : JSON.stringify(value);
 
         if (name in dict) {
             dict[name].push(val);
@@ -3010,6 +3010,23 @@ var _extends = Object.assign || function (target) {
   }
 
   return target;
+};
+
+var interopRequireWildcard = function (obj) {
+  if (obj && obj.__esModule) {
+    return obj;
+  } else {
+    var newObj = {};
+
+    if (obj != null) {
+      for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+      }
+    }
+
+    newObj.default = obj;
+    return newObj;
+  }
 };
 
 var objectWithoutProperties = function (obj, keys) {
@@ -7315,7 +7332,7 @@ const getWorkData = async function ({
             });
             return Promise.resolve().then(() => require(pluginPath));
         }
-        return Promise.resolve().then(() => require(`${pluginPath}`));
+        return Promise.resolve().then(() => interopRequireWildcard(require(`${pluginPath}`)));
     })) : null]);
     const pluginsForWork = new PluginsForWork({
         pluginsInWork, pluginFieldMappings, pluginObjects

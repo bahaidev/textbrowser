@@ -1,7 +1,7 @@
-# ?
+# 0.20.0
 
 - npm: Update jamilih (fixing security vulnerability), indexeddbshim,
-    load-stylesheets, and devDeps
+    load-stylesheets, deps, and devDeps
 - Testing: Use node-static server/opn-cli instead of our own
 - Build: Update Rollup per new version's API
 - Enhancement: Namespace textboxes by work to avoid caching of unused values
