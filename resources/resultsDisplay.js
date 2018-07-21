@@ -24,6 +24,7 @@ const setAnchor = ({
     );
     // Check if user added this (e.g., even to end of URL with
     //   other anchor params)
+    const work = $p.get('work');
     let anchor;
     const anchorRowCol = ilRaw('anchorrowcol');
     if (anchorRowCol) {
@@ -34,7 +35,7 @@ const setAnchor = ({
         let anchorField = '';
         for (let i = 1, breakout; !breakout && !anchors.length; i++) {
             for (let j = 1; ; j++) {
-                const anchorText = 'anchor' + i + '-' + j;
+                const anchorText = work + '-' + 'anchor' + i + '-' + j;
                 const anchor = $p.get(anchorText, true);
                 if (!anchor) {
                     if (i === max || // No more field sets to check
@@ -545,8 +546,8 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         ? (key, suffix = '') => $p.get(il(key) + suffix, true)
         : (key, suffix = '') => $p.get(key + suffix, true);
     const iilRaw = localizeParamNames
-        ? (key, suffix = '') => $p.get(iil(key) + suffix, true)
-        : (key, suffix = '') => $p.get(key + suffix, true);
+        ? (key, suffix = '') => $p.get($p.get('work') + '-' + iil(key) + suffix, true)
+        : (key, suffix = '') => $p.get($p.get('work') + '-' + key + suffix, true);
 
     // Now that we know `browseFieldSets`, we can parse `startEnd`
     const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) =>
@@ -604,7 +605,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     const buildRangePoint = (startOrEnd) =>
         applicableBrowseFieldNames.map((bfn, j) =>
             $p.get(
-                startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
+                $p.get('work') + '-' + startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
                 true
             )
         );

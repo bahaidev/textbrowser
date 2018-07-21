@@ -611,6 +611,7 @@ export default {
         ]]
     ]],
     addBrowseFields: ({browseFields, fieldInfo, ld, i, iil, $p, content}) => {
+        const work = $p.get('work');
         const addRowContent = (rowContent) => {
             if (!rowContent || !rowContent.length) { return; }
             content.push(['tr', rowContent]);
@@ -628,7 +629,8 @@ export default {
                         browseFields.reduce((rowContent, {
                             fieldName, aliases, fieldSchema: {minimum, maximum}
                         }, j) => {
-                            const name = iil(setType) + (i + 1) + '-' + (j + 1);
+                            // Namespace by work for sake of browser auto-complete caching
+                            const name = work + '-' + iil(setType) + (i + 1) + '-' + (j + 1);
                             const id = name;
                             rowContent['#'].push(
                                 ['td', [
@@ -686,7 +688,8 @@ export default {
                                     fieldName, aliases, fieldSchema: {minimum, maximum}
                                 }, j
                             ) => {
-                                const name = iil('anchor') + (i + 1) + '-' + (j + 1);
+                                // Namespace by work for sake of browser auto-complete caching
+                                const name = work + '-' + iil('anchor') + (i + 1) + '-' + (j + 1);
                                 const id = name;
                                 rowContent['#'].push(
                                     ['td', [

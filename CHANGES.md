@@ -4,6 +4,9 @@
     load-stylesheets, and devDeps
 - Testing: Use node-static server/opn-cli instead of our own
 - Build: Update Rollup per new version's API
+- Enhancement: Namespace textboxes by work to avoid caching of unused values
+- i18n: Populate non-English locales with missing English fields for easier
+    translation
 
 # 0.19.0
 

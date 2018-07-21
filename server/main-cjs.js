@@ -2510,6 +2510,7 @@ var workDisplay = {
         return ['option', atts, [imfl(['languages', lan.code])]];
     })]]]]],
     addBrowseFields: ({ browseFields, fieldInfo, ld, i, iil, $p, content }) => {
+        const work = $p.get('work');
         const addRowContent = rowContent => {
             if (!rowContent || !rowContent.length) {
                 return;
@@ -2522,7 +2523,8 @@ var workDisplay = {
             const addBrowseFieldSet = setType => browseFields.reduce((rowContent, {
                 fieldName, aliases, fieldSchema: { minimum, maximum }
             }, j) => {
-                const name = iil(setType) + (i + 1) + '-' + (j + 1);
+                // Namespace by work for sake of browser auto-complete caching
+                const name = work + '-' + iil(setType) + (i + 1) + '-' + (j + 1);
                 const id = name;
                 rowContent['#'].push(['td', [['label', { 'for': name }, [fieldName]]]], ['td', [aliases ? ['datalist', { id: 'dl-' + id }, aliases.map(alias => ['option', [alias]])] : '', aliases ? ['input', {
                     name, id, class: 'browseField',
@@ -2547,7 +2549,8 @@ var workDisplay = {
         })(), ['td', [browseFields.length > 1 ? ld('versesendingdataoptional') : '']]], [['td', { colspan: 4 * browseFields.length + 2 + 1, align: 'center' }, [['table', [['tr', [browseFields.reduce((rowContent, {
             fieldName, aliases, fieldSchema: { minimum, maximum }
         }, j) => {
-            const name = iil('anchor') + (i + 1) + '-' + (j + 1);
+            // Namespace by work for sake of browser auto-complete caching
+            const name = work + '-' + iil('anchor') + (i + 1) + '-' + (j + 1);
             const id = name;
             rowContent['#'].push(['td', [['label', { 'for': name }, [fieldName]]]], ['td', [aliases ? ['datalist', { id: 'dl-' + id }, aliases.map(alias => ['option', [alias]])] : '', aliases ? ['input', {
                 name, id, class: 'browseField',
@@ -3344,7 +3347,8 @@ const getFieldNameAndValueAliases = function ({
                     aliases = Object.values(aliases);
                 }
                 // We'll assume the longest version is best for auto-complete
-                ret.aliases.push(...aliases.filter(v => aliases.every(x => x === v || !x.toLowerCase().startsWith(v.toLowerCase()))).map(v => v + ' (' + key + ')'));
+                ret.aliases.push(...aliases.filter(v => aliases.every(x => x === v || !x.toLowerCase().startsWith(v.toLowerCase()))).map(v => v + ' (' + key + ')') // Todo: i18nize
+                );
             });
         }
         ret.fieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap));
@@ -7639,7 +7643,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     const il = localizeParamNames ? key => l(['params', key]) : key => key;
     const iil = localizeParamNames ? key => l(['params', 'indexed', key]) : key => key;
     const ilRaw = localizeParamNames ? (key, suffix = '') => $p.get(il(key) + suffix, true) : (key, suffix = '') => $p.get(key + suffix, true);
-    const iilRaw = localizeParamNames ? (key, suffix = '') => $p.get(iil(key) + suffix, true) : (key, suffix = '') => $p.get(key + suffix, true);
+    const iilRaw = localizeParamNames ? (key, suffix = '') => $p.get($p.get('work') + '-' + iil(key) + suffix, true) : (key, suffix = '') => $p.get($p.get('work') + '-' + key + suffix, true);
 
     // Now that we know `browseFieldSets`, we can parse `startEnd`
     const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) => typeof iilRaw('startEnd', i + 1) === 'string');
@@ -7688,7 +7692,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     const canonicalBrowseFieldNames = canonicalBrowseFieldSet.map(abfs => abfs.fieldName);
 
     const fieldSchemaTypes = applicableBrowseFieldSet.map(abfs => abfs.fieldSchema.type);
-    const buildRangePoint = startOrEnd => applicableBrowseFieldNames.map((bfn, j) => $p.get(startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1), true));
+    const buildRangePoint = startOrEnd => applicableBrowseFieldNames.map((bfn, j) => $p.get($p.get('work') + '-' + startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1), true));
     const starts = buildRangePoint('start');
     const ends = buildRangePoint('end');
 

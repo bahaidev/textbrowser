@@ -71,7 +71,7 @@ TextBrowser.prototype.displayLanguages = async function () {
         const p = this.paramChange();
 
         // INIT/ADD EVENTS
-        window.addEventListener('hashchange', () => this.paramChange(), false);
+        window.addEventListener('hashchange', () => this.paramChange());
 
         return p;
     } catch (err) {
@@ -224,7 +224,7 @@ TextBrowser.prototype.paramChange = async function () {
     document.body.replaceWith(Templates.defaultBody());
 
     // Todo: Could give option to i18nize 'lang' or omit
-    const $p = this.$p = new IntlURLSearchParams();
+    const $p = this.$p = new IntlURLSearchParams(); // Uses URL hash for params
 
     const followParams = () => {
         location.hash = '#' + $p.toString();
