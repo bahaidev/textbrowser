@@ -617,6 +617,8 @@ upon for monkey-patching.
 
 ## To-dos (Highest priority)
 
+1.  **Avoid setting inputs to empty string** on load (prevents using back
+    button to get at old values)
 1.  Document and add screen-casts along with one for developers showing
     JSON format, metadata, and schemas); also use with shortcuts (including
     Bahá'í library ones)
@@ -624,8 +626,6 @@ upon for monkey-patching.
     `activateCallback.js`
 1.  Have **IndexedDB handle all pages** language select, work select, and
     work display be part of too?
-1.  Avoid `datalist` showing past selections on separate book! (change element
-    ID to reflect work?)
 1.  **Node.js** (or PHP?)
     1.  Delivery of HTML content by same URL so third parties can
         consume without JavaScript and optimized when not offline
@@ -638,8 +638,6 @@ upon for monkey-patching.
             inject config for `index.js` to avoid reloading?
         1.  Use [IndexedDBShim](https://github.com/axemclion/IndexedDBShim)
             (with service worker shim?) to optimize on server
-1.  **Avoid setting inputs to empty string** on load (prevents using back
-    button to get at old values)
 1.  Icon for click/hover to get **interlinear field explanation**
 1.  Fix for **local notes storage plugin** when in interlinear column
 1.  Fix for **interlinear not showing** when opting for non-default
