@@ -330,10 +330,8 @@ function _prepareParam(param, skip) {
     return this.l10n(['params', param]);
 }
 
-function IntlURLSearchParams(config) {
-    config = config || {};
-    this.l10n = config.l10n;
-    let params = config.params;
+function IntlURLSearchParams({ l10n, params } = {}) {
+    this.l10n = l10n;
     if (!params) {
         params = location.hash.slice(1); // eslint-disable-line no-undef
     }
@@ -2095,17 +2093,69 @@ jml.setDocument(win$1.document);
 // jml.setXMLSerializer(require('xmldom').XMLSerializer);
 jml.setXMLSerializer(XMLSerializer$1);
 
+// get successful control from form and assemble into object
+
+function deserialize(form, hash) {
+    // input(text|radio|checkbox)|select(multiple)|textarea|keygen
+    Object.entries(hash).forEach(([name, value]) => {
+        let control = form[name];
+        if (!form[name]) {
+            control = form[name + '[]']; // We want this for RadioNodeList so setting value auto-disables other boxes
+            if (!('length' in control)) {
+                // The latter assignment only gets single
+                //    elements, so if not a RadioNodeList, we get all values here
+                control = form.querySelectorAll(`[name="${name}[]"]`);
+            }
+        }
+        const { type } = control;
+        if (type === 'checkbox') {
+            control.checked = value !== '';
+        }
+        if (Array.isArray(value)) {
+            if (type === 'select-multiple') {
+                [...control.options].forEach(o => {
+                    if (value.includes(o.value)) {
+                        o.selected = true;
+                    }
+                });
+                return;
+            }
+            value.forEach((v, i) => {
+                const c = control[i];
+                if (c.type === 'checkbox') {
+                    const isMatch = c.value === v || v === 'on';
+                    c.checked = isMatch;
+                    return;
+                }
+                c.value = v;
+            });
+        } else {
+            control.value = value;
+        }
+    });
+}
+
+/* eslint-env browser */
 var languageSelect = {
     main({ langs, languages, followParams, $p }) {
-        jml('div', { class: 'focus', id: 'languageSelectionContainer' }, [['select', {
+        jml('form', { class: 'focus', id: 'languageSelectionContainer', $on: {
+                submit(e) {
+                    e.preventDefault();
+                }
+            } }, [['select', {
+            name: 'lang',
             size: langs.length,
             $on: {
-                change({ target: { selectedOptions } }) {
-                    $p.set('lang', selectedOptions[0].value, true);
-                    followParams();
+                click({ target: { parentNode: { selectedOptions } } }) {
+                    followParams('#languageSelectionContainer', () => {
+                        $p.set('lang', selectedOptions[0].value, true);
+                    });
                 }
             }
         }, langs.map(({ code }) => ['option', { value: code }, [languages.getLanguageFromCode(code)]])]], document.body);
+        if (history.state && typeof history.state === 'object') {
+            deserialize(document.querySelector('#languageSelectionContainer'), history.state);
+        }
     }
 
     // Todo: Add in Go button (with 'submitgo' localization string) to
@@ -2121,29 +2171,41 @@ var languageSelect = {
 
 /* eslint-env browser */
 
-var workSelect = (({ groups, lf, getNextAlias, $p, followParams }) => jml('div', { class: 'focus' }, groups.map((group, i) => ['div', [i > 0 ? ['br', 'br', 'br'] : '', ['div', [lf({ key: group.directions.localeKey, fallback: true })]], ['br'], ['select', {
-    class: 'file',
-    dataset: {
-        name: group.name.localeKey
-    },
-    $on: {
-        change({ target: { value } }) {
-            /*
-            // If using click, but click doesn't always fire
-            if (e.target.nodeName.toLowerCase() === 'select') {
-                return;
+var workSelect = (({ groups, lf, getNextAlias, $p, followParams }) => {
+    const form = jml('form', { id: 'workSelect', class: 'focus', $on: {
+            submit(e) {
+                e.preventDefault();
             }
-            */
-            $p.set('work', value);
-            followParams();
+        } }, groups.map((group, i) => ['div', [i > 0 ? ['br', 'br', 'br'] : '', ['div', [lf({ key: group.directions.localeKey, fallback: true })]], ['br'], ['select', {
+        class: 'file',
+        name: 'work' + i,
+        dataset: {
+            name: group.name.localeKey
+        },
+        $on: {
+            change({ target: { value } }) {
+                /*
+                // If using click, but click doesn't always fire
+                if (e.target.nodeName.toLowerCase() === 'select') {
+                    return;
+                }
+                */
+                followParams('#workSelect', () => {
+                    $p.set('work', value);
+                });
+            }
         }
+    }, [['option', { value: '' }, ['--']], ...group.files.map(({ name: fileName }) => ['option', {
+        value: lf(['workNames', group.id, fileName])
+    }, [getNextAlias()]])]]
+    // Todo: Add in Go button (with 'submitgo' localization string) to
+    //    avoid need for pull-down if using first selection?
+    ]]), document.body);
+    if (history.state && typeof history.state === 'object') {
+        deserialize(document.querySelector('#workSelect'), history.state);
     }
-}, [['option', { value: '' }, ['--']], ...group.files.map(({ name: fileName }) => ['option', {
-    value: lf(['workNames', group.id, fileName])
-}, [getNextAlias()]])]]
-// Todo: Add in Go button (with 'submitgo' localization string) to
-//    avoid need for pull-down if using first selection?
-]]), document.body));
+    return form;
+});
 
 const colors = ['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'];
 const fonts = ['Helvetica, sans-serif', 'Verdana, sans-serif', 'Gill Sans, sans-serif', 'Avantgarde, sans-serif', 'Helvetica Narrow, sans-serif', 'sans-serif', 'Times, serif', 'Times New Roman, serif', 'Palatino, serif', 'Bookman, serif', 'New Century Schoolbook, serif', 'serif', 'Andale Mono, monospace', 'Courier New, monospace', 'Courier, monospace', 'Lucidatypewriter, monospace', 'Fixed, monospace', 'monospace', 'Comic Sans, Comic Sans MS, cursive', 'Zapf Chancery, cursive', 'Coronetscript, cursive', 'Florence, cursive', 'Parkavenue, cursive', 'cursive', 'Impact, fantasy', 'Arnoldboecklin, fantasy', 'Oldtown, fantasy', 'Blippo, fantasy', 'Brushstroke, fantasy', 'fantasy'];
@@ -2528,7 +2590,8 @@ var workDisplay = {
                 const id = name;
                 rowContent['#'].push(['td', [['label', { 'for': name }, [fieldName]]]], ['td', [aliases ? ['datalist', { id: 'dl-' + id }, aliases.map(alias => ['option', [alias]])] : '', aliases ? ['input', {
                     name, id, class: 'browseField',
-                    list: 'dl-' + id, value: $p.get(name),
+                    list: 'dl-' + id,
+                    value: $p.get(name, true),
                     $on: setType === 'start' ? { change(e) {
                             $$('input.browseField').forEach(bf => {
                                 if (bf.id.includes(i + 1 + '-' + (j + 1))) {
@@ -2541,7 +2604,7 @@ var workDisplay = {
                     type: 'number',
                     min: minimum,
                     max: maximum,
-                    value: $p.get(name)
+                    value: $p.get(name, true)
                 }], nbsp3]]);
                 return rowContent;
             }, { '#': [] });
@@ -2554,16 +2617,21 @@ var workDisplay = {
             const id = name;
             rowContent['#'].push(['td', [['label', { 'for': name }, [fieldName]]]], ['td', [aliases ? ['datalist', { id: 'dl-' + id }, aliases.map(alias => ['option', [alias]])] : '', aliases ? ['input', {
                 name, id, class: 'browseField',
-                list: 'dl-' + id, value: $p.get(name)
+                list: 'dl-' + id,
+                value: $p.get(name, true)
             }] : ['input', {
                 name, id,
                 type: 'number',
                 min: minimum,
                 max: maximum,
-                value: $p.get(name)
+                value: $p.get(name, true)
             }], nbsp2]]);
             return rowContent;
         }, { '#': [['td', { style: 'font-weight: bold; vertical-align: bottom;' }, [ld('anchored-at') + nbsp3]]] }), ['td', [['label', [ld('field') + nbsp2, ['select', { name: iil('anchorfield') + (i + 1), size: '1' }, fieldInfo.map(({ fieldAliasOrName }) => {
+            const val = $p.get(iil('anchorfield') + (i + 1), true);
+            if (val === fieldAliasOrName) {
+                return ['option', { selected: true }, [fieldAliasOrName]];
+            }
             return ['option', [fieldAliasOrName]];
         })]]]]]]]]]]]]].forEach(addRowContent);
     },
@@ -2638,8 +2706,13 @@ var workDisplay = {
             type: 'submit',
             $on: {
                 click() {
-                    const url = serializeParamsAsURL(getDataForSerializingParamsAsURL(), 'result');
-                    location.href = url;
+                    const data = getDataForSerializingParamsAsURL();
+                    const thisParams = serializeParamsAsURL(data, 'saveSettings').replace(/^[^#]*#/, '');
+                    // Don't change the visible URL
+                    console.log('history thisParams', thisParams);
+                    history.replaceState(thisParams, document.title, location.href);
+                    const newURL = serializeParamsAsURL(data, 'result');
+                    location.href = newURL;
                 }
             }
         })]]]]], document.body);

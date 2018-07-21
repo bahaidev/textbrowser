@@ -1,20 +1,31 @@
+/* eslint-env browser */
 import jml from 'jamilih';
 
+import {deserialize as formDeserialize} from 'form-serialize';
 export default {
     main ({langs, languages, followParams, $p}) {
-        jml('div', {class: 'focus', id: 'languageSelectionContainer'}, [
+        jml('form', {class: 'focus', id: 'languageSelectionContainer', $on: {
+            submit (e) {
+                e.preventDefault();
+            }
+        }}, [
             ['select', {
+                name: 'lang',
                 size: langs.length,
                 $on: {
-                    change ({target: {selectedOptions}}) {
-                        $p.set('lang', selectedOptions[0].value, true);
-                        followParams();
+                    click ({target: {parentNode: {selectedOptions}}}) {
+                        followParams('#languageSelectionContainer', () => {
+                            $p.set('lang', selectedOptions[0].value, true);
+                        });
                     }
                 }
             }, langs.map(({code}) =>
                 ['option', {value: code}, [languages.getLanguageFromCode(code)]]
             )]
         ], document.body);
+        if (history.state && typeof history.state === 'object') {
+            formDeserialize(document.querySelector('#languageSelectionContainer'), history.state);
+        }
     }
 
     // Todo: Add in Go button (with 'submitgo' localization string) to

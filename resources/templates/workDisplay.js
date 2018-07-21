@@ -642,7 +642,8 @@ export default {
                                     ] : '',
                                     aliases ? ['input', {
                                         name, id, class: 'browseField',
-                                        list: 'dl-' + id, value: $p.get(name),
+                                        list: 'dl-' + id,
+                                        value: $p.get(name, true),
                                         $on: setType === 'start'
                                             ? {change (e) {
                                                 $$('input.browseField').forEach((bf) => {
@@ -659,7 +660,7 @@ export default {
                                         type: 'number',
                                         min: minimum,
                                         max: maximum,
-                                        value: $p.get(name)
+                                        value: $p.get(name, true)
                                     }],
                                     nbsp3
                                 ]]
@@ -702,14 +703,15 @@ export default {
                                         aliases
                                             ? ['input', {
                                                 name, id, class: 'browseField',
-                                                list: 'dl-' + id, value: $p.get(name)
+                                                list: 'dl-' + id,
+                                                value: $p.get(name, true)
                                             }]
                                             : ['input', {
                                                 name, id,
                                                 type: 'number',
                                                 min: minimum,
                                                 max: maximum,
-                                                value: $p.get(name)
+                                                value: $p.get(name, true)
                                             }],
                                         nbsp2
                                     ]]
@@ -725,6 +727,10 @@ export default {
                                     ld('field') + nbsp2,
                                     ['select', {name: iil('anchorfield') + (i + 1), size: '1'},
                                         fieldInfo.map(({fieldAliasOrName}) => {
+                                            const val = $p.get(iil('anchorfield') + (i + 1), true);
+                                            if (val === fieldAliasOrName) {
+                                                return ['option', {selected: true}, [fieldAliasOrName]];
+                                            }
                                             return ['option', [fieldAliasOrName]];
                                         })
                                     ]
@@ -839,11 +845,19 @@ export default {
                             type: 'submit',
                             $on: {
                                 click () {
-                                    const url = serializeParamsAsURL(
-                                        getDataForSerializingParamsAsURL(),
+                                    const data = getDataForSerializingParamsAsURL();
+                                    const thisParams = serializeParamsAsURL(
+                                        data,
+                                        'saveSettings'
+                                    ).replace(/^[^#]*#/, '');
+                                    // Don't change the visible URL
+                                    console.log('history thisParams', thisParams);
+                                    history.replaceState(thisParams, document.title, location.href);
+                                    const newURL = serializeParamsAsURL(
+                                        data,
                                         'result'
                                     );
-                                    location.href = url;
+                                    location.href = newURL;
                                 }
                             }
                         })

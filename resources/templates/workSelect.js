@@ -1,10 +1,15 @@
 /* eslint-env browser */
 import jml from 'jamilih';
+import {deserialize as formDeserialize} from 'form-serialize';
 
-export default ({groups, lf, getNextAlias, $p, followParams}) =>
-    jml(
-        'div',
-        {class: 'focus'},
+export default ({groups, lf, getNextAlias, $p, followParams}) => {
+    const form = jml(
+        'form',
+        {id: 'workSelect', class: 'focus', $on: {
+            submit (e) {
+                e.preventDefault();
+            }
+        }},
         groups.map((group, i) =>
             ['div', [
                 i > 0 ? ['br', 'br', 'br'] : '',
@@ -14,6 +19,7 @@ export default ({groups, lf, getNextAlias, $p, followParams}) =>
                 ['br'],
                 ['select', {
                     class: 'file',
+                    name: 'work' + i,
                     dataset: {
                         name: group.name.localeKey
                     },
@@ -25,8 +31,9 @@ export default ({groups, lf, getNextAlias, $p, followParams}) =>
                                 return;
                             }
                             */
-                            $p.set('work', value);
-                            followParams();
+                            followParams('#workSelect', () => {
+                                $p.set('work', value);
+                            });
                         }
                     }
                 }, [
@@ -43,3 +50,8 @@ export default ({groups, lf, getNextAlias, $p, followParams}) =>
         ),
         document.body
     );
+    if (history.state && typeof history.state === 'object') {
+        formDeserialize(document.querySelector('#workSelect'), history.state);
+    }
+    return form;
+};

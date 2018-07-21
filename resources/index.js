@@ -19,6 +19,7 @@ import IntlURLSearchParams from './utils/IntlURLSearchParams.js';
 import workSelect from './workSelect.js';
 import workDisplay from './workDisplay.js';
 import {resultsDisplayClient} from './resultsDisplay.js';
+import {serialize as formSerialize} from 'form-serialize';
 
 function s (obj) { dialogs.alert(JSON.stringify(obj)); } // eslint-disable-line no-unused-vars
 
@@ -71,6 +72,8 @@ TextBrowser.prototype.displayLanguages = async function () {
         const p = this.paramChange();
 
         // INIT/ADD EVENTS
+        // With `hashchange` more generic than `popstate`, we use it
+        //  and just check `history.state`
         window.addEventListener('hashchange', () => this.paramChange());
 
         return p;
@@ -224,9 +227,17 @@ TextBrowser.prototype.paramChange = async function () {
     document.body.replaceWith(Templates.defaultBody());
 
     // Todo: Could give option to i18nize 'lang' or omit
-    const $p = this.$p = new IntlURLSearchParams(); // Uses URL hash for params
+    const $p = this.$p = typeof history.state === 'string'
+        ? new IntlURLSearchParams({params: history.state})
+        : new IntlURLSearchParams(); // Uses URL hash for params
 
-    const followParams = () => {
+    const followParams = (formSelector, cb) => {
+        const form = document.querySelector(formSelector);
+        // Record current URL along with state
+        const url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
+        history.replaceState(formSerialize(form, {hash: true}), document.title, url);
+        // Get and set new state within URL
+        cb();
         location.hash = '#' + $p.toString();
     };
 

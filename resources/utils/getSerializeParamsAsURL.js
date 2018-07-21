@@ -41,6 +41,6 @@ export default function ({l, il, $p}) {
             break;
         }
         }
-        return window.location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
+        return location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
     };
 };

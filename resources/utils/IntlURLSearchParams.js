@@ -12,10 +12,8 @@ function _prepareParam (param, skip) {
     return this.l10n(['params', param]);
 }
 
-function IntlURLSearchParams (config) {
-    config = config || {};
-    this.l10n = config.l10n;
-    let params = config.params;
+function IntlURLSearchParams ({l10n, params} = {}) {
+    this.l10n = l10n;
     if (!params) {
         params = location.hash.slice(1); // eslint-disable-line no-undef
     }

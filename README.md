@@ -617,8 +617,6 @@ upon for monkey-patching.
 
 ## To-dos (Highest priority)
 
-1.  **Avoid setting inputs to empty string** on load (prevents using back
-    button to get at old values)
 1.  Document and add screen-casts along with one for developers showing
     JSON format, metadata, and schemas); also use with shortcuts (including
     Bahá'í library ones)
