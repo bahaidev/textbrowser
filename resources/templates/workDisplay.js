@@ -222,9 +222,9 @@ export default {
                 ['input', {
                     name: il('fontvariant'),
                     type: 'radio',
-                    value: l('normal'),
+                    value: l(['param_values', 'fontvariant', 'normal']),
                     checked: $p.get('fontvariant') !==
-                        ld(['param_values', 'fontvariant', 'smallcaps'])
+                        ld(['param_values', 'fontvariant', 'small-caps'])
                 }],
                 ld(['param_values', 'fontvariant', 'normal']), nbsp
             ]],
@@ -232,11 +232,11 @@ export default {
                 ['input', {
                     name: il('fontvariant'),
                     type: 'radio',
-                    value: l('smallcaps'),
+                    value: l(['param_values', 'fontvariant', 'small-caps']),
                     checked: $p.get('fontvariant') ===
-                        ld(['param_values', 'fontvariant', 'smallcaps'])
+                        ld(['param_values', 'fontvariant', 'small-caps'])
                 }],
-                ld(['param_values', 'fontvariant', 'smallcaps']), nbsp
+                ld(['param_values', 'fontvariant', 'small-caps']), nbsp
             ]]
         ]],
         ['br'],

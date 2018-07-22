@@ -135,7 +135,7 @@
         },
         "fontvariant": {
             "normal": "معمولی",
-            "smallcaps": "کوچک - بزرگ"
+            "small-caps": "کوچک - بزرگ"
         },
         "outputmode": {
             "table": "Table",

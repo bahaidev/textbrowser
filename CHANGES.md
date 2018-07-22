@@ -1,3 +1,8 @@
+# 0.20.1
+
+- Fix: font-variant/small-caps
+- Fix: Show interlinear even when titles not chosen to be shown
+
 # 0.20.0
 
 - npm: Update jamilih (fixing security vulnerability), indexeddbshim,

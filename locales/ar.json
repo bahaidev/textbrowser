@@ -135,7 +135,7 @@
         },
         "fontvariant": {
             "normal": "عادي",
-            "smallcaps": "small-caps"
+            "small-caps": "small-caps"
         },
         "outputmode": {
             "table": "Table",

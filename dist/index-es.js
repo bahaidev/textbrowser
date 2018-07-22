@@ -8799,14 +8799,14 @@ var workDisplay = {
     })]]], ['br'], ['div', [ld('font_variant'), nbsp3, ['label', [['input', {
         name: il('fontvariant'),
         type: 'radio',
-        value: l('normal'),
-        checked: $p.get('fontvariant') !== ld(['param_values', 'fontvariant', 'smallcaps'])
+        value: l(['param_values', 'fontvariant', 'normal']),
+        checked: $p.get('fontvariant') !== ld(['param_values', 'fontvariant', 'small-caps'])
     }], ld(['param_values', 'fontvariant', 'normal']), nbsp]], ['label', [['input', {
         name: il('fontvariant'),
         type: 'radio',
-        value: l('smallcaps'),
-        checked: $p.get('fontvariant') === ld(['param_values', 'fontvariant', 'smallcaps'])
-    }], ld(['param_values', 'fontvariant', 'smallcaps']), nbsp]]]], ['br'], ['label', [
+        value: l(['param_values', 'fontvariant', 'small-caps']),
+        checked: $p.get('fontvariant') === ld(['param_values', 'fontvariant', 'small-caps'])
+    }], ld(['param_values', 'fontvariant', 'small-caps']), nbsp]]]], ['br'], ['label', [
     // Todo: i18n and allow for normal/bold pulldown and float input?
     ld('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp2, ['input', {
         name: il('fontweight'),
@@ -9371,7 +9371,7 @@ body {
                 }
             }), checkedFieldIndexes.map((idx, j) => {
                 const interlinearColIndexes = allInterlinearColIndexes[j];
-                const showInterlins = showInterlinTitles && interlinearColIndexes;
+                const showInterlins = interlinearColIndexes;
                 const { tdVal, htmlEscaped } = getCellValue({ tr, idx });
                 const interlins = showInterlins && interlinearColIndexes.map(idx => {
                     // Need to get a new one
@@ -9386,9 +9386,9 @@ body {
                     return showInterlins && !cellIsEmpty ? Templates.resultsDisplayServerOrClient.interlinearSegment({
                         lang: fieldLangs[idx],
                         dir: fieldDirs[idx],
-                        html: Templates.resultsDisplayServerOrClient.interlinearTitle({
+                        html: (showInterlinTitles ? Templates.resultsDisplayServerOrClient.interlinearTitle({
                             l, val: localizedFieldNames[idx]
-                        }) + tdVal
+                        }) : '') + tdVal
                     }) : tdVal;
                 }).filter(cell => cell !== '');
                 return addAtts(tdElem, {
@@ -9403,9 +9403,9 @@ body {
                     },
                     innerHTML: (showInterlins && !checkEmpty(tdVal, htmlEscaped) && (showTitleOnSingleInterlinear || interlins.length) ? Templates.resultsDisplayServerOrClient.interlinearSegment({
                         lang: fieldLangs[idx],
-                        html: Templates.resultsDisplayServerOrClient.interlinearTitle({
+                        html: (showInterlinTitles ? Templates.resultsDisplayServerOrClient.interlinearTitle({
                             l, val: localizedFieldNames[idx]
-                        }) + tdVal
+                        }) : '') + tdVal
                     }) : tdVal) + (interlinearColIndexes && interlins.length ? interlinearSeparator + interlins.join(interlinearSeparator) : '')
                 });
             })));

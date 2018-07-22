@@ -286,8 +286,7 @@ body {
                 }),
                 checkedFieldIndexes.map((idx, j) => {
                     const interlinearColIndexes = allInterlinearColIndexes[j];
-                    const showInterlins = showInterlinTitles &&
-                        interlinearColIndexes;
+                    const showInterlins = interlinearColIndexes;
                     const {tdVal, htmlEscaped} = getCellValue({tr, idx});
                     const interlins = showInterlins && interlinearColIndexes.map((idx) => {
                         // Need to get a new one
@@ -303,9 +302,11 @@ body {
                             ? Templates.resultsDisplayServerOrClient.interlinearSegment({
                                 lang: fieldLangs[idx],
                                 dir: fieldDirs[idx],
-                                html: Templates.resultsDisplayServerOrClient.interlinearTitle({
-                                    l, val: localizedFieldNames[idx]
-                                }) + tdVal
+                                html: (showInterlinTitles
+                                    ? Templates.resultsDisplayServerOrClient.interlinearTitle({
+                                        l, val: localizedFieldNames[idx]
+                                    })
+                                    : '') + tdVal
                             })
                             : tdVal);
                     }).filter((cell) => cell !== '');
@@ -324,9 +325,11 @@ body {
                                 (showTitleOnSingleInterlinear || interlins.length)
                                 ? Templates.resultsDisplayServerOrClient.interlinearSegment({
                                     lang: fieldLangs[idx],
-                                    html: Templates.resultsDisplayServerOrClient.interlinearTitle({
-                                        l, val: localizedFieldNames[idx]
-                                    }) + tdVal
+                                    html: (showInterlinTitles
+                                        ? Templates.resultsDisplayServerOrClient.interlinearTitle({
+                                            l, val: localizedFieldNames[idx]
+                                        })
+                                        : '') + tdVal
                                 })
                                 : tdVal
                             ) +
