@@ -257,7 +257,6 @@ TextBrowser.prototype.paramChange = async function () {
         // User may have persistence via bookmarks, etc. but just not
         //     want commital on notification
         // Notification.permission === 'default' ||
-
         // We always expect a controller, so is probably first visit
         localStorage.getItem(this.namespace + '-refused');
 

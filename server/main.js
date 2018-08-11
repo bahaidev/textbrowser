@@ -7,10 +7,10 @@ import getIMFFallbackResults from '../resources/utils/getIMFFallbackResults.js';
 import getJSON from 'simple-get-json';
 import {setServiceWorkerDefaults} from '../resources/utils/ServiceWorker.js';
 // import setGlobalVars from 'indexeddbshim/src/node-UnicodeIdentifiers.js';
-import fetch from 'node-fetch';
 import {Languages} from '../resources/utils/Languages.js';
 // import activateCallback from '../resources/activateCallback.js';
 
+const fetch = require('node-fetch'); // Problems as `import` since 2.1.2
 const setGlobalVars = require('indexeddbshim/dist/indexeddbshim-UnicodeIdentifiers-node.js');
 
 // Todo (low): See
