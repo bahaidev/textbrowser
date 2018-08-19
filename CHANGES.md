@@ -1,3 +1,8 @@
+# 0.21.1
+
+- Fix (work display): Selection of fields (noticeable on using back
+    button to return to page (history state serialization))
+
 # 0.21.0
 
 - Enhancement: Pass on `fieldInfo` (plugins to grab from another column)

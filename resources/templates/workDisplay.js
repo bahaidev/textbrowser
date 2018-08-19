@@ -74,7 +74,7 @@ export default {
                 le('check-sequence', 'td', 'title', {}, [
                     ['select', {name: iil('field') + idx, id: fieldIndex, size: '1'},
                         fieldInfo.map(({field, fieldAliasOrName}, j) => {
-                            const matchedFieldParam = fieldParam && fieldParam === field;
+                            const matchedFieldParam = fieldParam && fieldParam === fieldAliasOrName;
                             return ['option', {
                                 dataset: {name: field},
                                 value: fieldAliasOrName,
