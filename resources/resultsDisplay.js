@@ -719,7 +719,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             tableData.forEach((tr, i) => {
                 const applicableFieldText = tr[applicableFieldIdx];
                 tr[j] = plugin.getCellData({
-                    tr, tableData, i, j, applicableField,
+                    tr, tableData, i, j, applicableField, fieldInfo,
                     applicableFieldIdx, applicableFieldText, fieldLang,
                     meta, metaApplicableField, $p, thisObj: this
                 });

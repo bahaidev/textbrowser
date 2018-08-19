@@ -9369,7 +9369,7 @@ body {
         const [checkedFields, checkedFieldIndexes, allInterlinearColIndexes] = checkedAndInterlinearFieldInfo;
 
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
-        const tableWrap = children => tableWithFixedHeaderAndFooter ? ['div', { class: 'anchor-table-header zupa' }, [['div', { class: 'anchor-table-body' }, children]]] : ['div', children];
+        const tableWrap = children => tableWithFixedHeaderAndFooter ? ['div', { class: 'table-responsive anchor-table-header zupa' }, [['div', { class: 'table-responsive anchor-table-body' }, children]]] : ['div', { class: 'table-responsive' }, children];
 
         const addChildren = (el, children) => {
             el = JSON.parse(JSON.stringify(el));
@@ -10709,7 +10709,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             tableData.forEach((tr, i) => {
                 const applicableFieldText = tr[applicableFieldIdx];
                 tr[j] = plugin.getCellData({
-                    tr, tableData, i, j, applicableField,
+                    tr, tableData, i, j, applicableField, fieldInfo,
                     applicableFieldIdx, applicableFieldText, fieldLang,
                     meta, metaApplicableField, $p, thisObj: this
                 });

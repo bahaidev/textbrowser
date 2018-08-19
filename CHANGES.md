@@ -1,3 +1,9 @@
+# 0.21.0
+
+- Enhancement: Pass on `fieldInfo` (plugins to grab from another column)
+- Docs: Update user-sample.json
+- Refactoring: Wrap table in `table-responsive` (not actually needed now, but using in bahaiwritings)
+
 # 0.20.1
 
 - Fix: font-variant/small-caps

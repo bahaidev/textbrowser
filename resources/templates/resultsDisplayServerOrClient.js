@@ -232,10 +232,10 @@ body {
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
         const tableWrap = (children) =>
             tableWithFixedHeaderAndFooter
-                ? ['div', {class: 'anchor-table-header zupa'}, [
-                    ['div', {class: 'anchor-table-body'}, children]
+                ? ['div', {class: 'table-responsive anchor-table-header zupa'}, [
+                    ['div', {class: 'table-responsive anchor-table-body'}, children]
                 ]]
-                : ['div', children];
+                : ['div', {class: 'table-responsive'}, children];
 
         const addChildren = (el, children) => {
             el = JSON.parse(JSON.stringify(el));
