@@ -803,6 +803,10 @@ upon for monkey-patching.
     <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
     and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
 
+1.  Find way to avoid need for `!important` in column CSS
+1.  Offer more border styling tuning controls (including right/left/top/bottom,
+    color, etc.); then offer this along with other styles if we replace CSS
+    input box with pop-up styling form (like Advanced Formatting, but for columns)
 1.  Refactoring: Try to use `deserialize` of `form-serialize` fork for initial population
     or hash change?
 1.  We should try to allow `onByDefault` and `placement` for non-plugin
