@@ -1,3 +1,7 @@
+# 0.21.4
+
+- Security fix: Avoid exposing `.git` directory in server
+
 # 0.21.3
 
 - Fix: Save checkbox enabled state

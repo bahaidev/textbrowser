@@ -8095,6 +8095,9 @@ const srv = http.createServer(async (req, res) => {
     const { pathname, query } = url.parse(req.url);
     if (pathname !== '/textbrowser' || !query) {
         req.addListener('end', function () {
+            if (pathname.includes('.git')) {
+                req.url = '/index.html';
+            }
             fileServer.serve(req, res);
         }).resume();
         /*
