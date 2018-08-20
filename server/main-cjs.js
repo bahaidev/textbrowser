@@ -8035,6 +8035,7 @@ const domain = userParams.domain || `localhost`;
 const basePath = `http://${domain}${port ? ':' + port : ''}/`;
 
 const userParamsWithDefaults = _extends({}, userParams, setServiceWorkerDefaults(_extends({}, userParams), {
+    namespace: 'bahaiwritings',
     files: userParams.files || `${basePath}files.json`, // `files` must be absolute path for node-fetch
     languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
     serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON)}`

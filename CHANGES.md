@@ -1,3 +1,7 @@
+# 0.21.2
+
+- Fix: Create server-side namespace
+
 # 0.21.1
 
 - Fix (work display): Selection of fields (noticeable on using back
