@@ -4,7 +4,7 @@ import {serialize as formSerialize} from 'form-serialize';
 export default function ({l, il, $p}) {
     return function serializeParamsAsURL ({form, random, checkboxes}, type) {
         const paramsCopy = new URLSearchParams($p.params);
-        const formParamsHash = formSerialize(form, {hash: true});
+        const formParamsHash = formSerialize(form, {hash: true, empty: true});
 
         Object.keys(formParamsHash).forEach((key) => {
             paramsCopy.set(key, formParamsHash[key]);

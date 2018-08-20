@@ -235,7 +235,7 @@ TextBrowser.prototype.paramChange = async function () {
         const form = document.querySelector(formSelector);
         // Record current URL along with state
         const url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
-        history.replaceState(formSerialize(form, {hash: true}), document.title, url);
+        history.replaceState(formSerialize(form, {hash: true, empty: true}), document.title, url);
         // Get and set new state within URL
         cb();
         location.hash = '#' + $p.toString();

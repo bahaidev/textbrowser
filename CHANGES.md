@@ -1,3 +1,9 @@
+# 0.22.0
+
+- yarn: Remove `yarn.lock`
+- Fix: Serialize empty fields (ensuring state preserved to overwrite
+    previous non-empty)
+
 # 0.21.4
 
 - Security fix: Avoid exposing `.git` directory in server
