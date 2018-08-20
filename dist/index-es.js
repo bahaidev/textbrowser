@@ -9687,7 +9687,7 @@ var workSelect = (async function workSelect({
 function getSerializeParamsAsURL ({ l, il, $p }) {
     return function serializeParamsAsURL({ form, random, checkboxes }, type) {
         const paramsCopy = new URLSearchParams($p.params);
-        const formParamsHash = serialize(form, { hash: true });
+        const formParamsHash = serialize(form, { hash: true, empty: true });
 
         Object.keys(formParamsHash).forEach(key => {
             paramsCopy.set(key, formParamsHash[key]);
@@ -10960,7 +10960,7 @@ TextBrowser.prototype.paramChange = async function () {
         const form = document.querySelector(formSelector);
         // Record current URL along with state
         const url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
-        history.replaceState(serialize(form, { hash: true }), document.title, url);
+        history.replaceState(serialize(form, { hash: true, empty: true }), document.title, url);
         // Get and set new state within URL
         cb();
         location.hash = '#' + $p.toString();

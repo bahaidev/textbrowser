@@ -1,3 +1,7 @@
+# 0.22.1
+
+- Fix: Update `dist` files (with applying empty field changes)
+
 # 0.22.0
 
 - yarn: Remove `yarn.lock`
