@@ -1,3 +1,7 @@
+# 0.21.3
+
+- Fix: Save checkbox enabled state
+
 # 0.21.2
 
 - Fix: Create server-side namespace

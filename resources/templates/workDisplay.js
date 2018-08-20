@@ -67,7 +67,7 @@ export default {
                         id: checkedIndex,
                         name: iil('checked') + idx,
                         checked: $p.get(checkedIndex) !== l('no') &&
-                            fieldInfoItem.onByDefault !== false,
+                            ($p.has(checkedIndex) || fieldInfoItem.onByDefault !== false),
                         type: 'checkbox'
                     })
                 ]),

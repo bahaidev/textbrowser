@@ -8756,7 +8756,7 @@ Please refresh the page if you wish to reattempt.
 	            class: 'fieldSelector',
 	            id: checkedIndex,
 	            name: iil('checked') + idx,
-	            checked: $p.get(checkedIndex) !== l('no') && fieldInfoItem.onByDefault !== false,
+	            checked: $p.get(checkedIndex) !== l('no') && ($p.has(checkedIndex) || fieldInfoItem.onByDefault !== false),
 	            type: 'checkbox'
 	        })]), le('check-sequence', 'td', 'title', {}, [['select', { name: iil('field') + idx, id: fieldIndex, size: '1' }, fieldInfo.map(({ field, fieldAliasOrName }, j) => {
 	            const matchedFieldParam = fieldParam && fieldParam === fieldAliasOrName;
