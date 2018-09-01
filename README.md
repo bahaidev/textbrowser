@@ -652,6 +652,8 @@ upon for monkey-patching.
     `resultsDisplayServerOrClient.js` with to-do by `parseInt` (and
     also see `String()` conversions)
 1.  Get file names to be namespaced to group name to avoid name clashes
+1. **Text box parsing** - See search below for this higher priority
+    component of search (facilitating browser keywords)
 1.  **Locales**
     1.  Check `localizeParamNames` (preference)?
     1.  Test all locales and works and combos
@@ -660,6 +662,7 @@ upon for monkey-patching.
     spec'd in metadata schema and used in files.
     1. Also have `&checked1=Yes` omitted when generating results display
         (since now defaulting to this)
+1.  Allow **all text** to be shown (whether anchored or not)
 1.  Indicate min/max as **placeholder text** (`Max: 100`?)
 1.  **Rename "Field"** to "Column anchor"
 1.  **Move "Go"** to right (or immediate bottom) of paragraph selections
@@ -859,7 +862,7 @@ upon for monkey-patching.
         parts of a sentence, including one spanning multiple rows/verses);
         consider range for highlighting if verse range + added context range
         not enough
-    1.  Text box parsing? (for browsing ranges too)
+    1.  **Text box parsing?** (for browsing ranges too)
         1.  Ensure browsing can be done through URL params, especially
             to use in conjunction with bookmark keywords (in which case
             it particularly ought to be available through a single param
