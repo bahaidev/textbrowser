@@ -603,7 +603,7 @@ Worker config should be placed in a JSON file. The arguments are:
 - `files` - See above.
 - `languages` - See above.
 - `basePath` - Base path to `files.json` fetches.
--   `userStaticFiles` - Array of files additional to those of
+- `userStaticFiles` - Array of files additional to those of
     *TextBrowser* which you will need offline. Defaults to the minimum
     recommended files:
     `['/',  'index.html', 'files.json', 'site.json', 'resources/user.js', 'resources/user.css']`
@@ -619,7 +619,7 @@ upon for monkey-patching.
 
 1.  Document and add screen-casts along with one for developers showing
     JSON format, metadata, and schemas); also use with shortcuts (including
-    Bahá'í library ones)
+    Bahá'í Library Online ones)
 1.  **Move plug-in set-up** to run so setting indexedDB within
     `activateCallback.js`
 1.  Have **IndexedDB handle all pages** language select, work select, and
@@ -862,7 +862,7 @@ upon for monkey-patching.
         parts of a sentence, including one spanning multiple rows/verses);
         consider range for highlighting if verse range + added context range
         not enough
-    1.  **Text box parsing?** (for browsing ranges too)
+    1.  **Text box parsing?** (in code as `rawSearch`) (for browsing ranges too)
         1.  Ensure browsing can be done through URL params, especially
             to use in conjunction with bookmark keywords (in which case
             it particularly ought to be available through a single param
