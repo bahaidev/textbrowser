@@ -2225,15 +2225,15 @@ const fonts = ['Helvetica, sans-serif', 'Verdana, sans-serif', 'Gill Sans, sans-
 
 /* eslint-env browser */
 
-const nbsp2 = nbsp$1.repeat(2);
-const nbsp3 = nbsp$1.repeat(3);
+const nbsp2 = nbsp.repeat(2);
+const nbsp3 = nbsp.repeat(3);
 
 const getDataForSerializingParamsAsURL = () => ({
-    form: $$1('form#browse'),
+    form: $('form#browse'),
     // Todo: We don't need any default once random
     //    functionality is completed
-    random: $$1('#rand') || {},
-    checkboxes: $$$1('input[type=checkbox]')
+    random: $('#rand') || {},
+    checkboxes: $$('input[type=checkbox]')
 });
 
 var workDisplay = {
@@ -2295,7 +2295,7 @@ var workDisplay = {
         type: 'button',
         $on: {
             click() {
-                $$$1('.fieldSelector').forEach(checkbox => {
+                $$('.fieldSelector').forEach(checkbox => {
                     checkbox.checked = true;
                 });
             }
@@ -2304,7 +2304,7 @@ var workDisplay = {
         type: 'button',
         $on: {
             click() {
-                $$$1('.fieldSelector').forEach(checkbox => {
+                $$('.fieldSelector').forEach(checkbox => {
                     checkbox.checked = false;
                 });
             }
@@ -2317,8 +2317,8 @@ var workDisplay = {
                     const idx = i + 1;
                     // The following is redundant with 'field' but may need to
                     //     retrieve later out of order?
-                    const fld = $$1('#field' + idx).selectedOptions[0].dataset.name;
-                    $$1('#checked' + idx).checked = fieldMatchesLocale(fld);
+                    const fld = $('#field' + idx).selectedOptions[0].dataset.name;
+                    $('#checked' + idx).checked = fieldMatchesLocale(fld);
                 });
             }
         }
@@ -2331,7 +2331,7 @@ var workDisplay = {
             atts.selected = 'selected';
         }
         return lo(['param_values', 'colors', color], atts);
-    })]]], ['label', [nbsp$1, ld('or_entercolor'), nbsp2, ['input', {
+    })]]], ['label', [nbsp, ld('or_entercolor'), nbsp2, ['input', {
         name: il('color'),
         type: 'text',
         value: $p.get('color') || '#',
@@ -2342,7 +2342,7 @@ var workDisplay = {
             atts.selected = 'selected';
         }
         return lo(['param_values', 'colors', color], atts);
-    })]]], ['label', [nbsp$1, ld('or_entercolor'), nbsp2, ['input', {
+    })]]], ['label', [nbsp, ld('or_entercolor'), nbsp2, ['input', {
         name: il('bgcolor'),
         type: 'text',
         value: $p.get('bgcolor') || '#',
@@ -2366,12 +2366,12 @@ var workDisplay = {
         type: 'radio',
         value: l(['param_values', 'fontvariant', 'normal']),
         checked: $p.get('fontvariant') !== ld(['param_values', 'fontvariant', 'small-caps'])
-    }], ld(['param_values', 'fontvariant', 'normal']), nbsp$1]], ['label', [['input', {
+    }], ld(['param_values', 'fontvariant', 'normal']), nbsp]], ['label', [['input', {
         name: il('fontvariant'),
         type: 'radio',
         value: l(['param_values', 'fontvariant', 'small-caps']),
         checked: $p.get('fontvariant') === ld(['param_values', 'fontvariant', 'small-caps'])
-    }], ld(['param_values', 'fontvariant', 'small-caps']), nbsp$1]]]], ['br'], ['label', [
+    }], ld(['param_values', 'fontvariant', 'small-caps']), nbsp]]]], ['br'], ['label', [
     // Todo: i18n and allow for normal/bold pulldown and float input?
     ld('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp2, ['input', {
         name: il('fontweight'),
@@ -2388,7 +2388,7 @@ var workDisplay = {
     // Todo: remove hard-coded direction if i18nizing
     ['label', {
         dir: 'ltr'
-    }, [ld('font_stretch'), nbsp$1, ['select', { name: il('fontstretch') }, ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(stretch => {
+    }, [ld('font_stretch'), nbsp, ['select', { name: il('fontstretch') }, ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(stretch => {
         const atts = { value: ld(['param_values', 'font-stretch', stretch]) };
         if ($p.get('fontstretch') === stretch || !$p.has('fontstretch') && stretch === 'normal') {
             atts.selected = 'selected';
@@ -2521,7 +2521,7 @@ var workDisplay = {
             type: 'checkbox',
             value: l('yes'),
             checked: $p.get('rand') === l('yes')
-        }]]], nbsp3, ['label', [ld('verses-context'), nbsp$1, ['input', {
+        }]]], nbsp3, ['label', [ld('verses-context'), nbsp, ['input', {
             name: il('context'),
             type: 'number',
             min: 1,
@@ -2532,7 +2532,7 @@ var workDisplay = {
             $on: {
                 click() {
                     const url = serializeParamsAsURL(getDataForSerializingParamsAsURL(), 'randomResult');
-                    $$1('#randomURL').value = url;
+                    $('#randomURL').value = url;
                 }
             }
         }), ['input', { id: 'randomURL', type: 'text' }]]]]].forEach(addRowContent);
@@ -2553,7 +2553,7 @@ var workDisplay = {
         type: 'checkbox',
         checked: hideFormattingSection,
         $on: { change({ target: { checked } }) {
-                $$1('#advancedformatting').style.display = checked ? 'none' : 'block';
+                $('#advancedformatting').style.display = checked ? 'none' : 'block';
                 localStorage.setItem(namespace + '-hideFormattingSection', checked);
             } }
     }]]]]], ['div', [['label', { for: 'prefLangs' }, [l('Preferred language(s)')]], ['br'], ['select', {
@@ -2597,7 +2597,7 @@ var workDisplay = {
                     list: 'dl-' + id,
                     value: $p.get(name, true),
                     $on: setType === 'start' ? { change(e) {
-                            $$$1('input.browseField').forEach(bf => {
+                            $$('input.browseField').forEach(bf => {
                                 if (bf.id.includes(i + 1 + '-' + (j + 1))) {
                                     bf.value = e.target.value;
                                 }
@@ -2656,7 +2656,7 @@ var workDisplay = {
         // Returns element with localized or fallback attribute value (as Jamilih);
         //   also adds direction
         jml('div', { class: 'focus' }, [['div', { style: 'float: left;' }, [['button', { $on: { click() {
-                    const prefs = $$1('#preferences');
+                    const prefs = $('#preferences');
                     prefs.hidden = !prefs.hidden;
                 } } }, [l('Preferences')]], Templates.workDisplay.getPreferences({
             langs, imfl, l, localizeParamNames, namespace, hideFormattingSection
@@ -2673,7 +2673,7 @@ var workDisplay = {
             $on: {
                 click() {
                     const url = serializeParamsAsURL(getDataForSerializingParamsAsURL(), 'saveSettings');
-                    $$1('#settings-URL').value = url;
+                    $('#settings-URL').value = url;
                 }
             }
         }), ['input', { id: 'settings-URL' }]]], Templates.workDisplay.advancedFormatting({
@@ -3106,7 +3106,7 @@ class Dialog {
                     }
                 }
             }
-        }, [this.localeStrings.submit]), nbsp$1.repeat(2));
+        }, [this.localeStrings.submit]), nbsp.repeat(2));
         return dialog;
     }
     makeCancelDialog(_ref2) {
@@ -3164,7 +3164,7 @@ class Dialog {
                 cancel() {
                     reject(new Error('cancelled'));
                 },
-                children: [['label', [msg, nbsp$1.repeat(3), ['input']]]]
+                children: [['label', [msg, nbsp.repeat(3), ['input']]]]
             }));
         });
     }
@@ -3175,7 +3175,7 @@ class Dialog {
             const dialog = jml('dialog', [msg, ['br'], ['br'], ['div', { class: submitClass }, [['button', { $on: { click() {
                         dialog.close();
                         resolve();
-                    } } }, [this.localeStrings.ok]], nbsp$1.repeat(2), ['button', { $on: { click() {
+                    } } }, [this.localeStrings.ok]], nbsp.repeat(2), ['button', { $on: { click() {
                         dialog.close();
                         reject(new Error('cancelled'));
                     } } }, [this.localeStrings.cancel]]]]], document.body);
@@ -3188,11 +3188,11 @@ const dialogs = new Dialog();
 
 var resultsDisplayClient = {
     anchorRowCol({ anchorRowCol }) {
-        return $$1('#' + anchorRowCol);
+        return $('#' + anchorRowCol);
     },
     anchors({ escapedRow, escapedCol }) {
         const sel = 'tr[data-row="' + escapedRow + '"]' + (escapedCol ? '> td[data-col="' + escapedCol + '"]' : '');
-        return $$1(sel);
+        return $(sel);
     },
     main(...args) {
         let html;
@@ -3216,45 +3216,45 @@ const Templates = {
     resultsDisplayServerOrClient,
     resultsDisplayClient,
     defaultBody() {
-        $$1('html').style.height = '100%'; // Todo: Set in CSS
+        $('html').style.height = '100%'; // Todo: Set in CSS
         return jml('body', { style: 'height: 100%;' });
     }
 };
 Templates.permissions = {
     versionChange() {
-        $$1('#versionChange').showModal();
+        $('#versionChange').showModal();
     },
     addLogEntry({ text }) {
-        const installationDialog = $$1('#installationLogContainer');
+        const installationDialog = $('#installationLogContainer');
         try {
             installationDialog.showModal();
-            const container = $$1('#dialogContainer');
+            const container = $('#dialogContainer');
             container.hidden = false;
         } catch (err) {
             // May already be open
         }
-        $$1('#installationLog').append(text + '\n');
+        $('#installationLog').append(text + '\n');
     },
     exitDialogs() {
-        const container = $$1('#dialogContainer');
+        const container = $('#dialogContainer');
         if (container) {
             container.hidden = true;
         }
     },
     dbError({ type, escapedErrorMessage }) {
         if (type) {
-            jml('span', [type, ' ', escapedErrorMessage], $$1('#dbError'));
+            jml('span', [type, ' ', escapedErrorMessage], $('#dbError'));
         }
-        $$1('#dbError').showModal();
+        $('#dbError').showModal();
     },
     errorRegistering(escapedErrorMessage) {
         if (escapedErrorMessage) {
-            jml('span', [escapedErrorMessage], $$1('#errorRegistering'));
+            jml('span', [escapedErrorMessage], $('#errorRegistering'));
         }
-        $$1('#errorRegistering').showModal();
+        $('#errorRegistering').showModal();
     },
     browserNotGrantingPersistence() {
-        $$1('#browserNotGrantingPersistence').showModal();
+        $('#browserNotGrantingPersistence').showModal();
     },
     main({ l, ok, refuse, close, closeBrowserNotGranting }) {
         const installationDialog = jml('dialog', {

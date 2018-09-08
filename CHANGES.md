@@ -1,6 +1,10 @@
+# 0.23.2
+
+- Fix: Update server code
+
 # 0.23.1
 
-- Fix: Updated server code
+- Fix: Update server code
 
 # 0.23.0
 
