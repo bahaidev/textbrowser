@@ -1,3 +1,10 @@
+# 0.24.0
+
+- Enhancement: Allow more flexibility within start/end params in
+    undocumented `startEnd` feature--can still have the full
+    text + number in parenthesis or also just number of just text;
+    makes `startEnd` more appealing as target for browser keywords
+
 # 0.23.2
 
 - Fix: Update server code
