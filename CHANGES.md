@@ -1,3 +1,7 @@
+# 0.23.1
+
+- Fix: Updated server code
+
 # 0.23.0
 
 - Fix: Get server working again by adding `log` function

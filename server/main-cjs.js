@@ -813,6 +813,7 @@ const NULLABLES = ['dir', // HTMLElement
 ];
 
 const $ = sel => doc.querySelector(sel);
+const $$ = sel => [...doc.querySelectorAll(sel)];
 
 /**
 * Retrieve the (lower-cased) HTML name of a node
@@ -2091,6 +2092,8 @@ jml.getXMLSerializer = () => {
     return XmlSerializer;
 };
 
+const nbsp = '\u00a0'; // Very commonly needed in templates
+
 /* eslint-env node */
 
 // import {JSDOM} from 'jsdom';
@@ -2219,15 +2222,6 @@ var workSelect = (({ groups, lf, getNextAlias, $p, followParams }) => {
 
 const colors = ['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'];
 const fonts = ['Helvetica, sans-serif', 'Verdana, sans-serif', 'Gill Sans, sans-serif', 'Avantgarde, sans-serif', 'Helvetica Narrow, sans-serif', 'sans-serif', 'Times, serif', 'Times New Roman, serif', 'Palatino, serif', 'Bookman, serif', 'New Century Schoolbook, serif', 'serif', 'Andale Mono, monospace', 'Courier New, monospace', 'Courier, monospace', 'Lucidatypewriter, monospace', 'Fixed, monospace', 'monospace', 'Comic Sans, Comic Sans MS, cursive', 'Zapf Chancery, cursive', 'Coronetscript, cursive', 'Florence, cursive', 'Parkavenue, cursive', 'cursive', 'Impact, fantasy', 'Arnoldboecklin, fantasy', 'Oldtown, fantasy', 'Blippo, fantasy', 'Brushstroke, fantasy', 'fantasy'];
-
-const nbsp$1 = '\u00a0';
-const $$1 = sel => document.querySelector(sel);
-const $$$1 = sel => [...document.querySelectorAll(sel)];
-
-const $e = (el, descendentsSel) => {
-    el = typeof el === 'string' ? $$1(el) : el;
-    return el.querySelector(descendentsSel);
-};
 
 /* eslint-env browser */
 
@@ -3006,6 +3000,13 @@ body {
             return addChildren(thElem, [cf, tableWithFixedHeaderAndFooter ? ['div', { class: 'zupa1' }, [['div', { class: 'th-inner' }, [['span', [cf]]]]]] : '']);
         }))]) : '', addChildren(tbodyElem, outArr)])])]];
     }
+};
+
+const $$1 = sel => document.querySelector(sel);
+
+const $e = (el, descendentsSel) => {
+    el = typeof el === 'string' ? $$1(el) : el;
+    return el.querySelector(descendentsSel);
 };
 
 var _extends = Object.assign || function (target) {
