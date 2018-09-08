@@ -620,6 +620,13 @@ upon for monkey-patching.
 1.  Document and add screen-casts along with one for developers showing
     JSON format, metadata, and schemas); also use with shortcuts (including
     Bahá'í Library Online ones)
+1.  **Text box parsing**
+    1. Fix limitation that 0's don't change to 1's if
+        not present as a minimum (e.g., if no 0 for Chapter
+        number, then won't show anything).
+    1. Avoid need for separate `startEnd`; e.g., parse Rodwell or Sale?
+    1. Ideally work across browse field set and even book
+    1. Support anchor portion (e.g., `1:2:3-1:2:5#1:2:4`)
 1.  **Document server** including need for a `nodeActivate` call
 1.  **Move plug-in set-up** to run so setting indexedDB within
     `activateCallback.js`
@@ -653,8 +660,6 @@ upon for monkey-patching.
     `resultsDisplayServerOrClient.js` with to-do by `parseInt` (and
     also see `String()` conversions)
 1.  Get file names to be namespaced to group name to avoid name clashes
-1. **Text box parsing** - See search below for this higher priority
-    component of search (facilitating browser keywords)
 1.  **Locales**
     1.  Check `localizeParamNames` (preference)?
     1.  Test all locales and works and combos
@@ -863,17 +868,6 @@ upon for monkey-patching.
         parts of a sentence, including one spanning multiple rows/verses);
         consider range for highlighting if verse range + added context range
         not enough
-    1.  **Text box parsing?** (in code as `rawSearch`) (for browsing ranges too)
-        1.  Ensure browsing can be done through URL params, especially
-            to use in conjunction with bookmark keywords (in which case
-            it particularly ought to be available through a single param
-            without need for system allowing expansion)
-            1. The latter has already been implemented but without a UI,
-                and with the limitations that 0's don't change to 1's if
-                not present as a minimum (e.g., if no 0 for Chapter
-                number, then won't show anything), currently requiring
-                `${fieldAlias}(${fieldNumber})`, e.g., for the Bible,
-                `Joel (29)`, not just `Joel` OR `29`.
     1.  Ability to run XPath/`querySelector`-like queries against
         `format: "html"` fields relative to specific cells (or against
         original source HTML or XML document); also highlighting as
