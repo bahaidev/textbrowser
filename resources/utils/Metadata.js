@@ -64,6 +64,7 @@ export const getFieldNameAndValueAliases = function ({
     const fieldSchema = schemaItems[fieldSchemaIndex];
 
     const ret = {
+        // field,
         fieldName: getFieldAliasOrName(field)
     };
 
@@ -78,6 +79,7 @@ export const getFieldNameAndValueAliases = function ({
                 true
             );
         }
+        ret.rawFieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap));
         ret.aliases = [];
         // Todo: We could use `prefer_alias` but algorithm below may cover
         //    needed cases

@@ -5,8 +5,7 @@ import builtins from 'rollup-plugin-node-builtins';
 // import nodeGlobals from 'rollup-plugin-node-globals';
 import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-re';
-import {uglify} from 'rollup-plugin-uglify';
-import {minify} from 'uglify-es';
+import {terser} from 'rollup-plugin-terser';
 import postProcess from 'rollup-plugin-postprocess';
 
 const importerReplace = {
@@ -63,7 +62,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
         ]
     };
     if (minifying) {
-        nonMinified.plugins.push(uglify(null, minify));
+        nonMinified.plugins.push(terser());
     }
     return nonMinified;
 };

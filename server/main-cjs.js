@@ -23,10 +23,17 @@ function createCommonjsModule(fn, module) {
     // There is a bug in safari 10.1 (and earlier) that incorrectly decodes `%2B` as an empty space and not a plus.
     decodesPlusesCorrectly = nativeURLSearchParams && new nativeURLSearchParams('s=%2B').get('s') === '+',
         __URLSearchParams__ = "__URLSearchParams__",
+
+    // Fix bug in Edge which cannot encode ' &' correctly
+    encodesAmpersandsCorrectly = nativeURLSearchParams ? function () {
+        var ampersandTest = new nativeURLSearchParams();
+        ampersandTest.append('s', ' &');
+        return ampersandTest.toString() === 's=+%26';
+    }() : true,
         prototype = URLSearchParamsPolyfill.prototype,
         iterable = !!(self.Symbol && self.Symbol.iterator);
 
-    if (nativeURLSearchParams && isSupportObjectConstructor && decodesPlusesCorrectly) {
+    if (nativeURLSearchParams && isSupportObjectConstructor && decodesPlusesCorrectly && encodesAmpersandsCorrectly) {
         return;
     }
 
@@ -771,6 +778,7 @@ let doc = typeof document !== 'undefined' && document;
 let XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
 
 // STATIC PROPERTIES
+
 const possibleOptions = ['$plugins', '$map' // Add any other options here
 ];
 
@@ -803,6 +811,8 @@ const NULLABLES = ['dir', // HTMLElement
 'lang', // HTMLElement
 'max', 'min', 'title' // HTMLElement
 ];
+
+const $ = sel => doc.querySelector(sel);
 
 /**
 * Retrieve the (lower-cased) HTML name of a node
@@ -1107,7 +1117,7 @@ const jml = function jml(...args) {
                                     template = jml('template', template, doc.body);
                                 }
                             } else if (typeof template === 'string') {
-                                template = doc.querySelector(template);
+                                template = $(template);
                             }
                             jml(template.content.cloneNode(true), shadowRoot);
                         } else {
@@ -1995,29 +2005,29 @@ jml.toXMLDOMString = function (...args) {
 
 class JamilihMap extends Map {
     get(elem) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.get.call(this, elem);
     }
     set(elem, value) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.set.call(this, elem, value);
     }
     invoke(elem, methodName, ...args) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return this.get(elem)[methodName](elem, ...args);
     }
 }
 class JamilihWeakMap extends WeakMap {
     get(elem) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.get(elem);
     }
     set(elem, value) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.set(elem, value);
     }
     invoke(elem, methodName, ...args) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return this.get(elem)[methodName](elem, ...args);
     }
 }
@@ -2038,12 +2048,12 @@ jml.strong = function (obj, ...args) {
 };
 
 jml.symbol = jml.sym = jml.for = function (elem, sym) {
-    elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     return elem[typeof sym === 'symbol' ? sym : Symbol.for(sym)];
 };
 
 jml.command = function (elem, symOrMap, methodName, ...args) {
-    elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     let func;
     if (['symbol', 'string'].includes(typeof symOrMap)) {
         func = jml.sym(elem, symOrMap);
@@ -2210,26 +2220,26 @@ var workSelect = (({ groups, lf, getNextAlias, $p, followParams }) => {
 const colors = ['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'];
 const fonts = ['Helvetica, sans-serif', 'Verdana, sans-serif', 'Gill Sans, sans-serif', 'Avantgarde, sans-serif', 'Helvetica Narrow, sans-serif', 'sans-serif', 'Times, serif', 'Times New Roman, serif', 'Palatino, serif', 'Bookman, serif', 'New Century Schoolbook, serif', 'serif', 'Andale Mono, monospace', 'Courier New, monospace', 'Courier, monospace', 'Lucidatypewriter, monospace', 'Fixed, monospace', 'monospace', 'Comic Sans, Comic Sans MS, cursive', 'Zapf Chancery, cursive', 'Coronetscript, cursive', 'Florence, cursive', 'Parkavenue, cursive', 'cursive', 'Impact, fantasy', 'Arnoldboecklin, fantasy', 'Oldtown, fantasy', 'Blippo, fantasy', 'Brushstroke, fantasy', 'fantasy'];
 
-const nbsp = '\u00a0';
-const $ = sel => document.querySelector(sel);
-const $$ = sel => [...document.querySelectorAll(sel)];
+const nbsp$1 = '\u00a0';
+const $$1 = sel => document.querySelector(sel);
+const $$$1 = sel => [...document.querySelectorAll(sel)];
 
 const $e = (el, descendentsSel) => {
-    el = typeof el === 'string' ? $(el) : el;
+    el = typeof el === 'string' ? $$1(el) : el;
     return el.querySelector(descendentsSel);
 };
 
 /* eslint-env browser */
 
-const nbsp2 = nbsp.repeat(2);
-const nbsp3 = nbsp.repeat(3);
+const nbsp2 = nbsp$1.repeat(2);
+const nbsp3 = nbsp$1.repeat(3);
 
 const getDataForSerializingParamsAsURL = () => ({
-    form: $('form#browse'),
+    form: $$1('form#browse'),
     // Todo: We don't need any default once random
     //    functionality is completed
-    random: $('#rand') || {},
-    checkboxes: $$('input[type=checkbox]')
+    random: $$1('#rand') || {},
+    checkboxes: $$$1('input[type=checkbox]')
 });
 
 var workDisplay = {
@@ -2291,7 +2301,7 @@ var workDisplay = {
         type: 'button',
         $on: {
             click() {
-                $$('.fieldSelector').forEach(checkbox => {
+                $$$1('.fieldSelector').forEach(checkbox => {
                     checkbox.checked = true;
                 });
             }
@@ -2300,7 +2310,7 @@ var workDisplay = {
         type: 'button',
         $on: {
             click() {
-                $$('.fieldSelector').forEach(checkbox => {
+                $$$1('.fieldSelector').forEach(checkbox => {
                     checkbox.checked = false;
                 });
             }
@@ -2313,8 +2323,8 @@ var workDisplay = {
                     const idx = i + 1;
                     // The following is redundant with 'field' but may need to
                     //     retrieve later out of order?
-                    const fld = $('#field' + idx).selectedOptions[0].dataset.name;
-                    $('#checked' + idx).checked = fieldMatchesLocale(fld);
+                    const fld = $$1('#field' + idx).selectedOptions[0].dataset.name;
+                    $$1('#checked' + idx).checked = fieldMatchesLocale(fld);
                 });
             }
         }
@@ -2327,7 +2337,7 @@ var workDisplay = {
             atts.selected = 'selected';
         }
         return lo(['param_values', 'colors', color], atts);
-    })]]], ['label', [nbsp, ld('or_entercolor'), nbsp2, ['input', {
+    })]]], ['label', [nbsp$1, ld('or_entercolor'), nbsp2, ['input', {
         name: il('color'),
         type: 'text',
         value: $p.get('color') || '#',
@@ -2338,7 +2348,7 @@ var workDisplay = {
             atts.selected = 'selected';
         }
         return lo(['param_values', 'colors', color], atts);
-    })]]], ['label', [nbsp, ld('or_entercolor'), nbsp2, ['input', {
+    })]]], ['label', [nbsp$1, ld('or_entercolor'), nbsp2, ['input', {
         name: il('bgcolor'),
         type: 'text',
         value: $p.get('bgcolor') || '#',
@@ -2362,12 +2372,12 @@ var workDisplay = {
         type: 'radio',
         value: l(['param_values', 'fontvariant', 'normal']),
         checked: $p.get('fontvariant') !== ld(['param_values', 'fontvariant', 'small-caps'])
-    }], ld(['param_values', 'fontvariant', 'normal']), nbsp]], ['label', [['input', {
+    }], ld(['param_values', 'fontvariant', 'normal']), nbsp$1]], ['label', [['input', {
         name: il('fontvariant'),
         type: 'radio',
         value: l(['param_values', 'fontvariant', 'small-caps']),
         checked: $p.get('fontvariant') === ld(['param_values', 'fontvariant', 'small-caps'])
-    }], ld(['param_values', 'fontvariant', 'small-caps']), nbsp]]]], ['br'], ['label', [
+    }], ld(['param_values', 'fontvariant', 'small-caps']), nbsp$1]]]], ['br'], ['label', [
     // Todo: i18n and allow for normal/bold pulldown and float input?
     ld('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp2, ['input', {
         name: il('fontweight'),
@@ -2384,7 +2394,7 @@ var workDisplay = {
     // Todo: remove hard-coded direction if i18nizing
     ['label', {
         dir: 'ltr'
-    }, [ld('font_stretch'), nbsp, ['select', { name: il('fontstretch') }, ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(stretch => {
+    }, [ld('font_stretch'), nbsp$1, ['select', { name: il('fontstretch') }, ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(stretch => {
         const atts = { value: ld(['param_values', 'font-stretch', stretch]) };
         if ($p.get('fontstretch') === stretch || !$p.has('fontstretch') && stretch === 'normal') {
             atts.selected = 'selected';
@@ -2517,7 +2527,7 @@ var workDisplay = {
             type: 'checkbox',
             value: l('yes'),
             checked: $p.get('rand') === l('yes')
-        }]]], nbsp3, ['label', [ld('verses-context'), nbsp, ['input', {
+        }]]], nbsp3, ['label', [ld('verses-context'), nbsp$1, ['input', {
             name: il('context'),
             type: 'number',
             min: 1,
@@ -2528,7 +2538,7 @@ var workDisplay = {
             $on: {
                 click() {
                     const url = serializeParamsAsURL(getDataForSerializingParamsAsURL(), 'randomResult');
-                    $('#randomURL').value = url;
+                    $$1('#randomURL').value = url;
                 }
             }
         }), ['input', { id: 'randomURL', type: 'text' }]]]]].forEach(addRowContent);
@@ -2549,7 +2559,7 @@ var workDisplay = {
         type: 'checkbox',
         checked: hideFormattingSection,
         $on: { change({ target: { checked } }) {
-                $('#advancedformatting').style.display = checked ? 'none' : 'block';
+                $$1('#advancedformatting').style.display = checked ? 'none' : 'block';
                 localStorage.setItem(namespace + '-hideFormattingSection', checked);
             } }
     }]]]]], ['div', [['label', { for: 'prefLangs' }, [l('Preferred language(s)')]], ['br'], ['select', {
@@ -2593,7 +2603,7 @@ var workDisplay = {
                     list: 'dl-' + id,
                     value: $p.get(name, true),
                     $on: setType === 'start' ? { change(e) {
-                            $$('input.browseField').forEach(bf => {
+                            $$$1('input.browseField').forEach(bf => {
                                 if (bf.id.includes(i + 1 + '-' + (j + 1))) {
                                     bf.value = e.target.value;
                                 }
@@ -2652,7 +2662,7 @@ var workDisplay = {
         // Returns element with localized or fallback attribute value (as Jamilih);
         //   also adds direction
         jml('div', { class: 'focus' }, [['div', { style: 'float: left;' }, [['button', { $on: { click() {
-                    const prefs = $('#preferences');
+                    const prefs = $$1('#preferences');
                     prefs.hidden = !prefs.hidden;
                 } } }, [l('Preferences')]], Templates.workDisplay.getPreferences({
             langs, imfl, l, localizeParamNames, namespace, hideFormattingSection
@@ -2669,7 +2679,7 @@ var workDisplay = {
             $on: {
                 click() {
                     const url = serializeParamsAsURL(getDataForSerializingParamsAsURL(), 'saveSettings');
-                    $('#settings-URL').value = url;
+                    $$1('#settings-URL').value = url;
                 }
             }
         }), ['input', { id: 'settings-URL' }]]], Templates.workDisplay.advancedFormatting({
@@ -3095,7 +3105,7 @@ class Dialog {
                     }
                 }
             }
-        }, [this.localeStrings.submit]), nbsp.repeat(2));
+        }, [this.localeStrings.submit]), nbsp$1.repeat(2));
         return dialog;
     }
     makeCancelDialog(_ref2) {
@@ -3153,7 +3163,7 @@ class Dialog {
                 cancel() {
                     reject(new Error('cancelled'));
                 },
-                children: [['label', [msg, nbsp.repeat(3), ['input']]]]
+                children: [['label', [msg, nbsp$1.repeat(3), ['input']]]]
             }));
         });
     }
@@ -3164,7 +3174,7 @@ class Dialog {
             const dialog = jml('dialog', [msg, ['br'], ['br'], ['div', { class: submitClass }, [['button', { $on: { click() {
                         dialog.close();
                         resolve();
-                    } } }, [this.localeStrings.ok]], nbsp.repeat(2), ['button', { $on: { click() {
+                    } } }, [this.localeStrings.ok]], nbsp$1.repeat(2), ['button', { $on: { click() {
                         dialog.close();
                         reject(new Error('cancelled'));
                     } } }, [this.localeStrings.cancel]]]]], document.body);
@@ -3177,11 +3187,11 @@ const dialogs = new Dialog();
 
 var resultsDisplayClient = {
     anchorRowCol({ anchorRowCol }) {
-        return $('#' + anchorRowCol);
+        return $$1('#' + anchorRowCol);
     },
     anchors({ escapedRow, escapedCol }) {
         const sel = 'tr[data-row="' + escapedRow + '"]' + (escapedCol ? '> td[data-col="' + escapedCol + '"]' : '');
-        return $(sel);
+        return $$1(sel);
     },
     main(...args) {
         let html;
@@ -3205,45 +3215,45 @@ const Templates = {
     resultsDisplayServerOrClient,
     resultsDisplayClient,
     defaultBody() {
-        $('html').style.height = '100%'; // Todo: Set in CSS
+        $$1('html').style.height = '100%'; // Todo: Set in CSS
         return jml('body', { style: 'height: 100%;' });
     }
 };
 Templates.permissions = {
     versionChange() {
-        $('#versionChange').showModal();
+        $$1('#versionChange').showModal();
     },
     addLogEntry({ text }) {
-        const installationDialog = $('#installationLogContainer');
+        const installationDialog = $$1('#installationLogContainer');
         try {
             installationDialog.showModal();
-            const container = $('#dialogContainer');
+            const container = $$1('#dialogContainer');
             container.hidden = false;
         } catch (err) {
             // May already be open
         }
-        $('#installationLog').append(text + '\n');
+        $$1('#installationLog').append(text + '\n');
     },
     exitDialogs() {
-        const container = $('#dialogContainer');
+        const container = $$1('#dialogContainer');
         if (container) {
             container.hidden = true;
         }
     },
     dbError({ type, escapedErrorMessage }) {
         if (type) {
-            jml('span', [type, ' ', escapedErrorMessage], $('#dbError'));
+            jml('span', [type, ' ', escapedErrorMessage], $$1('#dbError'));
         }
-        $('#dbError').showModal();
+        $$1('#dbError').showModal();
     },
     errorRegistering(escapedErrorMessage) {
         if (escapedErrorMessage) {
-            jml('span', [escapedErrorMessage], $('#errorRegistering'));
+            jml('span', [escapedErrorMessage], $$1('#errorRegistering'));
         }
-        $('#errorRegistering').showModal();
+        $$1('#errorRegistering').showModal();
     },
     browserNotGrantingPersistence() {
-        $('#browserNotGrantingPersistence').showModal();
+        $$1('#browserNotGrantingPersistence').showModal();
     },
     main({ l, ok, refuse, close, closeBrowserNotGranting }) {
         const installationDialog = jml('dialog', {
@@ -3404,6 +3414,7 @@ const getFieldNameAndValueAliases = function ({
     const fieldSchema = schemaItems[fieldSchemaIndex];
 
     const ret = {
+        // field,
         fieldName: getFieldAliasOrName(field)
     };
 
@@ -3413,6 +3424,7 @@ const getFieldNameAndValueAliases = function ({
         if (fieldValueAliasMap.localeKey) {
             fieldValueAliasMap = getMetaProp(lang, metadataObj, fieldValueAliasMap.localeKey.split('/'), true);
         }
+        ret.rawFieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap));
         ret.aliases = [];
         // Todo: We could use `prefer_alias` but algorithm below may cover
         //    needed cases
@@ -7348,7 +7360,9 @@ const getWorkData = async function ({
 // Keep this as the last import for Rollup
 const JsonRefs$1 = require('json-refs');
 
-const getRawFieldValue = v => typeof v === 'string' ? v.replace(/^.* \((.*?)\)$/, '$1') : v;
+const fieldValueAliasRegex = /^.* \((.*?)\)$/;
+
+const getRawFieldValue = v => typeof v === 'string' ? v.replace(fieldValueAliasRegex, '$1') : v;
 
 const resultsDisplayServer = async function resultsDisplayServer(args) {
     const {
@@ -7553,7 +7567,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
                         return;
                     }
                     if (val && typeof val === 'object') {
-                        if (usePreferAlias && typeof preferAlias === 'string') {
+                        if (typeof preferAlias === 'string') {
                             fieldValueAliasMap[key] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
                                 key, value: val[preferAlias]
                             });
@@ -7794,9 +7808,37 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     console.log('rand', ilRaw('rand') === 'yes');
 
     const stripToRawFieldValue = (v, i) => {
-        const val = getRawFieldValue(v);
+        let val;
+        if (v.match(/^\d+$/) || v.match(fieldValueAliasRegex)) {
+            val = getRawFieldValue(v);
+        } else {
+            const rawFieldValueAliasMap = applicableBrowseFieldSet[i].rawFieldValueAliasMap;
+            let dealiased;
+            if (rawFieldValueAliasMap) {
+                // Look to dealias
+                const fvEntries = Object.entries(rawFieldValueAliasMap);
+                if (Array.isArray(fvEntries[0][1])) {
+                    fvEntries.some(([key, arr]) => {
+                        if (arr.includes(v)) {
+                            dealiased = key;
+                            return true;
+                        }
+                    });
+                } else {
+                    fvEntries.some(([key, obj]) => {
+                        const arr = Object.values(obj);
+                        if (arr.includes(v)) {
+                            dealiased = key;
+                            return true;
+                        }
+                    });
+                }
+            }
+            val = dealiased === undefined ? v : dealiased;
+        }
         return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
     };
+
     const unlocalizedWorkName = fileData.name;
 
     const stripToTextOnly = part => {
@@ -8040,6 +8082,9 @@ const userParamsWithDefaults = _extends({}, userParams, setServiceWorkerDefaults
     languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
     serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON)}`
 }), {
+    log(...args) {
+        console.log(...args);
+    },
     basePath,
     nodeActivate: undefined,
     port: undefined,

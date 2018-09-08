@@ -2414,6 +2414,7 @@ let doc = typeof document !== 'undefined' && document;
 let XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
 
 // STATIC PROPERTIES
+
 const possibleOptions = ['$plugins', '$map' // Add any other options here
 ];
 
@@ -2446,6 +2447,9 @@ const NULLABLES = ['dir', // HTMLElement
 'lang', // HTMLElement
 'max', 'min', 'title' // HTMLElement
 ];
+
+const $ = sel => doc.querySelector(sel);
+const $$ = sel => [...doc.querySelectorAll(sel)];
 
 /**
 * Retrieve the (lower-cased) HTML name of a node
@@ -2750,7 +2754,7 @@ const jml = function jml(...args) {
                                     template = jml('template', template, doc.body);
                                 }
                             } else if (typeof template === 'string') {
-                                template = doc.querySelector(template);
+                                template = $(template);
                             }
                             jml(template.content.cloneNode(true), shadowRoot);
                         } else {
@@ -3638,29 +3642,29 @@ jml.toXMLDOMString = function (...args) {
 
 class JamilihMap extends Map {
     get(elem) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.get.call(this, elem);
     }
     set(elem, value) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.set.call(this, elem, value);
     }
     invoke(elem, methodName, ...args) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return this.get(elem)[methodName](elem, ...args);
     }
 }
 class JamilihWeakMap extends WeakMap {
     get(elem) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.get(elem);
     }
     set(elem, value) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.set(elem, value);
     }
     invoke(elem, methodName, ...args) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return this.get(elem)[methodName](elem, ...args);
     }
 }
@@ -3681,12 +3685,12 @@ jml.strong = function (obj, ...args) {
 };
 
 jml.symbol = jml.sym = jml.for = function (elem, sym) {
-    elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     return elem[typeof sym === 'symbol' ? sym : Symbol.for(sym)];
 };
 
 jml.command = function (elem, symOrMap, methodName, ...args) {
-    elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     let func;
     if (['symbol', 'string'].includes(typeof symOrMap)) {
         func = jml.sym(elem, symOrMap);
@@ -3724,12 +3728,12 @@ jml.getXMLSerializer = () => {
     return XmlSerializer;
 };
 
-const nbsp = '\u00a0';
-const $ = sel => document.querySelector(sel);
-const $$ = sel => [...document.querySelectorAll(sel)];
+const nbsp = '\u00a0'; // Very commonly needed in templates
+
+const $$1 = sel => document.querySelector(sel);
 
 const $e = (el, descendentsSel) => {
-    el = typeof el === 'string' ? $(el) : el;
+    el = typeof el === 'string' ? $$1(el) : el;
     return el.querySelector(descendentsSel);
 };
 
@@ -7766,6 +7770,7 @@ const getFieldNameAndValueAliases = function ({
     const fieldSchema = schemaItems[fieldSchemaIndex];
 
     const ret = {
+        // field,
         fieldName: getFieldAliasOrName(field)
     };
 
@@ -7775,6 +7780,7 @@ const getFieldNameAndValueAliases = function ({
         if (fieldValueAliasMap.localeKey) {
             fieldValueAliasMap = getMetaProp(lang, metadataObj, fieldValueAliasMap.localeKey.split('/'), true);
         }
+        ret.rawFieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap));
         ret.aliases = [];
         // Todo: We could use `prefer_alias` but algorithm below may cover
         //    needed cases
@@ -10098,7 +10104,9 @@ var rtlDetect_3 = rtlDetect_1.getLangDir;
 
 /* eslint-env browser */
 
-const getRawFieldValue = v => typeof v === 'string' ? v.replace(/^.* \((.*?)\)$/, '$1') : v;
+const fieldValueAliasRegex = /^.* \((.*?)\)$/;
+
+const getRawFieldValue = v => typeof v === 'string' ? v.replace(fieldValueAliasRegex, '$1') : v;
 
 const setAnchor = ({
     applicableBrowseFieldSet,
@@ -10374,7 +10382,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
                         return;
                     }
                     if (val && typeof val === 'object') {
-                        if (usePreferAlias && typeof preferAlias === 'string') {
+                        if (typeof preferAlias === 'string') {
                             fieldValueAliasMap[key] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
                                 key, value: val[preferAlias]
                             });
@@ -10615,9 +10623,37 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     console.log('rand', ilRaw('rand') === 'yes');
 
     const stripToRawFieldValue = (v, i) => {
-        const val = getRawFieldValue(v);
+        let val;
+        if (v.match(/^\d+$/) || v.match(fieldValueAliasRegex)) {
+            val = getRawFieldValue(v);
+        } else {
+            const rawFieldValueAliasMap = applicableBrowseFieldSet[i].rawFieldValueAliasMap;
+            let dealiased;
+            if (rawFieldValueAliasMap) {
+                // Look to dealias
+                const fvEntries = Object.entries(rawFieldValueAliasMap);
+                if (Array.isArray(fvEntries[0][1])) {
+                    fvEntries.some(([key, arr]) => {
+                        if (arr.includes(v)) {
+                            dealiased = key;
+                            return true;
+                        }
+                    });
+                } else {
+                    fvEntries.some(([key, obj]) => {
+                        const arr = Object.values(obj);
+                        if (arr.includes(v)) {
+                            dealiased = key;
+                            return true;
+                        }
+                    });
+                }
+            }
+            val = dealiased === undefined ? v : dealiased;
+        }
         return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
     };
+
     const unlocalizedWorkName = fileData.name;
 
     const stripToTextOnly = part => {

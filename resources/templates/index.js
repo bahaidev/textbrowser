@@ -1,12 +1,11 @@
 /* eslint-env browser */
-import jml from 'jamilih';
+import {jml, $} from 'jamilih';
 
 import languageSelect from './languageSelect.js';
 import workSelect from './workSelect.js';
 import workDisplay from './workDisplay.js';
 import resultsDisplayServerOrClient from './resultsDisplayServerOrClient.js';
 import resultsDisplayClient from './resultsDisplayClient.js';
-import {$} from './utils/dom.js';
 
 const Templates = {
     languageSelect,

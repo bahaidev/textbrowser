@@ -1,8 +1,7 @@
 /* eslint-env browser */
-import jml from 'jamilih';
+import {jml, $, $$, nbsp} from 'jamilih';
 import Templates from './index.js';
 import {colors, fonts} from './utils/html.js';
-import {nbsp, $, $$} from './utils/dom.js';
 
 const nbsp2 = nbsp.repeat(2);
 const nbsp3 = nbsp.repeat(3);

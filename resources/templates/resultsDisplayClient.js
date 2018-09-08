@@ -1,5 +1,4 @@
-import {$} from './utils/dom.js';
-import jml from 'jamilih';
+import {jml, $} from 'jamilih';
 import Templates from './index.js';
 import {dialogs} from '../utils/dialogs.js';
 

@@ -63,6 +63,9 @@ const userParamsWithDefaults = {
         languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
         serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON)}`
     }),
+    log (...args) {
+        console.log(...args);
+    },
     basePath,
     nodeActivate: undefined,
     port: undefined,

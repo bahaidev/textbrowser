@@ -1,3 +1,13 @@
+# 0.23.0
+
+- Fix: Get server working again by adding `log` function
+- Enhancement: Allow detection of field names in start/end by alias
+    alone (no parentheses with numeric value needed)
+- Build: Use terser for Rollup minification
+- Linting (ESLint): Overwrite new "standard" rule
+- Refactoring: Use new Jamilih exports and format
+- npm: Update Jamilih, url-search-params-polyfill and devDeps
+
 # 0.22.1
 
 - Fix: Update `dist` files (with applying empty field changes)

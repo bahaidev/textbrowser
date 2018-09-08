@@ -9,10 +9,12 @@ import {Languages} from './utils/Languages.js';
 import {getWorkData} from './utils/WorkInfo.js';
 // Keep this as the last import for Rollup
 import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
-import jml from 'jamilih';
+import {jml} from 'jamilih';
+
+const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 
 const getRawFieldValue = (v) => typeof v === 'string'
-    ? v.replace(/^.* \((.*?)\)$/, '$1')
+    ? v.replace(fieldValueAliasRegex, '$1')
     : v;
 
 const setAnchor = ({
@@ -344,7 +346,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                         return;
                     }
                     if (val && typeof val === 'object') {
-                        if (usePreferAlias && typeof preferAlias === 'string') {
+                        if (typeof preferAlias === 'string') {
                             fieldValueAliasMap[key] =
                                 Templates.resultsDisplayServerOrClient.fieldValueAlias({
                                     key, value: val[preferAlias]
@@ -620,9 +622,37 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     console.log('rand', ilRaw('rand') === 'yes');
 
     const stripToRawFieldValue = (v, i) => {
-        const val = getRawFieldValue(v);
+        let val;
+        if (v.match(/^\d+$/) || v.match(fieldValueAliasRegex)) {
+            val = getRawFieldValue(v);
+        } else {
+            const rawFieldValueAliasMap = applicableBrowseFieldSet[i].rawFieldValueAliasMap;
+            let dealiased;
+            if (rawFieldValueAliasMap) {
+                // Look to dealias
+                const fvEntries = Object.entries(rawFieldValueAliasMap);
+                if (Array.isArray(fvEntries[0][1])) {
+                    fvEntries.some(([key, arr]) => {
+                        if (arr.includes(v)) {
+                            dealiased = key;
+                            return true;
+                        }
+                    });
+                } else {
+                    fvEntries.some(([key, obj]) => {
+                        const arr = Object.values(obj);
+                        if (arr.includes(v)) {
+                            dealiased = key;
+                            return true;
+                        }
+                    });
+                }
+            }
+            val = dealiased === undefined ? v : dealiased;
+        }
         return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
     };
+
     const unlocalizedWorkName = fileData.name;
 
     const stripToTextOnly = (part) => {

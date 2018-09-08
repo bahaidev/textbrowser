@@ -1,6 +1,6 @@
 /* globals dialogPolyfill */
-import jml from 'jamilih';
-import {$e, nbsp} from '../templates/utils/dom.js';
+import {jml, nbsp} from 'jamilih';
+import {$e} from '../templates/utils/dom.js';
 
 const defaultLocale = 'en';
 const localeStrings = {

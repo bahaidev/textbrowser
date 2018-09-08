@@ -620,6 +620,7 @@ upon for monkey-patching.
 1.  Document and add screen-casts along with one for developers showing
     JSON format, metadata, and schemas); also use with shortcuts (including
     Bahá'í Library Online ones)
+1.  **Document server** including need for a `nodeActivate` call
 1.  **Move plug-in set-up** to run so setting indexedDB within
     `activateCallback.js`
 1.  Have **IndexedDB handle all pages** language select, work select, and
