@@ -621,6 +621,7 @@ upon for monkey-patching.
     JSON format, metadata, and schemas); also use with shortcuts (including
     Bahá'í Library Online ones)
 1.  **Text box parsing**
+    1. Document availability of this parsing
     1. Fix limitation that 0's don't change to 1's if
         not present as a minimum (e.g., if no 0 for Chapter
         number, then won't show anything).
