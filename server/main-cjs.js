@@ -7424,7 +7424,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     };
     const determineEnd = ({
         fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,
-        applicableBrowseFieldNames, startsTextOnly, endsTextOnly
+        applicableBrowseFieldNames, startsRaw, endsRaw
     }) => ({
         tr, foundState
     }) => {
@@ -7440,23 +7440,17 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             //   items).
             if (fieldValueAliasMap[idx] !== undefined) {
                 rowIDPartsPreferred.push(fieldValueAliasMapPreferred[idx][tr[idx]]);
-                const val = fieldValueAliasMap[idx][tr[idx]];
-                if ( // The original is text so supplied as such in start value
-                typeof val === 'number' || Array.isArray(val) && val.every(v => typeof v === 'number')) {
-                    return tr[idx];
-                }
-                return val;
             }
             rowIDPartsPreferred.push(tr[idx]);
             return tr[idx];
         });
 
-        // Todo: Use schema to determine each and use `parseInt`
+        // Todo: Use schema to determine field type and use `parseInt`
         //   on other value instead of `String` conversions
         if (!foundState.start) {
-            if (startsTextOnly.some((part, i) => {
+            if (startsRaw.some((part, i) => {
                 const rowIDPart = rowIDParts[i];
-                return Array.isArray(rowIDPart) ? !rowIDPart.some(rip => part === String(rip)) : rowIDPart && typeof rowIDPart === 'object' ? !Object.values(rowIDPart).some(rip => part === String(rip)) : part !== String(rowIDPart);
+                return part !== rowIDPart;
             })) {
                 // Trigger skip of this row
                 return false;
@@ -7464,9 +7458,9 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             foundState.start = true;
         }
         // This doesn't go in an `else` for the above in case the start is the end
-        if (endsTextOnly.every((part, i) => {
+        if (endsRaw.every((part, i) => {
             const rowIDPart = rowIDParts[i];
-            return Array.isArray(rowIDPart) ? rowIDPart.some(rip => part === String(rip)) : rowIDPart && typeof rowIDPart === 'object' ? Object.values(rowIDPart).some(rip => part === String(rip)) : part === String(rowIDPart);
+            return part === rowIDPart;
         })) {
             foundState.end = true;
         } else if (foundState.end) {
@@ -7860,12 +7854,6 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
 
     const unlocalizedWorkName = fileData.name;
 
-    const stripToTextOnly = part => {
-        return part.replace(/ \(\d+\)$/, ''); // Remove that added to autocomplete aliases used for start/end values
-    };
-    const startsTextOnly = starts.map(stripToTextOnly);
-    const endsTextOnly = ends.map(stripToTextOnly);
-
     const startsRaw = starts.map(stripToRawFieldValue);
     const endsRaw = ends.map(stripToRawFieldValue);
 
@@ -7976,7 +7964,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             applicableBrowseFieldNames,
             fieldValueAliasMap, fieldValueAliasMapPreferred,
             localizedFieldNames,
-            startsTextOnly, endsTextOnly
+            startsRaw, endsRaw
         }),
         canonicalBrowseFieldSetName,
         getCanonicalID: getCanonicalID({
