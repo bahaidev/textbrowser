@@ -159,17 +159,34 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             ? {tdVal: escapeHTML(tdVal), htmlEscaped: true}
             : {tdVal};
     };
+    const getCanonicalID = ({
+        fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,
+        canonicalBrowseFieldNames
+    }) => ({
+        tr, foundState
+    }) => {
+        return canonicalBrowseFieldNames.map((fieldName) => {
+            const idx = localizedFieldNames.indexOf(fieldName);
+            // This works to put alias in anchor but this includes
+            //   our ending parenthetical, the alias may be harder
+            //   to remember and/or automated than original (e.g.,
+            //   for a number representing a book); we may wish to
+            //   switch this (and also for other browse field-based
+            //   items).
+            if (fieldValueAliasMap[idx] !== undefined) {
+                return fieldValueAliasMapPreferred[idx][tr[idx]];
+            }
+            return tr[idx];
+        }).join('-'); // rowID;
+    };
     const determineEnd = ({
         fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,
-        canonicalBrowseFieldNames,
         applicableBrowseFieldNames, startsTextOnly, endsTextOnly
     }) => ({
         tr, foundState
     }) => {
         const rowIDPartsPreferred = [];
-        const rowIDParts = (
-            canonicalBrowseFieldNames || applicableBrowseFieldNames
-        ).map((fieldName) => {
+        const rowIDParts = applicableBrowseFieldNames.map((fieldName) => {
             const idx = localizedFieldNames.indexOf(fieldName);
             // This works to put alias in anchor but this includes
             //   our ending parenthetical, the alias may be harder
@@ -193,37 +210,36 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             return tr[idx];
         });
 
-        if (!canonicalBrowseFieldNames) {
-            // Todo: Use schema to determine each and use `parseInt`
-            //   on other value instead of `String` conversions
-            if (!foundState.start) {
-                if (startsTextOnly.some((part, i) => {
-                    const rowIDPart = rowIDParts[i];
-                    return Array.isArray(rowIDPart)
-                        ? !rowIDPart.some((rip) => part === String(rip))
-                        : (rowIDPart && typeof rowIDPart === 'object'
-                            ? !Object.values(rowIDPart).some((rip) => part === String(rip))
-                            : part !== String(rowIDPart)
-                        );
-                })) {
-                    return false;
-                }
-                foundState.start = true;
-            }
-            // This doesn't go in an `else` for the above in case the start is the end
-            if (endsTextOnly.every((part, i) => {
+        // Todo: Use schema to determine each and use `parseInt`
+        //   on other value instead of `String` conversions
+        if (!foundState.start) {
+            if (startsTextOnly.some((part, i) => {
                 const rowIDPart = rowIDParts[i];
                 return Array.isArray(rowIDPart)
-                    ? rowIDPart.some((rip) => part === String(rip))
+                    ? !rowIDPart.some((rip) => part === String(rip))
                     : (rowIDPart && typeof rowIDPart === 'object'
-                        ? Object.values(rowIDPart).some((rip) => part === String(rip))
-                        : part === String(rowIDPart)
+                        ? !Object.values(rowIDPart).some((rip) => part === String(rip))
+                        : part !== String(rowIDPart)
                     );
             })) {
-                foundState.end = true;
-            } else if (foundState.end) { // If no longer matching, return
-                return true;
+                // Trigger skip of this row
+                return false;
             }
+            foundState.start = true;
+        }
+        // This doesn't go in an `else` for the above in case the start is the end
+        if (endsTextOnly.every((part, i) => {
+            const rowIDPart = rowIDParts[i];
+            return Array.isArray(rowIDPart)
+                ? rowIDPart.some((rip) => part === String(rip))
+                : (rowIDPart && typeof rowIDPart === 'object'
+                    ? Object.values(rowIDPart).some((rip) => part === String(rip))
+                    : part === String(rowIDPart)
+                );
+        })) {
+            foundState.end = true;
+        } else if (foundState.end) { // If no longer matching, trigger end of the table
+            return true;
         }
         return rowIDPartsPreferred.join('-'); // rowID;
     };
@@ -779,11 +795,10 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             startsTextOnly, endsTextOnly
         }),
         canonicalBrowseFieldSetName,
-        getCanonicalID: determineEnd({
+        getCanonicalID: getCanonicalID({
             canonicalBrowseFieldNames,
             fieldValueAliasMap, fieldValueAliasMapPreferred,
-            localizedFieldNames,
-            startsTextOnly, endsTextOnly
+            localizedFieldNames
         }),
         getCellValue: getCellValue({
             fieldValueAliasMapPreferred, escapeColumnIndexes, escapeHTML
