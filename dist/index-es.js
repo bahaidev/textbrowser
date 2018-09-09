@@ -10583,7 +10583,8 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         const rangeSep = '-';
         const partSep = ':';
 
-        // Search box functionality (Todo: not yet in UI)
+        // Search box functionality (Todo: not yet in UI); should first
+        //    avoid numeric startEnd and even work across book
         // Todo: At least avoid need for book text AND book number in Bible
         // Todo: Change query beginning at 0 to 1 if none present?
         // Todo: Support i18nized or canonical aliases (but don't
@@ -10607,8 +10608,8 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             console.log('endPartVals', endPartVals);
             startPartVals.forEach((startPartVal, i) => {
                 const endPartVal = endPartVals[i];
-                $p.set(`start${browseFieldSetStartEndIdx + 1}-${i + 1}`, startPartVal, true);
-                $p.set(`end${browseFieldSetStartEndIdx + 1}-${i + 1}`, endPartVal, true);
+                $p.set(`${$p.get('work')}-start${browseFieldSetStartEndIdx + 1}-${i + 1}`, startPartVal, true);
+                $p.set(`${$p.get('work')}-end${browseFieldSetStartEndIdx + 1}-${i + 1}`, endPartVal, true);
             });
         }
     }

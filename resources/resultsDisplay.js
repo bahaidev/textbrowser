@@ -581,8 +581,8 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             console.log('endPartVals', endPartVals);
             startPartVals.forEach((startPartVal, i) => {
                 const endPartVal = endPartVals[i];
-                $p.set(`start${browseFieldSetStartEndIdx + 1}-${i + 1}`, startPartVal, true);
-                $p.set(`end${browseFieldSetStartEndIdx + 1}-${i + 1}`, endPartVal, true);
+                $p.set(`${$p.get('work')}-start${browseFieldSetStartEndIdx + 1}-${i + 1}`, startPartVal, true);
+                $p.set(`${$p.get('work')}-end${browseFieldSetStartEndIdx + 1}-${i + 1}`, endPartVal, true);
             });
         }
     }

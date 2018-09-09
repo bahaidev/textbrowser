@@ -1,3 +1,7 @@
+# 0.24.1
+
+- Fix: `startEnd` setting issue
+
 # 0.24.0
 
 - Enhancement: Allow more flexibility within start/end params in
