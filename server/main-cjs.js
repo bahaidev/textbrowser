@@ -416,20 +416,20 @@ const invalidStateError = function () {
     }
 };
 const addExternalID = function (node, all) {
-    if (node.systemId.indexOf('"') !== -1 && node.systemId.indexOf("'") !== -1) {
+    if (node.systemId.includes('"') && node.systemId.includes("'")) {
         invalidStateError();
     }
     let string = '';
-    const publicId = node.publicId,
-          systemId = node.systemId,
-          publicQuote = publicId && publicId.indexOf("'") !== -1 ? "'" : '"',
+    const publicId = node.publicId !== 'undefined' && node.publicId,
+          systemId = node.systemId !== 'undefined' && node.systemId,
+          publicQuote = publicId && publicId.includes("'") ? "'" : '"',
           // Don't need to check for quotes here, since not allowed with public
-    systemQuote = systemId && systemId.indexOf("'") !== -1 ? "'" : '"'; // If as "entity" inside, will it return quote or entity? If former, we need to entify here (should be an error per section 9.3 of http://www.w3.org/TR/html5/the-xhtml-syntax.html )
-    if (systemId !== null && publicId !== null) {
+    systemQuote = systemId && systemId.includes("'") ? "'" : '"'; // If as "entity" inside, will it return quote or entity? If former, we need to entify here (should be an error per section 9.3 of http://www.w3.org/TR/html5/the-xhtml-syntax.html )
+    if (systemId && publicId) {
         string += ' PUBLIC ' + publicQuote + publicId + publicQuote + ' ' + systemQuote + systemId + systemQuote;
-    } else if (publicId !== null) {
+    } else if (publicId) {
         string += ' PUBLIC ' + publicQuote + publicId + publicQuote;
-    } else if (all || systemId !== null) {
+    } else if (all || systemId) {
         string += ' SYSTEM ' + systemQuote + systemId + systemQuote;
     }
     return string;
@@ -475,7 +475,7 @@ const serializeToString = function (nodeArg) {
               type = node.nodeType;
         namespaces = clone(namespaces) || {}; // Ensure we're working with a copy, so different levels in the hierarchy can treat it differently
 
-        if (node.prefix && node.prefix.indexOf(':') !== -1 || node.localName && node.localName.indexOf(':') !== -1) {
+        if (node.prefix && node.prefix.includes(':') || node.localName && node.localName.includes(':')) {
             invalidStateError();
         }
 
@@ -495,7 +495,7 @@ const serializeToString = function (nodeArg) {
 
                 if (that.$formSerialize) {
                     // Firefox serializes certain properties even if only set via JavaScript ("disabled", "readonly") and it sometimes even adds the "value" property in certain cases (<input type=hidden>)
-                    if ('|input|button|object|'.indexOf('|' + tagName + '|') > -1) {
+                    if ('|input|button|object|'.includes('|' + tagName + '|')) {
                         if (node.value !== node.defaultValue) {
                             // May be undefined for an object, or empty string for input, etc.
                             node.setAttribute('value', node.value);
@@ -570,9 +570,8 @@ const serializeToString = function (nodeArg) {
                     }
                 }
 
-                // Todo: Faster to use array with Array.prototype.indexOf polyfill?
-                emptyElement = emptyElements.indexOf('|' + tagName + '|') > -1;
-                htmlElement = node.namespaceURI === xhtmlNS || nonEmptyElements.indexOf('|' + tagName + '|') > -1; // || emptyElement;
+                emptyElement = emptyElements.includes('|' + tagName + '|');
+                htmlElement = node.namespaceURI === xhtmlNS || nonEmptyElements.includes('|' + tagName + '|'); // || emptyElement;
 
                 if (!node.firstChild && (emptyElement || !htmlElement)) {
                     // string += mode === 'xml' || node.namespaceURI !== xhtmlNS ? ' />' : '>';
@@ -610,7 +609,7 @@ const serializeToString = function (nodeArg) {
                 return entify(nodeValue); // Todo: only entify for XML
             case 4:
                 // CDATA
-                if (nodeValue.indexOf(']]' + '>') !== -1) {
+                if (nodeValue.includes(']]' + '>')) {
                     invalidStateError();
                 }
                 return '<' + '![CDATA[' + nodeValue + ']]' + '>';
@@ -664,19 +663,19 @@ const serializeToString = function (nodeArg) {
                 if (/^xml$/i.test(node.target)) {
                     invalidStateError();
                 }
-                if (node.target.indexOf('?>') !== -1) {
+                if (node.target.includes('?>')) {
                     invalidStateError();
                 }
-                if (node.target.indexOf(':') !== -1) {
+                if (node.target.includes(':')) {
                     invalidStateError();
                 }
-                if (node.data.indexOf('?>') !== -1) {
+                if (node.data.includes('?>')) {
                     invalidStateError();
                 }
                 return '<?' + node.target + ' ' + nodeValue + '?>';
             case 8:
                 // COMMENT
-                if (nodeValue.indexOf('--') !== -1 || nodeValue.length && nodeValue.lastIndexOf('-') === nodeValue.length - 1) {
+                if (nodeValue.includes('--') || nodeValue.length && nodeValue.lastIndexOf('-') === nodeValue.length - 1) {
                     invalidStateError();
                 }
                 return '<' + '!--' + nodeValue + '-->';
@@ -1009,7 +1008,8 @@ function _copyOrderedAtts(attArr) {
 function _childrenToJML(node) {
     return function (childNodeJML, i) {
         const cn = node.childNodes[i];
-        cn.parentNode.replaceChild(jml(...childNodeJML), cn);
+        const j = Array.isArray(childNodeJML) ? jml(...childNodeJML) : jml(childNodeJML);
+        cn.parentNode.replaceChild(j, cn);
     };
 }
 
@@ -1238,6 +1238,7 @@ const jml = function jml(...args) {
                         break;
                     }case '$document':
                     {
+                        // Todo: Conditionally create XML document
                         const node = doc.implementation.createHTMLDocument();
                         if (attVal.childNodes) {
                             attVal.childNodes.forEach(_childrenToJML(node));
@@ -1249,12 +1250,17 @@ const jml = function jml(...args) {
                                 j++;
                             }
                         } else {
+                            if (attVal.$DOCTYPE) {
+                                const dt = { $DOCTYPE: attVal.$DOCTYPE };
+                                const doctype = jml(dt);
+                                node.firstChild.replaceWith(doctype);
+                            }
                             const html = node.childNodes[1];
                             const head = html.childNodes[0];
                             const body = html.childNodes[1];
                             if (attVal.title || attVal.head) {
                                 const meta = doc.createElement('meta');
-                                meta.charset = 'utf-8';
+                                meta.setAttribute('charset', 'utf-8');
                                 head.appendChild(meta);
                             }
                             if (attVal.title) {
@@ -1267,6 +1273,7 @@ const jml = function jml(...args) {
                                 attVal.body.forEach(_appendJMLOrText(body));
                             }
                         }
+                        nodes[nodes.length] = node;
                         break;
                     }case '$DOCTYPE':
                     {
@@ -1291,7 +1298,7 @@ const jml = function jml(...args) {
                                 // internalSubset: // Todo
                             };
                         } else {
-                            node = doc.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
+                            node = doc.implementation.createDocumentType(attVal.name, attVal.publicId || '', attVal.systemId || '');
                         }
                         nodes[nodes.length] = node;
                         break;
@@ -2077,6 +2084,9 @@ jml.setWindow = wind => {
 };
 jml.setDocument = docum => {
     doc = docum;
+    if (docum && docum.body) {
+        body = docum.body;
+    }
 };
 jml.setXMLSerializer = xmls => {
     XmlSerializer = xmls;
@@ -2091,6 +2101,8 @@ jml.getDocument = () => {
 jml.getXMLSerializer = () => {
     return XmlSerializer;
 };
+
+let body = doc && doc.body;
 
 const nbsp = '\u00a0'; // Very commonly needed in templates
 
@@ -2165,7 +2177,7 @@ var languageSelect = {
                     });
                 }
             }
-        }, langs.map(({ code }) => ['option', { value: code }, [languages.getLanguageFromCode(code)]])]], document.body);
+        }, langs.map(({ code }) => ['option', { value: code }, [languages.getLanguageFromCode(code)]])]], body);
         if (history.state && typeof history.state === 'object') {
             deserialize(document.querySelector('#languageSelectionContainer'), history.state);
         }
@@ -2178,7 +2190,7 @@ var languageSelect = {
         ['div', [
             ['a', {href: '#', dataset: {code}}, [name]]
         ]]
-    ), document.body
+    ), body
     */
 };
 
@@ -2213,7 +2225,7 @@ var workSelect = (({ groups, lf, getNextAlias, $p, followParams }) => {
     }, [getNextAlias()]])]]
     // Todo: Add in Go button (with 'submitgo' localization string) to
     //    avoid need for pull-down if using first selection?
-    ]]), document.body);
+    ]]), body);
     if (history.state && typeof history.state === 'object') {
         deserialize(document.querySelector('#workSelect'), history.state);
     }
@@ -2538,7 +2550,8 @@ var workDisplay = {
         }), ['input', { id: 'randomURL', type: 'text' }]]]]].forEach(addRowContent);
     },
     getPreferences: ({
-        langs, imfl, l, localizeParamNames, namespace, hideFormattingSection
+        siteBaseURL, languageParam, lf,
+        langs, imfl, l, localizeParamNames, namespace, hideFormattingSection, groups
     }) => ['div', {
         style: { textAlign: 'left' }, id: 'preferences', hidden: 'true'
     }, [['div', { style: 'margin-top: 10px;' }, [['label', [l('localizeParamNames'), ['input', {
@@ -2574,7 +2587,57 @@ var workDisplay = {
             atts.selected = 'selected';
         }
         return ['option', atts, [imfl(['languages', lan.code])]];
-    })]]]]],
+    })]]], ['div', [['button', {
+        title: l('bookmark_generation_tooltip'),
+        $on: {
+            click() {
+                // Todo: Give option to edit (keywords and work URLs)
+                const date = new Date().getTime();
+                const ADD_DATE = date;
+                const LAST_MODIFIED = date;
+                const blob = new Blob([new XMLSerializer().serializeToString(jml({ $document: {
+                        $DOCTYPE: { name: 'NETSCAPE-Bookmark-file-1' },
+                        title: l('Bookmarks'),
+                        body: [['h1', [l('Bookmarks_Menu')]], ...groups.flatMap(({ name, files, id: groupID }) => {
+                            const groupName = lf({ key: name.localeKey, fallback: true });
+                            return [['dt', [['h3', {
+                                ADD_DATE,
+                                LAST_MODIFIED
+                            }, [groupName]]]], ['dl', [['p'], ...files.map(({ shortcut: SHORTCUTURL, name: work }) => {
+                                const workName = lf(['workNames', groupID, work]);
+                                // Todo (low): Add anchor, etc. (until handled by `work-startEnd`); &aqdas-anchor1-1=2&anchorfield1=Paragraph
+                                // Todo: option for additional browse field groups (startEnd2, etc.)
+                                // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
+
+                                // Todo: Add localized, per-work fields here (restricted by content locale?); field1=..., checked1=Yes, interlin1=, css1=, etc.
+                                // Todo: Localize style params by overriding current serialized URL
+                                const defaultStyleParams = 'colorName=Black&color=%23&bgcolorName=White&bgcolor=%23&fontSeq=Times+New+Roman%2C+serif&fontstyle=normal&fontvariant=normal&fontweight=normal&fontsize=&fontstretch=normal&letterspacing=normal&lineheight=normal&header=n&footer=0&caption=0&border=1&interlintitle=1&interlintitle_css=&pagecss=&outputmode=table&rand=No&=No&headerfooterfixed=No&result=Yes';
+                                const url = `${siteBaseURL || location.origin + location.pathname}#lang=${languageParam}&${defaultStyleParams}&work=${work}&${work}-startEnd1=%s`;
+                                return ['dt', [['a', {
+                                    href: url,
+                                    ADD_DATE,
+                                    LAST_MODIFIED,
+                                    SHORTCUTURL
+                                }, [workName]]]];
+                            })]]];
+                        })]
+                    } })).replace(
+                // Chrome has a quirk that requires this (and not
+                //   just any whitespace)
+                // We're not getting the keywords with Chrome,
+                //   but at least usable for bookmarks
+                /<dt>/g, '\n<dt>')], { type: 'text/html' });
+                const url = window.URL.createObjectURL(blob);
+                const a = jml('a', {
+                    hidden: true,
+                    download: 'bookmarks.html',
+                    href: url
+                }, body);
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+    }, [l('Generate_bookmarks')]]]]]],
     addBrowseFields: ({ browseFields, fieldInfo, ld, i, iil, $p, content }) => {
         const work = $p.get('work');
         const addRowContent = rowContent => {
@@ -2640,11 +2703,12 @@ var workDisplay = {
         })]]]]]]]]]]]]].forEach(addRowContent);
     },
     main: ({
+        siteBaseURL, lf, languageParam,
         l, namespace, heading, fallbackDirection, imfl, langs, fieldInfo, localizeParamNames,
         serializeParamsAsURL,
         hideFormattingSection, $p,
         metadataObj, il, le, ld, iil, fieldMatchesLocale,
-        preferredLocale, schemaItems, content
+        preferredLocale, schemaItems, content, groups
     }) => {
         const lo = (key, atts) => ['option', atts, [l({
             key,
@@ -2659,7 +2723,8 @@ var workDisplay = {
                     const prefs = $('#preferences');
                     prefs.hidden = !prefs.hidden;
                 } } }, [l('Preferences')]], Templates.workDisplay.getPreferences({
-            langs, imfl, l, localizeParamNames, namespace, hideFormattingSection
+            siteBaseURL, languageParam, lf,
+            langs, imfl, l, localizeParamNames, namespace, groups, hideFormattingSection
         })]], ['h2', [heading]], ['br'], ['form', { id: 'browse', $on: {
                 submit(e) {
                     e.preventDefault();
@@ -2719,7 +2784,7 @@ var workDisplay = {
                     location.href = newURL;
                 }
             }
-        })]]]]], document.body);
+        })]]]]], body);
     }
 };
 
@@ -3079,7 +3144,7 @@ class Dialog {
                 atts.$on.close = close;
             }
         }
-        const dialog = jml('dialog', atts, children, document.body);
+        const dialog = jml('dialog', atts, children, body);
         dialogPolyfill.registerDialog(dialog);
         dialog.showModal();
         if (remove) {
@@ -3142,7 +3207,7 @@ class Dialog {
             const dialog = jml('dialog', [msg, ...(includeOk ? [['br'], ['br'], ['div', { class: submitClass }, [['button', { $on: { click() {
                         dialog.close();
                         resolve();
-                    } } }, [this.localeStrings.ok]]]]] : [])], document.body);
+                    } } }, [this.localeStrings.ok]]]]] : [])], body);
             dialogPolyfill.registerDialog(dialog);
             dialog.showModal();
         });
@@ -3178,7 +3243,7 @@ class Dialog {
                     } } }, [this.localeStrings.ok]], nbsp.repeat(2), ['button', { $on: { click() {
                         dialog.close();
                         reject(new Error('cancelled'));
-                    } } }, [this.localeStrings.cancel]]]]], document.body);
+                    } } }, [this.localeStrings.cancel]]]]], body);
             dialogPolyfill.registerDialog(dialog);
             dialog.showModal();
         });
@@ -3203,7 +3268,7 @@ var resultsDisplayClient = {
                 dialogs.alert(err.message);
             }
         }
-        jml(...html, document.body);
+        jml(...html, body);
     }
 };
 
@@ -3217,7 +3282,12 @@ const Templates = {
     resultsDisplayClient,
     defaultBody() {
         $('html').style.height = '100%'; // Todo: Set in CSS
-        return jml('body', { style: 'height: 100%;' });
+        // We empty rather than `replaceWith` as our Jamilih `body` aliases
+        //   expect the old instance
+        while (body.hasChildNodes()) {
+            body.firstChild.remove();
+        }
+        return jml(body, { style: 'height: 100%;' });
     }
 };
 Templates.permissions = {
@@ -3286,7 +3356,7 @@ Templates.permissions = {
         const dbErrorNotice = jml('dialog', {
             id: 'dbError'
         }, [['section', [l('dbError')]]]);
-        jml('div', { id: 'dialogContainer', style: 'height: 100%' }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], document.body);
+        jml('div', { id: 'dialogContainer', style: 'height: 100%' }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], body);
 
         return [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice];
     }

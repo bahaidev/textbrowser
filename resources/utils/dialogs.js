@@ -1,5 +1,5 @@
 /* globals dialogPolyfill */
-import {jml, nbsp} from 'jamilih';
+import {jml, nbsp, body} from 'jamilih';
 import {$e} from '../templates/utils/dom.js';
 
 const defaultLocale = 'en';
@@ -32,7 +32,7 @@ class Dialog {
                 atts.$on.close = close;
             }
         }
-        const dialog = jml('dialog', atts, children, document.body);
+        const dialog = jml('dialog', atts, children, body);
         dialogPolyfill.registerDialog(dialog);
         dialog.showModal();
         if (remove) {
@@ -109,7 +109,7 @@ class Dialog {
                         ]]
                     ])
                     : [])
-            ], document.body);
+            ], body);
             dialogPolyfill.registerDialog(dialog);
             dialog.showModal();
         });
@@ -159,7 +159,7 @@ class Dialog {
                         reject(new Error('cancelled'));
                     }}}, [this.localeStrings.cancel]]
                 ]]
-            ], document.body);
+            ], body);
             dialogPolyfill.registerDialog(dialog);
             dialog.showModal();
         });

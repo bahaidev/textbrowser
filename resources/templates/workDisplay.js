@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import {jml, $, $$, nbsp} from 'jamilih';
+import {jml, $, $$, nbsp, body} from 'jamilih';
 import Templates from './index.js';
 import {colors, fonts} from './utils/html.js';
 
@@ -544,7 +544,8 @@ export default {
         ].forEach(addRowContent);
     },
     getPreferences: ({
-        langs, imfl, l, localizeParamNames, namespace, hideFormattingSection
+        siteBaseURL, languageParam, lf,
+        langs, imfl, l, localizeParamNames, namespace, hideFormattingSection, groups
     }) => ['div', {
         style: {textAlign: 'left'}, id: 'preferences', hidden: 'true'
     }, [
@@ -607,6 +608,82 @@ export default {
                     imfl(['languages', lan.code])
                 ]];
             })]
+        ]],
+        ['div', [
+            ['button', {
+                title: l('bookmark_generation_tooltip'),
+                $on: {
+                    click () { // Todo: Give option to edit (keywords and work URLs)
+                        const date = new Date().getTime();
+                        const ADD_DATE = date;
+                        const LAST_MODIFIED = date;
+                        const blob = new Blob([
+                            new XMLSerializer().serializeToString(
+                                jml({$document: {
+                                    $DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'},
+                                    title: l('Bookmarks'),
+                                    body: [
+                                        ['h1', [l('Bookmarks_Menu')]],
+                                        ...groups.flatMap(({name, files, id: groupID}) => {
+                                            const groupName = lf({key: name.localeKey, fallback: true});
+                                            return [
+                                                ['dt', [
+                                                    ['h3', {
+                                                        ADD_DATE,
+                                                        LAST_MODIFIED
+                                                    }, [
+                                                        groupName
+                                                    ]]
+                                                ]],
+                                                ['dl', [
+                                                    ['p'],
+                                                    ...files.map(({shortcut: SHORTCUTURL, name: work}) => {
+                                                        const workName = lf(['workNames', groupID, work]);
+                                                        // Todo (low): Add anchor, etc. (until handled by `work-startEnd`); &aqdas-anchor1-1=2&anchorfield1=Paragraph
+                                                        // Todo: option for additional browse field groups (startEnd2, etc.)
+                                                        // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
+
+                                                        // Todo: Add localized, per-work fields here (restricted by content locale?); field1=..., checked1=Yes, interlin1=, css1=, etc.
+                                                        // Todo: Localize style params by overriding current serialized URL
+                                                        const defaultStyleParams = 'colorName=Black&color=%23&bgcolorName=White&bgcolor=%23&fontSeq=Times+New+Roman%2C+serif&fontstyle=normal&fontvariant=normal&fontweight=normal&fontsize=&fontstretch=normal&letterspacing=normal&lineheight=normal&header=n&footer=0&caption=0&border=1&interlintitle=1&interlintitle_css=&pagecss=&outputmode=table&rand=No&=No&headerfooterfixed=No&result=Yes';
+                                                        const url = `${siteBaseURL || (location.origin + location.pathname)}#lang=${languageParam}&${defaultStyleParams}&work=${work}&${work}-startEnd1=%s`;
+                                                        return ['dt', [
+                                                            ['a', {
+                                                                href: url,
+                                                                ADD_DATE,
+                                                                LAST_MODIFIED,
+                                                                SHORTCUTURL
+                                                            }, [
+                                                                workName
+                                                            ]]
+                                                        ]];
+                                                    })
+                                                ]]
+                                            ];
+                                        })
+                                    ]
+                                }})
+                            ).replace(
+                                // Chrome has a quirk that requires this (and not
+                                //   just any whitespace)
+                                // We're not getting the keywords with Chrome,
+                                //   but at least usable for bookmarks (though
+                                //   not the groups apparently)
+                                /<dt>/g,
+                                '\n<dt>'
+                            )
+                        ], {type: 'text/html'});
+                        const url = window.URL.createObjectURL(blob);
+                        const a = jml('a', {
+                            hidden: true,
+                            download: 'bookmarks.html',
+                            href: url
+                        }, body);
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    }
+                }
+            }, [l('Generate_bookmarks')]]
         ]]
     ]],
     addBrowseFields: ({browseFields, fieldInfo, ld, i, iil, $p, content}) => {
@@ -742,11 +819,12 @@ export default {
         ].forEach(addRowContent);
     },
     main: ({
+        siteBaseURL, lf, languageParam,
         l, namespace, heading, fallbackDirection, imfl, langs, fieldInfo, localizeParamNames,
         serializeParamsAsURL,
         hideFormattingSection, $p,
         metadataObj, il, le, ld, iil, fieldMatchesLocale,
-        preferredLocale, schemaItems, content
+        preferredLocale, schemaItems, content, groups
     }) => {
         const lo = (key, atts) =>
             ['option', atts, [
@@ -770,7 +848,8 @@ export default {
                         prefs.hidden = !prefs.hidden;
                     }}}, [l('Preferences')]],
                     Templates.workDisplay.getPreferences({
-                        langs, imfl, l, localizeParamNames, namespace, hideFormattingSection
+                        siteBaseURL, languageParam, lf,
+                        langs, imfl, l, localizeParamNames, namespace, groups, hideFormattingSection
                     })
                 ]],
                 ['h2', [heading]],
@@ -863,7 +942,7 @@ export default {
                     ]]
                 ]]
             ],
-            document.body
+            body
         );
     }
 };

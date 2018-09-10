@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import {jml, $} from 'jamilih';
+import {jml, $, body} from 'jamilih';
 
 import languageSelect from './languageSelect.js';
 import workSelect from './workSelect.js';
@@ -15,7 +15,12 @@ const Templates = {
     resultsDisplayClient,
     defaultBody () {
         $('html').style.height = '100%'; // Todo: Set in CSS
-        return jml('body', {style: 'height: 100%;'});
+        // We empty rather than `replaceWith` as our Jamilih `body` aliases
+        //   expect the old instance
+        while (body.hasChildNodes()) {
+            body.firstChild.remove();
+        }
+        return jml(body, {style: 'height: 100%;'});
     }
 };
 Templates.permissions = {
@@ -147,7 +152,7 @@ Templates.permissions = {
             errorRegisteringNotice,
             versionChangeNotice,
             dbErrorNotice
-        ], document.body);
+        ], body);
 
         return [
             installationDialog,

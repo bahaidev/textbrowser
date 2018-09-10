@@ -30,7 +30,7 @@
     "form-serialize": "https://github.com/brettz9/form-serialize#browser-deserialize-rollup",
     "imf": "3.0.1",
     "indexeddbshim": "^3.8.0",
-    "jamilih": "0.38.1",
+    "jamilih": "0.41.0",
     "json-refs": "https://github.com/brettz9/json-refs#browser",
     "load-stylesheets": "0.7.0",
     "node-fetch": "^2.2.0",

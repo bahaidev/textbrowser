@@ -211,7 +211,10 @@
                                     "type": "string"
                                 },
                                 "schemaFile": {"type": "string"},
-                                "metadataFile": {"type": "string"}
+                                "metadataFile": {"type": "string"},
+                                "shortcut": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }

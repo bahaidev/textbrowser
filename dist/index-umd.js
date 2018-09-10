@@ -2651,7 +2651,8 @@
 	function _childrenToJML(node) {
 	    return function (childNodeJML, i) {
 	        const cn = node.childNodes[i];
-	        cn.parentNode.replaceChild(jml(...childNodeJML), cn);
+	        const j = Array.isArray(childNodeJML) ? jml(...childNodeJML) : jml(childNodeJML);
+	        cn.parentNode.replaceChild(j, cn);
 	    };
 	}
 
@@ -2880,6 +2881,7 @@
 	                        break;
 	                    }case '$document':
 	                    {
+	                        // Todo: Conditionally create XML document
 	                        const node = doc.implementation.createHTMLDocument();
 	                        if (attVal.childNodes) {
 	                            attVal.childNodes.forEach(_childrenToJML(node));
@@ -2891,12 +2893,17 @@
 	                                j++;
 	                            }
 	                        } else {
+	                            if (attVal.$DOCTYPE) {
+	                                const dt = { $DOCTYPE: attVal.$DOCTYPE };
+	                                const doctype = jml(dt);
+	                                node.firstChild.replaceWith(doctype);
+	                            }
 	                            const html = node.childNodes[1];
 	                            const head = html.childNodes[0];
 	                            const body = html.childNodes[1];
 	                            if (attVal.title || attVal.head) {
 	                                const meta = doc.createElement('meta');
-	                                meta.charset = 'utf-8';
+	                                meta.setAttribute('charset', 'utf-8');
 	                                head.appendChild(meta);
 	                            }
 	                            if (attVal.title) {
@@ -2909,6 +2916,7 @@
 	                                attVal.body.forEach(_appendJMLOrText(body));
 	                            }
 	                        }
+	                        nodes[nodes.length] = node;
 	                        break;
 	                    }case '$DOCTYPE':
 	                    {
@@ -2933,7 +2941,7 @@
 	                                // internalSubset: // Todo
 	                            };
 	                        } else {
-	                            node = doc.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
+	                            node = doc.implementation.createDocumentType(attVal.name, attVal.publicId || '', attVal.systemId || '');
 	                        }
 	                        nodes[nodes.length] = node;
 	                        break;
@@ -3719,6 +3727,9 @@
 	};
 	jml.setDocument = docum => {
 	    doc = docum;
+	    if (docum && docum.body) {
+	        body = docum.body;
+	    }
 	};
 	jml.setXMLSerializer = xmls => {
 	    XmlSerializer = xmls;
@@ -3733,6 +3744,8 @@
 	jml.getXMLSerializer = () => {
 	    return XmlSerializer;
 	};
+
+	let body = doc && doc.body;
 
 	const nbsp = '\u00a0'; // Very commonly needed in templates
 
@@ -3796,7 +3809,7 @@
 	                atts.$on.close = close;
 	            }
 	        }
-	        const dialog = jml('dialog', atts, children, document.body);
+	        const dialog = jml('dialog', atts, children, body);
 	        dialogPolyfill.registerDialog(dialog);
 	        dialog.showModal();
 	        if (remove) {
@@ -3859,7 +3872,7 @@
 	            const dialog = jml('dialog', [msg, ...(includeOk ? [['br'], ['br'], ['div', { class: submitClass }, [['button', { $on: { click() {
 	                        dialog.close();
 	                        resolve();
-	                    } } }, [this.localeStrings.ok]]]]] : [])], document.body);
+	                    } } }, [this.localeStrings.ok]]]]] : [])], body);
 	            dialogPolyfill.registerDialog(dialog);
 	            dialog.showModal();
 	        });
@@ -3895,7 +3908,7 @@
 	                    } } }, [this.localeStrings.ok]], nbsp.repeat(2), ['button', { $on: { click() {
 	                        dialog.close();
 	                        reject(new Error('cancelled'));
-	                    } } }, [this.localeStrings.cancel]]]]], document.body);
+	                    } } }, [this.localeStrings.cancel]]]]], body);
 	            dialogPolyfill.registerDialog(dialog);
 	            dialog.showModal();
 	        });
@@ -8659,7 +8672,7 @@ Please refresh the page if you wish to reattempt.
 	                    });
 	                }
 	            }
-	        }, langs.map(({ code }) => ['option', { value: code }, [languages.getLanguageFromCode(code)]])]], document.body);
+	        }, langs.map(({ code }) => ['option', { value: code }, [languages.getLanguageFromCode(code)]])]], body);
 	        if (history.state && typeof history.state === 'object') {
 	            deserialize(document.querySelector('#languageSelectionContainer'), history.state);
 	        }
@@ -8672,7 +8685,7 @@ Please refresh the page if you wish to reattempt.
 	        ['div', [
 	            ['a', {href: '#', dataset: {code}}, [name]]
 	        ]]
-	    ), document.body
+	    ), body
 	    */
 	};
 
@@ -8707,7 +8720,7 @@ Please refresh the page if you wish to reattempt.
 	    }, [getNextAlias()]])]]
 	    // Todo: Add in Go button (with 'submitgo' localization string) to
 	    //    avoid need for pull-down if using first selection?
-	    ]]), document.body);
+	    ]]), body);
 	    if (history.state && typeof history.state === 'object') {
 	        deserialize(document.querySelector('#workSelect'), history.state);
 	    }
@@ -9032,7 +9045,8 @@ Please refresh the page if you wish to reattempt.
 	        }), ['input', { id: 'randomURL', type: 'text' }]]]]].forEach(addRowContent);
 	    },
 	    getPreferences: ({
-	        langs, imfl, l, localizeParamNames, namespace, hideFormattingSection
+	        siteBaseURL, languageParam, lf,
+	        langs, imfl, l, localizeParamNames, namespace, hideFormattingSection, groups
 	    }) => ['div', {
 	        style: { textAlign: 'left' }, id: 'preferences', hidden: 'true'
 	    }, [['div', { style: 'margin-top: 10px;' }, [['label', [l('localizeParamNames'), ['input', {
@@ -9068,7 +9082,57 @@ Please refresh the page if you wish to reattempt.
 	            atts.selected = 'selected';
 	        }
 	        return ['option', atts, [imfl(['languages', lan.code])]];
-	    })]]]]],
+	    })]]], ['div', [['button', {
+	        title: l('bookmark_generation_tooltip'),
+	        $on: {
+	            click() {
+	                // Todo: Give option to edit (keywords and work URLs)
+	                const date = new Date().getTime();
+	                const ADD_DATE = date;
+	                const LAST_MODIFIED = date;
+	                const blob = new Blob([new XMLSerializer().serializeToString(jml({ $document: {
+	                        $DOCTYPE: { name: 'NETSCAPE-Bookmark-file-1' },
+	                        title: l('Bookmarks'),
+	                        body: [['h1', [l('Bookmarks_Menu')]], ...groups.flatMap(({ name, files, id: groupID }) => {
+	                            const groupName = lf({ key: name.localeKey, fallback: true });
+	                            return [['dt', [['h3', {
+	                                ADD_DATE,
+	                                LAST_MODIFIED
+	                            }, [groupName]]]], ['dl', [['p'], ...files.map(({ shortcut: SHORTCUTURL, name: work }) => {
+	                                const workName = lf(['workNames', groupID, work]);
+	                                // Todo (low): Add anchor, etc. (until handled by `work-startEnd`); &aqdas-anchor1-1=2&anchorfield1=Paragraph
+	                                // Todo: option for additional browse field groups (startEnd2, etc.)
+	                                // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
+
+	                                // Todo: Add localized, per-work fields here (restricted by content locale?); field1=..., checked1=Yes, interlin1=, css1=, etc.
+	                                // Todo: Localize style params by overriding current serialized URL
+	                                const defaultStyleParams = 'colorName=Black&color=%23&bgcolorName=White&bgcolor=%23&fontSeq=Times+New+Roman%2C+serif&fontstyle=normal&fontvariant=normal&fontweight=normal&fontsize=&fontstretch=normal&letterspacing=normal&lineheight=normal&header=n&footer=0&caption=0&border=1&interlintitle=1&interlintitle_css=&pagecss=&outputmode=table&rand=No&=No&headerfooterfixed=No&result=Yes';
+	                                const url = `${siteBaseURL || location.origin + location.pathname}#lang=${languageParam}&${defaultStyleParams}&work=${work}&${work}-startEnd1=%s`;
+	                                return ['dt', [['a', {
+	                                    href: url,
+	                                    ADD_DATE,
+	                                    LAST_MODIFIED,
+	                                    SHORTCUTURL
+	                                }, [workName]]]];
+	                            })]]];
+	                        })]
+	                    } })).replace(
+	                // Chrome has a quirk that requires this (and not
+	                //   just any whitespace)
+	                // We're not getting the keywords with Chrome,
+	                //   but at least usable for bookmarks
+	                /<dt>/g, '\n<dt>')], { type: 'text/html' });
+	                const url = window.URL.createObjectURL(blob);
+	                const a = jml('a', {
+	                    hidden: true,
+	                    download: 'bookmarks.html',
+	                    href: url
+	                }, body);
+	                a.click();
+	                URL.revokeObjectURL(url);
+	            }
+	        }
+	    }, [l('Generate_bookmarks')]]]]]],
 	    addBrowseFields: ({ browseFields, fieldInfo, ld, i, iil, $p, content }) => {
 	        const work = $p.get('work');
 	        const addRowContent = rowContent => {
@@ -9134,11 +9198,12 @@ Please refresh the page if you wish to reattempt.
 	        })]]]]]]]]]]]]].forEach(addRowContent);
 	    },
 	    main: ({
+	        siteBaseURL, lf, languageParam,
 	        l, namespace, heading, fallbackDirection, imfl, langs, fieldInfo, localizeParamNames,
 	        serializeParamsAsURL,
 	        hideFormattingSection, $p,
 	        metadataObj, il, le, ld, iil, fieldMatchesLocale,
-	        preferredLocale, schemaItems, content
+	        preferredLocale, schemaItems, content, groups
 	    }) => {
 	        const lo = (key, atts) => ['option', atts, [l({
 	            key,
@@ -9153,7 +9218,8 @@ Please refresh the page if you wish to reattempt.
 	                    const prefs = $('#preferences');
 	                    prefs.hidden = !prefs.hidden;
 	                } } }, [l('Preferences')]], Templates.workDisplay.getPreferences({
-	            langs, imfl, l, localizeParamNames, namespace, hideFormattingSection
+	            siteBaseURL, languageParam, lf,
+	            langs, imfl, l, localizeParamNames, namespace, groups, hideFormattingSection
 	        })]], ['h2', [heading]], ['br'], ['form', { id: 'browse', $on: {
 	                submit(e) {
 	                    e.preventDefault();
@@ -9213,7 +9279,7 @@ Please refresh the page if you wish to reattempt.
 	                    location.href = newURL;
 	                }
 	            }
-	        })]]]]], document.body);
+	        })]]]]], body);
 	    }
 	};
 
@@ -9513,7 +9579,7 @@ body {
 	                dialogs.alert(err.message);
 	            }
 	        }
-	        jml(...html, document.body);
+	        jml(...html, body);
 	    }
 	};
 
@@ -9527,7 +9593,12 @@ body {
 	    resultsDisplayClient,
 	    defaultBody() {
 	        $('html').style.height = '100%'; // Todo: Set in CSS
-	        return jml('body', { style: 'height: 100%;' });
+	        // We empty rather than `replaceWith` as our Jamilih `body` aliases
+	        //   expect the old instance
+	        while (body.hasChildNodes()) {
+	            body.firstChild.remove();
+	        }
+	        return jml(body, { style: 'height: 100%;' });
 	    }
 	};
 	Templates.permissions = {
@@ -9596,7 +9667,7 @@ body {
 	        const dbErrorNotice = jml('dialog', {
 	            id: 'dbError'
 	        }, [['section', [l('dbError')]]]);
-	        jml('div', { id: 'dialogContainer', style: 'height: 100%' }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], document.body);
+	        jml('div', { id: 'dialogContainer', style: 'height: 100%' }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], body);
 
 	        return [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice];
 	    }
@@ -9745,10 +9816,9 @@ body {
 	/* eslint-env browser */
 
 	var workDisplay = (async function workDisplay({
-	    l,
+	    l, languageParam,
 	    lang, preferredLocale, languages, fallbackLanguages, $p
 	}) {
-	    const that = this;
 	    const langs = this.langData.languages;
 
 	    const fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
@@ -9759,7 +9829,7 @@ body {
 	    const prefFormatting = localStorage.getItem(this.namespace + '-hideFormattingSection');
 	    const hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : prefFormatting === 'true' || prefFormatting !== 'false' && this.hideFormattingSection;
 
-	    function _displayWork({
+	    async function _displayWork({
 	        lf, metadataObj, getFieldAliasOrName, schemaObj,
 	        pluginsForWork
 	    }) {
@@ -9904,10 +9974,14 @@ body {
 	        */
 	        const serializeParamsAsURL = getSerializeParamsAsURL({ l, il, $p });
 
+	        const { groups } = await simpleGetJson(this.files);
+
 	        // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
 	        const heading = getMetaProp(lang, metadataObj, 'heading');
 	        Templates.workDisplay.main({
-	            l, namespace: that.namespace, heading,
+	            languageParam,
+	            siteBaseURL: this.siteBaseURL, lang, lf,
+	            l, namespace: this.namespace, groups, heading,
 	            imfl, fallbackDirection,
 	            langs, fieldInfo, localizeParamNames,
 	            serializeParamsAsURL, hideFormattingSection, $p,
@@ -9931,7 +10005,7 @@ body {
 	            },
 	            fallback: true
 	        });
-	        _displayWork.call(this, _extends({ lf, metadataObj }, args));
+	        await _displayWork.call(this, _extends({ lf, metadataObj }, args));
 	    } catch (err) {
 	        dialogs.alert(err);
 	    }
@@ -10999,7 +11073,7 @@ body {
 	}
 
 	TextBrowser.prototype.paramChange = async function () {
-	    document.body.replaceWith(Templates.defaultBody());
+	    Templates.defaultBody();
 
 	    // Todo: Could give option to i18nize 'lang' or omit
 	    const $p = this.$p = typeof history.state === 'string' ? new IntlURLSearchParams({ params: history.state }) : new IntlURLSearchParams(); // Uses URL hash for params
@@ -11264,6 +11338,7 @@ Please wait for a short while as we work to update to a new version.
 	                l,
 	                lang, preferredLocale,
 	                fallbackLanguages,
+	                languageParam,
 	                $p, languages
 	            });
 	            return true;

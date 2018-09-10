@@ -1,3 +1,9 @@
+# 0.25.0
+
+- Enhancement: Bookmarks export
+- npm: Update Jamilih
+- Refactoring: Make use of Jamilih's new `body` export
+
 # 0.24.1
 
 - Fix: `startEnd` setting issue

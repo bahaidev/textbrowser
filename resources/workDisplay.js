@@ -1,6 +1,7 @@
 /* eslint-env browser */
 import IMF from 'imf';
 import getSerializeParamsAsURL from './utils/getSerializeParamsAsURL.js';
+import getJSON from 'simple-get-json';
 
 import {getMetaProp, Metadata} from './utils/Metadata.js';
 import {escapePlugin} from './utils/Plugin.js';
@@ -9,10 +10,9 @@ import {dialogs} from './utils/dialogs.js';
 import Templates from './templates/index.js';
 
 export default async function workDisplay ({
-    l,
+    l, languageParam,
     lang, preferredLocale, languages, fallbackLanguages, $p
 }) {
-    const that = this;
     const langs = this.langData.languages;
 
     const fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
@@ -31,7 +31,7 @@ export default async function workDisplay ({
             prefFormatting !== 'false' && this.hideFormattingSection
         );
 
-    function _displayWork ({
+    async function _displayWork ({
         lf, metadataObj, getFieldAliasOrName, schemaObj,
         pluginsForWork
     }) {
@@ -191,10 +191,14 @@ export default async function workDisplay ({
         */
         const serializeParamsAsURL = getSerializeParamsAsURL({l, il, $p});
 
+        const {groups} = await getJSON(this.files);
+
         // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
         const heading = getMetaProp(lang, metadataObj, 'heading');
         Templates.workDisplay.main({
-            l, namespace: that.namespace, heading,
+            languageParam,
+            siteBaseURL: this.siteBaseURL, lang, lf,
+            l, namespace: this.namespace, groups, heading,
             imfl, fallbackDirection,
             langs, fieldInfo, localizeParamNames,
             serializeParamsAsURL, hideFormattingSection, $p,
@@ -218,7 +222,7 @@ export default async function workDisplay ({
             },
             fallback: true
         });
-        _displayWork.call(this, {lf, metadataObj, ...args});
+        await _displayWork.call(this, {lf, metadataObj, ...args});
     } catch (err) {
         dialogs.alert(err);
     }

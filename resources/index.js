@@ -224,7 +224,7 @@ async function requestPermissions (langs, l) {
 }
 
 TextBrowser.prototype.paramChange = async function () {
-    document.body.replaceWith(Templates.defaultBody());
+    Templates.defaultBody();
 
     // Todo: Could give option to i18nize 'lang' or omit
     const $p = this.$p = typeof history.state === 'string'
@@ -490,6 +490,7 @@ Please wait for a short while as we work to update to a new version.
                 l,
                 lang, preferredLocale,
                 fallbackLanguages,
+                languageParam,
                 $p, languages
             });
             return true;
