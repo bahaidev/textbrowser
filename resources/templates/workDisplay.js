@@ -642,7 +642,9 @@ export default {
                                                         // Todo (low): Add anchor, etc. (until handled by `work-startEnd`); &aqdas-anchor1-1=2&anchorfield1=Paragraph
                                                         // Todo: option for additional browse field groups (startEnd2, etc.)
                                                         // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
+                                                        // Todo: Make Chrome NativeExt add-on to manipulate its search engines (to read a bookmarks file from Firefox properly, i.e., including keywords) https://www.makeuseof.com/answers/export-google-chrome-search-engines-address-bar/
 
+                                                        // Todo: Allow copy-paste of keyword URL for current work (for Chrome)
                                                         // Todo: Add localized, per-work fields here (restricted by content locale?); field1=..., checked1=Yes, interlin1=, css1=, etc.
                                                         // Todo: Localize style params by overriding current serialized URL
                                                         const defaultStyleParams = 'colorName=Black&color=%23&bgcolorName=White&bgcolor=%23&fontSeq=Times+New+Roman%2C+serif&fontstyle=normal&fontvariant=normal&fontweight=normal&fontsize=&fontstretch=normal&letterspacing=normal&lineheight=normal&header=n&footer=0&caption=0&border=1&interlintitle=1&interlintitle_css=&pagecss=&outputmode=table&rand=No&=No&headerfooterfixed=No&result=Yes';
