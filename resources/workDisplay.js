@@ -3,8 +3,7 @@ import IMF from 'imf';
 import {replaceHash, getParamsSetter, getSerializeParamsAsURL} from './utils/Params.js';
 import getJSON from 'simple-get-json';
 
-import {getMetaProp, Metadata} from './utils/Metadata.js';
-import {escapePlugin} from './utils/Plugin.js';
+import {getMetaProp} from './utils/Metadata.js';
 import {dialogs} from './utils/dialogs.js';
 
 import Templates from './templates/index.js';
@@ -33,7 +32,7 @@ export default async function workDisplay ({
 
     async function _displayWork ({
         lf, metadataObj, getFieldAliasOrName, schemaObj, schemaItems, fieldInfo,
-        pluginsForWork, groupsToWorks
+        metadata, pluginsForWork, groupsToWorks
     }) {
         const il = localizeParamNames
             ? key => l(['params', key])
@@ -54,7 +53,7 @@ export default async function workDisplay ({
         const le = (key, el, attToLocalize, atts, children) => {
             atts[attToLocalize] = l({
                 key,
-                fallback: ({message}) => {
+                fallback ({message}) {
                     atts.dir = fallbackDirection;
                     return message;
                 }
@@ -71,92 +70,6 @@ export default async function workDisplay ({
                 fallback: ({message}) =>
                     Templates.workDisplay.bdo({fallbackDirection, message})
             });
-
-        const metadata = new Metadata({metadataObj});
-        if (pluginsForWork) {
-            console.log('pluginsForWork', pluginsForWork);
-            const {lang} = this; // array with first item as preferred
-            pluginsForWork.iterateMappings(({
-                plugin,
-                pluginName, pluginLang,
-                onByDefaultDefault,
-                placement, applicableFields, meta
-            }) => {
-                const processField = ({applicableField, targetLanguage, onByDefault, metaApplicableField} = {}) => {
-                    const plugin = pluginsForWork.getPluginObject(pluginName);
-                    const applicableFieldLang = metadata.getFieldLang(applicableField);
-                    if (plugin.getTargetLanguage) {
-                        targetLanguage = plugin.getTargetLanguage({
-                            applicableField,
-                            targetLanguage,
-                            // Default lang for plug-in (from files.json)
-                            pluginLang,
-                            // Default lang when no target language or
-                            //   plugin lang; using the lang of the applicable
-                            //   field
-                            applicableFieldLang
-                        });
-                    }
-                    const field = escapePlugin({
-                        pluginName,
-                        applicableField,
-                        targetLanguage: targetLanguage || pluginLang ||
-                            applicableFieldLang
-                    });
-                    if (targetLanguage === '{locale}') {
-                        targetLanguage = preferredLocale;
-                    }
-                    const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', applicableField]);
-                    const fieldAliasOrName = plugin.getFieldAliasOrName
-                        ? plugin.getFieldAliasOrName({
-                            locales: lang,
-                            lf,
-                            targetLanguage,
-                            applicableField,
-                            applicableFieldI18N,
-                            meta,
-                            metaApplicableField,
-                            targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
-                        })
-                        : languages.getFieldNameFromPluginNameAndLocales({
-                            pluginName,
-                            locales: lang,
-                            lf,
-                            targetLanguage,
-                            applicableFieldI18N,
-                            // Todo: Should have formal way to i18nize meta
-                            meta,
-                            metaApplicableField
-                        });
-                    fieldInfo.splice(
-                        // Todo: Allow default placement overriding for
-                        //    non-plugins
-                        placement === 'end'
-                            ? Infinity // push
-                            : placement,
-                        0,
-                        {
-                            field: `${this.namespace}-plugin-${field}`,
-                            fieldAliasOrName,
-                            // Plug-in specific (todo: allow specifying
-                            //    for non-plugins)
-                            onByDefault: typeof onByDefault === 'boolean'
-                                ? onByDefault
-                                : (onByDefaultDefault || false),
-                            // Three conventions for use by plug-ins but
-                            //     textbrowser only passes on (might
-                            //     not need here)
-                            applicableField,
-                            metaApplicableField,
-                            fieldLang: targetLanguage
-                        }
-                    );
-                };
-                if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
-                    processField();
-                }
-            });
-        }
 
         const fieldMatchesLocale = metadata.getFieldMatchesLocale({
             namespace: this.namespace,
@@ -197,7 +110,8 @@ export default async function workDisplay ({
                         return {
                             workName, shortcut: shortcuts[i],
                             fieldAliasOrNames: (await this.getWorkData({
-                                lang, fallbackLanguages, work: workName
+                                lang, fallbackLanguages, preferredLocale,
+                                languages, work: workName
                             })).fieldInfo.map(({fieldAliasOrName}) => fieldAliasOrName)
                         };
                     }));
@@ -229,7 +143,8 @@ export default async function workDisplay ({
 
     try {
         const {lf, fileData, metadataObj, ...args} = await this.getWorkData({
-            lang, fallbackLanguages, work: $p.get('work')
+            lang, fallbackLanguages, preferredLocale,
+            languages, work: $p.get('work')
         });
 
         document.title = lf({

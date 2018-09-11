@@ -2660,8 +2660,6 @@ var workDisplay = {
                                     workName: work, // Delete work of current page
                                     type: 'shortcutResult'
                                 }));
-                                // Todo: Allow copy-paste of keyword URL for current work (for Chrome)
-
                                 const url = replaceHash(paramsCopy) + `&work=${workName}&${workName}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here
 
                                 return ['dt', [['a', {
@@ -2802,7 +2800,22 @@ var workDisplay = {
                     $('#settings-URL').value = url;
                 }
             }
-        }), ['input', { id: 'settings-URL' }]]], Templates.workDisplay.advancedFormatting({
+        }), ['input', { id: 'settings-URL' }], ['br'], ['button', {
+            $on: {
+                async click() {
+                    const paramsCopy = paramsSetter(_extends({}, getDataForSerializingParamsAsURL(), {
+                        workName: work, // Delete work of current page
+                        type: 'startEndResult'
+                    }));
+                    const url = replaceHash(paramsCopy) + `&work=${work}&${work}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here
+                    try {
+                        await navigator.clipboard.writeText(url);
+                    } catch (err) {
+                        // User rejected
+                    }
+                }
+            }
+        }, [l('Copy_shortcut_URL')]]]], Templates.workDisplay.advancedFormatting({
             ld, il, l, lo, le, $p, hideFormattingSection
         })
         /*
@@ -7254,11 +7267,20 @@ if (typeof global !== 'undefined') {
     global.IntlMessageFormat = intlMessageformat;
 }
 
+const escapePluginComponent = pluginName => {
+    return pluginName.replace(/\^/g, '^^') // Escape our escape
+    .replace(/-/g, '^0');
+};
+
 const unescapePluginComponent = pluginName => {
     if (!pluginName) {
         return pluginName;
     }
     return pluginName.replace(/(\^+)0/g, (n0, esc) => esc.length % 2 ? esc.slice(1) + '-' : n0).replace(/\^\^/g, '^');
+};
+
+const escapePlugin = ({ pluginName, applicableField, targetLanguage }) => {
+    return escapePluginComponent(pluginName) + (applicableField ? '-' + escapePluginComponent(applicableField) : '-') + (targetLanguage ? '-' + escapePluginComponent(targetLanguage) : '');
 };
 
 class PluginsForWork {
@@ -7344,7 +7366,8 @@ const getFilePaths = function getFilePaths(filesObj, fileGroup, fileData) {
 };
 
 const getWorkData = async function ({
-    lang, fallbackLanguages, work, files, allowPlugins, basePath
+    lang, fallbackLanguages, work, files, allowPlugins, basePath,
+    languages, preferredLocale
 }) {
     const filesObj = await getJSON(files);
     const localeFromFileData = lan => filesObj['localization-strings'][lan];
@@ -7457,10 +7480,87 @@ const getWorkData = async function ({
             fieldAliasOrName: getFieldAliasOrName(field) || field
         };
     });
+    const metadata = new Metadata({ metadataObj });
+    if (languages && // Avoid all this processing if this is not the specific call requiring
+    pluginsForWork) {
+        console.log('pluginsForWork', pluginsForWork);
+        const { lang } = this; // array with first item as preferred
+        pluginsForWork.iterateMappings(({
+            plugin,
+            pluginName, pluginLang,
+            onByDefaultDefault,
+            placement, applicableFields, meta
+        }) => {
+            const processField = ({ applicableField, targetLanguage, onByDefault, metaApplicableField } = {}) => {
+                const plugin = pluginsForWork.getPluginObject(pluginName);
+                const applicableFieldLang = metadata.getFieldLang(applicableField);
+                if (plugin.getTargetLanguage) {
+                    targetLanguage = plugin.getTargetLanguage({
+                        applicableField,
+                        targetLanguage,
+                        // Default lang for plug-in (from files.json)
+                        pluginLang,
+                        // Default lang when no target language or
+                        //   plugin lang; using the lang of the applicable
+                        //   field
+                        applicableFieldLang
+                    });
+                }
+                const field = escapePlugin({
+                    pluginName,
+                    applicableField,
+                    targetLanguage: targetLanguage || pluginLang || applicableFieldLang
+                });
+                if (targetLanguage === '{locale}') {
+                    targetLanguage = preferredLocale;
+                }
+                const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', applicableField]);
+                const fieldAliasOrName = plugin.getFieldAliasOrName ? plugin.getFieldAliasOrName({
+                    locales: lang,
+                    lf,
+                    targetLanguage,
+                    applicableField,
+                    applicableFieldI18N,
+                    meta,
+                    metaApplicableField,
+                    targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
+                }) : languages.getFieldNameFromPluginNameAndLocales({
+                    pluginName,
+                    locales: lang,
+                    lf,
+                    targetLanguage,
+                    applicableFieldI18N,
+                    // Todo: Should have formal way to i18nize meta
+                    meta,
+                    metaApplicableField
+                });
+                fieldInfo.splice(
+                // Todo: Allow default placement overriding for
+                //    non-plugins
+                placement === 'end' ? Infinity // push
+                : placement, 0, {
+                    field: `${this.namespace}-plugin-${field}`,
+                    fieldAliasOrName,
+                    // Plug-in specific (todo: allow specifying
+                    //    for non-plugins)
+                    onByDefault: typeof onByDefault === 'boolean' ? onByDefault : onByDefaultDefault || false,
+                    // Three conventions for use by plug-ins but
+                    //     textbrowser only passes on (might
+                    //     not need here)
+                    applicableField,
+                    metaApplicableField,
+                    fieldLang: targetLanguage
+                });
+            };
+            if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
+                processField();
+            }
+        });
+    }
     return {
         fileData, lf, getFieldAliasOrName, metadataObj,
         schemaObj, schemaItems, fieldInfo,
-        pluginsForWork, groupsToWorks
+        pluginsForWork, groupsToWorks, metadata
     };
 };
 

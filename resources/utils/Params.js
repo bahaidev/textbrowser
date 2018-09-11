@@ -15,7 +15,7 @@ export const getSerializeParamsAsURL = function (...args) {
 };
 
 export const getParamsSetter = function ({l, il, $p}) {
-    return function ({form, random = {}, checkboxes, type, fieldAliasOrNames, workName}) {
+    return function ({form, random = {}, checkboxes, type, fieldAliasOrNames = [], workName}) {
         const paramsCopy = new URLSearchParams($p.params);
         const formParamsHash = formSerialize(form, {hash: true, empty: true});
 
@@ -35,6 +35,21 @@ export const getParamsSetter = function ({l, il, $p}) {
             paramsCopy.set(checkbox.name, checkbox.checked ? l('yes') : l('no'));
         });
 
+        function removeStartsEndsAndAnchors () {
+            let num = 1;
+            let num2 = 1;
+            while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
+                while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
+                    paramsCopy.delete(`${workName}-start${num}-${num2}`, true);
+                    paramsCopy.delete(`${workName}-end${num}-${num2}`, true);
+                    paramsCopy.delete(`${workName}-anchor${num}-${num2}`, true);
+                    num2++;
+                }
+                num2 = 1;
+                num++;
+            }
+        }
+
         switch (type) {
         case 'saveSettings': {
             // In case it was added previously on
@@ -49,18 +64,8 @@ export const getParamsSetter = function ({l, il, $p}) {
                 paramsCopy.delete(`anchorfield${num}`, true);
                 num++;
             }
-            num = 1;
-            let num2 = 1;
-            while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
-                while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
-                    paramsCopy.delete(`${workName}-start${num}-${num2}`, true);
-                    paramsCopy.delete(`${workName}-end${num}-${num2}`, true);
-                    paramsCopy.delete(`${workName}-anchor${num}-${num2}`, true);
-                    num2++;
-                }
-                num2 = 1;
-                num++;
-            }
+            removeStartsEndsAndAnchors(workName);
+
             num = 1;
             // Delete field-specific so we can add our own
             while (paramsCopy.has(`field${num}`, true)) {
@@ -80,8 +85,12 @@ export const getParamsSetter = function ({l, il, $p}) {
             paramsCopy.delete('work', true);
         }
         // Fallthrough
+        case 'startEndResult':
         case 'randomResult':
         case 'result': {
+            if (type === 'startEndResult') {
+                removeStartsEndsAndAnchors(workName);
+            }
             // In case it was added previously on this page,
             //    let's put random again toward the end.
             if (type === 'randomResult' || random.checked) {

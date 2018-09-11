@@ -1,7 +1,7 @@
 import getJSON from 'simple-get-json';
 import IMF from 'imf';
-import {getMetaProp, getMetadata} from './Metadata.js';
-import {PluginsForWork} from './Plugin.js';
+import {getMetaProp, getMetadata, Metadata} from './Metadata.js';
+import {PluginsForWork, escapePlugin} from './Plugin.js';
 
 export const getWorkFiles = async function getWorkFiles (files = this.files) {
     const filesObj = await getJSON(files);
@@ -33,7 +33,8 @@ export const getFilePaths = function getFilePaths (filesObj, fileGroup, fileData
 };
 
 export const getWorkData = async function ({
-    lang, fallbackLanguages, work, files, allowPlugins, basePath
+    lang, fallbackLanguages, work, files, allowPlugins, basePath,
+    languages, preferredLocale
 }) {
     const filesObj = await getJSON(files);
     const localeFromFileData = (lan) =>
@@ -153,9 +154,96 @@ export const getWorkData = async function ({
             fieldAliasOrName: getFieldAliasOrName(field) || field
         };
     });
+    const metadata = new Metadata({metadataObj});
+    if (languages && // Avoid all this processing if this is not the specific call requiring
+        pluginsForWork
+    ) {
+        console.log('pluginsForWork', pluginsForWork);
+        const {lang} = this; // array with first item as preferred
+        pluginsForWork.iterateMappings(({
+            plugin,
+            pluginName, pluginLang,
+            onByDefaultDefault,
+            placement, applicableFields, meta
+        }) => {
+            const processField = ({applicableField, targetLanguage, onByDefault, metaApplicableField} = {}) => {
+                const plugin = pluginsForWork.getPluginObject(pluginName);
+                const applicableFieldLang = metadata.getFieldLang(applicableField);
+                if (plugin.getTargetLanguage) {
+                    targetLanguage = plugin.getTargetLanguage({
+                        applicableField,
+                        targetLanguage,
+                        // Default lang for plug-in (from files.json)
+                        pluginLang,
+                        // Default lang when no target language or
+                        //   plugin lang; using the lang of the applicable
+                        //   field
+                        applicableFieldLang
+                    });
+                }
+                const field = escapePlugin({
+                    pluginName,
+                    applicableField,
+                    targetLanguage: targetLanguage || pluginLang ||
+                        applicableFieldLang
+                });
+                if (targetLanguage === '{locale}') {
+                    targetLanguage = preferredLocale;
+                }
+                const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', applicableField]);
+                const fieldAliasOrName = plugin.getFieldAliasOrName
+                    ? plugin.getFieldAliasOrName({
+                        locales: lang,
+                        lf,
+                        targetLanguage,
+                        applicableField,
+                        applicableFieldI18N,
+                        meta,
+                        metaApplicableField,
+                        targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
+                    })
+                    : languages.getFieldNameFromPluginNameAndLocales({
+                        pluginName,
+                        locales: lang,
+                        lf,
+                        targetLanguage,
+                        applicableFieldI18N,
+                        // Todo: Should have formal way to i18nize meta
+                        meta,
+                        metaApplicableField
+                    });
+                fieldInfo.splice(
+                    // Todo: Allow default placement overriding for
+                    //    non-plugins
+                    placement === 'end'
+                        ? Infinity // push
+                        : placement,
+                    0,
+                    {
+                        field: `${this.namespace}-plugin-${field}`,
+                        fieldAliasOrName,
+                        // Plug-in specific (todo: allow specifying
+                        //    for non-plugins)
+                        onByDefault: typeof onByDefault === 'boolean'
+                            ? onByDefault
+                            : (onByDefaultDefault || false),
+                        // Three conventions for use by plug-ins but
+                        //     textbrowser only passes on (might
+                        //     not need here)
+                        applicableField,
+                        metaApplicableField,
+                        fieldLang: targetLanguage
+                    }
+                );
+            };
+            if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
+                processField();
+            }
+        });
+    }
     return {
         fileData, lf, getFieldAliasOrName, metadataObj,
         schemaObj, schemaItems, fieldInfo,
-        pluginsForWork, groupsToWorks
+        pluginsForWork, groupsToWorks, metadata
     };
 };

@@ -86,7 +86,7 @@ TextBrowser.prototype.getWorkFiles = getWorkFiles;
 
 TextBrowser.prototype.getWorkData = function (opts) {
     try {
-        return getWorkData({
+        return getWorkData.call(this, {
             ...opts,
             files: this.files,
             allowPlugins: this.allowPlugins

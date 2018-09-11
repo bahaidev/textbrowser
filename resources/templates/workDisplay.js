@@ -650,8 +650,6 @@ export default {
                                                             workName: work, // Delete work of current page
                                                             type: 'shortcutResult'
                                                         });
-                                                        // Todo: Allow copy-paste of keyword URL for current work (for Chrome)
-
                                                         const url = replaceHash(paramsCopy) + `&work=${workName}&${workName}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here
 
                                                         return ['dt', [
@@ -898,7 +896,25 @@ export default {
                                             }
                                         }
                                     }),
-                                    ['input', {id: 'settings-URL'}]
+                                    ['input', {id: 'settings-URL'}],
+                                    ['br'],
+                                    ['button', {
+                                        $on: {
+                                            async click () {
+                                                const paramsCopy = paramsSetter({
+                                                    ...getDataForSerializingParamsAsURL(),
+                                                    workName: work, // Delete work of current page
+                                                    type: 'startEndResult'
+                                                });
+                                                const url = replaceHash(paramsCopy) + `&work=${work}&${work}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here
+                                                try {
+                                                    await navigator.clipboard.writeText(url);
+                                                } catch (err) {
+                                                    // User rejected
+                                                }
+                                            }
+                                        }
+                                    }, [l('Copy_shortcut_URL')]]
                                 ]],
                                 Templates.workDisplay.advancedFormatting({
                                     ld, il, l, lo, le, $p, hideFormattingSection

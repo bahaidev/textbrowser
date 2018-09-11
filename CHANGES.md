@@ -1,6 +1,7 @@
 # 0.25.0
 
 - Enhancement: Bookmarks export
+- Enhancement: Button to copy single shortcut URL (e.g., for Chrome)
 - npm: Update Jamilih
 - Refactoring: Make use of Jamilih's new `body` export
 

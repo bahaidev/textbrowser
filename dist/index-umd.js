@@ -8019,7 +8019,8 @@
 	};
 
 	const getWorkData = async function ({
-	    lang, fallbackLanguages, work, files, allowPlugins, basePath
+	    lang, fallbackLanguages, work, files, allowPlugins, basePath,
+	    languages, preferredLocale
 	}) {
 	    const filesObj = await simpleGetJson(files);
 	    const localeFromFileData = lan => filesObj['localization-strings'][lan];
@@ -8132,10 +8133,87 @@
 	            fieldAliasOrName: getFieldAliasOrName(field) || field
 	        };
 	    });
+	    const metadata = new Metadata({ metadataObj });
+	    if (languages && // Avoid all this processing if this is not the specific call requiring
+	    pluginsForWork) {
+	        console.log('pluginsForWork', pluginsForWork);
+	        const { lang } = this; // array with first item as preferred
+	        pluginsForWork.iterateMappings(({
+	            plugin,
+	            pluginName, pluginLang,
+	            onByDefaultDefault,
+	            placement, applicableFields, meta
+	        }) => {
+	            const processField = ({ applicableField, targetLanguage, onByDefault, metaApplicableField } = {}) => {
+	                const plugin = pluginsForWork.getPluginObject(pluginName);
+	                const applicableFieldLang = metadata.getFieldLang(applicableField);
+	                if (plugin.getTargetLanguage) {
+	                    targetLanguage = plugin.getTargetLanguage({
+	                        applicableField,
+	                        targetLanguage,
+	                        // Default lang for plug-in (from files.json)
+	                        pluginLang,
+	                        // Default lang when no target language or
+	                        //   plugin lang; using the lang of the applicable
+	                        //   field
+	                        applicableFieldLang
+	                    });
+	                }
+	                const field = escapePlugin({
+	                    pluginName,
+	                    applicableField,
+	                    targetLanguage: targetLanguage || pluginLang || applicableFieldLang
+	                });
+	                if (targetLanguage === '{locale}') {
+	                    targetLanguage = preferredLocale;
+	                }
+	                const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', applicableField]);
+	                const fieldAliasOrName = plugin.getFieldAliasOrName ? plugin.getFieldAliasOrName({
+	                    locales: lang,
+	                    lf,
+	                    targetLanguage,
+	                    applicableField,
+	                    applicableFieldI18N,
+	                    meta,
+	                    metaApplicableField,
+	                    targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
+	                }) : languages.getFieldNameFromPluginNameAndLocales({
+	                    pluginName,
+	                    locales: lang,
+	                    lf,
+	                    targetLanguage,
+	                    applicableFieldI18N,
+	                    // Todo: Should have formal way to i18nize meta
+	                    meta,
+	                    metaApplicableField
+	                });
+	                fieldInfo.splice(
+	                // Todo: Allow default placement overriding for
+	                //    non-plugins
+	                placement === 'end' ? Infinity // push
+	                : placement, 0, {
+	                    field: `${this.namespace}-plugin-${field}`,
+	                    fieldAliasOrName,
+	                    // Plug-in specific (todo: allow specifying
+	                    //    for non-plugins)
+	                    onByDefault: typeof onByDefault === 'boolean' ? onByDefault : onByDefaultDefault || false,
+	                    // Three conventions for use by plug-ins but
+	                    //     textbrowser only passes on (might
+	                    //     not need here)
+	                    applicableField,
+	                    metaApplicableField,
+	                    fieldLang: targetLanguage
+	                });
+	            };
+	            if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
+	                processField();
+	            }
+	        });
+	    }
 	    return {
 	        fileData, lf, getFieldAliasOrName, metadataObj,
 	        schemaObj, schemaItems, fieldInfo,
-	        pluginsForWork, groupsToWorks
+	        pluginsForWork, groupsToWorks, metadata
 	    };
 	};
 
@@ -9128,8 +9206,6 @@ Please refresh the page if you wish to reattempt.
 	                                    workName: work, // Delete work of current page
 	                                    type: 'shortcutResult'
 	                                }));
-	                                // Todo: Allow copy-paste of keyword URL for current work (for Chrome)
-
 	                                const url = replaceHash(paramsCopy) + `&work=${workName}&${workName}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here
 
 	                                return ['dt', [['a', {
@@ -9270,7 +9346,22 @@ Please refresh the page if you wish to reattempt.
 	                    $('#settings-URL').value = url;
 	                }
 	            }
-	        }), ['input', { id: 'settings-URL' }]]], Templates.workDisplay.advancedFormatting({
+	        }), ['input', { id: 'settings-URL' }], ['br'], ['button', {
+	            $on: {
+	                async click() {
+	                    const paramsCopy = paramsSetter(_extends({}, getDataForSerializingParamsAsURL(), {
+	                        workName: work, // Delete work of current page
+	                        type: 'startEndResult'
+	                    }));
+	                    const url = replaceHash(paramsCopy) + `&work=${work}&${work}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here
+	                    try {
+	                        await navigator.clipboard.writeText(url);
+	                    } catch (err) {
+	                        // User rejected
+	                    }
+	                }
+	            }
+	        }, [l('Copy_shortcut_URL')]]]], Templates.workDisplay.advancedFormatting({
 	            ld, il, l, lo, le, $p, hideFormattingSection
 	        })
 	        /*
@@ -9818,7 +9909,7 @@ body {
 	};
 
 	const getParamsSetter = function ({ l, il, $p }) {
-	    return function ({ form, random = {}, checkboxes, type, fieldAliasOrNames, workName }) {
+	    return function ({ form, random = {}, checkboxes, type, fieldAliasOrNames = [], workName }) {
 	        const paramsCopy = new URLSearchParams($p.params);
 	        const formParamsHash = serialize(form, { hash: true, empty: true });
 
@@ -9838,6 +9929,21 @@ body {
 	            paramsCopy.set(checkbox.name, checkbox.checked ? l('yes') : l('no'));
 	        });
 
+	        function removeStartsEndsAndAnchors() {
+	            let num = 1;
+	            let num2 = 1;
+	            while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
+	                while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
+	                    paramsCopy.delete(`${workName}-start${num}-${num2}`, true);
+	                    paramsCopy.delete(`${workName}-end${num}-${num2}`, true);
+	                    paramsCopy.delete(`${workName}-anchor${num}-${num2}`, true);
+	                    num2++;
+	                }
+	                num2 = 1;
+	                num++;
+	            }
+	        }
+
 	        switch (type) {
 	            case 'saveSettings':
 	                {
@@ -9854,18 +9960,8 @@ body {
 	                        paramsCopy.delete(`anchorfield${num}`, true);
 	                        num++;
 	                    }
-	                    num = 1;
-	                    let num2 = 1;
-	                    while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
-	                        while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
-	                            paramsCopy.delete(`${workName}-start${num}-${num2}`, true);
-	                            paramsCopy.delete(`${workName}-end${num}-${num2}`, true);
-	                            paramsCopy.delete(`${workName}-anchor${num}-${num2}`, true);
-	                            num2++;
-	                        }
-	                        num2 = 1;
-	                        num++;
-	                    }
+	                    removeStartsEndsAndAnchors(workName);
+
 	                    num = 1;
 	                    // Delete field-specific so we can add our own
 	                    while (paramsCopy.has(`field${num}`, true)) {
@@ -9882,12 +9978,16 @@ body {
 	                        paramsCopy.set(`interlin${i + 1}`, '');
 	                        paramsCopy.set(`css${i + 1}`, '');
 	                    });
-	                    paramsCopy.set('work', workName, true);
+	                    paramsCopy.delete('work', true);
 	                }
 	            // Fallthrough
+	            case 'startEndResult':
 	            case 'randomResult':
 	            case 'result':
 	                {
+	                    if (type === 'startEndResult') {
+	                        removeStartsEndsAndAnchors(workName);
+	                    }
 	                    // In case it was added previously on this page,
 	                    //    let's put random again toward the end.
 	                    if (type === 'randomResult' || random.checked) {
@@ -9920,7 +10020,7 @@ body {
 
 	    async function _displayWork({
 	        lf, metadataObj, getFieldAliasOrName, schemaObj, schemaItems, fieldInfo,
-	        pluginsForWork, groupsToWorks
+	        metadata, pluginsForWork, groupsToWorks
 	    }) {
 	        const il = localizeParamNames ? key => l(['params', key]) : key => key;
 	        const iil = localizeParamNames ? key => l(['params', 'indexed', key]) : key => key;
@@ -9937,7 +10037,7 @@ body {
 	        const le = (key, el, attToLocalize, atts, children) => {
 	            atts[attToLocalize] = l({
 	                key,
-	                fallback: ({ message }) => {
+	                fallback({ message }) {
 	                    atts.dir = fallbackDirection;
 	                    return message;
 	                }
@@ -9952,83 +10052,6 @@ body {
 	            formats,
 	            fallback: ({ message }) => Templates.workDisplay.bdo({ fallbackDirection, message })
 	        });
-
-	        const metadata = new Metadata({ metadataObj });
-	        if (pluginsForWork) {
-	            console.log('pluginsForWork', pluginsForWork);
-	            const { lang } = this; // array with first item as preferred
-	            pluginsForWork.iterateMappings(({
-	                plugin,
-	                pluginName, pluginLang,
-	                onByDefaultDefault,
-	                placement, applicableFields, meta
-	            }) => {
-	                const processField = ({ applicableField, targetLanguage, onByDefault, metaApplicableField } = {}) => {
-	                    const plugin = pluginsForWork.getPluginObject(pluginName);
-	                    const applicableFieldLang = metadata.getFieldLang(applicableField);
-	                    if (plugin.getTargetLanguage) {
-	                        targetLanguage = plugin.getTargetLanguage({
-	                            applicableField,
-	                            targetLanguage,
-	                            // Default lang for plug-in (from files.json)
-	                            pluginLang,
-	                            // Default lang when no target language or
-	                            //   plugin lang; using the lang of the applicable
-	                            //   field
-	                            applicableFieldLang
-	                        });
-	                    }
-	                    const field = escapePlugin({
-	                        pluginName,
-	                        applicableField,
-	                        targetLanguage: targetLanguage || pluginLang || applicableFieldLang
-	                    });
-	                    if (targetLanguage === '{locale}') {
-	                        targetLanguage = preferredLocale;
-	                    }
-	                    const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', applicableField]);
-	                    const fieldAliasOrName = plugin.getFieldAliasOrName ? plugin.getFieldAliasOrName({
-	                        locales: lang,
-	                        lf,
-	                        targetLanguage,
-	                        applicableField,
-	                        applicableFieldI18N,
-	                        meta,
-	                        metaApplicableField,
-	                        targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
-	                    }) : languages.getFieldNameFromPluginNameAndLocales({
-	                        pluginName,
-	                        locales: lang,
-	                        lf,
-	                        targetLanguage,
-	                        applicableFieldI18N,
-	                        // Todo: Should have formal way to i18nize meta
-	                        meta,
-	                        metaApplicableField
-	                    });
-	                    fieldInfo.splice(
-	                    // Todo: Allow default placement overriding for
-	                    //    non-plugins
-	                    placement === 'end' ? Infinity // push
-	                    : placement, 0, {
-	                        field: `${this.namespace}-plugin-${field}`,
-	                        fieldAliasOrName,
-	                        // Plug-in specific (todo: allow specifying
-	                        //    for non-plugins)
-	                        onByDefault: typeof onByDefault === 'boolean' ? onByDefault : onByDefaultDefault || false,
-	                        // Three conventions for use by plug-ins but
-	                        //     textbrowser only passes on (might
-	                        //     not need here)
-	                        applicableField,
-	                        metaApplicableField,
-	                        fieldLang: targetLanguage
-	                    });
-	                };
-	                if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
-	                    processField();
-	                }
-	            });
-	        }
 
 	        const fieldMatchesLocale = metadata.getFieldMatchesLocale({
 	            namespace: this.namespace,
@@ -10068,7 +10091,8 @@ body {
 	                    return {
 	                        workName, shortcut: shortcuts[i],
 	                        fieldAliasOrNames: (await this.getWorkData({
-	                            lang, fallbackLanguages, work: workName
+	                            lang, fallbackLanguages, preferredLocale,
+	                            languages, work: workName
 	                        })).fieldInfo.map(({ fieldAliasOrName }) => fieldAliasOrName)
 	                    };
 	                }));
@@ -10099,7 +10123,8 @@ body {
 
 	    try {
 	        const _ref = await this.getWorkData({
-	            lang, fallbackLanguages, work: $p.get('work')
+	            lang, fallbackLanguages, preferredLocale,
+	            languages, work: $p.get('work')
 	        }),
 	              { lf, fileData, metadataObj } = _ref,
 	              args = objectWithoutProperties(_ref, ['lf', 'fileData', 'metadataObj']);
@@ -11055,7 +11080,7 @@ body {
 
 	TextBrowser.prototype.getWorkData = function (opts) {
 	    try {
-	        return getWorkData(_extends({}, opts, {
+	        return getWorkData.call(this, _extends({}, opts, {
 	            files: this.files,
 	            allowPlugins: this.allowPlugins
 	        }));
