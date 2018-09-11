@@ -1,3 +1,7 @@
+# 0.25.1
+
+- Fix: Accommodate server differences with plugins
+
 # 0.25.0
 
 - Enhancement: Bookmarks export

@@ -7466,7 +7466,10 @@ const getWorkData = async function ({
             require('babel-register')({
                 presets: ['env']
             });
-            return Promise.resolve().then(() => require(pluginPath));
+            return Promise.resolve().then(() => require(pluginPath)).catch(err => {
+                // E.g., with tooltips plugin
+                console.log('err', err);
+            });
         }
         return Promise.resolve().then(() => interopRequireWildcard(require(`${pluginPath}`)));
     })) : null]);
@@ -7492,7 +7495,7 @@ const getWorkData = async function ({
             placement, applicableFields, meta
         }) => {
             const processField = ({ applicableField, targetLanguage, onByDefault, metaApplicableField } = {}) => {
-                const plugin = pluginsForWork.getPluginObject(pluginName);
+                const plugin = pluginsForWork.getPluginObject(pluginName) || {};
                 const applicableFieldLang = metadata.getFieldLang(applicableField);
                 if (plugin.getTargetLanguage) {
                     targetLanguage = plugin.getTargetLanguage({
@@ -7886,7 +7889,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             placement = placement === 'end' ? Infinity // push
             : placement;
             const processField = ({ applicableField, targetLanguage, onByDefault, metaApplicableField } = {}) => {
-                const plugin = pluginsForWork.getPluginObject(pluginName);
+                const plugin = pluginsForWork.getPluginObject(pluginName) || {};
                 const applicableFieldLang = metadata.getFieldLang(applicableField);
                 if (plugin.getTargetLanguage) {
                     targetLanguage = plugin.getTargetLanguage({
@@ -8145,11 +8148,11 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
             // Now safe to pass (and set) `j` value as tr array expanded
             tableData.forEach((tr, i) => {
                 const applicableFieldText = tr[applicableFieldIdx];
-                tr[j] = plugin.getCellData({
+                tr[j] = plugin.getCellData && plugin.getCellData({
                     tr, tableData, i, j, applicableField, fieldInfo,
                     applicableFieldIdx, applicableFieldText, fieldLang,
                     meta, metaApplicableField, $p, thisObj: this
-                });
+                }) || applicableFieldText;
             });
             console.log('applicableFieldIdx', applicableFieldIdx);
         });

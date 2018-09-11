@@ -447,7 +447,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                 ? Infinity // push
                 : placement;
             const processField = ({applicableField, targetLanguage, onByDefault, metaApplicableField} = {}) => {
-                const plugin = pluginsForWork.getPluginObject(pluginName);
+                const plugin = pluginsForWork.getPluginObject(pluginName) || {};
                 const applicableFieldLang = metadata.getFieldLang(applicableField);
                 if (plugin.getTargetLanguage) {
                     targetLanguage = plugin.getTargetLanguage({
@@ -742,11 +742,11 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             // Now safe to pass (and set) `j` value as tr array expanded
             tableData.forEach((tr, i) => {
                 const applicableFieldText = tr[applicableFieldIdx];
-                tr[j] = plugin.getCellData({
+                tr[j] = (plugin.getCellData && plugin.getCellData({
                     tr, tableData, i, j, applicableField, fieldInfo,
                     applicableFieldIdx, applicableFieldText, fieldLang,
                     meta, metaApplicableField, $p, thisObj: this
-                });
+                })) || applicableFieldText;
             });
             console.log('applicableFieldIdx', applicableFieldIdx);
         });

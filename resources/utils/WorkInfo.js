@@ -137,7 +137,10 @@ export const getWorkData = async function ({
                         require('babel-register')({
                             presets: ['env']
                         });
-                        return Promise.resolve().then(() => require(pluginPath));
+                        return Promise.resolve().then(() => require(pluginPath)).catch((err) => {
+                            // E.g., with tooltips plugin
+                            console.log('err', err);
+                        });
                     }
                     return import(pluginPath);
                 })
@@ -167,7 +170,7 @@ export const getWorkData = async function ({
             placement, applicableFields, meta
         }) => {
             const processField = ({applicableField, targetLanguage, onByDefault, metaApplicableField} = {}) => {
-                const plugin = pluginsForWork.getPluginObject(pluginName);
+                const plugin = pluginsForWork.getPluginObject(pluginName) || {};
                 const applicableFieldLang = metadata.getFieldLang(applicableField);
                 if (plugin.getTargetLanguage) {
                     targetLanguage = plugin.getTargetLanguage({
