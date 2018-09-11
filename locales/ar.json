@@ -99,7 +99,7 @@
     "Generate_bookmarks": "Generate bookmarks",
     "bookmark_generation_tooltip": "Import this file into your browser's bookmarks manager",
     "Bookmarks": "Bookmarks",
-    "Bookmarks_Menu": "Bookmarks_Menu",
+    "Bookmarks_Menu": "Bookmarks Menu",
     "page_css": "Page CSS",
     "page_css_tips": "CSS to apply to the whole page (e.g., to style links/visited links, etc.); note that surrounding context verses have class 'context'",
 

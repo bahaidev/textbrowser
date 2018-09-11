@@ -1,6 +1,6 @@
 /* eslint-env browser */
 import IMF from 'imf';
-import getSerializeParamsAsURL from './utils/getSerializeParamsAsURL.js';
+import {replaceHash, getParamsSetter, getSerializeParamsAsURL} from './utils/Params.js';
 import getJSON from 'simple-get-json';
 
 import {getMetaProp, Metadata} from './utils/Metadata.js';
@@ -32,8 +32,8 @@ export default async function workDisplay ({
         );
 
     async function _displayWork ({
-        lf, metadataObj, getFieldAliasOrName, schemaObj,
-        pluginsForWork
+        lf, metadataObj, getFieldAliasOrName, schemaObj, schemaItems, fieldInfo,
+        pluginsForWork, groupsToWorks
     }) {
         const il = localizeParamNames
             ? key => l(['params', key])
@@ -71,15 +71,6 @@ export default async function workDisplay ({
                 fallback: ({message}) =>
                     Templates.workDisplay.bdo({fallbackDirection, message})
             });
-
-        const schemaItems = schemaObj.items.items;
-
-        const fieldInfo = schemaItems.map(({title: field}) => {
-            return {
-                field,
-                fieldAliasOrName: getFieldAliasOrName(field) || field
-            };
-        });
 
         const metadata = new Metadata({metadataObj});
         if (pluginsForWork) {
@@ -190,18 +181,46 @@ export default async function workDisplay ({
         });
         */
         const serializeParamsAsURL = getSerializeParamsAsURL({l, il, $p});
+        const paramsSetter = getParamsSetter({l, il, $p});
 
         const {groups} = await getJSON(this.files);
 
         // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
         const heading = getMetaProp(lang, metadataObj, 'heading');
+
+        const getFieldAliasOrNames = (() => {
+            // Avoid blocking but start now
+            // Let this run in the background to avoid blocking
+            const all = Promise.all(
+                groupsToWorks.map(async ({name, workNames, shortcuts}) => {
+                    const worksToFields = await Promise.all(workNames.map(async (workName, i) => {
+                        return {
+                            workName, shortcut: shortcuts[i],
+                            fieldAliasOrNames: (await this.getWorkData({
+                                lang, fallbackLanguages, work: workName
+                            })).fieldInfo.map(({fieldAliasOrName}) => fieldAliasOrName)
+                        };
+                    }));
+                    return {
+                        groupName: name,
+                        worksToFields
+                    };
+                })
+            );
+            return async () => {
+                return all; // May not be finished by now
+            };
+        })();
+
         Templates.workDisplay.main({
             languageParam,
             siteBaseURL: this.siteBaseURL, lang, lf,
             l, namespace: this.namespace, groups, heading,
             imfl, fallbackDirection,
             langs, fieldInfo, localizeParamNames,
-            serializeParamsAsURL, hideFormattingSection, $p,
+            serializeParamsAsURL, paramsSetter, replaceHash,
+            getFieldAliasOrNames,
+            hideFormattingSection, $p,
             metadataObj, il, le, ld, iil,
             fieldMatchesLocale,
             preferredLocale, schemaItems, content
@@ -210,7 +229,7 @@ export default async function workDisplay ({
 
     try {
         const {lf, fileData, metadataObj, ...args} = await this.getWorkData({
-            lang, fallbackLanguages, $p
+            lang, fallbackLanguages, work: $p.get('work')
         });
 
         document.title = lf({

@@ -33,7 +33,7 @@ export const getFilePaths = function getFilePaths (filesObj, fileGroup, fileData
 };
 
 export const getWorkData = async function ({
-    lang, fallbackLanguages, $p, files, allowPlugins, basePath
+    lang, fallbackLanguages, work, files, allowPlugins, basePath
 }) {
     const filesObj = await getJSON(files);
     const localeFromFileData = (lan) =>
@@ -45,12 +45,21 @@ export const getWorkData = async function ({
     const lf = imfFile.getFormatter();
 
     let fileData;
-    const work = $p.get('work');
     const fileGroup = filesObj.groups.find((fg) => {
         fileData = fg.files.find((file) =>
             work === lf(['workNames', fg.id, file.name])
         );
         return Boolean(fileData);
+    });
+    // This is not specific to the work, but we export it anyways
+    const groupsToWorks = filesObj.groups.map((fg) => {
+        return {
+            name: lf({key: fg.name.localeKey, fallback: true}),
+            workNames: fg.files.map((file) => {
+                return lf(['workNames', fg.id, file.name]);
+            }),
+            shortcuts: fg.files.map((file) => file.shortcut)
+        };
     });
 
     const fp = getFilePaths(filesObj, fileGroup, fileData);
@@ -137,9 +146,16 @@ export const getWorkData = async function ({
     const pluginsForWork = new PluginsForWork({
         pluginsInWork, pluginFieldMappings, pluginObjects
     });
+    const schemaItems = schemaObj.items.items;
+    const fieldInfo = schemaItems.map(({title: field}) => {
+        return {
+            field,
+            fieldAliasOrName: getFieldAliasOrName(field) || field
+        };
+    });
     return {
         fileData, lf, getFieldAliasOrName, metadataObj,
-        schemaObj,
-        pluginsForWork
+        schemaObj, schemaItems, fieldInfo,
+        pluginsForWork, groupsToWorks
     };
 };

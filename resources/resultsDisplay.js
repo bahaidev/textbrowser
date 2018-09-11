@@ -402,7 +402,8 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     } = await getWorkData({
         files: files || this.files,
         allowPlugins: allowPlugins || this.allowPlugins,
-        lang, fallbackLanguages, $p,
+        lang, fallbackLanguages,
+        work: $p.get('work'),
         basePath
     });
     console.log('pluginsForWork', pluginsForWork);

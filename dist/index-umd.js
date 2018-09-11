@@ -8019,7 +8019,7 @@
 	};
 
 	const getWorkData = async function ({
-	    lang, fallbackLanguages, $p, files, allowPlugins, basePath
+	    lang, fallbackLanguages, work, files, allowPlugins, basePath
 	}) {
 	    const filesObj = await simpleGetJson(files);
 	    const localeFromFileData = lan => filesObj['localization-strings'][lan];
@@ -8030,10 +8030,19 @@
 	    const lf = imfFile.getFormatter();
 
 	    let fileData;
-	    const work = $p.get('work');
 	    const fileGroup = filesObj.groups.find(fg => {
 	        fileData = fg.files.find(file => work === lf(['workNames', fg.id, file.name]));
 	        return Boolean(fileData);
+	    });
+	    // This is not specific to the work, but we export it anyways
+	    const groupsToWorks = filesObj.groups.map(fg => {
+	        return {
+	            name: lf({ key: fg.name.localeKey, fallback: true }),
+	            workNames: fg.files.map(file => {
+	                return lf(['workNames', fg.id, file.name]);
+	            }),
+	            shortcuts: fg.files.map(file => file.shortcut)
+	        };
 	    });
 
 	    const fp = getFilePaths(filesObj, fileGroup, fileData);
@@ -8116,10 +8125,17 @@
 	    const pluginsForWork = new PluginsForWork({
 	        pluginsInWork, pluginFieldMappings, pluginObjects
 	    });
+	    const schemaItems = schemaObj.items.items;
+	    const fieldInfo = schemaItems.map(({ title: field }) => {
+	        return {
+	            field,
+	            fieldAliasOrName: getFieldAliasOrName(field) || field
+	        };
+	    });
 	    return {
 	        fileData, lf, getFieldAliasOrName, metadataObj,
-	        schemaObj,
-	        pluginsForWork
+	        schemaObj, schemaItems, fieldInfo,
+	        pluginsForWork, groupsToWorks
 	    };
 	};
 
@@ -9038,15 +9054,19 @@ Please refresh the page if you wish to reattempt.
 	            type: 'button',
 	            $on: {
 	                click() {
-	                    const url = serializeParamsAsURL(getDataForSerializingParamsAsURL(), 'randomResult');
+	                    const url = serializeParamsAsURL(_extends({}, getDataForSerializingParamsAsURL(), {
+	                        type: 'randomResult'
+	                    }));
 	                    $('#randomURL').value = url;
 	                }
 	            }
 	        }), ['input', { id: 'randomURL', type: 'text' }]]]]].forEach(addRowContent);
 	    },
 	    getPreferences: ({
-	        siteBaseURL, languageParam, lf,
-	        langs, imfl, l, localizeParamNames, namespace, hideFormattingSection, groups
+	        siteBaseURL, languageParam, lf, paramsSetter, replaceHash,
+	        getFieldAliasOrNames, work,
+	        langs, imfl, l, localizeParamNames, namespace,
+	        hideFormattingSection, groups
 	    }) => ['div', {
 	        style: { textAlign: 'left' }, id: 'preferences', hidden: 'true'
 	    }, [['div', { style: 'margin-top: 10px;' }, [['label', [l('localizeParamNames'), ['input', {
@@ -9085,7 +9105,7 @@ Please refresh the page if you wish to reattempt.
 	    })]]], ['div', [['button', {
 	        title: l('bookmark_generation_tooltip'),
 	        $on: {
-	            click() {
+	            async click() {
 	                // Todo: Give option to edit (keywords and work URLs)
 	                const date = new Date().getTime();
 	                const ADD_DATE = date;
@@ -9093,21 +9113,25 @@ Please refresh the page if you wish to reattempt.
 	                const blob = new Blob([new XMLSerializer().serializeToString(jml({ $document: {
 	                        $DOCTYPE: { name: 'NETSCAPE-Bookmark-file-1' },
 	                        title: l('Bookmarks'),
-	                        body: [['h1', [l('Bookmarks_Menu')]], ...groups.flatMap(({ name, files, id: groupID }) => {
-	                            const groupName = lf({ key: name.localeKey, fallback: true });
+	                        body: [['h1', [l('Bookmarks_Menu')]], ...(await getFieldAliasOrNames()).flatMap(({ groupName, worksToFields }) => {
 	                            return [['dt', [['h3', {
 	                                ADD_DATE,
 	                                LAST_MODIFIED
-	                            }, [groupName]]]], ['dl', [['p'], ...files.map(({ shortcut: SHORTCUTURL, name: work }) => {
-	                                const workName = lf(['workNames', groupID, work]);
+	                            }, [groupName]]]], ['dl', [['p'], ...worksToFields.map(({ fieldAliasOrNames, workName, shortcut: SHORTCUTURL }) => {
 	                                // Todo (low): Add anchor, etc. (until handled by `work-startEnd`); &aqdas-anchor1-1=2&anchorfield1=Paragraph
 	                                // Todo: option for additional browse field groups (startEnd2, etc.)
 	                                // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
+	                                // Todo: Make Chrome NativeExt add-on to manipulate its search engines (to read a bookmarks file from Firefox properly, i.e., including keywords) https://www.makeuseof.com/answers/export-google-chrome-search-engines-address-bar/
 
-	                                // Todo: Add localized, per-work fields here (restricted by content locale?); field1=..., checked1=Yes, interlin1=, css1=, etc.
-	                                // Todo: Localize style params by overriding current serialized URL
-	                                const defaultStyleParams = 'colorName=Black&color=%23&bgcolorName=White&bgcolor=%23&fontSeq=Times+New+Roman%2C+serif&fontstyle=normal&fontvariant=normal&fontweight=normal&fontsize=&fontstretch=normal&letterspacing=normal&lineheight=normal&header=n&footer=0&caption=0&border=1&interlintitle=1&interlintitle_css=&pagecss=&outputmode=table&rand=No&=No&headerfooterfixed=No&result=Yes';
-	                                const url = `${siteBaseURL || location.origin + location.pathname}#lang=${languageParam}&${defaultStyleParams}&work=${work}&${work}-startEnd1=%s`;
+	                                const paramsCopy = paramsSetter(_extends({}, getDataForSerializingParamsAsURL(), {
+	                                    fieldAliasOrNames,
+	                                    workName: work, // Delete work of current page
+	                                    type: 'shortcutResult'
+	                                }));
+	                                // Todo: Allow copy-paste of keyword URL for current work (for Chrome)
+
+	                                const url = replaceHash(paramsCopy) + `&work=${workName}&${workName}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here
+
 	                                return ['dt', [['a', {
 	                                    href: url,
 	                                    ADD_DATE,
@@ -9120,7 +9144,8 @@ Please refresh the page if you wish to reattempt.
 	                // Chrome has a quirk that requires this (and not
 	                //   just any whitespace)
 	                // We're not getting the keywords with Chrome,
-	                //   but at least usable for bookmarks
+	                //   but at least usable for bookmarks (though
+	                //   not the groups apparently)
 	                /<dt>/g, '\n<dt>')], { type: 'text/html' });
 	                const url = window.URL.createObjectURL(blob);
 	                const a = jml('a', {
@@ -9200,11 +9225,16 @@ Please refresh the page if you wish to reattempt.
 	    main: ({
 	        siteBaseURL, lf, languageParam,
 	        l, namespace, heading, fallbackDirection, imfl, langs, fieldInfo, localizeParamNames,
-	        serializeParamsAsURL,
+	        serializeParamsAsURL, paramsSetter, replaceHash,
+	        getFieldAliasOrNames,
 	        hideFormattingSection, $p,
 	        metadataObj, il, le, ld, iil, fieldMatchesLocale,
 	        preferredLocale, schemaItems, content, groups
 	    }) => {
+	        const work = $p.get('work');
+	        const serializeParamsAsURLWithData = ({ type }) => {
+	            return serializeParamsAsURL(_extends({}, getDataForSerializingParamsAsURL(), { type }));
+	        };
 	        const lo = (key, atts) => ['option', atts, [l({
 	            key,
 	            fallback({ message }) {
@@ -9218,8 +9248,10 @@ Please refresh the page if you wish to reattempt.
 	                    const prefs = $('#preferences');
 	                    prefs.hidden = !prefs.hidden;
 	                } } }, [l('Preferences')]], Templates.workDisplay.getPreferences({
-	            siteBaseURL, languageParam, lf,
-	            langs, imfl, l, localizeParamNames, namespace, groups, hideFormattingSection
+	            siteBaseURL, languageParam, lf, paramsSetter, replaceHash,
+	            getFieldAliasOrNames, work,
+	            langs, imfl, l, localizeParamNames, namespace,
+	            groups, hideFormattingSection
 	        })]], ['h2', [heading]], ['br'], ['form', { id: 'browse', $on: {
 	                submit(e) {
 	                    e.preventDefault();
@@ -9232,7 +9264,9 @@ Please refresh the page if you wish to reattempt.
 	            type: 'button',
 	            $on: {
 	                click() {
-	                    const url = serializeParamsAsURL(getDataForSerializingParamsAsURL(), 'saveSettings');
+	                    const url = serializeParamsAsURLWithData({
+	                        type: 'saveSettings'
+	                    });
 	                    $('#settings-URL').value = url;
 	                }
 	            }
@@ -9270,12 +9304,15 @@ Please refresh the page if you wish to reattempt.
 	            type: 'submit',
 	            $on: {
 	                click() {
-	                    const data = getDataForSerializingParamsAsURL();
-	                    const thisParams = serializeParamsAsURL(data, 'saveSettings').replace(/^[^#]*#/, '');
+	                    const thisParams = serializeParamsAsURLWithData({
+	                        type: 'saveSettings'
+	                    }).replace(/^[^#]*#/, '');
 	                    // Don't change the visible URL
 	                    console.log('history thisParams', thisParams);
 	                    history.replaceState(thisParams, document.title, location.href);
-	                    const newURL = serializeParamsAsURL(data, 'result');
+	                    const newURL = serializeParamsAsURLWithData({
+	                        type: 'result'
+	                    });
 	                    location.href = newURL;
 	                }
 	            }
@@ -9767,8 +9804,21 @@ body {
 	});
 
 	/* eslint-env browser */
-	function getSerializeParamsAsURL ({ l, il, $p }) {
-	    return function serializeParamsAsURL({ form, random, checkboxes }, type) {
+
+	const replaceHash = paramsCopy => {
+	    return location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
+	};
+
+	const getSerializeParamsAsURL = function (...args) {
+	    const setter = getParamsSetter(...args);
+	    return function (...innerArgs) {
+	        const paramsCopy = setter(...innerArgs);
+	        return replaceHash(paramsCopy);
+	    };
+	};
+
+	const getParamsSetter = function ({ l, il, $p }) {
+	    return function ({ form, random = {}, checkboxes, type, fieldAliasOrNames, workName }) {
 	        const paramsCopy = new URLSearchParams($p.params);
 	        const formParamsHash = serialize(form, { hash: true, empty: true });
 
@@ -9796,6 +9846,45 @@ body {
 	                    paramsCopy.delete(il('rand'));
 	                    break;
 	                }
+	            case 'shortcutResult':
+	                {
+	                    paramsCopy.delete(il('rand'));
+	                    let num = 1;
+	                    while (paramsCopy.has(`anchorfield${num}`, true)) {
+	                        paramsCopy.delete(`anchorfield${num}`, true);
+	                        num++;
+	                    }
+	                    num = 1;
+	                    let num2 = 1;
+	                    while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
+	                        while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
+	                            paramsCopy.delete(`${workName}-start${num}-${num2}`, true);
+	                            paramsCopy.delete(`${workName}-end${num}-${num2}`, true);
+	                            paramsCopy.delete(`${workName}-anchor${num}-${num2}`, true);
+	                            num2++;
+	                        }
+	                        num2 = 1;
+	                        num++;
+	                    }
+	                    num = 1;
+	                    // Delete field-specific so we can add our own
+	                    while (paramsCopy.has(`field${num}`, true)) {
+	                        paramsCopy.delete(`field${num}`, true);
+	                        paramsCopy.delete(`checked${num}`, true);
+	                        paramsCopy.delete(`interlin${num}`, true);
+	                        paramsCopy.delete(`css${num}`, true);
+	                        num++;
+	                    }
+	                    fieldAliasOrNames.forEach((fieldAliasOrName, i) => {
+	                        paramsCopy.set(`field${i + 1}`, fieldAliasOrName, true);
+	                        // Todo: Restrict by content locale?
+	                        paramsCopy.set(`checked${i + 1}`, l('yes'), true);
+	                        paramsCopy.set(`interlin${i + 1}`, '');
+	                        paramsCopy.set(`css${i + 1}`, '');
+	                    });
+	                    paramsCopy.set('work', workName, true);
+	                }
+	            // Fallthrough
 	            case 'randomResult':
 	            case 'result':
 	                {
@@ -9809,9 +9898,9 @@ body {
 	                    break;
 	                }
 	        }
-	        return location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
+	        return paramsCopy;
 	    };
-	}
+	};
 
 	/* eslint-env browser */
 
@@ -9830,8 +9919,8 @@ body {
 	    const hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : prefFormatting === 'true' || prefFormatting !== 'false' && this.hideFormattingSection;
 
 	    async function _displayWork({
-	        lf, metadataObj, getFieldAliasOrName, schemaObj,
-	        pluginsForWork
+	        lf, metadataObj, getFieldAliasOrName, schemaObj, schemaItems, fieldInfo,
+	        pluginsForWork, groupsToWorks
 	    }) {
 	        const il = localizeParamNames ? key => l(['params', key]) : key => key;
 	        const iil = localizeParamNames ? key => l(['params', 'indexed', key]) : key => key;
@@ -9862,15 +9951,6 @@ body {
 	            values,
 	            formats,
 	            fallback: ({ message }) => Templates.workDisplay.bdo({ fallbackDirection, message })
-	        });
-
-	        const schemaItems = schemaObj.items.items;
-
-	        const fieldInfo = schemaItems.map(({ title: field }) => {
-	            return {
-	                field,
-	                fieldAliasOrName: getFieldAliasOrName(field) || field
-	            };
 	        });
 
 	        const metadata = new Metadata({ metadataObj });
@@ -9973,18 +10053,44 @@ body {
 	        });
 	        */
 	        const serializeParamsAsURL = getSerializeParamsAsURL({ l, il, $p });
+	        const paramsSetter = getParamsSetter({ l, il, $p });
 
 	        const { groups } = await simpleGetJson(this.files);
 
 	        // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
 	        const heading = getMetaProp(lang, metadataObj, 'heading');
+
+	        const getFieldAliasOrNames = (() => {
+	            // Avoid blocking but start now
+	            // Let this run in the background to avoid blocking
+	            const all = Promise.all(groupsToWorks.map(async ({ name, workNames, shortcuts }) => {
+	                const worksToFields = await Promise.all(workNames.map(async (workName, i) => {
+	                    return {
+	                        workName, shortcut: shortcuts[i],
+	                        fieldAliasOrNames: (await this.getWorkData({
+	                            lang, fallbackLanguages, work: workName
+	                        })).fieldInfo.map(({ fieldAliasOrName }) => fieldAliasOrName)
+	                    };
+	                }));
+	                return {
+	                    groupName: name,
+	                    worksToFields
+	                };
+	            }));
+	            return async () => {
+	                return all; // May not be finished by now
+	            };
+	        })();
+
 	        Templates.workDisplay.main({
 	            languageParam,
 	            siteBaseURL: this.siteBaseURL, lang, lf,
 	            l, namespace: this.namespace, groups, heading,
 	            imfl, fallbackDirection,
 	            langs, fieldInfo, localizeParamNames,
-	            serializeParamsAsURL, hideFormattingSection, $p,
+	            serializeParamsAsURL, paramsSetter, replaceHash,
+	            getFieldAliasOrNames,
+	            hideFormattingSection, $p,
 	            metadataObj, il, le, ld, iil,
 	            fieldMatchesLocale,
 	            preferredLocale, schemaItems, content
@@ -9993,7 +10099,7 @@ body {
 
 	    try {
 	        const _ref = await this.getWorkData({
-	            lang, fallbackLanguages, $p
+	            lang, fallbackLanguages, work: $p.get('work')
 	        }),
 	              { lf, fileData, metadataObj } = _ref,
 	              args = objectWithoutProperties(_ref, ['lf', 'fileData', 'metadataObj']);
@@ -10529,7 +10635,8 @@ body {
 	    } = await getWorkData({
 	        files: files || this.files,
 	        allowPlugins: allowPlugins || this.allowPlugins,
-	        lang, fallbackLanguages, $p,
+	        lang, fallbackLanguages,
+	        work: $p.get('work'),
 	        basePath
 	    });
 	    console.log('pluginsForWork', pluginsForWork);

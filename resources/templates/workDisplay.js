@@ -530,10 +530,10 @@ export default {
                         type: 'button',
                         $on: {
                             click () {
-                                const url = serializeParamsAsURL(
-                                    getDataForSerializingParamsAsURL(),
-                                    'randomResult'
-                                );
+                                const url = serializeParamsAsURL({
+                                    ...getDataForSerializingParamsAsURL(),
+                                    type: 'randomResult'
+                                });
                                 $('#randomURL').value = url;
                             }
                         }
@@ -544,8 +544,10 @@ export default {
         ].forEach(addRowContent);
     },
     getPreferences: ({
-        siteBaseURL, languageParam, lf,
-        langs, imfl, l, localizeParamNames, namespace, hideFormattingSection, groups
+        siteBaseURL, languageParam, lf, paramsSetter, replaceHash,
+        getFieldAliasOrNames, work,
+        langs, imfl, l, localizeParamNames, namespace,
+        hideFormattingSection, groups
     }) => ['div', {
         style: {textAlign: 'left'}, id: 'preferences', hidden: 'true'
     }, [
@@ -613,7 +615,7 @@ export default {
             ['button', {
                 title: l('bookmark_generation_tooltip'),
                 $on: {
-                    click () { // Todo: Give option to edit (keywords and work URLs)
+                    async click () { // Todo: Give option to edit (keywords and work URLs)
                         const date = new Date().getTime();
                         const ADD_DATE = date;
                         const LAST_MODIFIED = date;
@@ -624,8 +626,7 @@ export default {
                                     title: l('Bookmarks'),
                                     body: [
                                         ['h1', [l('Bookmarks_Menu')]],
-                                        ...groups.flatMap(({name, files, id: groupID}) => {
-                                            const groupName = lf({key: name.localeKey, fallback: true});
+                                        ...(await getFieldAliasOrNames()).flatMap(({groupName, worksToFields}) => {
                                             return [
                                                 ['dt', [
                                                     ['h3', {
@@ -637,18 +638,22 @@ export default {
                                                 ]],
                                                 ['dl', [
                                                     ['p'],
-                                                    ...files.map(({shortcut: SHORTCUTURL, name: work}) => {
-                                                        const workName = lf(['workNames', groupID, work]);
+                                                    ...worksToFields.map(({fieldAliasOrNames, workName, shortcut: SHORTCUTURL}) => {
                                                         // Todo (low): Add anchor, etc. (until handled by `work-startEnd`); &aqdas-anchor1-1=2&anchorfield1=Paragraph
                                                         // Todo: option for additional browse field groups (startEnd2, etc.)
                                                         // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
                                                         // Todo: Make Chrome NativeExt add-on to manipulate its search engines (to read a bookmarks file from Firefox properly, i.e., including keywords) https://www.makeuseof.com/answers/export-google-chrome-search-engines-address-bar/
 
+                                                        const paramsCopy = paramsSetter({
+                                                            ...getDataForSerializingParamsAsURL(),
+                                                            fieldAliasOrNames,
+                                                            workName: work, // Delete work of current page
+                                                            type: 'shortcutResult'
+                                                        });
                                                         // Todo: Allow copy-paste of keyword URL for current work (for Chrome)
-                                                        // Todo: Add localized, per-work fields here (restricted by content locale?); field1=..., checked1=Yes, interlin1=, css1=, etc.
-                                                        // Todo: Localize style params by overriding current serialized URL
-                                                        const defaultStyleParams = 'colorName=Black&color=%23&bgcolorName=White&bgcolor=%23&fontSeq=Times+New+Roman%2C+serif&fontstyle=normal&fontvariant=normal&fontweight=normal&fontsize=&fontstretch=normal&letterspacing=normal&lineheight=normal&header=n&footer=0&caption=0&border=1&interlintitle=1&interlintitle_css=&pagecss=&outputmode=table&rand=No&=No&headerfooterfixed=No&result=Yes';
-                                                        const url = `${siteBaseURL || (location.origin + location.pathname)}#lang=${languageParam}&${defaultStyleParams}&work=${work}&${work}-startEnd1=%s`;
+
+                                                        const url = replaceHash(paramsCopy) + `&work=${workName}&${workName}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here
+
                                                         return ['dt', [
                                                             ['a', {
                                                                 href: url,
@@ -823,11 +828,18 @@ export default {
     main: ({
         siteBaseURL, lf, languageParam,
         l, namespace, heading, fallbackDirection, imfl, langs, fieldInfo, localizeParamNames,
-        serializeParamsAsURL,
+        serializeParamsAsURL, paramsSetter, replaceHash,
+        getFieldAliasOrNames,
         hideFormattingSection, $p,
         metadataObj, il, le, ld, iil, fieldMatchesLocale,
         preferredLocale, schemaItems, content, groups
     }) => {
+        const work = $p.get('work');
+        const serializeParamsAsURLWithData = ({type}) => {
+            return serializeParamsAsURL(
+                {...getDataForSerializingParamsAsURL(), type}
+            );
+        };
         const lo = (key, atts) =>
             ['option', atts, [
                 l({
@@ -850,8 +862,10 @@ export default {
                         prefs.hidden = !prefs.hidden;
                     }}}, [l('Preferences')]],
                     Templates.workDisplay.getPreferences({
-                        siteBaseURL, languageParam, lf,
-                        langs, imfl, l, localizeParamNames, namespace, groups, hideFormattingSection
+                        siteBaseURL, languageParam, lf, paramsSetter, replaceHash,
+                        getFieldAliasOrNames, work,
+                        langs, imfl, l, localizeParamNames, namespace,
+                        groups, hideFormattingSection
                     })
                 ]],
                 ['h2', [heading]],
@@ -877,10 +891,9 @@ export default {
                                         type: 'button',
                                         $on: {
                                             click () {
-                                                const url = serializeParamsAsURL(
-                                                    getDataForSerializingParamsAsURL(),
-                                                    'saveSettings'
-                                                );
+                                                const url = serializeParamsAsURLWithData({
+                                                    type: 'saveSettings'
+                                                });
                                                 $('#settings-URL').value = url;
                                             }
                                         }
@@ -925,18 +938,15 @@ export default {
                             type: 'submit',
                             $on: {
                                 click () {
-                                    const data = getDataForSerializingParamsAsURL();
-                                    const thisParams = serializeParamsAsURL(
-                                        data,
-                                        'saveSettings'
-                                    ).replace(/^[^#]*#/, '');
+                                    const thisParams = serializeParamsAsURLWithData({
+                                        type: 'saveSettings'
+                                    }).replace(/^[^#]*#/, '');
                                     // Don't change the visible URL
                                     console.log('history thisParams', thisParams);
                                     history.replaceState(thisParams, document.title, location.href);
-                                    const newURL = serializeParamsAsURL(
-                                        data,
-                                        'result'
-                                    );
+                                    const newURL = serializeParamsAsURLWithData({
+                                        type: 'result'
+                                    });
                                     location.href = newURL;
                                 }
                             }
