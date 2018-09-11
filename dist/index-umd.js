@@ -9334,6 +9334,16 @@ Please refresh the page if you wish to reattempt.
 	        })]], ['h2', [heading]], ['br'], ['form', { id: 'browse', $on: {
 	                submit(e) {
 	                    e.preventDefault();
+	                    const thisParams = serializeParamsAsURLWithData({
+	                        type: 'saveSettings'
+	                    }).replace(/^[^#]*#/, '');
+	                    // Don't change the visible URL
+	                    console.log('history thisParams', thisParams);
+	                    history.replaceState(thisParams, document.title, location.href);
+	                    const newURL = serializeParamsAsURLWithData({
+	                        type: 'result'
+	                    });
+	                    location.href = newURL;
 	                }
 	            }, name: il('browse') }, [['table', { align: 'center' }, content], ['br'], ['div', { style: 'margin-left: 20px' }, [['br'], ['br'], ['table', { border: '1', align: 'center', cellpadding: '5' }, [['tr', { valign: 'top' }, [['td', [Templates.workDisplay.columnsTable({
 	            ld, fieldInfo, $p, le, iil, l,
@@ -9395,21 +9405,7 @@ Please refresh the page if you wish to reattempt.
 	            ''
 	        */
 	        ]]]]]], ['p', { align: 'center' }, [le('submitgo', 'input', 'value', {
-	            type: 'submit',
-	            $on: {
-	                click() {
-	                    const thisParams = serializeParamsAsURLWithData({
-	                        type: 'saveSettings'
-	                    }).replace(/^[^#]*#/, '');
-	                    // Don't change the visible URL
-	                    console.log('history thisParams', thisParams);
-	                    history.replaceState(thisParams, document.title, location.href);
-	                    const newURL = serializeParamsAsURLWithData({
-	                        type: 'result'
-	                    });
-	                    location.href = newURL;
-	                }
-	            }
+	            type: 'submit'
 	        })]]]]], body);
 	    }
 	};

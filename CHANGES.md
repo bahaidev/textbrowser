@@ -1,3 +1,7 @@
+# 0.25.2
+
+- Fix: Allow form submission by hitting return
+
 # 0.25.1
 
 - Fix: Accommodate server differences with plugins

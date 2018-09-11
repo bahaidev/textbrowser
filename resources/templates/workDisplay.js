@@ -871,6 +871,16 @@ export default {
                 ['form', {id: 'browse', $on: {
                     submit (e) {
                         e.preventDefault();
+                        const thisParams = serializeParamsAsURLWithData({
+                            type: 'saveSettings'
+                        }).replace(/^[^#]*#/, '');
+                        // Don't change the visible URL
+                        console.log('history thisParams', thisParams);
+                        history.replaceState(thisParams, document.title, location.href);
+                        const newURL = serializeParamsAsURLWithData({
+                            type: 'result'
+                        });
+                        location.href = newURL;
                     }
                 }, name: il('browse')}, [
                     ['table', {align: 'center'}, content],
@@ -951,21 +961,7 @@ export default {
                     ]],
                     ['p', {align: 'center'}, [
                         le('submitgo', 'input', 'value', {
-                            type: 'submit',
-                            $on: {
-                                click () {
-                                    const thisParams = serializeParamsAsURLWithData({
-                                        type: 'saveSettings'
-                                    }).replace(/^[^#]*#/, '');
-                                    // Don't change the visible URL
-                                    console.log('history thisParams', thisParams);
-                                    history.replaceState(thisParams, document.title, location.href);
-                                    const newURL = serializeParamsAsURLWithData({
-                                        type: 'result'
-                                    });
-                                    location.href = newURL;
-                                }
-                            }
+                            type: 'submit'
                         })
                     ]]
                 ]]
