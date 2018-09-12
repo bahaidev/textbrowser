@@ -544,7 +544,7 @@ export default {
         ].forEach(addRowContent);
     },
     getPreferences: ({
-        siteBaseURL, languageParam, lf, paramsSetter, replaceHash,
+        languageParam, lf, paramsSetter, replaceHash,
         getFieldAliasOrNames, work,
         langs, imfl, l, localizeParamNames, namespace,
         hideFormattingSection, groups
@@ -824,7 +824,7 @@ export default {
         ].forEach(addRowContent);
     },
     main: ({
-        siteBaseURL, lf, languageParam,
+        lf, languageParam,
         l, namespace, heading, fallbackDirection, imfl, langs, fieldInfo, localizeParamNames,
         serializeParamsAsURL, paramsSetter, replaceHash,
         getFieldAliasOrNames,
@@ -860,7 +860,7 @@ export default {
                         prefs.hidden = !prefs.hidden;
                     }}}, [l('Preferences')]],
                     Templates.workDisplay.getPreferences({
-                        siteBaseURL, languageParam, lf, paramsSetter, replaceHash,
+                        languageParam, lf, paramsSetter, replaceHash,
                         getFieldAliasOrNames, work,
                         langs, imfl, l, localizeParamNames, namespace,
                         groups, hideFormattingSection

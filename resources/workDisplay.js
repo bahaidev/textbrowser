@@ -127,8 +127,7 @@ export default async function workDisplay ({
         })();
 
         Templates.workDisplay.main({
-            languageParam,
-            siteBaseURL: this.siteBaseURL, lang, lf,
+            languageParam, lang, lf,
             l, namespace: this.namespace, groups, heading,
             imfl, fallbackDirection,
             langs, fieldInfo, localizeParamNames,
