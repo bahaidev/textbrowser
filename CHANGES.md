@@ -1,3 +1,7 @@
+# 0.25.3
+
+- Fix: Avoid form submission upon copy shortcut click
+
 # 0.25.2
 
 - Fix: Allow form submission by hitting return

@@ -9355,7 +9355,8 @@ var workDisplay = {
             }
         }), ['input', { id: 'settings-URL' }], ['br'], ['button', {
             $on: {
-                async click() {
+                async click(e) {
+                    e.preventDefault();
                     const paramsCopy = paramsSetter(_extends({}, getDataForSerializingParamsAsURL(), {
                         workName: work, // Delete work of current page
                         type: 'startEndResult'

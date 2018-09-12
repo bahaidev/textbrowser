@@ -910,7 +910,8 @@ export default {
                                     ['br'],
                                     ['button', {
                                         $on: {
-                                            async click () {
+                                            async click (e) {
+                                                e.preventDefault();
                                                 const paramsCopy = paramsSetter({
                                                     ...getDataForSerializingParamsAsURL(),
                                                     workName: work, // Delete work of current page
