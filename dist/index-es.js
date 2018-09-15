@@ -9138,7 +9138,7 @@ var workDisplay = {
         }), ['input', { id: 'randomURL', type: 'text' }]]]]].forEach(addRowContent);
     },
     getPreferences: ({
-        siteBaseURL, languageParam, lf, paramsSetter, replaceHash,
+        languageParam, lf, paramsSetter, replaceHash,
         getFieldAliasOrNames, work,
         langs, imfl, l, localizeParamNames, namespace,
         hideFormattingSection, groups
@@ -9296,7 +9296,7 @@ var workDisplay = {
         })]]]]]]]]]]]]].forEach(addRowContent);
     },
     main: ({
-        siteBaseURL, lf, languageParam,
+        lf, languageParam,
         l, namespace, heading, fallbackDirection, imfl, langs, fieldInfo, localizeParamNames,
         serializeParamsAsURL, paramsSetter, replaceHash,
         getFieldAliasOrNames,
@@ -9321,13 +9321,12 @@ var workDisplay = {
                     const prefs = $('#preferences');
                     prefs.hidden = !prefs.hidden;
                 } } }, [l('Preferences')]], Templates.workDisplay.getPreferences({
-            siteBaseURL, languageParam, lf, paramsSetter, replaceHash,
+            languageParam, lf, paramsSetter, replaceHash,
             getFieldAliasOrNames, work,
             langs, imfl, l, localizeParamNames, namespace,
             groups, hideFormattingSection
-        })]], ['h2', [heading]], ['br'], ['form', { id: 'browse', $on: {
-                submit(e) {
-                    e.preventDefault();
+        })]], ['h2', [heading]], ['br'], ['form', { id: 'browse', $custom: {
+                $submit() {
                     const thisParams = serializeParamsAsURLWithData({
                         type: 'saveSettings'
                     }).replace(/^[^#]*#/, '');
@@ -9338,6 +9337,19 @@ var workDisplay = {
                         type: 'result'
                     });
                     location.href = newURL;
+                }
+            }, $on: {
+                keydown({ key, target }) {
+                    // Chrome is not having submit event triggered now with enter key
+                    //   presses on inputs, despite having a `type=submit` input in the
+                    //   form, and despite not using `preventDefault`
+                    if (key === 'Enter' && target.localName.toLowerCase() !== 'textarea') {
+                        this.$submit();
+                    }
+                },
+                submit(e) {
+                    e.preventDefault();
+                    this.$submit();
                 }
             }, name: il('browse') }, [['table', { align: 'center' }, content], ['br'], ['div', { style: 'margin-left: 20px' }, [['br'], ['br'], ['table', { border: '1', align: 'center', cellpadding: '5' }, [['tr', { valign: 'top' }, [['td', [Templates.workDisplay.columnsTable({
             ld, fieldInfo, $p, le, iil, l,
@@ -9920,7 +9932,10 @@ const getParamsSetter = function ({ l, il, $p }) {
         checkboxes.forEach(checkbox => {
             // Let's ensure the checked items are all together (at the end)
             paramsCopy.delete(checkbox.name);
-            paramsCopy.set(checkbox.name, checkbox.checked ? l('yes') : l('no'));
+            if (checkbox.name) {
+                // We don't want, e.g., preference controls added to URL
+                paramsCopy.set(checkbox.name, checkbox.checked ? l('yes') : l('no'));
+            }
         });
 
         function removeStartsEndsAndAnchors() {
@@ -10101,8 +10116,7 @@ var workDisplay = (async function workDisplay({
         })();
 
         Templates.workDisplay.main({
-            languageParam,
-            siteBaseURL: this.siteBaseURL, lang, lf,
+            languageParam, lang, lf,
             l, namespace: this.namespace, groups, heading,
             imfl, fallbackDirection,
             langs, fieldInfo, localizeParamNames,

@@ -32,7 +32,9 @@ export const getParamsSetter = function ({l, il, $p}) {
         checkboxes.forEach((checkbox) => {
             // Let's ensure the checked items are all together (at the end)
             paramsCopy.delete(checkbox.name);
-            paramsCopy.set(checkbox.name, checkbox.checked ? l('yes') : l('no'));
+            if (checkbox.name) { // We don't want, e.g., preference controls added to URL
+                paramsCopy.set(checkbox.name, checkbox.checked ? l('yes') : l('no'));
+            }
         });
 
         function removeStartsEndsAndAnchors () {

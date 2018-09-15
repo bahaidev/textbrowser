@@ -868,9 +868,8 @@ export default {
                 ]],
                 ['h2', [heading]],
                 ['br'],
-                ['form', {id: 'browse', $on: {
-                    submit (e) {
-                        e.preventDefault();
+                ['form', {id: 'browse', $custom: {
+                    $submit () {
                         const thisParams = serializeParamsAsURLWithData({
                             type: 'saveSettings'
                         }).replace(/^[^#]*#/, '');
@@ -881,6 +880,19 @@ export default {
                             type: 'result'
                         });
                         location.href = newURL;
+                    }
+                }, $on: {
+                    keydown ({key, target}) {
+                        // Chrome is not having submit event triggered now with enter key
+                        //   presses on inputs, despite having a `type=submit` input in the
+                        //   form, and despite not using `preventDefault`
+                        if (key === 'Enter' && target.localName.toLowerCase() !== 'textarea') {
+                            this.$submit();
+                        }
+                    },
+                    submit (e) {
+                        e.preventDefault();
+                        this.$submit();
                     }
                 }, name: il('browse')}, [
                     ['table', {align: 'center'}, content],

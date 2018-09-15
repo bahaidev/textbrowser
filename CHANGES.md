@@ -1,3 +1,9 @@
+# 0.25.4
+
+- Fix: Allow form submission by hitting return AND avoid form
+    submission upon copy shortcut click
+- Fix (minor): Avoid adding empty variable to query string
+
 # 0.25.3
 
 - Fix: Avoid form submission upon copy shortcut click
