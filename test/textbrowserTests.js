@@ -12,7 +12,7 @@ function cloneJSON (obj) {
 let appBase = '../';
 
 if (typeof exports !== 'undefined') {
-    require('babel-polyfill');
+    require('@babel/polyfill');
     Ajv = require('ajv');
     JsonRefs = require('json-refs');
     jsonpatch = require('fast-json-patch');

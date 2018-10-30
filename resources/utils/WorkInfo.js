@@ -122,9 +122,6 @@ export const getWorkData = async function ({
     };
     const pluginFieldMappings = pluginFieldMappingForWork;
 
-    if (typeof process !== 'undefined') {
-        require('babel-polyfill');
-    }
     const [schemaObj, pluginObjects] = await Promise.all([
         getMetadata(schemaFile, schemaProperty, basePath),
         getPlugins
@@ -134,8 +131,8 @@ export const getWorkData = async function ({
                         pluginPath = require('path').resolve(require('path').join(
                             process.cwd(), 'node_modules/textbrowser/server', pluginPath
                         ));
-                        require('babel-register')({
-                            presets: ['env']
+                        require('@babel/register')({
+                            presets: ['@babel/env']
                         });
                         return Promise.resolve().then(() => require(pluginPath)).catch((err) => {
                             // E.g., with tooltips plugin

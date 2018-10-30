@@ -1,3 +1,14 @@
+# 0.26.0
+
+- Breaking change: Update `babel-polyfill` to `@babel/polyfill`
+- Breaking change: Update `indexeddbshim`
+- Refactoring: Avoid deprecated `url.parse` in favor of `URL` constructor
+- Testing: Fix script dep. path per new `simple-get-json`
+- Build: Make CommonJS build for server to avoid need for `@babel/polyfill`
+- npm: Upgrade to Babel 7; update other devDeps and deps recursively; fix
+    `rtl-detect` as dep.
+- npm: Update devDeps
+
 # 0.25.4
 
 - Fix: Allow form submission by hitting return (with updated Chrome?)

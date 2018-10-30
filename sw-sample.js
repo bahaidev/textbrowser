@@ -5,11 +5,11 @@
 //    support:
 //    https://stackoverflow.com/a/45578811/271577
 //    https://bugs.chromium.org/p/chromium/issues/detail?id=680046
-// import getJSON from './node_modules/simple-get-json/index-es2017.js';
+// import getJSON from './node_modules/simple-get-json/dist/index-es.js';
 // import activateCallback from 'node_modules/textbrowser/resources/activateCallback.js';
 // import {getWorkFiles} from './WorkInfo.js';
-importScripts('node_modules/babel-polyfill/dist/polyfill.js');
-importScripts('node_modules/simple-get-json/index.js');
+importScripts('node_modules/@babel/polyfill/dist/polyfill.js');
+importScripts('node_modules/simple-get-json/dist/index.js');
 importScripts('node_modules/textbrowser/dist/WorkInfo-umd.js');
 importScripts('node_modules/textbrowser/dist/activateCallback-umd.js');
 
@@ -92,7 +92,7 @@ const defaultUserStaticFiles = [
 //   get these as reliable full paths without hard-coding or needing to
 //   actually be in `node_modules/textbrowser`; see `resources/index.js`
 const textbrowserStaticResourceFiles = [
-    'node_modules/babel-polyfill/dist/polyfill.js',
+    'node_modules/@babel/polyfill/dist/polyfill.js',
     'node_modules/dialog-polyfill/dialog-polyfill.css',
     'node_modules/dialog-polyfill/dialog-polyfill.js',
 

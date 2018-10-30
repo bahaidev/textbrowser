@@ -1,12 +1,12 @@
 import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
-import builtins from 'rollup-plugin-node-builtins';
 // import nodeGlobals from 'rollup-plugin-node-globals';
 import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-re';
 import {terser} from 'rollup-plugin-terser';
 import postProcess from 'rollup-plugin-postprocess';
+import pkg from './package.json';
 
 const importerReplace = {
     // Temporarily hide this from parser (using the Babel
@@ -34,26 +34,25 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
         plugins: [
             replace({
                 // ... do replace before commonjs
-                patterns: [importerReplace, {
+                patterns: [{
+                    include: ['node_modules/json-refs/dist/json-refs-min.js'],
+                    test: 'SCHEMES.urn.serialize(t,e)}}}]);', // End of file
+                    // replace: '$&\nexport default JsonRefs;'
+                    replace: 'SCHEMES.urn.serialize(t,e)}}}]);export default JsonRefs;'
+                }, importerReplace, {
                     // regexp match with resolved path
                     match: /formidable(\/|\\)lib/,
                     // string or regexp
                     test: 'if (global.GENTLY) require = GENTLY.hijack(require);',
                     // string or function to replaced with
                     replace: ''
-                }, {
-                    include: ['node_modules/json-refs/browser/json-refs-standalone-min.js'],
-                    test: '(1)});', // End of file
-                    // replace: '$&\nexport default JsonRefs;'
-                    replace: '(1)});export default JsonRefs;'
                 }]
             }),
             json(),
             babel(),
             // nodeGlobals(),
-            // builtins(),
             resolve({
-                browser: true
+                module: true
             }),
             commonjs(),
             postProcess([
@@ -83,11 +82,14 @@ export default [
         plugins: [
             replace({
                 // ... do replace before commonjs
-                patterns: [importerReplace]
+                patterns: [importerReplace, {
+                    include: ['node_modules/json-refs/dist/json-refs-min.js'],
+                    test: 'SCHEMES.urn.serialize(t,e)}}}]);', // End of file
+                    // replace: '$&\nexport default JsonRefs;'
+                    replace: 'SCHEMES.urn.serialize(t,e)}}}]);export default JsonRefs;'
+                }]
             }),
-            resolve({
-                browser: true
-            }),
+            resolve(),
             commonjs(),
             postProcess([
                 importerRevert
@@ -110,22 +112,32 @@ export default [
             format: 'cjs',
             file: `server/main-cjs.js`
         },
+        external: Object.keys(pkg.dependencies),
         plugins: [
             replace({
                 // ... do replace before commonjs
                 patterns: [/* importerReplace, */ {
                     include: ['resources/resultsDisplay.js', 'resources/utils/Metadata.js'],
-                    test: "import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';",
+                    test: "import JsonRefs from 'json-refs/dist/json-refs-min.js';",
                     replace: "const JsonRefs = require('json-refs');"
                 }]
             }),
             json(),
             babel({
-                plugins: ['dynamic-import-node']
+                plugins: ['dynamic-import-node'],
+                presets: [
+                    ['@babel/preset-env', {
+                        targets: {
+                            node: '10.11.0'
+                        }
+                    }]
+                ]
             }),
-            builtins(),
-            resolve(),
-            commonjs()
+            resolve({
+                preferBuiltins: true,
+                module: false,
+                main: true
+            })
         ]
     }
 ];

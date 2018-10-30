@@ -8,7 +8,7 @@ import {getLangDir} from 'rtl-detect';
 import {Languages} from './utils/Languages.js';
 import {getWorkData} from './utils/WorkInfo.js';
 // Keep this as the last import for Rollup
-import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
+import JsonRefs from 'json-refs/dist/json-refs-min.js';
 import {jml} from 'jamilih';
 
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;

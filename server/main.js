@@ -1,5 +1,4 @@
 /* eslint-env node */
-
 import 'url-search-params-polyfill';
 import IntlURLSearchParams from '../resources/utils/IntlURLSearchParams.js';
 import {resultsDisplayServer} from '../resources/resultsDisplay.js';
@@ -103,7 +102,6 @@ if (userParams.nodeActivate) {
 console.log('past activate check');
 
 const http = require('http');
-const url = require('url');
 
 global.DOMParser = require('dom-parser'); // potentially used within resultsDisplay.js
 
@@ -117,9 +115,9 @@ languagesInstance = new Languages({langData});
 })();
 
 const srv = http.createServer(async (req, res) => {
-    // console.log('URL::', url.parse(req.url));
-    const {pathname, query} = url.parse(req.url);
-    if (pathname !== '/textbrowser' || !query) {
+    // console.log('URL::', new URL(req.url));
+    const {pathname, search} = new URL(req.url, basePath);
+    if (pathname !== '/textbrowser' || !search) {
         req.addListener('end', function () {
             if (pathname.includes('.git')) {
                 req.url = '/index.html';
@@ -138,7 +136,7 @@ const srv = http.createServer(async (req, res) => {
         languages
     };
     const $p = new IntlURLSearchParams({
-        params: query
+        params: search
     });
 
     const {lang, langs, fallbackLanguages} = languagesInstance.getLanguageInfo({$p});

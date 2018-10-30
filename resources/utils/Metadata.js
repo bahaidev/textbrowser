@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import {getPreferredLanguages} from './Languages.js';
 // Keep this as the last import for Rollup
-import JsonRefs from 'json-refs/browser/json-refs-standalone-min.js';
+import JsonRefs from 'json-refs/dist/json-refs-min.js';
 
 const getCurrDir = () =>
     window.location.href.replace(/(index\.html)?#.*$/, '');
