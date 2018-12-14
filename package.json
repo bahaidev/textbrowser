@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.26.1",
+  "version": "0.26.2",
   "description": "Multilinear text browser",
   "main": "dist/index-umd.min.js",
   "bin": {
@@ -19,6 +19,7 @@
     "url": "git+https://github.com/brettz9/textbrowser.git"
   },
   "dependencies": {
+    "@babel/core": "^7.2.0",
     "@babel/polyfill": "^7.0.0",
     "@babel/register": "^7.0.0",
     "command-line-args": "^5.0.2",
@@ -38,7 +39,6 @@
     "url-search-params-polyfill": "^5.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.2.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.2.0",

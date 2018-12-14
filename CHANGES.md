@@ -1,3 +1,7 @@
+# 0.26.2
+
+- npm: Restore `@babel/core` as dep
+
 # 0.26.1
 
 - npm: Make `@babel/register` a dep
