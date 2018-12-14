@@ -1,3 +1,7 @@
+# 0.26.1
+
+- npm: Make `@babel/register` a dep
+
 # 0.26.0
 
 - Breaking change: Update `babel-polyfill` to `@babel/polyfill`
