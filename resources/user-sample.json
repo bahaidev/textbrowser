@@ -18,6 +18,7 @@
         "plugins/reverse-roman.js",
         "plugins/roman-numerals.js",
         "plugins/romanize.js",
+        "plugins/speech.js",
         "plugins/synopsis.js",
         "plugins/tooltips.js",
         "node_modules/tippy.js/dist/esm/tippy.js",
