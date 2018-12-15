@@ -17418,6 +17418,7 @@
                       applicableFieldIdx: applicableFieldIdx,
                       applicableFieldText: applicableFieldText,
                       fieldLang: fieldLang,
+                      getLangDir: rtlDetect_3,
                       meta: meta,
                       metaApplicableField: metaApplicableField,
                       $p: $p,

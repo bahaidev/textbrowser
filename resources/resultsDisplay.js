@@ -745,6 +745,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                 tr[j] = (plugin.getCellData && plugin.getCellData({
                     tr, tableData, i, j, applicableField, fieldInfo,
                     applicableFieldIdx, applicableFieldText, fieldLang,
+                    getLangDir,
                     meta, metaApplicableField, $p, thisObj: this
                 })) || applicableFieldText;
             });

@@ -3461,6 +3461,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
           applicableFieldIdx,
           applicableFieldText,
           fieldLang,
+          getLangDir: rtlDetect.getLangDir,
           meta,
           metaApplicableField,
           $p,
