@@ -813,7 +813,9 @@ upon for monkey-patching.
     might also use substitutable JSON References (see
     <https://github.com/whitlockjc/json-refs/issues/54#issuecomment-169169276>
     and <https://github.com/json-schema-org/json-schema-spec/issues/53#issuecomment-257002517>).
-
+    0. Remove need for separate metadata files per
+        <https://github.com/json-schema-org/json-schema-spec/issues/587#issuecomment-389726603>
+        by using initial `$`?
 1.  Find way to avoid need for `!important` in column CSS
 1.  Offer more border styling tuning controls (including right/left/top/bottom,
     color, etc.); then offer this along with other styles if we replace CSS
