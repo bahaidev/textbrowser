@@ -826,6 +826,9 @@ upon for monkey-patching.
     Complete switch to imports over script tags (by updating dependencies to
     use ES6 modules too and then use them; json-refs is only left); can also
     avoid function-passing main functions as arguments
+    1.  For json-refs, build on
+        <https://github.com/whitlockjc/json-refs/pull/149> before
+        ES dist. (Rollup or webpack CLI?) and `browser`/`module`
     1.  Apply <https://www.gnu.org/software/librejs/free-your-javascript.html>
         labels to provide machine-automated detection of licenses. (Adapt
         [LibreJS](https://www.gnu.org/software/librejs/) to work with
