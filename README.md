@@ -600,7 +600,9 @@ as a `npm` dependency).
     -   `skipIndexedDB` - If one wishes to force avoiding indexedDB even
         when permitted by user (for testing)
 
-Worker config should be placed in a JSON file. The arguments are:
+Worker config should be placed in a JSON file (see
+[`resources/user-sample.json`](./resources/user-sample.json)).
+The properties are:
 
 - `namespace` - See above.
 - `files` - See above.
