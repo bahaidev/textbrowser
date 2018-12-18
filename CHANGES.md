@@ -7,6 +7,8 @@
     were omitted
 - Fix: For `colorName` and `bgcolorName` (color pull-downs) and
     `fontstretch` pull-down, use reverse-localized value
+- Fix: Row ID setting when aliases present (and thus fix anchor
+    setting for such cases)
 
 ## 0.27.0
 

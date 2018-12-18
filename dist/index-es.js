@@ -16668,9 +16668,10 @@ function () {
 
                   if (fieldValueAliasMap[idx] !== undefined) {
                     rowIDPartsPreferred.push(fieldValueAliasMapPreferred[idx][tr[idx]]);
+                  } else {
+                    rowIDPartsPreferred.push(tr[idx]);
                   }
 
-                  rowIDPartsPreferred.push(tr[idx]);
                   return tr[idx];
                 }); // Todo: Use schema to determine field type and use `parseInt`
                 //   on other value instead of `String` conversions

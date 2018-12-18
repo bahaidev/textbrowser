@@ -197,8 +197,9 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             //   items).
             if (fieldValueAliasMap[idx] !== undefined) {
                 rowIDPartsPreferred.push(fieldValueAliasMapPreferred[idx][tr[idx]]);
+            } else {
+                rowIDPartsPreferred.push(tr[idx]);
             }
-            rowIDPartsPreferred.push(tr[idx]);
             return tr[idx];
         });
 
