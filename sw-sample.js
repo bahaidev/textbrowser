@@ -69,7 +69,8 @@ function getConfigDefaults (args) {
         basePath: '',
         languages: new URL(
             '../appdata/languages.json',
-            // Todo: Substitute with moduleURL once implemented
+            // Todo: Substitute with `import.meta.url` once implemented in
+            //   service workers
             new URL('node_modules/textbrowser/resources/index.js', location)
         ).href,
         files: 'files.json',
@@ -88,8 +89,9 @@ const defaultUserStaticFiles = [
     'resources/user.css'
     // We do not put the user.json here as that is obtained live with service worker
 ];
-// Todo: We could supply `new URL(fileName, moduleURL).href` to
-//   get these as reliable full paths without hard-coding or needing to
+// Todo: We could supply `new URL(fileName, import.meta.url).href` once
+//   `import.meta.url` was impelmented to get these as reliable full
+//   paths without hard-coding or needing to
 //   actually be in `node_modules/textbrowser`; see `resources/index.js`
 const textbrowserStaticResourceFiles = [
     'node_modules/@babel/polyfill/dist/polyfill.js',

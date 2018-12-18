@@ -12,35 +12,37 @@ function _prepareParam (param, skip) {
     return this.l10n(['params', param]);
 }
 
-function IntlURLSearchParams ({l10n, params} = {}) {
-    this.l10n = l10n;
-    if (!params) {
-        params = location.hash.slice(1); // eslint-disable-line no-undef
+class IntlURLSearchParams {
+    constructor ({l10n, params} = {}) {
+        this.l10n = l10n;
+        if (!params) {
+            params = location.hash.slice(1); // eslint-disable-line no-undef
+        }
+        if (typeof params === 'string') {
+            params = new URLSearchParams(params); // eslint-disable-line no-undef
+        }
+        this.params = params;
     }
-    if (typeof params === 'string') {
-        params = new URLSearchParams(params); // eslint-disable-line no-undef
+    get (param, skip) {
+        return this.params.get(_prepareParam.call(this, param, skip));
     }
-    this.params = params;
+    getAll (param, skip) {
+        return this.params.getAll(_prepareParam.call(this, param, skip));
+    }
+    has (param, skip) {
+        return this.params.has(_prepareParam.call(this, param, skip));
+    }
+    delete (param, skip) {
+        return this.params.delete(_prepareParam.call(this, param, skip));
+    }
+    set (param, value, skip) {
+        return this.params.set(_prepareParam.call(this, param, skip), value);
+    }
+    append (param, value, skip) {
+        return this.params.append(_prepareParam.call(this, param, skip), value);
+    }
+    toString () {
+        return this.params.toString();
+    }
 }
-IntlURLSearchParams.prototype.get = function (param, skip) {
-    return this.params.get(_prepareParam.call(this, param, skip));
-};
-IntlURLSearchParams.prototype.getAll = function (param, skip) {
-    return this.params.getAll(_prepareParam.call(this, param, skip));
-};
-IntlURLSearchParams.prototype.has = function (param, skip) {
-    return this.params.has(_prepareParam.call(this, param, skip));
-};
-IntlURLSearchParams.prototype.delete = function (param, skip) {
-    return this.params.delete(_prepareParam.call(this, param, skip));
-};
-IntlURLSearchParams.prototype.set = function (param, value, skip) {
-    return this.params.set(_prepareParam.call(this, param, skip), value);
-};
-IntlURLSearchParams.prototype.append = function (param, value, skip) {
-    return this.params.append(_prepareParam.call(this, param, skip), value);
-};
-IntlURLSearchParams.prototype.toString = function () {
-    return this.params.toString();
-};
 export default IntlURLSearchParams;

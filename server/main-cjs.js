@@ -3593,7 +3593,7 @@ function getIMFFallbackResults({
 /* globals console, location, URL */
 const setServiceWorkerDefaults = (target, source) => {
   target.userJSON = source.userJSON || 'resources/user.json';
-  target.languages = source.languages || new URL('../appdata/languages.json', // Todo: Substitute with moduleURL once implemented
+  target.languages = source.languages || new URL('../appdata/languages.json', // Todo: Substitute with `import.meta.url`
   new URL('node_modules/textbrowser/resources/index.js', location)).href;
   target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?pathToUserJSON=${encodeURIComponent(target.userJSON)}`;
   target.files = source.files || 'files.json';

@@ -1,5 +1,13 @@
 # textbrowser CHANGES
 
+## ?
+
+- Breaking change: `TextBrowser` must now be used with `new`
+    (`IntlURLSearchParams` also refactored as class)
+- Docs: In todo comments, refer to `import.meta.url` (also apparently
+    supported in Rollup; probably need to wait for service workers
+    behaving as modules)
+
 ## 0.28.0
 
 - npm: Update deps, devDeps
