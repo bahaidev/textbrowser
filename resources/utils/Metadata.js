@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import {getPreferredLanguages} from './Languages.js';
 // Keep this as the last import for Rollup
-import JsonRefs from 'json-refs/dist/json-refs-min.js';
+import JsonRefs from 'json-refs/dist/json-refs-min.js'; // eslint-disable-line import/order
 
 const getCurrDir = () =>
     window.location.href.replace(/(index\.html)?#.*$/, '');
@@ -206,4 +206,4 @@ export class Metadata {
                 );
         };
     }
-};
+}

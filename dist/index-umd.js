@@ -2894,93 +2894,6 @@
     global.IntlMessageFormat = MessageFormat;
   }
 
-  function getIMFFallbackResults(_ref) {
-    var $p = _ref.$p,
-        lang = _ref.lang,
-        langs = _ref.langs,
-        langData = _ref.langData,
-        fallbackLanguages = _ref.fallbackLanguages,
-        resultsDisplay = _ref.resultsDisplay,
-        _ref$basePath = _ref.basePath,
-        basePath = _ref$basePath === void 0 ? '' : _ref$basePath,
-        _ref$localeCallback = _ref.localeCallback,
-        localeCallback = _ref$localeCallback === void 0 ? false : _ref$localeCallback;
-    return new Promise(function (resolve, reject) {
-      var resultsCallback = function resultsCallback() {
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
-        }
-
-        var l10n = args[0];
-
-        if (!$p.l10n) {
-          $p.l10n = l10n;
-        }
-
-        return resultsDisplay.apply(void 0, [{
-          l: l10n,
-          lang: lang,
-          fallbackLanguages: fallbackLanguages,
-          imfLocales: imf.locales,
-          $p: $p,
-          basePath: basePath
-        }].concat(args));
-      };
-
-      var imf = IMFClass({
-        languages: lang,
-        fallbackLanguages: fallbackLanguages,
-        localeFileResolver: function localeFileResolver(code) {
-          // Todo: For editing of locales, we might instead resolve all
-          //    `$ref` (as with <https://github.com/whitlockjc/json-refs>) and
-          //    replace IMF() loadLocales behavior with our own now resolved
-          //    locales; see https://github.com/jdorn/json-editor/issues/132
-          return basePath + langData.localeFileBasePath + langs.find(function (l) {
-            return l.code === code;
-          }).locale.$ref;
-        },
-        callback: function () {
-          var _callback = _asyncToGenerator(
-          /*#__PURE__*/
-          regeneratorRuntime.mark(function _callee() {
-            var _args = arguments;
-            return regeneratorRuntime.wrap(function _callee$(_context) {
-              while (1) {
-                switch (_context.prev = _context.next) {
-                  case 0:
-                    if (!(localeCallback && localeCallback.apply(void 0, _args))) {
-                      _context.next = 3;
-                      break;
-                    }
-
-                    resolve();
-                    return _context.abrupt("return");
-
-                  case 3:
-                    _context.next = 5;
-                    return resultsCallback.apply(void 0, _args);
-
-                  case 5:
-                    resolve();
-
-                  case 6:
-                  case "end":
-                    return _context.stop();
-                }
-              }
-            }, _callee, this);
-          }));
-
-          function callback() {
-            return _callback.apply(this, arguments);
-          }
-
-          return callback;
-        }()
-      });
-    });
-  }
-
   function loadStylesheets(stylesheets, {
     before: beforeDefault,
     after: afterDefault,
@@ -3097,6 +3010,458 @@
     }
 
     return _typeof$2(obj);
+  }
+
+  function _slicedToArray$1(arr, i) {
+    return _arrayWithHoles$1(arr) || _iterableToArrayLimit$1(arr, i) || _nonIterableRest$1();
+  }
+
+  function _toConsumableArray$1(arr) {
+    return _arrayWithoutHoles$1(arr) || _iterableToArray$1(arr) || _nonIterableSpread$1();
+  }
+
+  function _arrayWithoutHoles$1(arr) {
+    if (Array.isArray(arr)) {
+      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+      return arr2;
+    }
+  }
+
+  function _arrayWithHoles$1(arr) {
+    if (Array.isArray(arr)) return arr;
+  }
+
+  function _iterableToArray$1(iter) {
+    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  }
+
+  function _iterableToArrayLimit$1(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"] != null) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  function _nonIterableSpread$1() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance");
+  }
+
+  function _nonIterableRest$1() {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  } // get successful control from form and assemble into object
+  // http://www.w3.org/TR/html401/interact/forms.html#h-17.13.2
+  // types which indicate a submit action and are not successful controls
+  // these will be ignored
+
+
+  var kRSubmitter = /^(?:submit|button|image|reset|file)$/i; // node names which could be successful controls
+
+  var kRSuccessContrls = /^(?:input|select|textarea|keygen)/i; // Matches bracket notation.
+
+  var brackets = /(\[[^[\]]*\])/g; // serializes form fields
+  // @param form MUST be an HTMLForm element
+  // @param options is an optional argument to configure the serialization. Default output
+  // with no options specified is a url encoded string
+  //    - hash: [true | false] Configure the output type. If true, the output will
+  //    be a js object.
+  //    - serializer: [function] Optional serializer function to override the default one.
+  //    The function takes 3 arguments (result, key, value) and should return new result
+  //    hash and url encoded str serializers are provided with this module
+  //    - disabled: [true | false]. If true serialize disabled fields.
+  //    - empty: [true | false]. If true serialize empty fields
+
+  function serialize(form, options) {
+    if (_typeof$2(options) !== 'object') {
+      options = {
+        hash: !!options
+      };
+    } else if (options.hash === undefined) {
+      options.hash = true;
+    }
+
+    var result = options.hash ? {} : '';
+    var serializer = options.serializer || (options.hash ? hashSerializer : strSerialize);
+    var elements = form && form.elements ? _toConsumableArray$1(form.elements) : []; // Object store each radio and set if it's empty or not
+
+    var radioStore = Object.create(null);
+    elements.forEach(function (element) {
+      // ignore disabled fields
+      if (!options.disabled && element.disabled || !element.name) {
+        return;
+      } // ignore anything that is not considered a success field
+
+
+      if (!kRSuccessContrls.test(element.nodeName) || kRSubmitter.test(element.type)) {
+        return;
+      }
+
+      var key = element.name,
+          type = element.type,
+          name = element.name,
+          checked = element.checked;
+      var value = element.value; // We can't just use element.value for checkboxes cause some browsers lie to us;
+      // they say "on" for value when the box isn't checked
+
+      if ((type === 'checkbox' || type === 'radio') && !checked) {
+        value = undefined;
+      } // If we want empty elements
+
+
+      if (options.empty) {
+        // for checkbox
+        if (type === 'checkbox' && !checked) {
+          value = '';
+        } // for radio
+
+
+        if (type === 'radio') {
+          if (!radioStore[name] && !checked) {
+            radioStore[name] = false;
+          } else if (checked) {
+            radioStore[name] = true;
+          }
+
+          if (value === undefined) {
+            return;
+          }
+        }
+      } else if (!value) {
+        // value-less fields are ignored unless options.empty is true
+        return;
+      } // multi select boxes
+
+
+      if (type === 'select-multiple') {
+        value = [];
+        var isSelectedOptions = false;
+
+        _toConsumableArray$1(element.options).forEach(function (option) {
+          var allowedEmpty = options.empty && !option.value;
+          var hasValue = option.value || allowedEmpty;
+
+          if (option.selected && hasValue) {
+            isSelectedOptions = true; // If using a hash serializer be sure to add the
+            // correct notation for an array in the multi-select
+            // context. Here the name attribute on the select element
+            // might be missing the trailing bracket pair. Both names
+            // "foo" and "foo[]" should be arrays.
+
+            if (options.hash && key.slice(key.length - 2) !== '[]') {
+              result = serializer(result, key + '[]', option.value);
+            } else {
+              result = serializer(result, key, option.value);
+            }
+          }
+        }); // Serialize if no selected options and options.empty is true
+
+
+        if (!isSelectedOptions && options.empty) {
+          result = serializer(result, key, '');
+        }
+
+        return;
+      }
+
+      result = serializer(result, key, value);
+    }); // Check for all empty radio buttons and serialize them with key=""
+
+    if (options.empty) {
+      Object.entries(radioStore).forEach(function (_ref) {
+        var _ref2 = _slicedToArray$1(_ref, 2),
+            key = _ref2[0],
+            value = _ref2[1];
+
+        if (!value) {
+          result = serializer(result, key, '');
+        }
+      });
+    }
+
+    return result;
+  }
+
+  function parseKeys(string) {
+    var keys = [];
+    var prefix = /^([^[\]]*)/;
+    var children = new RegExp(brackets);
+    var match = prefix.exec(string);
+
+    if (match[1]) {
+      keys.push(match[1]);
+    }
+
+    while ((match = children.exec(string)) !== null) {
+      keys.push(match[1]);
+    }
+
+    return keys;
+  }
+
+  function hashAssign(result, keys, value) {
+    if (keys.length === 0) {
+      return value;
+    }
+
+    var key = keys.shift();
+    var between = key.match(/^\[(.+?)\]$/);
+
+    if (key === '[]') {
+      result = result || [];
+
+      if (Array.isArray(result)) {
+        result.push(hashAssign(null, keys, value));
+      } else {
+        // This might be the result of bad name attributes like "[][foo]",
+        // in this case the original `result` object will already be
+        // assigned to an object literal. Rather than coerce the object to
+        // an array, or cause an exception the attribute "_values" is
+        // assigned as an array.
+        result._values = result._values || [];
+
+        result._values.push(hashAssign(null, keys, value));
+      }
+
+      return result;
+    } // Key is an attribute name and can be assigned directly.
+
+
+    if (!between) {
+      result[key] = hashAssign(result[key], keys, value);
+    } else {
+      var string = between[1]; // +var converts the variable into a number
+      // better than parseInt because it doesn't truncate away trailing
+      // letters and actually fails if whole thing is not a number
+
+      var index = +string; // If the characters between the brackets is not a number it is an
+      // attribute name and can be assigned directly.
+
+      if (isNaN(index)) {
+        result = result || {};
+        result[string] = hashAssign(result[string], keys, value);
+      } else {
+        result = result || [];
+        result[index] = hashAssign(result[index], keys, value);
+      }
+    }
+
+    return result;
+  } // Object/hash encoding serializer.
+
+
+  function hashSerializer(result, key, value) {
+    var hasBrackets = key.match(brackets); // Has brackets? Use the recursive assignment function to walk the keys,
+    // construct any missing objects in the result tree and make the assignment
+    // at the end of the chain.
+
+    if (hasBrackets) {
+      var keys = parseKeys(key);
+      hashAssign(result, keys, value);
+    } else {
+      // Non bracket notation can make assignments directly.
+      var existing = result[key]; // If the value has been assigned already (for instance when a radio and
+      // a checkbox have the same name attribute) convert the previous value
+      // into an array before pushing into it.
+      //
+      // NOTE: If this requirement were removed all hash creation and
+      // assignment could go through `hashAssign`.
+
+      if (existing) {
+        if (!Array.isArray(existing)) {
+          result[key] = [existing];
+        }
+
+        result[key].push(value);
+      } else {
+        result[key] = value;
+      }
+    }
+
+    return result;
+  } // urlform encoding serializer
+
+
+  function strSerialize(result, key, value) {
+    // encode newlines as \r\n cause the html spec says so
+    value = value.replace(/(\r)?\n/g, '\r\n');
+    value = encodeURIComponent(value); // spaces should be '+' rather than '%20'.
+
+    value = value.replace(/%20/g, '+');
+    return result + (result ? '&' : '') + encodeURIComponent(key) + '=' + value;
+  }
+
+  function deserialize(form, hash) {
+    // input(text|radio|checkbox)|select(multiple)|textarea|keygen
+    Object.entries(hash).forEach(function (_ref3) {
+      var _ref4 = _slicedToArray$1(_ref3, 2),
+          name = _ref4[0],
+          value = _ref4[1];
+
+      var control = form[name];
+
+      if (!form[name]) {
+        control = form[name + '[]']; // We want this for RadioNodeList so setting value auto-disables other boxes
+
+        if (!('length' in control)) {
+          // The latter assignment only gets single
+          //    elements, so if not a RadioNodeList, we get all values here
+          control = form.querySelectorAll("[name=\"".concat(name, "[]\"]"));
+        }
+      }
+
+      var _control = control,
+          type = _control.type;
+
+      if (type === 'checkbox') {
+        control.checked = value !== '';
+      }
+
+      if (Array.isArray(value)) {
+        if (type === 'select-multiple') {
+          _toConsumableArray$1(control.options).forEach(function (o) {
+            if (value.includes(o.value)) {
+              o.selected = true;
+            }
+          });
+
+          return;
+        }
+
+        value.forEach(function (v, i) {
+          var c = control[i];
+
+          if (c.type === 'checkbox') {
+            var isMatch = c.value === v || v === 'on';
+            c.checked = isMatch;
+            return;
+          }
+
+          c.value = v;
+        });
+      } else {
+        control.value = value;
+      }
+    });
+  }
+
+  function getIMFFallbackResults(_ref) {
+    var $p = _ref.$p,
+        lang = _ref.lang,
+        langs = _ref.langs,
+        langData = _ref.langData,
+        fallbackLanguages = _ref.fallbackLanguages,
+        resultsDisplay = _ref.resultsDisplay,
+        _ref$basePath = _ref.basePath,
+        basePath = _ref$basePath === void 0 ? '' : _ref$basePath,
+        _ref$localeCallback = _ref.localeCallback,
+        localeCallback = _ref$localeCallback === void 0 ? false : _ref$localeCallback;
+    return new Promise(function (resolve, reject) {
+      var resultsCallback = function resultsCallback() {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        var l10n = args[0];
+
+        if (!$p.l10n) {
+          $p.l10n = l10n;
+        }
+
+        return resultsDisplay.apply(void 0, [{
+          l: l10n,
+          lang: lang,
+          fallbackLanguages: fallbackLanguages,
+          imfLocales: imf.locales,
+          $p: $p,
+          basePath: basePath
+        }].concat(args));
+      };
+
+      var imf = IMFClass({
+        languages: lang,
+        fallbackLanguages: fallbackLanguages,
+        localeFileResolver: function localeFileResolver(code) {
+          // Todo: For editing of locales, we might instead resolve all
+          //    `$ref` (as with <https://github.com/whitlockjc/json-refs>) and
+          //    replace IMF() loadLocales behavior with our own now resolved
+          //    locales; see https://github.com/jdorn/json-editor/issues/132
+          return basePath + langData.localeFileBasePath + langs.find(function (l) {
+            return l.code === code;
+          }).locale.$ref;
+        },
+        callback: function () {
+          var _callback = _asyncToGenerator(
+          /*#__PURE__*/
+          regeneratorRuntime.mark(function _callee() {
+            var _args = arguments;
+            return regeneratorRuntime.wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    if (!(localeCallback && localeCallback.apply(void 0, _args))) {
+                      _context.next = 3;
+                      break;
+                    }
+
+                    resolve();
+                    return _context.abrupt("return");
+
+                  case 3:
+                    _context.next = 5;
+                    return resultsCallback.apply(void 0, _args);
+
+                  case 5:
+                    resolve();
+
+                  case 6:
+                  case "end":
+                    return _context.stop();
+                }
+              }
+            }, _callee, this);
+          }));
+
+          function callback() {
+            return _callback.apply(this, arguments);
+          }
+
+          return callback;
+        }()
+      });
+    });
+  }
+
+  function _typeof$3(obj) {
+    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+      _typeof$3 = function (obj) {
+        return typeof obj;
+      };
+    } else {
+      _typeof$3 = function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+      };
+    }
+
+    return _typeof$3(obj);
   }
 
   function _classCallCheck$1(instance, Constructor) {
@@ -3266,15 +3631,15 @@
     return _get$1(target, property, receiver || target);
   }
 
-  function _slicedToArray$1(arr, i) {
-    return _arrayWithHoles$1(arr) || _iterableToArrayLimit$1(arr, i) || _nonIterableRest$1();
+  function _slicedToArray$2(arr, i) {
+    return _arrayWithHoles$2(arr) || _iterableToArrayLimit$2(arr, i) || _nonIterableRest$2();
   }
 
-  function _toConsumableArray$1(arr) {
-    return _arrayWithoutHoles$1(arr) || _iterableToArray$1(arr) || _nonIterableSpread$1();
+  function _toConsumableArray$2(arr) {
+    return _arrayWithoutHoles$2(arr) || _iterableToArray$2(arr) || _nonIterableSpread$2();
   }
 
-  function _arrayWithoutHoles$1(arr) {
+  function _arrayWithoutHoles$2(arr) {
     if (Array.isArray(arr)) {
       for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
 
@@ -3282,15 +3647,15 @@
     }
   }
 
-  function _arrayWithHoles$1(arr) {
+  function _arrayWithHoles$2(arr) {
     if (Array.isArray(arr)) return arr;
   }
 
-  function _iterableToArray$1(iter) {
+  function _iterableToArray$2(iter) {
     if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
   }
 
-  function _iterableToArrayLimit$1(arr, i) {
+  function _iterableToArrayLimit$2(arr, i) {
     var _arr = [];
     var _n = true;
     var _d = false;
@@ -3316,11 +3681,11 @@
     return _arr;
   }
 
-  function _nonIterableSpread$1() {
+  function _nonIterableSpread$2() {
     throw new TypeError("Invalid attempt to spread non-iterable instance");
   }
 
-  function _nonIterableRest$1() {
+  function _nonIterableRest$2() {
     throw new TypeError("Invalid attempt to destructure non-iterable instance");
   }
   /*
@@ -3393,7 +3758,7 @@
   };
 
   var $$ = function $$(sel) {
-    return _toConsumableArray$1(doc.querySelectorAll(sel));
+    return _toConsumableArray$2(doc.querySelectorAll(sel));
   };
   /**
   * Retrieve the (lower-cased) HTML name of a node
@@ -3530,7 +3895,7 @@
       return 'string';
     }
 
-    if (_typeof$2(item) === 'object') {
+    if (_typeof$3(item) === 'object') {
       if (item === null) {
         return 'null';
       }
@@ -3591,7 +3956,7 @@
       args[_key] = arguments[_key];
     }
 
-    return jml.apply(void 0, _toConsumableArray$1(args[0] === undefined ? args.slice(1) : args));
+    return jml.apply(void 0, _toConsumableArray$2(args[0] === undefined ? args.slice(1) : args));
   }
   /**
   * @private
@@ -3624,7 +3989,7 @@
   function _childrenToJML(node) {
     return function (childNodeJML, i) {
       var cn = node.childNodes[i];
-      var j = Array.isArray(childNodeJML) ? jml.apply(void 0, _toConsumableArray$1(childNodeJML)) : jml(childNodeJML);
+      var j = Array.isArray(childNodeJML) ? jml.apply(void 0, _toConsumableArray$2(childNodeJML)) : jml(childNodeJML);
       cn.parentNode.replaceChild(j, cn);
     };
   }
@@ -3636,7 +4001,7 @@
 
   function _appendJML(node) {
     return function (childJML) {
-      node.appendChild(jml.apply(void 0, _toConsumableArray$1(childJML)));
+      node.appendChild(jml.apply(void 0, _toConsumableArray$2(childJML)));
     };
   }
   /**
@@ -3650,7 +4015,7 @@
       if (typeof childJML === 'string') {
         node.appendChild(doc.createTextNode(childJML));
       } else {
-        node.appendChild(jml.apply(void 0, _toConsumableArray$1(childJML)));
+        node.appendChild(jml.apply(void 0, _toConsumableArray$2(childJML)));
       }
     };
   }
@@ -3746,7 +4111,7 @@
                 if (Array.isArray(template)) {
                   if (_getType(template[0]) === 'object') {
                     // Has attributes
-                    template = jml.apply(void 0, ['template'].concat(_toConsumableArray$1(template), [doc.body]));
+                    template = jml.apply(void 0, ['template'].concat(_toConsumableArray$2(template), [doc.body]));
                   } else {
                     // Array is for the children
                     template = jml('template', template, doc.body);
@@ -3839,7 +4204,7 @@
 
                 if (Array.isArray(attVal)) {
                   if (attVal.length <= 2) {
-                    var _attVal = _slicedToArray$1(attVal, 2);
+                    var _attVal = _slicedToArray$2(attVal, 2);
 
                     constructor = _attVal[0];
                     options = _attVal[1];
@@ -3852,12 +4217,12 @@
                       prototype = options;
                     }
 
-                    if (_typeof$2(constructor) === 'object') {
+                    if (_typeof$3(constructor) === 'object') {
                       prototype = constructor;
                       constructor = getConstructor();
                     }
                   } else {
-                    var _attVal2 = _slicedToArray$1(attVal, 3);
+                    var _attVal2 = _slicedToArray$2(attVal, 3);
 
                     constructor = _attVal2[0];
                     prototype = _attVal2[1];
@@ -3899,7 +4264,7 @@
 
           case '$symbol':
             {
-              var _attVal3 = _slicedToArray$1(attVal, 2),
+              var _attVal3 = _slicedToArray$2(attVal, 2),
                   symbol = _attVal3[0],
                   func = _attVal3[1];
 
@@ -4108,7 +4473,7 @@
                       prop = startProp + key.replace(hyphenForCamelCase, _upperCase);
                     }
 
-                    if (value === null || _typeof$2(value) !== 'object') {
+                    if (value === null || _typeof$3(value) !== 'object') {
                       if (value != null) {
                         elem.dataset[prop] = value;
                       }
@@ -4167,7 +4532,7 @@
                 break;
               }
 
-              if (_typeof$2(attVal) === 'object') {
+              if (_typeof$3(attVal) === 'object') {
                 for (var _p in attVal) {
                   if (attVal.hasOwnProperty(_p) && attVal[_p] != null) {
                     // Todo: Handle aggregate properties like "border"
@@ -4269,7 +4634,7 @@
       var map, obj; // Boolean indicating use of default map and object
 
       if (dataVal === true) {
-        var _defaultMap = _slicedToArray$1(defaultMap, 2);
+        var _defaultMap = _slicedToArray$2(defaultMap, 2);
 
         map = _defaultMap[0];
         obj = _defaultMap[1];
@@ -4323,7 +4688,7 @@
               var procValue = args[++i];
               var val = procValue;
 
-              if (_typeof$2(val) === 'object') {
+              if (_typeof$3(val) === 'object') {
                 procValue = [];
 
                 for (var p in val) {
@@ -4427,7 +4792,7 @@
             // Can't set namespaceURI dynamically, renameNode() is not supported, and setAttribute() doesn't work to change the namespace, so we resort to this hack
             var replacer = void 0;
 
-            if (_typeof$2(atts.xmlns) === 'object') {
+            if (_typeof$3(atts.xmlns) === 'object') {
               replacer = _replaceDefiner(atts.xmlns);
             } else {
               replacer = ' xmlns="' + atts.xmlns + '"';
@@ -4480,7 +4845,7 @@
             // Go through children array container to handle elements
             var childContent = child[j];
 
-            var childContentType = _typeof$2(childContent);
+            var childContentType = _typeof$3(childContent);
 
             if (childContent === undefined) {
               throw String('Parent array:' + JSON.stringify(args) + '; child: ' + child + '; index:' + j);
@@ -4498,7 +4863,7 @@
               default:
                 if (Array.isArray(childContent)) {
                   // Arrays representing child elements
-                  _appendNode(elem, _optsOrUndefinedJML.apply(void 0, [opts].concat(_toConsumableArray$1(childContent))));
+                  _appendNode(elem, _optsOrUndefinedJML.apply(void 0, [opts].concat(_toConsumableArray$2(childContent))));
                 } else if (childContent['#']) {
                   // Fragment
                   _appendNode(elem, _optsOrUndefinedJML(opts, childContent['#']));
@@ -5053,7 +5418,7 @@
 
   jml.symbol = jml.sym = jml.for = function (elem, sym) {
     elem = typeof elem === 'string' ? $(elem) : elem;
-    return elem[_typeof$2(sym) === 'symbol' ? sym : Symbol.for(sym)];
+    return elem[_typeof$3(sym) === 'symbol' ? sym : Symbol.for(sym)];
   };
 
   jml.command = function (elem, symOrMap, methodName) {
@@ -5064,7 +5429,7 @@
       args[_key7 - 3] = arguments[_key7];
     }
 
-    if (['symbol', 'string'].includes(_typeof$2(symOrMap))) {
+    if (['symbol', 'string'].includes(_typeof$3(symOrMap))) {
       var _func;
 
       func = jml.sym(elem, symOrMap);
@@ -5162,7 +5527,7 @@
             locale = _ref2$locale === void 0 ? {} : _ref2$locale,
             _ref2$localeObject = _ref2.localeObject,
             localeObject = _ref2$localeObject === void 0 ? {} : _ref2$localeObject;
-        this.localeStrings = Object.assign({}, localeStrings[defaultLocale$1], localeStrings[locale], localeObject);
+        this.localeStrings = _objectSpread({}, localeStrings[defaultLocale$1], localeStrings[locale], localeObject);
       }
     }, {
       key: "makeDialog",
@@ -5364,6 +5729,7 @@
 
     return Dialog;
   }();
+
   var dialogs = new Dialog();
 
   /* eslint-env browser */
@@ -12937,6 +13303,15 @@
     return PluginsForWork;
   }();
 
+  var path, babelRegister;
+
+  if (typeof process !== 'undefined') {
+    /* eslint-disable global-require */
+    path = require('path');
+    babelRegister = require('@babel/register');
+    /* eslint-enable global-require */
+  }
+
   var getWorkFiles =
   /*#__PURE__*/
   function () {
@@ -12968,7 +13343,7 @@
                   dataFiles.push(file, schemaFile, metadataFile);
                 });
               });
-              dataFiles.push.apply(dataFiles, _toConsumableArray(Object.values(filesObj['plugins']).map(function (pl) {
+              dataFiles.push.apply(dataFiles, _toConsumableArray(Object.values(filesObj.plugins).map(function (pl) {
                 return pl.path;
               })));
               return _context.abrupt("return", dataFiles);
@@ -13136,14 +13511,12 @@
               _context2.next = 24;
               return Promise.all([getMetadata(schemaFile, schemaProperty, basePath), getPlugins ? Promise.all(pluginPaths.map(function (pluginPath) {
                 if (typeof process !== 'undefined') {
-                  pluginPath = require('path').resolve(require('path').join(process.cwd(), 'node_modules/textbrowser/server', pluginPath));
-
-                  require('@babel/register')({
+                  pluginPath = path.resolve(path.join(process.cwd(), 'node_modules/textbrowser/server', pluginPath));
+                  babelRegister({
                     presets: ['@babel/env']
                   });
-
                   return Promise.resolve().then(function () {
-                    return require(pluginPath);
+                    return require(pluginPath); // eslint-disable-line global-require, import/no-dynamic-require
                   }).catch(function (err) {
                     // E.g., with tooltips plugin
                     console.log('err', err);
@@ -13294,7 +13667,7 @@
 
   var setServiceWorkerDefaults = function setServiceWorkerDefaults(target, source) {
     target.userJSON = source.userJSON || 'resources/user.json';
-    target.languages = source.languages || new URL('../appdata/languages.json', // Todo: Substitute with moduleURL once implemented
+    target.languages = source.languages || new URL('../appdata/languages.json', // Todo: Substitute with `import.meta.url`
     new URL('node_modules/textbrowser/resources/index.js', location)).href;
     target.serviceWorkerPath = source.serviceWorkerPath || "sw.js?pathToUserJSON=".concat(encodeURIComponent(target.userJSON));
     target.files = source.files || 'files.json';
@@ -13396,7 +13769,8 @@
                     while (1) {
                       switch (_context2.prev = _context2.next) {
                         case 0:
-                          navigator.serviceWorker.onmessage = function (_ref6) {
+                          // eslint-disable-line no-async-promise-executor
+                          navigator.serviceWorker.addEventListener('message', function (_ref6) {
                             var data = _ref6.data;
                             var message = data.message,
                                 type = data.type,
@@ -13473,9 +13847,12 @@
                                 */
 
                                 break;
-                            }
-                          };
 
+                              default:
+                                console.error('Unexpected type', type);
+                                break;
+                            }
+                          });
                           worker = r.installing || r.waiting || r.active; // Failed or new worker in use
 
                           if (!(worker && worker.state === 'redundant')) {
@@ -13626,371 +14003,6 @@
   var escapeHTML = function escapeHTML(s) {
     return !s ? '' : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/, '&gt;');
   };
-
-  function _typeof$3(obj) {
-    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-      _typeof$3 = function (obj) {
-        return typeof obj;
-      };
-    } else {
-      _typeof$3 = function (obj) {
-        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-      };
-    }
-
-    return _typeof$3(obj);
-  }
-
-  function _slicedToArray$2(arr, i) {
-    return _arrayWithHoles$2(arr) || _iterableToArrayLimit$2(arr, i) || _nonIterableRest$2();
-  }
-
-  function _toConsumableArray$2(arr) {
-    return _arrayWithoutHoles$2(arr) || _iterableToArray$2(arr) || _nonIterableSpread$2();
-  }
-
-  function _arrayWithoutHoles$2(arr) {
-    if (Array.isArray(arr)) {
-      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-      return arr2;
-    }
-  }
-
-  function _arrayWithHoles$2(arr) {
-    if (Array.isArray(arr)) return arr;
-  }
-
-  function _iterableToArray$2(iter) {
-    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-  }
-
-  function _iterableToArrayLimit$2(arr, i) {
-    var _arr = [];
-    var _n = true;
-    var _d = false;
-    var _e = undefined;
-
-    try {
-      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-        _arr.push(_s.value);
-
-        if (i && _arr.length === i) break;
-      }
-    } catch (err) {
-      _d = true;
-      _e = err;
-    } finally {
-      try {
-        if (!_n && _i["return"] != null) _i["return"]();
-      } finally {
-        if (_d) throw _e;
-      }
-    }
-
-    return _arr;
-  }
-
-  function _nonIterableSpread$2() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance");
-  }
-
-  function _nonIterableRest$2() {
-    throw new TypeError("Invalid attempt to destructure non-iterable instance");
-  } // get successful control from form and assemble into object
-  // http://www.w3.org/TR/html401/interact/forms.html#h-17.13.2
-  // types which indicate a submit action and are not successful controls
-  // these will be ignored
-
-
-  var kRSubmitter = /^(?:submit|button|image|reset|file)$/i; // node names which could be successful controls
-
-  var kRSuccessContrls = /^(?:input|select|textarea|keygen)/i; // Matches bracket notation.
-
-  var brackets = /(\[[^[\]]*\])/g; // serializes form fields
-  // @param form MUST be an HTMLForm element
-  // @param options is an optional argument to configure the serialization. Default output
-  // with no options specified is a url encoded string
-  //    - hash: [true | false] Configure the output type. If true, the output will
-  //    be a js object.
-  //    - serializer: [function] Optional serializer function to override the default one.
-  //    The function takes 3 arguments (result, key, value) and should return new result
-  //    hash and url encoded str serializers are provided with this module
-  //    - disabled: [true | false]. If true serialize disabled fields.
-  //    - empty: [true | false]. If true serialize empty fields
-
-  function serialize(form, options) {
-    if (_typeof$3(options) !== 'object') {
-      options = {
-        hash: !!options
-      };
-    } else if (options.hash === undefined) {
-      options.hash = true;
-    }
-
-    var result = options.hash ? {} : '';
-    var serializer = options.serializer || (options.hash ? hashSerializer : strSerialize);
-    var elements = form && form.elements ? _toConsumableArray$2(form.elements) : []; // Object store each radio and set if it's empty or not
-
-    var radioStore = Object.create(null);
-    elements.forEach(function (element) {
-      // ignore disabled fields
-      if (!options.disabled && element.disabled || !element.name) {
-        return;
-      } // ignore anything that is not considered a success field
-
-
-      if (!kRSuccessContrls.test(element.nodeName) || kRSubmitter.test(element.type)) {
-        return;
-      }
-
-      var key = element.name,
-          type = element.type,
-          name = element.name,
-          checked = element.checked;
-      var value = element.value; // We can't just use element.value for checkboxes cause some browsers lie to us;
-      // they say "on" for value when the box isn't checked
-
-      if ((type === 'checkbox' || type === 'radio') && !checked) {
-        value = undefined;
-      } // If we want empty elements
-
-
-      if (options.empty) {
-        // for checkbox
-        if (type === 'checkbox' && !checked) {
-          value = '';
-        } // for radio
-
-
-        if (type === 'radio') {
-          if (!radioStore[name] && !checked) {
-            radioStore[name] = false;
-          } else if (checked) {
-            radioStore[name] = true;
-          }
-
-          if (value === undefined) {
-            return;
-          }
-        }
-      } else if (!value) {
-        // value-less fields are ignored unless options.empty is true
-        return;
-      } // multi select boxes
-
-
-      if (type === 'select-multiple') {
-        value = [];
-        var isSelectedOptions = false;
-
-        _toConsumableArray$2(element.options).forEach(function (option) {
-          var allowedEmpty = options.empty && !option.value;
-          var hasValue = option.value || allowedEmpty;
-
-          if (option.selected && hasValue) {
-            isSelectedOptions = true; // If using a hash serializer be sure to add the
-            // correct notation for an array in the multi-select
-            // context. Here the name attribute on the select element
-            // might be missing the trailing bracket pair. Both names
-            // "foo" and "foo[]" should be arrays.
-
-            if (options.hash && key.slice(key.length - 2) !== '[]') {
-              result = serializer(result, key + '[]', option.value);
-            } else {
-              result = serializer(result, key, option.value);
-            }
-          }
-        }); // Serialize if no selected options and options.empty is true
-
-
-        if (!isSelectedOptions && options.empty) {
-          result = serializer(result, key, '');
-        }
-
-        return;
-      }
-
-      result = serializer(result, key, value);
-    }); // Check for all empty radio buttons and serialize them with key=""
-
-    if (options.empty) {
-      Object.entries(radioStore).forEach(function (_ref) {
-        var _ref2 = _slicedToArray$2(_ref, 2),
-            key = _ref2[0],
-            value = _ref2[1];
-
-        if (!value) {
-          result = serializer(result, key, '');
-        }
-      });
-    }
-
-    return result;
-  }
-
-  function parseKeys(string) {
-    var keys = [];
-    var prefix = /^([^[\]]*)/;
-    var children = new RegExp(brackets);
-    var match = prefix.exec(string);
-
-    if (match[1]) {
-      keys.push(match[1]);
-    }
-
-    while ((match = children.exec(string)) !== null) {
-      keys.push(match[1]);
-    }
-
-    return keys;
-  }
-
-  function hashAssign(result, keys, value) {
-    if (keys.length === 0) {
-      return value;
-    }
-
-    var key = keys.shift();
-    var between = key.match(/^\[(.+?)\]$/);
-
-    if (key === '[]') {
-      result = result || [];
-
-      if (Array.isArray(result)) {
-        result.push(hashAssign(null, keys, value));
-      } else {
-        // This might be the result of bad name attributes like "[][foo]",
-        // in this case the original `result` object will already be
-        // assigned to an object literal. Rather than coerce the object to
-        // an array, or cause an exception the attribute "_values" is
-        // assigned as an array.
-        result._values = result._values || [];
-
-        result._values.push(hashAssign(null, keys, value));
-      }
-
-      return result;
-    } // Key is an attribute name and can be assigned directly.
-
-
-    if (!between) {
-      result[key] = hashAssign(result[key], keys, value);
-    } else {
-      var string = between[1]; // +var converts the variable into a number
-      // better than parseInt because it doesn't truncate away trailing
-      // letters and actually fails if whole thing is not a number
-
-      var index = +string; // If the characters between the brackets is not a number it is an
-      // attribute name and can be assigned directly.
-
-      if (isNaN(index)) {
-        result = result || {};
-        result[string] = hashAssign(result[string], keys, value);
-      } else {
-        result = result || [];
-        result[index] = hashAssign(result[index], keys, value);
-      }
-    }
-
-    return result;
-  } // Object/hash encoding serializer.
-
-
-  function hashSerializer(result, key, value) {
-    var hasBrackets = key.match(brackets); // Has brackets? Use the recursive assignment function to walk the keys,
-    // construct any missing objects in the result tree and make the assignment
-    // at the end of the chain.
-
-    if (hasBrackets) {
-      var keys = parseKeys(key);
-      hashAssign(result, keys, value);
-    } else {
-      // Non bracket notation can make assignments directly.
-      var existing = result[key]; // If the value has been assigned already (for instance when a radio and
-      // a checkbox have the same name attribute) convert the previous value
-      // into an array before pushing into it.
-      //
-      // NOTE: If this requirement were removed all hash creation and
-      // assignment could go through `hashAssign`.
-
-      if (existing) {
-        if (!Array.isArray(existing)) {
-          result[key] = [existing];
-        }
-
-        result[key].push(value);
-      } else {
-        result[key] = value;
-      }
-    }
-
-    return result;
-  } // urlform encoding serializer
-
-
-  function strSerialize(result, key, value) {
-    // encode newlines as \r\n cause the html spec says so
-    value = value.replace(/(\r)?\n/g, '\r\n');
-    value = encodeURIComponent(value); // spaces should be '+' rather than '%20'.
-
-    value = value.replace(/%20/g, '+');
-    return result + (result ? '&' : '') + encodeURIComponent(key) + '=' + value;
-  }
-
-  function deserialize(form, hash) {
-    // input(text|radio|checkbox)|select(multiple)|textarea|keygen
-    Object.entries(hash).forEach(function (_ref3) {
-      var _ref4 = _slicedToArray$2(_ref3, 2),
-          name = _ref4[0],
-          value = _ref4[1];
-
-      var control = form[name];
-
-      if (!form[name]) {
-        control = form[name + '[]']; // We want this for RadioNodeList so setting value auto-disables other boxes
-
-        if (!('length' in control)) {
-          // The latter assignment only gets single
-          //    elements, so if not a RadioNodeList, we get all values here
-          control = form.querySelectorAll("[name=\"".concat(name, "[]\"]"));
-        }
-      }
-
-      var _control = control,
-          type = _control.type;
-
-      if (type === 'checkbox') {
-        control.checked = value !== '';
-      }
-
-      if (Array.isArray(value)) {
-        if (type === 'select-multiple') {
-          _toConsumableArray$2(control.options).forEach(function (o) {
-            if (value.includes(o.value)) {
-              o.selected = true;
-            }
-          });
-
-          return;
-        }
-
-        value.forEach(function (v, i) {
-          var c = control[i];
-
-          if (c.type === 'checkbox') {
-            var isMatch = c.value === v || v === 'on';
-            c.checked = isMatch;
-            return;
-          }
-
-          c.value = v;
-        });
-      } else {
-        control.value = value;
-      }
-    });
-  }
 
   var languageSelect = {
     main: function main(_ref) {
@@ -14587,7 +14599,7 @@
           change: function change(_ref16) {
             var selectedOptions = _ref16.target.selectedOptions;
             // Todo: EU disclaimer re: storage?
-            localStorage.setItem(namespace + '-langCodes', JSON.stringify(Array.from(selectedOptions).map(function (opt) {
+            localStorage.setItem(namespace + '-langCodes', JSON.stringify(_toConsumableArray(selectedOptions).map(function (opt) {
               return opt.value;
             })));
           }
@@ -14747,7 +14759,7 @@
             var name = work + '-' + iil(setType) + (i + 1) + '-' + (j + 1);
             var id = name;
             rowContent['#'].push(['td', [['label', {
-              'for': name
+              for: name
             }, [fieldName]]]], ['td', [aliases ? ['datalist', {
               id: 'dl-' + id
             }, aliases.map(function (alias) {
@@ -14795,7 +14807,7 @@
         var name = work + '-' + iil('anchor') + (i + 1) + '-' + (j + 1);
         var id = name;
         rowContent['#'].push(['td', [['label', {
-          'for': name
+          for: name
         }, [fieldName]]]], ['td', [aliases ? ['datalist', {
           id: 'dl-' + id
         }, aliases.map(function (alias) {
@@ -15259,7 +15271,7 @@
             el = _ref11[0],
             atts = _ref11[1];
 
-        return [el, Object.assign({}, atts, newAtts)];
+        return [el, _objectSpread({}, atts, newAtts)];
       };
 
       var foundState = {
@@ -15267,8 +15279,8 @@
         end: false
       };
       var outArr = [];
-      var showEmptyInterlinear = this.showEmptyInterlinear;
-      var showTitleOnSingleInterlinear = this.showTitleOnSingleInterlinear;
+      var showEmptyInterlinear = this.showEmptyInterlinear,
+          showTitleOnSingleInterlinear = this.showTitleOnSingleInterlinear;
 
       var checkEmpty = function checkEmpty(tdVal, htmlEscaped) {
         if (!showEmptyInterlinear) {
@@ -15365,6 +15377,7 @@
             }) : tdVal) + (interlinearColIndexes && interlins.length ? interlinearSeparator + interlins.join(interlinearSeparator) : '')
           });
         })));
+        return false;
       });
       return ['div', [Templates.resultsDisplayServerOrClient.styles({
         $p: $p,
@@ -15579,9 +15592,10 @@
     if (skip || !this.localizeParamNames) {
       // (lang)
       return param;
-    }
+    } // start, end, toggle
 
-    var endNums = /\d+(-\d+)?$/; // start, end, toggle
+
+    var endNums = /\d+(-\d+)?$/; // eslint-disable-line unicorn/no-unsafe-regex
 
     var indexed = param.match(endNums);
 
@@ -15593,51 +15607,68 @@
     return this.l10n(['params', param]);
   }
 
-  function IntlURLSearchParams() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        l10n = _ref.l10n,
-        params = _ref.params;
+  var IntlURLSearchParams =
+  /*#__PURE__*/
+  function () {
+    function IntlURLSearchParams() {
+      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          l10n = _ref.l10n,
+          params = _ref.params;
 
-    this.l10n = l10n;
+      _classCallCheck(this, IntlURLSearchParams);
 
-    if (!params) {
-      params = location.hash.slice(1); // eslint-disable-line no-undef
+      this.l10n = l10n;
+
+      if (!params) {
+        params = location.hash.slice(1); // eslint-disable-line no-undef
+      }
+
+      if (typeof params === 'string') {
+        params = new URLSearchParams(params); // eslint-disable-line no-undef
+      }
+
+      this.params = params;
     }
 
-    if (typeof params === 'string') {
-      params = new URLSearchParams(params); // eslint-disable-line no-undef
-    }
+    _createClass(IntlURLSearchParams, [{
+      key: "get",
+      value: function get(param, skip) {
+        return this.params.get(_prepareParam.call(this, param, skip));
+      }
+    }, {
+      key: "getAll",
+      value: function getAll(param, skip) {
+        return this.params.getAll(_prepareParam.call(this, param, skip));
+      }
+    }, {
+      key: "has",
+      value: function has(param, skip) {
+        return this.params.has(_prepareParam.call(this, param, skip));
+      }
+    }, {
+      key: "delete",
+      value: function _delete(param, skip) {
+        return this.params.delete(_prepareParam.call(this, param, skip));
+      }
+    }, {
+      key: "set",
+      value: function set(param, value, skip) {
+        return this.params.set(_prepareParam.call(this, param, skip), value);
+      }
+    }, {
+      key: "append",
+      value: function append(param, value, skip) {
+        return this.params.append(_prepareParam.call(this, param, skip), value);
+      }
+    }, {
+      key: "toString",
+      value: function toString() {
+        return this.params.toString();
+      }
+    }]);
 
-    this.params = params;
-  }
-
-  IntlURLSearchParams.prototype.get = function (param, skip) {
-    return this.params.get(_prepareParam.call(this, param, skip));
-  };
-
-  IntlURLSearchParams.prototype.getAll = function (param, skip) {
-    return this.params.getAll(_prepareParam.call(this, param, skip));
-  };
-
-  IntlURLSearchParams.prototype.has = function (param, skip) {
-    return this.params.has(_prepareParam.call(this, param, skip));
-  };
-
-  IntlURLSearchParams.prototype.delete = function (param, skip) {
-    return this.params.delete(_prepareParam.call(this, param, skip));
-  };
-
-  IntlURLSearchParams.prototype.set = function (param, value, skip) {
-    return this.params.set(_prepareParam.call(this, param, skip), value);
-  };
-
-  IntlURLSearchParams.prototype.append = function (param, value, skip) {
-    return this.params.append(_prepareParam.call(this, param, skip), value);
-  };
-
-  IntlURLSearchParams.prototype.toString = function () {
-    return this.params.toString();
-  };
+    return IntlURLSearchParams;
+  }();
 
   function workSelect$1(_x) {
     return _workSelect.apply(this, arguments);
@@ -15851,6 +15882,11 @@
 
             paramsCopy.set(il('result'), l('yes'));
             break;
+          }
+
+        default:
+          {
+            console.error('Unexpected type', type);
           }
       }
 
@@ -16737,7 +16773,7 @@
                   return interlin && interlin.split(/\s*,\s*/).map(function (col) {
                     return (// Todo: Avoid this when known to be integer or if string, though allow
                       //    string to be treated as number if config is set.
-                      parseInt(col, 10) - 1
+                      parseInt(col) - 1
                     );
                   }).filter(function (n) {
                     return !Number.isNaN(n);
@@ -16850,7 +16886,7 @@
                       plugin = _ref16.plugin;
 
                   if (plugin) {
-                    return;
+                    return undefined;
                   }
 
                   var _getFieldNameAndValue = getFieldNameAndValueAliases({
@@ -16912,6 +16948,8 @@
                     });
                     return preferAlias !== false ? fieldValueAliasMap : undefined;
                   }
+
+                  return undefined;
                 });
               };
 
@@ -16935,6 +16973,8 @@
                       key = Object.keys(locale)[i];
                       return true;
                     }
+
+                    return false;
                   });
                 }
 
@@ -17184,7 +17224,7 @@
                     // e.g., 5 - 6:2:1 gets all of book 5 to 6:2:1
                     // Todo: We should fill with '0' but since that often
                     //    doesn't find anything, we default for now to '1'.
-                    startPartVals.push.apply(startPartVals, _toConsumableArray(Array(-startEndDiff).fill('1')));
+                    startPartVals.push.apply(startPartVals, _toConsumableArray(new Array(-startEndDiff).fill('1')));
                   }
 
                   console.log('startPartVals', startPartVals);
@@ -17254,6 +17294,8 @@
                           dealiased = key;
                           return true;
                         }
+
+                        return false;
                       });
                     } else {
                       fvEntries.some(function (_ref29) {
@@ -17267,6 +17309,8 @@
                           dealiased = key;
                           return true;
                         }
+
+                        return false;
                       });
                     }
                   }
@@ -17274,7 +17318,7 @@
                   val = dealiased === undefined ? v : dealiased;
                 }
 
-                return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
+                return fieldSchemaTypes[i] === 'integer' ? parseInt(val) : val;
               };
 
               unlocalizedWorkName = fileData.name;
@@ -17508,142 +17552,6 @@
     return resultsDisplayServerOrClient;
   }();
 
-  function TextBrowser(options) {
-    if (!(this instanceof TextBrowser)) {
-      return new TextBrowser(options);
-    } // Todo: Replace the `languages` default with `import.meta`
-    //  (`new URL('../appdata/languages.json', moduleURL).href`?) once
-    //  implemented; https://github.com/tc39/proposal-import-meta
-
-
-    var moduleURL = new URL('node_modules/textbrowser/resources/index.js', location);
-    this.site = options.site || 'site.json';
-    setServiceWorkerDefaults(this, options);
-    this.allowPlugins = options.allowPlugins;
-    this.dynamicBasePath = options.dynamicBasePath;
-    this.trustFormatHTML = options.trustFormatHTML;
-    this.requestPersistentStorage = options.requestPersistentStorage;
-    this.localizeParamNames = options.localizeParamNames === undefined ? true : options.localizeParamNames;
-    this.hideFormattingSection = Boolean(options.hideFormattingSection);
-    this.interlinearSeparator = options.interlinearSeparator; // Todo: Make these user facing options
-
-    this.showEmptyInterlinear = options.showEmptyInterlinear;
-    this.showTitleOnSingleInterlinear = options.showTitleOnSingleInterlinear;
-    this.noDynamic = options.noDynamic;
-    this.skipIndexedDB = options.skipIndexedDB;
-    this.stylesheets = (options.stylesheets || ['@builtin']).map(function (s) {
-      return s === '@builtin' ? new URL('index.css', moduleURL).href : s;
-    });
-  }
-
-  TextBrowser.prototype.workDisplay = workDisplay$1;
-  TextBrowser.prototype.resultsDisplayClient = resultsDisplayClient$1;
-  TextBrowser.prototype.init =
-  /*#__PURE__*/
-  _asyncToGenerator(
-  /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee() {
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            _context.next = 2;
-            return loadStylesheets(this.stylesheets);
-
-          case 2:
-            this._stylesheetElements = _context.sent;
-            return _context.abrupt("return", this.displayLanguages());
-
-          case 4:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee, this);
-  }));
-  TextBrowser.prototype.displayLanguages =
-  /*#__PURE__*/
-  _asyncToGenerator(
-  /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee2() {
-    var _this = this;
-
-    var _ref3, _ref4, langData, siteData, p;
-
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            _context2.prev = 0;
-            _context2.next = 3;
-            return getJSON([this.languages, this.site]);
-
-          case 3:
-            _ref3 = _context2.sent;
-            _ref4 = _slicedToArray(_ref3, 2);
-            langData = _ref4[0];
-            siteData = _ref4[1];
-            this.langData = langData;
-            this.siteData = siteData;
-            p = this.paramChange(); // INIT/ADD EVENTS
-            // With `hashchange` more generic than `popstate`, we use it
-            //  and just check `history.state`
-
-            window.addEventListener('hashchange', function () {
-              return _this.paramChange();
-            });
-            return _context2.abrupt("return", p);
-
-          case 14:
-            _context2.prev = 14;
-            _context2.t0 = _context2["catch"](0);
-            dialogs.alert(_context2.t0);
-
-          case 17:
-          case "end":
-            return _context2.stop();
-        }
-      }
-    }, _callee2, this, [[0, 14]]);
-  }));
-  TextBrowser.prototype.getWorkFiles = getWorkFiles;
-
-  TextBrowser.prototype.getWorkData = function (opts) {
-    try {
-      return getWorkData.call(this, _objectSpread({}, opts, {
-        files: this.files,
-        allowPlugins: this.allowPlugins
-      }));
-    } catch (err) {
-      dialogs.alert('catch:' + err);
-    }
-  }; // Need for directionality even if language specified (and we don't want
-  //   to require it as a param)
-  // Todo: Use rtl-detect (already included)
-
-
-  TextBrowser.prototype.getDirectionForLanguageCode = function (code) {
-    var langs = this.langData.languages;
-    var exactMatch = langs.find(function (lang) {
-      return lang.code === code;
-    });
-    return exactMatch && exactMatch.direction || langs.find(function (lang) {
-      return lang.code.startsWith(code + '-');
-    });
-  };
-
-  TextBrowser.prototype.getFieldNameAndValueAliases = function (args) {
-    return getFieldNameAndValueAliases(_objectSpread({}, args, {
-      lang: this.lang
-    }));
-  };
-
-  TextBrowser.prototype.getBrowseFieldData = function (args) {
-    return getBrowseFieldData(_objectSpread({}, args, {
-      lang: this.lang
-    }));
-  };
-
   function prepareForServiceWorker(_x) {
     return _prepareForServiceWorker.apply(this, arguments);
   }
@@ -17737,6 +17645,7 @@
             case 0:
               _context9.next = 2;
               return new Promise(function (resolve, reject) {
+                // eslint-disable-line promise/avoid-new
                 // Todo: We could run the dialog code below for every page if
                 //    `Notification.permission === 'default'` (i.e., not choice
                 //    yet made by user), but user may avoid denying with intent
@@ -17746,7 +17655,7 @@
                 var ok =
                 /*#__PURE__*/
                 function () {
-                  var _ref8 = _asyncToGenerator(
+                  var _ref5 = _asyncToGenerator(
                   /*#__PURE__*/
                   regeneratorRuntime.mark(function _callee7() {
                     var permissionStatus;
@@ -17770,7 +17679,7 @@
                   }));
 
                   return function ok() {
-                    return _ref8.apply(this, arguments);
+                    return _ref5.apply(this, arguments);
                   };
                 }();
 
@@ -17785,7 +17694,7 @@
                 var close =
                 /*#__PURE__*/
                 function () {
-                  var _ref9 = _asyncToGenerator(
+                  var _ref6 = _asyncToGenerator(
                   /*#__PURE__*/
                   regeneratorRuntime.mark(function _callee8() {
                     var rememberRefusal;
@@ -17793,7 +17702,7 @@
                       while (1) {
                         switch (_context8.prev = _context8.next) {
                           case 0:
-                            rememberRefusal = function _ref10() {
+                            rememberRefusal = function _ref7() {
                               // Todo: We could go forward with worker, caching files, and
                               //    indexedDB regardless of permissions, but this way
                               //    we can continue to gauge performance differences for now
@@ -17821,7 +17730,7 @@
 
                           case 10:
                             _context8.t1 = requestPermissionsDialog.returnValue;
-                            _context8.next = _context8.t1 === 'denied' ? 13 : _context8.t1 === 'default' ? 15 : _context8.t1 === 'granted' ? 17 : 22;
+                            _context8.next = _context8.t1 === 'denied' ? 13 : _context8.t1 === 'default' ? 15 : _context8.t1 === 'granted' ? 17 : 23;
                             break;
 
                           case 13:
@@ -17850,6 +17759,13 @@
                             return prepareForServiceWorker.call(_this3, langs);
 
                           case 22:
+                            return _context8.abrupt("break", 25);
+
+                          case 23:
+                            console.error('Unexpected returnValue', requestPermissionsDialog.returnValue);
+                            return _context8.abrupt("break", 25);
+
+                          case 25:
                           case "end":
                             return _context8.stop();
                         }
@@ -17858,7 +17774,7 @@
                   }));
 
                   return function close() {
-                    return _ref9.apply(this, arguments);
+                    return _ref6.apply(this, arguments);
                   };
                 }();
 
@@ -17887,413 +17803,589 @@
     return _requestPermissions.apply(this, arguments);
   }
 
-  TextBrowser.prototype.paramChange =
+  var TextBrowser =
   /*#__PURE__*/
-  _asyncToGenerator(
-  /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee5() {
-    var _this2 = this;
+  function () {
+    function TextBrowser(options) {
+      _classCallCheck(this, TextBrowser);
 
-    var $p, followParams, languages, _languages$getLanguag, lang, langs, languageParam, fallbackLanguages, _lang, preferredLocale, direction, refusedIndexedDB, getSiteI18n, siteI18n, result, persistent, r, register, worker, hourly, respondToStateOfWorker, languageSelect, l, localeCallback;
+      // Todo: Replace the `languages` default with `import.meta.url`
+      //  (`new URL('../appdata/languages.json', import.meta.url).href`?)
+      //  https://github.com/tc39/proposal-import-meta
+      var moduleURL = new URL('node_modules/textbrowser/resources/index.js', location);
+      this.site = options.site || 'site.json';
+      setServiceWorkerDefaults(this, options);
+      this.allowPlugins = options.allowPlugins;
+      this.dynamicBasePath = options.dynamicBasePath;
+      this.trustFormatHTML = options.trustFormatHTML;
+      this.requestPersistentStorage = options.requestPersistentStorage;
+      this.localizeParamNames = options.localizeParamNames === undefined ? true : options.localizeParamNames;
+      this.hideFormattingSection = Boolean(options.hideFormattingSection);
+      this.interlinearSeparator = options.interlinearSeparator; // Todo: Make these user facing options
 
-    return regeneratorRuntime.wrap(function _callee5$(_context5) {
-      while (1) {
-        switch (_context5.prev = _context5.next) {
-          case 0:
-            Templates.defaultBody(); // Todo: Could give option to i18nize 'lang' or omit
+      this.showEmptyInterlinear = options.showEmptyInterlinear;
+      this.showTitleOnSingleInterlinear = options.showTitleOnSingleInterlinear;
+      this.noDynamic = options.noDynamic;
+      this.skipIndexedDB = options.skipIndexedDB;
+      this.stylesheets = (options.stylesheets || ['@builtin']).map(function (s) {
+        return s === '@builtin' ? new URL('index.css', moduleURL).href : s;
+      });
+    }
 
-            $p = this.$p = typeof history.state === 'string' ? new IntlURLSearchParams({
-              params: history.state
-            }) : new IntlURLSearchParams(); // Uses URL hash for params
+    _createClass(TextBrowser, [{
+      key: "init",
+      value: function () {
+        var _init = _asyncToGenerator(
+        /*#__PURE__*/
+        regeneratorRuntime.mark(function _callee() {
+          return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  _context.next = 2;
+                  return loadStylesheets(this.stylesheets);
 
-            followParams = function followParams(formSelector, cb) {
-              var form = document.querySelector(formSelector); // Record current URL along with state
+                case 2:
+                  this._stylesheetElements = _context.sent;
+                  return _context.abrupt("return", this.displayLanguages());
 
-              var url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
-              history.replaceState(serialize(form, {
-                hash: true,
-                empty: true
-              }), document.title, url); // Get and set new state within URL
-
-              cb();
-              location.hash = '#' + $p.toString();
-            };
-
-            languages = new Languages({
-              langData: this.langData
-            });
-            _languages$getLanguag = languages.getLanguageInfo({
-              $p: $p
-            }), lang = _languages$getLanguag.lang, langs = _languages$getLanguag.langs, languageParam = _languages$getLanguag.languageParam, fallbackLanguages = _languages$getLanguag.fallbackLanguages;
-            this.lang = lang;
-            _lang = _slicedToArray(lang, 1), preferredLocale = _lang[0];
-            direction = this.getDirectionForLanguageCode(preferredLocale);
-            document.dir = direction;
-            refusedIndexedDB = // User may have persistence via bookmarks, etc. but just not
-            //     want commital on notification
-            // Notification.permission === 'default' ||
-            // We always expect a controller, so is probably first visit
-            localStorage.getItem(this.namespace + '-refused'); // This check goes further than `Notification.permission === 'granted'`
-            //   to see whether the browser actually considers the notification
-            //   sufficient to grant persistence (as it is supposed to do).
-
-            getSiteI18n = function getSiteI18n() {
-              var localeFromSiteData = function localeFromSiteData(lan) {
-                return _this2.siteData['localization-strings'][lan];
-              };
-
-              var imfSite = IMFClass({
-                locales: lang.map(localeFromSiteData),
-                fallbackLocales: fallbackLanguages.map(localeFromSiteData)
-              });
-              return imfSite.getFormatter();
-            };
-
-            result = $p.get('result'); // Todo: For now, we won't give opportunity to store offline on
-            //    results page. We could add a small button to open a dialog,
-            //    but then it'd show up in each results window, making it less
-            //    embed-friendly. Probably best to implement
-            //    navigation bar/breadcrumbs, with option on work display page on
-            //    whether to show or not; also ensure we have navigation
-            //    bar/breadcrumbs on all non-results pages
-
-            _context5.next = 14;
-            return navigator.storage.persisted();
-
-          case 14:
-            persistent = _context5.sent;
-            _context5.next = 17;
-            return navigator.serviceWorker.getRegistration(this.serviceWorkerPath);
-
-          case 17:
-            r = _context5.sent;
-
-            register =
-            /*#__PURE__*/
-            function () {
-              var _ref6 = _asyncToGenerator(
-              /*#__PURE__*/
-              regeneratorRuntime.mark(function _callee3() {
-                var tryRegistrationOrPersistence;
-                return regeneratorRuntime.wrap(function _callee3$(_context3) {
-                  while (1) {
-                    switch (_context3.prev = _context3.next) {
-                      case 0:
-                        if (!result) {
-                          _context3.next = 2;
-                          break;
-                        }
-
-                        return _context3.abrupt("return");
-
-                      case 2:
-                        tryRegistrationOrPersistence = !refusedIndexedDB && ( // Not show if refused before
-                        !navigator.serviceWorker.controller || // This is `null` on a force-refresh too
-                        !persistent);
-
-                        if (!tryRegistrationOrPersistence) {
-                          _context3.next = 14;
-                          break;
-                        }
-
-                        siteI18n = getSiteI18n(); // Note: In Chrome on 127.0.0.1 (but not localhost!),
-                        //        this always appears to be `true`, despite having
-                        //        no notifications enabled or bookmarking 127.0.0.1,
-                        //        or being on the main page per
-                        //        https://developers.google.com/web/updates/2016/06/persistent-storage
-
-                        if (!persistent) {
-                          _context3.next = 11;
-                          break;
-                        }
-
-                        // No need to ask permissions (e.g., if user bookmarked site instead),
-                        //   but we do need a worker
-                        Templates.permissions.main({
-                          l: siteI18n
-                        });
-                        _context3.next = 9;
-                        return prepareForServiceWorker.call(_this2, langs);
-
-                      case 9:
-                        _context3.next = 13;
-                        break;
-
-                      case 11:
-                        _context3.next = 13;
-                        return requestPermissions.call(_this2, langs, siteI18n);
-
-                      case 13:
-                        Templates.permissions.exitDialogs();
-
-                      case 14:
-                      case "end":
-                        return _context3.stop();
-                    }
-                  }
-                }, _callee3, this);
-              }));
-
-              return function register() {
-                return _ref6.apply(this, arguments);
-              };
-            }();
-            /*
-            try {
-                // Waits indefinitely without rejecting until active worker
-                const {active} = await navigator.serviceWorker.ready;
-            } catch (err) {
-            }
-            */
-
-            /*
-            // Present normally if activated, but will be `null` if force-reload
-            const {controller} = navigator.serviceWorker;
-            */
-
-
-            if (r) {
-              _context5.next = 24;
-              break;
-            }
-
-            _context5.next = 22;
-            return register();
-
-          case 22:
-            _context5.next = 55;
-            break;
-
-          case 24:
-            siteI18n = getSiteI18n();
-            worker = r.installing || r.waiting || r.active;
-
-            if (worker) {
-              _context5.next = 31;
-              break;
-            }
-
-            // Todo: Why wouldn't there be a worker here?
-            console.error('Unexpected error: worker registration received without a worker.'); // If anything, would probably need to register though
-
-            _context5.next = 30;
-            return register();
-
-          case 30:
-            return _context5.abrupt("return");
-
-          case 31:
-            Templates.permissions.main({
-              l: siteI18n
-            }); // "The browser checks for updates automatically after navigations and
-            //  functional events, but you can also trigger them manually"
-            //  -- https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#manual_updates
-
-            hourly = 60 * 60 * 1000;
-            setInterval(function () {
-              r.update();
-            }, hourly);
-            console.log('worker.state', worker.state);
-
-            respondToStateOfWorker =
-            /*#__PURE__*/
-            function () {
-              var _ref7 = _asyncToGenerator(
-              /*#__PURE__*/
-              regeneratorRuntime.mark(function _callee4() {
-                return regeneratorRuntime.wrap(function _callee4$(_context4) {
-                  while (1) {
-                    switch (_context4.prev = _context4.next) {
-                      case 0:
-                        _context4.prev = 0;
-                        return _context4.abrupt("return", respondToState({
-                          r: r,
-                          langs: langs,
-                          languages: _this2.languages,
-                          logger: Templates.permissions
-                        }));
-
-                      case 4:
-                        _context4.prev = 4;
-                        _context4.t0 = _context4["catch"](0);
-                        return _context4.abrupt("return", dialogs.alert("\n    There was an unexpected error activating the new version;\n    please save any unfinished work, close this tab, and try\n    opening this site again.\n\n    Please contact a service administrator if the problem\n    persists (Error type: worker activation).\n    "));
-
-                      case 7:
-                      case "end":
-                        return _context4.stop();
-                    }
-                  }
-                }, _callee4, this, [[0, 4]]);
-              }));
-
-              return function respondToStateOfWorker() {
-                return _ref7.apply(this, arguments);
-              };
-            }();
-
-            _context5.t0 = worker.state;
-            _context5.next = _context5.t0 === 'installing' ? 39 : _context5.t0 === 'installed' ? 42 : _context5.t0 === 'activating' ? 45 : _context5.t0 === 'activated' ? 50 : _context5.t0 === 'redundant' ? 52 : 55;
-            break;
-
-          case 39:
-            // If it fails, will instead be `redundant`; but will try again:
-            //     1. automatically (?) per https://developers.google.com/web/fundamentals/primers/service-workers/#the_service_worker_life_cycle
-            //     2. upon reattempting registration (?) per https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
-            // Supply file paths in case not completed and no
-            //    other tabs open to do so (assuming this is possible)
-            // Will use `r.installing`
-            // We don't await the fulfillment of this promise
-            respondToStateOfWorker();
-            listenForWorkerUpdate({
-              r: r,
-              logger: {
-                addLogEntry: function addLogEntry(s) {
-                  // We don't put the log in the page as user using
-                  console.log(s);
-                }
+                case 4:
+                case "end":
+                  return _context.stop();
               }
-            }); // Don't return as user may continue working until installed (though
-            //    will get message to close tab)
-
-            return _context5.abrupt("break", 55);
-
-          case 42:
-            _context5.next = 44;
-            return respondToStateOfWorker();
-
-          case 44:
-            return _context5.abrupt("break", 55);
-
-          case 45:
-            _context5.next = 47;
-            return dialogs.alert("\nPlease wait for a short while as we work to update to a new version.\n");
-
-          case 47:
-            respondToStateOfWorker();
-            navigator.serviceWorker.onmessage({
-              data: 'finishActivate'
-            }); // finishActivate({r, logger, namespace, files});
-
-            return _context5.abrupt("return");
-
-          case 50:
-            // Will use `r.active`
-            // We should be able to use the following to distinguish when
-            //    active but force-reloaded (will be `null` unlike `r.active` apparently)
-            // const {controller} = navigator.serviceWorker;
-            // Todo: Prevent from getting here as we should handle this differently
-            // May need to pass in arguments if new service worker appears and
-            //    it needs arguments for update
-            listenForWorkerUpdate({
-              r: r,
-              logger: {
-                addLogEntry: function addLogEntry(s) {
-                  // We don't put the log in the page as user using
-                  console.log(s);
-                }
-              }
-            });
-            return _context5.abrupt("break", 55);
-
-          case 52:
-            _context5.next = 54;
-            return respondToStateOfWorker();
-
-          case 54:
-            return _context5.abrupt("return");
-
-          case 55:
-            Templates.permissions.exitDialogs();
-
-            if (languageParam) {
-              _context5.next = 61;
-              break;
             }
+          }, _callee, this);
+        }));
 
-            languageSelect = function languageSelect(l) {
-              $p.l10n = l; // Also can use l('chooselanguage'), but assumes locale
-              //   as with page title
-
-              document.title = l('browser-title');
-              Templates.languageSelect.main({
-                langs: langs,
-                languages: languages,
-                followParams: followParams,
-                $p: $p
-              });
-            };
-
-            l = siteI18n || getSiteI18n();
-            languageSelect(l);
-            return _context5.abrupt("return");
-
-          case 61:
-            document.documentElement.lang = preferredLocale;
-
-            localeCallback = function localeCallback(l
-            /* defineFormatter */
-            ) {
-              _this2.l10n = l;
-              $p.l10n = l;
-              var work = $p.get('work');
-
-              if (!work) {
-                workSelect$1({
-                  // l,
-                  files: _this2.files,
-                  lang: lang,
-                  fallbackLanguages: fallbackLanguages,
-                  $p: $p,
-                  followParams: followParams
-                });
-                return true;
-              }
-
-              if (!result) {
-                _this2.workDisplay({
-                  l: l,
-                  lang: lang,
-                  preferredLocale: preferredLocale,
-                  fallbackLanguages: fallbackLanguages,
-                  languageParam: languageParam,
-                  $p: $p,
-                  languages: languages
-                });
-
-                return true;
-              }
-
-              return false;
-            };
-
-            return _context5.abrupt("return", getIMFFallbackResults({
-              $p: $p,
-              lang: lang,
-              langs: langs,
-              langData: this.langData,
-              fallbackLanguages: fallbackLanguages,
-              resultsDisplay: function resultsDisplay(opts) {
-                var noIndexedDB = refusedIndexedDB || !navigator.serviceWorker.controller; // No worker from which IndexedDB is available;
-
-                return _this2.resultsDisplayClient(_objectSpread({
-                  langData: _this2.langData
-                }, opts, {
-                  noIndexedDB: noIndexedDB,
-                  dynamicBasePath: _this2.dynamicBasePath,
-                  files: _this2.files,
-                  allowPlugins: _this2.allowPlugins
-                }));
-              },
-              localeCallback: localeCallback
-            }));
-
-          case 64:
-          case "end":
-            return _context5.stop();
+        function init() {
+          return _init.apply(this, arguments);
         }
+
+        return init;
+      }()
+    }, {
+      key: "displayLanguages",
+      value: function () {
+        var _displayLanguages = _asyncToGenerator(
+        /*#__PURE__*/
+        regeneratorRuntime.mark(function _callee2() {
+          var _this = this;
+
+          var _ref, _ref2, langData, siteData, p;
+
+          return regeneratorRuntime.wrap(function _callee2$(_context2) {
+            while (1) {
+              switch (_context2.prev = _context2.next) {
+                case 0:
+                  _context2.prev = 0;
+                  _context2.next = 3;
+                  return getJSON([this.languages, this.site]);
+
+                case 3:
+                  _ref = _context2.sent;
+                  _ref2 = _slicedToArray(_ref, 2);
+                  langData = _ref2[0];
+                  siteData = _ref2[1];
+                  this.langData = langData;
+                  this.siteData = siteData;
+                  p = this.paramChange(); // INIT/ADD EVENTS
+                  // With `hashchange` more generic than `popstate`, we use it
+                  //  and just check `history.state`
+
+                  window.addEventListener('hashchange', function () {
+                    return _this.paramChange();
+                  });
+                  return _context2.abrupt("return", p);
+
+                case 14:
+                  _context2.prev = 14;
+                  _context2.t0 = _context2["catch"](0);
+                  dialogs.alert(_context2.t0);
+
+                case 17:
+                case "end":
+                  return _context2.stop();
+              }
+            }
+          }, _callee2, this, [[0, 14]]);
+        }));
+
+        function displayLanguages() {
+          return _displayLanguages.apply(this, arguments);
+        }
+
+        return displayLanguages;
+      }()
+    }, {
+      key: "getWorkData",
+      value: function getWorkData$$1(opts) {
+        try {
+          return getWorkData.call(this, _objectSpread({}, opts, {
+            files: this.files,
+            allowPlugins: this.allowPlugins
+          }));
+        } catch (err) {
+          dialogs.alert('catch:' + err);
+        }
+      } // Need for directionality even if language specified (and we don't want
+      //   to require it as a param)
+      // Todo: Use rtl-detect (already included)
+
+    }, {
+      key: "getDirectionForLanguageCode",
+      value: function getDirectionForLanguageCode(code) {
+        var langs = this.langData.languages;
+        var exactMatch = langs.find(function (lang) {
+          return lang.code === code;
+        });
+        return exactMatch && exactMatch.direction || langs.find(function (lang) {
+          return lang.code.startsWith(code + '-');
+        });
       }
-    }, _callee5, this);
-  }));
+    }, {
+      key: "getFieldNameAndValueAliases",
+      value: function getFieldNameAndValueAliases$$1(args) {
+        return getFieldNameAndValueAliases(_objectSpread({}, args, {
+          lang: this.lang
+        }));
+      }
+    }, {
+      key: "getBrowseFieldData",
+      value: function getBrowseFieldData$$1(args) {
+        return getBrowseFieldData(_objectSpread({}, args, {
+          lang: this.lang
+        }));
+      }
+    }, {
+      key: "paramChange",
+      value: function () {
+        var _paramChange = _asyncToGenerator(
+        /*#__PURE__*/
+        regeneratorRuntime.mark(function _callee5() {
+          var _this2 = this;
+
+          var $p, followParams, languages, _languages$getLanguag, lang, langs, languageParam, fallbackLanguages, _lang, preferredLocale, direction, refusedIndexedDB, getSiteI18n, siteI18n, result, persistent, r, register, worker, hourly, respondToStateOfWorker, languageSelect, l, localeCallback;
+
+          return regeneratorRuntime.wrap(function _callee5$(_context5) {
+            while (1) {
+              switch (_context5.prev = _context5.next) {
+                case 0:
+                  Templates.defaultBody(); // Todo: Could give option to i18nize 'lang' or omit
+
+                  $p = this.$p = typeof history.state === 'string' ? new IntlURLSearchParams({
+                    params: history.state
+                  }) : new IntlURLSearchParams(); // Uses URL hash for params
+
+                  followParams = function followParams(formSelector, cb) {
+                    // eslint-disable-line promise/prefer-await-to-callbacks
+                    var form = document.querySelector(formSelector); // Record current URL along with state
+
+                    var url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
+                    history.replaceState(serialize(form, {
+                      hash: true,
+                      empty: true
+                    }), document.title, url); // Get and set new state within URL
+
+                    cb(); // eslint-disable-line promise/prefer-await-to-callbacks, callback-return
+
+                    location.hash = '#' + $p.toString();
+                  };
+
+                  languages = new Languages({
+                    langData: this.langData
+                  });
+                  _languages$getLanguag = languages.getLanguageInfo({
+                    $p: $p
+                  }), lang = _languages$getLanguag.lang, langs = _languages$getLanguag.langs, languageParam = _languages$getLanguag.languageParam, fallbackLanguages = _languages$getLanguag.fallbackLanguages;
+                  this.lang = lang;
+                  _lang = _slicedToArray(lang, 1), preferredLocale = _lang[0];
+                  direction = this.getDirectionForLanguageCode(preferredLocale);
+                  document.dir = direction;
+                  refusedIndexedDB = // User may have persistence via bookmarks, etc. but just not
+                  //     want commital on notification
+                  // Notification.permission === 'default' ||
+                  // We always expect a controller, so is probably first visit
+                  localStorage.getItem(this.namespace + '-refused'); // This check goes further than `Notification.permission === 'granted'`
+                  //   to see whether the browser actually considers the notification
+                  //   sufficient to grant persistence (as it is supposed to do).
+
+                  getSiteI18n = function getSiteI18n() {
+                    var localeFromSiteData = function localeFromSiteData(lan) {
+                      return _this2.siteData['localization-strings'][lan];
+                    };
+
+                    var imfSite = IMFClass({
+                      locales: lang.map(localeFromSiteData),
+                      fallbackLocales: fallbackLanguages.map(localeFromSiteData)
+                    });
+                    return imfSite.getFormatter();
+                  };
+
+                  result = $p.get('result'); // Todo: For now, we won't give opportunity to store offline on
+                  //    results page. We could add a small button to open a dialog,
+                  //    but then it'd show up in each results window, making it less
+                  //    embed-friendly. Probably best to implement
+                  //    navigation bar/breadcrumbs, with option on work display page on
+                  //    whether to show or not; also ensure we have navigation
+                  //    bar/breadcrumbs on all non-results pages
+
+                  _context5.next = 14;
+                  return navigator.storage.persisted();
+
+                case 14:
+                  persistent = _context5.sent;
+                  _context5.next = 17;
+                  return navigator.serviceWorker.getRegistration(this.serviceWorkerPath);
+
+                case 17:
+                  r = _context5.sent;
+
+                  register =
+                  /*#__PURE__*/
+                  function () {
+                    var _ref3 = _asyncToGenerator(
+                    /*#__PURE__*/
+                    regeneratorRuntime.mark(function _callee3() {
+                      var tryRegistrationOrPersistence;
+                      return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                        while (1) {
+                          switch (_context3.prev = _context3.next) {
+                            case 0:
+                              if (!result) {
+                                _context3.next = 2;
+                                break;
+                              }
+
+                              return _context3.abrupt("return");
+
+                            case 2:
+                              tryRegistrationOrPersistence = !refusedIndexedDB && ( // Not show if refused before
+                              !navigator.serviceWorker.controller || // This is `null` on a force-refresh too
+                              !persistent);
+
+                              if (!tryRegistrationOrPersistence) {
+                                _context3.next = 14;
+                                break;
+                              }
+
+                              siteI18n = getSiteI18n(); // Note: In Chrome on 127.0.0.1 (but not localhost!),
+                              //        this always appears to be `true`, despite having
+                              //        no notifications enabled or bookmarking 127.0.0.1,
+                              //        or being on the main page per
+                              //        https://developers.google.com/web/updates/2016/06/persistent-storage
+
+                              if (!persistent) {
+                                _context3.next = 11;
+                                break;
+                              }
+
+                              // No need to ask permissions (e.g., if user bookmarked site instead),
+                              //   but we do need a worker
+                              Templates.permissions.main({
+                                l: siteI18n
+                              });
+                              _context3.next = 9;
+                              return prepareForServiceWorker.call(_this2, langs);
+
+                            case 9:
+                              _context3.next = 13;
+                              break;
+
+                            case 11:
+                              _context3.next = 13;
+                              return requestPermissions.call(_this2, langs, siteI18n);
+
+                            case 13:
+                              Templates.permissions.exitDialogs();
+
+                            case 14:
+                            case "end":
+                              return _context3.stop();
+                          }
+                        }
+                      }, _callee3, this);
+                    }));
+
+                    return function register() {
+                      return _ref3.apply(this, arguments);
+                    };
+                  }();
+                  /*
+                  try {
+                      // Waits indefinitely without rejecting until active worker
+                      const {active} = await navigator.serviceWorker.ready;
+                  } catch (err) {
+                  }
+                  */
+
+                  /*
+                  // Present normally if activated, but will be `null` if force-reload
+                  const {controller} = navigator.serviceWorker;
+                  */
+
+
+                  if (r) {
+                    _context5.next = 24;
+                    break;
+                  }
+
+                  _context5.next = 22;
+                  return register();
+
+                case 22:
+                  _context5.next = 57;
+                  break;
+
+                case 24:
+                  siteI18n = getSiteI18n();
+                  worker = r.installing || r.waiting || r.active;
+
+                  if (worker) {
+                    _context5.next = 31;
+                    break;
+                  }
+
+                  // Todo: Why wouldn't there be a worker here?
+                  console.error('Unexpected error: worker registration received without a worker.'); // If anything, would probably need to register though
+
+                  _context5.next = 30;
+                  return register();
+
+                case 30:
+                  return _context5.abrupt("return");
+
+                case 31:
+                  Templates.permissions.main({
+                    l: siteI18n
+                  }); // "The browser checks for updates automatically after navigations and
+                  //  functional events, but you can also trigger them manually"
+                  //  -- https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#manual_updates
+
+                  hourly = 60 * 60 * 1000;
+                  setInterval(function () {
+                    r.update();
+                  }, hourly);
+                  console.log('worker.state', worker.state);
+
+                  respondToStateOfWorker =
+                  /*#__PURE__*/
+                  function () {
+                    var _ref4 = _asyncToGenerator(
+                    /*#__PURE__*/
+                    regeneratorRuntime.mark(function _callee4() {
+                      return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                        while (1) {
+                          switch (_context4.prev = _context4.next) {
+                            case 0:
+                              _context4.prev = 0;
+                              return _context4.abrupt("return", respondToState({
+                                r: r,
+                                langs: langs,
+                                languages: _this2.languages,
+                                logger: Templates.permissions
+                              }));
+
+                            case 4:
+                              _context4.prev = 4;
+                              _context4.t0 = _context4["catch"](0);
+                              return _context4.abrupt("return", dialogs.alert("\n        There was an unexpected error activating the new version;\n        please save any unfinished work, close this tab, and try\n        opening this site again.\n\n        Please contact a service administrator if the problem\n        persists (Error type: worker activation).\n        "));
+
+                            case 7:
+                            case "end":
+                              return _context4.stop();
+                          }
+                        }
+                      }, _callee4, this, [[0, 4]]);
+                    }));
+
+                    return function respondToStateOfWorker() {
+                      return _ref4.apply(this, arguments);
+                    };
+                  }();
+
+                  _context5.t0 = worker.state;
+                  _context5.next = _context5.t0 === 'installing' ? 39 : _context5.t0 === 'installed' ? 42 : _context5.t0 === 'activating' ? 45 : _context5.t0 === 'activated' ? 50 : _context5.t0 === 'redundant' ? 52 : 55;
+                  break;
+
+                case 39:
+                  // If it fails, will instead be `redundant`; but will try again:
+                  //     1. automatically (?) per https://developers.google.com/web/fundamentals/primers/service-workers/#the_service_worker_life_cycle
+                  //     2. upon reattempting registration (?) per https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
+                  // Supply file paths in case not completed and no
+                  //    other tabs open to do so (assuming this is possible)
+                  // Will use `r.installing`
+                  // We don't await the fulfillment of this promise
+                  respondToStateOfWorker();
+                  listenForWorkerUpdate({
+                    r: r,
+                    logger: {
+                      addLogEntry: function addLogEntry(s) {
+                        // We don't put the log in the page as user using
+                        console.log(s);
+                      }
+                    }
+                  }); // Don't return as user may continue working until installed (though
+                  //    will get message to close tab)
+
+                  return _context5.abrupt("break", 57);
+
+                case 42:
+                  _context5.next = 44;
+                  return respondToStateOfWorker();
+
+                case 44:
+                  return _context5.abrupt("break", 57);
+
+                case 45:
+                  _context5.next = 47;
+                  return dialogs.alert("\n    Please wait for a short while as we work to update to a new version.\n    ");
+
+                case 47:
+                  respondToStateOfWorker();
+                  navigator.serviceWorker.onmessage({
+                    data: 'finishActivate'
+                  }); // finishActivate({r, logger, namespace, files});
+
+                  return _context5.abrupt("return");
+
+                case 50:
+                  // Will use `r.active`
+                  // We should be able to use the following to distinguish when
+                  //    active but force-reloaded (will be `null` unlike `r.active` apparently)
+                  // const {controller} = navigator.serviceWorker;
+                  // Todo: Prevent from getting here as we should handle this differently
+                  // May need to pass in arguments if new service worker appears and
+                  //    it needs arguments for update
+                  listenForWorkerUpdate({
+                    r: r,
+                    logger: {
+                      addLogEntry: function addLogEntry(s) {
+                        // We don't put the log in the page as user using
+                        console.log(s);
+                      }
+                    }
+                  });
+                  return _context5.abrupt("break", 57);
+
+                case 52:
+                  _context5.next = 54;
+                  return respondToStateOfWorker();
+
+                case 54:
+                  return _context5.abrupt("return");
+
+                case 55:
+                  console.log('Unexpected worker.state', worker.state);
+                  return _context5.abrupt("break", 57);
+
+                case 57:
+                  Templates.permissions.exitDialogs();
+
+                  if (languageParam) {
+                    _context5.next = 63;
+                    break;
+                  }
+
+                  languageSelect = function languageSelect(l) {
+                    $p.l10n = l; // Also can use l('chooselanguage'), but assumes locale
+                    //   as with page title
+
+                    document.title = l('browser-title');
+                    Templates.languageSelect.main({
+                      langs: langs,
+                      languages: languages,
+                      followParams: followParams,
+                      $p: $p
+                    });
+                  };
+
+                  l = siteI18n || getSiteI18n();
+                  languageSelect(l);
+                  return _context5.abrupt("return");
+
+                case 63:
+                  document.documentElement.lang = preferredLocale;
+
+                  localeCallback = function localeCallback(l
+                  /* defineFormatter */
+                  ) {
+                    _this2.l10n = l;
+                    $p.l10n = l;
+                    var work = $p.get('work');
+
+                    if (!work) {
+                      workSelect$1({
+                        // l,
+                        files: _this2.files,
+                        lang: lang,
+                        fallbackLanguages: fallbackLanguages,
+                        $p: $p,
+                        followParams: followParams
+                      });
+                      return true;
+                    }
+
+                    if (!result) {
+                      _this2.workDisplay({
+                        l: l,
+                        lang: lang,
+                        preferredLocale: preferredLocale,
+                        fallbackLanguages: fallbackLanguages,
+                        languageParam: languageParam,
+                        $p: $p,
+                        languages: languages
+                      });
+
+                      return true;
+                    }
+
+                    return false;
+                  };
+
+                  return _context5.abrupt("return", getIMFFallbackResults({
+                    $p: $p,
+                    lang: lang,
+                    langs: langs,
+                    langData: this.langData,
+                    fallbackLanguages: fallbackLanguages,
+                    resultsDisplay: function resultsDisplay(opts) {
+                      var noIndexedDB = refusedIndexedDB || !navigator.serviceWorker.controller; // No worker from which IndexedDB is available;
+
+                      return _this2.resultsDisplayClient(_objectSpread({
+                        langData: _this2.langData
+                      }, opts, {
+                        noIndexedDB: noIndexedDB,
+                        dynamicBasePath: _this2.dynamicBasePath,
+                        files: _this2.files,
+                        allowPlugins: _this2.allowPlugins
+                      }));
+                    },
+                    localeCallback: localeCallback
+                  }));
+
+                case 66:
+                case "end":
+                  return _context5.stop();
+              }
+            }
+          }, _callee5, this);
+        }));
+
+        function paramChange() {
+          return _paramChange.apply(this, arguments);
+        }
+
+        return paramChange;
+      }()
+    }]);
+
+    return TextBrowser;
+  }(); // Todo: Definable as public fields?
+
+
+  TextBrowser.prototype.workDisplay = workDisplay$1;
+  TextBrowser.prototype.resultsDisplayClient = resultsDisplayClient$1;
+  TextBrowser.prototype.getWorkFiles = getWorkFiles;
 
   return TextBrowser;
 

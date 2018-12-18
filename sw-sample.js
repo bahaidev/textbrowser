@@ -1,5 +1,7 @@
 /* eslint-env browser, serviceworker */
 
+'use strict';
+
 /* globals getJSON, activateCallback, WorkInfo */
 // Todo: Replace with ES6 modules (and remove Rollup routines) once browsers
 //    support:
@@ -13,13 +15,21 @@ importScripts('node_modules/simple-get-json/dist/index.js');
 importScripts('node_modules/textbrowser/dist/WorkInfo-umd.js');
 importScripts('node_modules/textbrowser/dist/activateCallback-umd.js');
 
-const CACHE_VERSION = 8;
+const CACHE_VERSION = '0.22.1';
 const CURRENT_CACHES = {
     prefetch: 'prefetch-cache-v' + CACHE_VERSION
 };
 const minutes = 60 * 1000;
 
 // Utilities
+
+/**
+ *
+ * @param {Object} args
+ * @param {"log"|"error"|"beginInstall"|"finishedInstall"|"beginActivate"|"finishedActivate"} args.type
+ * @param {string} [args.message=type}]
+ * @returns {Promise} Resolves to `undefined`
+ */
 async function post ({type, message = type}) {
     const clients = await self.clients.matchAll({
         // Are there any uncontrolled within activate anyways?
@@ -35,25 +45,47 @@ async function post ({type, message = type}) {
         client.postMessage({message, type});
     });
 }
-async function log (...messages) {
+
+/**
+ *
+ * @param {string[]} messages
+* @returns {Promise} Resolves to `undefined`
+ */
+function log (...messages) {
     const message = messages.join(' ');
     console.log(message);
     return post({message, type: 'log'});
 }
-async function logError (error, ...messages) {
+
+/**
+ *
+ * @param {Error} error
+ * @param {string[]} messages
+* @returns {Promise} Resolves to `undefined`
+ */
+function logError (error, ...messages) {
     const message = messages.join(' ');
     console.error(error, message);
     return post({message, errorType: error.type, name: error.name, type: 'error'});
 }
 
+/**
+ *
+ * @param {Function} cb
+ * @param {PositiveInteger} timeout
+ * @param {string} errMessage
+ * @param {PositiveInteger} [time=0]
+ * @returns {Promise} Resolves to `undefined`
+ */
 async function tryAndRetry (cb, timeout, errMessage, time = 0) {
     time++;
     try {
-        await cb(time); // eslint-disable-line standard/no-callback-literal
+        await cb(time); // eslint-disable-line standard/no-callback-literal, promise/prefer-await-to-callbacks, callback-return
+        return undefined;
     } catch (err) {
         console.log('errrr', err);
         logError(err, err.message || errMessage);
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => { // eslint-disable-line promise/avoid-new
             setTimeout(() => {
                 resolve(tryAndRetry(cb, timeout, errMessage, time));
             }, timeout);
@@ -61,8 +93,13 @@ async function tryAndRetry (cb, timeout, errMessage, time = 0) {
     }
 }
 
-// Todo: Since some of these reused, move to external file (or
-//     use `setServiceWorkerDefaults`?)
+/**
+ *
+ * @param {Object} args
+ * @returns {Object}
+ * @todo Since some of these reused, move to external file (or
+ *         use `setServiceWorkerDefaults`?)
+ */
 function getConfigDefaults (args) {
     return {
         namespace: 'textbrowser',
@@ -89,9 +126,8 @@ const defaultUserStaticFiles = [
     'resources/user.css'
     // We do not put the user.json here as that is obtained live with service worker
 ];
-// Todo: We could supply `new URL(fileName, import.meta.url).href` once
-//   `import.meta.url` was impelmented to get these as reliable full
-//   paths without hard-coding or needing to
+// Todo: We could supply `new URL(fileName, moduleURL).href` to
+//   get these as reliable full paths without hard-coding or needing to
 //   actually be in `node_modules/textbrowser`; see `resources/index.js`
 const textbrowserStaticResourceFiles = [
     'node_modules/@babel/polyfill/dist/polyfill.js',
@@ -123,6 +159,12 @@ const textbrowserStaticResourceFiles = [
 
 const pathToUserJSON = new URL(location).searchParams.get('pathToUserJSON');
 console.log('sw info', pathToUserJSON);
+
+/**
+ *
+ * @param {PositiveInteger} time
+ * @returns {Promise} Resolves to `undefined`
+ */
 async function install (time) {
     post({type: 'beginInstall'});
     log(`Install: Trying, attempt ${time}`);
@@ -150,11 +192,12 @@ async function install (time) {
     // Todo: We might give option to only download
     //        one locale and avoid language splash page
     const localeFiles = langs.map(
-        ({locale: {$ref}}) =>
-            (langPathParts.length > 1
+        ({locale: {$ref}}) => {
+            return (langPathParts.length > 1
                 ? langPathParts.slice(0, -1).join('/') + '/'
                 : ''
-            ) + $ref
+            ) + $ref;
+        }
     );
 
     const urlsToPrefetch = [
@@ -200,6 +243,11 @@ async function install (time) {
     post({type: 'finishedInstall'});
 }
 
+/**
+ *
+ * @param {PositiveInteger} time
+ * @returns {Promise} Resolves to `undefined`
+ */
 async function activate (time) {
     post({type: 'beginActivate'});
     log(`Activate: Trying, attempt ${time}`);
@@ -225,11 +273,11 @@ async function activate (time) {
     post({type: 'finishedActivate'});
 }
 
-self.addEventListener('install', e => {
+self.addEventListener('install', (e) => {
     e.waitUntil(tryAndRetry(install, 5 * minutes, 'Error installing'));
 });
 
-self.addEventListener('activate', e => {
+self.addEventListener('activate', (e) => {
     // Erring is of no present use here:
     //   https://github.com/w3c/ServiceWorker/issues/659#issuecomment-384919053
     e.waitUntil(tryAndRetry(activate, 5 * minutes, 'Error activating'));

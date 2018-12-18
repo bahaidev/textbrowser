@@ -16,12 +16,11 @@ class Dialog {
         this.setLocale({locale, localeObject});
     }
     setLocale ({locale = {}, localeObject = {}}) {
-        this.localeStrings = Object.assign(
-            {},
-            localeStrings[defaultLocale],
-            localeStrings[locale],
-            localeObject
-        );
+        this.localeStrings = {
+            ...localeStrings[defaultLocale],
+            ...localeStrings[locale],
+            ...localeObject
+        };
     }
     makeDialog ({atts = {}, children = [], close, remove = true}) {
         if (close) {
@@ -164,7 +163,7 @@ class Dialog {
             dialog.showModal();
         });
     }
-};
+}
 
 const dialogs = new Dialog();
 

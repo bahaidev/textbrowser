@@ -64,9 +64,9 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
         nonMinified.plugins.push(terser());
     }
     return nonMinified;
-};
+}
 // console.log('typeof', typeof getRollupObject); // Keep for ESLint when commenting out below
-export default [
+export default [ // eslint-disable-line import/no-anonymous-default-export
     /**/
     getRollupObject(),
     getRollupObject({minifying: true}),
@@ -116,7 +116,7 @@ export default [
         plugins: [
             replace({
                 // ... do replace before commonjs
-                patterns: [/* importerReplace, */ {
+                patterns: [/* importerReplace, */{
                     include: ['resources/resultsDisplay.js', 'resources/utils/Metadata.js'],
                     test: "import JsonRefs from 'json-refs/dist/json-refs-min.js';",
                     replace: "const JsonRefs = require('json-refs');"

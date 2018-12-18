@@ -3,6 +3,14 @@ import IMF from 'imf';
 import {getMetaProp, getMetadata, Metadata} from './Metadata.js';
 import {PluginsForWork, escapePlugin} from './Plugin.js';
 
+let path, babelRegister;
+if (typeof process !== 'undefined') {
+    /* eslint-disable global-require */
+    path = require('path');
+    babelRegister = require('@babel/register');
+    /* eslint-enable global-require */
+}
+
 export const getWorkFiles = async function getWorkFiles (files = this.files) {
     const filesObj = await getJSON(files);
     const dataFiles = [];
@@ -14,7 +22,7 @@ export const getWorkFiles = async function getWorkFiles (files = this.files) {
         });
     });
     dataFiles.push(
-        ...Object.values(filesObj['plugins']).map((pl) => pl.path)
+        ...Object.values(filesObj.plugins).map((pl) => pl.path)
     );
     return dataFiles;
 };
@@ -128,13 +136,15 @@ export const getWorkData = async function ({
             ? Promise.all(
                 pluginPaths.map((pluginPath) => {
                     if (typeof process !== 'undefined') {
-                        pluginPath = require('path').resolve(require('path').join(
+                        pluginPath = path.resolve(path.join(
                             process.cwd(), 'node_modules/textbrowser/server', pluginPath
                         ));
-                        require('@babel/register')({
+                        babelRegister({
                             presets: ['@babel/env']
                         });
-                        return Promise.resolve().then(() => require(pluginPath)).catch((err) => {
+                        return Promise.resolve().then(() => {
+                            return require(pluginPath); // eslint-disable-line global-require, import/no-dynamic-require
+                        }).catch((err) => {
                             // E.g., with tooltips plugin
                             console.log('err', err);
                         });

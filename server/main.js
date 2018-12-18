@@ -1,14 +1,16 @@
 /* eslint-env node */
 import 'url-search-params-polyfill';
+import getJSON from 'simple-get-json';
 import IntlURLSearchParams from '../resources/utils/IntlURLSearchParams.js';
 import {resultsDisplayServer} from '../resources/resultsDisplay.js';
 import getIMFFallbackResults from '../resources/utils/getIMFFallbackResults.js';
-import getJSON from 'simple-get-json';
 import {setServiceWorkerDefaults} from '../resources/utils/ServiceWorker.js';
 // import setGlobalVars from 'indexeddbshim/src/node-UnicodeIdentifiers.js';
 import {Languages} from '../resources/utils/Languages.js';
 // import activateCallback from '../resources/activateCallback.js';
 
+/* eslint-disable import/no-commonjs */
+const http = require('http');
 const fetch = require('node-fetch'); // Problems as `import` since 2.1.2
 const setGlobalVars = require('indexeddbshim/dist/indexeddbshim-UnicodeIdentifiers-node.js');
 
@@ -93,7 +95,7 @@ setGlobalVars(null, {
 if (userParams.nodeActivate) {
     global.fetch = fetch;
     // const activateCallback = require('../resources/activateCallback.js');
-    const activateCallback = require('../dist/activateCallback-umd.js');
+    const activateCallback = require('../dist/activateCallback-umd.js'); // eslint-disable-line global-require
     (async () => {
         await activateCallback(userParamsWithDefaults);
         console.log('Activated');
@@ -101,11 +103,10 @@ if (userParams.nodeActivate) {
 }
 console.log('past activate check');
 
-const http = require('http');
-
 global.DOMParser = require('dom-parser'); // potentially used within resultsDisplay.js
 
 const statik = require('node-static');
+
 const fileServer = new statik.Server(); // Pass path; otherwise uses current directory
 
 let langData, languagesInstance;

@@ -9,9 +9,11 @@ export const unescapePluginComponent = (pluginName) => {
     }
     return pluginName.replace(
         /(\^+)0/g,
-        (n0, esc) => esc.length % 2
-            ? esc.slice(1) + '-'
-            : n0
+        (n0, esc) => {
+            return esc.length % 2
+                ? esc.slice(1) + '-'
+                : n0;
+        }
     ).replace(/\^\^/g, '^');
 };
 
@@ -90,4 +92,4 @@ export class PluginsForWork {
         }
         return [pluginName, applicableField, targetLanguage].map(unescapePluginComponent);
     }
-};
+}

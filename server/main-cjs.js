@@ -4,10 +4,10 @@
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 require('url-search-params-polyfill');
+var getJSON = _interopDefault(require('simple-get-json'));
+var rtlDetect = require('rtl-detect');
 var jamilih = require('jamilih');
 var formSerialize = require('form-serialize');
-var rtlDetect = require('rtl-detect');
-var getJSON = _interopDefault(require('simple-get-json'));
 var IMF = _interopDefault(require('imf'));
 
 function _defineProperty(obj, key, value) {
@@ -109,9 +109,10 @@ function _prepareParam(param, skip) {
   if (skip || !this.localizeParamNames) {
     // (lang)
     return param;
-  }
+  } // start, end, toggle
 
-  const endNums = /\d+(-\d+)?$/; // start, end, toggle
+
+  const endNums = /\d+(-\d+)?$/; // eslint-disable-line unicorn/no-unsafe-regex
 
   const indexed = param.match(endNums);
 
@@ -123,50 +124,53 @@ function _prepareParam(param, skip) {
   return this.l10n(['params', param]);
 }
 
-function IntlURLSearchParams({
-  l10n,
-  params
-} = {}) {
-  this.l10n = l10n;
+class IntlURLSearchParams {
+  constructor({
+    l10n,
+    params
+  } = {}) {
+    this.l10n = l10n;
 
-  if (!params) {
-    params = location.hash.slice(1); // eslint-disable-line no-undef
+    if (!params) {
+      params = location.hash.slice(1); // eslint-disable-line no-undef
+    }
+
+    if (typeof params === 'string') {
+      params = new URLSearchParams(params); // eslint-disable-line no-undef
+    }
+
+    this.params = params;
   }
 
-  if (typeof params === 'string') {
-    params = new URLSearchParams(params); // eslint-disable-line no-undef
+  get(param, skip) {
+    return this.params.get(_prepareParam.call(this, param, skip));
   }
 
-  this.params = params;
+  getAll(param, skip) {
+    return this.params.getAll(_prepareParam.call(this, param, skip));
+  }
+
+  has(param, skip) {
+    return this.params.has(_prepareParam.call(this, param, skip));
+  }
+
+  delete(param, skip) {
+    return this.params.delete(_prepareParam.call(this, param, skip));
+  }
+
+  set(param, value, skip) {
+    return this.params.set(_prepareParam.call(this, param, skip), value);
+  }
+
+  append(param, value, skip) {
+    return this.params.append(_prepareParam.call(this, param, skip), value);
+  }
+
+  toString() {
+    return this.params.toString();
+  }
+
 }
-
-IntlURLSearchParams.prototype.get = function (param, skip) {
-  return this.params.get(_prepareParam.call(this, param, skip));
-};
-
-IntlURLSearchParams.prototype.getAll = function (param, skip) {
-  return this.params.getAll(_prepareParam.call(this, param, skip));
-};
-
-IntlURLSearchParams.prototype.has = function (param, skip) {
-  return this.params.has(_prepareParam.call(this, param, skip));
-};
-
-IntlURLSearchParams.prototype.delete = function (param, skip) {
-  return this.params.delete(_prepareParam.call(this, param, skip));
-};
-
-IntlURLSearchParams.prototype.set = function (param, value, skip) {
-  return this.params.set(_prepareParam.call(this, param, skip), value);
-};
-
-IntlURLSearchParams.prototype.append = function (param, value, skip) {
-  return this.params.append(_prepareParam.call(this, param, skip), value);
-};
-
-IntlURLSearchParams.prototype.toString = function () {
-  return this.params.toString();
-};
 
 /* eslint-env browser */
 var languageSelect = {
@@ -652,7 +656,8 @@ var workDisplay = {
 
     return lo(['param_values', 'outputmode', mode], atts);
   })]])]],
-  addRandomFormFields: ({
+
+  addRandomFormFields({
     il,
     ld,
     l,
@@ -660,7 +665,7 @@ var workDisplay = {
     $p,
     serializeParamsAsURL,
     content
-  }) => {
+  }) {
     const addRowContent = rowContent => {
       if (!rowContent || !rowContent.length) {
         return;
@@ -704,6 +709,7 @@ var workDisplay = {
       type: 'text'
     }]]]]].forEach(addRowContent);
   },
+
   getPreferences: ({
     languageParam,
     lf,
@@ -768,7 +774,7 @@ var workDisplay = {
         }
       }) {
         // Todo: EU disclaimer re: storage?
-        localStorage.setItem(namespace + '-langCodes', JSON.stringify(Array.from(selectedOptions).map(opt => opt.value)));
+        localStorage.setItem(namespace + '-langCodes', JSON.stringify([...selectedOptions].map(opt => opt.value)));
       }
 
     }
@@ -851,7 +857,8 @@ var workDisplay = {
 
     }
   }, [l('Generate_bookmarks')]]]]]],
-  addBrowseFields: ({
+
+  addBrowseFields({
     browseFields,
     fieldInfo,
     ld,
@@ -859,7 +866,7 @@ var workDisplay = {
     iil,
     $p,
     content
-  }) => {
+  }) {
     const work = $p.get('work');
 
     const addRowContent = rowContent => {
@@ -887,7 +894,7 @@ var workDisplay = {
         const name = work + '-' + iil(setType) + (i + 1) + '-' + (j + 1);
         const id = name;
         rowContent['#'].push(['td', [['label', {
-          'for': name
+          for: name
         }, [fieldName]]]], ['td', [aliases ? ['datalist', {
           id: 'dl-' + id
         }, aliases.map(alias => ['option', [alias]])] : '', aliases ? ['input', {
@@ -935,7 +942,7 @@ var workDisplay = {
       const name = work + '-' + iil('anchor') + (i + 1) + '-' + (j + 1);
       const id = name;
       rowContent['#'].push(['td', [['label', {
-        'for': name
+        for: name
       }, [fieldName]]]], ['td', [aliases ? ['datalist', {
         id: 'dl-' + id
       }, aliases.map(alias => ['option', [alias]])] : '', aliases ? ['input', {
@@ -974,7 +981,8 @@ var workDisplay = {
       return ['option', [fieldAliasOrName]];
     })]]]]]]]]]]]]].forEach(addRowContent);
   },
-  main: ({
+
+  main({
     lf,
     languageParam,
     l,
@@ -1001,7 +1009,7 @@ var workDisplay = {
     schemaItems,
     content,
     groups
-  }) => {
+  }) {
     const work = $p.get('work');
 
     const serializeParamsAsURLWithData = ({
@@ -1183,9 +1191,9 @@ var workDisplay = {
       type: 'submit'
     })]]]]], jamilih.body);
   }
+
 };
 
-/* globals console, DOMParser */
 var resultsDisplayServerOrClient = {
   caption({
     heading,
@@ -1433,13 +1441,15 @@ body {
     const [checkedFields, checkedFieldIndexes, allInterlinearColIndexes] = checkedAndInterlinearFieldInfo;
     const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
 
-    const tableWrap = children => tableWithFixedHeaderAndFooter ? ['div', {
-      class: 'table-responsive anchor-table-header zupa'
-    }, [['div', {
-      class: 'table-responsive anchor-table-body'
-    }, children]]] : ['div', {
-      class: 'table-responsive'
-    }, children];
+    const tableWrap = children => {
+      return tableWithFixedHeaderAndFooter ? ['div', {
+        class: 'table-responsive anchor-table-header zupa'
+      }, [['div', {
+        class: 'table-responsive anchor-table-body'
+      }, children]]] : ['div', {
+        class: 'table-responsive'
+      }, children];
+    };
 
     const addChildren = (el, children) => {
       el = JSON.parse(JSON.stringify(el));
@@ -1447,15 +1457,17 @@ body {
       return el;
     };
 
-    const addAtts = ([el, atts], newAtts) => [el, Object.assign({}, atts, newAtts)];
+    const addAtts = ([el, atts], newAtts) => [el, _objectSpread({}, atts, newAtts)];
 
     const foundState = {
       start: false,
       end: false
     };
     const outArr = [];
-    const showEmptyInterlinear = this.showEmptyInterlinear;
-    const showTitleOnSingleInterlinear = this.showTitleOnSingleInterlinear;
+    const {
+      showEmptyInterlinear,
+      showTitleOnSingleInterlinear
+    } = this;
 
     const checkEmpty = (tdVal, htmlEscaped) => {
       if (!showEmptyInterlinear) {
@@ -1547,6 +1559,7 @@ body {
           }) : tdVal) + (interlinearColIndexes && interlins.length ? interlinearSeparator + interlins.join(interlinearSeparator) : '')
         });
       })));
+      return false;
     });
     return ['div', [Templates.resultsDisplayServerOrClient.styles({
       $p,
@@ -1624,7 +1637,7 @@ class Dialog {
     locale = {},
     localeObject = {}
   }) {
-    this.localeStrings = Object.assign({}, localeStrings[defaultLocale], localeStrings[locale], localeObject);
+    this.localeStrings = _objectSpread({}, localeStrings[defaultLocale], localeStrings[locale], localeObject);
   }
 
   makeDialog({
@@ -1819,6 +1832,7 @@ class Dialog {
   }
 
 }
+
 const dialogs = new Dialog();
 
 var resultsDisplayClient = {
@@ -2060,9 +2074,11 @@ class Languages {
   }) {
     const langs = this.langData.languages;
 
-    const localePass = lcl => langs.some(({
-      code
-    }) => code === lcl) ? lcl : false;
+    const localePass = lcl => {
+      return langs.some(({
+        code
+      }) => code === lcl) ? lcl : false;
+    };
 
     const languageParam = $p.get('lang', true); // Todo: We could (unless overridden by another button) assume the
     //         browser language based on fallbackLanguages instead
@@ -2086,7 +2102,8 @@ class Languages {
 
 /* eslint-env browser */
 
-const JsonRefs = require('json-refs');
+const JsonRefs = require('json-refs'); // eslint-disable-line import/order
+
 
 const getCurrDir = () => window.location.href.replace(/(index\.html)?#.*$/, '');
 
@@ -2303,7 +2320,9 @@ const unescapePluginComponent = pluginName => {
     return pluginName;
   }
 
-  return pluginName.replace(/(\^+)0/g, (n0, esc) => esc.length % 2 ? esc.slice(1) + '-' : n0).replace(/\^\^/g, '^');
+  return pluginName.replace(/(\^+)0/g, (n0, esc) => {
+    return esc.length % 2 ? esc.slice(1) + '-' : n0;
+  }).replace(/\^\^/g, '^');
 };
 const escapePlugin = ({
   pluginName,
@@ -2418,6 +2437,14 @@ class PluginsForWork {
 
 }
 
+let path, babelRegister;
+
+if (typeof process !== 'undefined') {
+  /* eslint-disable global-require */
+  path = require('path');
+  babelRegister = require('@babel/register');
+  /* eslint-enable global-require */
+}
 const getFilePaths = function getFilePaths(filesObj, fileGroup, fileData) {
   const baseDir = (filesObj.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
   const schemaBaseDir = (filesObj.schemaBaseDirectory || '') + (fileGroup.schemaBaseDirectory || '') + '/';
@@ -2547,13 +2574,13 @@ const getWorkData = async function ({
   const pluginFieldMappings = pluginFieldMappingForWork;
   const [schemaObj, pluginObjects] = await Promise.all([getMetadata(schemaFile, schemaProperty, basePath), getPlugins ? Promise.all(pluginPaths.map(pluginPath => {
     if (typeof process !== 'undefined') {
-      pluginPath = require('path').resolve(require('path').join(process.cwd(), 'node_modules/textbrowser/server', pluginPath));
-
-      require('@babel/register')({
+      pluginPath = path.resolve(path.join(process.cwd(), 'node_modules/textbrowser/server', pluginPath));
+      babelRegister({
         presets: ['@babel/env']
       });
-
-      return Promise.resolve().then(() => require(pluginPath)).catch(err => {
+      return Promise.resolve().then(() => {
+        return require(pluginPath); // eslint-disable-line global-require, import/no-dynamic-require
+      }).catch(err => {
         // E.g., with tooltips plugin
         console.log('err', err);
       });
@@ -2686,9 +2713,12 @@ const getWorkData = async function ({
 };
 
 const JsonRefs$1 = require('json-refs');
+
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 
-const getRawFieldValue = v => typeof v === 'string' ? v.replace(fieldValueAliasRegex, '$1') : v;
+const getRawFieldValue = v => {
+  return typeof v === 'string' ? v.replace(fieldValueAliasRegex, '$1') : v;
+};
 const resultsDisplayServer = async function resultsDisplayServer(args) {
   const {
     templateArgs
@@ -2705,8 +2735,10 @@ const resultsDisplayServer = async function resultsDisplayServer(args) {
       return Templates.resultsDisplayServerOrClient.main(templateArgs);
 
     case 'html':
-      const jamilih$$1 = Templates.resultsDisplayServerOrClient.main(templateArgs);
-      return jamilih.jml.toHTML(...jamilih$$1);
+      {
+        const jamilih$$1 = Templates.resultsDisplayServerOrClient.main(templateArgs);
+        return jamilih.jml.toHTML(...jamilih$$1);
+      }
   }
 };
 const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClient({
@@ -2859,7 +2891,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
       const interlin = $p.get('interlin' + (cfi + 1), true);
       return interlin && interlin.split(/\s*,\s*/).map(col => // Todo: Avoid this when known to be integer or if string, though allow
       //    string to be treated as number if config is set.
-      parseInt(col, 10) - 1).filter(n => !Number.isNaN(n));
+      parseInt(col) - 1).filter(n => !Number.isNaN(n));
     });
     return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
   };
@@ -2970,7 +3002,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
       plugin
     }) => {
       if (plugin) {
-        return;
+        return undefined;
       }
 
       const {
@@ -3023,6 +3055,8 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         });
         return preferAlias !== false ? fieldValueAliasMap : undefined;
       }
+
+      return undefined;
     });
   };
 
@@ -3046,6 +3080,8 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
           key = Object.keys(locale)[i];
           return true;
         }
+
+        return false;
       });
     }
 
@@ -3267,7 +3303,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         // e.g., 5 - 6:2:1 gets all of book 5 to 6:2:1
         // Todo: We should fill with '0' but since that often
         //    doesn't find anything, we default for now to '1'.
-        startPartVals.push(...Array(-startEndDiff).fill('1'));
+        startPartVals.push(...new Array(-startEndDiff).fill('1'));
       }
 
       console.log('startPartVals', startPartVals);
@@ -3308,7 +3344,9 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     if (v.match(/^\d+$/) || v.match(fieldValueAliasRegex)) {
       val = getRawFieldValue(v);
     } else {
-      const rawFieldValueAliasMap = applicableBrowseFieldSet[i].rawFieldValueAliasMap;
+      const {
+        rawFieldValueAliasMap
+      } = applicableBrowseFieldSet[i];
       let dealiased;
 
       if (rawFieldValueAliasMap) {
@@ -3321,6 +3359,8 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
               dealiased = key;
               return true;
             }
+
+            return false;
           });
         } else {
           fvEntries.some(([key, obj]) => {
@@ -3330,6 +3370,8 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
               dealiased = key;
               return true;
             }
+
+            return false;
           });
         }
       }
@@ -3337,7 +3379,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
       val = dealiased === undefined ? v : dealiased;
     }
 
-    return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
+    return fieldSchemaTypes[i] === 'integer' ? parseInt(val) : val;
   };
 
   const unlocalizedWorkName = fileData.name;
@@ -3568,7 +3610,8 @@ function getIMFFallbackResults({
     const imf = IMF({
       languages: lang,
       fallbackLanguages,
-      localeFileResolver: code => {
+
+      localeFileResolver(code) {
         // Todo: For editing of locales, we might instead resolve all
         //    `$ref` (as with <https://github.com/whitlockjc/json-refs>) and
         //    replace IMF() loadLocales behavior with our own now resolved
@@ -3600,6 +3643,10 @@ const setServiceWorkerDefaults = (target, source) => {
   target.namespace = source.namespace || 'textbrowser';
   return target;
 }; // (Unless skipped in code, will wait between install
+
+/* eslint-disable import/no-commonjs */
+
+const http = require('http');
 
 const fetch$1 = require('node-fetch'); // Problems as `import` since 2.1.2
 
@@ -3713,7 +3760,8 @@ setGlobalVars(null, {
 if (userParams.nodeActivate) {
   global.fetch = fetch$1; // const activateCallback = require('../resources/activateCallback.js');
 
-  const activateCallback = require('../dist/activateCallback-umd.js');
+  const activateCallback = require('../dist/activateCallback-umd.js'); // eslint-disable-line global-require
+
 
   (async () => {
     await activateCallback(userParamsWithDefaults);
@@ -3722,9 +3770,6 @@ if (userParams.nodeActivate) {
 }
 
 console.log('past activate check');
-
-const http = require('http');
-
 global.DOMParser = require('dom-parser'); // potentially used within resultsDisplay.js
 
 const statik = require('node-static');

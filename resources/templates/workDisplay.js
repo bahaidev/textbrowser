@@ -490,9 +490,9 @@ export default {
             })]
         ])
     ]],
-    addRandomFormFields: ({
+    addRandomFormFields ({
         il, ld, l, le, $p, serializeParamsAsURL, content
-    }) => {
+    }) {
         const addRowContent = (rowContent) => {
             if (!rowContent || !rowContent.length) { return; }
             content.push(['tr', rowContent]);
@@ -593,7 +593,7 @@ export default {
                     change ({target: {selectedOptions}}) {
                         // Todo: EU disclaimer re: storage?
                         localStorage.setItem(namespace + '-langCodes', JSON.stringify(
-                            Array.from(selectedOptions).map((opt) =>
+                            [...selectedOptions].map((opt) =>
                                 opt.value
                             )
                         ));
@@ -691,7 +691,7 @@ export default {
             }, [l('Generate_bookmarks')]]
         ]]
     ]],
-    addBrowseFields: ({browseFields, fieldInfo, ld, i, iil, $p, content}) => {
+    addBrowseFields ({browseFields, fieldInfo, ld, i, iil, $p, content}) {
         const work = $p.get('work');
         const addRowContent = (rowContent) => {
             if (!rowContent || !rowContent.length) { return; }
@@ -715,7 +715,7 @@ export default {
                             const id = name;
                             rowContent['#'].push(
                                 ['td', [
-                                    ['label', {'for': name}, [fieldName]]
+                                    ['label', {for: name}, [fieldName]]
                                 ]],
                                 ['td', [
                                     aliases ? ['datalist', {id: 'dl-' + id},
@@ -775,7 +775,7 @@ export default {
                                 const id = name;
                                 rowContent['#'].push(
                                     ['td', [
-                                        ['label', {'for': name}, [fieldName]]
+                                        ['label', {for: name}, [fieldName]]
                                     ]],
                                     ['td', [
                                         aliases ? ['datalist', {id: 'dl-' + id},
@@ -823,7 +823,7 @@ export default {
             ]
         ].forEach(addRowContent);
     },
-    main: ({
+    main ({
         lf, languageParam,
         l, namespace, heading, fallbackDirection, imfl, langs, fieldInfo, localizeParamNames,
         serializeParamsAsURL, paramsSetter, replaceHash,
@@ -831,7 +831,7 @@ export default {
         hideFormattingSection, $p,
         metadataObj, il, le, ld, iil, fieldMatchesLocale,
         preferredLocale, schemaItems, content, groups
-    }) => {
+    }) {
         const work = $p.get('work');
         const serializeParamsAsURLWithData = ({type}) => {
             return serializeParamsAsURL(

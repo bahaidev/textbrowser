@@ -89,8 +89,8 @@ export const respondToState = async ({
     // We use this promise for rejecting (inside a listener)
     //    to a common catch and to prevent continuation by
     //    failing to return
-    return new Promise(async (resolve, reject) => {
-        navigator.serviceWorker.onmessage = ({data}) => {
+    return new Promise(async (resolve, reject) => { // eslint-disable-line no-async-promise-executor
+        navigator.serviceWorker.addEventListener('message', ({data}) => {
             const {message, type, name, errorType} = data;
             console.log('msg1', message, r);
             switch (type) {
@@ -158,8 +158,11 @@ export const respondToState = async ({
                 reject(err);
                 */
                 break;
+            default:
+                console.error('Unexpected type', type);
+                break;
             }
-        };
+        });
         const worker = r.installing || r.waiting || r.active;
         // Failed or new worker in use
         if (worker && worker.state === 'redundant') {

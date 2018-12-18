@@ -14,6 +14,9 @@
     "test": "npm run eslint && npm run rollup && opn http://127.0.0.1:8081/test/ && npm start",
     "start": "static -p 8081"
   },
+  "browserslist": [
+    "cover 100%"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/brettz9/textbrowser.git"
@@ -46,12 +49,17 @@
     "babel-eslint": "^10.0.1",
     "babel-plugin-dynamic-import-node": "^2.2.0",
     "eslint": "5.10.0",
+    "eslint-config-ash-nazg": "^0.3.0",
     "eslint-config-standard": "12.0.0",
     "eslint-plugin-compat": "2.6.3",
     "eslint-plugin-import": "2.14.0",
+    "eslint-plugin-jsdoc": "^3.14.0",
+    "eslint-plugin-markdown": "^1.0.0-rc.0",
+    "eslint-plugin-no-use-extend-native": "^0.3.12",
     "eslint-plugin-node": "8.0.0",
     "eslint-plugin-promise": "4.0.1",
     "eslint-plugin-standard": "4.0.0",
+    "eslint-plugin-unicorn": "^6.0.1",
     "fast-json-patch": "2.0.7",
     "json-metaschema": "1.2.0",
     "nodeunit": "0.11.3",

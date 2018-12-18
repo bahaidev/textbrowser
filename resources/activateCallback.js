@@ -2,13 +2,10 @@
 
 const {ceil} = Math;
 const arrayChunk = (arr, size) => {
-    return Array.from(
-        Array(ceil(arr.length / size)),
-        (_, i) => {
-            const offset = i * size;
-            return arr.slice(offset, offset + size);
-        }
-    );
+    return [...new Array(ceil(arr.length / size))].map((_, i) => {
+        const offset = i * size;
+        return arr.slice(offset, offset + size);
+    });
 };
 
 // Todo: If fetching fails here (or in install), e.g., because activate event
@@ -38,8 +35,8 @@ export default async function activateCallback ({
     const schemaFiles = [];
     const metadataFiles = [];
     groups.forEach(
-        ({files, metadataBaseDirectory, schemaBaseDirectory}) => {
-            files.forEach(({file: {$ref: filePath}, metadataFile, schemaFile, name}) => {
+        ({files: fileObjs, metadataBaseDirectory, schemaBaseDirectory}) => {
+            fileObjs.forEach(({file: {$ref: filePath}, metadataFile, schemaFile, name}) => {
                 // We don't i18nize the name here
                 dataFileNames.push(name);
                 addJSONFetch(dataFiles, filePath);
@@ -59,9 +56,9 @@ export default async function activateCallback ({
     log('Activate: Files fetched');
     const dbName = namespace + '-textbrowser-cache-data';
     indexedDB.deleteDatabase(dbName);
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => { // eslint-disable-line promise/avoid-new
         const req = indexedDB.open(dbName);
-        req.onupgradeneeded = ({target: {result: db}}) => {
+        req.addEventListener('upgradeneeded', ({target: {result: db}}) => {
             db.onversionchange = () => {
                 db.close();
                 const err = new Error('versionchange');
@@ -88,13 +85,13 @@ export default async function activateCallback ({
                         browseFieldSetObj.name = browseFieldSetObj.set.join(',');
                     }
                     const browseFieldSetName = browseFieldSetObj.name;
-                    const browseFieldSetIndexes = browseFieldSetObj.set.map((browseField) =>
+                    const browseFieldSetIndexes = browseFieldSetObj.set.map((browseField) => {
                         // Need to convert to columns for numbers
                         //      to become valid key paths
-                        'c' + (
+                        return 'c' + (
                             fieldItems.findIndex((item) => item.title === browseField)
-                        )
-                    );
+                        );
+                    });
                     columnIndexes.push(...browseFieldSetIndexes);
 
                     log(
@@ -113,7 +110,7 @@ export default async function activateCallback ({
 
                 const uniqueColumnIndexes = [...new Set(columnIndexes)];
 
-                tableRows.forEach((tableRow, i) => {
+                tableRows.forEach((tableRow, j) => {
                     // Todo: Optionally send notice when complete
                     // To take advantage of indexes on our arrays, we
                     //   need to transform them to objects! See https://github.com/w3c/IndexedDB/issues/209
@@ -124,19 +121,21 @@ export default async function activateCallback ({
                         objRow[colIdx] = tableRow[colIdx.slice(1)];
                     });
                     // log('objRow', objRow);
-                    store.put(objRow, i);
+                    store.put(objRow, j);
                 });
             });
-        };
-        req.onsuccess = ({target: {result: db}}) => {
+        });
+        req.addEventListener('success', ({target: {result: db}}) => {
             log('Activate: Database set-up complete', db);
             // Todo: Replace this with `ready()` check
             //   in calling code?
             resolve();
-        };
-        req.onblocked = req.onerror = ({error = new Error('dbError')}) => {
+        });
+        const onerr = ({error = new Error('dbError')}) => {
             error.type = 'dbError';
             reject(error);
         };
+        req.addEventListener('blocked', onerr);
+        req.addEventListener('error', onerr);
     });
-};
+}

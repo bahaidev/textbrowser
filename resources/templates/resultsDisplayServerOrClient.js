@@ -228,19 +228,20 @@ body {
             checkedAndInterlinearFieldInfo;
 
         const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
-        const tableWrap = (children) =>
-            tableWithFixedHeaderAndFooter
+        const tableWrap = (children) => {
+            return tableWithFixedHeaderAndFooter
                 ? ['div', {class: 'table-responsive anchor-table-header zupa'}, [
                     ['div', {class: 'table-responsive anchor-table-body'}, children]
                 ]]
                 : ['div', {class: 'table-responsive'}, children];
+        };
 
         const addChildren = (el, children) => {
             el = JSON.parse(JSON.stringify(el));
             el.push(children);
             return el;
         };
-        const addAtts = ([el, atts], newAtts) => [el, Object.assign({}, atts, newAtts)];
+        const addAtts = ([el, atts], newAtts) => [el, {...atts, ...newAtts}];
 
         const foundState = {
             start: false,
@@ -248,8 +249,7 @@ body {
         };
         const outArr = [];
 
-        const showEmptyInterlinear = this.showEmptyInterlinear;
-        const showTitleOnSingleInterlinear = this.showTitleOnSingleInterlinear;
+        const {showEmptyInterlinear, showTitleOnSingleInterlinear} = this;
 
         const checkEmpty = (tdVal, htmlEscaped) => {
             if (!showEmptyInterlinear) {
@@ -339,6 +339,7 @@ body {
                     });
                 })
             ));
+            return false;
         });
 
         return ['div', [

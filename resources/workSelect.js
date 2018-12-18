@@ -52,4 +52,4 @@ export default async function workSelect ({
     } catch (err) {
         dialogs.alert(err);
     }
-};
+}

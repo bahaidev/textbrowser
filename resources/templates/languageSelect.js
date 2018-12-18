@@ -1,7 +1,7 @@
 /* eslint-env browser */
 import {jml, body} from 'jamilih';
-
 import {deserialize as formDeserialize} from 'form-serialize';
+
 export default {
     main ({langs, languages, followParams, $p}) {
         jml('form', {class: 'focus', id: 'languageSelectionContainer', $on: {

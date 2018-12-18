@@ -3,7 +3,7 @@
 var JsonRefs, jsonpatch, Ajv, getJSON, __dirname, path; // eslint-disable-line no-var
 
 (function () {
-'use strict';
+'use strict'; // eslint-disable-line strict
 
 function cloneJSON (obj) {
     return JSON.parse(JSON.stringify(obj));
@@ -12,12 +12,14 @@ function cloneJSON (obj) {
 let appBase = '../';
 
 if (typeof exports !== 'undefined') {
+    /* eslint-disable global-require */
     require('@babel/polyfill');
     Ajv = require('ajv');
     JsonRefs = require('json-refs');
     jsonpatch = require('fast-json-patch');
     getJSON = require('simple-get-json');
     path = require('path');
+    /* eslint-enable global-require */
 } else {
     path = {
         join: (...args) => args.join('')
@@ -31,13 +33,15 @@ const localesBase = appBase + 'locales/';
 const appdataBase = appBase + 'appdata/';
 
 /**
-* @param {object} schema Schema object
-* @param {any} data Data object
 * @param {string} testName Name of the current test
+* @param {Object} schema Schema object
+* @param {any} data Data object
+* @param {Array.<string[]>} extraSchemas
+* @param {Object} additionalOptions
 * @returns {boolean} Whether validation succeeded
 */
 function validate (testName, schema, data, extraSchemas = [], additionalOptions = {}) {
-    const ajv = new Ajv(Object.assign({}, {extendRefs: 'fail'}, additionalOptions));
+    const ajv = new Ajv({extendRefs: 'fail', ...additionalOptions});
     let valid;
     try {
         extraSchemas.forEach(([key, val]) => {

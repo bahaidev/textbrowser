@@ -1,4 +1,4 @@
 /* globals nodeunit, textbrowserTests */
-nodeunit.run({
+nodeunit.run({ // eslint-disable-line import/unambiguous
     'Suite One': textbrowserTests
 });

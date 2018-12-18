@@ -1,9 +1,10 @@
 /* eslint-env browser */
 import getJSON from 'simple-get-json';
 import IMF from 'imf';
-import getIMFFallbackResults from './utils/getIMFFallbackResults.js';
 import loadStylesheets from 'load-stylesheets';
+import {serialize as formSerialize} from 'form-serialize';
 
+import getIMFFallbackResults from './utils/getIMFFallbackResults.js';
 import {dialogs} from './utils/dialogs.js';
 import {getFieldNameAndValueAliases, getBrowseFieldData} from './utils/Metadata.js';
 import {getWorkFiles, getWorkData} from './utils/WorkInfo.js';
@@ -19,7 +20,6 @@ import IntlURLSearchParams from './utils/IntlURLSearchParams.js';
 import workSelect from './workSelect.js';
 import workDisplay from './workDisplay.js';
 import {resultsDisplayClient} from './resultsDisplay.js';
-import {serialize as formSerialize} from 'form-serialize';
 
 function s (obj) { dialogs.alert(JSON.stringify(obj)); } // eslint-disable-line no-unused-vars
 
@@ -60,7 +60,7 @@ async function prepareForServiceWorker (langs) {
 }
 
 async function requestPermissions (langs, l) {
-    await new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => { // eslint-disable-line promise/avoid-new
         // Todo: We could run the dialog code below for every page if
         //    `Notification.permission === 'default'` (i.e., not choice
         //    yet made by user), but user may avoid denying with intent
@@ -118,6 +118,10 @@ async function requestPermissions (langs, l) {
                 }
                 // Has own error-handling
                 await prepareForServiceWorker.call(this, langs);
+                break;
+            default:
+                console.error('Unexpected returnValue', requestPermissionsDialog.returnValue);
+                break;
             }
         };
         const [, requestPermissionsDialog, browserNotGrantingPersistenceAlert] = // , errorRegisteringNotice
@@ -199,13 +203,13 @@ class TextBrowser {
     // Todo: Use rtl-detect (already included)
     getDirectionForLanguageCode (code) {
         const langs = this.langData.languages;
-        const exactMatch = langs.find((lang) =>
-            lang.code === code
-        );
+        const exactMatch = langs.find((lang) => {
+            return lang.code === code;
+        });
         return (exactMatch && exactMatch.direction) ||
-            langs.find((lang) =>
-                lang.code.startsWith(code + '-')
-            );
+            langs.find((lang) => {
+                return lang.code.startsWith(code + '-');
+            });
     }
 
     getFieldNameAndValueAliases (args) {
@@ -224,13 +228,13 @@ class TextBrowser {
             ? new IntlURLSearchParams({params: history.state})
             : new IntlURLSearchParams(); // Uses URL hash for params
 
-        const followParams = (formSelector, cb) => {
+        const followParams = (formSelector, cb) => { // eslint-disable-line promise/prefer-await-to-callbacks
             const form = document.querySelector(formSelector);
             // Record current URL along with state
             const url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
             history.replaceState(formSerialize(form, {hash: true, empty: true}), document.title, url);
             // Get and set new state within URL
-            cb();
+            cb(); // eslint-disable-line promise/prefer-await-to-callbacks, callback-return
             location.hash = '#' + $p.toString();
         };
 
@@ -257,8 +261,9 @@ class TextBrowser {
         //   to see whether the browser actually considers the notification
         //   sufficient to grant persistence (as it is supposed to do).
         const getSiteI18n = () => {
-            const localeFromSiteData = (lan) =>
-                this.siteData['localization-strings'][lan];
+            const localeFromSiteData = (lan) => {
+                return this.siteData['localization-strings'][lan];
+            };
             const imfSite = IMF({
                 locales: lang.map(localeFromSiteData),
                 fallbackLocales: fallbackLanguages.map(localeFromSiteData)
@@ -368,8 +373,7 @@ class TextBrowser {
 
         Please contact a service administrator if the problem
         persists (Error type: worker activation).
-        `
-                    );
+        `);
                 }
             };
 
@@ -444,6 +448,9 @@ class TextBrowser {
                 // Todo: Could try registering again later (this will reload after an alert)
                 await respondToStateOfWorker();
                 return;
+            default:
+                console.log('Unexpected worker.state', worker.state);
+                break;
             }
         }
 

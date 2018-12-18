@@ -44,8 +44,9 @@ export class Languages {
     }
     getLanguageInfo ({$p}) {
         const langs = this.langData.languages;
-        const localePass = (lcl) =>
-            langs.some(({code}) => code === lcl) ? lcl : false;
+        const localePass = (lcl) => {
+            return langs.some(({code}) => code === lcl) ? lcl : false;
+        };
         const languageParam = $p.get('lang', true);
         // Todo: We could (unless overridden by another button) assume the
         //         browser language based on fallbackLanguages instead
@@ -67,4 +68,4 @@ export class Languages {
             fallbackLanguages
         };
     }
-};
+}

@@ -25,7 +25,7 @@ export default function getIMFFallbackResults ({
         const imf = IMF({
             languages: lang,
             fallbackLanguages,
-            localeFileResolver: (code) => {
+            localeFileResolver (code) {
                 // Todo: For editing of locales, we might instead resolve all
                 //    `$ref` (as with <https://github.com/whitlockjc/json-refs>) and
                 //    replace IMF() loadLocales behavior with our own now resolved
@@ -44,4 +44,4 @@ export default function getIMFFallbackResults ({
             }
         });
     });
-};
+}

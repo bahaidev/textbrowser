@@ -1,8 +1,8 @@
 /* eslint-env browser */
 import IMF from 'imf';
-import {replaceHash, getParamsSetter, getSerializeParamsAsURL} from './utils/Params.js';
 import getJSON from 'simple-get-json';
 
+import {replaceHash, getParamsSetter, getSerializeParamsAsURL} from './utils/Params.js';
 import {getMetaProp} from './utils/Metadata.js';
 import {dialogs} from './utils/dialogs.js';
 
@@ -159,4 +159,4 @@ export default async function workDisplay ({
     } catch (err) {
         dialogs.alert(err);
     }
-};
+}

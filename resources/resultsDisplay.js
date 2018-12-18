@@ -1,29 +1,32 @@
 /* eslint-env browser */
+import {getLangDir} from 'rtl-detect';
+import JsonRefs from 'json-refs/dist/json-refs-min.js';
+import {jml} from 'jamilih';
+
 import Templates from './templates/index.js';
 import {escapeHTML} from './utils/sanitize.js';
 import {
     getMetaProp, Metadata, getFieldNameAndValueAliases, getBrowseFieldData
 } from './utils/Metadata.js';
-import {getLangDir} from 'rtl-detect';
 import {Languages} from './utils/Languages.js';
 import {getWorkData} from './utils/WorkInfo.js';
 // Keep this as the last import for Rollup
-import JsonRefs from 'json-refs/dist/json-refs-min.js';
-import {jml} from 'jamilih';
 
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 
-const getRawFieldValue = (v) => typeof v === 'string'
-    ? v.replace(fieldValueAliasRegex, '$1')
-    : v;
+const getRawFieldValue = (v) => {
+    return typeof v === 'string'
+        ? v.replace(fieldValueAliasRegex, '$1')
+        : v;
+};
 
 const setAnchor = ({
     applicableBrowseFieldSet,
     fieldValueAliasMapPreferred, ilRaw, iil, max, $p
 }) => {
-    const applicableBrowseFieldSchemaIndexes = applicableBrowseFieldSet.map((abfs) =>
-        abfs.fieldSchemaIndex
-    );
+    const applicableBrowseFieldSchemaIndexes = applicableBrowseFieldSet.map((abfs) => {
+        return abfs.fieldSchemaIndex;
+    });
     // Check if user added this (e.g., even to end of URL with
     //   other anchor params)
     const work = $p.get('work');
@@ -128,9 +131,10 @@ export const resultsDisplayServer = async function resultsDisplayServer (args) {
         return templateArgs.tableData;
     case 'jamilih':
         return Templates.resultsDisplayServerOrClient.main(templateArgs);
-    case 'html':
+    case 'html': {
         const jamilih = Templates.resultsDisplayServerOrClient.main(templateArgs);
         return jml.toHTML(...jamilih);
+    }
     }
 };
 
@@ -249,7 +253,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             return interlin && interlin.split(/\s*,\s*/).map((col) =>
                 // Todo: Avoid this when known to be integer or if string, though allow
                 //    string to be treated as number if config is set.
-                parseInt(col, 10) - 1
+                parseInt(col) - 1
             ).filter((n) => !Number.isNaN(n));
         });
         return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
@@ -328,7 +332,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     }) => {
         return fieldInfo.map(({field, plugin}) => {
             if (plugin) {
-                return;
+                return undefined;
             }
             const {preferAlias, fieldValueAliasMap} = getFieldNameAndValueAliases({
                 field, schemaItems, metadataObj, getFieldAliasOrName, lang
@@ -365,6 +369,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                 });
                 return preferAlias !== false ? fieldValueAliasMap : undefined;
             }
+            return undefined;
         });
     };
     const $pRaw = (param, avoidLog) => {
@@ -384,6 +389,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                     key = Object.keys(locale)[i];
                     return true;
                 }
+                return false;
             });
         }
         reverseLocaleLookup(imfLocales);
@@ -577,7 +583,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             } else if (startEndDiff < 0) { // e.g., 5 - 6:2:1 gets all of book 5 to 6:2:1
                 // Todo: We should fill with '0' but since that often
                 //    doesn't find anything, we default for now to '1'.
-                startPartVals.push(...Array(-startEndDiff).fill('1'));
+                startPartVals.push(...new Array(-startEndDiff).fill('1'));
             }
             console.log('startPartVals', startPartVals);
             console.log('endPartVals', endPartVals);
@@ -627,7 +633,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         if (v.match(/^\d+$/) || v.match(fieldValueAliasRegex)) {
             val = getRawFieldValue(v);
         } else {
-            const rawFieldValueAliasMap = applicableBrowseFieldSet[i].rawFieldValueAliasMap;
+            const {rawFieldValueAliasMap} = applicableBrowseFieldSet[i];
             let dealiased;
             if (rawFieldValueAliasMap) {
                 // Look to dealias
@@ -638,6 +644,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                             dealiased = key;
                             return true;
                         }
+                        return false;
                     });
                 } else {
                     fvEntries.some(([key, obj]) => {
@@ -646,12 +653,13 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
                             dealiased = key;
                             return true;
                         }
+                        return false;
                     });
                 }
             }
             val = dealiased === undefined ? v : dealiased;
         }
-        return fieldSchemaTypes[i] === 'integer' ? parseInt(val, 10) : val;
+        return fieldSchemaTypes[i] === 'integer' ? parseInt(val) : val;
     };
 
     const unlocalizedWorkName = fileData.name;

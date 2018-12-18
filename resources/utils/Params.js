@@ -102,6 +102,9 @@ export const getParamsSetter = function ({l, il, $p}) {
             paramsCopy.set(il('result'), l('yes'));
             break;
         }
+        default: {
+            console.error('Unexpected type', type);
+        }
         }
         return paramsCopy;
     };
