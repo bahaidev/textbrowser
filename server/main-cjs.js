@@ -1252,8 +1252,8 @@ var resultsDisplayServerOrClient = {
     checkedFieldIndexes,
     hasCaption
   }) {
-    const colorEsc = !$p.has('color', true) || $p.get('color', true) === '#' ? $pEscArbitrary('colorName') : $pEscArbitrary('color');
-    const bgcolorEsc = !$p.has('bgcolor', true) || $p.get('bgcolor', true) === '#' ? $pEscArbitrary('bgcolorName') : $pEscArbitrary('bgcolor');
+    const colorEsc = !$p.has('color', true) || $p.get('color', true) === '#' ? $pRawEsc('colorName') : $pEscArbitrary('color');
+    const bgcolorEsc = !$p.has('bgcolor', true) || $p.get('bgcolor', true) === '#' ? $pRawEsc('bgcolorName') : $pEscArbitrary('bgcolor');
     const tableHeight = '100%';
     const topToCaptionStart = 1;
     const captionSizeDelta = (hasCaption ? 2 : 0) + 0;
@@ -1321,7 +1321,7 @@ div.inner-caption {
     ${$pEscArbitrary('fontsize') ? `font-size: ${$pEscArbitrary('fontsize')};` : ''}
     font-family: ${$pEscArbitrary('fontSeq')};
 
-    font-stretch: ${$pEscArbitrary('fontstretch')};
+    font-stretch: ${$pRawEsc('fontstretch')};
     letter-spacing: ${$pEscArbitrary('letterspacing')};
     line-height: ${$pEscArbitrary('lineheight')};
     ${colorEsc ? `color: ${escapeCSS(colorEsc)};` : ''}

@@ -5,6 +5,8 @@
 - Fix: Avoid need for `!important` with column color rules
 - Fix: CSS for column was not working properly when intervening columns
     were omitted
+- Fix: For `colorName` and `bgcolorName` (color pull-downs) and
+    `fontstretch` pull-down, use reverse-localized value
 
 ## 0.27.0
 

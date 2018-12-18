@@ -38,10 +38,10 @@ export default {
         tableWithFixedHeaderAndFooter, checkedFieldIndexes, hasCaption
     }) {
         const colorEsc = !$p.has('color', true) || $p.get('color', true) === '#'
-            ? $pEscArbitrary('colorName')
+            ? $pRawEsc('colorName')
             : $pEscArbitrary('color');
         const bgcolorEsc = !$p.has('bgcolor', true) || $p.get('bgcolor', true) === '#'
-            ? $pEscArbitrary('bgcolorName')
+            ? $pRawEsc('bgcolorName')
             : $pEscArbitrary('bgcolor');
 
         const tableHeight = '100%';
@@ -131,7 +131,7 @@ div.inner-caption {
     ${$pEscArbitrary('fontsize') ? `font-size: ${$pEscArbitrary('fontsize')};` : ''}
     font-family: ${$pEscArbitrary('fontSeq')};
 
-    font-stretch: ${$pEscArbitrary('fontstretch')};
+    font-stretch: ${$pRawEsc('fontstretch')};
     letter-spacing: ${$pEscArbitrary('letterspacing')};
     line-height: ${$pEscArbitrary('lineheight')};
     ${colorEsc ? `color: ${escapeCSS(colorEsc)};` : ''
