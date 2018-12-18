@@ -221,6 +221,8 @@ The recommended project directory structure (which are used by default by the
     call the `TextBrowser` constructor here. See *TextBrowser*'s
     `resources/user-sample.js` for a pattern you can copy and optionally
     adapt.
+-   ***resources/user.json*** - Indicates meta-data for consumption by
+    service worker
 -   ***plugins/*** - While *not yet in use*, this is the convention we wish
     to begin enforcing for hosting plugins (e.g., for automated columns).
     <!-- See [Plugin Format](#Plugin Format) -->
@@ -256,7 +258,8 @@ plain language description of the format.
 One meta-property shared among `files.json` and metadata files is
 `localeKey` which is a non-standard means of pointing to a key
 for substitution. It may be replaced in the future by the slightly
-more cumbersome though standards-track [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)s.
+more cumbersome though standards-track
+[JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03)s.
 
 ### Work-Specific JSON
 
