@@ -128,6 +128,44 @@ const textbrowserTests = {
             test.strictEqual(diff.length, 0);
         });
         test.done();
+    },
+    async 'userJSON tests' (test) {
+        const [jsonSchema, userJSONSchema, userJSON] = await getJSON([
+            path.join(
+                __dirname,
+                appBase + 'node_modules/json-metaschema/draft-07-schema.json'
+            ),
+            path.join(
+                __dirname,
+                schemaBase,
+                'user-json.jsonschema'
+            ),
+            path.join(
+                __dirname,
+                appBase + 'resources/user-sample.json'
+            )
+        ]);
+
+        const userJSONSchema2 = cloneJSON(userJSONSchema);
+        validate('Schema test', jsonSchema, userJSONSchema, undefined, {
+            validateSchema: false
+        });
+        const diff = jsonpatch.compare(userJSONSchema, userJSONSchema2);
+        if (diff.length) {
+            console.log(`diff for data file`, diff);
+        }
+        test.strictEqual(diff.length, 0);
+
+        const userJSON2 = cloneJSON(userJSON);
+        validate('Schema test', userJSONSchema, userJSON, undefined, {
+            validateSchema: false
+        });
+        const diff2 = jsonpatch.compare(userJSON, userJSON2);
+        if (diff2.length) {
+            console.log(`diff for data file`, diff2);
+        }
+        test.strictEqual(diff2.length, 0);
+        test.done();
     }
 };
 

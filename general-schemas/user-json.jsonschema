@@ -1,0 +1,24 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "namespace": {
+            "type": "string"
+        },
+        "basePath": {
+            "type": "string"
+        },
+        "languages": {
+            "type": "string"
+        },
+        "files": {
+            "type": "string"
+        },
+        "userStaticFiles": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    }
+}
