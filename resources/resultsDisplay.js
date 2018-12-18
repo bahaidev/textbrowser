@@ -553,7 +553,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
 
     // Now that we know `browseFieldSets`, we can parse `startEnd`
     const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) =>
-        typeof iilRaw('startEnd', (i + 1)) === 'string'
+        iilRaw('startEnd', (i + 1))
     );
     if (browseFieldSetStartEndIdx !== -1) {
         // Todo: i18nize (by work and/or by whole app?)
@@ -590,7 +590,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     }
 
     const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
-        typeof iilRaw('start', (i + 1) + '-1') === 'string'
+        iilRaw('start', (i + 1) + '-1')
     );
     const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
     const applicableBrowseFieldSetName = setNames[browseFieldSetIdx];

@@ -3240,7 +3240,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
   const ilRaw = localizeParamNames ? (key, suffix = '') => $p.get(il(key) + suffix, true) : (key, suffix = '') => $p.get(key + suffix, true);
   const iilRaw = localizeParamNames ? (key, suffix = '') => $p.get($p.get('work') + '-' + iil(key) + suffix, true) : (key, suffix = '') => $p.get($p.get('work') + '-' + key + suffix, true); // Now that we know `browseFieldSets`, we can parse `startEnd`
 
-  const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) => typeof iilRaw('startEnd', i + 1) === 'string');
+  const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) => iilRaw('startEnd', i + 1));
 
   if (browseFieldSetStartEndIdx !== -1) {
     // Todo: i18nize (by work and/or by whole app?)
@@ -3280,7 +3280,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     }
   }
 
-  const browseFieldSetIdx = browseFieldSets.findIndex((item, i) => typeof iilRaw('start', i + 1 + '-1') === 'string');
+  const browseFieldSetIdx = browseFieldSets.findIndex((item, i) => iilRaw('start', i + 1 + '-1'));
   const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
   const applicableBrowseFieldSetName = setNames[browseFieldSetIdx];
   const applicableBrowseFieldNames = applicableBrowseFieldSet.map(abfs => abfs.fieldName);

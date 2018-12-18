@@ -17156,7 +17156,7 @@
               }; // Now that we know `browseFieldSets`, we can parse `startEnd`
 
               browseFieldSetStartEndIdx = browseFieldSets.findIndex(function (item, i) {
-                return typeof iilRaw('startEnd', i + 1) === 'string';
+                return iilRaw('startEnd', i + 1);
               });
 
               if (browseFieldSetStartEndIdx !== -1) {
@@ -17198,7 +17198,7 @@
               }
 
               browseFieldSetIdx = browseFieldSets.findIndex(function (item, i) {
-                return typeof iilRaw('start', i + 1 + '-1') === 'string';
+                return iilRaw('start', i + 1 + '-1');
               });
               applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
               applicableBrowseFieldSetName = setNames[browseFieldSetIdx];

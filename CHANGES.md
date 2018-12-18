@@ -9,6 +9,7 @@
     `fontstretch` pull-down, use reverse-localized value
 - Fix: Row ID setting when aliases present (and thus fix anchor
     setting for such cases)
+- Fix: Applicable field set was not being properly detected
 
 ## 0.27.0
 
