@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.27.1",
+  "version": "0.28.0",
   "description": "Multilinear text browser",
   "main": "dist/index-umd.min.js",
   "bin": {
@@ -19,7 +19,7 @@
     "url": "git+https://github.com/brettz9/textbrowser.git"
   },
   "dependencies": {
-    "@babel/core": "^7.2.0",
+    "@babel/core": "^7.2.2",
     "@babel/polyfill": "^7.0.0",
     "@babel/register": "^7.0.0",
     "command-line-args": "^5.0.2",
@@ -42,7 +42,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.2.0",
-    "ajv": "6.6.1",
+    "ajv": "6.6.2",
     "babel-eslint": "^10.0.1",
     "babel-plugin-dynamic-import-node": "^2.2.0",
     "eslint": "5.10.0",
@@ -57,7 +57,7 @@
     "nodeunit": "0.11.3",
     "opn-cli": "^4.0.0",
     "remark-lint": "6.0.4",
-    "rollup": "0.67.4",
+    "rollup": "0.68.0",
     "rollup-plugin-babel": "^4.1.0",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-json": "^3.1.0",

@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.28.0
+
+- npm: Update deps, devDeps
+
 ## 0.27.1
 
 - Fix: Avoid need for `!important` with column color rules

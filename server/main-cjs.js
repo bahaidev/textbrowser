@@ -4,11 +4,11 @@
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 require('url-search-params-polyfill');
+var jamilih = require('jamilih');
 var formSerialize = require('form-serialize');
 var rtlDetect = require('rtl-detect');
-var jamilih = require('jamilih');
-var IMF = _interopDefault(require('imf'));
 var getJSON = _interopDefault(require('simple-get-json'));
+var IMF = _interopDefault(require('imf'));
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
