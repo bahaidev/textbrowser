@@ -1,5 +1,11 @@
 # textbrowser CHANGES
 
+## 0.27.1
+
+- Fix: Avoid need for `!important` with column color rules
+- Fix: CSS for column was not working properly when intervening columns
+    were omitted
+
 ## 0.27.0
 
 - Enhancement: Expose `getLangDir` so plugins can set proper directionality

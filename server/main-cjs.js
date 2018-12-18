@@ -1265,26 +1265,7 @@ var resultsDisplayServerOrClient = {
     const topToBodyEnd = `100% - ${topToBodyStart} - ${footerHeight} - ${bodyToFooterPadding}`;
     const topToBodyEndCalc = `calc(${topToBodyEnd})`;
     const topToFooter = `calc(${topToBodyEnd} + ${bodyToFooterPadding})`;
-    return ['style', [($pRaw('caption') === 'y' ? tableWithFixedHeaderAndFooter ? '.caption div.inner-caption, ' : '.caption, ' : '') + ($pRaw('header') === 'y' ? tableWithFixedHeaderAndFooter ? `` // `.thead .th, .thead .th div.th-inner, ` // Problems at least in Chrome
-    : `.thead .th, ` : '') + ($pRaw('footer') === 'y' ? tableWithFixedHeaderAndFooter ? `` // `.tfoot .th, .tfoot .th div.th-inner, ` // Problems at least in Chrome
-    : `.tfoot .th, ` : '') + '.tbody td' + ` {
-    vertical-align: top;
-    font-style: ${$pRawEsc('fontstyle')};
-    font-variant: ${$pRawEsc('fontvariant')};
-    font-weight: ${$pEscArbitrary('fontweight')};
-    ${$pEscArbitrary('fontsize') ? `font-size: ${$pEscArbitrary('fontsize')};` : ''}
-    font-family: ${$pEscArbitrary('fontSeq')};
-
-    font-stretch: ${$pEscArbitrary('fontstretch')};
-    letter-spacing: ${$pEscArbitrary('letterspacing')};
-    line-height: ${$pEscArbitrary('lineheight')};
-    ${colorEsc ? `color: ${escapeCSS(colorEsc)} !important;` : '' // Marked `!important` as will be overridden by default fixed table colors
-    }
-    ${bgcolorEsc ? `background-color: ${escapeCSS(bgcolorEsc)} !important;` : '' // Marked `!important` as will be overridden by default fixed table colors
-    }
-}
-${escapeCSS($pEscArbitrary('pagecss') || '')}
-` + (tableWithFixedHeaderAndFooter ? `
+    return ['style', [(tableWithFixedHeaderAndFooter ? `
 html, body, body > div {
     height: 100%; /* Needed to ensure descendent heights retain 100%; could be avoided if didn't want percent on table height */
     overflow-y: hidden; /* Not sure why we're getting extra here, but... */
@@ -1330,8 +1311,25 @@ div.inner-caption {
     margin-left: -50%;
     text-align: center;
 }
-` : '') + checkedFieldIndexes.map((idx, i) => ($pRaw('header') === 'y' ? tableWithFixedHeaderAndFooter ? `.thead .th:nth-child(${i + 1}) div.th-inner, ` : `.thead .th:nth-child(${i + 1}), ` : '') + ($pRaw('footer') === 'y' ? tableWithFixedHeaderAndFooter ? `.tfoot .th:nth-child(${i + 1}) div.th-inner, ` : `.tfoot .th:nth-child(${i + 1}), ` : '') + `.tbody td:nth-child(${i + 1}) ` + `{
-    ${$pEscArbitrary('css' + (i + 1))}
+` : '') + ($pRaw('caption') === 'y' ? tableWithFixedHeaderAndFooter ? '.caption div.inner-caption, ' : '.caption, ' : '') + ($pRaw('header') === 'y' ? tableWithFixedHeaderAndFooter ? `` // `.thead .th, .thead .th div.th-inner, ` // Problems at least in Chrome
+    : `.thead .th, ` : '') + ($pRaw('footer') === 'y' ? tableWithFixedHeaderAndFooter ? `` // `.tfoot .th, .tfoot .th div.th-inner, ` // Problems at least in Chrome
+    : `.tfoot .th, ` : '') + '.tbody td' + ` {
+    vertical-align: top;
+    font-style: ${$pRawEsc('fontstyle')};
+    font-variant: ${$pRawEsc('fontvariant')};
+    font-weight: ${$pEscArbitrary('fontweight')};
+    ${$pEscArbitrary('fontsize') ? `font-size: ${$pEscArbitrary('fontsize')};` : ''}
+    font-family: ${$pEscArbitrary('fontSeq')};
+
+    font-stretch: ${$pEscArbitrary('fontstretch')};
+    letter-spacing: ${$pEscArbitrary('letterspacing')};
+    line-height: ${$pEscArbitrary('lineheight')};
+    ${colorEsc ? `color: ${escapeCSS(colorEsc)};` : ''}
+    ${bgcolorEsc ? `background-color: ${escapeCSS(bgcolorEsc)};` : ''}
+}
+${escapeCSS($pEscArbitrary('pagecss') || '')}
+` + checkedFieldIndexes.map((idx, i) => ($pRaw('header') === 'y' ? tableWithFixedHeaderAndFooter ? `.thead .th:nth-child(${i + 1}) div.th-inner, ` : `.thead .th:nth-child(${i + 1}), ` : '') + ($pRaw('footer') === 'y' ? tableWithFixedHeaderAndFooter ? `.tfoot .th:nth-child(${i + 1}) div.th-inner, ` : `.tfoot .th:nth-child(${i + 1}), ` : '') + `.tbody td:nth-child(${i + 1}) ` + `{
+    ${$pEscArbitrary('css' + (idx + 1))}
 }
 `).join('') + ($pEscArbitrary('interlintitle_css') ? `
 /* http://salzerdesign.com/test/fixedTable.html */
@@ -1570,7 +1568,7 @@ body {
     //  confirmed per https://quirksmode.org/css/css2/columns.html)
     addChildren(colgroupElem,
         checkedFieldIndexes.map((idx, i) =>
-            addAtts(colElem, {style: $pRaw('css' + (i + 1))})
+            addAtts(colElem, {style: $pRaw('css' + (idx + 1))})
         )
     ),
     */

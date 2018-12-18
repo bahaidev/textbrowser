@@ -58,42 +58,6 @@ export default {
         const topToBodyEndCalc = `calc(${topToBodyEnd})`;
         const topToFooter = `calc(${topToBodyEnd} + ${bodyToFooterPadding})`;
         return ['style', [
-            ($pRaw('caption') === 'y'
-                ? (tableWithFixedHeaderAndFooter
-                    ? '.caption div.inner-caption, '
-                    : '.caption, ')
-                : ''
-            ) +
-            ($pRaw('header') === 'y'
-                ? (tableWithFixedHeaderAndFooter
-                    ? `` // `.thead .th, .thead .th div.th-inner, ` // Problems at least in Chrome
-                    : `.thead .th, `)
-                : '') +
-            ($pRaw('footer') === 'y'
-                ? (tableWithFixedHeaderAndFooter
-                    ? `` // `.tfoot .th, .tfoot .th div.th-inner, ` // Problems at least in Chrome
-                    : `.tfoot .th, `)
-                : '') +
-            ('.tbody td') + ` {
-    vertical-align: top;
-    font-style: ${$pRawEsc('fontstyle')};
-    font-variant: ${$pRawEsc('fontvariant')};
-    font-weight: ${$pEscArbitrary('fontweight')};
-    ${$pEscArbitrary('fontsize') ? `font-size: ${$pEscArbitrary('fontsize')};` : ''}
-    font-family: ${$pEscArbitrary('fontSeq')};
-
-    font-stretch: ${$pEscArbitrary('fontstretch')};
-    letter-spacing: ${$pEscArbitrary('letterspacing')};
-    line-height: ${$pEscArbitrary('lineheight')};
-    ${colorEsc ? `color: ${escapeCSS(colorEsc)} !important;` : ''
-    // Marked `!important` as will be overridden by default fixed table colors
-}
-    ${bgcolorEsc ? `background-color: ${escapeCSS(bgcolorEsc)} !important;` : ''
-    // Marked `!important` as will be overridden by default fixed table colors
-}
-}
-${escapeCSS($pEscArbitrary('pagecss') || '')}
-` +
             (tableWithFixedHeaderAndFooter
                 ? `
 html, body, body > div {
@@ -143,6 +107,40 @@ div.inner-caption {
 }
 `
                 : '') +
+            ($pRaw('caption') === 'y'
+                ? (tableWithFixedHeaderAndFooter
+                    ? '.caption div.inner-caption, '
+                    : '.caption, ')
+                : ''
+            ) +
+            ($pRaw('header') === 'y'
+                ? (tableWithFixedHeaderAndFooter
+                    ? `` // `.thead .th, .thead .th div.th-inner, ` // Problems at least in Chrome
+                    : `.thead .th, `)
+                : '') +
+            ($pRaw('footer') === 'y'
+                ? (tableWithFixedHeaderAndFooter
+                    ? `` // `.tfoot .th, .tfoot .th div.th-inner, ` // Problems at least in Chrome
+                    : `.tfoot .th, `)
+                : '') +
+            ('.tbody td') + ` {
+    vertical-align: top;
+    font-style: ${$pRawEsc('fontstyle')};
+    font-variant: ${$pRawEsc('fontvariant')};
+    font-weight: ${$pEscArbitrary('fontweight')};
+    ${$pEscArbitrary('fontsize') ? `font-size: ${$pEscArbitrary('fontsize')};` : ''}
+    font-family: ${$pEscArbitrary('fontSeq')};
+
+    font-stretch: ${$pEscArbitrary('fontstretch')};
+    letter-spacing: ${$pEscArbitrary('letterspacing')};
+    line-height: ${$pEscArbitrary('lineheight')};
+    ${colorEsc ? `color: ${escapeCSS(colorEsc)};` : ''
+}
+    ${bgcolorEsc ? `background-color: ${escapeCSS(bgcolorEsc)};` : ''
+}
+}
+${escapeCSS($pEscArbitrary('pagecss') || '')}
+` +
             checkedFieldIndexes.map((idx, i) =>
                 ($pRaw('header') === 'y'
                     ? (tableWithFixedHeaderAndFooter
@@ -156,7 +154,7 @@ div.inner-caption {
                     : '') +
                 `.tbody td:nth-child(${i + 1}) ` +
 `{
-    ${$pEscArbitrary('css' + (i + 1))}
+    ${$pEscArbitrary('css' + (idx + 1))}
 }
 `).join('') +
 
@@ -366,7 +364,7 @@ body {
                     //  confirmed per https://quirksmode.org/css/css2/columns.html)
                     addChildren(colgroupElem,
                         checkedFieldIndexes.map((idx, i) =>
-                            addAtts(colElem, {style: $pRaw('css' + (i + 1))})
+                            addAtts(colElem, {style: $pRaw('css' + (idx + 1))})
                         )
                     ),
                     */
