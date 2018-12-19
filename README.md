@@ -505,20 +505,88 @@ arrays of strings, or other objects of keys).
 
 ## Plugin Format
 
-Plugin file designated within `files.json` may have any of the following exports:
+Plugin file designated within `files.json` may have any of the following
+exports. See the subsection below for details on arguments shared by multiple
+methods.
 
 - `getCellData({tr, tableData, i, j, applicableField, fieldInfo, applicableFieldIdx, applicableFieldText, fieldLang, getLangDir, meta, metaApplicableField, $p, thisObj})` -
-    Used to build the plugin field's cell contents. Invoked for each cell of the data.
-    Used in conjunction with `escapeColumn`.
-- `escapeColumn` - Boolean (defaults to `true`).
-- `done({$p, applicableField, meta, j, thisObj})` - Invoked after each cell of
-    the table has been processed.
+    Used to build the plugin field's cell contents. The return value will
+    set `tr[j]` unless the return is falsy in which case `applicableFieldText`
+    will be used. Invoked for each cell of the data. To return HTML, must use
+    in conjunction with `escapeColumn: false`. Besides properties shared with
+    other methods, `getCellData` is passed the following:
+        - `tableData` - The entire set of table data as an array of arrays (of
+            strings and/or integers), containing non-plugin content and any
+            already processed plugin contents.
+        - `i` - The 0-based row integer.
+        - `tr` - Equivalent to `tableData[i]`
+        - `fieldInfo` - Array of info about all fields; has the following
+            properties if not a plugin:
+            - `field` - The schema `title` if not a plugin
+            - `fieldAliasOrName` - Obtained by finding alias if present
+                or the `field` otherwise
+            - `escapeColumn` - `true` if schema `format` is not `"html"`
+            - `fieldLang` - The `lang` of the metadata object for `field`
+            If it is a plugin, will have the following properties:
+            - `plugin` - The `files.json` plugin object 
+            - `meta` - The plugin `meta`
+            - `placement` - As with `plugin-field-mapping` `placement` but
+                with `"end"` replaced with `Infinity`
+            - `fieldAliasOrName`
+            - `escapeColumn` - `true` if the plugin's `escapeColumn` is not `false`
+            - `onByDefault` - The `applicableField`'s `onByDefault` if a boolean,
+                the current plugin's if truthy and `false` otherwise
+            - `applicableField` - The `applicable-fields` field
+            - `metaApplicableField` - The `meta` of the `applicable-fields` field
+            - `fieldLang` - The `targetLanguage`
+        - `applicableFieldIdx` - The `fieldInfo` item whose `field` property is equal to `applicableField`.
+        - `applicableFieldText` - Equivalent to `tr[applicableFieldIdx]`
+        - `fieldLang` - The `fieldLang` property of `fieldInfo[j]`
+        - `getLangDir` - A method from
+            [`rtl-detect`](https://github.com/shadiabuhilal/rtl-detect)
+            for determining directionality ("rtl" or "ltr") for a given
+            language code. May be useful with
+            `fieldInfo[applicableFieldIdx].fieldLang`
+- `escapeColumn` - Boolean (defaults to `true`). If set to `false`, will avoid
+    escaping, though the plugin rendered cell data should be trusted to avoid
+    possible cross-site scripting.
+- `done({$p, applicableField, meta, j, thisObj})` - Invoked after all cells of
+    the table have been processed.
 - `getTargetLanguage({applicableField, targetLanguage, pluginLang, applicableFieldLang})` -
-    Called for each plug-in. `pluginLang` is the default lang for the
-    plug-in (from `files.json`). `applicableFieldLang` is the default lang
-    when there is no target language or plugin lang; it is the lang of
-    the applicable field.
-- `getFieldAliasOrName({locales, lf, targetLanguage, applicableField, applicableFieldI18N, meta, metaApplicableField, targetLanguageI18N})` - Called for each plug-in (after `getTargetLanguage`).
+    Called for each plug-in. The return value will be used for setting the
+    `lang` of the plug-in field. May return `{locale}` to indicate the
+    language should follow the locale. The supplied `targetLanguage` is any
+    `targetLanguage` property found on the `plugin-field-mapping`'s'
+    `applicable-fields` field. `pluginLang` is the (default) `lang` for
+    the plug-in (from `files.json`). `applicableFieldLang` is the default
+    lang when there is no target language or plugin lang; it is the `lang`
+    of the applicable field.
+- `getFieldAliasOrName({locales, lf, targetLanguage, applicableField, applicableFieldI18N, meta, metaApplicableField, targetLanguageI18N})` -
+    Called for each plug-in (after `getTargetLanguage`). Sets the `fieldInfo`
+    `fieldAliasOrName` which is used for labeling the field. Besides
+    properties shared with other methods, `getFieldAliasOrName` is passed
+    the following:
+    - `locales` - The app `lang` array (URL-specified `lang` languages or
+        fallback-specified ones from `navigator.languages` that are
+        supported by the app)
+    - `lf` - An [imf](https://github.com/brettz9/imf) locale formatter based
+        on `files.json` locale strings.
+    - `applicableFieldI18N` - The localized metadata `fieldnames` `applicableField`
+    - `targetLanguageI18N` - The localized name of `targetLanguage`
+    - `targetLanguage` - The result of `getTargetLanguage` (or the
+        `targetLanguage` argument to it if not present)
+
+### Properties
+
+A number of properties are passed to multiple plug-in methods:
+
+- `$p` - Usable for getting URL parameters
+- `applicableField` - The field indicated in `files.json` as being
+    applicable to the plugin.
+- `meta` - See the property from `fieldInfo`
+- `thisObj` - The `TextBrowser` instance
+- `j` (`i` is for column) - The 0-based column integer.
+- `metaApplicableField` - See the property from `fieldInfo`
 
 ## Security notes
 
