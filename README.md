@@ -528,11 +528,13 @@ methods.
             - `escapeColumn` - `true` if schema `format` is not `"html"`
             - `fieldLang` - The `lang` of the metadata object for `field`
             If it is a plugin, will have the following properties:
-            - `plugin` - The `files.json` plugin object 
+            - `plugin` - The `files.json` plugin object
             - `meta` - The plugin `meta`
             - `placement` - As with `plugin-field-mapping` `placement` but
                 with `"end"` replaced with `Infinity`
-            - `fieldAliasOrName`
+            - `fieldAliasOrName` - The result of `getFieldAliasOrName` on
+                the plugin if present or the localization of the `plugins`'
+                `fieldname`
             - `escapeColumn` - `true` if the plugin's `escapeColumn` is not `false`
             - `onByDefault` - The `applicableField`'s `onByDefault` if a boolean,
                 the current plugin's if truthy and `false` otherwise
