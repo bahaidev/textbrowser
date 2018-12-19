@@ -508,7 +508,8 @@ arrays of strings, or other objects of keys).
 Plugin file designated within `files.json` may have any of the following exports:
 
 - `getCellData({tr, tableData, i, j, applicableField, fieldInfo, applicableFieldIdx, applicableFieldText, fieldLang, getLangDir, meta, metaApplicableField, $p, thisObj})` -
-    Invoked for each cell of the data
+    Used to build the plugin field's cell contents. Invoked for each cell of the data.
+    Used in conjunction with `escapeColumn`.
 - `done({$p, applicableField, meta, j, thisObj})` - Invoked after each cell of
     the table has been processed.
 - `getTargetLanguage({applicableField, targetLanguage, pluginLang, applicableFieldLang})` -
