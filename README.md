@@ -538,8 +538,23 @@ as a `npm` dependency).
 -   ***new TextBrowser(options)*** - Constructor which takes an options object
     with the following optional properties:
 
+    -   `namespace` - Namespace to use as a prefix for all `localStorage`,
+        caching, or `indexedDB` usage. Defaults to `"textbrowser"` but this
+        could clash with other *TextBrowser* projects on the same origin,
+        so you should change for your project. (This setting might be used in
+        the future for any other namespacing.)
+
     -   `files` - Path for the `files.json` containing meta-data on the files
         to be made available via the interface. Defaults to `"files.json"`.
+
+    -   `languages` - Path for the `languages.json` file containing meta-data
+        on the languages to be displayed in the interface. Defaults to
+        the `TextBrowser` project's `"appdata/languages.json"`.
+
+    -   `site` - Path for the `site.json` containing meta-data on the site.
+        Defaults to `site.json`. (Only used currently for localization,
+        but may in the future provide surrounding navigation information
+        such as breadcrumbs.)
 
     -   `stylesheets` - Array of stylesheet paths and/or of two-item arrays
         with stylesheet path and
@@ -549,28 +564,21 @@ as a `npm` dependency).
         browser limitations with a lack of import meta-data, we cannot
         provide this accurately for all configurations at the moment).
 
-    -   `languages` - Path for the `languages.json` file containing meta-data
-        on the languages to be displayed in the interface. Defaults to
-        the `TextBrowser` project's `"appdata/languages.json"`.
+    -   `serviceWorkerPath` - Service worker path which defaults to
+        `"sw.js"` (which, if you are including *TextBrowser* via npm,
+        will be within your own project root). This should probably not
+        be adjusted (and if you do want to adjust it, it may be better
+        to file an issue or PR to allow us to provide choices among
+        various default-available service worker/caching patterns).
 
-    -   `site` - Path for the `site.json` containing meta-data on the site.
-        (Only used currently for localization, but is intended for providing
-        surrounding navigation information such as breadcrumbs.)
-
-    -   `namespace` - Namespace to use as a prefix for all `localStorage`,
-        caching, or `indexedDB` usage. Defaults to `"textbrowser"` but this
-        could clash with other *TextBrowser* projects on the same origin,
-        so you should change for your project. (This setting might be used in
-        the future for any other namespacing.)
+    -   `dynamicBasePath` - Base bath for the server hosting the TextBrowser
+        content. Defaults to the current site.
 
     -   `allowPlugins` - Enables `files.json`-specified plugins to be run.
         Defaults to `false` as it causes scripts to be run, but if you trust
         your JSON source files, you will presumably wish to enable this
         to get the full functionality designated within the JSON (and add
         the script files designated in `files.json` to your project).
-
-    -   `dynamicBasePath` - Base bath for the server hosting the TextBrowser
-        content. Defaults to the current site.
 
     -   `trustFormatHTML` - If `true`, inserts fields designated by your
         JSON schema as `"format": "html"` as HTML without escaping; this
@@ -592,13 +600,6 @@ as a `npm` dependency).
         section by default (can be overridden by the user in preferences).
         This section might be changed to a plugin in the future in which case
         you'd just avoid designating it within `files.json`.
-
-    -   `serviceWorkerPath` - Service worker path which defaults to
-        `"sw.js"` (which, if you are including *TextBrowser* via npm,
-        will be within your own project root). This should probably not
-        be adjusted (and if you do want to adjust it, it may be better
-        to file an issue or PR to allow us to provide choices among
-        various default-available service worker/caching patterns).
 
     -   `interlinearSeparator` - HTML code to be injected between each
         interlinear entry; this is not exposed to the user for
