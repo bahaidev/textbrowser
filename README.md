@@ -556,10 +556,10 @@ as a `npm` dependency).
         (Only used currently for localization, but is intended for providing
         surrounding navigation information such as breadcrumbs.)
 
-    -   `namespace` - Namespace to use as a prefix for all `localStorage`
-        or `indexedDB` usage. Defaults to `"textbrowser"` but this could
-        clash with other *TextBrowser* projects on the same origin, so you
-        should change for your project. (This setting might be used in
+    -   `namespace` - Namespace to use as a prefix for all `localStorage`,
+        caching, or `indexedDB` usage. Defaults to `"textbrowser"` but this
+        could clash with other *TextBrowser* projects on the same origin,
+        so you should change for your project. (This setting might be used in
         the future for any other namespacing.)
 
     -   `allowPlugins` - Enables `files.json`-specified plugins to be run.
