@@ -613,11 +613,12 @@ as a `npm` dependency).
         users in the future.
 
     -   `showEmptyInterlinear` - Whether to show empty interlinear entries
-        (with a title)
+        (with a title). We may put this under user control in the future.
 
     -   `showTitleOnSingleInterlinear` - If only the main item is present in
         an interlinear-enabled column, this determines whether a title (if
-        enabled) will be shown.
+        enabled) will be shown. We may put this under user control in the
+        future.
 
     -   `noDynamic` - If there is no server-side component to expedite
         non-indexedDB queries
