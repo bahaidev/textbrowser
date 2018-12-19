@@ -4,9 +4,14 @@
 
 - Breaking change: `TextBrowser` must now be used with `new`
     (`IntlURLSearchParams` also refactored as class)
+- Linting: Add recommended extension to `.eslintrc` (.js); apply
+    ash-nazg rules
 - Docs: In todo comments, refer to `import.meta.url` (also apparently
     supported in Rollup; probably need to wait for service workers
     behaving as modules)
+- Docs (README): Clean-up/clarify; indicate `user.json` as recommended;
+    document plugins, `{locale}` value, and `shortcut` and `meta`
+    properties
 
 ## 0.28.0
 
