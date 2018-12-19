@@ -556,6 +556,9 @@ as a `npm` dependency).
         but may in the future provide surrounding navigation information
         such as breadcrumbs.)
 
+    -   `userJSON` - Points to the user JSON file, `resources/user.json`
+        by default. See the "User JSON" subsection below.
+
     -   `stylesheets` - Array of stylesheet paths and/or of two-item arrays
         with stylesheet path and
         [loadStylesheets](https://github.com/brettz9/load-stylesheets)
@@ -627,6 +630,15 @@ as a `npm` dependency).
         enabled) will be shown. We may put this under user control in the
         future.
 
+As per [semantic versioning](http://semver.org/) used by `npm`,
+our API should continue to work until an increment in the major release
+number.
+
+The rest of the API used internally is unstable and should not be relied
+upon for monkey-patching.
+
+### User JSON
+
 Worker config should be placed in a JSON file (see
 [`resources/user-sample.json`](./resources/user-sample.json)).
 The properties are:
@@ -640,12 +652,17 @@ The properties are:
     recommended files:
     `['/',  'index.html', 'files.json', 'site.json', 'resources/user.js', 'resources/user.css']`
 
-As per [semantic versioning](http://semver.org/) used by `npm`,
-our API should continue to work until an increment in the major release
-number.
+## Server API
 
-The rest of the API used internally is unstable and should not be relied
-upon for monkey-patching.
+The `textbrowser` server API offers the same arguments as the `TextBrowser`
+constructor (minus `site`, `stylesheets`, `requestPersistentStorage`, `noDynamic`,`skipIndexedDB`, and `hideFormattingSection`). In addition,
+it supports the following arguments:
+
+- `domain` - The domain for hosting the server. Defaults to `localhost`.
+- `port` - The port on which the server will be hosted. Defaults to 8000.
+- `nodeActivate` - This argument must be run once to build the necessary
+    database files. While the database files will be SQLite based, they
+    are consumed by [IndexedDBShim](https://github.com/axemclion/IndexedDBShim/).
 
 ## To-dos (Highest priority)
 
@@ -664,7 +681,6 @@ upon for monkey-patching.
         e.g., parse Rodwell or Sale?
     1. Ideally work across even book
     1. Support anchor portion (e.g., `1:2:3-1:2:5#1:2:4`)
-1.  **Document server** including need for a `nodeActivate` call
 1.  **Move plug-in set-up** to run so setting indexedDB within
     `activateCallback.js`
 1.  Have **IndexedDB handle all pages** language select, work select, and
