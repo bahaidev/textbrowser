@@ -225,7 +225,7 @@ The recommended project directory structure (which are used by default by the
     service worker
 -   ***plugins/*** - While *not yet in use*, this is the convention we wish
     to begin enforcing for hosting plugins (e.g., for automated columns).
-    <!-- See [Plugin Format](#Plugin Format) -->
+    See [Plugin Format](#Plugin Format).
 -   ***sw.js*** - Although you can change the name of this file via
     `serviceWorkerPath` (see [JavaScript API](#JavaScript API)), this
     file should be at or higher than the files you are caching (including
@@ -412,7 +412,12 @@ The `files` array property contains object items with the following properties:
 a `name` string or localization key (or a file group display name),
 `schemaFile` and `metadataFile` string file paths (resolved relative to the
 respective base path properties), and `file` which is an reference to a
-specific JSON data file [table-container.jsonschema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema)).
+specific JSON data file
+[table-container.jsonschema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema)).
+There can also be a `shortcut` property which is used for indicating the
+keyword to use when the "Generate bookmarks" button in Preferences or
+"Copy shortcut URL" is used to build URL keyword shortcuts (what Chrome
+considers a custom search engine).
 
 As with other files, there is also a `localization-strings` key object, keyed
 to language code, which is keyed to an object of keys (which can be strings,
@@ -421,19 +426,19 @@ arrays of strings, or other objects of keys, including specifically for
 `plugins` whose keys are plugins and whose object values have a `fieldname`
 key).
 
-The `plugins` object property indicates scripts in metadata and is
-*not yet in use*.
+The `plugins` object property indicates scripts in metadata.
 
 Its keys are plug-in names and whose value objects have the required property
 `path`, and the optional properties `onByDefault` boolean and `lang` language
-code string.
-<!-- See [Plugin Format](#Plugin Format) for the structure of the plug-in pointed
-to by the path. -->
+code string. There may also be a `meta` key which is used to pass data to the
+plug-in. This object currently only allows string keys.
 
-The `plugin-field-mapping` object property similarly is *not yet in use*, but
-whose keys are intended as groups and whose object key values include works as
-keys and whose key values include field names as keys and whose key values
-includes field arguments, namely:
+See [Plugin Format](#Plugin Format) for the structure of the plug-in pointed
+to by the path.
+
+The `plugin-field-mapping` object property has keys which act as groups and
+whose object key values include works as keys and whose key values include
+field names as keys and whose key values includes field arguments, namely:
 
 - `placement` (the string `"end"` or a number to indicate placement relative
     to other properties; this might be changed to a string indicating field
@@ -441,7 +446,10 @@ includes field arguments, namely:
 - `applicable-fields` an object property whose properties are field names
     pointing to an object key value with properties that may vary with plug-in,
     but which specifically reserve a `targetLanguage` language code string
-    property and a `onByDefault` boolean property.
+    property (or array of strings or the special string `{locale}` to indicate
+    the value will vary be determined by the current locale) and a
+    `onByDefault` boolean property. There is also a `meta` property object
+    whose key values must currently only be strings.
 
 #### `languages.json` and `locales/en-US.json`, etc.
 
@@ -495,10 +503,21 @@ As with other files, there is a `localization-strings` object, keyed to
 language code, which is keyed to an object of keys (which can be strings,
 arrays of strings, or other objects of keys).
 
-<!-- ## Plugin Format -->
-<!-- Add once implemented;
-    e.g., Each plugin file designated within
-    `files.json` expects an `insertField` `export` directive, etc. -->
+## Plugin Format
+
+Plugin file designated within `files.json` may have any of the following exports:
+
+- `getCellData({tr, tableData, i, j, applicableField, fieldInfo, applicableFieldIdx, applicableFieldText, fieldLang, getLangDir, meta, metaApplicableField, $p, thisObj})` -
+    Invoked for each cell of the data
+- `done({$p, applicableField, meta, j, thisObj})` - Invoked after each cell of
+    the table has been processed.
+- `getTargetLanguage({applicableField, targetLanguage, pluginLang, applicableFieldLang})` -
+    Called for each plug-in. `pluginLang` is the default lang for the
+    plug-in (from `files.json`). `applicableFieldLang` is the default lang
+    when there is no target language or plugin lang; it is the lang of
+    the applicable field.
+- `getFieldAliasOrName({locales, lf, targetLanguage, applicableField, applicableFieldI18N, meta, metaApplicableField, targetLanguageI18N})` - Called for each plug-in (after `getTargetLanguage`).
+- `escapeColumn` - Boolean (defaults to `true`).
 
 ## Security notes
 
