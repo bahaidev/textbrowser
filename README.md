@@ -273,7 +273,11 @@ in this section.
 
 JSON data files to represent your data (e.g.,
 [this file](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/peace.json?at=master&fileviewer=file-view-default))
-expect 3 fields (per the simple [schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema) and its simple [array-of-arrays subschema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/array-of-arrays.jsonschema) to which they adhere):
+expect 3 fields (per the simple
+[schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema)
+and its simple
+[array-of-arrays subschema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/array-of-arrays.jsonschema)
+to which they adhere):
 
 1. A `schema` JSON reference pointer to your data's JSON schema.
     See [JSON Schema](#JSON Schema).
@@ -287,7 +291,8 @@ expect 3 fields (per the simple [schema](https://github.com/brettz9/textbrowser/
 
 This document must itself be a valid
 [JSON Schema](http://json-schema.org/documentation.html)
-and must, moreover, adhere to the [table format schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table.jsonschema).
+and must, moreover, adhere to the
+[table format schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table.jsonschema).
 
 This simple document, besides including the text content, designates a more precise JSON schema to indicate precise column types (e.g.,
 [this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/schemas/Bible.jsonschema?at=master&fileviewer=file-view-default)).
@@ -342,9 +347,9 @@ a form submission without supplying a range.
 
 For `fields`, the `lang` string property indicates the language code for the
 content of this field. It is used for letting the user quickly enable
-fields which match their desired locale language(s). It might be used for
-HTML `lang` values in the future to properly display fonts for languages
-that leverage it, such as the CJK languages.
+fields which match their desired locale language(s). It is also used for
+setting HTML table column `lang` values to properly display fonts for
+languages that leverage it, such as the CJK languages.
 
 One other set of types for `fields` are `name` and `alias` strings (or
 `localeKey` pointing to strings). The `name` points to the regular
@@ -381,7 +386,7 @@ to language code, which is keyed to an object of keys (which can be strings
 including specifically for JSON metadata, `fieldnames`, `fieldaliases`,
 `fieldvalue`, and `fieldvalue-aliases`).
 
-### Application-Wide JSON files
+### Application-wide JSON files
 
 Besides the JSON files directly representing your works, you will need the
 following files to indicate behavior for the text-browsing application as a
@@ -510,7 +515,7 @@ See `resources/user-sample.js` for an example (where the sample paths
 are assumed to be relative to a package that contains *TextBrowser*
 as a `npm` dependency).
 
--   ***TextBrowser(options)*** - Constructor which takes an options object
+-   ***new TextBrowser(options)*** - Constructor which takes an options object
     with the following optional properties:
 
     -   `files` - Path for the `files.json` containing meta-data on the files
