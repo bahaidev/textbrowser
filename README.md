@@ -510,6 +510,7 @@ Plugin file designated within `files.json` may have any of the following exports
 - `getCellData({tr, tableData, i, j, applicableField, fieldInfo, applicableFieldIdx, applicableFieldText, fieldLang, getLangDir, meta, metaApplicableField, $p, thisObj})` -
     Used to build the plugin field's cell contents. Invoked for each cell of the data.
     Used in conjunction with `escapeColumn`.
+- `escapeColumn` - Boolean (defaults to `true`).
 - `done({$p, applicableField, meta, j, thisObj})` - Invoked after each cell of
     the table has been processed.
 - `getTargetLanguage({applicableField, targetLanguage, pluginLang, applicableFieldLang})` -
@@ -518,7 +519,6 @@ Plugin file designated within `files.json` may have any of the following exports
     when there is no target language or plugin lang; it is the lang of
     the applicable field.
 - `getFieldAliasOrName({locales, lf, targetLanguage, applicableField, applicableFieldI18N, meta, metaApplicableField, targetLanguageI18N})` - Called for each plug-in (after `getTargetLanguage`).
-- `escapeColumn` - Boolean (defaults to `true`).
 
 ## Security notes
 
@@ -593,24 +593,24 @@ as a `npm` dependency).
         This section might be changed to a plugin in the future in which case
         you'd just avoid designating it within `files.json`.
 
-    -   `interlinearSeparator` - HTML code to be injected between each
-        interlinear entry; this is not exposed to the user for
-        security reasons (preventing [cross-site scripting](https://en.wikipedia.org/wiki/Cross-site_scripting)
-        attacks); defaults to `<br /><br />` though one may set to
-        another string such as `<hr />`. If you need greater control,
-        you might consider monkey-patching the simple templating function
-        `Templates.resultsDisplayServerOrClient.interlinearTitle` (and optionally
-        setting `interlinearSeparator` to an empty string if you use that
-        function to handle the separation), but please note that this API
-        could change. It is also desired for us to allow users to have
-        some predefined choices.
-
     -   `serviceWorkerPath` - Service worker path which defaults to
         `"sw.js"` (which, if you are including *TextBrowser* via npm,
         will be within your own project root). This should probably not
         be adjusted (and if you do want to adjust it, it may be better
         to file an issue or PR to allow us to provide choices among
         various default-available service worker/caching patterns).
+
+    -   `interlinearSeparator` - HTML code to be injected between each
+        interlinear entry; this is not exposed to the user for
+        security reasons (preventing [cross-site scripting](https://en.wikipedia.org/wiki/Cross-site_scripting)
+        attacks); defaults to `<br /><br />` though one may set to
+        another string such as `<hr />`. If you need greater control,
+        you might consider monkey-patching the simple templating function
+        `Templates.resultsDisplayServerOrClient.interlinearTitle` (and
+        optionally setting `interlinearSeparator` to an empty string if
+        you use that function to handle the separation), but please note
+        that this API could change. We may add some predefined choices for
+        users in the future.
 
     -   `showEmptyInterlinear` - Whether to show empty interlinear entries
         (with a title)
