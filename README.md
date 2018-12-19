@@ -574,6 +574,10 @@ as a `npm` dependency).
     -   `dynamicBasePath` - Base bath for the server hosting the TextBrowser
         content. Defaults to the current site.
 
+    -   `localizeParamNames` - Boolean as to whether to localize parameter
+        names by default (can be overridden by the user in preferences).
+        (This has not been fully tested.)
+
     -   `allowPlugins` - Enables `files.json`-specified plugins to be run.
         Defaults to `false` as it causes scripts to be run, but if you trust
         your JSON source files, you will presumably wish to enable this
@@ -592,9 +596,11 @@ as a `npm` dependency).
         performance, especially with large data files, as the whole data
         file must otherwise be downloaded for each result display.
 
-    -   `localizeParamNames` - Boolean as to whether to localize parameter
-        names by default (can be overridden by the user in preferences).
-        (This has not been fully tested.)
+    -   `noDynamic` - If there is no server-side component to expedite
+        non-indexedDB queries
+
+    -   `skipIndexedDB` - If one wishes to force avoiding indexedDB even
+        when permitted by user (for testing)
 
     -   `hideFormattingSection` - Boolean as to whether to hide the formatting
         section by default (can be overridden by the user in preferences).
@@ -620,12 +626,6 @@ as a `npm` dependency).
         an interlinear-enabled column, this determines whether a title (if
         enabled) will be shown. We may put this under user control in the
         future.
-
-    -   `noDynamic` - If there is no server-side component to expedite
-        non-indexedDB queries
-
-    -   `skipIndexedDB` - If one wishes to force avoiding indexedDB even
-        when permitted by user (for testing)
 
 Worker config should be placed in a JSON file (see
 [`resources/user-sample.json`](./resources/user-sample.json)).
