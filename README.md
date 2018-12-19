@@ -651,6 +651,9 @@ upon for monkey-patching.
 1.  Document and add screen-casts along with one for developers showing
     JSON format, metadata, and schemas); also use with shortcuts (including
     Bahá'í Library Online ones)
+1.  In place of passing in `files`, `namespace` and `languages`, pass
+    in `userJSON`
+1.  Ensure caching user's `stylesheets`.
 1.  **Text box parsing**
     1. Document availability of this parsing
     1. Fix limitation that 0's don't change to 1's if
