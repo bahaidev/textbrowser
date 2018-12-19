@@ -9,9 +9,9 @@
 - Docs: In todo comments, refer to `import.meta.url` (also apparently
     supported in Rollup; probably need to wait for service workers
     behaving as modules)
+- Docs (README): Document server API, plugins, and `userJSON` property
 - Docs (README): Clean-up/clarify; indicate `user.json` as recommended;
-    document plugins, `{locale}` value, and `shortcut` and `meta`
-    properties
+    document `{locale}` value, and `shortcut` and `meta` properties
 
 ## 0.28.0
 
