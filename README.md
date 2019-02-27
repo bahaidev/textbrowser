@@ -739,6 +739,14 @@ it supports the following arguments:
 1.  Document and add screen-casts along with one for developers showing
     JSON format, metadata, and schemas); also use with shortcuts (including
     Bahá'í Library Online ones)
+1.  **Progress meter** with hidden console to avoid intimidating loading
+    messages of service worker
+1.  **Move "Go"** to right (or immediate bottom) of paragraph selections
+1.  **Default field(s) and default value(s)** for when no text is entered and
+    a reasonable sample is desired to be shown. Use `default_view` already
+    spec'd in metadata schema and used in files.
+    1. Also have `&checked1=Yes` omitted when generating results display
+        (since now defaulting to this)
 1.  In place of passing in `files`, `namespace` and `languages`, pass
     in `userJSON`
 1.  Ensure caching user's `stylesheets`.
@@ -786,15 +794,9 @@ it supports the following arguments:
 1.  **Locales**
     1.  Check `localizeParamNames` (preference)?
     1.  Test all locales and works and combos
-1.  **Default field(s) and default value(s)** for when no text is entered and
-    a reasonable sample is desired to be shown. Use `default_view` already
-    spec'd in metadata schema and used in files.
-    1. Also have `&checked1=Yes` omitted when generating results display
-        (since now defaulting to this)
 1.  Allow **all text** to be shown (whether anchored or not)
 1.  Indicate min/max as **placeholder text** (`Max: 100`?)
 1.  **Rename "Field"** to "Column anchor"
-1.  **Move "Go"** to right (or immediate bottom) of paragraph selections
 1.  Renaming/linking to fuller descriptions or graphics explaining
     options/preferences regarding locale, interlinear, CSS
 1.  **Plugins/Automated** fields
