@@ -1,8 +1,8 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
-    global.activateCallback = factory();
-}(typeof self !== 'undefined' ? self : this, function () { 'use strict';
+    (global = global || self, global.activateCallback = factory());
+}(this, function () { 'use strict';
 
     /* eslint-env worker */
 
@@ -62,7 +62,7 @@
         log('Activate: Files fetched');
         const dbName = namespace + '-textbrowser-cache-data';
         indexedDB.deleteDatabase(dbName);
-        return new Promise((resolve, reject) => { // eslint-disable-line promise/avoid-new
+        return new Promise((resolve, reject) => {
             const req = indexedDB.open(dbName);
             req.addEventListener('upgradeneeded', ({target: {result: db}}) => {
                 db.onversionchange = () => {

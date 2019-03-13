@@ -24,8 +24,8 @@ if (typeof exports !== 'undefined') {
     path = {
         join: (...args) => args.join('')
     };
-    appBase = location.protocol + '//' + location.host + '/'; // eslint-disable-line no-undef
-    __dirname = ''; // eslint-disable-line no-global-assign
+    appBase = location.protocol + '//' + location.host + '/';
+    __dirname = '';
 }
 
 const schemaBase = appBase + 'general-schemas/';
@@ -49,16 +49,16 @@ function validate (testName, schema, data, extraSchemas = [], additionalOptions 
         });
         valid = ajv.validate(schema, data);
     } catch (e) {
-        console.log('(' + testName + ') ' + e); // eslint-disable-line no-console
+        console.log('(' + testName + ') ' + e);
     } finally {
-        if (!valid) { console.log(JSON.stringify(ajv.errors, null, 2)); } // eslint-disable-line no-console
+        if (!valid) { console.log(JSON.stringify(ajv.errors, null, 2)); }
     }
     return valid;
 }
 
 const textbrowserTests = {
     async 'locales tests' (test) {
-        test.expect(5); // eslint-disable-line no-magic-numbers
+        test.expect(5);
         const [jsonSchema, schema, ...locales] = await Promise.all([
             getJSON(path.join(
                 __dirname,
@@ -98,7 +98,7 @@ const textbrowserTests = {
         test.done();
     },
     async 'languages.json test' (test) {
-        test.expect(3); // eslint-disable-line no-magic-numbers
+        test.expect(3);
         const results = await Promise.all([
             JsonRefs.resolveRefsAt(path.join(__dirname, appdataBase, 'languages.json')),
             getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-07-schema.json')),

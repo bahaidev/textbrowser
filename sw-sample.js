@@ -80,12 +80,12 @@ function logError (error, ...messages) {
 async function tryAndRetry (cb, timeout, errMessage, time = 0) {
     time++;
     try {
-        await cb(time); // eslint-disable-line standard/no-callback-literal, promise/prefer-await-to-callbacks, callback-return
+        await cb(time);
         return undefined;
     } catch (err) {
         console.log('errrr', err);
         logError(err, err.message || errMessage);
-        return new Promise((resolve, reject) => { // eslint-disable-line promise/avoid-new
+        return new Promise((resolve, reject) => {
             setTimeout(() => {
                 resolve(tryAndRetry(cb, timeout, errMessage, time));
             }, timeout);

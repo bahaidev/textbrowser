@@ -66,7 +66,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
     return nonMinified;
 }
 // console.log('typeof', typeof getRollupObject); // Keep for ESLint when commenting out below
-export default [ // eslint-disable-line import/no-anonymous-default-export
+export default [
     /**/
     getRollupObject(),
     getRollupObject({minifying: true}),

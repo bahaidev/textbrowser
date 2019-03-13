@@ -1,8 +1,8 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  global.TextBrowser = factory();
-}(typeof self !== 'undefined' ? self : this, function () { 'use strict';
+  (global = global || self, global.TextBrowser = factory());
+}(this, function () { 'use strict';
 
   function _typeof(obj) {
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -3437,7 +3437,7 @@
                     return _context.stop();
                 }
               }
-            }, _callee, this);
+            }, _callee);
           }));
 
           function callback() {
@@ -3448,6 +3448,835 @@
         }()
       });
     });
+  }
+
+  // nb. This is for IE10 and lower _only_.
+  var supportCustomEvent = window.CustomEvent;
+
+  if (!supportCustomEvent || typeof supportCustomEvent === 'object') {
+    supportCustomEvent = function CustomEvent(event, x) {
+      x = x || {};
+      var ev = document.createEvent('CustomEvent');
+      ev.initCustomEvent(event, !!x.bubbles, !!x.cancelable, x.detail || null);
+      return ev;
+    };
+
+    supportCustomEvent.prototype = window.Event.prototype;
+  }
+  /**
+   * @param {Element} el to check for stacking context
+   * @return {boolean} whether this el or its parents creates a stacking context
+   */
+
+
+  function createsStackingContext(el) {
+    while (el && el !== document.body) {
+      var s = window.getComputedStyle(el);
+
+      var invalid = function (k, ok) {
+        return !(s[k] === undefined || s[k] === ok);
+      };
+
+      if (s.opacity < 1 || invalid('zIndex', 'auto') || invalid('transform', 'none') || invalid('mixBlendMode', 'normal') || invalid('filter', 'none') || invalid('perspective', 'none') || s['isolation'] === 'isolate' || s.position === 'fixed' || s.webkitOverflowScrolling === 'touch') {
+        return true;
+      }
+
+      el = el.parentElement;
+    }
+
+    return false;
+  }
+  /**
+   * Finds the nearest <dialog> from the passed element.
+   *
+   * @param {Element} el to search from
+   * @return {HTMLDialogElement} dialog found
+   */
+
+
+  function findNearestDialog(el) {
+    while (el) {
+      if (el.localName === 'dialog') {
+        return (
+          /** @type {HTMLDialogElement} */
+          el
+        );
+      }
+
+      el = el.parentElement;
+    }
+
+    return null;
+  }
+  /**
+   * Blur the specified element, as long as it's not the HTML body element.
+   * This works around an IE9/10 bug - blurring the body causes Windows to
+   * blur the whole application.
+   *
+   * @param {Element} el to blur
+   */
+
+
+  function safeBlur(el) {
+    if (el && el.blur && el !== document.body) {
+      el.blur();
+    }
+  }
+  /**
+   * @param {!NodeList} nodeList to search
+   * @param {Node} node to find
+   * @return {boolean} whether node is inside nodeList
+   */
+
+
+  function inNodeList(nodeList, node) {
+    for (var i = 0; i < nodeList.length; ++i) {
+      if (nodeList[i] === node) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+  /**
+   * @param {HTMLFormElement} el to check
+   * @return {boolean} whether this form has method="dialog"
+   */
+
+
+  function isFormMethodDialog(el) {
+    if (!el || !el.hasAttribute('method')) {
+      return false;
+    }
+
+    return el.getAttribute('method').toLowerCase() === 'dialog';
+  }
+  /**
+   * @param {!HTMLDialogElement} dialog to upgrade
+   * @constructor
+   */
+
+
+  function dialogPolyfillInfo(dialog) {
+    this.dialog_ = dialog;
+    this.replacedStyleTop_ = false;
+    this.openAsModal_ = false; // Set a11y role. Browsers that support dialog implicitly know this already.
+
+    if (!dialog.hasAttribute('role')) {
+      dialog.setAttribute('role', 'dialog');
+    }
+
+    dialog.show = this.show.bind(this);
+    dialog.showModal = this.showModal.bind(this);
+    dialog.close = this.close.bind(this);
+
+    if (!('returnValue' in dialog)) {
+      dialog.returnValue = '';
+    }
+
+    if ('MutationObserver' in window) {
+      var mo = new MutationObserver(this.maybeHideModal.bind(this));
+      mo.observe(dialog, {
+        attributes: true,
+        attributeFilter: ['open']
+      });
+    } else {
+      // IE10 and below support. Note that DOMNodeRemoved etc fire _before_ removal. They also
+      // seem to fire even if the element was removed as part of a parent removal. Use the removed
+      // events to force downgrade (useful if removed/immediately added).
+      var removed = false;
+
+      var cb = function () {
+        removed ? this.downgradeModal() : this.maybeHideModal();
+        removed = false;
+      }.bind(this);
+
+      var timeout;
+
+      var delayModel = function (ev) {
+        if (ev.target !== dialog) {
+          return;
+        } // not for a child element
+
+
+        var cand = 'DOMNodeRemoved';
+        removed |= ev.type.substr(0, cand.length) === cand;
+        window.clearTimeout(timeout);
+        timeout = window.setTimeout(cb, 0);
+      };
+
+      ['DOMAttrModified', 'DOMNodeRemoved', 'DOMNodeRemovedFromDocument'].forEach(function (name) {
+        dialog.addEventListener(name, delayModel);
+      });
+    } // Note that the DOM is observed inside DialogManager while any dialog
+    // is being displayed as a modal, to catch modal removal from the DOM.
+
+
+    Object.defineProperty(dialog, 'open', {
+      set: this.setOpen.bind(this),
+      get: dialog.hasAttribute.bind(dialog, 'open')
+    });
+    this.backdrop_ = document.createElement('div');
+    this.backdrop_.className = 'backdrop';
+    this.backdrop_.addEventListener('click', this.backdropClick_.bind(this));
+  }
+
+  dialogPolyfillInfo.prototype = {
+    get dialog() {
+      return this.dialog_;
+    },
+
+    /**
+     * Maybe remove this dialog from the modal top layer. This is called when
+     * a modal dialog may no longer be tenable, e.g., when the dialog is no
+     * longer open or is no longer part of the DOM.
+     */
+    maybeHideModal: function () {
+      if (this.dialog_.hasAttribute('open') && document.body.contains(this.dialog_)) {
+        return;
+      }
+
+      this.downgradeModal();
+    },
+
+    /**
+     * Remove this dialog from the modal top layer, leaving it as a non-modal.
+     */
+    downgradeModal: function () {
+      if (!this.openAsModal_) {
+        return;
+      }
+
+      this.openAsModal_ = false;
+      this.dialog_.style.zIndex = ''; // This won't match the native <dialog> exactly because if the user set top on a centered
+      // polyfill dialog, that top gets thrown away when the dialog is closed. Not sure it's
+      // possible to polyfill this perfectly.
+
+      if (this.replacedStyleTop_) {
+        this.dialog_.style.top = '';
+        this.replacedStyleTop_ = false;
+      } // Clear the backdrop and remove from the manager.
+
+
+      this.backdrop_.parentNode && this.backdrop_.parentNode.removeChild(this.backdrop_);
+      dialogPolyfill.dm.removeDialog(this);
+    },
+
+    /**
+     * @param {boolean} value whether to open or close this dialog
+     */
+    setOpen: function (value) {
+      if (value) {
+        this.dialog_.hasAttribute('open') || this.dialog_.setAttribute('open', '');
+      } else {
+        this.dialog_.removeAttribute('open');
+        this.maybeHideModal(); // nb. redundant with MutationObserver
+      }
+    },
+
+    /**
+     * Handles clicks on the fake .backdrop element, redirecting them as if
+     * they were on the dialog itself.
+     *
+     * @param {!Event} e to redirect
+     */
+    backdropClick_: function (e) {
+      if (!this.dialog_.hasAttribute('tabindex')) {
+        // Clicking on the backdrop should move the implicit cursor, even if dialog cannot be
+        // focused. Create a fake thing to focus on. If the backdrop was _before_ the dialog, this
+        // would not be needed - clicks would move the implicit cursor there.
+        var fake = document.createElement('div');
+        this.dialog_.insertBefore(fake, this.dialog_.firstChild);
+        fake.tabIndex = -1;
+        fake.focus();
+        this.dialog_.removeChild(fake);
+      } else {
+        this.dialog_.focus();
+      }
+
+      var redirectedEvent = document.createEvent('MouseEvents');
+      redirectedEvent.initMouseEvent(e.type, e.bubbles, e.cancelable, window, e.detail, e.screenX, e.screenY, e.clientX, e.clientY, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button, e.relatedTarget);
+      this.dialog_.dispatchEvent(redirectedEvent);
+      e.stopPropagation();
+    },
+
+    /**
+     * Focuses on the first focusable element within the dialog. This will always blur the current
+     * focus, even if nothing within the dialog is found.
+     */
+    focus_: function () {
+      // Find element with `autofocus` attribute, or fall back to the first form/tabindex control.
+      var target = this.dialog_.querySelector('[autofocus]:not([disabled])');
+
+      if (!target && this.dialog_.tabIndex >= 0) {
+        target = this.dialog_;
+      }
+
+      if (!target) {
+        // Note that this is 'any focusable area'. This list is probably not exhaustive, but the
+        // alternative involves stepping through and trying to focus everything.
+        var opts = ['button', 'input', 'keygen', 'select', 'textarea'];
+        var query = opts.map(function (el) {
+          return el + ':not([disabled])';
+        }); // TODO(samthor): tabindex values that are not numeric are not focusable.
+
+        query.push('[tabindex]:not([disabled]):not([tabindex=""])'); // tabindex != "", not disabled
+
+        target = this.dialog_.querySelector(query.join(', '));
+      }
+
+      safeBlur(document.activeElement);
+      target && target.focus();
+    },
+
+    /**
+     * Sets the zIndex for the backdrop and dialog.
+     *
+     * @param {number} dialogZ
+     * @param {number} backdropZ
+     */
+    updateZIndex: function (dialogZ, backdropZ) {
+      if (dialogZ < backdropZ) {
+        throw new Error('dialogZ should never be < backdropZ');
+      }
+
+      this.dialog_.style.zIndex = dialogZ;
+      this.backdrop_.style.zIndex = backdropZ;
+    },
+
+    /**
+     * Shows the dialog. If the dialog is already open, this does nothing.
+     */
+    show: function () {
+      if (!this.dialog_.open) {
+        this.setOpen(true);
+        this.focus_();
+      }
+    },
+
+    /**
+     * Show this dialog modally.
+     */
+    showModal: function () {
+      if (this.dialog_.hasAttribute('open')) {
+        throw new Error('Failed to execute \'showModal\' on dialog: The element is already open, and therefore cannot be opened modally.');
+      }
+
+      if (!document.body.contains(this.dialog_)) {
+        throw new Error('Failed to execute \'showModal\' on dialog: The element is not in a Document.');
+      }
+
+      if (!dialogPolyfill.dm.pushDialog(this)) {
+        throw new Error('Failed to execute \'showModal\' on dialog: There are too many open modal dialogs.');
+      }
+
+      if (createsStackingContext(this.dialog_.parentElement)) {
+        console.warn('A dialog is being shown inside a stacking context. ' + 'This may cause it to be unusable. For more information, see this link: ' + 'https://github.com/GoogleChrome/dialog-polyfill/#stacking-context');
+      }
+
+      this.setOpen(true);
+      this.openAsModal_ = true; // Optionally center vertically, relative to the current viewport.
+
+      if (dialogPolyfill.needsCentering(this.dialog_)) {
+        dialogPolyfill.reposition(this.dialog_);
+        this.replacedStyleTop_ = true;
+      } else {
+        this.replacedStyleTop_ = false;
+      } // Insert backdrop.
+
+
+      this.dialog_.parentNode.insertBefore(this.backdrop_, this.dialog_.nextSibling); // Focus on whatever inside the dialog.
+
+      this.focus_();
+    },
+
+    /**
+     * Closes this HTMLDialogElement. This is optional vs clearing the open
+     * attribute, however this fires a 'close' event.
+     *
+     * @param {string=} opt_returnValue to use as the returnValue
+     */
+    close: function (opt_returnValue) {
+      if (!this.dialog_.hasAttribute('open')) {
+        throw new Error('Failed to execute \'close\' on dialog: The element does not have an \'open\' attribute, and therefore cannot be closed.');
+      }
+
+      this.setOpen(false); // Leave returnValue untouched in case it was set directly on the element
+
+      if (opt_returnValue !== undefined) {
+        this.dialog_.returnValue = opt_returnValue;
+      } // Triggering "close" event for any attached listeners on the <dialog>.
+
+
+      var closeEvent = new supportCustomEvent('close', {
+        bubbles: false,
+        cancelable: false
+      });
+      this.dialog_.dispatchEvent(closeEvent);
+    }
+  };
+  var dialogPolyfill = {};
+
+  dialogPolyfill.reposition = function (element) {
+    var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+    var topValue = scrollTop + (window.innerHeight - element.offsetHeight) / 2;
+    element.style.top = Math.max(scrollTop, topValue) + 'px';
+  };
+
+  dialogPolyfill.isInlinePositionSetByStylesheet = function (element) {
+    for (var i = 0; i < document.styleSheets.length; ++i) {
+      var styleSheet = document.styleSheets[i];
+      var cssRules = null; // Some browsers throw on cssRules.
+
+      try {
+        cssRules = styleSheet.cssRules;
+      } catch (e) {}
+
+      if (!cssRules) {
+        continue;
+      }
+
+      for (var j = 0; j < cssRules.length; ++j) {
+        var rule = cssRules[j];
+        var selectedNodes = null; // Ignore errors on invalid selector texts.
+
+        try {
+          selectedNodes = document.querySelectorAll(rule.selectorText);
+        } catch (e) {}
+
+        if (!selectedNodes || !inNodeList(selectedNodes, element)) {
+          continue;
+        }
+
+        var cssTop = rule.style.getPropertyValue('top');
+        var cssBottom = rule.style.getPropertyValue('bottom');
+
+        if (cssTop && cssTop !== 'auto' || cssBottom && cssBottom !== 'auto') {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  dialogPolyfill.needsCentering = function (dialog) {
+    var computedStyle = window.getComputedStyle(dialog);
+
+    if (computedStyle.position !== 'absolute') {
+      return false;
+    } // We must determine whether the top/bottom specified value is non-auto.  In
+    // WebKit/Blink, checking computedStyle.top == 'auto' is sufficient, but
+    // Firefox returns the used value. So we do this crazy thing instead: check
+    // the inline style and then go through CSS rules.
+
+
+    if (dialog.style.top !== 'auto' && dialog.style.top !== '' || dialog.style.bottom !== 'auto' && dialog.style.bottom !== '') {
+      return false;
+    }
+
+    return !dialogPolyfill.isInlinePositionSetByStylesheet(dialog);
+  };
+  /**
+   * @param {!Element} element to force upgrade
+   */
+
+
+  dialogPolyfill.forceRegisterDialog = function (element) {
+    if (window.HTMLDialogElement || element.showModal) {
+      console.warn('This browser already supports <dialog>, the polyfill ' + 'may not work correctly', element);
+    }
+
+    if (element.localName !== 'dialog') {
+      throw new Error('Failed to register dialog: The element is not a dialog.');
+    }
+
+    new dialogPolyfillInfo(
+    /** @type {!HTMLDialogElement} */
+    element);
+  };
+  /**
+   * @param {!Element} element to upgrade, if necessary
+   */
+
+
+  dialogPolyfill.registerDialog = function (element) {
+    if (!element.showModal) {
+      dialogPolyfill.forceRegisterDialog(element);
+    }
+  };
+  /**
+   * @constructor
+   */
+
+
+  dialogPolyfill.DialogManager = function () {
+    /** @type {!Array<!dialogPolyfillInfo>} */
+    this.pendingDialogStack = [];
+    var checkDOM = this.checkDOM_.bind(this); // The overlay is used to simulate how a modal dialog blocks the document.
+    // The blocking dialog is positioned on top of the overlay, and the rest of
+    // the dialogs on the pending dialog stack are positioned below it. In the
+    // actual implementation, the modal dialog stacking is controlled by the
+    // top layer, where z-index has no effect.
+
+    this.overlay = document.createElement('div');
+    this.overlay.className = '_dialog_overlay';
+    this.overlay.addEventListener('click', function (e) {
+      this.forwardTab_ = undefined;
+      e.stopPropagation();
+      checkDOM([]); // sanity-check DOM
+    }.bind(this));
+    this.handleKey_ = this.handleKey_.bind(this);
+    this.handleFocus_ = this.handleFocus_.bind(this);
+    this.zIndexLow_ = 100000;
+    this.zIndexHigh_ = 100000 + 150;
+    this.forwardTab_ = undefined;
+
+    if ('MutationObserver' in window) {
+      this.mo_ = new MutationObserver(function (records) {
+        var removed = [];
+        records.forEach(function (rec) {
+          for (var i = 0, c; c = rec.removedNodes[i]; ++i) {
+            if (!(c instanceof Element)) {
+              continue;
+            } else if (c.localName === 'dialog') {
+              removed.push(c);
+            }
+
+            removed = removed.concat(c.querySelectorAll('dialog'));
+          }
+        });
+        removed.length && checkDOM(removed);
+      });
+    }
+  };
+  /**
+   * Called on the first modal dialog being shown. Adds the overlay and related
+   * handlers.
+   */
+
+
+  dialogPolyfill.DialogManager.prototype.blockDocument = function () {
+    document.documentElement.addEventListener('focus', this.handleFocus_, true);
+    document.addEventListener('keydown', this.handleKey_);
+    this.mo_ && this.mo_.observe(document, {
+      childList: true,
+      subtree: true
+    });
+  };
+  /**
+   * Called on the first modal dialog being removed, i.e., when no more modal
+   * dialogs are visible.
+   */
+
+
+  dialogPolyfill.DialogManager.prototype.unblockDocument = function () {
+    document.documentElement.removeEventListener('focus', this.handleFocus_, true);
+    document.removeEventListener('keydown', this.handleKey_);
+    this.mo_ && this.mo_.disconnect();
+  };
+  /**
+   * Updates the stacking of all known dialogs.
+   */
+
+
+  dialogPolyfill.DialogManager.prototype.updateStacking = function () {
+    var zIndex = this.zIndexHigh_;
+
+    for (var i = 0, dpi; dpi = this.pendingDialogStack[i]; ++i) {
+      dpi.updateZIndex(--zIndex, --zIndex);
+
+      if (i === 0) {
+        this.overlay.style.zIndex = --zIndex;
+      }
+    } // Make the overlay a sibling of the dialog itself.
+
+
+    var last = this.pendingDialogStack[0];
+
+    if (last) {
+      var p = last.dialog.parentNode || document.body;
+      p.appendChild(this.overlay);
+    } else if (this.overlay.parentNode) {
+      this.overlay.parentNode.removeChild(this.overlay);
+    }
+  };
+  /**
+   * @param {Element} candidate to check if contained or is the top-most modal dialog
+   * @return {boolean} whether candidate is contained in top dialog
+   */
+
+
+  dialogPolyfill.DialogManager.prototype.containedByTopDialog_ = function (candidate) {
+    while (candidate = findNearestDialog(candidate)) {
+      for (var i = 0, dpi; dpi = this.pendingDialogStack[i]; ++i) {
+        if (dpi.dialog === candidate) {
+          return i === 0; // only valid if top-most
+        }
+      }
+
+      candidate = candidate.parentElement;
+    }
+
+    return false;
+  };
+
+  dialogPolyfill.DialogManager.prototype.handleFocus_ = function (event) {
+    if (this.containedByTopDialog_(event.target)) {
+      return;
+    }
+
+    if (document.activeElement === document.documentElement) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    safeBlur(
+    /** @type {Element} */
+    event.target);
+
+    if (this.forwardTab_ === undefined) {
+      return;
+    } // move focus only from a tab key
+
+
+    var dpi = this.pendingDialogStack[0];
+    var dialog = dpi.dialog;
+    var position = dialog.compareDocumentPosition(event.target);
+
+    if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+      if (this.forwardTab_) {
+        // forward
+        dpi.focus_();
+      } else if (event.target !== document.documentElement) {
+        // backwards if we're not already focused on <html>
+        document.documentElement.focus();
+      }
+    }
+
+    return false;
+  };
+
+  dialogPolyfill.DialogManager.prototype.handleKey_ = function (event) {
+    this.forwardTab_ = undefined;
+
+    if (event.keyCode === 27) {
+      event.preventDefault();
+      event.stopPropagation();
+      var cancelEvent = new supportCustomEvent('cancel', {
+        bubbles: false,
+        cancelable: true
+      });
+      var dpi = this.pendingDialogStack[0];
+
+      if (dpi && dpi.dialog.dispatchEvent(cancelEvent)) {
+        dpi.dialog.close();
+      }
+    } else if (event.keyCode === 9) {
+      this.forwardTab_ = !event.shiftKey;
+    }
+  };
+  /**
+   * Finds and downgrades any known modal dialogs that are no longer displayed. Dialogs that are
+   * removed and immediately readded don't stay modal, they become normal.
+   *
+   * @param {!Array<!HTMLDialogElement>} removed that have definitely been removed
+   */
+
+
+  dialogPolyfill.DialogManager.prototype.checkDOM_ = function (removed) {
+    // This operates on a clone because it may cause it to change. Each change also calls
+    // updateStacking, which only actually needs to happen once. But who removes many modal dialogs
+    // at a time?!
+    var clone = this.pendingDialogStack.slice();
+    clone.forEach(function (dpi) {
+      if (removed.indexOf(dpi.dialog) !== -1) {
+        dpi.downgradeModal();
+      } else {
+        dpi.maybeHideModal();
+      }
+    });
+  };
+  /**
+   * @param {!dialogPolyfillInfo} dpi
+   * @return {boolean} whether the dialog was allowed
+   */
+
+
+  dialogPolyfill.DialogManager.prototype.pushDialog = function (dpi) {
+    var allowed = (this.zIndexHigh_ - this.zIndexLow_) / 2 - 1;
+
+    if (this.pendingDialogStack.length >= allowed) {
+      return false;
+    }
+
+    if (this.pendingDialogStack.unshift(dpi) === 1) {
+      this.blockDocument();
+    }
+
+    this.updateStacking();
+    return true;
+  };
+  /**
+   * @param {!dialogPolyfillInfo} dpi
+   */
+
+
+  dialogPolyfill.DialogManager.prototype.removeDialog = function (dpi) {
+    var index = this.pendingDialogStack.indexOf(dpi);
+
+    if (index === -1) {
+      return;
+    }
+
+    this.pendingDialogStack.splice(index, 1);
+
+    if (this.pendingDialogStack.length === 0) {
+      this.unblockDocument();
+    }
+
+    this.updateStacking();
+  };
+
+  dialogPolyfill.dm = new dialogPolyfill.DialogManager();
+  dialogPolyfill.formSubmitter = null;
+  dialogPolyfill.useValue = null;
+  /**
+   * Installs global handlers, such as click listers and native method overrides. These are needed
+   * even if a no dialog is registered, as they deal with <form method="dialog">.
+   */
+
+  if (window.HTMLDialogElement === undefined) {
+    /**
+     * If HTMLFormElement translates method="DIALOG" into 'get', then replace the descriptor with
+     * one that returns the correct value.
+     */
+    var testForm = document.createElement('form');
+    testForm.setAttribute('method', 'dialog');
+
+    if (testForm.method !== 'dialog') {
+      var methodDescriptor = Object.getOwnPropertyDescriptor(HTMLFormElement.prototype, 'method');
+
+      if (methodDescriptor) {
+        // nb. Some older iOS and older PhantomJS fail to return the descriptor. Don't do anything
+        // and don't bother to update the element.
+        var realGet = methodDescriptor.get;
+
+        methodDescriptor.get = function () {
+          if (isFormMethodDialog(this)) {
+            return 'dialog';
+          }
+
+          return realGet.call(this);
+        };
+
+        var realSet = methodDescriptor.set;
+
+        methodDescriptor.set = function (v) {
+          if (typeof v === 'string' && v.toLowerCase() === 'dialog') {
+            return this.setAttribute('method', v);
+          }
+
+          return realSet.call(this, v);
+        };
+
+        Object.defineProperty(HTMLFormElement.prototype, 'method', methodDescriptor);
+      }
+    }
+    /**
+     * Global 'click' handler, to capture the <input type="submit"> or <button> element which has
+     * submitted a <form method="dialog">. Needed as Safari and others don't report this inside
+     * document.activeElement.
+     */
+
+
+    document.addEventListener('click', function (ev) {
+      dialogPolyfill.formSubmitter = null;
+      dialogPolyfill.useValue = null;
+
+      if (ev.defaultPrevented) {
+        return;
+      } // e.g. a submit which prevents default submission
+
+
+      var target =
+      /** @type {Element} */
+      ev.target;
+
+      if (!target || !isFormMethodDialog(target.form)) {
+        return;
+      }
+
+      var valid = target.type === 'submit' && ['button', 'input'].indexOf(target.localName) > -1;
+
+      if (!valid) {
+        if (!(target.localName === 'input' && target.type === 'image')) {
+          return;
+        } // this is a <input type="image">, which can submit forms
+
+
+        dialogPolyfill.useValue = ev.offsetX + ',' + ev.offsetY;
+      }
+
+      var dialog = findNearestDialog(target);
+
+      if (!dialog) {
+        return;
+      }
+
+      dialogPolyfill.formSubmitter = target;
+    }, false);
+    /**
+     * Replace the native HTMLFormElement.submit() method, as it won't fire the
+     * submit event and give us a chance to respond.
+     */
+
+    var nativeFormSubmit = HTMLFormElement.prototype.submit;
+
+    var replacementFormSubmit = function () {
+      if (!isFormMethodDialog(this)) {
+        return nativeFormSubmit.call(this);
+      }
+
+      var dialog = findNearestDialog(this);
+      dialog && dialog.close();
+    };
+
+    HTMLFormElement.prototype.submit = replacementFormSubmit;
+    /**
+     * Global form 'dialog' method handler. Closes a dialog correctly on submit
+     * and possibly sets its return value.
+     */
+
+    document.addEventListener('submit', function (ev) {
+      var form =
+      /** @type {HTMLFormElement} */
+      ev.target;
+
+      if (!isFormMethodDialog(form)) {
+        return;
+      }
+
+      ev.preventDefault();
+      var dialog = findNearestDialog(form);
+
+      if (!dialog) {
+        return;
+      } // Forms can only be submitted via .submit() or a click (?), but anyway: sanity-check that
+      // the submitter is correct before using its value as .returnValue.
+
+
+      var s = dialogPolyfill.formSubmitter;
+
+      if (s && s.form === form) {
+        dialog.close(dialogPolyfill.useValue || s.value);
+      } else {
+        dialog.close();
+      }
+
+      dialogPolyfill.formSubmitter = null;
+    }, true);
   }
 
   function _typeof$3(obj) {
@@ -3486,7 +4315,7 @@
     return Constructor;
   }
 
-  function _inherits$1(subClass, superClass) {
+  function _inherits(subClass, superClass) {
     if (typeof superClass !== "function" && superClass !== null) {
       throw new TypeError("Super expression must either be null or a function");
     }
@@ -3498,26 +4327,26 @@
         configurable: true
       }
     });
-    if (superClass) _setPrototypeOf$1(subClass, superClass);
+    if (superClass) _setPrototypeOf(subClass, superClass);
   }
 
-  function _getPrototypeOf$1(o) {
-    _getPrototypeOf$1 = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+  function _getPrototypeOf(o) {
+    _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
       return o.__proto__ || Object.getPrototypeOf(o);
     };
-    return _getPrototypeOf$1(o);
+    return _getPrototypeOf(o);
   }
 
-  function _setPrototypeOf$1(o, p) {
-    _setPrototypeOf$1 = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+  function _setPrototypeOf(o, p) {
+    _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
       o.__proto__ = p;
       return o;
     };
 
-    return _setPrototypeOf$1(o, p);
+    return _setPrototypeOf(o, p);
   }
 
-  function isNativeReflectConstruct$1() {
+  function isNativeReflectConstruct() {
     if (typeof Reflect === "undefined" || !Reflect.construct) return false;
     if (Reflect.construct.sham) return false;
     if (typeof Proxy === "function") return true;
@@ -3530,32 +4359,32 @@
     }
   }
 
-  function _construct$1(Parent, args, Class) {
-    if (isNativeReflectConstruct$1()) {
-      _construct$1 = Reflect.construct;
+  function _construct(Parent, args, Class) {
+    if (isNativeReflectConstruct()) {
+      _construct = Reflect.construct;
     } else {
-      _construct$1 = function _construct(Parent, args, Class) {
+      _construct = function _construct(Parent, args, Class) {
         var a = [null];
         a.push.apply(a, args);
         var Constructor = Function.bind.apply(Parent, a);
         var instance = new Constructor();
-        if (Class) _setPrototypeOf$1(instance, Class.prototype);
+        if (Class) _setPrototypeOf(instance, Class.prototype);
         return instance;
       };
     }
 
-    return _construct$1.apply(null, arguments);
+    return _construct.apply(null, arguments);
   }
 
-  function _isNativeFunction$1(fn) {
+  function _isNativeFunction(fn) {
     return Function.toString.call(fn).indexOf("[native code]") !== -1;
   }
 
-  function _wrapNativeSuper$1(Class) {
+  function _wrapNativeSuper(Class) {
     var _cache = typeof Map === "function" ? new Map() : undefined;
 
-    _wrapNativeSuper$1 = function _wrapNativeSuper(Class) {
-      if (Class === null || !_isNativeFunction$1(Class)) return Class;
+    _wrapNativeSuper = function _wrapNativeSuper(Class) {
+      if (Class === null || !_isNativeFunction(Class)) return Class;
 
       if (typeof Class !== "function") {
         throw new TypeError("Super expression must either be null or a function");
@@ -3568,7 +4397,7 @@
       }
 
       function Wrapper() {
-        return _construct$1(Class, arguments, _getPrototypeOf$1(this).constructor);
+        return _construct(Class, arguments, _getPrototypeOf(this).constructor);
       }
 
       Wrapper.prototype = Object.create(Class.prototype, {
@@ -3579,13 +4408,13 @@
           configurable: true
         }
       });
-      return _setPrototypeOf$1(Wrapper, Class);
+      return _setPrototypeOf(Wrapper, Class);
     };
 
-    return _wrapNativeSuper$1(Class);
+    return _wrapNativeSuper(Class);
   }
 
-  function _assertThisInitialized$1(self) {
+  function _assertThisInitialized(self) {
     if (self === void 0) {
       throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
     }
@@ -3593,29 +4422,29 @@
     return self;
   }
 
-  function _possibleConstructorReturn$1(self, call) {
+  function _possibleConstructorReturn(self, call) {
     if (call && (typeof call === "object" || typeof call === "function")) {
       return call;
     }
 
-    return _assertThisInitialized$1(self);
+    return _assertThisInitialized(self);
   }
 
-  function _superPropBase$1(object, property) {
+  function _superPropBase(object, property) {
     while (!Object.prototype.hasOwnProperty.call(object, property)) {
-      object = _getPrototypeOf$1(object);
+      object = _getPrototypeOf(object);
       if (object === null) break;
     }
 
     return object;
   }
 
-  function _get$1(target, property, receiver) {
+  function _get(target, property, receiver) {
     if (typeof Reflect !== "undefined" && Reflect.get) {
-      _get$1 = Reflect.get;
+      _get = Reflect.get;
     } else {
-      _get$1 = function _get(target, property, receiver) {
-        var base = _superPropBase$1(target, property);
+      _get = function _get(target, property, receiver) {
+        var base = _superPropBase(target, property);
 
         if (!base) return;
         var desc = Object.getOwnPropertyDescriptor(base, property);
@@ -3628,7 +4457,7 @@
       };
     }
 
-    return _get$1(target, property, receiver || target);
+    return _get(target, property, receiver || target);
   }
 
   function _slicedToArray$2(arr, i) {
@@ -4170,15 +4999,15 @@
                   return cb ?
                   /*#__PURE__*/
                   function (_baseClass) {
-                    _inherits$1(_class, _baseClass);
+                    _inherits(_class, _baseClass);
 
                     function _class() {
                       var _this;
 
                       _classCallCheck$1(this, _class);
 
-                      _this = _possibleConstructorReturn$1(this, _getPrototypeOf$1(_class).call(this));
-                      cb.call(_assertThisInitialized$1(_assertThisInitialized$1(_this)));
+                      _this = _possibleConstructorReturn(this, _getPrototypeOf(_class).call(this));
+                      cb.call(_assertThisInitialized(_assertThisInitialized(_this)));
                       return _this;
                     }
 
@@ -4186,12 +5015,12 @@
                   }(baseClass) :
                   /*#__PURE__*/
                   function (_baseClass2) {
-                    _inherits$1(_class2, _baseClass2);
+                    _inherits(_class2, _baseClass2);
 
                     function _class2() {
                       _classCallCheck$1(this, _class2);
 
-                      return _possibleConstructorReturn$1(this, _getPrototypeOf$1(_class2).apply(this, arguments));
+                      return _possibleConstructorReturn(this, _getPrototypeOf(_class2).apply(this, arguments));
                     }
 
                     return _class2;
@@ -5308,25 +6137,25 @@
   var JamilihMap =
   /*#__PURE__*/
   function (_Map) {
-    _inherits$1(JamilihMap, _Map);
+    _inherits(JamilihMap, _Map);
 
     function JamilihMap() {
       _classCallCheck$1(this, JamilihMap);
 
-      return _possibleConstructorReturn$1(this, _getPrototypeOf$1(JamilihMap).apply(this, arguments));
+      return _possibleConstructorReturn(this, _getPrototypeOf(JamilihMap).apply(this, arguments));
     }
 
     _createClass$1(JamilihMap, [{
       key: "get",
       value: function get$$1(elem) {
         elem = typeof elem === 'string' ? $(elem) : elem;
-        return _get$1(_getPrototypeOf$1(JamilihMap.prototype), "get", this).call(this, elem);
+        return _get(_getPrototypeOf(JamilihMap.prototype), "get", this).call(this, elem);
       }
     }, {
       key: "set",
       value: function set(elem, value) {
         elem = typeof elem === 'string' ? $(elem) : elem;
-        return _get$1(_getPrototypeOf$1(JamilihMap.prototype), "set", this).call(this, elem, value);
+        return _get(_getPrototypeOf(JamilihMap.prototype), "set", this).call(this, elem, value);
       }
     }, {
       key: "invoke",
@@ -5344,30 +6173,30 @@
     }]);
 
     return JamilihMap;
-  }(_wrapNativeSuper$1(Map));
+  }(_wrapNativeSuper(Map));
 
   var JamilihWeakMap =
   /*#__PURE__*/
   function (_WeakMap) {
-    _inherits$1(JamilihWeakMap, _WeakMap);
+    _inherits(JamilihWeakMap, _WeakMap);
 
     function JamilihWeakMap() {
       _classCallCheck$1(this, JamilihWeakMap);
 
-      return _possibleConstructorReturn$1(this, _getPrototypeOf$1(JamilihWeakMap).apply(this, arguments));
+      return _possibleConstructorReturn(this, _getPrototypeOf(JamilihWeakMap).apply(this, arguments));
     }
 
     _createClass$1(JamilihWeakMap, [{
       key: "get",
       value: function get$$1(elem) {
         elem = typeof elem === 'string' ? $(elem) : elem;
-        return _get$1(_getPrototypeOf$1(JamilihWeakMap.prototype), "get", this).call(this, elem);
+        return _get(_getPrototypeOf(JamilihWeakMap.prototype), "get", this).call(this, elem);
       }
     }, {
       key: "set",
       value: function set(elem, value) {
         elem = typeof elem === 'string' ? $(elem) : elem;
-        return _get$1(_getPrototypeOf$1(JamilihWeakMap.prototype), "set", this).call(this, elem, value);
+        return _get(_getPrototypeOf(JamilihWeakMap.prototype), "set", this).call(this, elem, value);
       }
     }, {
       key: "invoke",
@@ -5385,7 +6214,7 @@
     }]);
 
     return JamilihWeakMap;
-  }(_wrapNativeSuper$1(WeakMap));
+  }(_wrapNativeSuper(WeakMap));
 
   jml.Map = JamilihMap;
   jml.WeakMap = JamilihWeakMap;
@@ -7569,10 +8398,11 @@
 
               try {
                 t[un] = u;
+                var r = !0;
               } catch (t) {}
 
               var o = de.call(t);
-              return e ? t[un] = n : delete t[un], o;
+              return r && (e ? t[un] = n : delete t[un]), o;
             }(t) : function (t) {
               return de.call(t);
             }(t);
@@ -12942,8 +13772,7 @@
               return JsonRefs.resolveRefsAt((basePath || getCurrDir()) + file + (property ? '#/' + property : ''), {
                 loaderOptions: {
                   processContent: function processContent(res, callback) {
-                    callback(undefined, JSON.parse( // eslint-disable-line standard/no-callback-literal
-                    res.text || // `.metadata` not a recognized extension, so
+                    callback(undefined, JSON.parse(res.text || // `.metadata` not a recognized extension, so
                     //    convert to string for JSON in Node
                     res.body.toString()));
                   }
@@ -12963,7 +13792,7 @@
               return _context.stop();
           }
         }
-      }, _callee, this, [[0, 6]]);
+      }, _callee, null, [[0, 6]]);
     }));
 
     return function getMetadata(_x, _x2, _x3) {
@@ -13742,7 +14571,7 @@
                 return _context.stop();
             }
           }
-        }, _callee, this);
+        }, _callee);
       })));
     });
   };
@@ -13897,7 +14726,7 @@
                           return _context2.stop();
                       }
                     }
-                  }, _callee2, this);
+                  }, _callee2);
                 }));
 
                 return function (_x2, _x3) {
@@ -13910,7 +14739,7 @@
               return _context3.stop();
           }
         }
-      }, _callee3, this);
+      }, _callee3);
     }));
 
     return function respondToState(_x) {
@@ -13992,7 +14821,7 @@
               return _context4.stop();
           }
         }
-      }, _callee4, this, [[2, 8]]);
+      }, _callee4, null, [[2, 8]]);
     }));
 
     return function registerServiceWorker(_x4) {
@@ -14713,7 +15542,7 @@
                       return _context.stop();
                   }
                 }
-              }, _callee, this);
+              }, _callee);
             }));
 
             function click() {
@@ -14747,7 +15576,7 @@
       i > 0 ? [['td', {
         colspan: 12,
         align: 'center'
-      }, [['br'], ld('or'), ['br'], ['br']]]] : '', _toConsumableArray(function () {
+      }, [['br'], ld('or'), ['br'], ['br']]]] : '', [].concat(_toConsumableArray(function () {
         var addBrowseFieldSet = function addBrowseFieldSet(setType) {
           return browseFields.reduce(function (rowContent, _ref20, j) {
             var fieldName = _ref20.fieldName,
@@ -14794,7 +15623,7 @@
         };
 
         return [addBrowseFieldSet('start'), ['td', [['b', [ld('to')]], nbsp3]], addBrowseFieldSet('end')];
-      }()).concat([['td', [browseFields.length > 1 ? ld('versesendingdataoptional') : '']]]), [['td', {
+      }()), [['td', [browseFields.length > 1 ? ld('versesendingdataoptional') : '']]]), [['td', {
         colspan: 4 * browseFields.length + 2 + 1,
         align: 'center'
       }, [['table', [['tr', [browseFields.reduce(function (rowContent, _ref21, j) {
@@ -15024,7 +15853,7 @@
                       return _context2.stop();
                   }
                 }
-              }, _callee2, this, [[3, 8]]);
+              }, _callee2, null, [[3, 8]]);
             }));
 
             function click(_x) {
@@ -15620,11 +16449,11 @@
       this.l10n = l10n;
 
       if (!params) {
-        params = location.hash.slice(1); // eslint-disable-line no-undef
+        params = location.hash.slice(1);
       }
 
       if (typeof params === 'string') {
-        params = new URLSearchParams(params); // eslint-disable-line no-undef
+        params = new URLSearchParams(params);
       }
 
       this.params = params;
@@ -15706,7 +16535,6 @@
             case 8:
               metadataObjs = _context.sent;
               imfFile = IMFClass({
-                // eslint-disable-line new-cap
                 locales: lang.map(localeFromFileData),
                 fallbackLocales: fallbackLanguages.map(localeFromFileData)
               });
@@ -15755,7 +16583,7 @@
               return _context.stop();
           }
         }
-      }, _callee, this, [[1, 17]]);
+      }, _callee, null, [[1, 17]]);
     }));
     return _workSelect.apply(this, arguments);
   }
@@ -15935,8 +16763,7 @@
                           imfLang = IMFClass({
                             locales: lang.map(localeFromLangData),
                             fallbackLocales: fallbackLanguages.map(localeFromLangData)
-                          }); // eslint-disable-line new-cap
-
+                          });
                           imfl = imfLang.getFormatter(); // Returns option element with localized option text (as Jamilih), with
                           //   optional fallback direction
 
@@ -16073,7 +16900,7 @@
                                                     return _context.stop();
                                                 }
                                               }
-                                            }, _callee, this);
+                                            }, _callee);
                                           }));
 
                                           return function (_x4, _x5) {
@@ -16093,7 +16920,7 @@
                                         return _context2.stop();
                                     }
                                   }
-                                }, _callee2, this);
+                                }, _callee2);
                               }));
 
                               return function (_x3) {
@@ -16116,7 +16943,7 @@
                                         return _context3.stop();
                                     }
                                   }
-                                }, _callee3, this);
+                                }, _callee3);
                               }))
                             );
                           }();
@@ -16572,52 +17399,6 @@
     }
 
     return resultsDisplayClient;
-  }();
-  var resultsDisplayServer =
-  /*#__PURE__*/
-  function () {
-    var _resultsDisplayServer = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(args) {
-      var _ref4, templateArgs, jamilih;
-
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              _context2.next = 2;
-              return resultsDisplayServerOrClient$1.call(this, _objectSpread({}, args));
-
-            case 2:
-              _ref4 = _context2.sent;
-              templateArgs = _ref4.templateArgs;
-              _context2.t0 = args.serverOutput;
-              _context2.next = _context2.t0 === 'json' ? 7 : _context2.t0 === 'jamilih' ? 8 : _context2.t0 === 'html' ? 9 : 7;
-              break;
-
-            case 7:
-              return _context2.abrupt("return", templateArgs.tableData);
-
-            case 8:
-              return _context2.abrupt("return", Templates.resultsDisplayServerOrClient.main(templateArgs));
-
-            case 9:
-              jamilih = Templates.resultsDisplayServerOrClient.main(templateArgs);
-              return _context2.abrupt("return", jml.toHTML.apply(jml, _toConsumableArray(jamilih)));
-
-            case 11:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2, this);
-    }));
-
-    function resultsDisplayServer(_x2) {
-      return _resultsDisplayServer.apply(this, arguments);
-    }
-
-    return resultsDisplayServer;
   }();
   var resultsDisplayServerOrClient$1 =
   /*#__PURE__*/
@@ -17645,7 +18426,6 @@
             case 0:
               _context9.next = 2;
               return new Promise(function (resolve, reject) {
-                // eslint-disable-line promise/avoid-new
                 // Todo: We could run the dialog code below for every page if
                 //    `Notification.permission === 'default'` (i.e., not choice
                 //    yet made by user), but user may avoid denying with intent
@@ -17675,7 +18455,7 @@
                             return _context7.stop();
                         }
                       }
-                    }, _callee7, this);
+                    }, _callee7);
                   }));
 
                   return function ok() {
@@ -17770,7 +18550,7 @@
                             return _context8.stop();
                         }
                       }
-                    }, _callee8, this, [[1, 7]]);
+                    }, _callee8, null, [[1, 7]]);
                   }));
 
                   return function close() {
@@ -17798,7 +18578,7 @@
               return _context9.stop();
           }
         }
-      }, _callee9, this);
+      }, _callee9);
     }));
     return _requestPermissions.apply(this, arguments);
   }
@@ -17827,9 +18607,14 @@
       this.showTitleOnSingleInterlinear = options.showTitleOnSingleInterlinear;
       this.noDynamic = options.noDynamic;
       this.skipIndexedDB = options.skipIndexedDB;
-      this.stylesheets = (options.stylesheets || ['@builtin']).map(function (s) {
-        return s === '@builtin' ? new URL('index.css', moduleURL).href : s;
-      });
+      var stylesheets = options.stylesheets || ['@builtin'];
+      var builtinIndex = stylesheets.indexOf('@builtin');
+
+      if (builtinIndex !== -1) {
+        stylesheets.splice(builtinIndex, 1, new URL('index.css', moduleURL).href, new URL('../../dialog-polyfill/dist/dialog-polyfill.css', moduleURL).href);
+      }
+
+      this.stylesheets = stylesheets;
     }
 
     _createClass(TextBrowser, [{
@@ -17918,7 +18703,7 @@
       }()
     }, {
       key: "getWorkData",
-      value: function getWorkData$$1(opts) {
+      value: function getWorkData$1(opts) {
         try {
           return getWorkData.call(this, _objectSpread({}, opts, {
             files: this.files,
@@ -17944,14 +18729,14 @@
       }
     }, {
       key: "getFieldNameAndValueAliases",
-      value: function getFieldNameAndValueAliases$$1(args) {
+      value: function getFieldNameAndValueAliases$1(args) {
         return getFieldNameAndValueAliases(_objectSpread({}, args, {
           lang: this.lang
         }));
       }
     }, {
       key: "getBrowseFieldData",
-      value: function getBrowseFieldData$$1(args) {
+      value: function getBrowseFieldData$1(args) {
         return getBrowseFieldData(_objectSpread({}, args, {
           lang: this.lang
         }));
@@ -17977,7 +18762,6 @@
                   }) : new IntlURLSearchParams(); // Uses URL hash for params
 
                   followParams = function followParams(formSelector, cb) {
-                    // eslint-disable-line promise/prefer-await-to-callbacks
                     var form = document.querySelector(formSelector); // Record current URL along with state
 
                     var url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
@@ -17986,8 +18770,7 @@
                       empty: true
                     }), document.title, url); // Get and set new state within URL
 
-                    cb(); // eslint-disable-line promise/prefer-await-to-callbacks, callback-return
-
+                    cb();
                     location.hash = '#' + $p.toString();
                   };
 
@@ -18103,7 +18886,7 @@
                               return _context3.stop();
                           }
                         }
-                      }, _callee3, this);
+                      }, _callee3);
                     }));
 
                     return function register() {
@@ -18195,7 +18978,7 @@
                               return _context4.stop();
                           }
                         }
-                      }, _callee4, this, [[0, 4]]);
+                      }, _callee4, null, [[0, 4]]);
                     }));
 
                     return function respondToStateOfWorker() {

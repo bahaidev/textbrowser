@@ -40,7 +40,7 @@ export const getMetadata = async (file, property, basePath) => {
                 {
                     loaderOptions: {
                         processContent (res, callback) {
-                            callback(undefined, JSON.parse( // eslint-disable-line standard/no-callback-literal
+                            callback(undefined, JSON.parse(
                                 res.text ||
                                 // `.metadata` not a recognized extension, so
                                 //    convert to string for JSON in Node

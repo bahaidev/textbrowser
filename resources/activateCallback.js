@@ -56,7 +56,7 @@ export default async function activateCallback ({
     log('Activate: Files fetched');
     const dbName = namespace + '-textbrowser-cache-data';
     indexedDB.deleteDatabase(dbName);
-    return new Promise((resolve, reject) => { // eslint-disable-line promise/avoid-new
+    return new Promise((resolve, reject) => {
         const req = indexedDB.open(dbName);
         req.addEventListener('upgradeneeded', ({target: {result: db}}) => {
             db.onversionchange = () => {

@@ -8,6 +8,7 @@ var getJSON = _interopDefault(require('simple-get-json'));
 var rtlDetect = require('rtl-detect');
 var jamilih = require('jamilih');
 var formSerialize = require('form-serialize');
+var dialogPolyfill = _interopDefault(require('dialog-polyfill'));
 var IMF = _interopDefault(require('imf'));
 
 function _defineProperty(obj, key, value) {
@@ -132,11 +133,11 @@ class IntlURLSearchParams {
     this.l10n = l10n;
 
     if (!params) {
-      params = location.hash.slice(1); // eslint-disable-line no-undef
+      params = location.hash.slice(1);
     }
 
     if (typeof params === 'string') {
-      params = new URLSearchParams(params); // eslint-disable-line no-undef
+      params = new URLSearchParams(params);
     }
 
     this.params = params;
@@ -2137,8 +2138,7 @@ const getMetadata = async (file, property, basePath) => {
     return (await JsonRefs.resolveRefsAt((basePath || getCurrDir()) + file + (property ? '#/' + property : ''), {
       loaderOptions: {
         processContent(res, callback) {
-          callback(undefined, JSON.parse( // eslint-disable-line standard/no-callback-literal
-          res.text || // `.metadata` not a recognized extension, so
+          callback(undefined, JSON.parse(res.text || // `.metadata` not a recognized extension, so
           //    convert to string for JSON in Node
           res.body.toString()));
         }
@@ -2736,8 +2736,8 @@ const resultsDisplayServer = async function resultsDisplayServer(args) {
 
     case 'html':
       {
-        const jamilih$$1 = Templates.resultsDisplayServerOrClient.main(templateArgs);
-        return jamilih.jml.toHTML(...jamilih$$1);
+        const jamilih$1 = Templates.resultsDisplayServerOrClient.main(templateArgs);
+        return jamilih.jml.toHTML(...jamilih$1);
       }
   }
 };
@@ -3773,6 +3773,8 @@ console.log('past activate check');
 global.DOMParser = require('dom-parser'); // potentially used within resultsDisplay.js
 
 const statik = require('node-static');
+/* eslint-enable import/no-commonjs */
+
 
 const fileServer = new statik.Server(); // Pass path; otherwise uses current directory
 

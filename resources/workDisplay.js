@@ -45,7 +45,7 @@ export default async function workDisplay ({
         const imfLang = IMF({
             locales: lang.map(localeFromLangData),
             fallbackLocales: fallbackLanguages.map(localeFromLangData)
-        }); // eslint-disable-line new-cap
+        });
         const imfl = imfLang.getFormatter();
 
         // Returns option element with localized option text (as Jamilih), with

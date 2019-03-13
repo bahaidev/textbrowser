@@ -1,4 +1,4 @@
-/* globals dialogPolyfill */
+import dialogPolyfill from 'dialog-polyfill';
 import {jml, nbsp, body} from 'jamilih';
 import {$e} from '../templates/utils/dom.js';
 

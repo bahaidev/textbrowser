@@ -17,10 +17,10 @@ class IntlURLSearchParams {
     constructor ({l10n, params} = {}) {
         this.l10n = l10n;
         if (!params) {
-            params = location.hash.slice(1); // eslint-disable-line no-undef
+            params = location.hash.slice(1);
         }
         if (typeof params === 'string') {
-            params = new URLSearchParams(params); // eslint-disable-line no-undef
+            params = new URLSearchParams(params);
         }
         this.params = params;
     }

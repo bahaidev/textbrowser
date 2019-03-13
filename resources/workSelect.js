@@ -24,7 +24,7 @@ export default async function workSelect ({
                 ar.concat(metadataBaseDir + fileData.metadataFile),
             arr);
         }, []));
-        const imfFile = IMF({ // eslint-disable-line new-cap
+        const imfFile = IMF({
             locales: lang.map(localeFromFileData),
             fallbackLocales: fallbackLanguages.map(localeFromFileData)
         });

@@ -7,7 +7,7 @@ module.exports = {
   "settings": {
     "polyfills": [
         "url", "promises", "fetch", "queryselector",
-        "serviceworkers", "urlsearchparams"
+        "serviceworkers", "urlsearchparams", "object-values"
     ]
   },
   "overrides": [{

@@ -106,7 +106,7 @@ console.log('past activate check');
 global.DOMParser = require('dom-parser'); // potentially used within resultsDisplay.js
 
 const statik = require('node-static');
-
+/* eslint-enable import/no-commonjs */
 const fileServer = new statik.Server(); // Pass path; otherwise uses current directory
 
 let langData, languagesInstance;

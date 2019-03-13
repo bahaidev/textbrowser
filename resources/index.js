@@ -60,7 +60,7 @@ async function prepareForServiceWorker (langs) {
 }
 
 async function requestPermissions (langs, l) {
-    await new Promise((resolve, reject) => { // eslint-disable-line promise/avoid-new
+    await new Promise((resolve, reject) => {
         // Todo: We could run the dialog code below for every page if
         //    `Notification.permission === 'default'` (i.e., not choice
         //    yet made by user), but user may avoid denying with intent
@@ -156,9 +156,18 @@ class TextBrowser {
         this.showTitleOnSingleInterlinear = options.showTitleOnSingleInterlinear;
         this.noDynamic = options.noDynamic;
         this.skipIndexedDB = options.skipIndexedDB;
-        this.stylesheets = (options.stylesheets || ['@builtin']).map((s) => {
-            return s === '@builtin' ? new URL('index.css', moduleURL).href : s;
-        });
+
+        const stylesheets = options.stylesheets || ['@builtin'];
+        const builtinIndex = stylesheets.indexOf('@builtin');
+        if (builtinIndex !== -1) {
+            stylesheets.splice(
+                builtinIndex,
+                1,
+                new URL('index.css', moduleURL).href,
+                new URL('../../dialog-polyfill/dist/dialog-polyfill.css', moduleURL).href
+            );
+        }
+        this.stylesheets = stylesheets;
     }
 
     async init () {
@@ -228,13 +237,13 @@ class TextBrowser {
             ? new IntlURLSearchParams({params: history.state})
             : new IntlURLSearchParams(); // Uses URL hash for params
 
-        const followParams = (formSelector, cb) => { // eslint-disable-line promise/prefer-await-to-callbacks
+        const followParams = (formSelector, cb) => {
             const form = document.querySelector(formSelector);
             // Record current URL along with state
             const url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
             history.replaceState(formSerialize(form, {hash: true, empty: true}), document.title, url);
             // Get and set new state within URL
-            cb(); // eslint-disable-line promise/prefer-await-to-callbacks, callback-return
+            cb();
             location.hash = '#' + $p.toString();
         };
 
@@ -399,7 +408,7 @@ class TextBrowser {
                 // Don't return as user may continue working until installed (though
                 //    will get message to close tab)
                 break;
-            case 'installed': // eslint-disable-line no-fallthrough
+            case 'installed':
                 // Waiting ensures only one version of our service worker active
                 // No dedicated "waiting" state so handle here
                 // Will use `r.waiting`
