@@ -851,7 +851,8 @@ it supports the following arguments:
                 text-to-(Google search, Google define, Wikipedia, etc.
                 edit pages)-links
         1.  Auto-links by verse to relevant forums, wikis, blogs, or personal
-            notes pertaining to a given verse
+            notes pertaining to a given verse; also Q&A and (federated)
+            social media
             1.  Built-in (including offline or only offline) note-taking
                (local/remote and wiki WYSIWYG with Git version control?);
                modular loading of others' notes?
