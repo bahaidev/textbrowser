@@ -4,6 +4,8 @@
 
 - Breaking change: `TextBrowser` must now be used with `new`
     (`IntlURLSearchParams` also refactored as class)
+- Refactoring: Use modular form of dialog-polyfill
+- Change: Add dialog stylesheet when `@builtin` stylesheet is used
 - Linting: Add recommended extension to `.eslintrc` (.js); apply
     ash-nazg rules
 - Docs: In todo comments, refer to `import.meta.url` (also apparently
@@ -12,6 +14,8 @@
 - Docs (README): Document server API, plugins, and `userJSON` property
 - Docs (README): Clean-up/clarify; indicate `user.json` as recommended;
     document `{locale}` value, and `shortcut` and `meta` properties
+- Testing: Add schema and tests for user-json schema
+- npm: Update deps and devDeps
 
 ## 0.28.0
 
