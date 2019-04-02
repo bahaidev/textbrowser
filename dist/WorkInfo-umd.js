@@ -3179,9 +3179,9 @@
       };
   };
 
-  exports.getWorkFiles = getWorkFiles;
   exports.getFilePaths = getFilePaths;
   exports.getWorkData = getWorkData;
+  exports.getWorkFiles = getWorkFiles;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
