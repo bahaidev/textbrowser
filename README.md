@@ -1112,9 +1112,6 @@ it supports the following arguments:
 1.  Restore `tabindex` usage
 1.  Restore option from work page to have a checkbox on whether to go to
     "Advanced mode", opening the styling options by default or not.
-1.  Testing
-    1.  Start browser testing: <https://www.npmjs.com/package/testcafe> (or
-        possibly <http://nightwatchjs.org/>); headless Chrome?
 
 ## Testing
 
