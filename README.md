@@ -739,6 +739,8 @@ it supports the following arguments:
 1.  Document and add screen-casts along with one for developers showing
     JSON format, metadata, and schemas); also use with shortcuts (including
     Bahá'í Library Online ones)
+1.  For plugins, allow export of `stylesheets` array to add to
+    `loadStylesheets`, so they don't have to do the importing and executing.
 1.  **Progress meter** with hidden console to avoid intimidating loading
     messages of service worker
 1.  **Move "Go"** to right (or immediate bottom) of paragraph selections
