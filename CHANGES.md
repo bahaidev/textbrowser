@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.29.1
+
+- Update: In sample Service worker, point to new dialog-polyfill path
+
 ## 0.29.0
 
 - Breaking change: `TextBrowser` must now be used with `new`

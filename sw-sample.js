@@ -132,7 +132,7 @@ const defaultUserStaticFiles = [
 const textbrowserStaticResourceFiles = [
     'node_modules/@babel/polyfill/dist/polyfill.js',
     'node_modules/dialog-polyfill/dialog-polyfill.css',
-    'node_modules/dialog-polyfill/dialog-polyfill.js',
+    'node_modules/dialog-polyfill/dist/dialog-polyfill.esm.js',
 
     'node_modules/textbrowser/appdata/languages.json',
 
