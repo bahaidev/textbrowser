@@ -1,6 +1,6 @@
 # textbrowser CHANGES
 
-## ?
+## 0.29.0
 
 - Breaking change: `TextBrowser` must now be used with `new`
     (`IntlURLSearchParams` also refactored as class)
