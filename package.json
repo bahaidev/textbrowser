@@ -19,7 +19,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brettz9/textbrowser.git"
+    "url": "git+https://github.com/bahaidev/textbrowser.git"
   },
   "dependencies": {
     "@babel/core": "^7.4.0",
@@ -84,7 +84,7 @@
     "text"
   ],
   "bugs": {
-    "url": "https://github.com/brettz9/textbrowser/issues"
+    "url": "https://github.com/bahaidev/textbrowser/issues"
   },
-  "homepage": "https://github.com/brettz9/textbrowser#readme"
+  "homepage": "https://github.com/bahaidev/textbrowser#readme"
 }
