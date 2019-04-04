@@ -8,7 +8,6 @@ var getJSON = _interopDefault(require('simple-get-json'));
 var rtlDetect = require('rtl-detect');
 var jamilih = require('jamilih');
 var formSerialize = require('form-serialize');
-var dialogPolyfill = _interopDefault(require('dialog-polyfill'));
 var IMF = _interopDefault(require('imf'));
 
 function _defineProperty(obj, key, value) {
@@ -1658,7 +1657,6 @@ class Dialog {
     }
 
     const dialog = jamilih.jml('dialog', atts, children, jamilih.body);
-    dialogPolyfill.registerDialog(dialog);
     dialog.showModal();
 
     if (remove) {
@@ -1753,7 +1751,6 @@ class Dialog {
 
         }
       }, [this.localeStrings.ok]]]]] : [])], jamilih.body);
-      dialogPolyfill.registerDialog(dialog);
       dialog.showModal();
     });
   }
@@ -1827,7 +1824,6 @@ class Dialog {
 
         }
       }, [this.localeStrings.cancel]]]]], jamilih.body);
-      dialogPolyfill.registerDialog(dialog);
       dialog.showModal();
     });
   }

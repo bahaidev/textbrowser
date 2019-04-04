@@ -1,5 +1,10 @@
 # textbrowser CHANGES
 
+## 0.29.2
+
+- Fix (Server): Replace the dialog polyfill with our own noop
+    polyfill for Node
+
 ## 0.29.1
 
 - Update: In sample Service worker, point to new dialog-polyfill path

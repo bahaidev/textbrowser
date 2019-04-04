@@ -120,6 +120,10 @@ export default [
                     include: ['resources/resultsDisplay.js', 'resources/utils/Metadata.js'],
                     test: "import JsonRefs from 'json-refs/dist/json-refs-min.js';",
                     replace: "const JsonRefs = require('json-refs');"
+                }, {
+                    include: ['resources/utils/dialogs.js'],
+                    test: "import dialogPolyfill from 'dialog-polyfill';",
+                    replace: 'const dialogPolyfill = {registerDialog () {}};'
                 }]
             }),
             json(),
