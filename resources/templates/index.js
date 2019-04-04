@@ -14,13 +14,14 @@ const Templates = {
     resultsDisplayServerOrClient,
     resultsDisplayClient,
     defaultBody () {
-        $('html').style.height = '100%'; // Todo: Set in CSS
-        // We empty rather than `replaceWith` as our Jamilih `body` aliases
-        //   expect the old instance
+        // We empty rather than `replaceWith` as our Jamilih `body`
+        //   aliases expect the old instance
         while (body.hasChildNodes()) {
             body.firstChild.remove();
         }
-        return jml(body, {style: 'height: 100%;'});
+        return jml('div', {
+            id: 'main', role: 'main'
+        }, body);
     }
 };
 Templates.permissions = {
@@ -152,7 +153,7 @@ Templates.permissions = {
             errorRegisteringNotice,
             versionChangeNotice,
             dbErrorNotice
-        ], body);
+        ], $('#main'));
 
         return [
             installationDialog,

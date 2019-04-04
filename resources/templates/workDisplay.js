@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import {jml, $, $$, nbsp, body} from 'jamilih';
+import {jml, $, $$, nbsp} from 'jamilih';
 import Templates from './index.js';
 import {colors, fonts} from './utils/html.js';
 
@@ -683,7 +683,7 @@ export default {
                             hidden: true,
                             download: 'bookmarks.html',
                             href: url
-                        }, body);
+                        }, $('#main'));
                         a.click();
                         URL.revokeObjectURL(url);
                     }
@@ -979,7 +979,7 @@ export default {
                     ]]
                 ]]
             ],
-            body
+            $('#main')
         );
     }
 };

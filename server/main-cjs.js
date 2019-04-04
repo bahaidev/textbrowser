@@ -210,7 +210,7 @@ var languageSelect = {
       code
     }) => ['option', {
       value: code
-    }, [languages.getLanguageFromCode(code)]])]], jamilih.body);
+    }, [languages.getLanguageFromCode(code)]])]], jamilih.$('#main'));
 
     if (history.state && typeof history.state === 'object') {
       formSerialize.deserialize(document.querySelector('#languageSelectionContainer'), history.state);
@@ -223,7 +223,7 @@ var languageSelect = {
       ['div', [
           ['a', {href: '#', dataset: {code}}, [name]]
       ]]
-  ), body
+  ), $('#main')
   */
 
 
@@ -281,7 +281,7 @@ var workSelect = (({
     value: lf(['workNames', group.id, fileName])
   }, [getNextAlias()]])]] // Todo: Add in Go button (with 'submitgo' localization string) to
   //    avoid need for pull-down if using first selection?
-  ]]), jamilih.body);
+  ]]), jamilih.$('#main'));
 
   if (history.state && typeof history.state === 'object') {
     formSerialize.deserialize(document.querySelector('#workSelect'), history.state);
@@ -850,7 +850,7 @@ var workDisplay = {
           hidden: true,
           download: 'bookmarks.html',
           href: url
-        }, jamilih.body);
+        }, jamilih.$('#main'));
         a.click();
         URL.revokeObjectURL(url);
       }
@@ -1189,7 +1189,7 @@ var workDisplay = {
       align: 'center'
     }, [le('submitgo', 'input', 'value', {
       type: 'submit'
-    })]]]]], jamilih.body);
+    })]]]]], jamilih.$('#main'));
   }
 
 };
@@ -1274,7 +1274,7 @@ var resultsDisplayServerOrClient = {
     const topToBodyEndCalc = `calc(${topToBodyEnd})`;
     const topToFooter = `calc(${topToBodyEnd} + ${bodyToFooterPadding})`;
     return ['style', [(tableWithFixedHeaderAndFooter ? `
-html, body, body > div {
+html, body, #main, #main > div {
     height: 100%; /* Needed to ensure descendent heights retain 100%; could be avoided if didn't want percent on table height */
     overflow-y: hidden; /* Not sure why we're getting extra here, but... */
 }
@@ -1656,7 +1656,7 @@ class Dialog {
       }
     }
 
-    const dialog = jamilih.jml('dialog', atts, children, jamilih.body);
+    const dialog = jamilih.jml('dialog', atts, children, jamilih.$('#main'));
     dialog.showModal();
 
     if (remove) {
@@ -1750,7 +1750,7 @@ class Dialog {
           }
 
         }
-      }, [this.localeStrings.ok]]]]] : [])], jamilih.body);
+      }, [this.localeStrings.ok]]]]] : [])], jamilih.$('#main'));
       dialog.showModal();
     });
   }
@@ -1823,7 +1823,7 @@ class Dialog {
           }
 
         }
-      }, [this.localeStrings.cancel]]]]], jamilih.body);
+      }, [this.localeStrings.cancel]]]]], jamilih.$('#main'));
       dialog.showModal();
     });
   }
@@ -1858,7 +1858,7 @@ var resultsDisplayClient = {
       }
     }
 
-    jamilih.jml(...html, jamilih.body);
+    jamilih.jml(...html, jamilih.$('#main'));
   }
 
 };
@@ -1872,17 +1872,16 @@ const Templates = {
   resultsDisplayClient,
 
   defaultBody() {
-    jamilih.$('html').style.height = '100%'; // Todo: Set in CSS
-    // We empty rather than `replaceWith` as our Jamilih `body` aliases
-    //   expect the old instance
-
+    // We empty rather than `replaceWith` as our Jamilih `body`
+    //   aliases expect the old instance
     while (jamilih.body.hasChildNodes()) {
       jamilih.body.firstChild.remove();
     }
 
-    return jamilih.jml(jamilih.body, {
-      style: 'height: 100%;'
-    });
+    return jamilih.jml('div', {
+      id: 'main',
+      role: 'main'
+    }, jamilih.body);
   }
 
 };
@@ -2001,7 +2000,7 @@ Templates.permissions = {
     jamilih.jml('div', {
       id: 'dialogContainer',
       style: 'height: 100%'
-    }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], jamilih.body);
+    }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], jamilih.$('#main'));
     return [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice];
   }
 

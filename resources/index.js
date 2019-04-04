@@ -258,17 +258,9 @@ class TextBrowser {
 
         const [preferredLocale] = lang;
         const direction = this.getDirectionForLanguageCode(preferredLocale);
+        document.documentElement.lang = preferredLocale;
         document.dir = direction;
-        const refusedIndexedDB =
-            // User may have persistence via bookmarks, etc. but just not
-            //     want commital on notification
-            // Notification.permission === 'default' ||
-            // We always expect a controller, so is probably first visit
-            localStorage.getItem(this.namespace + '-refused');
 
-        // This check goes further than `Notification.permission === 'granted'`
-        //   to see whether the browser actually considers the notification
-        //   sufficient to grant persistence (as it is supposed to do).
         const getSiteI18n = () => {
             const localeFromSiteData = (lan) => {
                 return this.siteData['localization-strings'][lan];
@@ -280,8 +272,21 @@ class TextBrowser {
             return imfSite.getFormatter();
         };
 
-        let siteI18n;
-        const result = $p.get('result');
+        const siteI18n = getSiteI18n();
+        // Even if individual pages may end up changing, we need a
+        //   title now for accessibility
+        document.title = siteI18n('browser-title');
+
+        const refusedIndexedDB =
+            // User may have persistence via bookmarks, etc. but just not
+            //     want commital on notification
+            // Notification.permission === 'default' ||
+            // We always expect a controller, so is probably first visit
+            localStorage.getItem(this.namespace + '-refused');
+
+        // This check goes further than `Notification.permission === 'granted'`
+        //   to see whether the browser actually considers the notification
+        //   sufficient to grant persistence (as it is supposed to do).
 
         // Todo: For now, we won't give opportunity to store offline on
         //    results page. We could add a small button to open a dialog,
@@ -294,6 +299,7 @@ class TextBrowser {
 
         const r = await navigator.serviceWorker.getRegistration(this.serviceWorkerPath);
 
+        const result = $p.get('result');
         const register = async () => {
             /*
             console.log(
@@ -310,7 +316,6 @@ class TextBrowser {
                     !persistent);
 
             if (tryRegistrationOrPersistence) {
-                siteI18n = getSiteI18n();
                 // Note: In Chrome on 127.0.0.1 (but not localhost!),
                 //        this always appears to be `true`, despite having
                 //        no notifications enabled or bookmarking 127.0.0.1,
@@ -343,7 +348,6 @@ class TextBrowser {
         if (!r) {
             await register();
         } else {
-            siteI18n = getSiteI18n();
             const worker = r.installing || r.waiting || r.active;
             if (!worker) {
                 // Todo: Why wouldn't there be a worker here?
@@ -465,20 +469,15 @@ class TextBrowser {
 
         Templates.permissions.exitDialogs();
         if (!languageParam) {
-            const languageSelect = (l) => {
-                $p.l10n = l;
-                // Also can use l('chooselanguage'), but assumes locale
-                //   as with page title
-                document.title = l('browser-title');
-                Templates.languageSelect.main({
-                    langs, languages, followParams, $p
-                });
-            };
-            const l = siteI18n || getSiteI18n();
-            languageSelect(l);
+            // Also could use l('chooselanguage'), but assumes locale
+            //   as with page title
+            $p.l10n = siteI18n; // Is this in use?
+            document.title = siteI18n('languages-title');
+            Templates.languageSelect.main({
+                langs, languages, followParams, $p
+            });
             return;
         }
-        document.documentElement.lang = preferredLocale;
 
         const localeCallback = (l /* defineFormatter */) => {
             this.l10n = l;

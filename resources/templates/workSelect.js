@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import {jml, body} from 'jamilih';
+import {jml, $} from 'jamilih';
 import {deserialize as formDeserialize} from 'form-serialize';
 
 export default ({groups, lf, getNextAlias, $p, followParams}) => {
@@ -48,7 +48,7 @@ export default ({groups, lf, getNextAlias, $p, followParams}) => {
                 //    avoid need for pull-down if using first selection?
             ]]
         ),
-        body
+        $('#main')
     );
     if (history.state && typeof history.state === 'object') {
         formDeserialize(document.querySelector('#workSelect'), history.state);

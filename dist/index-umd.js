@@ -6379,7 +6379,7 @@
           }
         }
 
-        var dialog = jml('dialog', atts, children, body);
+        var dialog = jml('dialog', atts, children, $('#main'));
         dialogPolyfill.registerDialog(dialog);
         dialog.showModal();
 
@@ -6474,7 +6474,7 @@
                 resolve();
               }
             }
-          }, [_this.localeStrings.ok]]]]] : [])), body);
+          }, [_this.localeStrings.ok]]]]] : [])), $('#main'));
           dialogPolyfill.registerDialog(dialog);
           dialog.showModal();
         });
@@ -6549,7 +6549,7 @@
                 reject(new Error('cancelled'));
               }
             }
-          }, [_this3.localeStrings.cancel]]]]], body);
+          }, [_this3.localeStrings.cancel]]]]], $('#main'));
           dialogPolyfill.registerDialog(dialog);
           dialog.showModal();
         });
@@ -14863,7 +14863,7 @@
         return ['option', {
           value: code
         }, [languages.getLanguageFromCode(code)]];
-      })]], body);
+      })]], $('#main'));
 
       if (history.state && _typeof(history.state) === 'object') {
         deserialize(document.querySelector('#languageSelectionContainer'), history.state);
@@ -14876,7 +14876,7 @@
         ['div', [
             ['a', {href: '#', dataset: {code}}, [name]]
         ]]
-    ), body
+    ), $('#main')
     */
 
   };
@@ -14930,7 +14930,7 @@
       })))] // Todo: Add in Go button (with 'submitgo' localization string) to
       //    avoid need for pull-down if using first selection?
       ]];
-    }), body);
+    }), $('#main'));
 
     if (history.state && _typeof(history.state) === 'object') {
       deserialize(document.querySelector('#workSelect'), history.state);
@@ -15533,7 +15533,7 @@
                         hidden: true,
                         download: 'bookmarks.html',
                         href: url
-                      }, body);
+                      }, $('#main'));
                       a.click();
                       URL.revokeObjectURL(url);
 
@@ -15903,7 +15903,7 @@
         align: 'center'
       }, [le('submitgo', 'input', 'value', {
         type: 'submit'
-      })]]]]], body);
+      })]]]]], $('#main'));
     }
   };
 
@@ -15971,7 +15971,7 @@
       var topToBodyEnd = "100% - ".concat(topToBodyStart, " - ").concat(footerHeight, " - ").concat(bodyToFooterPadding);
       var topToBodyEndCalc = "calc(".concat(topToBodyEnd, ")");
       var topToFooter = "calc(".concat(topToBodyEnd, " + ").concat(bodyToFooterPadding, ")");
-      return ['style', [(tableWithFixedHeaderAndFooter ? "\nhtml, body, body > div {\n    height: 100%; /* Needed to ensure descendent heights retain 100%; could be avoided if didn't want percent on table height */\n    overflow-y: hidden; /* Not sure why we're getting extra here, but... */\n}\n.anchor-table-header {\n    background-color: ".concat(bgcolorEsc || 'white', "; /* Header background (not just for div text inside header, but for whole header area) */\n    overflow-x: hidden; /* Not sure why we're getting extra here, but... */\n    position: relative; /* Ensures we are still flowing, but provides anchor for absolutely positioned thead below (absolute positioning positions relative to nearest non-static ancestor; clear demo at https://www.w3schools.com/cssref/playit.asp?filename=playcss_position&preval=fixed ) */\n    padding-top: ").concat(topToBodyStart, "; /* Provides space for the header (and caption) (the one that is absolutely positioned below relative to here) */\n    height: ").concat(tableHeight, "; /* Percent of the whole screen taken by the table */\n}\n.anchor-table-body {\n    overflow-y: auto; /* Provides scrollbars when text fills up beyond the height */\n    height: ").concat(topToBodyEndCalc, "; /* If < 100%, the header anchor background color will seep below table */\n}\n\n.caption, .thead .th, .tfoot .th {\n    line-height: 0; /* th div will have own line-height; reducing here avoids fattening it by an inner div */\n    color: transparent; /* Hides the non-div duplicated header text */\n    white-space: nowrap; /* Ensures column header text uses up full width without overlap (esp. wrap no longer seems to work); this must be applied outside of the div */\n    border: none; /* We don't want a border for this invisible section */\n}\ndiv.inner-caption, .thead .th div.th-inner, .tfoot .th div.th-inner { /* divs are used as th is supposedly problematic */\n    position: absolute; /* Puts relative to nearest non-static ancestor (our relative header anchor) */\n    color: initial; /* Header must have an explicit color or it will get transparent container color */\n    line-height: normal; /* Revert ancestor line height of 0 */\n}\n.thead .th div.th-inner {\n    top: ").concat(topToHeadingsStart, "em; /* Ensures our header stays fixed at top outside of normal flow of table */\n}\ndiv.inner-caption {\n    top: ").concat(topToCaptionStart, "em;\n}\n.tfoot .th div.th-inner { /* divs are used as th is supposedly problematic */\n    top: ").concat(topToFooter, "; /* Ensures our header stays fixed at top outside of normal flow of table */\n}\n.zupa div.zupa1 {\n    margin: 0 auto !important;\n    width: 0 !important;\n}\n.zupa div.th-inner, .zupa div.inner-caption {\n    width: 100%;\n    margin-left: -50%;\n    text-align: center;\n}\n") : '') + ($pRaw('caption') === 'y' ? tableWithFixedHeaderAndFooter ? '.caption div.inner-caption, ' : '.caption, ' : '') + ($pRaw('header') === 'y' ? tableWithFixedHeaderAndFooter ? "" // `.thead .th, .thead .th div.th-inner, ` // Problems at least in Chrome
+      return ['style', [(tableWithFixedHeaderAndFooter ? "\nhtml, body, #main, #main > div {\n    height: 100%; /* Needed to ensure descendent heights retain 100%; could be avoided if didn't want percent on table height */\n    overflow-y: hidden; /* Not sure why we're getting extra here, but... */\n}\n.anchor-table-header {\n    background-color: ".concat(bgcolorEsc || 'white', "; /* Header background (not just for div text inside header, but for whole header area) */\n    overflow-x: hidden; /* Not sure why we're getting extra here, but... */\n    position: relative; /* Ensures we are still flowing, but provides anchor for absolutely positioned thead below (absolute positioning positions relative to nearest non-static ancestor; clear demo at https://www.w3schools.com/cssref/playit.asp?filename=playcss_position&preval=fixed ) */\n    padding-top: ").concat(topToBodyStart, "; /* Provides space for the header (and caption) (the one that is absolutely positioned below relative to here) */\n    height: ").concat(tableHeight, "; /* Percent of the whole screen taken by the table */\n}\n.anchor-table-body {\n    overflow-y: auto; /* Provides scrollbars when text fills up beyond the height */\n    height: ").concat(topToBodyEndCalc, "; /* If < 100%, the header anchor background color will seep below table */\n}\n\n.caption, .thead .th, .tfoot .th {\n    line-height: 0; /* th div will have own line-height; reducing here avoids fattening it by an inner div */\n    color: transparent; /* Hides the non-div duplicated header text */\n    white-space: nowrap; /* Ensures column header text uses up full width without overlap (esp. wrap no longer seems to work); this must be applied outside of the div */\n    border: none; /* We don't want a border for this invisible section */\n}\ndiv.inner-caption, .thead .th div.th-inner, .tfoot .th div.th-inner { /* divs are used as th is supposedly problematic */\n    position: absolute; /* Puts relative to nearest non-static ancestor (our relative header anchor) */\n    color: initial; /* Header must have an explicit color or it will get transparent container color */\n    line-height: normal; /* Revert ancestor line height of 0 */\n}\n.thead .th div.th-inner {\n    top: ").concat(topToHeadingsStart, "em; /* Ensures our header stays fixed at top outside of normal flow of table */\n}\ndiv.inner-caption {\n    top: ").concat(topToCaptionStart, "em;\n}\n.tfoot .th div.th-inner { /* divs are used as th is supposedly problematic */\n    top: ").concat(topToFooter, "; /* Ensures our header stays fixed at top outside of normal flow of table */\n}\n.zupa div.zupa1 {\n    margin: 0 auto !important;\n    width: 0 !important;\n}\n.zupa div.th-inner, .zupa div.inner-caption {\n    width: 100%;\n    margin-left: -50%;\n    text-align: center;\n}\n") : '') + ($pRaw('caption') === 'y' ? tableWithFixedHeaderAndFooter ? '.caption div.inner-caption, ' : '.caption, ' : '') + ($pRaw('header') === 'y' ? tableWithFixedHeaderAndFooter ? "" // `.thead .th, .thead .th div.th-inner, ` // Problems at least in Chrome
       : ".thead .th, " : '') + ($pRaw('footer') === 'y' ? tableWithFixedHeaderAndFooter ? "" // `.tfoot .th, .tfoot .th div.th-inner, ` // Problems at least in Chrome
       : ".tfoot .th, " : '') + '.tbody td' + " {\n    vertical-align: top;\n    font-style: ".concat($pRawEsc('fontstyle'), ";\n    font-variant: ").concat($pRawEsc('fontvariant'), ";\n    font-weight: ").concat($pEscArbitrary('fontweight'), ";\n    ").concat($pEscArbitrary('fontsize') ? "font-size: ".concat($pEscArbitrary('fontsize'), ";") : '', "\n    font-family: ").concat($pEscArbitrary('fontSeq'), ";\n\n    font-stretch: ").concat($pRawEsc('fontstretch'), ";\n    letter-spacing: ").concat($pEscArbitrary('letterspacing'), ";\n    line-height: ").concat($pEscArbitrary('lineheight'), ";\n    ").concat(colorEsc ? "color: ".concat(escapeCSS(colorEsc), ";") : '', "\n    ").concat(bgcolorEsc ? "background-color: ".concat(escapeCSS(bgcolorEsc), ";") : '', "\n}\n").concat(escapeCSS($pEscArbitrary('pagecss') || ''), "\n") + checkedFieldIndexes.map(function (idx, i) {
         return ($pRaw('header') === 'y' ? tableWithFixedHeaderAndFooter ? ".thead .th:nth-child(".concat(i + 1, ") div.th-inner, ") : ".thead .th:nth-child(".concat(i + 1, "), ") : '') + ($pRaw('footer') === 'y' ? tableWithFixedHeaderAndFooter ? ".tfoot .th:nth-child(".concat(i + 1, ") div.th-inner, ") : ".tfoot .th:nth-child(".concat(i + 1, "), ") : '') + ".tbody td:nth-child(".concat(i + 1, ") ") + "{\n    ".concat($pEscArbitrary('css' + (idx + 1)), "\n}\n");
@@ -16280,7 +16280,7 @@
         }
       }
 
-      jml.apply(void 0, _toConsumableArray(html).concat([body]));
+      jml.apply(void 0, _toConsumableArray(html).concat([$('#main')]));
     }
   };
 
@@ -16292,17 +16292,16 @@
     resultsDisplayServerOrClient: resultsDisplayServerOrClient,
     resultsDisplayClient: resultsDisplayClient,
     defaultBody: function defaultBody() {
-      $('html').style.height = '100%'; // Todo: Set in CSS
-      // We empty rather than `replaceWith` as our Jamilih `body` aliases
-      //   expect the old instance
-
+      // We empty rather than `replaceWith` as our Jamilih `body`
+      //   aliases expect the old instance
       while (body.hasChildNodes()) {
         body.firstChild.remove();
       }
 
-      return jml(body, {
-        style: 'height: 100%;'
-      });
+      return jml('div', {
+        id: 'main',
+        role: 'main'
+      }, body);
     }
   };
   Templates.permissions = {
@@ -16412,7 +16411,7 @@
       jml('div', {
         id: 'dialogContainer',
         style: 'height: 100%'
-      }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], body);
+      }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], $('#main'));
       return [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice];
     }
   };
@@ -18749,7 +18748,7 @@
         regeneratorRuntime.mark(function _callee5() {
           var _this2 = this;
 
-          var $p, followParams, languages, _languages$getLanguag, lang, langs, languageParam, fallbackLanguages, _lang, preferredLocale, direction, refusedIndexedDB, getSiteI18n, siteI18n, result, persistent, r, register, worker, hourly, respondToStateOfWorker, languageSelect, l, localeCallback;
+          var $p, followParams, languages, _languages$getLanguag, lang, langs, languageParam, fallbackLanguages, _lang, preferredLocale, direction, getSiteI18n, siteI18n, refusedIndexedDB, persistent, r, result, register, worker, hourly, respondToStateOfWorker, localeCallback;
 
           return regeneratorRuntime.wrap(function _callee5$(_context5) {
             while (1) {
@@ -18783,14 +18782,8 @@
                   this.lang = lang;
                   _lang = _slicedToArray(lang, 1), preferredLocale = _lang[0];
                   direction = this.getDirectionForLanguageCode(preferredLocale);
+                  document.documentElement.lang = preferredLocale;
                   document.dir = direction;
-                  refusedIndexedDB = // User may have persistence via bookmarks, etc. but just not
-                  //     want commital on notification
-                  // Notification.permission === 'default' ||
-                  // We always expect a controller, so is probably first visit
-                  localStorage.getItem(this.namespace + '-refused'); // This check goes further than `Notification.permission === 'granted'`
-                  //   to see whether the browser actually considers the notification
-                  //   sufficient to grant persistence (as it is supposed to do).
 
                   getSiteI18n = function getSiteI18n() {
                     var localeFromSiteData = function localeFromSiteData(lan) {
@@ -18804,7 +18797,18 @@
                     return imfSite.getFormatter();
                   };
 
-                  result = $p.get('result'); // Todo: For now, we won't give opportunity to store offline on
+                  siteI18n = getSiteI18n(); // Even if individual pages may end up changing, we need a
+                  //   title now for accessibility
+
+                  document.title = siteI18n('browser-title');
+                  refusedIndexedDB = // User may have persistence via bookmarks, etc. but just not
+                  //     want commital on notification
+                  // Notification.permission === 'default' ||
+                  // We always expect a controller, so is probably first visit
+                  localStorage.getItem(this.namespace + '-refused'); // This check goes further than `Notification.permission === 'granted'`
+                  //   to see whether the browser actually considers the notification
+                  //   sufficient to grant persistence (as it is supposed to do).
+                  // Todo: For now, we won't give opportunity to store offline on
                   //    results page. We could add a small button to open a dialog,
                   //    but then it'd show up in each results window, making it less
                   //    embed-friendly. Probably best to implement
@@ -18812,16 +18816,17 @@
                   //    whether to show or not; also ensure we have navigation
                   //    bar/breadcrumbs on all non-results pages
 
-                  _context5.next = 14;
+                  _context5.next = 16;
                   return navigator.storage.persisted();
 
-                case 14:
+                case 16:
                   persistent = _context5.sent;
-                  _context5.next = 17;
+                  _context5.next = 19;
                   return navigator.serviceWorker.getRegistration(this.serviceWorkerPath);
 
-                case 17:
+                case 19:
                   r = _context5.sent;
+                  result = $p.get('result');
 
                   register =
                   /*#__PURE__*/
@@ -18847,18 +18852,12 @@
                               !persistent);
 
                               if (!tryRegistrationOrPersistence) {
-                                _context3.next = 14;
+                                _context3.next = 13;
                                 break;
                               }
 
-                              siteI18n = getSiteI18n(); // Note: In Chrome on 127.0.0.1 (but not localhost!),
-                              //        this always appears to be `true`, despite having
-                              //        no notifications enabled or bookmarking 127.0.0.1,
-                              //        or being on the main page per
-                              //        https://developers.google.com/web/updates/2016/06/persistent-storage
-
                               if (!persistent) {
-                                _context3.next = 11;
+                                _context3.next = 10;
                                 break;
                               }
 
@@ -18867,21 +18866,21 @@
                               Templates.permissions.main({
                                 l: siteI18n
                               });
-                              _context3.next = 9;
+                              _context3.next = 8;
                               return prepareForServiceWorker.call(_this2, langs);
 
-                            case 9:
-                              _context3.next = 13;
+                            case 8:
+                              _context3.next = 12;
                               break;
 
-                            case 11:
-                              _context3.next = 13;
+                            case 10:
+                              _context3.next = 12;
                               return requestPermissions.call(_this2, langs, siteI18n);
 
-                            case 13:
+                            case 12:
                               Templates.permissions.exitDialogs();
 
-                            case 14:
+                            case 13:
                             case "end":
                               return _context3.stop();
                           }
@@ -18908,36 +18907,35 @@
 
 
                   if (r) {
-                    _context5.next = 24;
+                    _context5.next = 27;
                     break;
                   }
 
-                  _context5.next = 22;
+                  _context5.next = 25;
                   return register();
 
-                case 22:
-                  _context5.next = 57;
+                case 25:
+                  _context5.next = 59;
                   break;
 
-                case 24:
-                  siteI18n = getSiteI18n();
+                case 27:
                   worker = r.installing || r.waiting || r.active;
 
                   if (worker) {
-                    _context5.next = 31;
+                    _context5.next = 33;
                     break;
                   }
 
                   // Todo: Why wouldn't there be a worker here?
                   console.error('Unexpected error: worker registration received without a worker.'); // If anything, would probably need to register though
 
-                  _context5.next = 30;
+                  _context5.next = 32;
                   return register();
 
-                case 30:
+                case 32:
                   return _context5.abrupt("return");
 
-                case 31:
+                case 33:
                   Templates.permissions.main({
                     l: siteI18n
                   }); // "The browser checks for updates automatically after navigations and
@@ -18987,10 +18985,10 @@
                   }();
 
                   _context5.t0 = worker.state;
-                  _context5.next = _context5.t0 === 'installing' ? 39 : _context5.t0 === 'installed' ? 42 : _context5.t0 === 'activating' ? 45 : _context5.t0 === 'activated' ? 50 : _context5.t0 === 'redundant' ? 52 : 55;
+                  _context5.next = _context5.t0 === 'installing' ? 41 : _context5.t0 === 'installed' ? 44 : _context5.t0 === 'activating' ? 47 : _context5.t0 === 'activated' ? 52 : _context5.t0 === 'redundant' ? 54 : 57;
                   break;
 
-                case 39:
+                case 41:
                   // If it fails, will instead be `redundant`; but will try again:
                   //     1. automatically (?) per https://developers.google.com/web/fundamentals/primers/service-workers/#the_service_worker_life_cycle
                   //     2. upon reattempting registration (?) per https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
@@ -19010,20 +19008,20 @@
                   }); // Don't return as user may continue working until installed (though
                   //    will get message to close tab)
 
-                  return _context5.abrupt("break", 57);
-
-                case 42:
-                  _context5.next = 44;
-                  return respondToStateOfWorker();
+                  return _context5.abrupt("break", 59);
 
                 case 44:
-                  return _context5.abrupt("break", 57);
+                  _context5.next = 46;
+                  return respondToStateOfWorker();
 
-                case 45:
-                  _context5.next = 47;
-                  return dialogs.alert("\n    Please wait for a short while as we work to update to a new version.\n    ");
+                case 46:
+                  return _context5.abrupt("break", 59);
 
                 case 47:
+                  _context5.next = 49;
+                  return dialogs.alert("\n    Please wait for a short while as we work to update to a new version.\n    ");
+
+                case 49:
                   respondToStateOfWorker();
                   navigator.serviceWorker.onmessage({
                     data: 'finishActivate'
@@ -19031,7 +19029,7 @@
 
                   return _context5.abrupt("return");
 
-                case 50:
+                case 52:
                   // Will use `r.active`
                   // We should be able to use the following to distinguish when
                   //    active but force-reloaded (will be `null` unlike `r.active` apparently)
@@ -19048,47 +19046,41 @@
                       }
                     }
                   });
-                  return _context5.abrupt("break", 57);
-
-                case 52:
-                  _context5.next = 54;
-                  return respondToStateOfWorker();
+                  return _context5.abrupt("break", 59);
 
                 case 54:
+                  _context5.next = 56;
+                  return respondToStateOfWorker();
+
+                case 56:
                   return _context5.abrupt("return");
 
-                case 55:
-                  console.log('Unexpected worker.state', worker.state);
-                  return _context5.abrupt("break", 57);
-
                 case 57:
+                  console.log('Unexpected worker.state', worker.state);
+                  return _context5.abrupt("break", 59);
+
+                case 59:
                   Templates.permissions.exitDialogs();
 
                   if (languageParam) {
-                    _context5.next = 63;
+                    _context5.next = 65;
                     break;
                   }
 
-                  languageSelect = function languageSelect(l) {
-                    $p.l10n = l; // Also can use l('chooselanguage'), but assumes locale
-                    //   as with page title
+                  // Also could use l('chooselanguage'), but assumes locale
+                  //   as with page title
+                  $p.l10n = siteI18n; // Is this in use?
 
-                    document.title = l('browser-title');
-                    Templates.languageSelect.main({
-                      langs: langs,
-                      languages: languages,
-                      followParams: followParams,
-                      $p: $p
-                    });
-                  };
-
-                  l = siteI18n || getSiteI18n();
-                  languageSelect(l);
+                  document.title = siteI18n('languages-title');
+                  Templates.languageSelect.main({
+                    langs: langs,
+                    languages: languages,
+                    followParams: followParams,
+                    $p: $p
+                  });
                   return _context5.abrupt("return");
 
-                case 63:
-                  document.documentElement.lang = preferredLocale;
-
+                case 65:
                   localeCallback = function localeCallback(l
                   /* defineFormatter */
                   ) {
@@ -19146,7 +19138,7 @@
                     localeCallback: localeCallback
                   }));
 
-                case 66:
+                case 67:
                 case "end":
                   return _context5.stop();
               }

@@ -60,7 +60,7 @@ export default {
         return ['style', [
             (tableWithFixedHeaderAndFooter
                 ? `
-html, body, body > div {
+html, body, #main, #main > div {
     height: 100%; /* Needed to ensure descendent heights retain 100%; could be avoided if didn't want percent on table height */
     overflow-y: hidden; /* Not sure why we're getting extra here, but... */
 }

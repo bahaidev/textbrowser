@@ -1,5 +1,5 @@
 import dialogPolyfill from 'dialog-polyfill';
-import {jml, nbsp, body} from 'jamilih';
+import {jml, nbsp, $} from 'jamilih';
 import {$e} from '../templates/utils/dom.js';
 
 const defaultLocale = 'en';
@@ -31,7 +31,7 @@ class Dialog {
                 atts.$on.close = close;
             }
         }
-        const dialog = jml('dialog', atts, children, body);
+        const dialog = jml('dialog', atts, children, $('#main'));
         dialogPolyfill.registerDialog(dialog);
         dialog.showModal();
         if (remove) {
@@ -108,7 +108,7 @@ class Dialog {
                         ]]
                     ])
                     : [])
-            ], body);
+            ], $('#main'));
             dialogPolyfill.registerDialog(dialog);
             dialog.showModal();
         });
@@ -158,7 +158,7 @@ class Dialog {
                         reject(new Error('cancelled'));
                     }}}, [this.localeStrings.cancel]]
                 ]]
-            ], body);
+            ], $('#main'));
             dialogPolyfill.registerDialog(dialog);
             dialog.showModal();
         });

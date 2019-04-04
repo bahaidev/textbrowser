@@ -1,5 +1,12 @@
 # textbrowser CHANGES
 
+## 0.30.0
+
+- Fix: Use consistent dialog-polyfill.css path so cached
+- Fix (Accessibility): Set `lang` and `title` earlier; add landmark section
+- Enhancement: Allow separate languages page title in `site.json`
+- Refactoring: simplify; move some styling to CSS
+
 ## 0.29.2
 
 - Fix (Server): Replace the dialog polyfill with our own noop

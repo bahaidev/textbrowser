@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import {jml, body} from 'jamilih';
+import {jml, $} from 'jamilih';
 import {deserialize as formDeserialize} from 'form-serialize';
 
 export default {
@@ -22,7 +22,7 @@ export default {
             }, langs.map(({code}) =>
                 ['option', {value: code}, [languages.getLanguageFromCode(code)]]
             )]
-        ], body);
+        ], $('#main'));
         if (history.state && typeof history.state === 'object') {
             formDeserialize(document.querySelector('#languageSelectionContainer'), history.state);
         }
@@ -35,6 +35,6 @@ export default {
         ['div', [
             ['a', {href: '#', dataset: {code}}, [name]]
         ]]
-    ), body
+    ), $('#main')
     */
 };

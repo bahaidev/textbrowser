@@ -1,4 +1,4 @@
-import {jml, $, body} from 'jamilih';
+import {jml, $} from 'jamilih';
 import Templates from './index.js';
 import {dialogs} from '../utils/dialogs.js';
 
@@ -22,6 +22,6 @@ export default {
                 dialogs.alert(err.message);
             }
         }
-        jml(...html, body);
+        jml(...html, $('#main'));
     }
 };
