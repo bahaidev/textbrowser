@@ -752,6 +752,13 @@ it supports the following arguments:
 1.  In place of passing in `files`, `namespace` and `languages`, pass
     in `userJSON`
 1.  Ensure caching user's `stylesheets`.
+1.  If get [MapText](https://github.com/brettz9/maptext) working, could
+    actually extract out image portion(s) into table cell to show the
+    original Tablet portion alongside commentary, etc. (along with
+    MapText tooltips and text copy ability to get at the real text
+    from the images; ideally any global search would be able to reach
+    into these as well, though that will probably just duplicate what
+    is already in the corresponding JSON store as a regular text column).
 1.  **Text box parsing**
     1. Document availability of this parsing
     1. Fix limitation that 0's don't change to 1's if
