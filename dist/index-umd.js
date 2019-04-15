@@ -6401,7 +6401,7 @@
 
         var dialog = this.makeCancelDialog(args);
         $e(dialog, "button.".concat(args.cancelClass || 'cancel')).before(jml('button', {
-          class: submitClass,
+          "class": submitClass,
           $on: {
             click: function click(e) {
               if (submit) {
@@ -6428,9 +6428,9 @@
 
         var dialog = this.makeDialog(args);
         jml('div', {
-          class: submitClass
+          "class": submitClass
         }, [['br'], ['br'], ['button', {
-          class: cancelClass,
+          "class": cancelClass,
           $on: {
             click: function click(e) {
               e.preventDefault();
@@ -6466,7 +6466,7 @@
             submitClass = _message$submitClass === void 0 ? 'submit' : _message$submitClass;
         return new Promise(function (resolve, reject) {
           var dialog = jml('dialog', [msg].concat(_toConsumableArray(includeOk ? [['br'], ['br'], ['div', {
-            class: submitClass
+            "class": submitClass
           }, [['button', {
             $on: {
               click: function click() {
@@ -6534,7 +6534,7 @@
             submitClass = _message3$submitClass === void 0 ? 'submit' : _message3$submitClass;
         return new Promise(function (resolve, reject) {
           var dialog = jml('dialog', [msg, ['br'], ['br'], ['div', {
-            class: submitClass
+            "class": submitClass
           }, [['button', {
             $on: {
               click: function click() {
@@ -13825,8 +13825,8 @@
       ret.aliases = []; // Todo: We could use `prefer_alias` but algorithm below may cover
       //    needed cases
 
-      if (fieldSchema.enum && fieldSchema.enum.length) {
-        fieldSchema.enum.forEach(function (enm) {
+      if (fieldSchema["enum"] && fieldSchema["enum"].length) {
+        fieldSchema["enum"].forEach(function (enm) {
           ret.aliases.push(getMetaProp(lang, metadataObj, ['fieldvalue', field, enm], true));
 
           if (enm in fieldValueAliasMap && // Todo: We could allow numbers here too, but crowds
@@ -14346,7 +14346,7 @@
                   });
                   return Promise.resolve().then(function () {
                     return require(pluginPath); // eslint-disable-line global-require, import/no-dynamic-require
-                  }).catch(function (err) {
+                  })["catch"](function (err) {
                     // E.g., with tooltips plugin
                     console.log('err', err);
                   });
@@ -14840,7 +14840,7 @@
           followParams = _ref.followParams,
           $p = _ref.$p;
       jml('form', {
-        class: 'focus',
+        "class": 'focus',
         id: 'languageSelectionContainer',
         $on: {
           submit: function submit(e) {
@@ -14889,7 +14889,7 @@
         followParams = _ref.followParams;
     var form = jml('form', {
       id: 'workSelect',
-      class: 'focus',
+      "class": 'focus',
       $on: {
         submit: function submit(e) {
           e.preventDefault();
@@ -14900,7 +14900,7 @@
         key: group.directions.localeKey,
         fallback: true
       })]], ['br'], ['select', {
-        class: 'file',
+        "class": 'file',
         name: 'work' + i,
         dataset: {
           name: group.name.localeKey
@@ -15001,7 +15001,7 @@
         return ['tr', [// Todo: Get Jamilih to accept numbers and
         //    booleans (`toString` is too dangerous)
         ['td', [String(idx)]], le('check-columns-to-browse', 'td', 'title', {}, [le('yes', 'input', 'value', {
-          class: 'fieldSelector',
+          "class": 'fieldSelector',
           id: checkedIndex,
           name: iil('checked') + idx,
           checked: $p.get(checkedIndex) !== l('no') && ($p.has(checkedIndex) || fieldInfoItem.onByDefault !== false),
@@ -15419,7 +15419,7 @@
           }
         }
       }]]]]], ['div', [['label', {
-        for: 'prefLangs'
+        "for": 'prefLangs'
       }, [l('Preferred language(s)')]], ['br'], ['select', {
         id: 'prefLangs',
         multiple: 'multiple',
@@ -15588,7 +15588,7 @@
             var name = work + '-' + iil(setType) + (i + 1) + '-' + (j + 1);
             var id = name;
             rowContent['#'].push(['td', [['label', {
-              for: name
+              "for": name
             }, [fieldName]]]], ['td', [aliases ? ['datalist', {
               id: 'dl-' + id
             }, aliases.map(function (alias) {
@@ -15596,7 +15596,7 @@
             })] : '', aliases ? ['input', {
               name: name,
               id: id,
-              class: 'browseField',
+              "class": 'browseField',
               list: 'dl-' + id,
               value: $p.get(name, true),
               $on: setType === 'start' ? {
@@ -15636,7 +15636,7 @@
         var name = work + '-' + iil('anchor') + (i + 1) + '-' + (j + 1);
         var id = name;
         rowContent['#'].push(['td', [['label', {
-          for: name
+          "for": name
         }, [fieldName]]]], ['td', [aliases ? ['datalist', {
           id: 'dl-' + id
         }, aliases.map(function (alias) {
@@ -15644,7 +15644,7 @@
         })] : '', aliases ? ['input', {
           name: name,
           id: id,
-          class: 'browseField',
+          "class": 'browseField',
           list: 'dl-' + id,
           value: $p.get(name, true)
         }] : ['input', {
@@ -15726,7 +15726,7 @@
 
 
       jml('div', {
-        class: 'focus'
+        "class": 'focus'
       }, [['div', {
         style: 'float: left;'
       }, [['button', {
@@ -16002,47 +16002,47 @@
           interlinearSeparator = _ref9$interlinearSepa === void 0 ? '<br /><br />' : _ref9$interlinearSepa;
       var tableOptions = {
         table: [['table', {
-          class: 'table',
+          "class": 'table',
           border: $pRaw('border') || '0'
         }], ['tr', {
-          class: 'tr'
+          "class": 'tr'
         }], ['td'], // , {class: 'td'} // Too much data to add class to each
         ['th', {
-          class: 'th'
+          "class": 'th'
         }], ['caption', {
-          class: 'caption'
+          "class": 'caption'
         }], ['thead', {
-          class: 'thead'
+          "class": 'thead'
         }], ['tbody', {
-          class: 'tbody'
+          "class": 'tbody'
         }], ['tfoot', {
-          class: 'tfoot'
+          "class": 'tfoot'
         }] // ['colgroup', {class: 'colgroup'}],
         // ['col', {class: 'col'}]
         ],
         div: [['div', {
-          class: 'table',
+          "class": 'table',
           style: 'display: table;'
         }], ['div', {
-          class: 'tr',
+          "class": 'tr',
           style: 'display: table-row;'
         }], ['div', {
-          class: 'td',
+          "class": 'td',
           style: 'display: table-cell;'
         }], ['div', {
-          class: 'th',
+          "class": 'th',
           style: 'display: table-cell;'
         }], ['div', {
-          class: 'caption',
+          "class": 'caption',
           style: 'display: table-caption;'
         }], ['div', {
-          class: 'thead',
+          "class": 'thead',
           style: 'display: table-header-group;'
         }], ['div', {
-          class: 'tbody',
+          "class": 'tbody',
           style: 'display: table-row-group;'
         }], ['div', {
-          class: 'tfoot',
+          "class": 'tfoot',
           style: 'display: table-footer-group;'
         }] // ['div', {class: 'colgroup', style: 'display: table-column-group;'}],
         // ['div', {class: 'col', style: 'display: table-column;'}]
@@ -16081,11 +16081,11 @@
 
       var tableWrap = function tableWrap(children) {
         return tableWithFixedHeaderAndFooter ? ['div', {
-          class: 'table-responsive anchor-table-header zupa'
+          "class": 'table-responsive anchor-table-header zupa'
         }, [['div', {
-          class: 'table-responsive anchor-table-body'
+          "class": 'table-responsive anchor-table-body'
         }, children]]] : ['div', {
-          class: 'table-responsive'
+          "class": 'table-responsive'
         }, children];
       };
 
@@ -16219,9 +16219,9 @@
         checkedFieldIndexes: checkedFieldIndexes,
         hasCaption: hasCaption
       }), tableWrap([addChildren(tableElem, [caption ? addChildren(captionElem, [caption, tableWithFixedHeaderAndFooter ? ['div', {
-        class: 'zupa1'
+        "class": 'zupa1'
       }, [['div', {
-        class: 'inner-caption'
+        "class": 'inner-caption'
       }, [['span', [caption]]]]]] : '']) : '',
       /*
       // Works but quirky, e.g., `color` doesn't work (as also
@@ -16238,9 +16238,9 @@
           return localizedFieldNames[idx];
         }).join(l('comma-space')) : '');
         return addChildren(thElem, [cf, tableWithFixedHeaderAndFooter ? ['div', {
-          class: 'zupa1'
+          "class": 'zupa1'
         }, [['div', {
-          class: 'th-inner'
+          "class": 'th-inner'
         }, [['span', [cf]]]]]] : '']);
       }))]) : '', $pRaw('footer') && $pRaw('footer') !== '0' ? addChildren(tfootElem, [addChildren(trElem, checkedFields.map(function (cf, i) {
         var interlinearColIndexes = allInterlinearColIndexes[i];
@@ -16248,9 +16248,9 @@
           return localizedFieldNames[idx];
         }).join(l('comma-space')) : '');
         return addChildren(thElem, [cf, tableWithFixedHeaderAndFooter ? ['div', {
-          class: 'zupa1'
+          "class": 'zupa1'
         }, [['div', {
-          class: 'th-inner'
+          "class": 'th-inner'
         }, [['span', [cf]]]]]] : '']);
       }))]) : '', addChildren(tbodyElem, outArr)])])]];
     }
@@ -16357,7 +16357,7 @@
       var installationDialog = jml('dialog', {
         style: 'text-align: center; height: 100%',
         id: 'installationLogContainer',
-        class: 'focus'
+        "class": 'focus'
       }, [['p', [l('wait-installing')]], ['div', {
         style: 'height: 80%; overflow: auto;'
       }, [['pre', {
@@ -16373,7 +16373,7 @@
             close: close
           }
         }, [['section', [l('will-request-storage-permissions')]], ['br'], ['div', {
-          class: 'focus'
+          "class": 'focus'
         }, [['button', {
           $on: {
             click: ok
@@ -16394,7 +16394,7 @@
         browserNotGrantingPersistenceAlert = jml('dialog', {
           id: 'browserNotGrantingPersistence'
         }, [['section', [l('browser-not-granting-persistence')]], ['br'], ['div', {
-          class: 'focus'
+          "class": 'focus'
         }, [['button', {
           $on: {
             click: closeBrowserNotGranting
@@ -16476,7 +16476,7 @@
     }, {
       key: "delete",
       value: function _delete(param, skip) {
-        return this.params.delete(_prepareParam.call(this, param, skip));
+        return this.params["delete"](_prepareParam.call(this, param, skip));
       }
     }, {
       key: "set",
@@ -16620,13 +16620,13 @@
         paramsCopy.set(key, formParamsHash[key]);
       }); // Follow the same style (and order) for checkboxes
 
-      paramsCopy.delete(il('rand'));
+      paramsCopy["delete"](il('rand'));
       paramsCopy.set(il('rand'), random.checked ? l('yes') : l('no')); // We want checkboxes to typically show by default, so we cannot use the
       //    standard serialization
 
       checkboxes.forEach(function (checkbox) {
         // Let's ensure the checked items are all together (at the end)
-        paramsCopy.delete(checkbox.name);
+        paramsCopy["delete"](checkbox.name);
 
         if (checkbox.name) {
           // We don't want, e.g., preference controls added to URL
@@ -16640,9 +16640,9 @@
 
         while (paramsCopy.has("".concat(workName, "-start").concat(num, "-").concat(num2), true)) {
           while (paramsCopy.has("".concat(workName, "-start").concat(num, "-").concat(num2), true)) {
-            paramsCopy.delete("".concat(workName, "-start").concat(num, "-").concat(num2), true);
-            paramsCopy.delete("".concat(workName, "-end").concat(num, "-").concat(num2), true);
-            paramsCopy.delete("".concat(workName, "-anchor").concat(num, "-").concat(num2), true);
+            paramsCopy["delete"]("".concat(workName, "-start").concat(num, "-").concat(num2), true);
+            paramsCopy["delete"]("".concat(workName, "-end").concat(num, "-").concat(num2), true);
+            paramsCopy["delete"]("".concat(workName, "-anchor").concat(num, "-").concat(num2), true);
             num2++;
           }
 
@@ -16656,17 +16656,17 @@
           {
             // In case it was added previously on
             //    this page, let's remove it.
-            paramsCopy.delete(il('rand'));
+            paramsCopy["delete"](il('rand'));
             break;
           }
 
         case 'shortcutResult':
           {
-            paramsCopy.delete(il('rand'));
+            paramsCopy["delete"](il('rand'));
             var num = 1;
 
             while (paramsCopy.has("anchorfield".concat(num), true)) {
-              paramsCopy.delete("anchorfield".concat(num), true);
+              paramsCopy["delete"]("anchorfield".concat(num), true);
               num++;
             }
 
@@ -16674,10 +16674,10 @@
             num = 1; // Delete field-specific so we can add our own
 
             while (paramsCopy.has("field".concat(num), true)) {
-              paramsCopy.delete("field".concat(num), true);
-              paramsCopy.delete("checked".concat(num), true);
-              paramsCopy.delete("interlin".concat(num), true);
-              paramsCopy.delete("css".concat(num), true);
+              paramsCopy["delete"]("field".concat(num), true);
+              paramsCopy["delete"]("checked".concat(num), true);
+              paramsCopy["delete"]("interlin".concat(num), true);
+              paramsCopy["delete"]("css".concat(num), true);
               num++;
             }
 
@@ -16688,7 +16688,7 @@
               paramsCopy.set("interlin".concat(i + 1), '');
               paramsCopy.set("css".concat(i + 1), '');
             });
-            paramsCopy.delete('work', true);
+            paramsCopy["delete"]('work', true);
           }
         // Fallthrough
 
@@ -16703,7 +16703,7 @@
 
 
             if (type === 'randomResult' || random.checked) {
-              paramsCopy.delete(il('rand'));
+              paramsCopy["delete"](il('rand'));
               paramsCopy.set(il('rand'), l('yes'));
             }
 

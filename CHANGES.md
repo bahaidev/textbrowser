@@ -1,5 +1,10 @@
 # textbrowser CHANGES
 
+## ?
+
+- Build: Adjust node-resolve per update; apply babel updates
+- npm: Update devDeps
+
 ## 0.30.0
 
 - Fix: Use consistent dialog-polyfill.css path so cached

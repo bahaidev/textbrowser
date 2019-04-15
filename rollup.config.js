@@ -52,7 +52,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
             babel(),
             // nodeGlobals(),
             resolve({
-                module: true
+                mainFields: ['module']
             }),
             commonjs(),
             postProcess([
@@ -139,8 +139,7 @@ export default [
             }),
             resolve({
                 preferBuiltins: true,
-                module: false,
-                main: true
+                mainFields: ['main']
             })
         ]
     }
