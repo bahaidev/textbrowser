@@ -749,6 +749,7 @@ it supports the following arguments:
     spec'd in metadata schema and used in files.
     1. Also have `&checked1=Yes` omitted when generating results display
         (since now defaulting to this)
+1.  Overflow on cells past a certain height—especially for indexes
 1.  In place of passing in `files`, `namespace` and `languages`, pass
     in `userJSON`
 1.  Ensure caching user's `stylesheets`.
