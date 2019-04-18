@@ -1,6 +1,6 @@
 /* eslint-env browser */
 // Todo: Reimplement this with `formSerialize.deserialize` as possible
-import {serialize as formSerialize} from 'form-serialize';
+import {serialize as formSerialize} from 'form-serialization';
 
 export const replaceHash = (paramsCopy) => {
     return location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();

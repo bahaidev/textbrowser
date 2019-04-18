@@ -3,6 +3,7 @@
 ## ?
 
 - Build: Adjust node-resolve per update; apply babel updates
+- npm: Update from `form-serialize` to `form-serialization`
 - npm: Update devDeps
 
 ## 0.30.0

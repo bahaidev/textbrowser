@@ -2,7 +2,7 @@
 import getJSON from 'simple-get-json';
 import IMF from 'imf';
 import loadStylesheets from 'load-stylesheets';
-import {serialize as formSerialize} from 'form-serialize';
+import {serialize as formSerialize} from 'form-serialization';
 
 import getIMFFallbackResults from './utils/getIMFFallbackResults.js';
 import {dialogs} from './utils/dialogs.js';

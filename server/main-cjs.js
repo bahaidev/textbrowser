@@ -7,7 +7,7 @@ require('url-search-params-polyfill');
 var getJSON = _interopDefault(require('simple-get-json'));
 var rtlDetect = require('rtl-detect');
 var jamilih = require('jamilih');
-var formSerialize = require('form-serialize');
+var formSerialize = require('form-serialization');
 var IMF = _interopDefault(require('imf'));
 
 function _defineProperty(obj, key, value) {

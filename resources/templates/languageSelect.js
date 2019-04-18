@@ -1,6 +1,6 @@
 /* eslint-env browser */
 import {jml, $} from 'jamilih';
-import {deserialize as formDeserialize} from 'form-serialize';
+import {deserialize as formDeserialize} from 'form-serialization';
 
 export default {
     main ({langs, languages, followParams, $p}) {

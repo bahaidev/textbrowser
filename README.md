@@ -954,7 +954,7 @@ it supports the following arguments:
 1.  Offer more border styling tuning controls (including right/left/top/bottom,
     color, etc.); then offer this along with other styles if we replace CSS
     input box with pop-up styling form (like Advanced Formatting, but for columns)
-1.  Refactoring: Try to use `deserialize` of `form-serialize` fork for initial population
+1.  Refactoring: Try to use `deserialize` of `form-serialization` fork for initial population
     or hash change?
 1.  We should try to allow `onByDefault` and `placement` for non-plugin
     fields also
