@@ -742,7 +742,7 @@ it supports the following arguments:
 1.  For plugins, allow export of `stylesheets` array to add to
     `loadStylesheets`, so they don't have to do the importing and executing.
 1.  **Progress meter** with hidden console to avoid intimidating loading
-    messages of service worker
+    messages of service worker; also retrieve latest in `CHANGES.md`!
 1.  **Move "Go"** to right (or immediate bottom) of paragraph selections
 1.  **Default field(s) and default value(s)** for when no text is entered and
     a reasonable sample is desired to be shown. Use `default_view` already
