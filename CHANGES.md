@@ -2,6 +2,16 @@
 
 ## ?
 
+- Fix (server): Ensure user `namespace` can override default
+- Change (server): Switch from "bahaiwritings"->"textbrowser"
+    as default `namespace`
+- Enhancement: Incorporate resolved stylesheet file names into
+    service worker path so it may cache them automatically
+    along with files in `userJSON` yet avoid fetching in sample
+    SW/userJSON if not included
+- Enhancement (server): Add `basePath` option
+- Refactoring (server): Simplify default setting; properly group
+    settings by type
 - Build: Adjust node-resolve per update; apply babel updates
 - npm: Update from `form-serialize` to `form-serialization`
 - npm: Update devDeps

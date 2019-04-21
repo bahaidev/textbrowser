@@ -8,7 +8,6 @@
         "files.json",
         "site.json",
         "resources/user.js",
-        "resources/user.css",
 
         "plugins/chinese-numbers.js",
         "plugins/define.js",

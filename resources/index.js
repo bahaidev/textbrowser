@@ -139,6 +139,17 @@ class TextBrowser {
         //  https://github.com/tc39/proposal-import-meta
         const moduleURL = new URL('node_modules/textbrowser/resources/index.js', location);
         this.site = options.site || 'site.json';
+        const stylesheets = options.stylesheets || ['@builtin'];
+        const builtinIndex = stylesheets.indexOf('@builtin');
+        if (builtinIndex !== -1) {
+            stylesheets.splice(
+                builtinIndex,
+                1,
+                new URL('index.css', moduleURL).href,
+                new URL('../../dialog-polyfill/dist/dialog-polyfill.css', moduleURL).href
+            );
+        }
+        this.stylesheets = stylesheets;
 
         setServiceWorkerDefaults(this, options);
 
@@ -156,18 +167,6 @@ class TextBrowser {
         this.showTitleOnSingleInterlinear = options.showTitleOnSingleInterlinear;
         this.noDynamic = options.noDynamic;
         this.skipIndexedDB = options.skipIndexedDB;
-
-        const stylesheets = options.stylesheets || ['@builtin'];
-        const builtinIndex = stylesheets.indexOf('@builtin');
-        if (builtinIndex !== -1) {
-            stylesheets.splice(
-                builtinIndex,
-                1,
-                new URL('index.css', moduleURL).href,
-                new URL('../../dialog-polyfill/dist/dialog-polyfill.css', moduleURL).href
-            );
-        }
-        this.stylesheets = stylesheets;
     }
 
     async init () {

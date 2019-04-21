@@ -24,6 +24,8 @@ const optionDefinitions = [
     // Node-server-specific
     {name: 'nodeActivate', type: Boolean},
     {name: 'port', type: Number},
+    {name: 'domain', type: String},
+    {name: 'basePath', type: String},
 
     // Results display (main)
     //      `namespace`: (but set below)
@@ -41,7 +43,6 @@ const optionDefinitions = [
     {name: 'showTitleOnSingleInterlinear', type: Boolean},
 
     // Service worker
-    {name: 'domain', type: String},
     {name: 'serviceWorkerPath', type: String, defaultOption: true},
     {name: 'userJSON', type: String},
     {name: 'languages', type: String},
@@ -52,22 +53,19 @@ const userParams = require('command-line-args')(optionDefinitions);
 
 const port = 'port' in userParams ? userParams.port : 8000;
 const domain = userParams.domain || `localhost`;
-const basePath = `http://${domain}${port ? ':' + port : ''}/`;
+const basePath = userParams.basePath || `http://${domain}${port ? ':' + port : ''}/`;
 
 const userParamsWithDefaults = {
-    ...userParams,
-    ...setServiceWorkerDefaults({
-        ...userParams
-    }, {
-        namespace: 'bahaiwritings',
-        files: userParams.files || `${basePath}files.json`, // `files` must be absolute path for node-fetch
-        languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
-        serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON)}`
+    ...setServiceWorkerDefaults({}, {
+        namespace: 'textbrowser',
+        files: `${basePath}files.json`, // `files` must be absolute path for node-fetch
+        languages: `${basePath}node_modules/textbrowser/appdata/languages.json`,
+        serviceWorkerPath: `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON || '')}`
     }),
+    ...userParams,
     log (...args) {
         console.log(...args);
     },
-    basePath,
     nodeActivate: undefined,
     port: undefined,
     skipIndexedDB: false, // Not relevant here

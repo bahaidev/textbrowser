@@ -7,7 +7,7 @@ require('url-search-params-polyfill');
 var getJSON = _interopDefault(require('simple-get-json'));
 var rtlDetect = require('rtl-detect');
 var jamilih = require('jamilih');
-var formSerialize = require('form-serialization');
+var formSerialization = require('form-serialization');
 var IMF = _interopDefault(require('imf'));
 
 function _defineProperty(obj, key, value) {
@@ -213,7 +213,7 @@ var languageSelect = {
     }, [languages.getLanguageFromCode(code)]])]], jamilih.$('#main'));
 
     if (history.state && typeof history.state === 'object') {
-      formSerialize.deserialize(document.querySelector('#languageSelectionContainer'), history.state);
+      formSerialization.deserialize(document.querySelector('#languageSelectionContainer'), history.state);
     }
   } // Todo: Add in Go button (with 'submitgo' localization string) to
   //   avoid need for pull-down if using first selection?
@@ -284,7 +284,7 @@ var workSelect = (({
   ]]), jamilih.$('#main'));
 
   if (history.state && typeof history.state === 'object') {
-    formSerialize.deserialize(document.querySelector('#workSelect'), history.state);
+    formSerialization.deserialize(document.querySelector('#workSelect'), history.state);
   }
 
   return form;
@@ -3633,7 +3633,7 @@ const setServiceWorkerDefaults = (target, source) => {
   target.userJSON = source.userJSON || 'resources/user.json';
   target.languages = source.languages || new URL('../appdata/languages.json', // Todo: Substitute with `import.meta.url`
   new URL('node_modules/textbrowser/resources/index.js', location)).href;
-  target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?pathToUserJSON=${encodeURIComponent(target.userJSON)}`;
+  target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?pathToUserJSON=${encodeURIComponent(target.userJSON)}&stylesheets=${JSON.stringify(target.stylesheets || [])}`;
   target.files = source.files || 'files.json';
   target.namespace = source.namespace || 'textbrowser';
   return target;
@@ -3660,6 +3660,12 @@ const optionDefinitions = [// Node-server-specific
 }, {
   name: 'port',
   type: Number
+}, {
+  name: 'domain',
+  type: String
+}, {
+  name: 'basePath',
+  type: String
 }, // Results display (main)
 //      `namespace`: (but set below)
 //      `skipIndexedDB`: set to `false` below (and the default anyways)
@@ -3687,9 +3693,6 @@ const optionDefinitions = [// Node-server-specific
   type: Boolean
 }, // Service worker
 {
-  name: 'domain',
-  type: String
-}, {
   name: 'serviceWorkerPath',
   type: String,
   defaultOption: true
@@ -3711,20 +3714,19 @@ const userParams = require('command-line-args')(optionDefinitions);
 
 const port = 'port' in userParams ? userParams.port : 8000;
 const domain = userParams.domain || `localhost`;
-const basePath = `http://${domain}${port ? ':' + port : ''}/`;
+const basePath = userParams.basePath || `http://${domain}${port ? ':' + port : ''}/`;
 
-const userParamsWithDefaults = _objectSpread({}, userParams, setServiceWorkerDefaults(_objectSpread({}, userParams), {
-  namespace: 'bahaiwritings',
-  files: userParams.files || `${basePath}files.json`,
+const userParamsWithDefaults = _objectSpread({}, setServiceWorkerDefaults({}, {
+  namespace: 'textbrowser',
+  files: `${basePath}files.json`,
   // `files` must be absolute path for node-fetch
-  languages: userParams.languages || `${basePath}node_modules/textbrowser/appdata/languages.json`,
-  serviceWorkerPath: userParams.serviceWorkerPath || `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON)}`
-}), {
+  languages: `${basePath}node_modules/textbrowser/appdata/languages.json`,
+  serviceWorkerPath: `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON || '')}`
+}), userParams, {
   log(...args) {
     console.log(...args);
   },
 
-  basePath,
   nodeActivate: undefined,
   port: undefined,
   skipIndexedDB: false,

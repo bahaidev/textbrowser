@@ -9,7 +9,12 @@ export const setServiceWorkerDefaults = (target, source) => {
         // Todo: Substitute with `import.meta.url`
         new URL('node_modules/textbrowser/resources/index.js', location)
     ).href;
-    target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?pathToUserJSON=${encodeURIComponent(target.userJSON)}`;
+    target.serviceWorkerPath = source.serviceWorkerPath ||
+        `sw.js?pathToUserJSON=${
+            encodeURIComponent(target.userJSON)
+        }&stylesheets=${
+            JSON.stringify(target.stylesheets || [])
+        }`;
     target.files = source.files || 'files.json';
     target.namespace = source.namespace || 'textbrowser';
     return target;

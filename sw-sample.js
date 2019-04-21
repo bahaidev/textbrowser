@@ -122,8 +122,7 @@ const defaultUserStaticFiles = [
     'index.html',
     'files.json',
     'site.json',
-    'resources/user.js',
-    'resources/user.css'
+    'resources/user.js'
     // We do not put the user.json here as that is obtained live with service worker
 ];
 // Todo: We could supply `new URL(fileName, moduleURL).href` to
@@ -131,7 +130,6 @@ const defaultUserStaticFiles = [
 //   actually be in `node_modules/textbrowser`; see `resources/index.js`
 const textbrowserStaticResourceFiles = [
     'node_modules/@babel/polyfill/dist/polyfill.js',
-    'node_modules/dialog-polyfill/dist/dialog-polyfill.css',
     'node_modules/dialog-polyfill/dist/dialog-polyfill.esm.js',
 
     'node_modules/textbrowser/appdata/languages.json',
@@ -153,12 +151,15 @@ const textbrowserStaticResourceFiles = [
     'node_modules/textbrowser/locales/fa.json',
     'node_modules/textbrowser/locales/ru.json',
 
-    'node_modules/textbrowser/resources/index.css',
     'node_modules/textbrowser/dist/index-es.js'
 ];
 
-const pathToUserJSON = new URL(location).searchParams.get('pathToUserJSON');
+const params = new URL(location).searchParams;
+const pathToUserJSON = params.get('pathToUserJSON');
+const stylesheets = JSON.parse(params.get('stylesheets') || []);
+
 console.log('sw info', pathToUserJSON);
+console.log('sw stylesheets', stylesheets);
 
 /**
  *
@@ -204,7 +205,8 @@ async function install (time) {
         ...textbrowserStaticResourceFiles,
         ...localeFiles,
         ...userStaticFiles,
-        ...userDataFiles
+        ...userDataFiles,
+        ...stylesheets
     ];
     // .map((url) => url === 'index.html' ? new Request(url, {cache: 'reload'}) : url)
     try {
