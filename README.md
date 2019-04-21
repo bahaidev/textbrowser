@@ -752,7 +752,6 @@ it supports the following arguments:
 1.  Overflow on cells past a certain height—especially for indexes
 1.  In place of passing in `files`, `namespace` and `languages`, pass
     in `userJSON`
-1.  Ensure caching user's `stylesheets`.
 1.  If get [MapText](https://github.com/brettz9/maptext) working, could
     actually extract out image portion(s) into table cell to show the
     original Tablet portion alongside commentary, etc. (along with
