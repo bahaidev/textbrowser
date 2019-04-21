@@ -2,6 +2,10 @@
 
 ## ?
 
+- npm: Update devDep
+
+## 0.31.0
+
 - Fix (server): Ensure user `namespace` can override default
 - Change (server): Switch from "bahaiwritings"->"textbrowser"
     as default `namespace`
