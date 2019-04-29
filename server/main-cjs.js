@@ -1523,7 +1523,6 @@ body {
             tr,
             idx
           });
-          let cellIsEmpty;
           console.log('showEmptyInterlinear', showEmptyInterlinear, htmlEscaped);
           const isEmpty = checkEmpty(tdVal, htmlEscaped);
 
@@ -1531,7 +1530,7 @@ body {
             return '';
           }
 
-          return showInterlins && !cellIsEmpty ? Templates.resultsDisplayServerOrClient.interlinearSegment({
+          return showInterlins ? Templates.resultsDisplayServerOrClient.interlinearSegment({
             lang: fieldLangs[idx],
             dir: fieldDirs[idx],
             html: (showInterlinTitles ? Templates.resultsDisplayServerOrClient.interlinearTitle({
@@ -2007,7 +2006,7 @@ Templates.permissions = {
 };
 
 const escapeHTML = s => {
-  return !s ? '' : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/, '&gt;');
+  return !s ? '' : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 };
 
 /* eslint-env browser */
@@ -3089,13 +3088,14 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     return key; // || p; // $p.get(param, true);
   };
 
-  const escapeQuotedCSS = s => s.replace(/"/g, '\\"');
-
   const escapeCSS = escapeHTML;
 
   const $pRawEsc = param => escapeHTML($pRaw(param));
 
-  const $pEscArbitrary = param => escapeHTML($p.get(param, true));
+  const $pEscArbitrary = param => escapeHTML($p.get(param, true)); // Not currently in use
+
+
+  const escapeQuotedCSS = s => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
   const {
     fileData,

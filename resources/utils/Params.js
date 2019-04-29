@@ -66,7 +66,7 @@ export const getParamsSetter = function ({l, il, $p}) {
                 paramsCopy.delete(`anchorfield${num}`, true);
                 num++;
             }
-            removeStartsEndsAndAnchors(workName);
+            removeStartsEndsAndAnchors();
 
             num = 1;
             // Delete field-specific so we can add our own
@@ -91,7 +91,7 @@ export const getParamsSetter = function ({l, il, $p}) {
         case 'randomResult':
         case 'result': {
             if (type === 'startEndResult') {
-                removeStartsEndsAndAnchors(workName);
+                removeStartsEndsAndAnchors();
             }
             // In case it was added previously on this page,
             //    let's put random again toward the end.

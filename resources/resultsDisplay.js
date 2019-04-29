@@ -398,10 +398,13 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         }
         return key; // || p; // $p.get(param, true);
     };
-    const escapeQuotedCSS = (s) => s.replace(/"/g, '\\"');
+
     const escapeCSS = escapeHTML;
     const $pRawEsc = (param) => escapeHTML($pRaw(param));
     const $pEscArbitrary = (param) => escapeHTML($p.get(param, true));
+
+    // Not currently in use
+    const escapeQuotedCSS = (s) => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
     const {
         fileData, lf, getFieldAliasOrName, schemaObj, metadataObj,

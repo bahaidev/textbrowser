@@ -1,8 +1,10 @@
 # textbrowser CHANGES
 
-## ?
+## 0.32.0
 
-- npm: Update devDep
+- Linting (LGTM): Escape backslashes, escape globally useless var and
+  argument
+- npm: Update deps, devDeps
 
 ## 0.31.0
 

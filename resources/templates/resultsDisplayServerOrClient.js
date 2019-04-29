@@ -289,14 +289,13 @@ body {
                     const interlins = showInterlins && interlinearColIndexes.map((idx) => {
                         // Need to get a new one
                         const {tdVal, htmlEscaped} = getCellValue({tr, idx});
-                        let cellIsEmpty;
                         console.log('showEmptyInterlinear', showEmptyInterlinear, htmlEscaped);
                         const isEmpty = checkEmpty(tdVal, htmlEscaped);
                         if (isEmpty) {
                             return '';
                         }
 
-                        return (showInterlins && !cellIsEmpty
+                        return (showInterlins
                             ? Templates.resultsDisplayServerOrClient.interlinearSegment({
                                 lang: fieldLangs[idx],
                                 dir: fieldDirs[idx],

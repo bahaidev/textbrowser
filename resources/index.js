@@ -21,7 +21,8 @@ import workSelect from './workSelect.js';
 import workDisplay from './workDisplay.js';
 import {resultsDisplayClient} from './resultsDisplay.js';
 
-function s (obj) { dialogs.alert(JSON.stringify(obj)); } // eslint-disable-line no-unused-vars
+/* eslint-disable-next-line no-unused-vars */
+function s (obj) { dialogs.alert(JSON.stringify(obj)); } // lgtm [js/unused-local-variable]
 
 async function prepareForServiceWorker (langs) {
     try {

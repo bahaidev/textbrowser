@@ -14931,7 +14931,7 @@
   }();
 
   var escapeHTML = function escapeHTML(s) {
-    return !s ? '' : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/, '&gt;');
+    return !s ? '' : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   };
 
   var languageSelect = {
@@ -16269,7 +16269,6 @@
                 tdVal = _getCellValue2.tdVal,
                 htmlEscaped = _getCellValue2.htmlEscaped;
 
-            var cellIsEmpty;
             console.log('showEmptyInterlinear', showEmptyInterlinear, htmlEscaped);
             var isEmpty = checkEmpty(tdVal, htmlEscaped);
 
@@ -16277,7 +16276,7 @@
               return '';
             }
 
-            return showInterlins && !cellIsEmpty ? Templates.resultsDisplayServerOrClient.interlinearSegment({
+            return showInterlins ? Templates.resultsDisplayServerOrClient.interlinearSegment({
               lang: fieldLangs[idx],
               dir: fieldDirs[idx],
               html: (showInterlinTitles ? Templates.resultsDisplayServerOrClient.interlinearTitle({
@@ -16771,7 +16770,7 @@
               num++;
             }
 
-            removeStartsEndsAndAnchors(workName);
+            removeStartsEndsAndAnchors();
             num = 1; // Delete field-specific so we can add our own
 
             while (paramsCopy.has("field".concat(num), true)) {
@@ -16798,7 +16797,7 @@
         case 'result':
           {
             if (type === 'startEndResult') {
-              removeStartsEndsAndAnchors(workName);
+              removeStartsEndsAndAnchors();
             } // In case it was added previously on this page,
             //    let's put random again toward the end.
 
@@ -17508,7 +17507,7 @@
     regeneratorRuntime.mark(function _callee3(_ref5) {
       var _this2 = this;
 
-      var l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, noIndexedDB, prefI18n, files, allowPlugins, langData, _ref5$basePath, basePath, _ref5$dynamicBasePath, dynamicBasePath, languages, getCellValue, getCanonicalID, determineEnd, getCheckedAndInterlinearFieldInfo, getCaption, runPresort, getFieldValueAliasMap, $pRaw, escapeQuotedCSS, escapeCSS, $pRawEsc, $pEscArbitrary, _ref21, fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginsForWork, heading, schemaItems, setNames, presorts, browseFieldSets, fieldInfo, _lang, preferredLocale, metadata, _lang2, localizedFieldNames, escapeColumnIndexes, fieldLangs, fieldValueAliasMap, fieldValueAliasMapPreferred, localizeParamNames, il, iil, ilRaw, iilRaw, browseFieldSetStartEndIdx, rangeSep, partSep, rawSearch, _rawSearch$split, _rawSearch$split2, startFull, endFull, startPartVals, endPartVals, startEndDiff, browseFieldSetIdx, applicableBrowseFieldSet, applicableBrowseFieldSetName, applicableBrowseFieldNames, canonicalBrowseFieldSet, canonicalBrowseFieldSetName, canonicalBrowseFieldNames, fieldSchemaTypes, buildRangePoint, starts, ends, _getCaption, _getCaption2, hasCaption, caption, showInterlinTitles, stripToRawFieldValue, unlocalizedWorkName, startsRaw, endsRaw, tableData, usingServerData, presort, _ref33, jsonURL, localeDir, fieldDirs, templateArgs;
+      var l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, noIndexedDB, prefI18n, files, allowPlugins, langData, _ref5$basePath, basePath, _ref5$dynamicBasePath, dynamicBasePath, languages, getCellValue, getCanonicalID, determineEnd, getCheckedAndInterlinearFieldInfo, getCaption, runPresort, getFieldValueAliasMap, $pRaw, escapeCSS, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, _ref21, fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginsForWork, heading, schemaItems, setNames, presorts, browseFieldSets, fieldInfo, _lang, preferredLocale, metadata, _lang2, localizedFieldNames, escapeColumnIndexes, fieldLangs, fieldValueAliasMap, fieldValueAliasMapPreferred, localizeParamNames, il, iil, ilRaw, iilRaw, browseFieldSetStartEndIdx, rangeSep, partSep, rawSearch, _rawSearch$split, _rawSearch$split2, startFull, endFull, startPartVals, endPartVals, startEndDiff, browseFieldSetIdx, applicableBrowseFieldSet, applicableBrowseFieldSetName, applicableBrowseFieldNames, canonicalBrowseFieldSet, canonicalBrowseFieldSetName, canonicalBrowseFieldNames, fieldSchemaTypes, buildRangePoint, starts, ends, _getCaption, _getCaption2, hasCaption, caption, showInterlinTitles, stripToRawFieldValue, unlocalizedWorkName, startsRaw, endsRaw, tableData, usingServerData, presort, _ref33, jsonURL, localeDir, fieldDirs, templateArgs;
 
       return regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
@@ -17868,10 +17867,6 @@
                 return key; // || p; // $p.get(param, true);
               };
 
-              escapeQuotedCSS = function escapeQuotedCSS(s) {
-                return s.replace(/"/g, '\\"');
-              };
-
               escapeCSS = escapeHTML;
 
               $pRawEsc = function $pRawEsc(param) {
@@ -17880,6 +17875,11 @@
 
               $pEscArbitrary = function $pEscArbitrary(param) {
                 return escapeHTML($p.get(param, true));
+              }; // Not currently in use
+
+
+              escapeQuotedCSS = function escapeQuotedCSS(s) {
+                return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
               };
 
               _context3.next = 16;
