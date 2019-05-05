@@ -1,5 +1,11 @@
 # textbrowser CHANGES
 
+## 0.33.0
+
+- npm: Update deps, devDeps
+- npm: peerDeps - Move from deprecated @babel/polyfill to
+    core-js/regenerator-runtime
+
 ## 0.32.0
 
 - Linting (LGTM): Escape backslashes, escape globally useless var and

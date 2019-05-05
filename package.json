@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.32.0",
+  "version": "0.33.0",
   "description": "Multilinear text browser",
   "main": "dist/index-umd.min.js",
   "bin": {
@@ -33,7 +33,7 @@
     "jamilih": "0.44.0",
     "json-refs": "git+https://github.com/brettz9/json-refs.git#browser",
     "load-stylesheets": "0.7.0",
-    "node-fetch": "^2.4.1",
+    "node-fetch": "^2.5.0",
     "node-serviceworker": "^0.3.0",
     "node-static": "^0.7.11",
     "rtl-detect": "^1.0.2",
@@ -41,18 +41,20 @@
     "url-search-params-polyfill": "^6.0.0"
   },
   "peerDependencies": {
-    "@babel/polyfill": "^7.4.4"
+    "core-js-bundle": "^3.0.1",
+    "regenerator-runtime": "^0.13.2"
   },
   "devDependencies": {
     "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.4.4",
-    "@mysticatea/eslint-plugin": "^10.0.2",
+    "@mysticatea/eslint-plugin": "^10.0.3",
     "ajv": "6.10.0",
     "babel-eslint": "^10.0.1",
     "babel-plugin-dynamic-import-node": "^2.2.0",
+    "core-js-bundle": "^3.0.1",
     "eslint": "^5.16.0",
-    "eslint-config-ash-nazg": "^3.0.1",
+    "eslint-config-ash-nazg": "^4.0.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-compat": "^3.1.1",
     "eslint-plugin-eslint-comments": "^3.1.1",
@@ -60,7 +62,7 @@
     "eslint-plugin-jsdoc": "^4.8.3",
     "eslint-plugin-markdown": "^1.0.0",
     "eslint-plugin-no-use-extend-native": "^0.4.0",
-    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-node": "^9.0.1",
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-unicorn": "^8.0.2",
@@ -68,8 +70,9 @@
     "json-metaschema": "1.2.0",
     "nodeunit": "0.11.3",
     "opn-cli": "^4.1.0",
+    "regenerator-runtime": "^0.13.2",
     "remark-lint": "6.0.4",
-    "rollup": "1.10.1",
+    "rollup": "1.11.3",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-json": "^4.0.0",

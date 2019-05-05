@@ -13,7 +13,6 @@ let appBase = '../';
 
 if (typeof exports !== 'undefined') {
     /* eslint-disable global-require */
-    require('@babel/polyfill');
     Ajv = require('ajv');
     JsonRefs = require('json-refs');
     jsonpatch = require('fast-json-patch');
