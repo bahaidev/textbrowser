@@ -8,10 +8,10 @@
   },
   "module": "resources/index.js",
   "scripts": {
-    "node": "npm run eslint && npm run rollup && nodeunit test/textbrowserTests.js",
+    "node": "npm run eslint && npm run rollup && mocha test/textbrowserTests.js",
     "rollup": "rollup -c",
     "eslint": "eslint .",
-    "test": "npm run eslint && npm run rollup && opn http://127.0.0.1:8081/test/ && npm start",
+    "test": "npm run eslint && npm run rollup && open-cli http://127.0.0.1:8081/test/ && npm start",
     "start": "static -p 8081"
   },
   "browserslist": [
@@ -52,6 +52,7 @@
     "ajv": "6.10.0",
     "babel-eslint": "^10.0.1",
     "babel-plugin-dynamic-import-node": "^2.2.0",
+    "chai": "^4.2.0",
     "core-js-bundle": "^3.0.1",
     "eslint": "^5.16.0",
     "eslint-config-ash-nazg": "^4.0.0",
@@ -68,8 +69,8 @@
     "eslint-plugin-unicorn": "^8.0.2",
     "fast-json-patch": "2.1.0",
     "json-metaschema": "1.2.0",
-    "nodeunit": "0.11.3",
-    "opn-cli": "^4.1.0",
+    "mocha": "^6.1.4",
+    "open-cli": "^5.0.0",
     "regenerator-runtime": "^0.13.2",
     "remark-lint": "6.0.4",
     "rollup": "1.11.3",

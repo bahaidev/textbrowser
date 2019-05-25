@@ -1,9 +1,7 @@
-/* eslint-env node */
-/* exported textbrowserTests */
-var JsonRefs, jsonpatch, Ajv, getJSON, __dirname, path; // eslint-disable-line no-var
-
-(function () {
+/* eslint-env node, mocha */
 'use strict'; // eslint-disable-line strict
+
+var JsonRefs, chai, assert, jsonpatch, Ajv, getJSON, __dirname, path; // eslint-disable-line no-var
 
 function cloneJSON (obj) {
     return JSON.parse(JSON.stringify(obj));
@@ -17,9 +15,11 @@ if (typeof exports !== 'undefined') {
     JsonRefs = require('json-refs');
     jsonpatch = require('fast-json-patch');
     getJSON = require('simple-get-json');
+    assert = require('assert');
     path = require('path');
     /* eslint-enable global-require */
 } else {
+    ({assert} = chai);
     path = {
         join: (...args) => args.join('')
     };
@@ -47,6 +47,7 @@ function validate (testName, schema, data, extraSchemas = [], additionalOptions 
             ajv.addSchema(val, key);
         });
         valid = ajv.validate(schema, data);
+        assert(valid, 'Valid schema');
     } catch (e) {
         console.log('(' + testName + ') ' + e);
     } finally {
@@ -55,9 +56,8 @@ function validate (testName, schema, data, extraSchemas = [], additionalOptions 
     return valid;
 }
 
-const textbrowserTests = {
-    async 'locales tests' (test) {
-        test.expect(5);
+describe('textbrowser tests', function () {
+    it('locales tests', async () => {
         const [jsonSchema, schema, ...locales] = await Promise.all([
             getJSON(path.join(
                 __dirname,
@@ -75,7 +75,7 @@ const textbrowserTests = {
         ]);
         locales.forEach(function (locale) {
             const valid = validate('locales tests', schema, locale);
-            test.strictEqual(valid, true);
+            assert.strictEqual(valid, true);
         });
 
         validate('Schema test', jsonSchema, schema, undefined, {
@@ -92,12 +92,9 @@ const textbrowserTests = {
         if (diff.length) {
             console.log('diff', diff);
         }
-        test.strictEqual(diff.length, 0);
-
-        test.done();
-    },
-    async 'languages.json test' (test) {
-        test.expect(3);
+        assert.strictEqual(diff.length, 0);
+    });
+    it('languages.json test', async () => {
         const results = await Promise.all([
             JsonRefs.resolveRefsAt(path.join(__dirname, appdataBase, 'languages.json')),
             getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-07-schema.json')),
@@ -107,7 +104,7 @@ const textbrowserTests = {
         const [{resolved: data}, jsonSchema, schema, localeSchema] = results;
         const extraSchemas = [['locale.jsonschema', localeSchema]];
         const valid = validate('languages.json test', schema, data, extraSchemas);
-        test.strictEqual(valid, true);
+        assert.strictEqual(valid, true);
 
         const schemas = results.slice(2);
         schemas.forEach((schema, i) => {
@@ -124,11 +121,10 @@ const textbrowserTests = {
             if (diff.length) {
                 console.log(`diff for schema at index ${i}`, diff);
             }
-            test.strictEqual(diff.length, 0);
+            assert.strictEqual(diff.length, 0);
         });
-        test.done();
-    },
-    async 'userJSON tests' (test) {
+    });
+    it('userJSON tests', async () => {
         const [jsonSchema, userJSONSchema, userJSON] = await getJSON([
             path.join(
                 __dirname,
@@ -153,7 +149,7 @@ const textbrowserTests = {
         if (diff.length) {
             console.log(`diff for data file`, diff);
         }
-        test.strictEqual(diff.length, 0);
+        assert.strictEqual(diff.length, 0);
 
         const userJSON2 = cloneJSON(userJSON);
         validate('Schema test', userJSONSchema, userJSON, undefined, {
@@ -163,14 +159,6 @@ const textbrowserTests = {
         if (diff2.length) {
             console.log(`diff for data file`, diff2);
         }
-        test.strictEqual(diff2.length, 0);
-        test.done();
-    }
-};
-
-if (typeof exports !== 'undefined') {
-    module.exports = textbrowserTests;
-} else {
-    window.textbrowserTests = textbrowserTests;
-}
-}());
+        assert.strictEqual(diff2.length, 0);
+    });
+});
