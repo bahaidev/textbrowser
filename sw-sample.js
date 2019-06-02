@@ -72,8 +72,14 @@ function logError (error, ...messages) {
 }
 
 /**
+ * @callback DelayCallback
+ * @param {Float} time
+ * @returns {void}
+ */
+
+/**
  *
- * @param {GenericCallback} cb
+ * @param {DelayCallback} cb
  * @param {PositiveInteger} timeout
  * @param {string} errMessage
  * @param {PositiveInteger} [time=0]
