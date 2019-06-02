@@ -6,6 +6,7 @@ import {getMetaProp} from './utils/Metadata.js';
 import {dialogs} from './utils/dialogs.js';
 import Templates from './templates/index.js';
 
+// eslint-disable-next-line jsdoc/require-jsdoc
 export default async function workSelect ({
     files, lang, fallbackLanguages, $p, followParams
     /* , l, defineFormatter */

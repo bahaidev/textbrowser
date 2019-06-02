@@ -20,6 +20,18 @@ const importerRevert = [/return window.importer\(/, 'return import('];
 
 // Todo: Monitor https://github.com/rollup/rollup/issues/1978
 //        to suppress (known) circular dependency warnings
+/**
+ * @external RollupConfig
+ * @type {PlainObject}
+ * @see {@link https://rollupjs.org/guide/en#big-list-of-options}
+ */
+
+/**
+ * @param {PlainObject} config
+ * @param {boolean} config.minifying
+ * @param {string} [config.format='umd'} = {}]
+ * @returns {external:RollupConfig}
+ */
 function getRollupObject ({minifying, format = 'umd'} = {}) {
     const nonMinified = {
         input: 'resources/index.js',

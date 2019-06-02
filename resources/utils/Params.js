@@ -37,6 +37,10 @@ export const getParamsSetter = function ({l, il, $p}) {
             }
         });
 
+        /**
+         *
+         * @returns {void}
+         */
         function removeStartsEndsAndAnchors () {
             let num = 1;
             let num2 = 1;

@@ -1,5 +1,13 @@
 # textbrowser CHANGES
 
+## ?
+
+- Linting: Update per latest config (esp. jsdoc)
+- Testing: Switch from end-of-lifed nodeunit to mocha+chai
+- Change @babel/polyfill in sample files
+- npm: Update babel/core, node-fetch deps, core-js-bundle peerdep, and devDeps
+- npm: Update opn-cli -> open-cli
+
 ## 0.33.0
 
 - npm: Update deps, devDeps

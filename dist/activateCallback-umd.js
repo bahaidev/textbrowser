@@ -19,6 +19,19 @@
     //          to cache, de-register and re-register (?); how to detect if all
     //          files in cache?
     // Todo: Check `oldVersion` and run this first if still too old
+
+    /**
+    * @typedef {function} Logger
+    */
+
+    /**
+     * @param {PlainObject} cfg
+     * @param {string} cfg.namespace
+     * @param {string[]} cfg.files
+     * @param {Logger} cfg.log
+     * @param {string} [cfg.basePath=''}]
+     * @returns {Promise<void>}
+     */
     async function activateCallback ({
         namespace, files, log, basePath = ''
     }) {

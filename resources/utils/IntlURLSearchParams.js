@@ -1,3 +1,10 @@
+/**
+ *
+ * @param {string} param
+ * @param {boolean} skip
+ * @this IntlURLSearchParams
+ * @returns {string}
+ */
 function _prepareParam (param, skip) {
     if (skip || !this.localizeParamNames) { // (lang)
         return param;

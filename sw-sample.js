@@ -27,10 +27,10 @@ const minutes = 60 * 1000;
 
 /**
  *
- * @param {Object} args
+ * @param {object} args
  * @param {"log"|"error"|"beginInstall"|"finishedInstall"|"beginActivate"|"finishedActivate"} args.type
  * @param {string} [args.message=type}]
- * @returns {Promise} Resolves to `undefined`
+ * @returns {Promise<void>}
  */
 async function post ({type, message = type}) {
     const clients = await self.clients.matchAll({
@@ -51,7 +51,7 @@ async function post ({type, message = type}) {
 /**
  *
  * @param {string[]} messages
-* @returns {Promise} Resolves to `undefined`
+* @returns {Promise<void>}
  */
 function log (...messages) {
     const message = messages.join(' ');
@@ -63,7 +63,7 @@ function log (...messages) {
  *
  * @param {Error} error
  * @param {string[]} messages
-* @returns {Promise} Resolves to `undefined`
+* @returns {Promise<void>}
  */
 function logError (error, ...messages) {
     const message = messages.join(' ');
@@ -73,11 +73,11 @@ function logError (error, ...messages) {
 
 /**
  *
- * @param {Function} cb
+ * @param {GenericCallback} cb
  * @param {PositiveInteger} timeout
  * @param {string} errMessage
  * @param {PositiveInteger} [time=0]
- * @returns {Promise} Resolves to `undefined`
+ * @returns {Promise<void>}
  */
 async function tryAndRetry (cb, timeout, errMessage, time = 0) {
     time++;
@@ -97,8 +97,8 @@ async function tryAndRetry (cb, timeout, errMessage, time = 0) {
 
 /**
  *
- * @param {Object} args
- * @returns {Object}
+ * @param {object} args
+ * @returns {object}
  * @todo Since some of these reused, move to external file (or
  *         use `setServiceWorkerDefaults`?)
  */
@@ -167,7 +167,7 @@ console.log('sw stylesheets', stylesheets);
 /**
  *
  * @param {PositiveInteger} time
- * @returns {Promise} Resolves to `undefined`
+ * @returns {Promise<void>}
  */
 async function install (time) {
     post({type: 'beginInstall'});
@@ -251,7 +251,7 @@ async function install (time) {
 /**
  *
  * @param {PositiveInteger} time
- * @returns {Promise} Resolves to `undefined`
+ * @returns {Promise<void>}
  */
 async function activate (time) {
     post({type: 'beginActivate'});

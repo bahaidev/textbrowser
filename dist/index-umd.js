@@ -16516,6 +16516,13 @@
     }
   };
 
+  /**
+   *
+   * @param {string} param
+   * @param {boolean} skip
+   * @this IntlURLSearchParams
+   * @returns {string}
+   */
   function _prepareParam(param, skip) {
     if (skip || !this.localizeParamNames) {
       // (lang)
@@ -16733,6 +16740,10 @@
           paramsCopy.set(checkbox.name, checkbox.checked ? l('yes') : l('no'));
         }
       });
+      /**
+       *
+       * @returns {void}
+       */
 
       function removeStartsEndsAndAnchors() {
         var num = 1;
@@ -17097,7 +17108,8 @@
               prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
               localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
               prefFormatting = localStorage.getItem(this.namespace + '-hideFormattingSection');
-              hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : prefFormatting === 'true' || prefFormatting !== 'false' && this.hideFormattingSection;
+              hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : prefFormatting === 'true' || prefFormatting !== 'false' && this.hideFormattingSection; // eslint-disable-next-line jsdoc/require-jsdoc
+
               _context5.prev = 9;
               _context5.next = 12;
               return this.getWorkData({
@@ -17837,6 +17849,11 @@
                 // Todo: Should work with i18n=true (if names i18nized, need reverse look-up)
                 var key;
                 var p = $p.get(param, true);
+                /**
+                 *
+                 * @param {GenericArray|PlainObject} locale
+                 * @returns {boolean}
+                 */
 
                 function reverseLocaleLookup(locale) {
                   if (Array.isArray(locale)) {
@@ -18433,14 +18450,36 @@
     return resultsDisplayServerOrClient;
   }();
 
-  function prepareForServiceWorker(_x) {
+  /* eslint-enable no-unused-vars */
+
+  /**
+   *
+   * @returns {Promise<void>}
+   */
+
+
+  function prepareForServiceWorker() {
     return _prepareForServiceWorker.apply(this, arguments);
   }
+  /**
+  * @typedef {PlainObject} Langs
+  * @property {string} code
+  * @property {string} direction
+  * @property {PlainObject} locale
+  */
+
+  /**
+   *
+   * @param {Langs} langs
+   * @param {Logger} l
+   * @returns {Promise<void>}
+   */
+
 
   function _prepareForServiceWorker() {
     _prepareForServiceWorker = _asyncToGenerator(
     /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee6(langs) {
+    regeneratorRuntime.mark(function _callee6() {
       var persistent, errorType;
       return regeneratorRuntime.wrap(function _callee6$(_context6) {
         while (1) {
@@ -18510,7 +18549,7 @@
     return _prepareForServiceWorker.apply(this, arguments);
   }
 
-  function requestPermissions(_x2, _x3) {
+  function requestPermissions(_x, _x2) {
     return _requestPermissions.apply(this, arguments);
   }
 
@@ -18636,7 +18675,7 @@
 
                           case 20:
                             _context8.next = 22;
-                            return prepareForServiceWorker.call(_this3, langs);
+                            return prepareForServiceWorker.call(_this3);
 
                           case 22:
                             return _context8.abrupt("break", 25);
@@ -18968,7 +19007,7 @@
                                 l: siteI18n
                               });
                               _context3.next = 8;
-                              return prepareForServiceWorker.call(_this2, langs);
+                              return prepareForServiceWorker.call(_this2);
 
                             case 8:
                               _context3.next = 12;

@@ -21,10 +21,20 @@ import workSelect from './workSelect.js';
 import workDisplay from './workDisplay.js';
 import {resultsDisplayClient} from './resultsDisplay.js';
 
-/* eslint-disable-next-line no-unused-vars */
+/* eslint-disable no-unused-vars */
+/**
+ *
+ * @param {null|number|string|PlainObject|GenericArray} obj
+ * @returns {void}
+ */
 function s (obj) { dialogs.alert(JSON.stringify(obj)); } // lgtm [js/unused-local-variable]
+/* eslint-enable no-unused-vars */
 
-async function prepareForServiceWorker (langs) {
+/**
+ *
+ * @returns {Promise<void>}
+ */
+async function prepareForServiceWorker () {
     try {
         // Todo: No possible resolving after this point? (except
         //          to reload or if worker somehow active already)
@@ -60,6 +70,19 @@ async function prepareForServiceWorker (langs) {
     }
 }
 
+/**
+* @typedef {PlainObject} Langs
+* @property {string} code
+* @property {string} direction
+* @property {PlainObject} locale
+*/
+
+/**
+ *
+ * @param {Langs} langs
+ * @param {Logger} l
+ * @returns {Promise<void>}
+ */
 async function requestPermissions (langs, l) {
     await new Promise((resolve, reject) => {
         // Todo: We could run the dialog code below for every page if
@@ -80,6 +103,10 @@ async function requestPermissions (langs, l) {
             browserNotGrantingPersistenceAlert.close();
         };
         const close = async () => {
+            /**
+             *
+             * @returns {void}
+             */
             function rememberRefusal () {
                 // Todo: We could go forward with worker, caching files, and
                 //    indexedDB regardless of permissions, but this way
@@ -118,7 +145,7 @@ async function requestPermissions (langs, l) {
                     return;
                 }
                 // Has own error-handling
-                await prepareForServiceWorker.call(this, langs);
+                await prepareForServiceWorker.call(this);
                 break;
             default:
                 console.error('Unexpected returnValue', requestPermissionsDialog.returnValue);
@@ -325,7 +352,7 @@ class TextBrowser {
                     // No need to ask permissions (e.g., if user bookmarked site instead),
                     //   but we do need a worker
                     Templates.permissions.main({l: siteI18n});
-                    await prepareForServiceWorker.call(this, langs);
+                    await prepareForServiceWorker.call(this);
                 } else { // Keep asking if not persistent (unless refused)
                     await requestPermissions.call(this, langs, siteI18n);
                 }

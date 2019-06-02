@@ -105,6 +105,13 @@ function _objectWithoutProperties(source, excluded) {
   return target;
 }
 
+/**
+ *
+ * @param {string} param
+ * @param {boolean} skip
+ * @this IntlURLSearchParams
+ * @returns {string}
+ */
 function _prepareParam(param, skip) {
   if (skip || !this.localizeParamNames) {
     // (lang)
@@ -3058,6 +3065,11 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     // Todo: Should work with i18n=true (if names i18nized, need reverse look-up)
     let key;
     const p = $p.get(param, true);
+    /**
+     *
+     * @param {GenericArray|PlainObject} locale
+     * @returns {boolean}
+     */
 
     function reverseLocaleLookup(locale) {
       if (Array.isArray(locale)) {

@@ -8,6 +8,7 @@ import {dialogs} from './utils/dialogs.js';
 
 import Templates from './templates/index.js';
 
+// eslint-disable-next-line jsdoc/require-jsdoc
 export default async function workDisplay ({
     l, languageParam,
     lang, preferredLocale, languages, fallbackLanguages, $p
@@ -30,6 +31,7 @@ export default async function workDisplay ({
             prefFormatting !== 'false' && this.hideFormattingSection
         );
 
+    // eslint-disable-next-line jsdoc/require-jsdoc
     async function _displayWork ({
         lf, metadataObj, getFieldAliasOrName, schemaObj, schemaItems, fieldInfo,
         metadata, pluginsForWork, groupsToWorks

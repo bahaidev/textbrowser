@@ -3,6 +3,11 @@
 
 var JsonRefs, chai, assert, jsonpatch, Ajv, getJSON, __dirname, path; // eslint-disable-line no-var
 
+/**
+ *
+ * @param {null|number|string|GenericArray|PlainObject} obj
+ * @returns {null|number|string|GenericArray|PlainObject}
+ */
 function cloneJSON (obj) {
     return JSON.parse(JSON.stringify(obj));
 }
@@ -33,10 +38,10 @@ const appdataBase = appBase + 'appdata/';
 
 /**
 * @param {string} testName Name of the current test
-* @param {Object} schema Schema object
-* @param {any} data Data object
-* @param {Array.<string[]>} extraSchemas
-* @param {Object} additionalOptions
+* @param {object} schema Schema object
+* @param {PlainObject} data Data object
+* @param {string[][]} extraSchemas
+* @param {object} additionalOptions
 * @returns {boolean} Whether validation succeeded
 */
 function validate (testName, schema, data, extraSchemas = [], additionalOptions = {}) {

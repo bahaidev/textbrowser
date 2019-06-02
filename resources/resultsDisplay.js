@@ -376,6 +376,11 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         // Todo: Should work with i18n=true (if names i18nized, need reverse look-up)
         let key;
         const p = $p.get(param, true);
+        /**
+         *
+         * @param {GenericArray|PlainObject} locale
+         * @returns {boolean}
+         */
         function reverseLocaleLookup (locale) {
             if (Array.isArray(locale)) {
                 return locale.some(reverseLocaleLookup);
