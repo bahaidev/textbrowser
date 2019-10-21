@@ -3,11 +3,15 @@
 ## ?
 
 - Linting: Update per latest config (esp. jsdoc)
+- Linting (ESLint): Lint any HTML/Markdown JS
 - Testing: Switch from end-of-lifed nodeunit to mocha+chai
 - Change @babel/polyfill in sample files
 - npm: Update jamilih, load-stylesheets
-- npm: Update babel/core, node-fetch deps, core-js-bundle peerdep, and devDeps
+- npm: Update node-fetch dep
 - npm: Update opn-cli -> open-cli
+- npm: Update devDeps (eslint, rollup, remark-lint, ajv, fast-json-patch,
+    mocha, regenerator-runtime, core-js-bundle), deps (babel,
+    url-search-params-polyfill, load-stylesheets, indexeddbshim), peerDeps
 
 ## 0.33.0
 

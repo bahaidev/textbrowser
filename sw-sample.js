@@ -27,7 +27,7 @@ const minutes = 60 * 1000;
 
 /**
  *
- * @param {object} args
+ * @param {PlainObject} args
  * @param {"log"|"error"|"beginInstall"|"finishedInstall"|"beginActivate"|"finishedActivate"} args.type
  * @param {string} [args.message=type}]
  * @returns {Promise<void>}
@@ -102,9 +102,14 @@ async function tryAndRetry (cb, timeout, errMessage, time = 0) {
 }
 
 /**
+* @typedef {PlainObject} ConfigObject
+* @todo Define this
+*/
+
+/**
  *
- * @param {object} args
- * @returns {object}
+ * @param {ConfigObject} args
+ * @returns {ConfigObject}
  * @todo Since some of these reused, move to external file (or
  *         use `setServiceWorkerDefaults`?)
  */

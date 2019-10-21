@@ -25,48 +25,87 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-function _objectSpread(target) {
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread2(target) {
   for (var i = 1; i < arguments.length; i++) {
     var source = arguments[i] != null ? arguments[i] : {};
-    var ownKeys = Object.keys(source);
 
-    if (typeof Object.getOwnPropertySymbols === 'function') {
-      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-      }));
+    if (i % 2) {
+      ownKeys(source, true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(source).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
     }
-
-    ownKeys.forEach(function (key) {
-      _defineProperty(target, key, source[key]);
-    });
   }
 
   return target;
 }
 
+function _getRequireWildcardCache() {
+  if (typeof WeakMap !== "function") return null;
+  var cache = new WeakMap();
+
+  _getRequireWildcardCache = function () {
+    return cache;
+  };
+
+  return cache;
+}
+
 function _interopRequireWildcard(obj) {
   if (obj && obj.__esModule) {
     return obj;
-  } else {
-    var newObj = {};
+  }
 
-    if (obj != null) {
-      for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {};
+  var cache = _getRequireWildcardCache();
 
-          if (desc.get || desc.set) {
-            Object.defineProperty(newObj, key, desc);
-          } else {
-            newObj[key] = obj[key];
-          }
+  if (cache && cache.has(obj)) {
+    return cache.get(obj);
+  }
+
+  var newObj = {};
+
+  if (obj != null) {
+    var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+
+    for (var key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+
+        if (desc && (desc.get || desc.set)) {
+          Object.defineProperty(newObj, key, desc);
+        } else {
+          newObj[key] = obj[key];
         }
       }
     }
-
-    newObj.default = obj;
-    return newObj;
   }
+
+  newObj.default = obj;
+
+  if (cache) {
+    cache.set(obj, newObj);
+  }
+
+  return newObj;
 }
 
 function _objectWithoutPropertiesLoose(source, excluded) {
@@ -704,7 +743,7 @@ var workDisplay = {
       type: 'button',
       $on: {
         click() {
-          const url = serializeParamsAsURL(_objectSpread({}, getDataForSerializingParamsAsURL(), {
+          const url = serializeParamsAsURL(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
             type: 'randomResult'
           }));
           jamilih.$('#randomURL').value = url;
@@ -827,7 +866,7 @@ var workDisplay = {
                 // Todo: option for additional browse field groups (startEnd2, etc.)
                 // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
                 // Todo: Make Chrome NativeExt add-on to manipulate its search engines (to read a bookmarks file from Firefox properly, i.e., including keywords) https://www.makeuseof.com/answers/export-google-chrome-search-engines-address-bar/
-                const paramsCopy = paramsSetter(_objectSpread({}, getDataForSerializingParamsAsURL(), {
+                const paramsCopy = paramsSetter(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
                   fieldAliasOrNames,
                   workName: work,
                   // Delete work of current page
@@ -1022,7 +1061,7 @@ var workDisplay = {
     const serializeParamsAsURLWithData = ({
       type
     }) => {
-      return serializeParamsAsURL(_objectSpread({}, getDataForSerializingParamsAsURL(), {
+      return serializeParamsAsURL(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
         type
       }));
     };
@@ -1142,7 +1181,7 @@ var workDisplay = {
       $on: {
         async click(e) {
           e.preventDefault();
-          const paramsCopy = paramsSetter(_objectSpread({}, getDataForSerializingParamsAsURL(), {
+          const paramsCopy = paramsSetter(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
             workName: work,
             // Delete work of current page
             type: 'startEndResult'
@@ -1434,8 +1473,7 @@ body {
     };
     const outputmode = $p.get('outputmode', true); // Why not $pRaw?
 
-    const tableElems = tableOptions[// eslint-disable-line standard/computed-property-even-spacing
-    Object.keys(tableOptions).includes(outputmode) // Exclude __proto__ or whatever
+    const tableElems = tableOptions[Object.keys(tableOptions).includes(outputmode) // Exclude __proto__ or whatever
     ? outputmode : 'table' // Default
     ];
 
@@ -1464,7 +1502,7 @@ body {
       return el;
     };
 
-    const addAtts = ([el, atts], newAtts) => [el, _objectSpread({}, atts, newAtts)];
+    const addAtts = ([el, atts], newAtts) => [el, _objectSpread2({}, atts, {}, newAtts)];
 
     const foundState = {
       start: false,
@@ -1643,7 +1681,7 @@ class Dialog {
     locale = {},
     localeObject = {}
   }) {
-    this.localeStrings = _objectSpread({}, localeStrings[defaultLocale], localeStrings[locale], localeObject);
+    this.localeStrings = _objectSpread2({}, localeStrings[defaultLocale], {}, localeStrings[locale], {}, localeObject);
   }
 
   makeDialog({
@@ -1790,7 +1828,7 @@ class Dialog {
       /* const dialog = */
 
 
-      this.makeSubmitDialog(_objectSpread({}, submitArgs, {
+      this.makeSubmitDialog(_objectSpread2({}, submitArgs, {
         submit,
 
         cancel() {
@@ -2065,7 +2103,7 @@ class Languages {
     meta,
     metaApplicableField
   }) {
-    return lf(['plugins', pluginName, 'fieldname'], _objectSpread({}, meta, metaApplicableField, {
+    return lf(['plugins', pluginName, 'fieldname'], _objectSpread2({}, meta, {}, metaApplicableField, {
       applicableField: applicableFieldI18N,
       targetLanguage: targetLanguage ? this.getLanguageFromCode(targetLanguage) : ''
     }));
@@ -2135,20 +2173,16 @@ const getMetaProp = function getMetaProp(lang, metadataObj, properties, allowObj
 // Todo: Allow use of dbs and fileGroup together in base directories?
 
 const getMetadata = async (file, property, basePath) => {
-  try {
-    return (await JsonRefs.resolveRefsAt((basePath || getCurrDir()) + file + (property ? '#/' + property : ''), {
-      loaderOptions: {
-        processContent(res, callback) {
-          callback(undefined, JSON.parse(res.text || // `.metadata` not a recognized extension, so
-          //    convert to string for JSON in Node
-          res.body.toString()));
-        }
-
+  return (await JsonRefs.resolveRefsAt((basePath || getCurrDir()) + file + (property ? '#/' + property : ''), {
+    loaderOptions: {
+      processContent(res, callback) {
+        callback(undefined, JSON.parse(res.text || // `.metadata` not a recognized extension, so
+        //    convert to string for JSON in Node
+        res.body.toString()));
       }
-    })).resolved;
-  } catch (err) {
-    throw err;
-  }
+
+    }
+  })).resolved;
 };
 const getFieldNameAndValueAliases = function ({
   field,
@@ -2723,7 +2757,7 @@ const getRawFieldValue = v => {
 const resultsDisplayServer = async function resultsDisplayServer(args) {
   const {
     templateArgs
-  } = await resultsDisplayServerOrClient$1.call(this, _objectSpread({}, args)); // Todo: Should really reconcile this with client-side output options
+  } = await resultsDisplayServerOrClient$1.call(this, _objectSpread2({}, args)); // Todo: Should really reconcile this with client-side output options
   //         (as should also have option there to get JSON, Jamilih, etc.
   //         output)
 
@@ -3276,6 +3310,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     usePreferAlias: true
   }); // Todo: Repeats some code in workDisplay; probably need to reuse
   //   these functions more in `Templates.resultsDisplayServerOrClient` too
+  // eslint-disable-next-line require-atomic-updates
 
   const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
   const il = localizeParamNames ? key => l(['params', key]) : key => key;
@@ -3728,13 +3763,13 @@ const port = 'port' in userParams ? userParams.port : 8000;
 const domain = userParams.domain || `localhost`;
 const basePath = userParams.basePath || `http://${domain}${port ? ':' + port : ''}/`;
 
-const userParamsWithDefaults = _objectSpread({}, setServiceWorkerDefaults({}, {
+const userParamsWithDefaults = _objectSpread2({}, setServiceWorkerDefaults({}, {
   namespace: 'textbrowser',
   files: `${basePath}files.json`,
   // `files` must be absolute path for node-fetch
   languages: `${basePath}node_modules/textbrowser/appdata/languages.json`,
   serviceWorkerPath: `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON || '')}`
-}), userParams, {
+}), {}, userParams, {
   log(...args) {
     console.log(...args);
   },
@@ -3848,14 +3883,14 @@ const srv = http.createServer(async (req, res) => {
       res.writeHead(200, {
         'Content-Type': isHTML ? 'text/html;charset=utf8' : 'application/json;charset=utf8'
       });
-      resultsArgs = _objectSpread({}, resultsArgs, {
+      resultsArgs = _objectSpread2({}, resultsArgs, {
         skipIndexedDB: false,
         serverOutput,
         langData,
         prefI18n: $p.get('prefI18n', true)
       }); // Todo: Move sw-sample.js to bahaiwritings and test
 
-      const result = await resultsDisplayServer.call(_objectSpread({}, userParamsWithDefaults, {
+      const result = await resultsDisplayServer.call(_objectSpread2({}, userParamsWithDefaults, {
         lang,
         langs,
         fallbackLanguages

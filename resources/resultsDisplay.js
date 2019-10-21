@@ -547,6 +547,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
 
     // Todo: Repeats some code in workDisplay; probably need to reuse
     //   these functions more in `Templates.resultsDisplayServerOrClient` too
+    // eslint-disable-next-line require-atomic-updates
     const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true)
         ? $p.get('i18n', true) === '1'
         : prefI18n === 'true' || (

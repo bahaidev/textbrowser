@@ -33,26 +33,22 @@ export const getMetaProp = function getMetaProp (lang, metadataObj, properties, 
 //      file.anyOf.splice(1, 1, {$ref: schemaFile});
 // Todo: Allow use of dbs and fileGroup together in base directories?
 export const getMetadata = async (file, property, basePath) => {
-    try {
-        return (await JsonRefs
-            .resolveRefsAt(
-                (basePath || getCurrDir()) + file + (property ? '#/' + property : ''),
-                {
-                    loaderOptions: {
-                        processContent (res, callback) {
-                            callback(undefined, JSON.parse(
-                                res.text ||
-                                // `.metadata` not a recognized extension, so
-                                //    convert to string for JSON in Node
-                                res.body.toString()
-                            ));
-                        }
+    return (await JsonRefs
+        .resolveRefsAt(
+            (basePath || getCurrDir()) + file + (property ? '#/' + property : ''),
+            {
+                loaderOptions: {
+                    processContent (res, callback) {
+                        callback(undefined, JSON.parse(
+                            res.text ||
+                            // `.metadata` not a recognized extension, so
+                            //    convert to string for JSON in Node
+                            res.body.toString()
+                        ));
                     }
                 }
-            )).resolved;
-    } catch (err) {
-        throw err;
-    }
+            }
+        )).resolved;
 };
 
 export const getFieldNameAndValueAliases = function ({

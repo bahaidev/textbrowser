@@ -37,11 +37,19 @@ const localesBase = appBase + 'locales/';
 const appdataBase = appBase + 'appdata/';
 
 /**
+* @external JSONSchema
+*/
+
+/**
+* @external AJVOptions
+*/
+
+/**
 * @param {string} testName Name of the current test
-* @param {object} schema Schema object
+* @param {external:JSONSchema} schema Schema object
 * @param {PlainObject} data Data object
 * @param {string[][]} extraSchemas
-* @param {object} additionalOptions
+* @param {external:AJVOptions} additionalOptions
 * @returns {boolean} Whether validation succeeded
 */
 function validate (testName, schema, data, extraSchemas = [], additionalOptions = {}) {

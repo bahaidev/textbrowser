@@ -212,7 +212,7 @@ body {
             'json-object': 'json'
         };
         const outputmode = $p.get('outputmode', true); // Why not $pRaw?
-        const tableElems = tableOptions[ // eslint-disable-line standard/computed-property-even-spacing
+        const tableElems = tableOptions[
             Object.keys(tableOptions).includes(outputmode) // Exclude __proto__ or whatever
                 ? outputmode
                 : 'table' // Default

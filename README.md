@@ -1021,6 +1021,7 @@ it supports the following arguments:
 1.  Remove need for separate metadata
     files per
     <https://github.com/json-schema-org/json-schema-spec/issues/587#issuecomment-389726603>
+1.  Remove `form-serialization` in favor of [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData)?
 1.  Replace comma-separated interlinear approach with a popup dialog
     with multiselect
 1.  Preview styling changes (or move all controls to results page for

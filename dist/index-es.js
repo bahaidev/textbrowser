@@ -85,20 +85,35 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-function _objectSpread(target) {
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread2(target) {
   for (var i = 1; i < arguments.length; i++) {
     var source = arguments[i] != null ? arguments[i] : {};
-    var ownKeys = Object.keys(source);
 
-    if (typeof Object.getOwnPropertySymbols === 'function') {
-      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-      }));
+    if (i % 2) {
+      ownKeys(source, true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(source).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
     }
-
-    ownKeys.forEach(function (key) {
-      _defineProperty(target, key, source[key]);
-    });
   }
 
   return target;
@@ -165,6 +180,10 @@ function _iterableToArray(iter) {
 }
 
 function _iterableToArrayLimit(arr, i) {
+  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
+    return;
+  }
+
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -2921,11 +2940,13 @@ function loadStylesheets(stylesheets, {
       } else if (after) {
         after.after(link);
       } else {
+        // eslint-disable-next-line unicorn/prefer-node-append
         document.head.appendChild(link);
       }
     }
 
-    const link = document.createElement('link');
+    const link = document.createElement('link'); // eslint-disable-next-line promise/avoid-new
+
     return new Promise((resolve, reject) => {
       let rej = reject;
 
@@ -2989,7 +3010,7 @@ function loadStylesheets(stylesheets, {
     });
   }
 
-  return Promise.all(stylesheets.map(setupLink));
+  return Promise.all(stylesheets.map(stylesheetURL => setupLink(stylesheetURL)));
 }
 
 function _typeof$2(obj) {
@@ -4425,7 +4446,7 @@ function _defineProperty$1(obj, key, value) {
   return obj;
 }
 
-function _objectSpread$1(target) {
+function _objectSpread(target) {
   for (var i = 1; i < arguments.length; i++) {
     var source = arguments[i] != null ? arguments[i] : {};
     var ownKeys = Object.keys(source);
@@ -6066,7 +6087,7 @@ jml.toJML = function (dom, config) {
     }
     */
     var type = 'nodeType' in node ? node.nodeType : null;
-    namespaces = _objectSpread$1({}, namespaces);
+    namespaces = _objectSpread({}, namespaces);
     var xmlChars = /([\t\n\r -\uD7FF\uE000-\uFFFD]|(?:[\uD800-\uDBFF](?![\uDC00-\uDFFF]))(?:(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]))*$/; // eslint-disable-line no-control-regex
 
     if ([2, 3, 4, 7, 8].includes(type) && !xmlChars.test(node.nodeValue)) {
@@ -6670,7 +6691,7 @@ function () {
           locale = _ref2$locale === void 0 ? {} : _ref2$locale,
           _ref2$localeObject = _ref2.localeObject,
           localeObject = _ref2$localeObject === void 0 ? {} : _ref2$localeObject;
-      this.localeStrings = _objectSpread({}, localeStrings[defaultLocale$1], localeStrings[locale], localeObject);
+      this.localeStrings = _objectSpread2({}, localeStrings[defaultLocale$1], {}, localeStrings[locale], {}, localeObject);
     }
   }, {
     key: "makeDialog",
@@ -6825,7 +6846,7 @@ function () {
         /* const dialog = */
 
 
-        _this2.makeSubmitDialog(_objectSpread({}, submitArgs, {
+        _this2.makeSubmitDialog(_objectSpread2({}, submitArgs, {
           submit: submit,
           cancel: function cancel() {
             reject(new Error('cancelled'));
@@ -6930,7 +6951,7 @@ function () {
           applicableFieldI18N = _ref3.applicableFieldI18N,
           meta = _ref3.meta,
           metaApplicableField = _ref3.metaApplicableField;
-      return lf(['plugins', pluginName, 'fieldname'], _objectSpread({}, meta, metaApplicableField, {
+      return lf(['plugins', pluginName, 'fieldname'], _objectSpread2({}, meta, {}, metaApplicableField, {
         applicableField: applicableFieldI18N,
         targetLanguage: targetLanguage ? this.getLanguageFromCode(targetLanguage) : ''
       }));
@@ -14081,8 +14102,7 @@ function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.prev = 0;
-            _context.next = 3;
+            _context.next = 2;
             return JsonRefs.resolveRefsAt((basePath || getCurrDir()) + file + (property ? '#/' + property : ''), {
               loaderOptions: {
                 processContent: function processContent(res, callback) {
@@ -14093,20 +14113,15 @@ function () {
               }
             });
 
-          case 3:
+          case 2:
             return _context.abrupt("return", _context.sent.resolved);
 
-          case 6:
-            _context.prev = 6;
-            _context.t0 = _context["catch"](0);
-            throw _context.t0;
-
-          case 9:
+          case 3:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 6]]);
+    }, _callee);
   }));
 
   return function getMetadata(_x, _x2, _x3) {
@@ -15678,7 +15693,7 @@ var workDisplay = {
       type: 'button',
       $on: {
         click: function click() {
-          var url = serializeParamsAsURL(_objectSpread({}, getDataForSerializingParamsAsURL(), {
+          var url = serializeParamsAsURL(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
             type: 'randomResult'
           }));
           $('#randomURL').value = url;
@@ -15802,7 +15817,7 @@ var workDisplay = {
                         // Todo: option for additional browse field groups (startEnd2, etc.)
                         // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
                         // Todo: Make Chrome NativeExt add-on to manipulate its search engines (to read a bookmarks file from Firefox properly, i.e., including keywords) https://www.makeuseof.com/answers/export-google-chrome-search-engines-address-bar/
-                        var paramsCopy = paramsSetter(_objectSpread({}, getDataForSerializingParamsAsURL(), {
+                        var paramsCopy = paramsSetter(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
                           fieldAliasOrNames: fieldAliasOrNames,
                           workName: work,
                           // Delete work of current page
@@ -16021,7 +16036,7 @@ var workDisplay = {
 
     var serializeParamsAsURLWithData = function serializeParamsAsURLWithData(_ref24) {
       var type = _ref24.type;
-      return serializeParamsAsURL(_objectSpread({}, getDataForSerializingParamsAsURL(), {
+      return serializeParamsAsURL(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
         type: type
       }));
     };
@@ -16143,7 +16158,7 @@ var workDisplay = {
                 switch (_context2.prev = _context2.next) {
                   case 0:
                     e.preventDefault();
-                    paramsCopy = paramsSetter(_objectSpread({}, getDataForSerializingParamsAsURL(), {
+                    paramsCopy = paramsSetter(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
                       workName: work,
                       // Delete work of current page
                       type: 'startEndResult'
@@ -16366,8 +16381,7 @@ var resultsDisplayServerOrClient = {
     };
     var outputmode = $p.get('outputmode', true); // Why not $pRaw?
 
-    var tableElems = tableOptions[// eslint-disable-line standard/computed-property-even-spacing
-    Object.keys(tableOptions).includes(outputmode) // Exclude __proto__ or whatever
+    var tableElems = tableOptions[Object.keys(tableOptions).includes(outputmode) // Exclude __proto__ or whatever
     ? outputmode : 'table' // Default
     ];
 
@@ -16414,7 +16428,7 @@ var resultsDisplayServerOrClient = {
           el = _ref11[0],
           atts = _ref11[1];
 
-      return [el, _objectSpread({}, atts, newAtts)];
+      return [el, _objectSpread2({}, atts, {}, newAtts)];
     };
 
     var foundState = {
@@ -17347,7 +17361,7 @@ function _workDisplay() {
               fallback: true
             });
             _context5.next = 20;
-            return _displayWork.call(this, _objectSpread({
+            return _displayWork.call(this, _objectSpread2({
               lf: lf,
               metadataObj: metadataObj
             }, args));
@@ -17654,7 +17668,7 @@ function () {
             skipIndexedDB = this.skipIndexedDB || !persistent || !navigator.serviceWorker.controller;
             prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
             _context.next = 7;
-            return resultsDisplayServerOrClient$1.call(this, _objectSpread({}, args, {
+            return resultsDisplayServerOrClient$1.call(this, _objectSpread2({}, args, {
               skipIndexedDB: skipIndexedDB,
               prefI18n: prefI18n
             }));
@@ -18279,6 +18293,7 @@ function () {
               usePreferAlias: true
             }); // Todo: Repeats some code in workDisplay; probably need to reuse
             //   these functions more in `Templates.resultsDisplayServerOrClient` too
+            // eslint-disable-next-line require-atomic-updates
 
             localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
             il = localizeParamNames ? function (key) {
@@ -19057,7 +19072,7 @@ function () {
     key: "getWorkData",
     value: function getWorkData$1(opts) {
       try {
-        return getWorkData.call(this, _objectSpread({}, opts, {
+        return getWorkData.call(this, _objectSpread2({}, opts, {
           files: this.files,
           allowPlugins: this.allowPlugins
         }));
@@ -19082,14 +19097,14 @@ function () {
   }, {
     key: "getFieldNameAndValueAliases",
     value: function getFieldNameAndValueAliases$1(args) {
-      return getFieldNameAndValueAliases(_objectSpread({}, args, {
+      return getFieldNameAndValueAliases(_objectSpread2({}, args, {
         lang: this.lang
       }));
     }
   }, {
     key: "getBrowseFieldData",
     value: function getBrowseFieldData$1(args) {
-      return getBrowseFieldData(_objectSpread({}, args, {
+      return getBrowseFieldData(_objectSpread2({}, args, {
         lang: this.lang
       }));
     }
@@ -19422,6 +19437,7 @@ function () {
 
                 // Also could use l('chooselanguage'), but assumes locale
                 //   as with page title
+                // eslint-disable-next-line require-atomic-updates
                 $p.l10n = siteI18n; // Is this in use?
 
                 document.title = siteI18n('languages-title');
@@ -19479,7 +19495,7 @@ function () {
                   resultsDisplay: function resultsDisplay(opts) {
                     var noIndexedDB = refusedIndexedDB || !navigator.serviceWorker.controller; // No worker from which IndexedDB is available;
 
-                    return _this2.resultsDisplayClient(_objectSpread({
+                    return _this2.resultsDisplayClient(_objectSpread2({
                       langData: _this2.langData
                     }, opts, {
                       noIndexedDB: noIndexedDB,

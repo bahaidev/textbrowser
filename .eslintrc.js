@@ -52,6 +52,14 @@ module.exports = {
         "strict": 0
     }
   }, {
+    "files": ["test/index.html"],
+    "globals": {
+        mocha: false
+    },
+    "rules": {
+        "import/unambiguous": 0
+    }
+  }, {
     "files": ["test/textbrowserTests.js"],
     "rules": {
         "import/unambiguous": 0,
@@ -74,6 +82,7 @@ module.exports = {
     "consistent-return": 0,
     "arrow-parens": 0,
     "require-await": 0,
+    "prefer-named-capture-group": 0,
 
     "unicorn/no-fn-reference-in-iterator": 0,
     "promise/avoid-new": 0,
