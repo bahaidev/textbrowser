@@ -4,6 +4,8 @@
 
 - Linting: Update per latest config (esp. jsdoc)
 - Linting (ESLint): Lint any HTML/Markdown JS
+- Linting (ESLint): Switch to 2sp.
+- Maintenance: Add `.editorconfig`
 - Testing: Switch from end-of-lifed nodeunit to mocha+chai
 - Change @babel/polyfill in sample files
 - npm: Update opn-cli -> open-cli
