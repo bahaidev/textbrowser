@@ -75,6 +75,12 @@ function _interopRequireWildcard(obj) {
     return obj;
   }
 
+  if (obj === null || typeof obj !== "object" && typeof obj !== "function") {
+    return {
+      default: obj
+    };
+  }
+
   var cache = _getRequireWildcardCache();
 
   if (cache && cache.has(obj)) {
@@ -82,19 +88,16 @@ function _interopRequireWildcard(obj) {
   }
 
   var newObj = {};
+  var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
 
-  if (obj != null) {
-    var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+  for (var key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
 
-    for (var key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
-
-        if (desc && (desc.get || desc.set)) {
-          Object.defineProperty(newObj, key, desc);
-        } else {
-          newObj[key] = obj[key];
-        }
+      if (desc && (desc.get || desc.set)) {
+        Object.defineProperty(newObj, key, desc);
+      } else {
+        newObj[key] = obj[key];
       }
     }
   }
@@ -265,12 +268,12 @@ var languageSelect = {
   //   avoid need for pull-down if using first selection?
 
   /* Works too:
-  langs.map(({code, name}) =>
-      ['div', [
-          ['a', {href: '#', dataset: {code}}, [name]]
-      ]]
-  ), $('#main')
-  */
+    langs.map(({code, name}) =>
+        ['div', [
+            ['a', {href: '#', dataset: {code}}, [name]]
+        ]]
+    ), $('#main')
+    */
 
 
 };
@@ -308,11 +311,11 @@ var workSelect = (({
         }
       }) {
         /*
-        // If using click, but click doesn't always fire
-        if (e.target.nodeName.toLowerCase() === 'select') {
-            return;
-        }
-        */
+                      // If using click, but click doesn't always fire
+                      if (e.target.nodeName.toLowerCase() === 'select') {
+                          return;
+                      }
+                      */
         followParams('#workSelect', () => {
           $p.set('work', value);
         });
@@ -380,12 +383,12 @@ var workDisplay = {
     width: '20'
   }, [ld('field_enabled')]], ['th', [ld('field_title')]], ['th', [ld('fieldinterlin')]], ['th', [ld('fieldcss')]]
   /*
-  Todo: Support search?
-  ,
-  ['th', [
-      ld('fieldsearch')
-  ]]
-  */
+        Todo: Support search?
+        ,
+        ['th', [
+            ld('fieldsearch')
+        ]]
+        */
   ]], ...fieldInfo.map((fieldInfoItem, i) => {
     const idx = i + 1;
     const checkedIndex = 'checked' + idx;
@@ -426,11 +429,11 @@ var workDisplay = {
       value: $p.get('css' + idx)
     }]]]
     /*
-    ,
-    ['td', [ // Todo: Allow plain or regexp searching
-        ['input', {name: iil('search') + idx, value: $p.get('search' + idx)}]
-    ]]
-    */
+            ,
+            ['td', [ // Todo: Allow plain or regexp searching
+                ['input', {name: iil('search') + idx, value: $p.get('search' + idx)}]
+            ]]
+            */
     ]];
   }), ['tr', [['td', {
     colspan: 3
@@ -646,42 +649,42 @@ var workDisplay = {
     size: '12'
   }]]], ['br'],
   /*
-  ['br'],
-  ['label', [
-      ['input', {
-          name: il('transpose'),
-          type: 'checkbox',
-          value: l('yes'),
-          checked: $p.get('transpose') === l('yes')
-      }],
-      nbsp2, ld('transpose')
-  ]],
-  */
+      ['br'],
+      ['label', [
+          ['input', {
+              name: il('transpose'),
+              type: 'checkbox',
+              value: l('yes'),
+              checked: $p.get('transpose') === l('yes')
+          }],
+          nbsp2, ld('transpose')
+      ]],
+      */
   ['br'], le('pageformatting_tips', 'h3', 'title', {}, [ld('pageformatting')]),
   /*
-  ['label', [
-      ld('speech_controls'), nbsp2,
       ['label', [
-          ['input', {
-              name: il('speech'),
-              type: 'radio',
-              value: '1',
-              checked: $p.get('speech') === '1'
-          }],
-          ld('yes'), nbsp3
+          ld('speech_controls'), nbsp2,
+          ['label', [
+              ['input', {
+                  name: il('speech'),
+                  type: 'radio',
+                  value: '1',
+                  checked: $p.get('speech') === '1'
+              }],
+              ld('yes'), nbsp3
+          ]],
+          ['label', [
+              ['input', {
+                  name: il('speech'),
+                  type: 'radio',
+                  value: '0',
+                  checked: $p.get('speech') !== '1'
+              }],
+              ld('no')
+          ]]
       ]],
-      ['label', [
-          ['input', {
-              name: il('speech'),
-              type: 'radio',
-              value: '0',
-              checked: $p.get('speech') !== '1'
-          }],
-          ld('no')
-      ]]
-  ]],
-  ['br'],
-  */
+      ['br'],
+      */
   ['label', [ld('page_css'), nbsp2, ['textarea', {
     name: il('pagecss'),
     title: l('page_css_tips'),
@@ -1205,32 +1208,32 @@ var workDisplay = {
       hideFormattingSection
     })
     /*
-    // Todo: Is this still the case? No way to control with CSS?
-    ,arabicContent ?
-        // If there is Arabic content, a text box will be created for
-        //    each field with such content to allow the user to choose
-        //    how wide the field should be (since the Arabic is smaller).
-        // Todo: Allow naming of the field differently for Persian?
-        //    Allowing any column to be resized would probably be most
-        //    consistent with this project's aim to not make arbitrary
-        //    decisions on what should be customizable, but rather make
-        //    as much as possible customizable. It may also be helpful
-        //    for Chinese, etc. If adding, also need $p.get() for
-        //    defaulting behavior
-        {'#': arabicContent.map((item, i) =>
-            {'#': [
-                'Width of Arabic column: ', // Todo: i18n
-                ['input', {
-                    name: il('arw') + i,
-                    type: 'text',
-                    value: '',
-                    size: '7',
-                    maxlength: '12'
-                }]
-            ]}
-        )} :
-        ''
-    */
+                    // Todo: Is this still the case? No way to control with CSS?
+                    ,arabicContent ?
+                        // If there is Arabic content, a text box will be created for
+                        //    each field with such content to allow the user to choose
+                        //    how wide the field should be (since the Arabic is smaller).
+                        // Todo: Allow naming of the field differently for Persian?
+                        //    Allowing any column to be resized would probably be most
+                        //    consistent with this project's aim to not make arbitrary
+                        //    decisions on what should be customizable, but rather make
+                        //    as much as possible customizable. It may also be helpful
+                        //    for Chinese, etc. If adding, also need $p.get() for
+                        //    defaulting behavior
+                        {'#': arabicContent.map((item, i) =>
+                            {'#': [
+                                'Width of Arabic column: ', // Todo: i18n
+                                ['input', {
+                                    name: il('arw') + i,
+                                    type: 'text',
+                                    value: '',
+                                    size: '7',
+                                    maxlength: '12'
+                                }]
+                            ]}
+                        )} :
+                        ''
+                    */
     ]]]]]], ['p', {
       align: 'center'
     }, [le('submitgo', 'input', 'value', {
@@ -1621,14 +1624,14 @@ body {
       class: 'inner-caption'
     }, [['span', [caption]]]]]] : '']) : '',
     /*
-    // Works but quirky, e.g., `color` doesn't work (as also
-    //  confirmed per https://quirksmode.org/css/css2/columns.html)
-    addChildren(colgroupElem,
-        checkedFieldIndexes.map((idx, i) =>
-            addAtts(colElem, {style: $pRaw('css' + (idx + 1))})
-        )
-    ),
-    */
+              // Works but quirky, e.g., `color` doesn't work (as also
+              //  confirmed per https://quirksmode.org/css/css2/columns.html)
+              addChildren(colgroupElem,
+                  checkedFieldIndexes.map((idx, i) =>
+                      addAtts(colElem, {style: $pRaw('css' + (idx + 1))})
+                  )
+              ),
+              */
     $pRaw('header') !== '0' ? addChildren(theadElem, [addChildren(trElem, checkedFields.map((cf, i) => {
       const interlinearColIndexes = allInterlinearColIndexes[i];
       cf = escapeHTML(cf) + (interlinearColIndexes ? l('comma-space') + interlinearColIndexes.map(idx => localizedFieldNames[idx]).join(l('comma-space')) : '');
@@ -2390,11 +2393,11 @@ class PluginsForWork {
       placement,
 
       /*
-      {fieldXYZ: {
-          targetLanguage: "en"|["en"], // E.g., translating from Persian to English
-          onByDefault: true // Overrides plugin default
-      }}
-      */
+            {fieldXYZ: {
+                targetLanguage: "en"|["en"], // E.g., translating from Persian to English
+                onByDefault: true // Overrides plugin default
+            }}
+            */
       'applicable-fields': applicableFields
     }, i) => {
       const [pluginName, {
@@ -2942,26 +2945,26 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
 
     if (hasCaption) {
       /*
-      // Works but displays in parentheses browse fields which
-      //  may be non-applicable
-      const buildRangePoint = (startOrEnd) => escapeHTML(
-          browseFieldSets.reduce((txt, bfs, i) =>
-              (txt ? txt + ' (' : '') + bfs.map((bf, j) =>
-                  (j > 0 ? l('comma-space') : '') + bf + ' ' +
-                      $pRaw(startOrEnd + (i + 1) + '-' + (j + 1))
-              ).join('') + (txt ? ')' : ''), '')
-      );
-      */
+            // Works but displays in parentheses browse fields which
+            //  may be non-applicable
+            const buildRangePoint = (startOrEnd) => escapeHTML(
+                browseFieldSets.reduce((txt, bfs, i) =>
+                    (txt ? txt + ' (' : '') + bfs.map((bf, j) =>
+                        (j > 0 ? l('comma-space') : '') + bf + ' ' +
+                            $pRaw(startOrEnd + (i + 1) + '-' + (j + 1))
+                    ).join('') + (txt ? ')' : ''), '')
+            );
+            */
 
       /*
-      // Works but overly long
-      const buildRangePoint = (startOrEnd) => escapeHTML(
-          applicableBrowseFieldSet.map((bf, j) =>
-              (j > 0 ? l('comma-space') : '') + bf + ' ' +
-                  $pRaw(startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1))
-          ).join('')
-      );
-      */
+            // Works but overly long
+            const buildRangePoint = (startOrEnd) => escapeHTML(
+                applicableBrowseFieldSet.map((bf, j) =>
+                    (j > 0 ? l('comma-space') : '') + bf + ' ' +
+                        $pRaw(startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1))
+                ).join('')
+            );
+            */
       const startSep = Templates.resultsDisplayServerOrClient.startSeparator({
         l
       });
@@ -3100,10 +3103,10 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     let key;
     const p = $p.get(param, true);
     /**
-     *
-     * @param {GenericArray|PlainObject} locale
-     * @returns {boolean}
-     */
+         *
+         * @param {GenericArray|PlainObject} locale
+         * @returns {boolean}
+         */
 
     function reverseLocaleLookup(locale) {
       if (Array.isArray(locale)) {
@@ -3488,12 +3491,12 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
       });
     } else {
       /*
-      const jsonURL = Object.entries({
-          prefI18n, unlocalizedWorkName, startsRaw, endsRaw
-      }).reduce((url, [arg, argVal]) => {
-          return url + '&' + arg + '=' + encodeURIComponent((argVal));
-      }, `${dynamicBasePath}textbrowser?`);
-      */
+            const jsonURL = Object.entries({
+                prefI18n, unlocalizedWorkName, startsRaw, endsRaw
+            }).reduce((url, [arg, argVal]) => {
+                return url + '&' + arg + '=' + encodeURIComponent((argVal));
+            }, `${dynamicBasePath}textbrowser?`);
+            */
       const jsonURL = `${dynamicBasePath}textbrowser?${$p.toString()}`;
       tableData = await (await fetch(jsonURL)).json();
       usingServerData = true;
@@ -3781,18 +3784,18 @@ const userParamsWithDefaults = _objectSpread2({}, setServiceWorkerDefaults({}, {
   noDynamic: false // Not relevant here
 
   /*
-  Not in use:
-  logger: {
-      addLogEntry ({text}) {
-          console.log(`Log: ${text}`);
-      },
-      dbError ({
-          type,
-          escapedErrorMessage
-      }) {
-          throw new Error(`Worker aborted: error type ${type}; ${escapedErrorMessage}`);
-      }
-  } */
+    Not in use:
+    logger: {
+        addLogEntry ({text}) {
+            console.log(`Log: ${text}`);
+        },
+        dbError ({
+            type,
+            escapedErrorMessage
+        }) {
+            throw new Error(`Worker aborted: error type ${type}; ${escapedErrorMessage}`);
+        }
+    } */
 
 });
 
@@ -3847,9 +3850,9 @@ const srv = http.createServer(async (req, res) => {
       fileServer.serve(req, res);
     }).resume();
     /*
-    res.writeHead(404, {'Content-Type': 'text/html'});
-    res.end('<h1>File not found</h1>');
-    */
+        res.writeHead(404, {'Content-Type': 'text/html'});
+        res.end('<h1>File not found</h1>');
+        */
 
     return;
   }

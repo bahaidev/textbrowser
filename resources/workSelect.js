@@ -8,30 +8,30 @@ import Templates from './templates/index.js';
 
 // eslint-disable-next-line jsdoc/require-jsdoc
 export default async function workSelect ({
-    files, lang, fallbackLanguages, $p, followParams
-    /* , l, defineFormatter */
+  files, lang, fallbackLanguages, $p, followParams
+  /* , l, defineFormatter */
 }) {
-    // We use getJSON instead of JsonRefs as we do not necessarily need to
-    //    resolve the file contents here
-    try {
-        const dbs = await getJSON(files);
-        const localeFromFileData = (lan) =>
-            dbs['localization-strings'][lan];
+  // We use getJSON instead of JsonRefs as we do not necessarily need to
+  //    resolve the file contents here
+  try {
+    const dbs = await getJSON(files);
+    const localeFromFileData = (lan) =>
+      dbs['localization-strings'][lan];
 
-        const metadataObjs = await getJSON(dbs.groups.reduce((arr, fileGroup) => {
-            const metadataBaseDir = (dbs.metadataBaseDirectory || '') +
+    const metadataObjs = await getJSON(dbs.groups.reduce((arr, fileGroup) => {
+      const metadataBaseDir = (dbs.metadataBaseDirectory || '') +
                 (fileGroup.metadataBaseDirectory || '') + '/';
-            return fileGroup.files.reduce((ar, fileData) =>
-                ar.concat(metadataBaseDir + fileData.metadataFile),
-            arr);
-        }, []));
-        const imfFile = IMF({
-            locales: lang.map(localeFromFileData),
-            fallbackLocales: fallbackLanguages.map(localeFromFileData)
-        });
-        const lf = imfFile.getFormatter();
-        document.title = lf({key: 'browserfile-workselect', fallback: true});
-        /*
+      return fileGroup.files.reduce((ar, fileData) =>
+        ar.concat(metadataBaseDir + fileData.metadataFile),
+      arr);
+    }, []));
+    const imfFile = IMF({
+      locales: lang.map(localeFromFileData),
+      fallbackLocales: fallbackLanguages.map(localeFromFileData)
+    });
+    const lf = imfFile.getFormatter();
+    document.title = lf({key: 'browserfile-workselect', fallback: true});
+    /*
         function ld (key, values, formats) {
             return l({
                 key: key, values: values, formats: formats, fallback: ({message}) =>
@@ -44,13 +44,13 @@ export default async function workSelect ({
         }
         */
 
-        const metadataObjsIter = metadataObjs[Symbol.iterator]();
-        const getNextAlias = () => {
-            const metadataObj = metadataObjsIter.next().value;
-            return getMetaProp(lang, metadataObj, 'alias');
-        };
-        Templates.workSelect({groups: dbs.groups, lf, getNextAlias, $p, followParams});
-    } catch (err) {
-        dialogs.alert(err);
-    }
+    const metadataObjsIter = metadataObjs[Symbol.iterator]();
+    const getNextAlias = () => {
+      const metadataObj = metadataObjsIter.next().value;
+      return getMetaProp(lang, metadataObj, 'alias');
+    };
+    Templates.workSelect({groups: dbs.groups, lf, getNextAlias, $p, followParams});
+  } catch (err) {
+    dialogs.alert(err);
+  }
 }
