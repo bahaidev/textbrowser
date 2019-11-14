@@ -144,7 +144,7 @@ The repository is intended to be used as a
 Run the following from your project root.
 
 ```install
-npm install textbrower --save
+npm install textbrowser --save
 ```
 
 You can also target the latest code in `master` with the following:
