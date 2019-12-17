@@ -1,5 +1,11 @@
 # textbrowser CHANGES
 
+## ?
+
+- npm: Switch to non-deprecated `@rollup/plugin-node-resolve`
+- npm: Update deps (`babel`-related, `indexeddbshim`,
+  `url-search-param-polyfill`), peerDeps (`core-js-bundle`), devDeps
+
 ## 0.34.0
 
 - Linting: Update per latest config (esp. jsdoc)

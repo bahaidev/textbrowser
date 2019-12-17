@@ -44,13 +44,13 @@ function _objectSpread2(target) {
     var source = arguments[i] != null ? arguments[i] : {};
 
     if (i % 2) {
-      ownKeys(source, true).forEach(function (key) {
+      ownKeys(Object(source), true).forEach(function (key) {
         _defineProperty(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
     } else {
-      ownKeys(source).forEach(function (key) {
+      ownKeys(Object(source)).forEach(function (key) {
         Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
       });
     }
@@ -1660,6 +1660,10 @@ const $e = (el, descendentsSel) => {
   return el.querySelector(descendentsSel);
 };
 
+const dialogPolyfill = {
+  registerDialog() {}
+
+};
 const defaultLocale = 'en';
 const localeStrings = {
   en: {
@@ -1704,6 +1708,7 @@ class Dialog {
     }
 
     const dialog = jamilih.jml('dialog', atts, children, jamilih.$('#main'));
+    dialogPolyfill.registerDialog(dialog);
     dialog.showModal();
 
     if (remove) {
@@ -1798,6 +1803,7 @@ class Dialog {
 
         }
       }, [this.localeStrings.ok]]]]] : [])], jamilih.$('#main'));
+      dialogPolyfill.registerDialog(dialog);
       dialog.showModal();
     });
   }
@@ -1871,6 +1877,7 @@ class Dialog {
 
         }
       }, [this.localeStrings.cancel]]]]], jamilih.$('#main'));
+      dialogPolyfill.registerDialog(dialog);
       dialog.showModal();
     });
   }
