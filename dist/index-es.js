@@ -12,6 +12,42 @@ function _typeof(obj) {
   return _typeof(obj);
 }
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+        args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+
+      _next(undefined);
+    });
+  };
+}
+
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -181,7 +217,7 @@ function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance");
 }
 
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+function asyncGeneratorStep$1(gen, resolve, reject, _next, _throw, key, arg) {
   try {
     var info = gen[key](arg);
     var value = info.value;
@@ -197,7 +233,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   }
 }
 
-function _asyncToGenerator(fn) {
+function _asyncToGenerator$1(fn) {
   return function () {
     var self = this,
         args = arguments;
@@ -205,11 +241,11 @@ function _asyncToGenerator(fn) {
       var gen = fn.apply(self, args);
 
       function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+        asyncGeneratorStep$1(gen, resolve, reject, _next, _throw, "next", value);
       }
 
       function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+        asyncGeneratorStep$1(gen, resolve, reject, _next, _throw, "throw", err);
       }
 
       _next(undefined);
@@ -242,7 +278,7 @@ function getJSON(_x, _x2, _x3) {
 }
 
 function _getJSON() {
-  _getJSON = _asyncToGenerator(
+  _getJSON = _asyncToGenerator$1(
   /*#__PURE__*/
   regeneratorRuntime.mark(function _callee(jsonURL, cb, errBack) {
     var arrResult, result;
@@ -2578,7 +2614,7 @@ function _typeof$1(obj) {
   return _typeof$1(obj);
 }
 
-function asyncGeneratorStep$1(gen, resolve, reject, _next, _throw, key, arg) {
+function asyncGeneratorStep$1$1(gen, resolve, reject, _next, _throw, key, arg) {
   try {
     var info = gen[key](arg);
     var value = info.value;
@@ -2594,7 +2630,7 @@ function asyncGeneratorStep$1(gen, resolve, reject, _next, _throw, key, arg) {
   }
 }
 
-function _asyncToGenerator$1(fn) {
+function _asyncToGenerator$1$1(fn) {
   return function () {
     var self = this,
         args = arguments;
@@ -2602,11 +2638,11 @@ function _asyncToGenerator$1(fn) {
       var gen = fn.apply(self, args);
 
       function _next(value) {
-        asyncGeneratorStep$1(gen, resolve, reject, _next, _throw, "next", value);
+        asyncGeneratorStep$1$1(gen, resolve, reject, _next, _throw, "next", value);
       }
 
       function _throw(err) {
-        asyncGeneratorStep$1(gen, resolve, reject, _next, _throw, "throw", err);
+        asyncGeneratorStep$1$1(gen, resolve, reject, _next, _throw, "throw", err);
       }
 
       _next(undefined);
@@ -2619,7 +2655,7 @@ function getJSON$1(_x, _x2, _x3) {
 }
 
 function _getJSON$1() {
-  _getJSON$1 = _asyncToGenerator$1(
+  _getJSON$1 = _asyncToGenerator$1$1(
   /*#__PURE__*/
   regeneratorRuntime.mark(function _callee(jsonURL, cb, errBack) {
     var arrResult, result;
@@ -3510,34 +3546,44 @@ function getIMFFallbackResults(_ref) {
           return l.code === code;
         }).locale.$ref;
       },
-      callback: function callback() {
-        var _args = arguments;
-        return regeneratorRuntime.async(function callback$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!(localeCallback && localeCallback.apply(void 0, _args))) {
-                  _context.next = 3;
-                  break;
-                }
+      callback: function () {
+        var _callback = _asyncToGenerator(
+        /*#__PURE__*/
+        regeneratorRuntime.mark(function _callee() {
+          var _args = arguments;
+          return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  if (!(localeCallback && localeCallback.apply(void 0, _args))) {
+                    _context.next = 3;
+                    break;
+                  }
 
-                resolve();
-                return _context.abrupt("return");
+                  resolve();
+                  return _context.abrupt("return");
 
-              case 3:
-                _context.next = 5;
-                return regeneratorRuntime.awrap(resultsCallback.apply(void 0, _args));
+                case 3:
+                  _context.next = 5;
+                  return resultsCallback.apply(void 0, _args);
 
-              case 5:
-                resolve();
+                case 5:
+                  resolve();
 
-              case 6:
-              case "end":
-                return _context.stop();
+                case 6:
+                case "end":
+                  return _context.stop();
+              }
             }
-          }
-        });
-      }
+          }, _callee);
+        }));
+
+        function callback() {
+          return _callback.apply(this, arguments);
+        }
+
+        return callback;
+      }()
     });
   });
 }
@@ -14089,38 +14135,48 @@ var getMetaProp = function getMetaProp(lang, metadataObj, properties, allowObjec
 //      file.anyOf.splice(1, 1, {$ref: schemaFile});
 // Todo: Allow use of dbs and fileGroup together in base directories?
 
-var getMetadata = function getMetadata(file, property, basePath) {
-  return regeneratorRuntime.async(function getMetadata$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          _context.next = 2;
-          return regeneratorRuntime.awrap(JsonRefs.resolveRefsAt((basePath || getCurrDir()) + file + (property ? '#/' + property : ''), {
-            loaderOptions: {
-              processContent: function processContent(res, callback) {
-                callback(undefined, JSON.parse(res.text || // `.metadata` not a recognized extension, so
-                //    convert to string for JSON in Node
-                res.body.toString()));
+var getMetadata =
+/*#__PURE__*/
+function () {
+  var _ref = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee(file, property, basePath) {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return JsonRefs.resolveRefsAt((basePath || getCurrDir()) + file + (property ? '#/' + property : ''), {
+              loaderOptions: {
+                processContent: function processContent(res, callback) {
+                  callback(undefined, JSON.parse(res.text || // `.metadata` not a recognized extension, so
+                  //    convert to string for JSON in Node
+                  res.body.toString()));
+                }
               }
-            }
-          }));
+            });
 
-        case 2:
-          return _context.abrupt("return", _context.sent.resolved);
+          case 2:
+            return _context.abrupt("return", _context.sent.resolved);
 
-        case 3:
-        case "end":
-          return _context.stop();
+          case 3:
+          case "end":
+            return _context.stop();
+        }
       }
-    }
-  });
-};
-var getFieldNameAndValueAliases = function getFieldNameAndValueAliases(_ref) {
-  var field = _ref.field,
-      schemaItems = _ref.schemaItems,
-      metadataObj = _ref.metadataObj,
-      getFieldAliasOrName = _ref.getFieldAliasOrName,
-      lang = _ref.lang;
+    }, _callee);
+  }));
+
+  return function getMetadata(_x, _x2, _x3) {
+    return _ref.apply(this, arguments);
+  };
+}();
+var getFieldNameAndValueAliases = function getFieldNameAndValueAliases(_ref2) {
+  var field = _ref2.field,
+      schemaItems = _ref2.schemaItems,
+      metadataObj = _ref2.metadataObj,
+      getFieldAliasOrName = _ref2.getFieldAliasOrName,
+      lang = _ref2.lang;
   var fieldSchemaIndex = schemaItems.findIndex(function (item) {
     return item.title === field;
   });
@@ -14157,12 +14213,12 @@ var getFieldNameAndValueAliases = function getFieldNameAndValueAliases(_ref) {
       // Todo: We might iterate over all values (in case some not
       //         included in fv map)
       // Todo: Check `fieldSchema` for integer or string type
-      Object.entries(fieldValueAliasMap).forEach(function (_ref2) {
+      Object.entries(fieldValueAliasMap).forEach(function (_ref3) {
         var _ret$aliases2;
 
-        var _ref3 = _slicedToArray(_ref2, 2),
-            key = _ref3[0],
-            aliases = _ref3[1];
+        var _ref4 = _slicedToArray(_ref3, 2),
+            key = _ref4[0],
+            aliases = _ref4[1];
 
         // We'll preserve the numbers since probably more useful if
         //   stored with data (as opposed to enums)
@@ -14191,12 +14247,12 @@ var getFieldNameAndValueAliases = function getFieldNameAndValueAliases(_ref) {
   ret.lang = fieldInfo.lang;
   return ret;
 };
-var getBrowseFieldData = function getBrowseFieldData(_ref4) {
-  var metadataObj = _ref4.metadataObj,
-      schemaItems = _ref4.schemaItems,
-      getFieldAliasOrName = _ref4.getFieldAliasOrName,
-      lang = _ref4.lang,
-      callback = _ref4.callback;
+var getBrowseFieldData = function getBrowseFieldData(_ref5) {
+  var metadataObj = _ref5.metadataObj,
+      schemaItems = _ref5.schemaItems,
+      getFieldAliasOrName = _ref5.getFieldAliasOrName,
+      lang = _ref5.lang,
+      callback = _ref5.callback;
   metadataObj.table.browse_fields.forEach(function (browseFieldSetObject, i) {
     if (typeof browseFieldSetObject === 'string') {
       browseFieldSetObject = {
@@ -14235,8 +14291,8 @@ var getBrowseFieldData = function getBrowseFieldData(_ref4) {
 var Metadata =
 /*#__PURE__*/
 function () {
-  function Metadata(_ref5) {
-    var metadataObj = _ref5.metadataObj;
+  function Metadata(_ref6) {
+    var metadataObj = _ref6.metadataObj;
 
     _classCallCheck(this, Metadata);
 
@@ -14252,13 +14308,13 @@ function () {
     }
   }, {
     key: "getFieldMatchesLocale",
-    value: function getFieldMatchesLocale(_ref6) {
+    value: function getFieldMatchesLocale(_ref7) {
       var _this = this;
 
-      var namespace = _ref6.namespace,
-          preferredLocale = _ref6.preferredLocale,
-          schemaItems = _ref6.schemaItems,
-          pluginsForWork = _ref6.pluginsForWork;
+      var namespace = _ref7.namespace,
+          preferredLocale = _ref7.preferredLocale,
+          schemaItems = _ref7.schemaItems,
+          pluginsForWork = _ref7.pluginsForWork;
       var metadataObj = this.metadataObj;
       return function (field) {
         var preferredLanguages = getPreferredLanguages({
@@ -14457,44 +14513,56 @@ if (typeof process !== 'undefined') {
   /* eslint-enable global-require */
 }
 
-var getWorkFiles = function getWorkFiles() {
-  var files,
-      filesObj,
-      dataFiles,
-      _args = arguments;
-  return regeneratorRuntime.async(function getWorkFiles$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          files = _args.length > 0 && _args[0] !== undefined ? _args[0] : this.files;
-          _context.next = 3;
-          return regeneratorRuntime.awrap(getJSON(files));
+var getWorkFiles =
+/*#__PURE__*/
+function () {
+  var _getWorkFiles = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee() {
+    var files,
+        filesObj,
+        dataFiles,
+        _args = arguments;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            files = _args.length > 0 && _args[0] !== undefined ? _args[0] : this.files;
+            _context.next = 3;
+            return getJSON(files);
 
-        case 3:
-          filesObj = _context.sent;
-          dataFiles = [];
-          filesObj.groups.forEach(function (fileGroup) {
-            fileGroup.files.forEach(function (fileData) {
-              var _getFilePaths = getFilePaths(filesObj, fileGroup, fileData),
-                  file = _getFilePaths.file,
-                  schemaFile = _getFilePaths.schemaFile,
-                  metadataFile = _getFilePaths.metadataFile;
+          case 3:
+            filesObj = _context.sent;
+            dataFiles = [];
+            filesObj.groups.forEach(function (fileGroup) {
+              fileGroup.files.forEach(function (fileData) {
+                var _getFilePaths = getFilePaths(filesObj, fileGroup, fileData),
+                    file = _getFilePaths.file,
+                    schemaFile = _getFilePaths.schemaFile,
+                    metadataFile = _getFilePaths.metadataFile;
 
-              dataFiles.push(file, schemaFile, metadataFile);
+                dataFiles.push(file, schemaFile, metadataFile);
+              });
             });
-          });
-          dataFiles.push.apply(dataFiles, _toConsumableArray(Object.values(filesObj.plugins).map(function (pl) {
-            return pl.path;
-          })));
-          return _context.abrupt("return", dataFiles);
+            dataFiles.push.apply(dataFiles, _toConsumableArray(Object.values(filesObj.plugins).map(function (pl) {
+              return pl.path;
+            })));
+            return _context.abrupt("return", dataFiles);
 
-        case 8:
-        case "end":
-          return _context.stop();
+          case 8:
+          case "end":
+            return _context.stop();
+        }
       }
-    }
-  }, null, this);
-};
+    }, _callee, this);
+  }));
+
+  function getWorkFiles() {
+    return _getWorkFiles.apply(this, arguments);
+  }
+
+  return getWorkFiles;
+}();
 var getFilePaths = function getFilePaths(filesObj, fileGroup, fileData) {
   var baseDir = (filesObj.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
   var schemaBaseDir = (filesObj.schemaBaseDirectory || '') + (fileGroup.schemaBaseDirectory || '') + '/';
@@ -14508,287 +14576,296 @@ var getFilePaths = function getFilePaths(filesObj, fileGroup, fileData) {
     metadataFile: metadataFile
   };
 };
-var getWorkData = function getWorkData(_ref) {
-  var _this = this;
+var getWorkData =
+/*#__PURE__*/
+function () {
+  var _ref2 = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee2(_ref) {
+    var _this = this;
 
-  var lang, fallbackLanguages, work, files, allowPlugins, basePath, languages, preferredLocale, filesObj, localeFromFileData, imfFile, lf, fileData, fileGroup, groupsToWorks, fp, file, schemaFile, metadataFile, schemaProperty, metadataProperty, getPlugins, pluginsInWork, pluginFieldsForWork, pluginPaths, pluginFieldMappingForWork, pluginFieldMapping, pluginFieldMappingID, possiblePluginFieldMappingForWork, metadataObj, getFieldAliasOrName, pluginFieldMappings, _ref8, _ref9, schemaObj, pluginObjects, pluginsForWork, schemaItems, fieldInfo, metadata, _lang;
+    var lang, fallbackLanguages, work, files, allowPlugins, basePath, languages, preferredLocale, filesObj, localeFromFileData, imfFile, lf, fileData, fileGroup, groupsToWorks, fp, file, schemaFile, metadataFile, schemaProperty, metadataProperty, getPlugins, pluginsInWork, pluginFieldsForWork, pluginPaths, pluginFieldMappingForWork, pluginFieldMapping, pluginFieldMappingID, possiblePluginFieldMappingForWork, metadataObj, getFieldAliasOrName, pluginFieldMappings, _ref9, _ref10, schemaObj, pluginObjects, pluginsForWork, schemaItems, fieldInfo, metadata, _lang;
 
-  return regeneratorRuntime.async(function getWorkData$(_context2) {
-    while (1) {
-      switch (_context2.prev = _context2.next) {
-        case 0:
-          lang = _ref.lang, fallbackLanguages = _ref.fallbackLanguages, work = _ref.work, files = _ref.files, allowPlugins = _ref.allowPlugins, basePath = _ref.basePath, languages = _ref.languages, preferredLocale = _ref.preferredLocale;
-          _context2.next = 3;
-          return regeneratorRuntime.awrap(getJSON(files));
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            lang = _ref.lang, fallbackLanguages = _ref.fallbackLanguages, work = _ref.work, files = _ref.files, allowPlugins = _ref.allowPlugins, basePath = _ref.basePath, languages = _ref.languages, preferredLocale = _ref.preferredLocale;
+            _context2.next = 3;
+            return getJSON(files);
 
-        case 3:
-          filesObj = _context2.sent;
+          case 3:
+            filesObj = _context2.sent;
 
-          localeFromFileData = function localeFromFileData(lan) {
-            return filesObj['localization-strings'][lan];
-          };
+            localeFromFileData = function localeFromFileData(lan) {
+              return filesObj['localization-strings'][lan];
+            };
 
-          imfFile = IMFClass({
-            locales: lang.map(localeFromFileData),
-            fallbackLocales: fallbackLanguages.map(localeFromFileData)
-          });
-          lf = imfFile.getFormatter();
-          fileGroup = filesObj.groups.find(function (fg) {
-            fileData = fg.files.find(function (file) {
-              return work === lf(['workNames', fg.id, file.name]);
+            imfFile = IMFClass({
+              locales: lang.map(localeFromFileData),
+              fallbackLocales: fallbackLanguages.map(localeFromFileData)
             });
-            return Boolean(fileData);
-          }); // This is not specific to the work, but we export it anyways
-
-          groupsToWorks = filesObj.groups.map(function (fg) {
-            return {
-              name: lf({
-                key: fg.name.localeKey,
-                fallback: true
-              }),
-              workNames: fg.files.map(function (file) {
-                return lf(['workNames', fg.id, file.name]);
-              }),
-              shortcuts: fg.files.map(function (file) {
-                return file.shortcut;
-              })
-            };
-          });
-          fp = getFilePaths(filesObj, fileGroup, fileData);
-          file = fp.file;
-          schemaFile = fp.schemaFile, metadataFile = fp.metadataFile;
-          schemaProperty = '', metadataProperty = '';
-
-          if (!schemaFile) {
-            schemaFile = file;
-            schemaProperty = 'schema';
-          }
-
-          if (!metadataFile) {
-            metadataFile = file;
-            metadataProperty = 'metadata';
-          }
-
-          pluginFieldMappingForWork = [];
-
-          if (allowPlugins) {
-            pluginFieldMapping = filesObj['plugin-field-mapping'];
-            pluginFieldMappingID = pluginFieldMapping[fileGroup.id];
-            possiblePluginFieldMappingForWork = pluginFieldMappingID[fileData.name];
-
-            if (possiblePluginFieldMappingForWork) {
-              pluginFieldsForWork = Object.keys(possiblePluginFieldMappingForWork);
-              pluginsInWork = Object.entries(filesObj.plugins).filter(function (_ref2) {
-                var _ref3 = _slicedToArray(_ref2, 1),
-                    p = _ref3[0];
-
-                return pluginFieldsForWork.includes(p);
+            lf = imfFile.getFormatter();
+            fileGroup = filesObj.groups.find(function (fg) {
+              fileData = fg.files.find(function (file) {
+                return work === lf(['workNames', fg.id, file.name]);
               });
-              pluginFieldMappingForWork = pluginsInWork.map(function (_ref4) {
-                var _ref5 = _slicedToArray(_ref4, 1),
-                    p = _ref5[0];
+              return Boolean(fileData);
+            }); // This is not specific to the work, but we export it anyways
 
-                return possiblePluginFieldMappingForWork[p];
-              });
-              pluginPaths = pluginsInWork.map(function (_ref6) {
-                var _ref7 = _slicedToArray(_ref6, 2),
-                    pluginObj = _ref7[1];
-
-                return pluginObj.path;
-              });
-              getPlugins = pluginsInWork;
-            }
-          }
-
-          _context2.next = 19;
-          return regeneratorRuntime.awrap(getMetadata(metadataFile, metadataProperty, basePath));
-
-        case 19:
-          metadataObj = _context2.sent;
-
-          getFieldAliasOrName = function getFieldAliasOrName(field) {
-            var fieldObj = metadataObj.fields && metadataObj.fields[field];
-            var fieldName;
-            var fieldAlias;
-
-            if (fieldObj) {
-              fieldAlias = fieldObj.alias;
-            }
-
-            if (fieldAlias) {
-              if (typeof fieldAlias === 'string') {
-                fieldName = fieldAlias;
-              } else {
-                fieldAlias = fieldAlias.localeKey;
-                fieldName = getMetaProp(lang, metadataObj, fieldAlias.split('/'));
-              }
-            } else {
-              // No alias
-              fieldName = fieldObj.name;
-
-              if (_typeof(fieldName) === 'object') {
-                fieldName = fieldName.localeKey;
-                fieldName = getMetaProp(lang, metadataObj, fieldName.split('/'));
-              }
-            }
-
-            return fieldName;
-          };
-
-          pluginFieldMappings = pluginFieldMappingForWork;
-          _context2.next = 24;
-          return regeneratorRuntime.awrap(Promise.all([getMetadata(schemaFile, schemaProperty, basePath), getPlugins ? Promise.all(pluginPaths.map(function (pluginPath) {
-            if (typeof process !== 'undefined') {
-              pluginPath = path.resolve(path.join(process.cwd(), 'node_modules/textbrowser/server', pluginPath));
-              babelRegister({
-                presets: ['@babel/env']
-              });
-              return Promise.resolve().then(function () {
-                return require(pluginPath); // eslint-disable-line global-require, import/no-dynamic-require
-              })["catch"](function (err) {
-                // E.g., with tooltips plugin
-                console.log('err', err);
-              });
-            }
-
-            return import(pluginPath);
-          })) : null]));
-
-        case 24:
-          _ref8 = _context2.sent;
-          _ref9 = _slicedToArray(_ref8, 2);
-          schemaObj = _ref9[0];
-          pluginObjects = _ref9[1];
-          pluginsForWork = new PluginsForWork({
-            pluginsInWork: pluginsInWork,
-            pluginFieldMappings: pluginFieldMappings,
-            pluginObjects: pluginObjects
-          });
-          schemaItems = schemaObj.items.items;
-          fieldInfo = schemaItems.map(function (_ref10) {
-            var field = _ref10.title;
-            return {
-              field: field,
-              fieldAliasOrName: getFieldAliasOrName(field) || field
-            };
-          });
-          metadata = new Metadata({
-            metadataObj: metadataObj
-          });
-
-          if (languages && // Avoid all this processing if this is not the specific call requiring
-          pluginsForWork) {
-            console.log('pluginsForWork', pluginsForWork);
-            _lang = this.lang; // array with first item as preferred
-
-            pluginsForWork.iterateMappings(function (_ref11) {
-              var plugin = _ref11.plugin,
-                  pluginName = _ref11.pluginName,
-                  pluginLang = _ref11.pluginLang,
-                  onByDefaultDefault = _ref11.onByDefaultDefault,
-                  placement = _ref11.placement,
-                  applicableFields = _ref11.applicableFields,
-                  meta = _ref11.meta;
-
-              var processField = function processField() {
-                var _ref12 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-                    applicableField = _ref12.applicableField,
-                    targetLanguage = _ref12.targetLanguage,
-                    onByDefault = _ref12.onByDefault,
-                    metaApplicableField = _ref12.metaApplicableField;
-
-                var plugin = pluginsForWork.getPluginObject(pluginName) || {};
-                var applicableFieldLang = metadata.getFieldLang(applicableField);
-
-                if (plugin.getTargetLanguage) {
-                  targetLanguage = plugin.getTargetLanguage({
-                    applicableField: applicableField,
-                    targetLanguage: targetLanguage,
-                    // Default lang for plug-in (from files.json)
-                    pluginLang: pluginLang,
-                    // Default lang when no target language or
-                    //   plugin lang; using the lang of the applicable
-                    //   field
-                    applicableFieldLang: applicableFieldLang
-                  });
-                }
-
-                var field = escapePlugin({
-                  pluginName: pluginName,
-                  applicableField: applicableField,
-                  targetLanguage: targetLanguage || pluginLang || applicableFieldLang
-                });
-
-                if (targetLanguage === '{locale}') {
-                  targetLanguage = preferredLocale;
-                }
-
-                var applicableFieldI18N = getMetaProp(_lang, metadataObj, ['fieldnames', applicableField]);
-                var fieldAliasOrName = plugin.getFieldAliasOrName ? plugin.getFieldAliasOrName({
-                  locales: _lang,
-                  lf: lf,
-                  targetLanguage: targetLanguage,
-                  applicableField: applicableField,
-                  applicableFieldI18N: applicableFieldI18N,
-                  meta: meta,
-                  metaApplicableField: metaApplicableField,
-                  targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
-                }) : languages.getFieldNameFromPluginNameAndLocales({
-                  pluginName: pluginName,
-                  locales: _lang,
-                  lf: lf,
-                  targetLanguage: targetLanguage,
-                  applicableFieldI18N: applicableFieldI18N,
-                  // Todo: Should have formal way to i18nize meta
-                  meta: meta,
-                  metaApplicableField: metaApplicableField
-                });
-                fieldInfo.splice( // Todo: Allow default placement overriding for
-                //    non-plugins
-                placement === 'end' ? Infinity // push
-                : placement, 0, {
-                  field: "".concat(_this.namespace, "-plugin-").concat(field),
-                  fieldAliasOrName: fieldAliasOrName,
-                  // Plug-in specific (todo: allow specifying
-                  //    for non-plugins)
-                  onByDefault: typeof onByDefault === 'boolean' ? onByDefault : onByDefaultDefault || false,
-                  // Three conventions for use by plug-ins but
-                  //     textbrowser only passes on (might
-                  //     not need here)
-                  applicableField: applicableField,
-                  metaApplicableField: metaApplicableField,
-                  fieldLang: targetLanguage
-                });
+            groupsToWorks = filesObj.groups.map(function (fg) {
+              return {
+                name: lf({
+                  key: fg.name.localeKey,
+                  fallback: true
+                }),
+                workNames: fg.files.map(function (file) {
+                  return lf(['workNames', fg.id, file.name]);
+                }),
+                shortcuts: fg.files.map(function (file) {
+                  return file.shortcut;
+                })
               };
-
-              if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
-                processField();
-              }
             });
-          }
+            fp = getFilePaths(filesObj, fileGroup, fileData);
+            file = fp.file;
+            schemaFile = fp.schemaFile, metadataFile = fp.metadataFile;
+            schemaProperty = '', metadataProperty = '';
 
-          return _context2.abrupt("return", {
-            fileData: fileData,
-            lf: lf,
-            getFieldAliasOrName: getFieldAliasOrName,
-            metadataObj: metadataObj,
-            schemaObj: schemaObj,
-            schemaItems: schemaItems,
-            fieldInfo: fieldInfo,
-            pluginsForWork: pluginsForWork,
-            groupsToWorks: groupsToWorks,
-            metadata: metadata
-          });
+            if (!schemaFile) {
+              schemaFile = file;
+              schemaProperty = 'schema';
+            }
 
-        case 34:
-        case "end":
-          return _context2.stop();
+            if (!metadataFile) {
+              metadataFile = file;
+              metadataProperty = 'metadata';
+            }
+
+            pluginFieldMappingForWork = [];
+
+            if (allowPlugins) {
+              pluginFieldMapping = filesObj['plugin-field-mapping'];
+              pluginFieldMappingID = pluginFieldMapping[fileGroup.id];
+              possiblePluginFieldMappingForWork = pluginFieldMappingID[fileData.name];
+
+              if (possiblePluginFieldMappingForWork) {
+                pluginFieldsForWork = Object.keys(possiblePluginFieldMappingForWork);
+                pluginsInWork = Object.entries(filesObj.plugins).filter(function (_ref3) {
+                  var _ref4 = _slicedToArray(_ref3, 1),
+                      p = _ref4[0];
+
+                  return pluginFieldsForWork.includes(p);
+                });
+                pluginFieldMappingForWork = pluginsInWork.map(function (_ref5) {
+                  var _ref6 = _slicedToArray(_ref5, 1),
+                      p = _ref6[0];
+
+                  return possiblePluginFieldMappingForWork[p];
+                });
+                pluginPaths = pluginsInWork.map(function (_ref7) {
+                  var _ref8 = _slicedToArray(_ref7, 2),
+                      pluginObj = _ref8[1];
+
+                  return pluginObj.path;
+                });
+                getPlugins = pluginsInWork;
+              }
+            }
+
+            _context2.next = 19;
+            return getMetadata(metadataFile, metadataProperty, basePath);
+
+          case 19:
+            metadataObj = _context2.sent;
+
+            getFieldAliasOrName = function getFieldAliasOrName(field) {
+              var fieldObj = metadataObj.fields && metadataObj.fields[field];
+              var fieldName;
+              var fieldAlias;
+
+              if (fieldObj) {
+                fieldAlias = fieldObj.alias;
+              }
+
+              if (fieldAlias) {
+                if (typeof fieldAlias === 'string') {
+                  fieldName = fieldAlias;
+                } else {
+                  fieldAlias = fieldAlias.localeKey;
+                  fieldName = getMetaProp(lang, metadataObj, fieldAlias.split('/'));
+                }
+              } else {
+                // No alias
+                fieldName = fieldObj.name;
+
+                if (_typeof(fieldName) === 'object') {
+                  fieldName = fieldName.localeKey;
+                  fieldName = getMetaProp(lang, metadataObj, fieldName.split('/'));
+                }
+              }
+
+              return fieldName;
+            };
+
+            pluginFieldMappings = pluginFieldMappingForWork;
+            _context2.next = 24;
+            return Promise.all([getMetadata(schemaFile, schemaProperty, basePath), getPlugins ? Promise.all(pluginPaths.map(function (pluginPath) {
+              if (typeof process !== 'undefined') {
+                pluginPath = path.resolve(path.join(process.cwd(), 'node_modules/textbrowser/server', pluginPath));
+                babelRegister({
+                  presets: ['@babel/env']
+                });
+                return Promise.resolve().then(function () {
+                  return require(pluginPath); // eslint-disable-line global-require, import/no-dynamic-require
+                })["catch"](function (err) {
+                  // E.g., with tooltips plugin
+                  console.log('err', err);
+                });
+              }
+
+              return import(pluginPath);
+            })) : null]);
+
+          case 24:
+            _ref9 = _context2.sent;
+            _ref10 = _slicedToArray(_ref9, 2);
+            schemaObj = _ref10[0];
+            pluginObjects = _ref10[1];
+            pluginsForWork = new PluginsForWork({
+              pluginsInWork: pluginsInWork,
+              pluginFieldMappings: pluginFieldMappings,
+              pluginObjects: pluginObjects
+            });
+            schemaItems = schemaObj.items.items;
+            fieldInfo = schemaItems.map(function (_ref11) {
+              var field = _ref11.title;
+              return {
+                field: field,
+                fieldAliasOrName: getFieldAliasOrName(field) || field
+              };
+            });
+            metadata = new Metadata({
+              metadataObj: metadataObj
+            });
+
+            if (languages && // Avoid all this processing if this is not the specific call requiring
+            pluginsForWork) {
+              console.log('pluginsForWork', pluginsForWork);
+              _lang = this.lang; // array with first item as preferred
+
+              pluginsForWork.iterateMappings(function (_ref12) {
+                var plugin = _ref12.plugin,
+                    pluginName = _ref12.pluginName,
+                    pluginLang = _ref12.pluginLang,
+                    onByDefaultDefault = _ref12.onByDefaultDefault,
+                    placement = _ref12.placement,
+                    applicableFields = _ref12.applicableFields,
+                    meta = _ref12.meta;
+
+                var processField = function processField() {
+                  var _ref13 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                      applicableField = _ref13.applicableField,
+                      targetLanguage = _ref13.targetLanguage,
+                      onByDefault = _ref13.onByDefault,
+                      metaApplicableField = _ref13.metaApplicableField;
+
+                  var plugin = pluginsForWork.getPluginObject(pluginName) || {};
+                  var applicableFieldLang = metadata.getFieldLang(applicableField);
+
+                  if (plugin.getTargetLanguage) {
+                    targetLanguage = plugin.getTargetLanguage({
+                      applicableField: applicableField,
+                      targetLanguage: targetLanguage,
+                      // Default lang for plug-in (from files.json)
+                      pluginLang: pluginLang,
+                      // Default lang when no target language or
+                      //   plugin lang; using the lang of the applicable
+                      //   field
+                      applicableFieldLang: applicableFieldLang
+                    });
+                  }
+
+                  var field = escapePlugin({
+                    pluginName: pluginName,
+                    applicableField: applicableField,
+                    targetLanguage: targetLanguage || pluginLang || applicableFieldLang
+                  });
+
+                  if (targetLanguage === '{locale}') {
+                    targetLanguage = preferredLocale;
+                  }
+
+                  var applicableFieldI18N = getMetaProp(_lang, metadataObj, ['fieldnames', applicableField]);
+                  var fieldAliasOrName = plugin.getFieldAliasOrName ? plugin.getFieldAliasOrName({
+                    locales: _lang,
+                    lf: lf,
+                    targetLanguage: targetLanguage,
+                    applicableField: applicableField,
+                    applicableFieldI18N: applicableFieldI18N,
+                    meta: meta,
+                    metaApplicableField: metaApplicableField,
+                    targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
+                  }) : languages.getFieldNameFromPluginNameAndLocales({
+                    pluginName: pluginName,
+                    locales: _lang,
+                    lf: lf,
+                    targetLanguage: targetLanguage,
+                    applicableFieldI18N: applicableFieldI18N,
+                    // Todo: Should have formal way to i18nize meta
+                    meta: meta,
+                    metaApplicableField: metaApplicableField
+                  });
+                  fieldInfo.splice( // Todo: Allow default placement overriding for
+                  //    non-plugins
+                  placement === 'end' ? Infinity // push
+                  : placement, 0, {
+                    field: "".concat(_this.namespace, "-plugin-").concat(field),
+                    fieldAliasOrName: fieldAliasOrName,
+                    // Plug-in specific (todo: allow specifying
+                    //    for non-plugins)
+                    onByDefault: typeof onByDefault === 'boolean' ? onByDefault : onByDefaultDefault || false,
+                    // Three conventions for use by plug-ins but
+                    //     textbrowser only passes on (might
+                    //     not need here)
+                    applicableField: applicableField,
+                    metaApplicableField: metaApplicableField,
+                    fieldLang: targetLanguage
+                  });
+                };
+
+                if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
+                  processField();
+                }
+              });
+            }
+
+            return _context2.abrupt("return", {
+              fileData: fileData,
+              lf: lf,
+              getFieldAliasOrName: getFieldAliasOrName,
+              metadataObj: metadataObj,
+              schemaObj: schemaObj,
+              schemaItems: schemaItems,
+              fieldInfo: fieldInfo,
+              pluginsForWork: pluginsForWork,
+              groupsToWorks: groupsToWorks,
+              metadata: metadata
+            });
+
+          case 34:
+          case "end":
+            return _context2.stop();
+        }
       }
-    }
-  }, null, this);
-};
+    }, _callee2, this);
+  }));
 
-/* globals console, location, URL */
+  return function getWorkData(_x) {
+    return _ref2.apply(this, arguments);
+  };
+}();
+
 var setServiceWorkerDefaults = function setServiceWorkerDefaults(target, source) {
   target.userJSON = source.userJSON || 'resources/user.json';
   target.languages = source.languages || new URL('../appdata/languages.json', // Todo: Substitute with `import.meta.url`
@@ -14811,9 +14888,13 @@ var listenForWorkerUpdate = function listenForWorkerUpdate(_ref) {
     console.log('update found', e);
     var newWorker = r.installing; // statechange won't catch this installing event as already installing
 
-    newWorker.addEventListener('statechange', function _callee() {
+    newWorker.addEventListener('statechange',
+    /*#__PURE__*/
+    _asyncToGenerator(
+    /*#__PURE__*/
+    regeneratorRuntime.mark(function _callee() {
       var state;
-      return regeneratorRuntime.async(function _callee$(_context) {
+      return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
@@ -14829,7 +14910,7 @@ var listenForWorkerUpdate = function listenForWorkerUpdate(_ref) {
             case 6:
               console.log('Installation status', state);
               _context.next = 9;
-              return regeneratorRuntime.awrap(dialogs.alert("\nA new version of this offlinable app has been downloaded.\n\nIf you have work to complete in this tab, you can dismiss\nthis dialog now and continue working with the old version.\n\nHowever, when you are finished, you should close this tab\nand any other old tabs for this site in order to be able to\nbegin using the new version.\n"));
+              return dialogs.alert("\nA new version of this offlinable app has been downloaded.\n\nIf you have work to complete in this tab, you can dismiss\nthis dialog now and continue working with the old version.\n\nHowever, when you are finished, you should close this tab\nand any other old tabs for this site in order to be able to\nbegin using the new version.\n");
 
             case 9:
               return _context.abrupt("break", 19);
@@ -14841,7 +14922,7 @@ var listenForWorkerUpdate = function listenForWorkerUpdate(_ref) {
               console.log('Installation status', state); // Todo: Try updating again if get redundant here
 
               _context.next = 13;
-              return regeneratorRuntime.awrap(dialogs.alert("\nThere was an error during installation (to allow offline/speeded\ncache use).\n\nIf you have work to complete in this tab, you can dismiss\nthis dialog now and continue working with the old version.\n\nHowever, when you are finished, you may wish to close this tab\nand any other old tabs for this site in order to try again\nfor offline installation.\n"));
+              return dialogs.alert("\nThere was an error during installation (to allow offline/speeded\ncache use).\n\nIf you have work to complete in this tab, you can dismiss\nthis dialog now and continue working with the old version.\n\nHowever, when you are finished, you may wish to close this tab\nand any other old tabs for this site in order to try again\nfor offline installation.\n");
 
             case 13:
               return _context.abrupt("break", 19);
@@ -14862,233 +14943,263 @@ var listenForWorkerUpdate = function listenForWorkerUpdate(_ref) {
               return _context.stop();
           }
         }
-      });
-    });
+      }, _callee);
+    })));
   });
 };
-var respondToState = function respondToState(_ref2) {
-  var r, logger;
-  return regeneratorRuntime.async(function respondToState$(_context3) {
-    while (1) {
-      switch (_context3.prev = _context3.next) {
-        case 0:
-          r = _ref2.r, logger = _ref2.logger;
-          return _context3.abrupt("return", new Promise(function _callee2(resolve, reject) {
-            var worker;
-            return regeneratorRuntime.async(function _callee2$(_context2) {
-              while (1) {
-                switch (_context2.prev = _context2.next) {
-                  case 0:
-                    // eslint-disable-line no-async-promise-executor
-                    navigator.serviceWorker.addEventListener('message', function (_ref3) {
-                      var data = _ref3.data;
-                      var message = data.message,
-                          type = data.type,
-                          name = data.name,
-                          errorType = data.errorType;
-                      console.log('msg1', message, r);
+var respondToState =
+/*#__PURE__*/
+function () {
+  var _ref4 = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee3(_ref3) {
+    var r, logger;
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            r = _ref3.r, logger = _ref3.logger;
+            return _context3.abrupt("return", new Promise(
+            /*#__PURE__*/
+            function () {
+              var _ref5 = _asyncToGenerator(
+              /*#__PURE__*/
+              regeneratorRuntime.mark(function _callee2(resolve, reject) {
+                var worker;
+                return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                  while (1) {
+                    switch (_context2.prev = _context2.next) {
+                      case 0:
+                        // eslint-disable-line no-async-promise-executor
+                        navigator.serviceWorker.addEventListener('message', function (_ref6) {
+                          var data = _ref6.data;
+                          var message = data.message,
+                              type = data.type,
+                              name = data.name,
+                              errorType = data.errorType;
+                          console.log('msg1', message, r);
 
-                      switch (type) {
-                        case 'log':
-                          logger.addLogEntry({
-                            text: message
-                          });
-                          return;
+                          switch (type) {
+                            case 'log':
+                              logger.addLogEntry({
+                                text: message
+                              });
+                              return;
 
-                        case 'beginInstall':
-                          logger.addLogEntry({
-                            text: 'Install: Begun...'
-                          });
-                          return;
+                            case 'beginInstall':
+                              logger.addLogEntry({
+                                text: 'Install: Begun...'
+                              });
+                              return;
 
-                        case 'finishedInstall':
-                          logger.addLogEntry({
-                            text: 'Install: Finished...'
-                          });
-                          return;
+                            case 'finishedInstall':
+                              logger.addLogEntry({
+                                text: 'Install: Finished...'
+                              });
+                              return;
 
-                        case 'beginActivate':
-                          // Just use `e.source`?
-                          logger.addLogEntry({
-                            text: 'Activate: Caching finished'
-                          });
-                          logger.addLogEntry({
-                            text: 'Activate: Begin database resources storage...'
-                          }); // r.active is also available for mere "activating"
-                          //    as we are now
+                            case 'beginActivate':
+                              // Just use `e.source`?
+                              logger.addLogEntry({
+                                text: 'Activate: Caching finished'
+                              });
+                              logger.addLogEntry({
+                                text: 'Activate: Begin database resources storage...'
+                              }); // r.active is also available for mere "activating"
+                              //    as we are now
 
-                          return;
+                              return;
 
-                        case 'finishedActivate':
-                          logger.addLogEntry({
-                            text: 'Activate: Finished...'
-                          }); // Still not controlled even after activation is
-                          //    ready, so refresh page
-                          // Seems to be working (unlike `location.replace`),
-                          //  but if problems, could add `true` but as forces
-                          //  from server not cache, what will happen here? (also
-                          //  `controller` may be `null` with force-reload)
+                            case 'finishedActivate':
+                              logger.addLogEntry({
+                                text: 'Activate: Finished...'
+                              }); // Still not controlled even after activation is
+                              //    ready, so refresh page
+                              // Seems to be working (unlike `location.replace`),
+                              //  but if problems, could add `true` but as forces
+                              //  from server not cache, what will happen here? (also
+                              //  `controller` may be `null` with force-reload)
 
-                          location.reload(); // location.replace(location); // Avoids adding to browser history)
-                          // This will cause jankiness and unnecessarily show languages selection
-                          // resolve();
+                              location.reload(); // location.replace(location); // Avoids adding to browser history)
+                              // This will cause jankiness and unnecessarily show languages selection
+                              // resolve();
 
-                          return;
+                              return;
 
-                        case 'error':
-                          logger.addLogEntry({
-                            text: message + "".concat(errorType === 'dbError' ? "Database error ".concat(name) : '', "; trying again...")
-                          });
-                          /*
-                                  if (errorType === 'dbError') {
-                                      logger.dbError({
-                                          type: name || errorType,
-                                          escapedErrorMessage: escapeHTML(message)
-                                      });
-                                  }
-                                  */
-                          // Todo: auto-close any dbError dialog if retrying
-                          // No longer rejecting as should auto-retry
+                            case 'error':
+                              logger.addLogEntry({
+                                text: message + "".concat(errorType === 'dbError' ? "Database error ".concat(name) : '', "; trying again...")
+                              });
+                              /*
+                                      if (errorType === 'dbError') {
+                                          logger.dbError({
+                                              type: name || errorType,
+                                              escapedErrorMessage: escapeHTML(message)
+                                          });
+                                      }
+                                      */
+                              // Todo: auto-close any dbError dialog if retrying
+                              // No longer rejecting as should auto-retry
 
-                          /*
-                                  const err = new Error(message);
-                                  err.type = type;
-                                  reject(err);
-                                  */
+                              /*
+                                      const err = new Error(message);
+                                      err.type = type;
+                                      reject(err);
+                                      */
 
+                              break;
+
+                            default:
+                              console.error('Unexpected type', type);
+                              break;
+                          }
+                        });
+                        worker = r.installing || r.waiting || r.active; // Failed or new worker in use
+
+                        if (!(worker && worker.state === 'redundant')) {
+                          _context2.next = 8;
                           break;
+                        }
 
-                        default:
-                          console.error('Unexpected type', type);
+                        _context2.next = 5;
+                        return dialogs.alert("\nThere was likely an error installing. Click \"ok\" to try again.\n(Error code: Service worker is redundant)\n");
+
+                      case 5:
+                        location.reload(); // listenForWorkerUpdate({r, logger});
+
+                        _context2.next = 15;
+                        break;
+
+                      case 8:
+                        if (!r.installing) {
+                          _context2.next = 12;
                           break;
-                      }
-                    });
-                    worker = r.installing || r.waiting || r.active; // Failed or new worker in use
+                        }
 
-                    if (!(worker && worker.state === 'redundant')) {
-                      _context2.next = 8;
-                      break;
+                        // No need to expect a message from the installing event,
+                        //   as the `register` call seems to get called if ready
+                        console.log('INSTALLING');
+                        _context2.next = 15;
+                        break;
+
+                      case 12:
+                        if (!r.waiting) {
+                          _context2.next = 15;
+                          break;
+                        }
+
+                        _context2.next = 15;
+                        return dialogs.alert("\nAn update is in progress. After finishing any work\nyou have in them, please close this and any other existing tabs\nrunning this web application and then open the site again.\nPlease note it may take some time to install and may not show\nany indication it is installing.\n", {
+                          ok: false
+                        });
+
+                      case 15:
+                      case "end":
+                        return _context2.stop();
                     }
+                  }
+                }, _callee2);
+              }));
 
-                    _context2.next = 5;
-                    return regeneratorRuntime.awrap(dialogs.alert("\nThere was likely an error installing. Click \"ok\" to try again.\n(Error code: Service worker is redundant)\n"));
+              return function (_x2, _x3) {
+                return _ref5.apply(this, arguments);
+              };
+            }()));
 
-                  case 5:
-                    location.reload(); // listenForWorkerUpdate({r, logger});
-
-                    _context2.next = 15;
-                    break;
-
-                  case 8:
-                    if (!r.installing) {
-                      _context2.next = 12;
-                      break;
-                    }
-
-                    // No need to expect a message from the installing event,
-                    //   as the `register` call seems to get called if ready
-                    console.log('INSTALLING');
-                    _context2.next = 15;
-                    break;
-
-                  case 12:
-                    if (!r.waiting) {
-                      _context2.next = 15;
-                      break;
-                    }
-
-                    _context2.next = 15;
-                    return regeneratorRuntime.awrap(dialogs.alert("\nAn update is in progress. After finishing any work\nyou have in them, please close this and any other existing tabs\nrunning this web application and then open the site again.\nPlease note it may take some time to install and may not show\nany indication it is installing.\n", {
-                      ok: false
-                    }));
-
-                  case 15:
-                  case "end":
-                    return _context2.stop();
-                }
-              }
-            });
-          }));
-
-        case 2:
-        case "end":
-          return _context3.stop();
+          case 2:
+          case "end":
+            return _context3.stop();
+        }
       }
-    }
-  });
-}; // Keep in this file as may wish to avoid using for server (while still
+    }, _callee3);
+  }));
+
+  return function respondToState(_x) {
+    return _ref4.apply(this, arguments);
+  };
+}(); // Keep in this file as may wish to avoid using for server (while still
 //   doing other service worker work)
 
-var registerServiceWorker = function registerServiceWorker(_ref4) {
-  var serviceWorkerPath, logger, r;
-  return regeneratorRuntime.async(function registerServiceWorker$(_context4) {
-    while (1) {
-      switch (_context4.prev = _context4.next) {
-        case 0:
-          serviceWorkerPath = _ref4.serviceWorkerPath, logger = _ref4.logger;
-          // Todo: We might wish to allow avoiding the other locale files
-          //   and if only one chosen, switch to the work selection page
-          //   in that language
+var registerServiceWorker =
+/*#__PURE__*/
+function () {
+  var _ref8 = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee4(_ref7) {
+    var serviceWorkerPath, logger, r;
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            serviceWorkerPath = _ref7.serviceWorkerPath, logger = _ref7.logger;
+            // Todo: We might wish to allow avoiding the other locale files
+            //   and if only one chosen, switch to the work selection page
+            //   in that language
 
-          /*
-            Todo: (Configurable) Strategy options
-             - Wait and put everything in an `install` `waitUntil` after we've retrieved
-            the user JSON, informing the user that they must wait for everything to
-            download and ensure they can go completely offline (especially for sites
-            which don't have that much offline content).
-            - A safer bet (especially for non-hardcore users) is to pre-cache the
-            necessary files for this app, and download the rest as available. However,
-            if the user attempts to download while they are offline before
-            they got all files, we'll need to show a notice. The *TextBrowser* source
-            files, the user's files list and locales should be enough.
-             For either option, we might possibly (and user-optionally) send a notice
-            (whose approval we've asked for already) when all files are complete
-            instead of just a dialog. We could also skip waiting if we disabled offline
-            on previously controlled clients (until refresh would get new app files
-            and database queries wouldn't be broken)
-            */
-          console.log('--ready to register service worker', serviceWorkerPath); // `persist` will grandfather non-persisted caches, so if we don't end up
-          //    using `install` event for dynamic items, we could put the service worker
-          //    registration at the beginning of the file without waiting for persistence
-          //    approval (or at least after rendering page to avoid visual "jankiness"/
-          //    competititon for network for low-bandwidth sites); however,
-          //    as we want to show a dialog about permissions first, we wait until here.
+            /*
+              Todo: (Configurable) Strategy options
+               - Wait and put everything in an `install` `waitUntil` after we've retrieved
+              the user JSON, informing the user that they must wait for everything to
+              download and ensure they can go completely offline (especially for sites
+              which don't have that much offline content).
+              - A safer bet (especially for non-hardcore users) is to pre-cache the
+              necessary files for this app, and download the rest as available. However,
+              if the user attempts to download while they are offline before
+              they got all files, we'll need to show a notice. The *TextBrowser* source
+              files, the user's files list and locales should be enough.
+               For either option, we might possibly (and user-optionally) send a notice
+              (whose approval we've asked for already) when all files are complete
+              instead of just a dialog. We could also skip waiting if we disabled offline
+              on previously controlled clients (until refresh would get new app files
+              and database queries wouldn't be broken)
+              */
+            console.log('--ready to register service worker', serviceWorkerPath); // `persist` will grandfather non-persisted caches, so if we don't end up
+            //    using `install` event for dynamic items, we could put the service worker
+            //    registration at the beginning of the file without waiting for persistence
+            //    approval (or at least after rendering page to avoid visual "jankiness"/
+            //    competititon for network for low-bandwidth sites); however,
+            //    as we want to show a dialog about permissions first, we wait until here.
 
-          _context4.prev = 2;
-          _context4.next = 5;
-          return regeneratorRuntime.awrap(navigator.serviceWorker.register(serviceWorkerPath));
+            _context4.prev = 2;
+            _context4.next = 5;
+            return navigator.serviceWorker.register(serviceWorkerPath);
 
-        case 5:
-          r = _context4.sent;
-          _context4.next = 13;
-          break;
+          case 5:
+            r = _context4.sent;
+            _context4.next = 13;
+            break;
 
-        case 8:
-          _context4.prev = 8;
-          _context4.t0 = _context4["catch"](2);
-          _context4.next = 12;
-          return regeneratorRuntime.awrap(dialogs.alert("\nThere was an error during registration (for offline ability).\nPlease refresh the page if you wish to reattempt.\n"));
+          case 8:
+            _context4.prev = 8;
+            _context4.t0 = _context4["catch"](2);
+            _context4.next = 12;
+            return dialogs.alert("\nThere was an error during registration (for offline ability).\nPlease refresh the page if you wish to reattempt.\n");
 
-        case 12:
-          return _context4.abrupt("return");
+          case 12:
+            return _context4.abrupt("return");
 
-        case 13:
-          logger.addLogEntry({
-            text: 'Worker registration: Complete'
-          }); // Todo: Catch errors?
+          case 13:
+            logger.addLogEntry({
+              text: 'Worker registration: Complete'
+            }); // Todo: Catch errors?
 
-          return _context4.abrupt("return", respondToState({
-            r: r,
-            logger: logger
-          }));
+            return _context4.abrupt("return", respondToState({
+              r: r,
+              logger: logger
+            }));
 
-        case 15:
-        case "end":
-          return _context4.stop();
+          case 15:
+          case "end":
+            return _context4.stop();
+        }
       }
-    }
-  }, null, null, [[2, 8]]);
-};
+    }, _callee4, null, [[2, 8]]);
+  }));
+
+  return function registerServiceWorker(_x4) {
+    return _ref8.apply(this, arguments);
+  };
+}();
 
 var escapeHTML = function escapeHTML(s) {
   return !s ? '' : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -15709,99 +15820,109 @@ var workDisplay = {
     })]]], ['div', [['button', {
       title: l('bookmark_generation_tooltip'),
       $on: {
-        click: function click() {
-          var date, ADD_DATE, LAST_MODIFIED, blob, url, a;
-          return regeneratorRuntime.async(function click$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  // Todo: Give option to edit (keywords and work URLs)
-                  date = new Date().getTime();
-                  ADD_DATE = date;
-                  LAST_MODIFIED = date;
-                  _context.t0 = Blob;
-                  _context.t1 = new XMLSerializer();
-                  _context.t2 = jml;
-                  _context.t3 = {
-                    name: 'NETSCAPE-Bookmark-file-1'
-                  };
-                  _context.t4 = l('Bookmarks');
-                  _context.t5 = [['h1', [l('Bookmarks_Menu')]]];
-                  _context.t6 = _toConsumableArray;
-                  _context.next = 12;
-                  return regeneratorRuntime.awrap(getFieldAliasOrNames());
+        click: function () {
+          var _click = _asyncToGenerator(
+          /*#__PURE__*/
+          regeneratorRuntime.mark(function _callee() {
+            var date, ADD_DATE, LAST_MODIFIED, blob, url, a;
+            return regeneratorRuntime.wrap(function _callee$(_context) {
+              while (1) {
+                switch (_context.prev = _context.next) {
+                  case 0:
+                    // Todo: Give option to edit (keywords and work URLs)
+                    date = new Date().getTime();
+                    ADD_DATE = date;
+                    LAST_MODIFIED = date;
+                    _context.t0 = Blob;
+                    _context.t1 = new XMLSerializer();
+                    _context.t2 = jml;
+                    _context.t3 = {
+                      name: 'NETSCAPE-Bookmark-file-1'
+                    };
+                    _context.t4 = l('Bookmarks');
+                    _context.t5 = [['h1', [l('Bookmarks_Menu')]]];
+                    _context.t6 = _toConsumableArray;
+                    _context.next = 12;
+                    return getFieldAliasOrNames();
 
-                case 12:
-                  _context.t7 = function (_ref17) {
-                    var groupName = _ref17.groupName,
-                        worksToFields = _ref17.worksToFields;
-                    return [['dt', [['h3', {
-                      ADD_DATE: ADD_DATE,
-                      LAST_MODIFIED: LAST_MODIFIED
-                    }, [groupName]]]], ['dl', [['p']].concat(_toConsumableArray(worksToFields.map(function (_ref18) {
-                      var fieldAliasOrNames = _ref18.fieldAliasOrNames,
-                          workName = _ref18.workName,
-                          SHORTCUTURL = _ref18.shortcut;
-                      // Todo (low): Add anchor, etc. (until handled by `work-startEnd`); &aqdas-anchor1-1=2&anchorfield1=Paragraph
-                      // Todo: option for additional browse field groups (startEnd2, etc.)
-                      // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
-                      // Todo: Make Chrome NativeExt add-on to manipulate its search engines (to read a bookmarks file from Firefox properly, i.e., including keywords) https://www.makeuseof.com/answers/export-google-chrome-search-engines-address-bar/
-                      var paramsCopy = paramsSetter(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
-                        fieldAliasOrNames: fieldAliasOrNames,
-                        workName: work,
-                        // Delete work of current page
-                        type: 'shortcutResult'
-                      }));
-                      var url = replaceHash(paramsCopy) + "&work=".concat(workName, "&").concat(workName, "-startEnd1=%s"); // %s will be escaped if set as param; also add changeable workName here
-
-                      return ['dt', [['a', {
-                        href: url,
+                  case 12:
+                    _context.t7 = function (_ref17) {
+                      var groupName = _ref17.groupName,
+                          worksToFields = _ref17.worksToFields;
+                      return [['dt', [['h3', {
                         ADD_DATE: ADD_DATE,
-                        LAST_MODIFIED: LAST_MODIFIED,
-                        SHORTCUTURL: SHORTCUTURL
-                      }, [workName]]]];
-                    })))]];
-                  };
+                        LAST_MODIFIED: LAST_MODIFIED
+                      }, [groupName]]]], ['dl', [['p']].concat(_toConsumableArray(worksToFields.map(function (_ref18) {
+                        var fieldAliasOrNames = _ref18.fieldAliasOrNames,
+                            workName = _ref18.workName,
+                            SHORTCUTURL = _ref18.shortcut;
+                        // Todo (low): Add anchor, etc. (until handled by `work-startEnd`); &aqdas-anchor1-1=2&anchorfield1=Paragraph
+                        // Todo: option for additional browse field groups (startEnd2, etc.)
+                        // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
+                        // Todo: Make Chrome NativeExt add-on to manipulate its search engines (to read a bookmarks file from Firefox properly, i.e., including keywords) https://www.makeuseof.com/answers/export-google-chrome-search-engines-address-bar/
+                        var paramsCopy = paramsSetter(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
+                          fieldAliasOrNames: fieldAliasOrNames,
+                          workName: work,
+                          // Delete work of current page
+                          type: 'shortcutResult'
+                        }));
+                        var url = replaceHash(paramsCopy) + "&work=".concat(workName, "&").concat(workName, "-startEnd1=%s"); // %s will be escaped if set as param; also add changeable workName here
 
-                  _context.t8 = _context.sent.flatMap(_context.t7);
-                  _context.t9 = (0, _context.t6)(_context.t8);
-                  _context.t10 = _context.t5.concat.call(_context.t5, _context.t9);
-                  _context.t11 = {
-                    $DOCTYPE: _context.t3,
-                    title: _context.t4,
-                    body: _context.t10
-                  };
-                  _context.t12 = {
-                    $document: _context.t11
-                  };
-                  _context.t13 = (0, _context.t2)(_context.t12);
-                  _context.t14 = _context.t1.serializeToString.call(_context.t1, _context.t13).replace( // Chrome has a quirk that requires this (and not
-                  //   just any whitespace)
-                  // We're not getting the keywords with Chrome,
-                  //   but at least usable for bookmarks (though
-                  //   not the groups apparently)
-                  /<dt>/g, '\n<dt>');
-                  _context.t15 = [_context.t14];
-                  _context.t16 = {
-                    type: 'text/html'
-                  };
-                  blob = new _context.t0(_context.t15, _context.t16);
-                  url = window.URL.createObjectURL(blob);
-                  a = jml('a', {
-                    hidden: true,
-                    download: 'bookmarks.html',
-                    href: url
-                  }, $('#main'));
-                  a.click();
-                  URL.revokeObjectURL(url);
+                        return ['dt', [['a', {
+                          href: url,
+                          ADD_DATE: ADD_DATE,
+                          LAST_MODIFIED: LAST_MODIFIED,
+                          SHORTCUTURL: SHORTCUTURL
+                        }, [workName]]]];
+                      })))]];
+                    };
 
-                case 27:
-                case "end":
-                  return _context.stop();
+                    _context.t8 = _context.sent.flatMap(_context.t7);
+                    _context.t9 = (0, _context.t6)(_context.t8);
+                    _context.t10 = _context.t5.concat.call(_context.t5, _context.t9);
+                    _context.t11 = {
+                      $DOCTYPE: _context.t3,
+                      title: _context.t4,
+                      body: _context.t10
+                    };
+                    _context.t12 = {
+                      $document: _context.t11
+                    };
+                    _context.t13 = (0, _context.t2)(_context.t12);
+                    _context.t14 = _context.t1.serializeToString.call(_context.t1, _context.t13).replace( // Chrome has a quirk that requires this (and not
+                    //   just any whitespace)
+                    // We're not getting the keywords with Chrome,
+                    //   but at least usable for bookmarks (though
+                    //   not the groups apparently)
+                    /<dt>/g, '\n<dt>');
+                    _context.t15 = [_context.t14];
+                    _context.t16 = {
+                      type: 'text/html'
+                    };
+                    blob = new _context.t0(_context.t15, _context.t16);
+                    url = window.URL.createObjectURL(blob);
+                    a = jml('a', {
+                      hidden: true,
+                      download: 'bookmarks.html',
+                      href: url
+                    }, $('#main'));
+                    a.click();
+                    URL.revokeObjectURL(url);
+
+                  case 27:
+                  case "end":
+                    return _context.stop();
+                }
               }
-            }
-          });
-        }
+            }, _callee);
+          }));
+
+          function click() {
+            return _click.apply(this, arguments);
+          }
+
+          return click;
+        }()
       }
     }, [l('Generate_bookmarks')]]]]]];
   },
@@ -16070,39 +16191,49 @@ var workDisplay = {
       id: 'settings-URL'
     }], ['br'], ['button', {
       $on: {
-        click: function click(e) {
-          var paramsCopy, url;
-          return regeneratorRuntime.async(function click$(_context2) {
-            while (1) {
-              switch (_context2.prev = _context2.next) {
-                case 0:
-                  e.preventDefault();
-                  paramsCopy = paramsSetter(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
-                    workName: work,
-                    // Delete work of current page
-                    type: 'startEndResult'
-                  }));
-                  url = replaceHash(paramsCopy) + "&work=".concat(work, "&").concat(work, "-startEnd1=%s"); // %s will be escaped if set as param; also add changeable workName here
+        click: function () {
+          var _click2 = _asyncToGenerator(
+          /*#__PURE__*/
+          regeneratorRuntime.mark(function _callee2(e) {
+            var paramsCopy, url;
+            return regeneratorRuntime.wrap(function _callee2$(_context2) {
+              while (1) {
+                switch (_context2.prev = _context2.next) {
+                  case 0:
+                    e.preventDefault();
+                    paramsCopy = paramsSetter(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
+                      workName: work,
+                      // Delete work of current page
+                      type: 'startEndResult'
+                    }));
+                    url = replaceHash(paramsCopy) + "&work=".concat(work, "&").concat(work, "-startEnd1=%s"); // %s will be escaped if set as param; also add changeable workName here
 
-                  _context2.prev = 3;
-                  _context2.next = 6;
-                  return regeneratorRuntime.awrap(navigator.clipboard.writeText(url));
+                    _context2.prev = 3;
+                    _context2.next = 6;
+                    return navigator.clipboard.writeText(url);
 
-                case 6:
-                  _context2.next = 10;
-                  break;
+                  case 6:
+                    _context2.next = 10;
+                    break;
 
-                case 8:
-                  _context2.prev = 8;
-                  _context2.t0 = _context2["catch"](3);
+                  case 8:
+                    _context2.prev = 8;
+                    _context2.t0 = _context2["catch"](3);
 
-                case 10:
-                case "end":
-                  return _context2.stop();
+                  case 10:
+                  case "end":
+                    return _context2.stop();
+                }
               }
-            }
-          }, null, null, [[3, 8]]);
-        }
+            }, _callee2, null, [[3, 8]]);
+          }));
+
+          function click(_x) {
+            return _click2.apply(this, arguments);
+          }
+
+          return click;
+        }()
       }
     }, [l('Copy_shortcut_URL')]]]], Templates.workDisplay.advancedFormatting({
       ld: ld,
@@ -16744,86 +16875,93 @@ function () {
   return IntlURLSearchParams;
 }();
 
-/* eslint-env browser */
+function workSelect$1(_x) {
+  return _workSelect.apply(this, arguments);
+}
 
-function workSelect$1(_ref) {
-  var files, lang, fallbackLanguages, $p, followParams, dbs, localeFromFileData, metadataObjs, imfFile, lf, metadataObjsIter, getNextAlias;
-  return regeneratorRuntime.async(function workSelect$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          files = _ref.files, lang = _ref.lang, fallbackLanguages = _ref.fallbackLanguages, $p = _ref.$p, followParams = _ref.followParams;
-          _context.prev = 1;
-          _context.next = 4;
-          return regeneratorRuntime.awrap(getJSON(files));
+function _workSelect() {
+  _workSelect = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee(_ref) {
+    var files, lang, fallbackLanguages, $p, followParams, dbs, localeFromFileData, metadataObjs, imfFile, lf, metadataObjsIter, getNextAlias;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            files = _ref.files, lang = _ref.lang, fallbackLanguages = _ref.fallbackLanguages, $p = _ref.$p, followParams = _ref.followParams;
+            _context.prev = 1;
+            _context.next = 4;
+            return getJSON(files);
 
-        case 4:
-          dbs = _context.sent;
+          case 4:
+            dbs = _context.sent;
 
-          localeFromFileData = function localeFromFileData(lan) {
-            return dbs['localization-strings'][lan];
-          };
+            localeFromFileData = function localeFromFileData(lan) {
+              return dbs['localization-strings'][lan];
+            };
 
-          _context.next = 8;
-          return regeneratorRuntime.awrap(getJSON(dbs.groups.reduce(function (arr, fileGroup) {
-            var metadataBaseDir = (dbs.metadataBaseDirectory || '') + (fileGroup.metadataBaseDirectory || '') + '/';
-            return fileGroup.files.reduce(function (ar, fileData) {
-              return ar.concat(metadataBaseDir + fileData.metadataFile);
-            }, arr);
-          }, [])));
+            _context.next = 8;
+            return getJSON(dbs.groups.reduce(function (arr, fileGroup) {
+              var metadataBaseDir = (dbs.metadataBaseDirectory || '') + (fileGroup.metadataBaseDirectory || '') + '/';
+              return fileGroup.files.reduce(function (ar, fileData) {
+                return ar.concat(metadataBaseDir + fileData.metadataFile);
+              }, arr);
+            }, []));
 
-        case 8:
-          metadataObjs = _context.sent;
-          imfFile = IMFClass({
-            locales: lang.map(localeFromFileData),
-            fallbackLocales: fallbackLanguages.map(localeFromFileData)
-          });
-          lf = imfFile.getFormatter();
-          document.title = lf({
-            key: 'browserfile-workselect',
-            fallback: true
-          });
-          /*
-              function ld (key, values, formats) {
-                  return l({
-                      key: key, values: values, formats: formats, fallback: ({message}) =>
-                          // Displaying as div with inline display instead of span since
-                          //    Firefox puts punctuation at left otherwise
-                          ['div', {
-                              style: 'display: inline;direction: ' + fallbackDirection
-                          }, [message]]
-                  });
-              }
-              */
+          case 8:
+            metadataObjs = _context.sent;
+            imfFile = IMFClass({
+              locales: lang.map(localeFromFileData),
+              fallbackLocales: fallbackLanguages.map(localeFromFileData)
+            });
+            lf = imfFile.getFormatter();
+            document.title = lf({
+              key: 'browserfile-workselect',
+              fallback: true
+            });
+            /*
+                function ld (key, values, formats) {
+                    return l({
+                        key: key, values: values, formats: formats, fallback: ({message}) =>
+                            // Displaying as div with inline display instead of span since
+                            //    Firefox puts punctuation at left otherwise
+                            ['div', {
+                                style: 'display: inline;direction: ' + fallbackDirection
+                            }, [message]]
+                    });
+                }
+                */
 
-          metadataObjsIter = metadataObjs[Symbol.iterator]();
+            metadataObjsIter = metadataObjs[Symbol.iterator]();
 
-          getNextAlias = function getNextAlias() {
-            var metadataObj = metadataObjsIter.next().value;
-            return getMetaProp(lang, metadataObj, 'alias');
-          };
+            getNextAlias = function getNextAlias() {
+              var metadataObj = metadataObjsIter.next().value;
+              return getMetaProp(lang, metadataObj, 'alias');
+            };
 
-          Templates.workSelect({
-            groups: dbs.groups,
-            lf: lf,
-            getNextAlias: getNextAlias,
-            $p: $p,
-            followParams: followParams
-          });
-          _context.next = 20;
-          break;
+            Templates.workSelect({
+              groups: dbs.groups,
+              lf: lf,
+              getNextAlias: getNextAlias,
+              $p: $p,
+              followParams: followParams
+            });
+            _context.next = 20;
+            break;
 
-        case 17:
-          _context.prev = 17;
-          _context.t0 = _context["catch"](1);
-          dialogs.alert(_context.t0);
+          case 17:
+            _context.prev = 17;
+            _context.t0 = _context["catch"](1);
+            dialogs.alert(_context.t0);
 
-        case 20:
-        case "end":
-          return _context.stop();
+          case 20:
+          case "end":
+            return _context.stop();
+        }
       }
-    }
-  }, null, null, [[1, 17]]);
+    }, _callee, null, [[1, 17]]);
+  }));
+  return _workSelect.apply(this, arguments);
 }
 
 /* eslint-env browser */
@@ -16964,287 +17102,330 @@ var getParamsSetter = function getParamsSetter(_ref) {
   };
 };
 
-function workDisplay$1(_ref) {
-  var l, languageParam, lang, preferredLocale, languages, fallbackLanguages, $p, langs, fallbackDirection, prefI18n, localizeParamNames, prefFormatting, hideFormattingSection, _displayWork, _ref9, lf, fileData, metadataObj, args;
+function workDisplay$1(_x) {
+  return _workDisplay.apply(this, arguments);
+}
 
-  return regeneratorRuntime.async(function workDisplay$(_context5) {
-    while (1) {
-      switch (_context5.prev = _context5.next) {
-        case 0:
-          _displayWork = function _ref10(_ref2) {
-            var _this = this;
+function _workDisplay() {
+  _workDisplay = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee5(_ref) {
+    var l, languageParam, lang, preferredLocale, languages, fallbackLanguages, $p, langs, fallbackDirection, prefI18n, localizeParamNames, prefFormatting, hideFormattingSection, _displayWork, _displayWork2, _ref3, lf, fileData, metadataObj, args;
 
-            var lf, metadataObj, getFieldAliasOrName, schemaObj, schemaItems, fieldInfo, metadata, pluginsForWork, groupsToWorks, il, iil, localeFromLangData, imfLang, imfl, le, ld, fieldMatchesLocale, content, serializeParamsAsURL, paramsSetter, _ref6, groups, heading, getFieldAliasOrNames;
+    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            _displayWork2 = function _ref14() {
+              _displayWork2 = _asyncToGenerator(
+              /*#__PURE__*/
+              regeneratorRuntime.mark(function _callee4(_ref2) {
+                var _this = this;
 
-            return regeneratorRuntime.async(function _displayWork$(_context4) {
-              while (1) {
-                switch (_context4.prev = _context4.next) {
-                  case 0:
-                    lf = _ref2.lf, metadataObj = _ref2.metadataObj, getFieldAliasOrName = _ref2.getFieldAliasOrName, schemaObj = _ref2.schemaObj, schemaItems = _ref2.schemaItems, fieldInfo = _ref2.fieldInfo, metadata = _ref2.metadata, pluginsForWork = _ref2.pluginsForWork, groupsToWorks = _ref2.groupsToWorks;
-                    il = localizeParamNames ? function (key) {
-                      return l(['params', key]);
-                    } : function (key) {
-                      return key;
-                    };
-                    iil = localizeParamNames ? function (key) {
-                      return l(['params', 'indexed', key]);
-                    } : function (key) {
-                      return key;
-                    };
-                    localeFromLangData = languages.localeFromLangData.bind(languages);
-                    imfLang = IMFClass({
-                      locales: lang.map(localeFromLangData),
-                      fallbackLocales: fallbackLanguages.map(localeFromLangData)
-                    });
-                    imfl = imfLang.getFormatter(); // Returns option element with localized option text (as Jamilih), with
-                    //   optional fallback direction
+                var lf, metadataObj, getFieldAliasOrName, schemaObj, schemaItems, fieldInfo, metadata, pluginsForWork, groupsToWorks, il, iil, localeFromLangData, imfLang, imfl, le, ld, fieldMatchesLocale, content, serializeParamsAsURL, paramsSetter, _ref7, groups, heading, getFieldAliasOrNames;
 
-                    le = function le(key, el, attToLocalize, atts, children) {
-                      atts[attToLocalize] = l({
-                        key: key,
-                        fallback: function fallback(_ref3) {
-                          var message = _ref3.message;
-                          atts.dir = fallbackDirection;
-                          return message;
-                        }
-                      });
-                      return [el, atts, children];
-                    }; // Returns plain text node or element (as Jamilih) with fallback direction
+                return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                  while (1) {
+                    switch (_context4.prev = _context4.next) {
+                      case 0:
+                        lf = _ref2.lf, metadataObj = _ref2.metadataObj, getFieldAliasOrName = _ref2.getFieldAliasOrName, schemaObj = _ref2.schemaObj, schemaItems = _ref2.schemaItems, fieldInfo = _ref2.fieldInfo, metadata = _ref2.metadata, pluginsForWork = _ref2.pluginsForWork, groupsToWorks = _ref2.groupsToWorks;
+                        il = localizeParamNames ? function (key) {
+                          return l(['params', key]);
+                        } : function (key) {
+                          return key;
+                        };
+                        iil = localizeParamNames ? function (key) {
+                          return l(['params', 'indexed', key]);
+                        } : function (key) {
+                          return key;
+                        };
+                        localeFromLangData = languages.localeFromLangData.bind(languages);
+                        imfLang = IMFClass({
+                          locales: lang.map(localeFromLangData),
+                          fallbackLocales: fallbackLanguages.map(localeFromLangData)
+                        });
+                        imfl = imfLang.getFormatter(); // Returns option element with localized option text (as Jamilih), with
+                        //   optional fallback direction
 
-
-                    ld = function ld(key, values, formats) {
-                      return l({
-                        key: key,
-                        values: values,
-                        formats: formats,
-                        fallback: function fallback(_ref4) {
-                          var message = _ref4.message;
-                          return Templates.workDisplay.bdo({
-                            fallbackDirection: fallbackDirection,
-                            message: message
+                        le = function le(key, el, attToLocalize, atts, children) {
+                          atts[attToLocalize] = l({
+                            key: key,
+                            fallback: function fallback(_ref4) {
+                              var message = _ref4.message;
+                              atts.dir = fallbackDirection;
+                              return message;
+                            }
                           });
-                        }
-                      });
-                    };
+                          return [el, atts, children];
+                        }; // Returns plain text node or element (as Jamilih) with fallback direction
 
-                    fieldMatchesLocale = metadata.getFieldMatchesLocale({
-                      namespace: this.namespace,
-                      preferredLocale: preferredLocale,
-                      schemaItems: schemaItems,
-                      pluginsForWork: pluginsForWork
-                    });
-                    content = [];
-                    this.getBrowseFieldData({
-                      metadataObj: metadataObj,
-                      schemaItems: schemaItems,
-                      getFieldAliasOrName: getFieldAliasOrName,
-                      callback: function callback(_ref5) {
-                        var browseFields = _ref5.browseFields,
-                            i = _ref5.i;
-                        Templates.workDisplay.addBrowseFields({
-                          browseFields: browseFields,
+
+                        ld = function ld(key, values, formats) {
+                          return l({
+                            key: key,
+                            values: values,
+                            formats: formats,
+                            fallback: function fallback(_ref5) {
+                              var message = _ref5.message;
+                              return Templates.workDisplay.bdo({
+                                fallbackDirection: fallbackDirection,
+                                message: message
+                              });
+                            }
+                          });
+                        };
+
+                        fieldMatchesLocale = metadata.getFieldMatchesLocale({
+                          namespace: this.namespace,
+                          preferredLocale: preferredLocale,
+                          schemaItems: schemaItems,
+                          pluginsForWork: pluginsForWork
+                        });
+                        content = [];
+                        this.getBrowseFieldData({
+                          metadataObj: metadataObj,
+                          schemaItems: schemaItems,
+                          getFieldAliasOrName: getFieldAliasOrName,
+                          callback: function callback(_ref6) {
+                            var browseFields = _ref6.browseFields,
+                                i = _ref6.i;
+                            Templates.workDisplay.addBrowseFields({
+                              browseFields: browseFields,
+                              fieldInfo: fieldInfo,
+                              ld: ld,
+                              i: i,
+                              iil: iil,
+                              $p: $p,
+                              content: content
+                            });
+                          }
+                        });
+                        /*
+                            Templates.workDisplay.addRandomFormFields({
+                                il, l, ld, le, $p, serializeParamsAsURL, content
+                            });
+                            */
+
+                        serializeParamsAsURL = getSerializeParamsAsURL({
+                          l: l,
+                          il: il,
+                          $p: $p
+                        });
+                        paramsSetter = getParamsSetter({
+                          l: l,
+                          il: il,
+                          $p: $p
+                        });
+                        _context4.next = 15;
+                        return getJSON(this.files);
+
+                      case 15:
+                        _ref7 = _context4.sent;
+                        groups = _ref7.groups;
+                        // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
+                        heading = getMetaProp(lang, metadataObj, 'heading');
+
+                        getFieldAliasOrNames = function () {
+                          // Avoid blocking but start now
+                          // Let this run in the background to avoid blocking
+                          var all = Promise.all(groupsToWorks.map(
+                          /*#__PURE__*/
+                          function () {
+                            var _ref9 = _asyncToGenerator(
+                            /*#__PURE__*/
+                            regeneratorRuntime.mark(function _callee2(_ref8) {
+                              var name, workNames, shortcuts, worksToFields;
+                              return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                                while (1) {
+                                  switch (_context2.prev = _context2.next) {
+                                    case 0:
+                                      name = _ref8.name, workNames = _ref8.workNames, shortcuts = _ref8.shortcuts;
+                                      _context2.next = 3;
+                                      return Promise.all(workNames.map(
+                                      /*#__PURE__*/
+                                      function () {
+                                        var _ref10 = _asyncToGenerator(
+                                        /*#__PURE__*/
+                                        regeneratorRuntime.mark(function _callee(workName, i) {
+                                          return regeneratorRuntime.wrap(function _callee$(_context) {
+                                            while (1) {
+                                              switch (_context.prev = _context.next) {
+                                                case 0:
+                                                  _context.t0 = workName;
+                                                  _context.t1 = shortcuts[i];
+                                                  _context.next = 4;
+                                                  return _this.getWorkData({
+                                                    lang: lang,
+                                                    fallbackLanguages: fallbackLanguages,
+                                                    preferredLocale: preferredLocale,
+                                                    languages: languages,
+                                                    work: workName
+                                                  });
+
+                                                case 4:
+                                                  _context.t2 = function (_ref11) {
+                                                    var fieldAliasOrName = _ref11.fieldAliasOrName;
+                                                    return fieldAliasOrName;
+                                                  };
+
+                                                  _context.t3 = _context.sent.fieldInfo.map(_context.t2);
+                                                  return _context.abrupt("return", {
+                                                    workName: _context.t0,
+                                                    shortcut: _context.t1,
+                                                    fieldAliasOrNames: _context.t3
+                                                  });
+
+                                                case 7:
+                                                case "end":
+                                                  return _context.stop();
+                                              }
+                                            }
+                                          }, _callee);
+                                        }));
+
+                                        return function (_x4, _x5) {
+                                          return _ref10.apply(this, arguments);
+                                        };
+                                      }()));
+
+                                    case 3:
+                                      worksToFields = _context2.sent;
+                                      return _context2.abrupt("return", {
+                                        groupName: name,
+                                        worksToFields: worksToFields
+                                      });
+
+                                    case 5:
+                                    case "end":
+                                      return _context2.stop();
+                                  }
+                                }
+                              }, _callee2);
+                            }));
+
+                            return function (_x3) {
+                              return _ref9.apply(this, arguments);
+                            };
+                          }()));
+                          return (
+                            /*#__PURE__*/
+                            _asyncToGenerator(
+                            /*#__PURE__*/
+                            regeneratorRuntime.mark(function _callee3() {
+                              return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                                while (1) {
+                                  switch (_context3.prev = _context3.next) {
+                                    case 0:
+                                      return _context3.abrupt("return", all);
+
+                                    case 1:
+                                    case "end":
+                                      return _context3.stop();
+                                  }
+                                }
+                              }, _callee3);
+                            }))
+                          );
+                        }();
+
+                        Templates.workDisplay.main({
+                          languageParam: languageParam,
+                          lang: lang,
+                          lf: lf,
+                          l: l,
+                          namespace: this.namespace,
+                          groups: groups,
+                          heading: heading,
+                          imfl: imfl,
+                          fallbackDirection: fallbackDirection,
+                          langs: langs,
                           fieldInfo: fieldInfo,
-                          ld: ld,
-                          i: i,
-                          iil: iil,
+                          localizeParamNames: localizeParamNames,
+                          serializeParamsAsURL: serializeParamsAsURL,
+                          paramsSetter: paramsSetter,
+                          replaceHash: replaceHash,
+                          getFieldAliasOrNames: getFieldAliasOrNames,
+                          hideFormattingSection: hideFormattingSection,
                           $p: $p,
+                          metadataObj: metadataObj,
+                          il: il,
+                          le: le,
+                          ld: ld,
+                          iil: iil,
+                          fieldMatchesLocale: fieldMatchesLocale,
+                          preferredLocale: preferredLocale,
+                          schemaItems: schemaItems,
                           content: content
                         });
-                      }
-                    });
-                    /*
-                        Templates.workDisplay.addRandomFormFields({
-                            il, l, ld, le, $p, serializeParamsAsURL, content
-                        });
-                        */
 
-                    serializeParamsAsURL = getSerializeParamsAsURL({
-                      l: l,
-                      il: il,
-                      $p: $p
-                    });
-                    paramsSetter = getParamsSetter({
-                      l: l,
-                      il: il,
-                      $p: $p
-                    });
-                    _context4.next = 15;
-                    return regeneratorRuntime.awrap(getJSON(this.files));
+                      case 20:
+                      case "end":
+                        return _context4.stop();
+                    }
+                  }
+                }, _callee4, this);
+              }));
+              return _displayWork2.apply(this, arguments);
+            };
 
-                  case 15:
-                    _ref6 = _context4.sent;
-                    groups = _ref6.groups;
-                    // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
-                    heading = getMetaProp(lang, metadataObj, 'heading');
+            _displayWork = function _ref13(_x2) {
+              return _displayWork2.apply(this, arguments);
+            };
 
-                    getFieldAliasOrNames = function () {
-                      // Avoid blocking but start now
-                      // Let this run in the background to avoid blocking
-                      var all = Promise.all(groupsToWorks.map(function _callee2(_ref7) {
-                        var name, workNames, shortcuts, worksToFields;
-                        return regeneratorRuntime.async(function _callee2$(_context2) {
-                          while (1) {
-                            switch (_context2.prev = _context2.next) {
-                              case 0:
-                                name = _ref7.name, workNames = _ref7.workNames, shortcuts = _ref7.shortcuts;
-                                _context2.next = 3;
-                                return regeneratorRuntime.awrap(Promise.all(workNames.map(function _callee(workName, i) {
-                                  return regeneratorRuntime.async(function _callee$(_context) {
-                                    while (1) {
-                                      switch (_context.prev = _context.next) {
-                                        case 0:
-                                          _context.t0 = workName;
-                                          _context.t1 = shortcuts[i];
-                                          _context.next = 4;
-                                          return regeneratorRuntime.awrap(_this.getWorkData({
-                                            lang: lang,
-                                            fallbackLanguages: fallbackLanguages,
-                                            preferredLocale: preferredLocale,
-                                            languages: languages,
-                                            work: workName
-                                          }));
+            l = _ref.l, languageParam = _ref.languageParam, lang = _ref.lang, preferredLocale = _ref.preferredLocale, languages = _ref.languages, fallbackLanguages = _ref.fallbackLanguages, $p = _ref.$p;
+            langs = this.langData.languages;
+            fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
+            prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
+            localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
+            prefFormatting = localStorage.getItem(this.namespace + '-hideFormattingSection');
+            hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : prefFormatting === 'true' || prefFormatting !== 'false' && this.hideFormattingSection; // eslint-disable-next-line jsdoc/require-jsdoc
 
-                                        case 4:
-                                          _context.t2 = function (_ref8) {
-                                            var fieldAliasOrName = _ref8.fieldAliasOrName;
-                                            return fieldAliasOrName;
-                                          };
+            _context5.prev = 9;
+            _context5.next = 12;
+            return this.getWorkData({
+              lang: lang,
+              fallbackLanguages: fallbackLanguages,
+              preferredLocale: preferredLocale,
+              languages: languages,
+              work: $p.get('work')
+            });
 
-                                          _context.t3 = _context.sent.fieldInfo.map(_context.t2);
-                                          return _context.abrupt("return", {
-                                            workName: _context.t0,
-                                            shortcut: _context.t1,
-                                            fieldAliasOrNames: _context.t3
-                                          });
+          case 12:
+            _ref3 = _context5.sent;
+            lf = _ref3.lf;
+            fileData = _ref3.fileData;
+            metadataObj = _ref3.metadataObj;
+            args = _objectWithoutProperties(_ref3, ["lf", "fileData", "metadataObj"]);
+            document.title = lf({
+              key: 'browserfile-workdisplay',
+              values: {
+                work: fileData ? getMetaProp(lang, metadataObj, 'alias') : ''
+              },
+              fallback: true
+            });
+            _context5.next = 20;
+            return _displayWork.call(this, _objectSpread2({
+              lf: lf,
+              metadataObj: metadataObj
+            }, args));
 
-                                        case 7:
-                                        case "end":
-                                          return _context.stop();
-                                      }
-                                    }
-                                  });
-                                })));
+          case 20:
+            _context5.next = 25;
+            break;
 
-                              case 3:
-                                worksToFields = _context2.sent;
-                                return _context2.abrupt("return", {
-                                  groupName: name,
-                                  worksToFields: worksToFields
-                                });
+          case 22:
+            _context5.prev = 22;
+            _context5.t0 = _context5["catch"](9);
+            dialogs.alert(_context5.t0);
 
-                              case 5:
-                              case "end":
-                                return _context2.stop();
-                            }
-                          }
-                        });
-                      }));
-                      return function _callee3() {
-                        return regeneratorRuntime.async(function _callee3$(_context3) {
-                          while (1) {
-                            switch (_context3.prev = _context3.next) {
-                              case 0:
-                                return _context3.abrupt("return", all);
-
-                              case 1:
-                              case "end":
-                                return _context3.stop();
-                            }
-                          }
-                        });
-                      };
-                    }();
-
-                    Templates.workDisplay.main({
-                      languageParam: languageParam,
-                      lang: lang,
-                      lf: lf,
-                      l: l,
-                      namespace: this.namespace,
-                      groups: groups,
-                      heading: heading,
-                      imfl: imfl,
-                      fallbackDirection: fallbackDirection,
-                      langs: langs,
-                      fieldInfo: fieldInfo,
-                      localizeParamNames: localizeParamNames,
-                      serializeParamsAsURL: serializeParamsAsURL,
-                      paramsSetter: paramsSetter,
-                      replaceHash: replaceHash,
-                      getFieldAliasOrNames: getFieldAliasOrNames,
-                      hideFormattingSection: hideFormattingSection,
-                      $p: $p,
-                      metadataObj: metadataObj,
-                      il: il,
-                      le: le,
-                      ld: ld,
-                      iil: iil,
-                      fieldMatchesLocale: fieldMatchesLocale,
-                      preferredLocale: preferredLocale,
-                      schemaItems: schemaItems,
-                      content: content
-                    });
-
-                  case 20:
-                  case "end":
-                    return _context4.stop();
-                }
-              }
-            }, null, this);
-          };
-
-          l = _ref.l, languageParam = _ref.languageParam, lang = _ref.lang, preferredLocale = _ref.preferredLocale, languages = _ref.languages, fallbackLanguages = _ref.fallbackLanguages, $p = _ref.$p;
-          langs = this.langData.languages;
-          fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
-          prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
-          localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
-          prefFormatting = localStorage.getItem(this.namespace + '-hideFormattingSection');
-          hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : prefFormatting === 'true' || prefFormatting !== 'false' && this.hideFormattingSection; // eslint-disable-next-line jsdoc/require-jsdoc
-
-          _context5.prev = 8;
-          _context5.next = 11;
-          return regeneratorRuntime.awrap(this.getWorkData({
-            lang: lang,
-            fallbackLanguages: fallbackLanguages,
-            preferredLocale: preferredLocale,
-            languages: languages,
-            work: $p.get('work')
-          }));
-
-        case 11:
-          _ref9 = _context5.sent;
-          lf = _ref9.lf;
-          fileData = _ref9.fileData;
-          metadataObj = _ref9.metadataObj;
-          args = _objectWithoutProperties(_ref9, ["lf", "fileData", "metadataObj"]);
-          document.title = lf({
-            key: 'browserfile-workdisplay',
-            values: {
-              work: fileData ? getMetaProp(lang, metadataObj, 'alias') : ''
-            },
-            fallback: true
-          });
-          _context5.next = 19;
-          return regeneratorRuntime.awrap(_displayWork.call(this, _objectSpread2({
-            lf: lf,
-            metadataObj: metadataObj
-          }, args)));
-
-        case 19:
-          _context5.next = 24;
-          break;
-
-        case 21:
-          _context5.prev = 21;
-          _context5.t0 = _context5["catch"](8);
-          dialogs.alert(_context5.t0);
-
-        case 24:
-        case "end":
-          return _context5.stop();
+          case 25:
+          case "end":
+            return _context5.stop();
+        }
       }
-    }
-  }, null, this, [[8, 21]]);
+    }, _callee5, this, [[9, 22]]);
+  }));
+  return _workDisplay.apply(this, arguments);
 }
 
 /**
@@ -17508,1015 +17689,1036 @@ var setAnchor = function setAnchor(_ref) {
   }
 };
 
-var resultsDisplayClient$1 = function resultsDisplayClient(args) {
-  var _this = this;
+var resultsDisplayClient$1 =
+/*#__PURE__*/
+function () {
+  var _resultsDisplayClient = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee(args) {
+    var _this = this;
 
-  var persistent, skipIndexedDB, prefI18n, _ref2, fieldInfo, $p, browseFieldSets, applicableBrowseFieldSet, lang, metadataObj, fileData, fieldValueAliasMapPreferred, lf, iil, ilRaw, templateArgs;
+    var persistent, skipIndexedDB, prefI18n, _ref2, fieldInfo, $p, browseFieldSets, applicableBrowseFieldSet, lang, metadataObj, fileData, fieldValueAliasMapPreferred, lf, iil, ilRaw, templateArgs;
 
-  return regeneratorRuntime.async(function resultsDisplayClient$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          _context.next = 2;
-          return regeneratorRuntime.awrap(navigator.storage.persisted());
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return navigator.storage.persisted();
 
-        case 2:
-          persistent = _context.sent;
-          skipIndexedDB = this.skipIndexedDB || !persistent || !navigator.serviceWorker.controller;
-          prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
-          _context.next = 7;
-          return regeneratorRuntime.awrap(resultsDisplayServerOrClient$1.call(this, _objectSpread2({}, args, {
-            skipIndexedDB: skipIndexedDB,
-            prefI18n: prefI18n
-          })));
+          case 2:
+            persistent = _context.sent;
+            skipIndexedDB = this.skipIndexedDB || !persistent || !navigator.serviceWorker.controller;
+            prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
+            _context.next = 7;
+            return resultsDisplayServerOrClient$1.call(this, _objectSpread2({}, args, {
+              skipIndexedDB: skipIndexedDB,
+              prefI18n: prefI18n
+            }));
 
-        case 7:
-          _ref2 = _context.sent;
-          fieldInfo = _ref2.fieldInfo;
-          $p = _ref2.$p;
-          browseFieldSets = _ref2.browseFieldSets;
-          applicableBrowseFieldSet = _ref2.applicableBrowseFieldSet;
-          lang = _ref2.lang;
-          metadataObj = _ref2.metadataObj;
-          fileData = _ref2.fileData;
-          fieldValueAliasMapPreferred = _ref2.fieldValueAliasMapPreferred;
-          lf = _ref2.lf;
-          iil = _ref2.iil;
-          ilRaw = _ref2.ilRaw;
-          templateArgs = _ref2.templateArgs;
-          document.title = lf({
-            key: 'browserfile-resultsdisplay',
-            values: {
-              work: fileData ? getMetaProp(lang, metadataObj, 'alias') : ''
-            },
-            fallback: true
-          });
-          Templates.resultsDisplayClient.main(templateArgs);
-          setAnchor({
-            applicableBrowseFieldSet: applicableBrowseFieldSet,
-            fieldValueAliasMapPreferred: fieldValueAliasMapPreferred,
-            iil: iil,
-            ilRaw: ilRaw,
-            $p: args.$p,
-            max: browseFieldSets.length
-          });
-          fieldInfo.forEach(function (_ref3) {
-            var plugin = _ref3.plugin,
-                applicableField = _ref3.applicableField,
-                meta = _ref3.meta,
-                j = _ref3.j;
-
-            if (!plugin) {
-              return;
-            }
-
-            if (plugin.done) {
-              plugin.done({
-                $p: $p,
-                applicableField: applicableField,
-                meta: meta,
-                j: j,
-                thisObj: _this
-              });
-            }
-          });
-
-        case 24:
-        case "end":
-          return _context.stop();
-      }
-    }
-  }, null, this);
-};
-var resultsDisplayServerOrClient$1 = function resultsDisplayServerOrClient(_ref5) {
-  var _this2 = this;
-
-  var l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, noIndexedDB, prefI18n, files, allowPlugins, langData, _ref5$basePath, basePath, _ref5$dynamicBasePath, dynamicBasePath, languages, getCellValue, getCanonicalID, determineEnd, getCheckedAndInterlinearFieldInfo, getCaption, runPresort, getFieldValueAliasMap, $pRaw, escapeCSS, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, _ref21, fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginsForWork, heading, schemaItems, setNames, presorts, browseFieldSets, fieldInfo, _lang, preferredLocale, metadata, _lang2, localizedFieldNames, escapeColumnIndexes, fieldLangs, fieldValueAliasMap, fieldValueAliasMapPreferred, localizeParamNames, il, iil, ilRaw, iilRaw, browseFieldSetStartEndIdx, rangeSep, partSep, rawSearch, _rawSearch$split, _rawSearch$split2, startFull, endFull, startPartVals, endPartVals, startEndDiff, browseFieldSetIdx, applicableBrowseFieldSet, applicableBrowseFieldSetName, applicableBrowseFieldNames, canonicalBrowseFieldSet, canonicalBrowseFieldSetName, canonicalBrowseFieldNames, fieldSchemaTypes, buildRangePoint, starts, ends, _getCaption, _getCaption2, hasCaption, caption, showInterlinTitles, stripToRawFieldValue, unlocalizedWorkName, startsRaw, endsRaw, tableData, usingServerData, presort, _ref33, jsonURL, localeDir, fieldDirs, templateArgs;
-
-  return regeneratorRuntime.async(function resultsDisplayServerOrClient$(_context3) {
-    while (1) {
-      switch (_context3.prev = _context3.next) {
-        case 0:
-          l = _ref5.l, lang = _ref5.lang, fallbackLanguages = _ref5.fallbackLanguages, imfLocales = _ref5.imfLocales, $p = _ref5.$p, skipIndexedDB = _ref5.skipIndexedDB, noIndexedDB = _ref5.noIndexedDB, prefI18n = _ref5.prefI18n, files = _ref5.files, allowPlugins = _ref5.allowPlugins, langData = _ref5.langData, _ref5$basePath = _ref5.basePath, basePath = _ref5$basePath === void 0 ? '' : _ref5$basePath, _ref5$dynamicBasePath = _ref5.dynamicBasePath, dynamicBasePath = _ref5$dynamicBasePath === void 0 ? '' : _ref5$dynamicBasePath;
-          languages = new Languages({
-            langData: langData
-          });
-
-          getCellValue = function getCellValue(_ref6) {
-            var fieldValueAliasMapPreferred = _ref6.fieldValueAliasMapPreferred,
-                escapeColumnIndexes = _ref6.escapeColumnIndexes;
-            return function (_ref7) {
-              var tr = _ref7.tr,
-                  idx = _ref7.idx;
-              var tdVal = fieldValueAliasMapPreferred[idx] !== undefined ? fieldValueAliasMapPreferred[idx][tr[idx]] : tr[idx];
-
-              if (tdVal && _typeof(tdVal) === 'object') {
-                tdVal = Object.values(tdVal);
-              }
-
-              if (Array.isArray(tdVal)) {
-                tdVal = tdVal.join(l('comma-space'));
-              }
-
-              return (escapeColumnIndexes[idx] || !_this2.trustFormatHTML) && typeof tdVal === 'string' ? {
-                tdVal: escapeHTML(tdVal),
-                htmlEscaped: true
-              } : {
-                tdVal: tdVal
-              };
-            };
-          };
-
-          getCanonicalID = function getCanonicalID(_ref8) {
-            var fieldValueAliasMap = _ref8.fieldValueAliasMap,
-                fieldValueAliasMapPreferred = _ref8.fieldValueAliasMapPreferred,
-                localizedFieldNames = _ref8.localizedFieldNames,
-                canonicalBrowseFieldNames = _ref8.canonicalBrowseFieldNames;
-            return function (_ref9) {
-              var tr = _ref9.tr,
-                  foundState = _ref9.foundState;
-              return canonicalBrowseFieldNames.map(function (fieldName) {
-                var idx = localizedFieldNames.indexOf(fieldName); // This works to put alias in anchor but this includes
-                //   our ending parenthetical, the alias may be harder
-                //   to remember and/or automated than original (e.g.,
-                //   for a number representing a book); we may wish to
-                //   switch this (and also for other browse field-based
-                //   items).
-
-                if (fieldValueAliasMap[idx] !== undefined) {
-                  return fieldValueAliasMapPreferred[idx][tr[idx]];
-                }
-
-                return tr[idx];
-              }).join('-'); // rowID;
-            };
-          };
-
-          determineEnd = function determineEnd(_ref10) {
-            var fieldValueAliasMap = _ref10.fieldValueAliasMap,
-                fieldValueAliasMapPreferred = _ref10.fieldValueAliasMapPreferred,
-                localizedFieldNames = _ref10.localizedFieldNames,
-                applicableBrowseFieldNames = _ref10.applicableBrowseFieldNames,
-                startsRaw = _ref10.startsRaw,
-                endsRaw = _ref10.endsRaw;
-            return function (_ref11) {
-              var tr = _ref11.tr,
-                  foundState = _ref11.foundState;
-              var rowIDPartsPreferred = [];
-              var rowIDParts = applicableBrowseFieldNames.map(function (fieldName) {
-                var idx = localizedFieldNames.indexOf(fieldName); // This works to put alias in anchor but this includes
-                //   our ending parenthetical, the alias may be harder
-                //   to remember and/or automated than original (e.g.,
-                //   for a number representing a book), and there could
-                //   be multiple aliases for a value; we may wish to
-                //   switch this (and also for other browse field-based
-                //   items).
-
-                if (fieldValueAliasMap[idx] !== undefined) {
-                  rowIDPartsPreferred.push(fieldValueAliasMapPreferred[idx][tr[idx]]);
-                } else {
-                  rowIDPartsPreferred.push(tr[idx]);
-                }
-
-                return tr[idx];
-              }); // Todo: Use schema to determine field type and use `parseInt`
-              //   on other value instead of `String` conversions
-
-              if (!foundState.start) {
-                if (startsRaw.some(function (part, i) {
-                  var rowIDPart = rowIDParts[i];
-                  return part !== rowIDPart;
-                })) {
-                  // Trigger skip of this row
-                  return false;
-                }
-
-                foundState.start = true;
-              } // This doesn't go in an `else` for the above in case the start is the end
-
-
-              if (endsRaw.every(function (part, i) {
-                var rowIDPart = rowIDParts[i];
-                return part === rowIDPart;
-              })) {
-                foundState.end = true;
-              } else if (foundState.end) {
-                // If no longer matching, trigger end of the table
-                return true;
-              }
-
-              return rowIDPartsPreferred.join('-'); // rowID;
-            };
-          };
-
-          getCheckedAndInterlinearFieldInfo = function getCheckedAndInterlinearFieldInfo(_ref12) {
-            var localizedFieldNames = _ref12.localizedFieldNames;
-            var i = 1;
-            var field, checked;
-            var checkedFields = [];
-
-            do {
-              field = $p.get('field' + i, true);
-              checked = $p.get('checked' + i, true);
-              i++;
-
-              if (field && (checked === l('yes') || checked === null // Default to "on"
-              )) {
-                checkedFields.push(field);
-              }
-            } while (field);
-
-            checkedFields = checkedFields.filter(function (cf) {
-              return localizedFieldNames.includes(cf);
+          case 7:
+            _ref2 = _context.sent;
+            fieldInfo = _ref2.fieldInfo;
+            $p = _ref2.$p;
+            browseFieldSets = _ref2.browseFieldSets;
+            applicableBrowseFieldSet = _ref2.applicableBrowseFieldSet;
+            lang = _ref2.lang;
+            metadataObj = _ref2.metadataObj;
+            fileData = _ref2.fileData;
+            fieldValueAliasMapPreferred = _ref2.fieldValueAliasMapPreferred;
+            lf = _ref2.lf;
+            iil = _ref2.iil;
+            ilRaw = _ref2.ilRaw;
+            templateArgs = _ref2.templateArgs;
+            document.title = lf({
+              key: 'browserfile-resultsdisplay',
+              values: {
+                work: fileData ? getMetaProp(lang, metadataObj, 'alias') : ''
+              },
+              fallback: true
             });
-            var checkedFieldIndexes = checkedFields.map(function (cf) {
-              return localizedFieldNames.indexOf(cf);
+            Templates.resultsDisplayClient.main(templateArgs);
+            setAnchor({
+              applicableBrowseFieldSet: applicableBrowseFieldSet,
+              fieldValueAliasMapPreferred: fieldValueAliasMapPreferred,
+              iil: iil,
+              ilRaw: ilRaw,
+              $p: args.$p,
+              max: browseFieldSets.length
             });
-            var allInterlinearColIndexes = checkedFieldIndexes.map(function (cfi, i) {
-              var interlin = $p.get('interlin' + (cfi + 1), true);
-              return interlin && interlin.split(/\s*,\s*/).map(function (col) {
-                return (// Todo: Avoid this when known to be integer or if string, though allow
-                  //    string to be treated as number if config is set.
-                  parseInt(col) - 1
-                );
-              }).filter(function (n) {
-                return !Number.isNaN(n);
-              });
-            });
-            return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
-          };
+            fieldInfo.forEach(function (_ref3) {
+              var plugin = _ref3.plugin,
+                  applicableField = _ref3.applicableField,
+                  meta = _ref3.meta,
+                  j = _ref3.j;
 
-          getCaption = function getCaption(_ref13) {
-            var starts = _ref13.starts,
-                ends = _ref13.ends,
-                applicableBrowseFieldNames = _ref13.applicableBrowseFieldNames,
-                heading = _ref13.heading;
-            var caption;
-            var hasCaption = $pRaw('caption') !== '0';
+              if (!plugin) {
+                return;
+              }
 
-            if (hasCaption) {
-              /*
-                    // Works but displays in parentheses browse fields which
-                    //  may be non-applicable
-                    const buildRangePoint = (startOrEnd) => escapeHTML(
-                        browseFieldSets.reduce((txt, bfs, i) =>
-                            (txt ? txt + ' (' : '') + bfs.map((bf, j) =>
-                                (j > 0 ? l('comma-space') : '') + bf + ' ' +
-                                    $pRaw(startOrEnd + (i + 1) + '-' + (j + 1))
-                            ).join('') + (txt ? ')' : ''), '')
-                    );
-                    */
-
-              /*
-                    // Works but overly long
-                    const buildRangePoint = (startOrEnd) => escapeHTML(
-                        applicableBrowseFieldSet.map((bf, j) =>
-                            (j > 0 ? l('comma-space') : '') + bf + ' ' +
-                                $pRaw(startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1))
-                        ).join('')
-                    );
-                    */
-              var startSep = Templates.resultsDisplayServerOrClient.startSeparator({
-                l: l
-              });
-              var innerBrowseFieldSeparator = Templates.resultsDisplayServerOrClient.innerBrowseFieldSeparator({
-                l: l
-              });
-
-              var buildRanges = function buildRanges() {
-                var endVals = [];
-                var startRange = starts.reduce(function (str, startFieldValue, i) {
-                  var ret = str + startFieldValue;
-
-                  if (startFieldValue === ends[i]) {
-                    // We abbreviate as start/end share same Book, etc.
-                    return ret + (i > 0 ? innerBrowseFieldSeparator // e.g., for "Genesis 7, 5-8"
-                    : ' ' // e.g., for 2nd space in "Surah 2 5-8"
-                    );
-                  }
-
-                  endVals.push(ends[i]);
-                  return ret + startSep;
-                }, '').slice(0, -startSep.length);
-                var rangeNames = applicableBrowseFieldNames.join(innerBrowseFieldSeparator);
-                return escapeHTML(Templates.resultsDisplayServerOrClient.ranges({
-                  l: l,
-                  startRange: startRange,
-                  endVals: endVals,
-                  rangeNames: rangeNames
-                }));
-              };
-
-              var ranges = buildRanges();
-              caption = Templates.resultsDisplayServerOrClient.caption({
-                heading: heading,
-                ranges: ranges
-              });
-            }
-
-            return [hasCaption, caption];
-          };
-
-          runPresort = function runPresort(_ref14) {
-            var presort = _ref14.presort,
-                tableData = _ref14.tableData,
-                applicableBrowseFieldNames = _ref14.applicableBrowseFieldNames,
-                localizedFieldNames = _ref14.localizedFieldNames;
-
-            // Todo: Ought to be checking against an aliased table
-            if (presort) {
-              tableData.sort(function (rowA, rowB) {
-                var precedence;
-                applicableBrowseFieldNames.some(function (fieldName) {
-                  var idx = localizedFieldNames.indexOf(fieldName);
-                  var rowAFirst = rowA[idx] < rowB[idx];
-                  var rowBFirst = rowA[idx] > rowB[idx];
-                  precedence = rowBFirst ? 1 : -1;
-                  return rowAFirst || rowBFirst; // Keep going if 0
+              if (plugin.done) {
+                plugin.done({
+                  $p: $p,
+                  applicableField: applicableField,
+                  meta: meta,
+                  j: j,
+                  thisObj: _this
                 });
-                return precedence;
-              });
-            }
-          };
-
-          getFieldValueAliasMap = function getFieldValueAliasMap(_ref15) {
-            var schemaItems = _ref15.schemaItems,
-                fieldInfo = _ref15.fieldInfo,
-                metadataObj = _ref15.metadataObj,
-                getFieldAliasOrName = _ref15.getFieldAliasOrName,
-                usePreferAlias = _ref15.usePreferAlias;
-            return fieldInfo.map(function (_ref16) {
-              var field = _ref16.field,
-                  plugin = _ref16.plugin;
-
-              if (plugin) {
-                return undefined;
               }
+            });
 
-              var _getFieldNameAndValue = getFieldNameAndValueAliases({
-                field: field,
-                schemaItems: schemaItems,
-                metadataObj: metadataObj,
-                getFieldAliasOrName: getFieldAliasOrName,
-                lang: lang
-              }),
-                  preferAlias = _getFieldNameAndValue.preferAlias,
-                  fieldValueAliasMap = _getFieldNameAndValue.fieldValueAliasMap;
+          case 24:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, this);
+  }));
 
-              if (!usePreferAlias) {
-                return preferAlias !== false ? fieldValueAliasMap : undefined;
-              }
+  function resultsDisplayClient(_x) {
+    return _resultsDisplayClient.apply(this, arguments);
+  }
 
-              if (fieldValueAliasMap) {
-                Object.entries(fieldValueAliasMap).forEach(function (_ref17) {
-                  var _ref18 = _slicedToArray(_ref17, 2),
-                      key = _ref18[0],
-                      val = _ref18[1];
+  return resultsDisplayClient;
+}();
+var resultsDisplayServerOrClient$1 =
+/*#__PURE__*/
+function () {
+  var _resultsDisplayServerOrClient = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee3(_ref5) {
+    var _this2 = this;
 
-                  if (Array.isArray(val)) {
-                    fieldValueAliasMap[key] = val.map(function (value) {
-                      return Templates.resultsDisplayServerOrClient.fieldValueAlias({
-                        key: key,
-                        value: value
-                      });
-                    });
-                    return;
+    var l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, noIndexedDB, prefI18n, files, allowPlugins, langData, _ref5$basePath, basePath, _ref5$dynamicBasePath, dynamicBasePath, languages, getCellValue, getCanonicalID, determineEnd, getCheckedAndInterlinearFieldInfo, getCaption, runPresort, getFieldValueAliasMap, $pRaw, escapeCSS, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, _ref21, fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginsForWork, heading, schemaItems, setNames, presorts, browseFieldSets, fieldInfo, _lang, preferredLocale, metadata, _lang2, localizedFieldNames, escapeColumnIndexes, fieldLangs, fieldValueAliasMap, fieldValueAliasMapPreferred, localizeParamNames, il, iil, ilRaw, iilRaw, browseFieldSetStartEndIdx, rangeSep, partSep, rawSearch, _rawSearch$split, _rawSearch$split2, startFull, endFull, startPartVals, endPartVals, startEndDiff, browseFieldSetIdx, applicableBrowseFieldSet, applicableBrowseFieldSetName, applicableBrowseFieldNames, canonicalBrowseFieldSet, canonicalBrowseFieldSetName, canonicalBrowseFieldNames, fieldSchemaTypes, buildRangePoint, starts, ends, _getCaption, _getCaption2, hasCaption, caption, showInterlinTitles, stripToRawFieldValue, unlocalizedWorkName, startsRaw, endsRaw, tableData, usingServerData, presort, _ref33, jsonURL, localeDir, fieldDirs, templateArgs;
+
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            l = _ref5.l, lang = _ref5.lang, fallbackLanguages = _ref5.fallbackLanguages, imfLocales = _ref5.imfLocales, $p = _ref5.$p, skipIndexedDB = _ref5.skipIndexedDB, noIndexedDB = _ref5.noIndexedDB, prefI18n = _ref5.prefI18n, files = _ref5.files, allowPlugins = _ref5.allowPlugins, langData = _ref5.langData, _ref5$basePath = _ref5.basePath, basePath = _ref5$basePath === void 0 ? '' : _ref5$basePath, _ref5$dynamicBasePath = _ref5.dynamicBasePath, dynamicBasePath = _ref5$dynamicBasePath === void 0 ? '' : _ref5$dynamicBasePath;
+            languages = new Languages({
+              langData: langData
+            });
+
+            getCellValue = function getCellValue(_ref6) {
+              var fieldValueAliasMapPreferred = _ref6.fieldValueAliasMapPreferred,
+                  escapeColumnIndexes = _ref6.escapeColumnIndexes;
+              return function (_ref7) {
+                var tr = _ref7.tr,
+                    idx = _ref7.idx;
+                var tdVal = fieldValueAliasMapPreferred[idx] !== undefined ? fieldValueAliasMapPreferred[idx][tr[idx]] : tr[idx];
+
+                if (tdVal && _typeof(tdVal) === 'object') {
+                  tdVal = Object.values(tdVal);
+                }
+
+                if (Array.isArray(tdVal)) {
+                  tdVal = tdVal.join(l('comma-space'));
+                }
+
+                return (escapeColumnIndexes[idx] || !_this2.trustFormatHTML) && typeof tdVal === 'string' ? {
+                  tdVal: escapeHTML(tdVal),
+                  htmlEscaped: true
+                } : {
+                  tdVal: tdVal
+                };
+              };
+            };
+
+            getCanonicalID = function getCanonicalID(_ref8) {
+              var fieldValueAliasMap = _ref8.fieldValueAliasMap,
+                  fieldValueAliasMapPreferred = _ref8.fieldValueAliasMapPreferred,
+                  localizedFieldNames = _ref8.localizedFieldNames,
+                  canonicalBrowseFieldNames = _ref8.canonicalBrowseFieldNames;
+              return function (_ref9) {
+                var tr = _ref9.tr,
+                    foundState = _ref9.foundState;
+                return canonicalBrowseFieldNames.map(function (fieldName) {
+                  var idx = localizedFieldNames.indexOf(fieldName); // This works to put alias in anchor but this includes
+                  //   our ending parenthetical, the alias may be harder
+                  //   to remember and/or automated than original (e.g.,
+                  //   for a number representing a book); we may wish to
+                  //   switch this (and also for other browse field-based
+                  //   items).
+
+                  if (fieldValueAliasMap[idx] !== undefined) {
+                    return fieldValueAliasMapPreferred[idx][tr[idx]];
                   }
 
-                  if (val && _typeof(val) === 'object') {
-                    if (typeof preferAlias === 'string') {
-                      fieldValueAliasMap[key] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
-                        key: key,
-                        value: val[preferAlias]
-                      });
-                    } else {
-                      Object.entries(val).forEach(function (_ref19) {
-                        var _ref20 = _slicedToArray(_ref19, 2),
-                            k = _ref20[0],
-                            value = _ref20[1];
+                  return tr[idx];
+                }).join('-'); // rowID;
+              };
+            };
 
-                        fieldValueAliasMap[key][k] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
+            determineEnd = function determineEnd(_ref10) {
+              var fieldValueAliasMap = _ref10.fieldValueAliasMap,
+                  fieldValueAliasMapPreferred = _ref10.fieldValueAliasMapPreferred,
+                  localizedFieldNames = _ref10.localizedFieldNames,
+                  applicableBrowseFieldNames = _ref10.applicableBrowseFieldNames,
+                  startsRaw = _ref10.startsRaw,
+                  endsRaw = _ref10.endsRaw;
+              return function (_ref11) {
+                var tr = _ref11.tr,
+                    foundState = _ref11.foundState;
+                var rowIDPartsPreferred = [];
+                var rowIDParts = applicableBrowseFieldNames.map(function (fieldName) {
+                  var idx = localizedFieldNames.indexOf(fieldName); // This works to put alias in anchor but this includes
+                  //   our ending parenthetical, the alias may be harder
+                  //   to remember and/or automated than original (e.g.,
+                  //   for a number representing a book), and there could
+                  //   be multiple aliases for a value; we may wish to
+                  //   switch this (and also for other browse field-based
+                  //   items).
+
+                  if (fieldValueAliasMap[idx] !== undefined) {
+                    rowIDPartsPreferred.push(fieldValueAliasMapPreferred[idx][tr[idx]]);
+                  } else {
+                    rowIDPartsPreferred.push(tr[idx]);
+                  }
+
+                  return tr[idx];
+                }); // Todo: Use schema to determine field type and use `parseInt`
+                //   on other value instead of `String` conversions
+
+                if (!foundState.start) {
+                  if (startsRaw.some(function (part, i) {
+                    var rowIDPart = rowIDParts[i];
+                    return part !== rowIDPart;
+                  })) {
+                    // Trigger skip of this row
+                    return false;
+                  }
+
+                  foundState.start = true;
+                } // This doesn't go in an `else` for the above in case the start is the end
+
+
+                if (endsRaw.every(function (part, i) {
+                  var rowIDPart = rowIDParts[i];
+                  return part === rowIDPart;
+                })) {
+                  foundState.end = true;
+                } else if (foundState.end) {
+                  // If no longer matching, trigger end of the table
+                  return true;
+                }
+
+                return rowIDPartsPreferred.join('-'); // rowID;
+              };
+            };
+
+            getCheckedAndInterlinearFieldInfo = function getCheckedAndInterlinearFieldInfo(_ref12) {
+              var localizedFieldNames = _ref12.localizedFieldNames;
+              var i = 1;
+              var field, checked;
+              var checkedFields = [];
+
+              do {
+                field = $p.get('field' + i, true);
+                checked = $p.get('checked' + i, true);
+                i++;
+
+                if (field && (checked === l('yes') || checked === null // Default to "on"
+                )) {
+                  checkedFields.push(field);
+                }
+              } while (field);
+
+              checkedFields = checkedFields.filter(function (cf) {
+                return localizedFieldNames.includes(cf);
+              });
+              var checkedFieldIndexes = checkedFields.map(function (cf) {
+                return localizedFieldNames.indexOf(cf);
+              });
+              var allInterlinearColIndexes = checkedFieldIndexes.map(function (cfi, i) {
+                var interlin = $p.get('interlin' + (cfi + 1), true);
+                return interlin && interlin.split(/\s*,\s*/).map(function (col) {
+                  return (// Todo: Avoid this when known to be integer or if string, though allow
+                    //    string to be treated as number if config is set.
+                    parseInt(col) - 1
+                  );
+                }).filter(function (n) {
+                  return !Number.isNaN(n);
+                });
+              });
+              return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
+            };
+
+            getCaption = function getCaption(_ref13) {
+              var starts = _ref13.starts,
+                  ends = _ref13.ends,
+                  applicableBrowseFieldNames = _ref13.applicableBrowseFieldNames,
+                  heading = _ref13.heading;
+              var caption;
+              var hasCaption = $pRaw('caption') !== '0';
+
+              if (hasCaption) {
+                /*
+                      // Works but displays in parentheses browse fields which
+                      //  may be non-applicable
+                      const buildRangePoint = (startOrEnd) => escapeHTML(
+                          browseFieldSets.reduce((txt, bfs, i) =>
+                              (txt ? txt + ' (' : '') + bfs.map((bf, j) =>
+                                  (j > 0 ? l('comma-space') : '') + bf + ' ' +
+                                      $pRaw(startOrEnd + (i + 1) + '-' + (j + 1))
+                              ).join('') + (txt ? ')' : ''), '')
+                      );
+                      */
+
+                /*
+                      // Works but overly long
+                      const buildRangePoint = (startOrEnd) => escapeHTML(
+                          applicableBrowseFieldSet.map((bf, j) =>
+                              (j > 0 ? l('comma-space') : '') + bf + ' ' +
+                                  $pRaw(startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1))
+                          ).join('')
+                      );
+                      */
+                var startSep = Templates.resultsDisplayServerOrClient.startSeparator({
+                  l: l
+                });
+                var innerBrowseFieldSeparator = Templates.resultsDisplayServerOrClient.innerBrowseFieldSeparator({
+                  l: l
+                });
+
+                var buildRanges = function buildRanges() {
+                  var endVals = [];
+                  var startRange = starts.reduce(function (str, startFieldValue, i) {
+                    var ret = str + startFieldValue;
+
+                    if (startFieldValue === ends[i]) {
+                      // We abbreviate as start/end share same Book, etc.
+                      return ret + (i > 0 ? innerBrowseFieldSeparator // e.g., for "Genesis 7, 5-8"
+                      : ' ' // e.g., for 2nd space in "Surah 2 5-8"
+                      );
+                    }
+
+                    endVals.push(ends[i]);
+                    return ret + startSep;
+                  }, '').slice(0, -startSep.length);
+                  var rangeNames = applicableBrowseFieldNames.join(innerBrowseFieldSeparator);
+                  return escapeHTML(Templates.resultsDisplayServerOrClient.ranges({
+                    l: l,
+                    startRange: startRange,
+                    endVals: endVals,
+                    rangeNames: rangeNames
+                  }));
+                };
+
+                var ranges = buildRanges();
+                caption = Templates.resultsDisplayServerOrClient.caption({
+                  heading: heading,
+                  ranges: ranges
+                });
+              }
+
+              return [hasCaption, caption];
+            };
+
+            runPresort = function runPresort(_ref14) {
+              var presort = _ref14.presort,
+                  tableData = _ref14.tableData,
+                  applicableBrowseFieldNames = _ref14.applicableBrowseFieldNames,
+                  localizedFieldNames = _ref14.localizedFieldNames;
+
+              // Todo: Ought to be checking against an aliased table
+              if (presort) {
+                tableData.sort(function (rowA, rowB) {
+                  var precedence;
+                  applicableBrowseFieldNames.some(function (fieldName) {
+                    var idx = localizedFieldNames.indexOf(fieldName);
+                    var rowAFirst = rowA[idx] < rowB[idx];
+                    var rowBFirst = rowA[idx] > rowB[idx];
+                    precedence = rowBFirst ? 1 : -1;
+                    return rowAFirst || rowBFirst; // Keep going if 0
+                  });
+                  return precedence;
+                });
+              }
+            };
+
+            getFieldValueAliasMap = function getFieldValueAliasMap(_ref15) {
+              var schemaItems = _ref15.schemaItems,
+                  fieldInfo = _ref15.fieldInfo,
+                  metadataObj = _ref15.metadataObj,
+                  getFieldAliasOrName = _ref15.getFieldAliasOrName,
+                  usePreferAlias = _ref15.usePreferAlias;
+              return fieldInfo.map(function (_ref16) {
+                var field = _ref16.field,
+                    plugin = _ref16.plugin;
+
+                if (plugin) {
+                  return undefined;
+                }
+
+                var _getFieldNameAndValue = getFieldNameAndValueAliases({
+                  field: field,
+                  schemaItems: schemaItems,
+                  metadataObj: metadataObj,
+                  getFieldAliasOrName: getFieldAliasOrName,
+                  lang: lang
+                }),
+                    preferAlias = _getFieldNameAndValue.preferAlias,
+                    fieldValueAliasMap = _getFieldNameAndValue.fieldValueAliasMap;
+
+                if (!usePreferAlias) {
+                  return preferAlias !== false ? fieldValueAliasMap : undefined;
+                }
+
+                if (fieldValueAliasMap) {
+                  Object.entries(fieldValueAliasMap).forEach(function (_ref17) {
+                    var _ref18 = _slicedToArray(_ref17, 2),
+                        key = _ref18[0],
+                        val = _ref18[1];
+
+                    if (Array.isArray(val)) {
+                      fieldValueAliasMap[key] = val.map(function (value) {
+                        return Templates.resultsDisplayServerOrClient.fieldValueAlias({
                           key: key,
                           value: value
                         });
                       });
+                      return;
                     }
 
-                    return;
+                    if (val && _typeof(val) === 'object') {
+                      if (typeof preferAlias === 'string') {
+                        fieldValueAliasMap[key] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
+                          key: key,
+                          value: val[preferAlias]
+                        });
+                      } else {
+                        Object.entries(val).forEach(function (_ref19) {
+                          var _ref20 = _slicedToArray(_ref19, 2),
+                              k = _ref20[0],
+                              value = _ref20[1];
+
+                          fieldValueAliasMap[key][k] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
+                            key: key,
+                            value: value
+                          });
+                        });
+                      }
+
+                      return;
+                    }
+
+                    fieldValueAliasMap[key] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
+                      key: key,
+                      value: val
+                    });
+                  });
+                  return preferAlias !== false ? fieldValueAliasMap : undefined;
+                }
+
+                return undefined;
+              });
+            };
+
+            $pRaw = function $pRaw(param, avoidLog) {
+              // Todo: Should work with i18n=true (if names i18nized, need reverse look-up)
+              var key;
+              var p = $p.get(param, true);
+              /**
+                   *
+                   * @param {GenericArray|PlainObject} locale
+                   * @returns {boolean}
+                   */
+
+              function reverseLocaleLookup(locale) {
+                if (Array.isArray(locale)) {
+                  return locale.some(reverseLocaleLookup);
+                }
+
+                var localeValues = Object.values(locale);
+                return localeValues.some(function (val, i) {
+                  if (typeof val !== 'string') {
+                    return reverseLocaleLookup(val);
                   }
 
-                  fieldValueAliasMap[key] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
-                    key: key,
-                    value: val
-                  });
+                  if (val === p) {
+                    key = Object.keys(locale)[i];
+                    return true;
+                  }
+
+                  return false;
                 });
-                return preferAlias !== false ? fieldValueAliasMap : undefined;
               }
 
-              return undefined;
-            });
-          };
+              reverseLocaleLookup(imfLocales);
 
-          $pRaw = function $pRaw(param, avoidLog) {
-            // Todo: Should work with i18n=true (if names i18nized, need reverse look-up)
-            var key;
-            var p = $p.get(param, true);
-            /**
-                 *
-                 * @param {GenericArray|PlainObject} locale
-                 * @returns {boolean}
-                 */
-
-            function reverseLocaleLookup(locale) {
-              if (Array.isArray(locale)) {
-                return locale.some(reverseLocaleLookup);
+              if (!key && !avoidLog) {
+                console.log('Bad param/value', param, '::', p);
               }
 
-              var localeValues = Object.values(locale);
-              return localeValues.some(function (val, i) {
-                if (typeof val !== 'string') {
-                  return reverseLocaleLookup(val);
-                }
-
-                if (val === p) {
-                  key = Object.keys(locale)[i];
-                  return true;
-                }
-
-                return false;
-              });
-            }
-
-            reverseLocaleLookup(imfLocales);
-
-            if (!key && !avoidLog) {
-              console.log('Bad param/value', param, '::', p);
-            }
-
-            return key; // || p; // $p.get(param, true);
-          };
-
-          escapeCSS = escapeHTML;
-
-          $pRawEsc = function $pRawEsc(param) {
-            return escapeHTML($pRaw(param));
-          };
-
-          $pEscArbitrary = function $pEscArbitrary(param) {
-            return escapeHTML($p.get(param, true));
-          }; // Not currently in use
-
-
-          escapeQuotedCSS = function escapeQuotedCSS(s) {
-            return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-          };
-
-          _context3.next = 16;
-          return regeneratorRuntime.awrap(getWorkData({
-            files: files || this.files,
-            allowPlugins: allowPlugins || this.allowPlugins,
-            lang: lang,
-            fallbackLanguages: fallbackLanguages,
-            work: $p.get('work'),
-            basePath: basePath
-          }));
-
-        case 16:
-          _ref21 = _context3.sent;
-          fileData = _ref21.fileData;
-          lf = _ref21.lf;
-          getFieldAliasOrName = _ref21.getFieldAliasOrName;
-          schemaObj = _ref21.schemaObj;
-          metadataObj = _ref21.metadataObj;
-          pluginsForWork = _ref21.pluginsForWork;
-          console.log('pluginsForWork', pluginsForWork);
-          heading = getMetaProp(lang, metadataObj, 'heading');
-          schemaItems = schemaObj.items.items;
-          setNames = [];
-          presorts = [];
-          browseFieldSets = [];
-          getBrowseFieldData({
-            metadataObj: metadataObj,
-            schemaItems: schemaItems,
-            getFieldAliasOrName: getFieldAliasOrName,
-            lang: lang,
-            callback: function callback(_ref22) {
-              var setName = _ref22.setName,
-                  browseFields = _ref22.browseFields,
-                  presort = _ref22.presort;
-              setNames.push(setName);
-              presorts.push(presort);
-              browseFieldSets.push(browseFields);
-            }
-          });
-          fieldInfo = schemaItems.map(function (_ref23) {
-            var field = _ref23.title,
-                format = _ref23.format;
-            return {
-              field: field,
-              fieldAliasOrName: getFieldAliasOrName(field) || field,
-              escapeColumn: format !== 'html',
-              fieldLang: metadataObj.fields[field].lang
+              return key; // || p; // $p.get(param, true);
             };
-          });
-          _lang = _slicedToArray(lang, 1), preferredLocale = _lang[0];
-          metadata = new Metadata({
-            metadataObj: metadataObj
-          });
 
-          if (pluginsForWork) {
+            escapeCSS = escapeHTML;
+
+            $pRawEsc = function $pRawEsc(param) {
+              return escapeHTML($pRaw(param));
+            };
+
+            $pEscArbitrary = function $pEscArbitrary(param) {
+              return escapeHTML($p.get(param, true));
+            }; // Not currently in use
+
+
+            escapeQuotedCSS = function escapeQuotedCSS(s) {
+              return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+            };
+
+            _context3.next = 16;
+            return getWorkData({
+              files: files || this.files,
+              allowPlugins: allowPlugins || this.allowPlugins,
+              lang: lang,
+              fallbackLanguages: fallbackLanguages,
+              work: $p.get('work'),
+              basePath: basePath
+            });
+
+          case 16:
+            _ref21 = _context3.sent;
+            fileData = _ref21.fileData;
+            lf = _ref21.lf;
+            getFieldAliasOrName = _ref21.getFieldAliasOrName;
+            schemaObj = _ref21.schemaObj;
+            metadataObj = _ref21.metadataObj;
+            pluginsForWork = _ref21.pluginsForWork;
             console.log('pluginsForWork', pluginsForWork);
-            _lang2 = this.lang; // array with first item as preferred
+            heading = getMetaProp(lang, metadataObj, 'heading');
+            schemaItems = schemaObj.items.items;
+            setNames = [];
+            presorts = [];
+            browseFieldSets = [];
+            getBrowseFieldData({
+              metadataObj: metadataObj,
+              schemaItems: schemaItems,
+              getFieldAliasOrName: getFieldAliasOrName,
+              lang: lang,
+              callback: function callback(_ref22) {
+                var setName = _ref22.setName,
+                    browseFields = _ref22.browseFields,
+                    presort = _ref22.presort;
+                setNames.push(setName);
+                presorts.push(presort);
+                browseFieldSets.push(browseFields);
+              }
+            });
+            fieldInfo = schemaItems.map(function (_ref23) {
+              var field = _ref23.title,
+                  format = _ref23.format;
+              return {
+                field: field,
+                fieldAliasOrName: getFieldAliasOrName(field) || field,
+                escapeColumn: format !== 'html',
+                fieldLang: metadataObj.fields[field].lang
+              };
+            });
+            _lang = _slicedToArray(lang, 1), preferredLocale = _lang[0];
+            metadata = new Metadata({
+              metadataObj: metadataObj
+            });
 
-            pluginsForWork.iterateMappings(function (_ref24) {
-              var plugin = _ref24.plugin,
-                  pluginName = _ref24.pluginName,
-                  pluginLang = _ref24.pluginLang,
-                  onByDefaultDefault = _ref24.onByDefaultDefault,
-                  placement = _ref24.placement,
-                  applicableFields = _ref24.applicableFields,
-                  meta = _ref24.meta;
-              placement = placement === 'end' ? Infinity // push
-              : placement;
+            if (pluginsForWork) {
+              console.log('pluginsForWork', pluginsForWork);
+              _lang2 = this.lang; // array with first item as preferred
 
-              var processField = function processField() {
-                var _ref25 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-                    applicableField = _ref25.applicableField,
-                    targetLanguage = _ref25.targetLanguage,
-                    onByDefault = _ref25.onByDefault,
-                    metaApplicableField = _ref25.metaApplicableField;
+              pluginsForWork.iterateMappings(function (_ref24) {
+                var plugin = _ref24.plugin,
+                    pluginName = _ref24.pluginName,
+                    pluginLang = _ref24.pluginLang,
+                    onByDefaultDefault = _ref24.onByDefaultDefault,
+                    placement = _ref24.placement,
+                    applicableFields = _ref24.applicableFields,
+                    meta = _ref24.meta;
+                placement = placement === 'end' ? Infinity // push
+                : placement;
 
-                var plugin = pluginsForWork.getPluginObject(pluginName) || {};
-                var applicableFieldLang = metadata.getFieldLang(applicableField);
+                var processField = function processField() {
+                  var _ref25 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                      applicableField = _ref25.applicableField,
+                      targetLanguage = _ref25.targetLanguage,
+                      onByDefault = _ref25.onByDefault,
+                      metaApplicableField = _ref25.metaApplicableField;
 
-                if (plugin.getTargetLanguage) {
-                  targetLanguage = plugin.getTargetLanguage({
-                    applicableField: applicableField,
+                  var plugin = pluginsForWork.getPluginObject(pluginName) || {};
+                  var applicableFieldLang = metadata.getFieldLang(applicableField);
+
+                  if (plugin.getTargetLanguage) {
+                    targetLanguage = plugin.getTargetLanguage({
+                      applicableField: applicableField,
+                      targetLanguage: targetLanguage,
+                      // Default lang for plug-in (from files.json)
+                      pluginLang: pluginLang,
+                      // Default lang when no target language or
+                      //   plugin lang; using the lang of the applicable
+                      //   field
+                      applicableFieldLang: applicableFieldLang
+                    });
+                  }
+
+                  if (targetLanguage === '{locale}') {
+                    targetLanguage = preferredLocale;
+                  }
+
+                  var applicableFieldI18N = getMetaProp(_lang2, metadataObj, ['fieldnames', applicableField]);
+                  var fieldAliasOrName = plugin.getFieldAliasOrName ? plugin.getFieldAliasOrName({
+                    locales: _lang2,
+                    lf: lf,
                     targetLanguage: targetLanguage,
-                    // Default lang for plug-in (from files.json)
-                    pluginLang: pluginLang,
-                    // Default lang when no target language or
-                    //   plugin lang; using the lang of the applicable
-                    //   field
-                    applicableFieldLang: applicableFieldLang
+                    applicableField: applicableField,
+                    applicableFieldI18N: applicableFieldI18N,
+                    meta: meta,
+                    metaApplicableField: metaApplicableField,
+                    targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
+                  }) : languages.getFieldNameFromPluginNameAndLocales({
+                    pluginName: pluginName,
+                    locales: _lang2,
+                    lf: lf,
+                    targetLanguage: targetLanguage,
+                    applicableFieldI18N: applicableFieldI18N,
+                    // Todo: Should have formal way to i18nize meta
+                    meta: meta,
+                    metaApplicableField: metaApplicableField
                   });
+                  fieldInfo.splice( // Todo: Allow default placement overriding for
+                  //    non-plugins
+                  placement, 0, {
+                    plugin: plugin,
+                    meta: meta,
+                    placement: placement,
+                    // field: `${this.namespace}-plugin-${field}`,
+                    fieldAliasOrName: fieldAliasOrName,
+                    escapeColumn: plugin.escapeColumn !== false,
+                    // Plug-in specific (todo: allow specifying
+                    //    for non-plugins)
+                    onByDefault: typeof onByDefault === 'boolean' ? onByDefault : onByDefaultDefault || false,
+                    // Three conventions for use by plug-ins but
+                    //     textbrowser only passes on (might
+                    //     not need here)
+                    applicableField: applicableField,
+                    metaApplicableField: metaApplicableField,
+                    fieldLang: targetLanguage
+                  });
+                };
+
+                if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
+                  processField();
                 }
-
-                if (targetLanguage === '{locale}') {
-                  targetLanguage = preferredLocale;
-                }
-
-                var applicableFieldI18N = getMetaProp(_lang2, metadataObj, ['fieldnames', applicableField]);
-                var fieldAliasOrName = plugin.getFieldAliasOrName ? plugin.getFieldAliasOrName({
-                  locales: _lang2,
-                  lf: lf,
-                  targetLanguage: targetLanguage,
-                  applicableField: applicableField,
-                  applicableFieldI18N: applicableFieldI18N,
-                  meta: meta,
-                  metaApplicableField: metaApplicableField,
-                  targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
-                }) : languages.getFieldNameFromPluginNameAndLocales({
-                  pluginName: pluginName,
-                  locales: _lang2,
-                  lf: lf,
-                  targetLanguage: targetLanguage,
-                  applicableFieldI18N: applicableFieldI18N,
-                  // Todo: Should have formal way to i18nize meta
-                  meta: meta,
-                  metaApplicableField: metaApplicableField
-                });
-                fieldInfo.splice( // Todo: Allow default placement overriding for
-                //    non-plugins
-                placement, 0, {
-                  plugin: plugin,
-                  meta: meta,
-                  placement: placement,
-                  // field: `${this.namespace}-plugin-${field}`,
-                  fieldAliasOrName: fieldAliasOrName,
-                  escapeColumn: plugin.escapeColumn !== false,
-                  // Plug-in specific (todo: allow specifying
-                  //    for non-plugins)
-                  onByDefault: typeof onByDefault === 'boolean' ? onByDefault : onByDefaultDefault || false,
-                  // Three conventions for use by plug-ins but
-                  //     textbrowser only passes on (might
-                  //     not need here)
-                  applicableField: applicableField,
-                  metaApplicableField: metaApplicableField,
-                  fieldLang: targetLanguage
-                });
-              };
-
-              if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
-                processField();
-              }
-            });
-          }
-
-          localizedFieldNames = fieldInfo.map(function (fi) {
-            return fi.fieldAliasOrName;
-          });
-          escapeColumnIndexes = fieldInfo.map(function (fi) {
-            return fi.escapeColumn;
-          });
-          fieldLangs = fieldInfo.map(function (_ref26) {
-            var fieldLang = _ref26.fieldLang;
-            return fieldLang !== preferredLocale ? fieldLang : null;
-          });
-          fieldValueAliasMap = getFieldValueAliasMap({
-            schemaItems: schemaItems,
-            fieldInfo: fieldInfo,
-            metadataObj: metadataObj,
-            getFieldAliasOrName: getFieldAliasOrName,
-            usePreferAlias: false
-          });
-          fieldValueAliasMapPreferred = getFieldValueAliasMap({
-            schemaItems: schemaItems,
-            fieldInfo: fieldInfo,
-            metadataObj: metadataObj,
-            getFieldAliasOrName: getFieldAliasOrName,
-            usePreferAlias: true
-          }); // Todo: Repeats some code in workDisplay; probably need to reuse
-          //   these functions more in `Templates.resultsDisplayServerOrClient` too
-          // eslint-disable-next-line require-atomic-updates
-
-          localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
-          il = localizeParamNames ? function (key) {
-            return l(['params', key]);
-          } : function (key) {
-            return key;
-          };
-          iil = localizeParamNames ? function (key) {
-            return l(['params', 'indexed', key]);
-          } : function (key) {
-            return key;
-          };
-          ilRaw = localizeParamNames ? function (key) {
-            var suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-            return $p.get(il(key) + suffix, true);
-          } : function (key) {
-            var suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-            return $p.get(key + suffix, true);
-          };
-          iilRaw = localizeParamNames ? function (key) {
-            var suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-            return $p.get($p.get('work') + '-' + iil(key) + suffix, true);
-          } : function (key) {
-            var suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-            return $p.get($p.get('work') + '-' + key + suffix, true);
-          }; // Now that we know `browseFieldSets`, we can parse `startEnd`
-
-          browseFieldSetStartEndIdx = browseFieldSets.findIndex(function (item, i) {
-            return iilRaw('startEnd', i + 1);
-          });
-
-          if (browseFieldSetStartEndIdx !== -1) {
-            // Todo: i18nize (by work and/or by whole app?)
-            rangeSep = '-';
-            partSep = ':'; // Search box functionality (Todo: not yet in UI); should first
-            //    avoid numeric startEnd and even work across book
-            // Todo: At least avoid need for book text AND book number in Bible
-            // Todo: Change query beginning at 0 to 1 if none present?
-            // Todo: Support i18nized or canonical aliases (but don't
-            //         over-trim in such cases)
-
-            rawSearch = (iilRaw('startEnd', browseFieldSetStartEndIdx + 1) || '').trim();
-            _rawSearch$split = rawSearch.split(rangeSep), _rawSearch$split2 = _slicedToArray(_rawSearch$split, 2), startFull = _rawSearch$split2[0], endFull = _rawSearch$split2[1];
-
-            if (endFull !== undefined) {
-              startPartVals = startFull.split(partSep);
-              endPartVals = endFull.split(partSep);
-              startEndDiff = startPartVals.length - endPartVals.length;
-
-              if (startEndDiff > 0) {
-                // e.g., 5:42:7 - 8 only gets verses 7-8
-                endPartVals.unshift.apply(endPartVals, _toConsumableArray(startPartVals.slice(0, startEndDiff)));
-              } else if (startEndDiff < 0) {
-                // e.g., 5 - 6:2:1 gets all of book 5 to 6:2:1
-                // Todo: We should fill with '0' but since that often
-                //    doesn't find anything, we default for now to '1'.
-                startPartVals.push.apply(startPartVals, _toConsumableArray(new Array(-startEndDiff).fill('1')));
-              }
-
-              console.log('startPartVals', startPartVals);
-              console.log('endPartVals', endPartVals);
-              startPartVals.forEach(function (startPartVal, i) {
-                var endPartVal = endPartVals[i];
-                $p.set("".concat($p.get('work'), "-start").concat(browseFieldSetStartEndIdx + 1, "-").concat(i + 1), startPartVal, true);
-                $p.set("".concat($p.get('work'), "-end").concat(browseFieldSetStartEndIdx + 1, "-").concat(i + 1), endPartVal, true);
               });
             }
-          }
 
-          browseFieldSetIdx = browseFieldSets.findIndex(function (item, i) {
-            return iilRaw('start', i + 1 + '-1');
-          });
-          applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
-          applicableBrowseFieldSetName = setNames[browseFieldSetIdx];
-          applicableBrowseFieldNames = applicableBrowseFieldSet.map(function (abfs) {
-            return abfs.fieldName;
-          });
-          canonicalBrowseFieldSet = browseFieldSets[0];
-          canonicalBrowseFieldSetName = setNames[0];
-          canonicalBrowseFieldNames = canonicalBrowseFieldSet.map(function (abfs) {
-            return abfs.fieldName;
-          });
-          fieldSchemaTypes = applicableBrowseFieldSet.map(function (abfs) {
-            return abfs.fieldSchema.type;
-          });
-
-          buildRangePoint = function buildRangePoint(startOrEnd) {
-            return applicableBrowseFieldNames.map(function (bfn, j) {
-              return $p.get($p.get('work') + '-' + startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1), true);
+            localizedFieldNames = fieldInfo.map(function (fi) {
+              return fi.fieldAliasOrName;
             });
-          };
+            escapeColumnIndexes = fieldInfo.map(function (fi) {
+              return fi.escapeColumn;
+            });
+            fieldLangs = fieldInfo.map(function (_ref26) {
+              var fieldLang = _ref26.fieldLang;
+              return fieldLang !== preferredLocale ? fieldLang : null;
+            });
+            fieldValueAliasMap = getFieldValueAliasMap({
+              schemaItems: schemaItems,
+              fieldInfo: fieldInfo,
+              metadataObj: metadataObj,
+              getFieldAliasOrName: getFieldAliasOrName,
+              usePreferAlias: false
+            });
+            fieldValueAliasMapPreferred = getFieldValueAliasMap({
+              schemaItems: schemaItems,
+              fieldInfo: fieldInfo,
+              metadataObj: metadataObj,
+              getFieldAliasOrName: getFieldAliasOrName,
+              usePreferAlias: true
+            }); // Todo: Repeats some code in workDisplay; probably need to reuse
+            //   these functions more in `Templates.resultsDisplayServerOrClient` too
 
-          starts = buildRangePoint('start');
-          ends = buildRangePoint('end');
-          _getCaption = getCaption({
-            starts: starts,
-            ends: ends,
-            applicableBrowseFieldNames: applicableBrowseFieldNames,
-            heading: heading
-          }), _getCaption2 = _slicedToArray(_getCaption, 2), hasCaption = _getCaption2[0], caption = _getCaption2[1];
-          showInterlinTitles = $pRaw('interlintitle') === '1';
-          console.log('rand', ilRaw('rand') === 'yes');
-
-          stripToRawFieldValue = function stripToRawFieldValue(v, i) {
-            var val;
-
-            if (v.match(/^\d+$/) || v.match(fieldValueAliasRegex)) {
-              val = getRawFieldValue(v);
-            } else {
-              var rawFieldValueAliasMap = applicableBrowseFieldSet[i].rawFieldValueAliasMap;
-              var dealiased;
-
-              if (rawFieldValueAliasMap) {
-                // Look to dealias
-                var fvEntries = Object.entries(rawFieldValueAliasMap);
-
-                if (Array.isArray(fvEntries[0][1])) {
-                  fvEntries.some(function (_ref27) {
-                    var _ref28 = _slicedToArray(_ref27, 2),
-                        key = _ref28[0],
-                        arr = _ref28[1];
-
-                    if (arr.includes(v)) {
-                      dealiased = key;
-                      return true;
-                    }
-
-                    return false;
-                  });
-                } else {
-                  fvEntries.some(function (_ref29) {
-                    var _ref30 = _slicedToArray(_ref29, 2),
-                        key = _ref30[0],
-                        obj = _ref30[1];
-
-                    var arr = Object.values(obj);
-
-                    if (arr.includes(v)) {
-                      dealiased = key;
-                      return true;
-                    }
-
-                    return false;
-                  });
-                }
-              }
-
-              val = dealiased === undefined ? v : dealiased;
-            }
-
-            return fieldSchemaTypes[i] === 'integer' ? parseInt(val) : val;
-          };
-
-          unlocalizedWorkName = fileData.name;
-          startsRaw = starts.map(stripToRawFieldValue);
-          endsRaw = ends.map(stripToRawFieldValue);
-          usingServerData = false; // Site owner may have configured to skip (e.g., testing)
-
-          if (!(!skipIndexedDB && // User may have refused, not yet agreed, or are visiting the
-          //   results page directly where we don't ask for the permissions
-          //   needed for persistent IndexedDB currently so that people can
-          //   be brought to a results page without needing to agree to persist
-          //   through notifications (or however)
-          !noIndexedDB)) {
-            _context3.next = 71;
-            break;
-          }
-
-          _context3.next = 68;
-          return regeneratorRuntime.awrap(new Promise(function (resolve, reject) {
-            // Todo: Fetch the work in code based on the non-localized `datafileName`
-            var dbName = _this2.namespace + '-textbrowser-cache-data';
-            var req = indexedDB.open(dbName);
-
-            req.onsuccess = function (_ref31) {
-              var db = _ref31.target.result;
-              var storeName = 'files-to-cache-' + unlocalizedWorkName;
-              var trans = db.transaction(storeName);
-              var store = trans.objectStore(storeName); // Get among browse field sets by index number within URL params
-
-              var index = store.index('browseFields-' + applicableBrowseFieldSetName); // console.log('dbName', dbName);
-              // console.log('storeName', storeName);
-              // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
-
-              var r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
-
-              r.onsuccess = function (_ref32) {
-                var result = _ref32.target.result;
-                var converted = result.map(function (r) {
-                  return r.value;
-                });
-                resolve(converted);
-              };
+            localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
+            il = localizeParamNames ? function (key) {
+              return l(['params', key]);
+            } : function (key) {
+              return key;
             };
-          }));
+            iil = localizeParamNames ? function (key) {
+              return l(['params', 'indexed', key]);
+            } : function (key) {
+              return key;
+            };
+            ilRaw = localizeParamNames ? function (key) {
+              var suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+              return $p.get(il(key) + suffix, true);
+            } : function (key) {
+              var suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+              return $p.get(key + suffix, true);
+            };
+            iilRaw = localizeParamNames ? function (key) {
+              var suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+              return $p.get($p.get('work') + '-' + iil(key) + suffix, true);
+            } : function (key) {
+              var suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+              return $p.get($p.get('work') + '-' + key + suffix, true);
+            }; // Now that we know `browseFieldSets`, we can parse `startEnd`
 
-        case 68:
-          tableData = _context3.sent;
-          _context3.next = 89;
-          break;
-
-        case 71:
-          // No need for presorting in indexedDB, given indexes
-          presort = presorts[browseFieldSetIdx]; // Given that we are not currently wishing to add complexity to
-          //   our PHP code (though it is not a problem with Node.js),
-          //   we retrieve the whole file and then sort where presorting is
-          //   needed
-          // if (presort || this.noDynamic) {
-
-          if (!this.noDynamic) {
-            _context3.next = 80;
-            break;
-          }
-
-          _context3.next = 75;
-          return regeneratorRuntime.awrap(JsonRefs.resolveRefs(fileData.file));
-
-        case 75:
-          _ref33 = _context3.sent;
-          tableData = _ref33.resolved.data;
-          runPresort({
-            presort: presort,
-            tableData: tableData,
-            applicableBrowseFieldNames: applicableBrowseFieldNames,
-            localizedFieldNames: localizedFieldNames
-          });
-          _context3.next = 89;
-          break;
-
-        case 80:
-          /*
-                const jsonURL = Object.entries({
-                    prefI18n, unlocalizedWorkName, startsRaw, endsRaw
-                }).reduce((url, [arg, argVal]) => {
-                    return url + '&' + arg + '=' + encodeURIComponent((argVal));
-                }, `${dynamicBasePath}textbrowser?`);
-                */
-          jsonURL = "".concat(dynamicBasePath, "textbrowser?").concat($p.toString());
-          _context3.t0 = regeneratorRuntime;
-          _context3.next = 84;
-          return regeneratorRuntime.awrap(fetch(jsonURL));
-
-        case 84:
-          _context3.t1 = _context3.sent.json();
-          _context3.next = 87;
-          return _context3.t0.awrap.call(_context3.t0, _context3.t1);
-
-        case 87:
-          tableData = _context3.sent;
-          usingServerData = true;
-
-        case 89:
-          if (!usingServerData && pluginsForWork) {
-            fieldInfo.forEach(function (_ref34, j) {
-              var plugin = _ref34.plugin,
-                  placement = _ref34.placement;
-
-              if (!plugin) {
-                return;
-              }
-
-              tableData.forEach(function (tr, i) {
-                // Todo: We should pass on other arguments (like `meta` but on `applicableFields`)
-                tr.splice(placement, 0, null // `${i}-${j}`);
-                );
-              });
+            browseFieldSetStartEndIdx = browseFieldSets.findIndex(function (item, i) {
+              return iilRaw('startEnd', i + 1);
             });
-            fieldInfo.forEach(function (_ref35, j) {
-              var plugin = _ref35.plugin,
-                  applicableField = _ref35.applicableField,
-                  fieldLang = _ref35.fieldLang,
-                  meta = _ref35.meta,
-                  metaApplicableField = _ref35.metaApplicableField;
 
-              if (!plugin) {
-                return;
+            if (browseFieldSetStartEndIdx !== -1) {
+              // Todo: i18nize (by work and/or by whole app?)
+              rangeSep = '-';
+              partSep = ':'; // Search box functionality (Todo: not yet in UI); should first
+              //    avoid numeric startEnd and even work across book
+              // Todo: At least avoid need for book text AND book number in Bible
+              // Todo: Change query beginning at 0 to 1 if none present?
+              // Todo: Support i18nized or canonical aliases (but don't
+              //         over-trim in such cases)
+
+              rawSearch = (iilRaw('startEnd', browseFieldSetStartEndIdx + 1) || '').trim();
+              _rawSearch$split = rawSearch.split(rangeSep), _rawSearch$split2 = _slicedToArray(_rawSearch$split, 2), startFull = _rawSearch$split2[0], endFull = _rawSearch$split2[1];
+
+              if (endFull !== undefined) {
+                startPartVals = startFull.split(partSep);
+                endPartVals = endFull.split(partSep);
+                startEndDiff = startPartVals.length - endPartVals.length;
+
+                if (startEndDiff > 0) {
+                  // e.g., 5:42:7 - 8 only gets verses 7-8
+                  endPartVals.unshift.apply(endPartVals, _toConsumableArray(startPartVals.slice(0, startEndDiff)));
+                } else if (startEndDiff < 0) {
+                  // e.g., 5 - 6:2:1 gets all of book 5 to 6:2:1
+                  // Todo: We should fill with '0' but since that often
+                  //    doesn't find anything, we default for now to '1'.
+                  startPartVals.push.apply(startPartVals, _toConsumableArray(new Array(-startEndDiff).fill('1')));
+                }
+
+                console.log('startPartVals', startPartVals);
+                console.log('endPartVals', endPartVals);
+                startPartVals.forEach(function (startPartVal, i) {
+                  var endPartVal = endPartVals[i];
+                  $p.set("".concat($p.get('work'), "-start").concat(browseFieldSetStartEndIdx + 1, "-").concat(i + 1), startPartVal, true);
+                  $p.set("".concat($p.get('work'), "-end").concat(browseFieldSetStartEndIdx + 1, "-").concat(i + 1), endPartVal, true);
+                });
               }
-
-              var applicableFieldIdx = fieldInfo.findIndex(function (_ref36) {
-                var field = _ref36.field;
-                return field === applicableField;
-              }); // Now safe to pass (and set) `j` value as tr array expanded
-
-              tableData.forEach(function (tr, i) {
-                var applicableFieldText = tr[applicableFieldIdx];
-                tr[j] = plugin.getCellData && plugin.getCellData({
-                  tr: tr,
-                  tableData: tableData,
-                  i: i,
-                  j: j,
-                  applicableField: applicableField,
-                  fieldInfo: fieldInfo,
-                  applicableFieldIdx: applicableFieldIdx,
-                  applicableFieldText: applicableFieldText,
-                  fieldLang: fieldLang,
-                  getLangDir: rtlDetect_3,
-                  meta: meta,
-                  metaApplicableField: metaApplicableField,
-                  $p: $p,
-                  thisObj: _this2
-                }) || applicableFieldText;
-              });
-              console.log('applicableFieldIdx', applicableFieldIdx);
-            });
-          }
-
-          localeDir = rtlDetect_3(preferredLocale);
-          fieldDirs = fieldLangs.map(function (langCode) {
-            if (!langCode) {
-              return null;
             }
 
-            var langDir = rtlDetect_3(langCode);
-            return langDir !== localeDir ? langDir : null;
-          });
-          templateArgs = {
-            tableData: tableData,
-            $p: $p,
-            $pRaw: $pRaw,
-            $pRawEsc: $pRawEsc,
-            $pEscArbitrary: $pEscArbitrary,
-            escapeQuotedCSS: escapeQuotedCSS,
-            escapeCSS: escapeCSS,
-            escapeHTML: escapeHTML,
-            l: l,
-            localizedFieldNames: localizedFieldNames,
-            fieldLangs: fieldLangs,
-            fieldDirs: fieldDirs,
-            caption: caption,
-            hasCaption: hasCaption,
-            showInterlinTitles: showInterlinTitles,
-            determineEnd: determineEnd({
-              applicableBrowseFieldNames: applicableBrowseFieldNames,
-              fieldValueAliasMap: fieldValueAliasMap,
-              fieldValueAliasMapPreferred: fieldValueAliasMapPreferred,
-              localizedFieldNames: localizedFieldNames,
-              startsRaw: startsRaw,
-              endsRaw: endsRaw
-            }),
-            canonicalBrowseFieldSetName: canonicalBrowseFieldSetName,
-            getCanonicalID: getCanonicalID({
-              canonicalBrowseFieldNames: canonicalBrowseFieldNames,
-              fieldValueAliasMap: fieldValueAliasMap,
-              fieldValueAliasMapPreferred: fieldValueAliasMapPreferred,
-              localizedFieldNames: localizedFieldNames
-            }),
-            getCellValue: getCellValue({
-              fieldValueAliasMapPreferred: fieldValueAliasMapPreferred,
-              escapeColumnIndexes: escapeColumnIndexes,
-              escapeHTML: escapeHTML
-            }),
-            checkedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
-              localizedFieldNames: localizedFieldNames
-            }),
-            interlinearSeparator: this.interlinearSeparator
-          };
-          return _context3.abrupt("return", {
-            fieldInfo: fieldInfo,
-            $p: $p,
-            applicableBrowseFieldSet: applicableBrowseFieldSet,
-            fieldValueAliasMapPreferred: fieldValueAliasMapPreferred,
-            lf: lf,
-            iil: iil,
-            ilRaw: ilRaw,
-            browseFieldSets: browseFieldSets,
-            lang: lang,
-            metadataObj: metadataObj,
-            fileData: fileData,
-            templateArgs: templateArgs
-          });
+            browseFieldSetIdx = browseFieldSets.findIndex(function (item, i) {
+              return iilRaw('start', i + 1 + '-1');
+            });
+            applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
+            applicableBrowseFieldSetName = setNames[browseFieldSetIdx];
+            applicableBrowseFieldNames = applicableBrowseFieldSet.map(function (abfs) {
+              return abfs.fieldName;
+            });
+            canonicalBrowseFieldSet = browseFieldSets[0];
+            canonicalBrowseFieldSetName = setNames[0];
+            canonicalBrowseFieldNames = canonicalBrowseFieldSet.map(function (abfs) {
+              return abfs.fieldName;
+            });
+            fieldSchemaTypes = applicableBrowseFieldSet.map(function (abfs) {
+              return abfs.fieldSchema.type;
+            });
 
-        case 94:
-        case "end":
-          return _context3.stop();
+            buildRangePoint = function buildRangePoint(startOrEnd) {
+              return applicableBrowseFieldNames.map(function (bfn, j) {
+                return $p.get($p.get('work') + '-' + startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1), true);
+              });
+            };
+
+            starts = buildRangePoint('start');
+            ends = buildRangePoint('end');
+            _getCaption = getCaption({
+              starts: starts,
+              ends: ends,
+              applicableBrowseFieldNames: applicableBrowseFieldNames,
+              heading: heading
+            }), _getCaption2 = _slicedToArray(_getCaption, 2), hasCaption = _getCaption2[0], caption = _getCaption2[1];
+            showInterlinTitles = $pRaw('interlintitle') === '1';
+            console.log('rand', ilRaw('rand') === 'yes');
+
+            stripToRawFieldValue = function stripToRawFieldValue(v, i) {
+              var val;
+
+              if (v.match(/^\d+$/) || v.match(fieldValueAliasRegex)) {
+                val = getRawFieldValue(v);
+              } else {
+                var rawFieldValueAliasMap = applicableBrowseFieldSet[i].rawFieldValueAliasMap;
+                var dealiased;
+
+                if (rawFieldValueAliasMap) {
+                  // Look to dealias
+                  var fvEntries = Object.entries(rawFieldValueAliasMap);
+
+                  if (Array.isArray(fvEntries[0][1])) {
+                    fvEntries.some(function (_ref27) {
+                      var _ref28 = _slicedToArray(_ref27, 2),
+                          key = _ref28[0],
+                          arr = _ref28[1];
+
+                      if (arr.includes(v)) {
+                        dealiased = key;
+                        return true;
+                      }
+
+                      return false;
+                    });
+                  } else {
+                    fvEntries.some(function (_ref29) {
+                      var _ref30 = _slicedToArray(_ref29, 2),
+                          key = _ref30[0],
+                          obj = _ref30[1];
+
+                      var arr = Object.values(obj);
+
+                      if (arr.includes(v)) {
+                        dealiased = key;
+                        return true;
+                      }
+
+                      return false;
+                    });
+                  }
+                }
+
+                val = dealiased === undefined ? v : dealiased;
+              }
+
+              return fieldSchemaTypes[i] === 'integer' ? parseInt(val) : val;
+            };
+
+            unlocalizedWorkName = fileData.name;
+            startsRaw = starts.map(stripToRawFieldValue);
+            endsRaw = ends.map(stripToRawFieldValue);
+            usingServerData = false; // Site owner may have configured to skip (e.g., testing)
+
+            if (!(!skipIndexedDB && // User may have refused, not yet agreed, or are visiting the
+            //   results page directly where we don't ask for the permissions
+            //   needed for persistent IndexedDB currently so that people can
+            //   be brought to a results page without needing to agree to persist
+            //   through notifications (or however)
+            !noIndexedDB)) {
+              _context3.next = 71;
+              break;
+            }
+
+            _context3.next = 68;
+            return new Promise(function (resolve, reject) {
+              // Todo: Fetch the work in code based on the non-localized `datafileName`
+              var dbName = _this2.namespace + '-textbrowser-cache-data';
+              var req = indexedDB.open(dbName);
+
+              req.onsuccess = function (_ref31) {
+                var db = _ref31.target.result;
+                var storeName = 'files-to-cache-' + unlocalizedWorkName;
+                var trans = db.transaction(storeName);
+                var store = trans.objectStore(storeName); // Get among browse field sets by index number within URL params
+
+                var index = store.index('browseFields-' + applicableBrowseFieldSetName); // console.log('dbName', dbName);
+                // console.log('storeName', storeName);
+                // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
+
+                var r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
+
+                r.onsuccess = function (_ref32) {
+                  var result = _ref32.target.result;
+                  var converted = result.map(function (r) {
+                    return r.value;
+                  });
+                  resolve(converted);
+                };
+              };
+            });
+
+          case 68:
+            tableData = _context3.sent;
+            _context3.next = 87;
+            break;
+
+          case 71:
+            // No need for presorting in indexedDB, given indexes
+            presort = presorts[browseFieldSetIdx]; // Given that we are not currently wishing to add complexity to
+            //   our PHP code (though it is not a problem with Node.js),
+            //   we retrieve the whole file and then sort where presorting is
+            //   needed
+            // if (presort || this.noDynamic) {
+
+            if (!this.noDynamic) {
+              _context3.next = 80;
+              break;
+            }
+
+            _context3.next = 75;
+            return JsonRefs.resolveRefs(fileData.file);
+
+          case 75:
+            _ref33 = _context3.sent;
+            tableData = _ref33.resolved.data;
+            runPresort({
+              presort: presort,
+              tableData: tableData,
+              applicableBrowseFieldNames: applicableBrowseFieldNames,
+              localizedFieldNames: localizedFieldNames
+            });
+            _context3.next = 87;
+            break;
+
+          case 80:
+            /*
+                  const jsonURL = Object.entries({
+                      prefI18n, unlocalizedWorkName, startsRaw, endsRaw
+                  }).reduce((url, [arg, argVal]) => {
+                      return url + '&' + arg + '=' + encodeURIComponent((argVal));
+                  }, `${dynamicBasePath}textbrowser?`);
+                  */
+            jsonURL = "".concat(dynamicBasePath, "textbrowser?").concat($p.toString());
+            _context3.next = 83;
+            return fetch(jsonURL);
+
+          case 83:
+            _context3.next = 85;
+            return _context3.sent.json();
+
+          case 85:
+            tableData = _context3.sent;
+            usingServerData = true;
+
+          case 87:
+            if (!usingServerData && pluginsForWork) {
+              fieldInfo.forEach(function (_ref34, j) {
+                var plugin = _ref34.plugin,
+                    placement = _ref34.placement;
+
+                if (!plugin) {
+                  return;
+                }
+
+                tableData.forEach(function (tr, i) {
+                  // Todo: We should pass on other arguments (like `meta` but on `applicableFields`)
+                  tr.splice(placement, 0, null // `${i}-${j}`);
+                  );
+                });
+              });
+              fieldInfo.forEach(function (_ref35, j) {
+                var plugin = _ref35.plugin,
+                    applicableField = _ref35.applicableField,
+                    fieldLang = _ref35.fieldLang,
+                    meta = _ref35.meta,
+                    metaApplicableField = _ref35.metaApplicableField;
+
+                if (!plugin) {
+                  return;
+                }
+
+                var applicableFieldIdx = fieldInfo.findIndex(function (_ref36) {
+                  var field = _ref36.field;
+                  return field === applicableField;
+                }); // Now safe to pass (and set) `j` value as tr array expanded
+
+                tableData.forEach(function (tr, i) {
+                  var applicableFieldText = tr[applicableFieldIdx];
+                  tr[j] = plugin.getCellData && plugin.getCellData({
+                    tr: tr,
+                    tableData: tableData,
+                    i: i,
+                    j: j,
+                    applicableField: applicableField,
+                    fieldInfo: fieldInfo,
+                    applicableFieldIdx: applicableFieldIdx,
+                    applicableFieldText: applicableFieldText,
+                    fieldLang: fieldLang,
+                    getLangDir: rtlDetect_3,
+                    meta: meta,
+                    metaApplicableField: metaApplicableField,
+                    $p: $p,
+                    thisObj: _this2
+                  }) || applicableFieldText;
+                });
+                console.log('applicableFieldIdx', applicableFieldIdx);
+              });
+            }
+
+            localeDir = rtlDetect_3(preferredLocale);
+            fieldDirs = fieldLangs.map(function (langCode) {
+              if (!langCode) {
+                return null;
+              }
+
+              var langDir = rtlDetect_3(langCode);
+              return langDir !== localeDir ? langDir : null;
+            });
+            templateArgs = {
+              tableData: tableData,
+              $p: $p,
+              $pRaw: $pRaw,
+              $pRawEsc: $pRawEsc,
+              $pEscArbitrary: $pEscArbitrary,
+              escapeQuotedCSS: escapeQuotedCSS,
+              escapeCSS: escapeCSS,
+              escapeHTML: escapeHTML,
+              l: l,
+              localizedFieldNames: localizedFieldNames,
+              fieldLangs: fieldLangs,
+              fieldDirs: fieldDirs,
+              caption: caption,
+              hasCaption: hasCaption,
+              showInterlinTitles: showInterlinTitles,
+              determineEnd: determineEnd({
+                applicableBrowseFieldNames: applicableBrowseFieldNames,
+                fieldValueAliasMap: fieldValueAliasMap,
+                fieldValueAliasMapPreferred: fieldValueAliasMapPreferred,
+                localizedFieldNames: localizedFieldNames,
+                startsRaw: startsRaw,
+                endsRaw: endsRaw
+              }),
+              canonicalBrowseFieldSetName: canonicalBrowseFieldSetName,
+              getCanonicalID: getCanonicalID({
+                canonicalBrowseFieldNames: canonicalBrowseFieldNames,
+                fieldValueAliasMap: fieldValueAliasMap,
+                fieldValueAliasMapPreferred: fieldValueAliasMapPreferred,
+                localizedFieldNames: localizedFieldNames
+              }),
+              getCellValue: getCellValue({
+                fieldValueAliasMapPreferred: fieldValueAliasMapPreferred,
+                escapeColumnIndexes: escapeColumnIndexes,
+                escapeHTML: escapeHTML
+              }),
+              checkedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
+                localizedFieldNames: localizedFieldNames
+              }),
+              interlinearSeparator: this.interlinearSeparator
+            };
+            return _context3.abrupt("return", {
+              fieldInfo: fieldInfo,
+              $p: $p,
+              applicableBrowseFieldSet: applicableBrowseFieldSet,
+              fieldValueAliasMapPreferred: fieldValueAliasMapPreferred,
+              lf: lf,
+              iil: iil,
+              ilRaw: ilRaw,
+              browseFieldSets: browseFieldSets,
+              lang: lang,
+              metadataObj: metadataObj,
+              fileData: fileData,
+              templateArgs: templateArgs
+            });
+
+          case 92:
+          case "end":
+            return _context3.stop();
+        }
       }
-    }
-  }, null, this);
-};
+    }, _callee3, this);
+  }));
+
+  function resultsDisplayServerOrClient(_x3) {
+    return _resultsDisplayServerOrClient.apply(this, arguments);
+  }
+
+  return resultsDisplayServerOrClient;
+}();
 
 /* eslint-enable no-unused-vars */
 
@@ -18527,71 +18729,7 @@ var resultsDisplayServerOrClient$1 = function resultsDisplayServerOrClient(_ref5
 
 
 function prepareForServiceWorker() {
-  var persistent, errorType;
-  return regeneratorRuntime.async(function prepareForServiceWorker$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          _context.prev = 0;
-          // Todo: No possible resolving after this point? (except
-          //          to reload or if worker somehow active already)
-          Templates.permissions.addLogEntry({
-            text: 'Worker registration: Beginning...'
-          });
-          _context.next = 4;
-          return regeneratorRuntime.awrap(navigator.storage.persist());
-
-        case 4:
-          persistent = _context.sent;
-
-          if (persistent) {
-            _context.next = 8;
-            break;
-          }
-
-          Templates.permissions.browserNotGrantingPersistence();
-          return _context.abrupt("return");
-
-        case 8:
-          _context.next = 10;
-          return regeneratorRuntime.awrap(registerServiceWorker({
-            serviceWorkerPath: this.serviceWorkerPath,
-            logger: Templates.permissions
-          }));
-
-        case 10:
-          _context.next = 21;
-          break;
-
-        case 12:
-          _context.prev = 12;
-          _context.t0 = _context["catch"](0);
-          console.log('err', _context.t0);
-
-          if (!(_context.t0 && _typeof(_context.t0) === 'object')) {
-            _context.next = 20;
-            break;
-          }
-
-          errorType = _context.t0.errorType;
-
-          if (!(errorType === 'versionChange')) {
-            _context.next = 20;
-            break;
-          }
-
-          Templates.permissions.versionChange();
-          return _context.abrupt("return");
-
-        case 20:
-          Templates.permissions.errorRegistering(escapeHTML(_context.t0 && _context.t0.message));
-
-        case 21:
-        case "end":
-          return _context.stop();
-      }
-    }
-  }, null, this, [[0, 12]]);
+  return _prepareForServiceWorker.apply(this, arguments);
 }
 /**
 * @typedef {PlainObject} Langs
@@ -18608,148 +18746,250 @@ function prepareForServiceWorker() {
  */
 
 
-function requestPermissions(langs, l) {
-  var _this = this;
+function _prepareForServiceWorker() {
+  _prepareForServiceWorker = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee6() {
+    var persistent, errorType;
+    return regeneratorRuntime.wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            _context6.prev = 0;
+            // Todo: No possible resolving after this point? (except
+            //          to reload or if worker somehow active already)
+            Templates.permissions.addLogEntry({
+              text: 'Worker registration: Beginning...'
+            });
+            _context6.next = 4;
+            return navigator.storage.persist();
 
-  return regeneratorRuntime.async(function requestPermissions$(_context4) {
-    while (1) {
-      switch (_context4.prev = _context4.next) {
-        case 0:
-          _context4.next = 2;
-          return regeneratorRuntime.awrap(new Promise(function (resolve, reject) {
-            // Todo: We could run the dialog code below for every page if
-            //    `Notification.permission === 'default'` (i.e., not choice
-            //    yet made by user), but user may avoid denying with intent
-            //    of seeing how it goes. But for users who come directly to
-            //    the work or results page, the slow performance will be
-            //    unexplained so probably better to force a decision.
-            var ok = function ok() {
-              var permissionStatus;
-              return regeneratorRuntime.async(function ok$(_context2) {
-                while (1) {
-                  switch (_context2.prev = _context2.next) {
-                    case 0:
-                      _context2.next = 2;
-                      return regeneratorRuntime.awrap(Notification.requestPermission());
+          case 4:
+            persistent = _context6.sent;
 
-                    case 2:
-                      permissionStatus = _context2.sent;
-                      requestPermissionsDialog.close(permissionStatus);
+            if (persistent) {
+              _context6.next = 8;
+              break;
+            }
 
-                    case 4:
-                    case "end":
-                      return _context2.stop();
-                  }
-                }
-              });
-            };
+            Templates.permissions.browserNotGrantingPersistence();
+            return _context6.abrupt("return");
 
-            var refuse = function refuse() {
-              requestPermissionsDialog.close();
-            };
+          case 8:
+            _context6.next = 10;
+            return registerServiceWorker({
+              serviceWorkerPath: this.serviceWorkerPath,
+              logger: Templates.permissions
+            });
 
-            var closeBrowserNotGranting = function closeBrowserNotGranting(e) {
-              browserNotGrantingPersistenceAlert.close();
-            };
+          case 10:
+            _context6.next = 21;
+            break;
 
-            var close = function close() {
-              var rememberRefusal;
-              return regeneratorRuntime.async(function close$(_context3) {
-                while (1) {
-                  switch (_context3.prev = _context3.next) {
-                    case 0:
-                      rememberRefusal = function _ref() {
-                        // Todo: We could go forward with worker, caching files, and
-                        //    indexedDB regardless of permissions, but this way
-                        //    we can continue to gauge performance differences for now
-                        localStorage.setItem(this.namespace + '-refused', 'true');
-                      };
+          case 12:
+            _context6.prev = 12;
+            _context6.t0 = _context6["catch"](0);
+            console.log('err', _context6.t0);
 
-                      _context3.prev = 1;
+            if (!(_context6.t0 && _typeof(_context6.t0) === 'object')) {
+              _context6.next = 20;
+              break;
+            }
 
-                      if (requestPermissionsDialog.returnValue) {
-                        _context3.next = 5;
-                        break;
-                      }
+            errorType = _context6.t0.errorType;
 
-                      rememberRefusal();
-                      return _context3.abrupt("return");
+            if (!(errorType === 'versionChange')) {
+              _context6.next = 20;
+              break;
+            }
 
-                    case 5:
-                      _context3.next = 10;
-                      break;
+            Templates.permissions.versionChange();
+            return _context6.abrupt("return");
 
-                    case 7:
-                      _context3.prev = 7;
-                      _context3.t0 = _context3["catch"](1);
-                      Templates.permissions.errorRegistering(escapeHTML(_context3.t0 && _context3.t0.message));
+          case 20:
+            Templates.permissions.errorRegistering(escapeHTML(_context6.t0 && _context6.t0.message));
 
-                    case 10:
-                      _context3.t1 = requestPermissionsDialog.returnValue;
-                      _context3.next = _context3.t1 === 'denied' ? 13 : _context3.t1 === 'default' ? 15 : _context3.t1 === 'granted' ? 17 : 23;
-                      break;
-
-                    case 13:
-                      // User may not want notifications but may look into another way
-                      //   to persist (e.g., adding to bookmark), so we don't remember
-                      //   the refusal unless they refuse in *our* dialog
-                      // rememberRefusal();
-                      resolve();
-                      return _context3.abrupt("return");
-
-                    case 15:
-                      resolve();
-                      return _context3.abrupt("return");
-
-                    case 17:
-                      if (!navigator.serviceWorker.controller) {
-                        _context3.next = 20;
-                        break;
-                      }
-
-                      resolve();
-                      return _context3.abrupt("return");
-
-                    case 20:
-                      _context3.next = 22;
-                      return regeneratorRuntime.awrap(prepareForServiceWorker.call(_this));
-
-                    case 22:
-                      return _context3.abrupt("break", 25);
-
-                    case 23:
-                      console.error('Unexpected returnValue', requestPermissionsDialog.returnValue);
-                      return _context3.abrupt("break", 25);
-
-                    case 25:
-                    case "end":
-                      return _context3.stop();
-                  }
-                }
-              }, null, null, [[1, 7]]);
-            };
-
-            var _Templates$permission = // , errorRegisteringNotice
-            Templates.permissions.main({
-              l: l,
-              ok: ok,
-              refuse: refuse,
-              close: close,
-              closeBrowserNotGranting: closeBrowserNotGranting
-            }),
-                _Templates$permission2 = _slicedToArray(_Templates$permission, 3),
-                requestPermissionsDialog = _Templates$permission2[1],
-                browserNotGrantingPersistenceAlert = _Templates$permission2[2];
-
-            requestPermissionsDialog.showModal();
-          }));
-
-        case 2:
-        case "end":
-          return _context4.stop();
+          case 21:
+          case "end":
+            return _context6.stop();
+        }
       }
-    }
-  });
+    }, _callee6, this, [[0, 12]]);
+  }));
+  return _prepareForServiceWorker.apply(this, arguments);
+}
+
+function requestPermissions(_x, _x2) {
+  return _requestPermissions.apply(this, arguments);
+}
+
+function _requestPermissions() {
+  _requestPermissions = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee9(langs, l) {
+    var _this3 = this;
+
+    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+      while (1) {
+        switch (_context9.prev = _context9.next) {
+          case 0:
+            _context9.next = 2;
+            return new Promise(function (resolve, reject) {
+              // Todo: We could run the dialog code below for every page if
+              //    `Notification.permission === 'default'` (i.e., not choice
+              //    yet made by user), but user may avoid denying with intent
+              //    of seeing how it goes. But for users who come directly to
+              //    the work or results page, the slow performance will be
+              //    unexplained so probably better to force a decision.
+              var ok =
+              /*#__PURE__*/
+              function () {
+                var _ref5 = _asyncToGenerator(
+                /*#__PURE__*/
+                regeneratorRuntime.mark(function _callee7() {
+                  var permissionStatus;
+                  return regeneratorRuntime.wrap(function _callee7$(_context7) {
+                    while (1) {
+                      switch (_context7.prev = _context7.next) {
+                        case 0:
+                          _context7.next = 2;
+                          return Notification.requestPermission();
+
+                        case 2:
+                          permissionStatus = _context7.sent;
+                          requestPermissionsDialog.close(permissionStatus);
+
+                        case 4:
+                        case "end":
+                          return _context7.stop();
+                      }
+                    }
+                  }, _callee7);
+                }));
+
+                return function ok() {
+                  return _ref5.apply(this, arguments);
+                };
+              }();
+
+              var refuse = function refuse() {
+                requestPermissionsDialog.close();
+              };
+
+              var closeBrowserNotGranting = function closeBrowserNotGranting(e) {
+                browserNotGrantingPersistenceAlert.close();
+              };
+
+              var close =
+              /*#__PURE__*/
+              function () {
+                var _ref6 = _asyncToGenerator(
+                /*#__PURE__*/
+                regeneratorRuntime.mark(function _callee8() {
+                  var rememberRefusal;
+                  return regeneratorRuntime.wrap(function _callee8$(_context8) {
+                    while (1) {
+                      switch (_context8.prev = _context8.next) {
+                        case 0:
+                          rememberRefusal = function _ref7() {
+                            // Todo: We could go forward with worker, caching files, and
+                            //    indexedDB regardless of permissions, but this way
+                            //    we can continue to gauge performance differences for now
+                            localStorage.setItem(this.namespace + '-refused', 'true');
+                          };
+
+                          _context8.prev = 1;
+
+                          if (requestPermissionsDialog.returnValue) {
+                            _context8.next = 5;
+                            break;
+                          }
+
+                          rememberRefusal();
+                          return _context8.abrupt("return");
+
+                        case 5:
+                          _context8.next = 10;
+                          break;
+
+                        case 7:
+                          _context8.prev = 7;
+                          _context8.t0 = _context8["catch"](1);
+                          Templates.permissions.errorRegistering(escapeHTML(_context8.t0 && _context8.t0.message));
+
+                        case 10:
+                          _context8.t1 = requestPermissionsDialog.returnValue;
+                          _context8.next = _context8.t1 === 'denied' ? 13 : _context8.t1 === 'default' ? 15 : _context8.t1 === 'granted' ? 17 : 23;
+                          break;
+
+                        case 13:
+                          // User may not want notifications but may look into another way
+                          //   to persist (e.g., adding to bookmark), so we don't remember
+                          //   the refusal unless they refuse in *our* dialog
+                          // rememberRefusal();
+                          resolve();
+                          return _context8.abrupt("return");
+
+                        case 15:
+                          resolve();
+                          return _context8.abrupt("return");
+
+                        case 17:
+                          if (!navigator.serviceWorker.controller) {
+                            _context8.next = 20;
+                            break;
+                          }
+
+                          resolve();
+                          return _context8.abrupt("return");
+
+                        case 20:
+                          _context8.next = 22;
+                          return prepareForServiceWorker.call(_this3);
+
+                        case 22:
+                          return _context8.abrupt("break", 25);
+
+                        case 23:
+                          console.error('Unexpected returnValue', requestPermissionsDialog.returnValue);
+                          return _context8.abrupt("break", 25);
+
+                        case 25:
+                        case "end":
+                          return _context8.stop();
+                      }
+                    }
+                  }, _callee8, null, [[1, 7]]);
+                }));
+
+                return function close() {
+                  return _ref6.apply(this, arguments);
+                };
+              }();
+
+              var _Templates$permission = // , errorRegisteringNotice
+              Templates.permissions.main({
+                l: l,
+                ok: ok,
+                refuse: refuse,
+                close: close,
+                closeBrowserNotGranting: closeBrowserNotGranting
+              }),
+                  _Templates$permission2 = _slicedToArray(_Templates$permission, 3),
+                  requestPermissionsDialog = _Templates$permission2[1],
+                  browserNotGrantingPersistenceAlert = _Templates$permission2[2];
+
+              requestPermissionsDialog.showModal();
+            });
+
+          case 2:
+          case "end":
+            return _context9.stop();
+        }
+      }
+    }, _callee9);
+  }));
+  return _requestPermissions.apply(this, arguments);
 }
 
 var TextBrowser =
@@ -18788,68 +19028,88 @@ function () {
 
   _createClass(TextBrowser, [{
     key: "init",
-    value: function init() {
-      return regeneratorRuntime.async(function init$(_context5) {
-        while (1) {
-          switch (_context5.prev = _context5.next) {
-            case 0:
-              _context5.next = 2;
-              return regeneratorRuntime.awrap(loadStylesheets(this.stylesheets));
+    value: function () {
+      var _init = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee() {
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return loadStylesheets(this.stylesheets);
 
-            case 2:
-              this._stylesheetElements = _context5.sent;
-              return _context5.abrupt("return", this.displayLanguages());
+              case 2:
+                this._stylesheetElements = _context.sent;
+                return _context.abrupt("return", this.displayLanguages());
 
-            case 4:
-            case "end":
-              return _context5.stop();
+              case 4:
+              case "end":
+                return _context.stop();
+            }
           }
-        }
-      }, null, this);
-    }
+        }, _callee, this);
+      }));
+
+      function init() {
+        return _init.apply(this, arguments);
+      }
+
+      return init;
+    }()
   }, {
     key: "displayLanguages",
-    value: function displayLanguages() {
-      var _this2 = this;
+    value: function () {
+      var _displayLanguages = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee2() {
+        var _this = this;
 
-      var _ref2, _ref3, langData, siteData, p;
+        var _ref, _ref2, langData, siteData, p;
 
-      return regeneratorRuntime.async(function displayLanguages$(_context6) {
-        while (1) {
-          switch (_context6.prev = _context6.next) {
-            case 0:
-              _context6.prev = 0;
-              _context6.next = 3;
-              return regeneratorRuntime.awrap(getJSON([this.languages, this.site]));
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.prev = 0;
+                _context2.next = 3;
+                return getJSON([this.languages, this.site]);
 
-            case 3:
-              _ref2 = _context6.sent;
-              _ref3 = _slicedToArray(_ref2, 2);
-              langData = _ref3[0];
-              siteData = _ref3[1];
-              this.langData = langData;
-              this.siteData = siteData;
-              p = this.paramChange(); // INIT/ADD EVENTS
-              // With `hashchange` more generic than `popstate`, we use it
-              //  and just check `history.state`
+              case 3:
+                _ref = _context2.sent;
+                _ref2 = _slicedToArray(_ref, 2);
+                langData = _ref2[0];
+                siteData = _ref2[1];
+                this.langData = langData;
+                this.siteData = siteData;
+                p = this.paramChange(); // INIT/ADD EVENTS
+                // With `hashchange` more generic than `popstate`, we use it
+                //  and just check `history.state`
 
-              window.addEventListener('hashchange', function () {
-                return _this2.paramChange();
-              });
-              return _context6.abrupt("return", p);
+                window.addEventListener('hashchange', function () {
+                  return _this.paramChange();
+                });
+                return _context2.abrupt("return", p);
 
-            case 14:
-              _context6.prev = 14;
-              _context6.t0 = _context6["catch"](0);
-              dialogs.alert(_context6.t0);
+              case 14:
+                _context2.prev = 14;
+                _context2.t0 = _context2["catch"](0);
+                dialogs.alert(_context2.t0);
 
-            case 17:
-            case "end":
-              return _context6.stop();
+              case 17:
+              case "end":
+                return _context2.stop();
+            }
           }
-        }
-      }, null, this, [[0, 14]]);
-    }
+        }, _callee2, this, [[0, 14]]);
+      }));
+
+      function displayLanguages() {
+        return _displayLanguages.apply(this, arguments);
+      }
+
+      return displayLanguages;
+    }()
   }, {
     key: "getWorkData",
     value: function getWorkData$1(opts) {
@@ -18892,387 +19152,416 @@ function () {
     }
   }, {
     key: "paramChange",
-    value: function paramChange() {
-      var _this3 = this;
+    value: function () {
+      var _paramChange = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee5() {
+        var _this2 = this;
 
-      var $p, followParams, languages, _languages$getLanguag, lang, langs, languageParam, fallbackLanguages, _lang, preferredLocale, direction, getSiteI18n, siteI18n, refusedIndexedDB, persistent, r, result, register, worker, hourly, respondToStateOfWorker, localeCallback;
+        var $p, followParams, languages, _languages$getLanguag, lang, langs, languageParam, fallbackLanguages, _lang, preferredLocale, direction, getSiteI18n, siteI18n, refusedIndexedDB, persistent, r, result, register, worker, hourly, respondToStateOfWorker, localeCallback;
 
-      return regeneratorRuntime.async(function paramChange$(_context9) {
-        while (1) {
-          switch (_context9.prev = _context9.next) {
-            case 0:
-              Templates.defaultBody(); // Todo: Could give option to i18nize 'lang' or omit
+        return regeneratorRuntime.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                Templates.defaultBody(); // Todo: Could give option to i18nize 'lang' or omit
 
-              $p = this.$p = typeof history.state === 'string' ? new IntlURLSearchParams({
-                params: history.state
-              }) : new IntlURLSearchParams(); // Uses URL hash for params
+                $p = this.$p = typeof history.state === 'string' ? new IntlURLSearchParams({
+                  params: history.state
+                }) : new IntlURLSearchParams(); // Uses URL hash for params
 
-              followParams = function followParams(formSelector, cb) {
-                var form = document.querySelector(formSelector); // Record current URL along with state
+                followParams = function followParams(formSelector, cb) {
+                  var form = document.querySelector(formSelector); // Record current URL along with state
 
-                var url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
-                history.replaceState(serialize(form, {
-                  hash: true,
-                  empty: true
-                }), document.title, url); // Get and set new state within URL
+                  var url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
+                  history.replaceState(serialize(form, {
+                    hash: true,
+                    empty: true
+                  }), document.title, url); // Get and set new state within URL
 
-                cb();
-                location.hash = '#' + $p.toString();
-              };
-
-              languages = new Languages({
-                langData: this.langData
-              });
-              _languages$getLanguag = languages.getLanguageInfo({
-                $p: $p
-              }), lang = _languages$getLanguag.lang, langs = _languages$getLanguag.langs, languageParam = _languages$getLanguag.languageParam, fallbackLanguages = _languages$getLanguag.fallbackLanguages;
-              this.lang = lang;
-              _lang = _slicedToArray(lang, 1), preferredLocale = _lang[0];
-              direction = this.getDirectionForLanguageCode(preferredLocale);
-              document.documentElement.lang = preferredLocale;
-              document.dir = direction;
-
-              getSiteI18n = function getSiteI18n() {
-                var localeFromSiteData = function localeFromSiteData(lan) {
-                  return _this3.siteData['localization-strings'][lan];
+                  cb();
+                  location.hash = '#' + $p.toString();
                 };
 
-                var imfSite = IMFClass({
-                  locales: lang.map(localeFromSiteData),
-                  fallbackLocales: fallbackLanguages.map(localeFromSiteData)
+                languages = new Languages({
+                  langData: this.langData
                 });
-                return imfSite.getFormatter();
-              };
+                _languages$getLanguag = languages.getLanguageInfo({
+                  $p: $p
+                }), lang = _languages$getLanguag.lang, langs = _languages$getLanguag.langs, languageParam = _languages$getLanguag.languageParam, fallbackLanguages = _languages$getLanguag.fallbackLanguages;
+                this.lang = lang;
+                _lang = _slicedToArray(lang, 1), preferredLocale = _lang[0];
+                direction = this.getDirectionForLanguageCode(preferredLocale);
+                document.documentElement.lang = preferredLocale;
+                document.dir = direction;
 
-              siteI18n = getSiteI18n(); // Even if individual pages may end up changing, we need a
-              //   title now for accessibility
+                getSiteI18n = function getSiteI18n() {
+                  var localeFromSiteData = function localeFromSiteData(lan) {
+                    return _this2.siteData['localization-strings'][lan];
+                  };
 
-              document.title = siteI18n('browser-title');
-              refusedIndexedDB = // User may have persistence via bookmarks, etc. but just not
-              //     want commital on notification
-              // Notification.permission === 'default' ||
-              // We always expect a controller, so is probably first visit
-              localStorage.getItem(this.namespace + '-refused'); // This check goes further than `Notification.permission === 'granted'`
-              //   to see whether the browser actually considers the notification
-              //   sufficient to grant persistence (as it is supposed to do).
-              // Todo: For now, we won't give opportunity to store offline on
-              //    results page. We could add a small button to open a dialog,
-              //    but then it'd show up in each results window, making it less
-              //    embed-friendly. Probably best to implement
-              //    navigation bar/breadcrumbs, with option on work display page on
-              //    whether to show or not; also ensure we have navigation
-              //    bar/breadcrumbs on all non-results pages
-
-              _context9.next = 16;
-              return regeneratorRuntime.awrap(navigator.storage.persisted());
-
-            case 16:
-              persistent = _context9.sent;
-              _context9.next = 19;
-              return regeneratorRuntime.awrap(navigator.serviceWorker.getRegistration(this.serviceWorkerPath));
-
-            case 19:
-              r = _context9.sent;
-              result = $p.get('result');
-
-              register = function register() {
-                var tryRegistrationOrPersistence;
-                return regeneratorRuntime.async(function register$(_context7) {
-                  while (1) {
-                    switch (_context7.prev = _context7.next) {
-                      case 0:
-                        if (!result) {
-                          _context7.next = 2;
-                          break;
-                        }
-
-                        return _context7.abrupt("return");
-
-                      case 2:
-                        tryRegistrationOrPersistence = !refusedIndexedDB && ( // Not show if refused before
-                        !navigator.serviceWorker.controller || // This is `null` on a force-refresh too
-                        !persistent);
-
-                        if (!tryRegistrationOrPersistence) {
-                          _context7.next = 13;
-                          break;
-                        }
-
-                        if (!persistent) {
-                          _context7.next = 10;
-                          break;
-                        }
-
-                        // No need to ask permissions (e.g., if user bookmarked site instead),
-                        //   but we do need a worker
-                        Templates.permissions.main({
-                          l: siteI18n
-                        });
-                        _context7.next = 8;
-                        return regeneratorRuntime.awrap(prepareForServiceWorker.call(_this3));
-
-                      case 8:
-                        _context7.next = 12;
-                        break;
-
-                      case 10:
-                        _context7.next = 12;
-                        return regeneratorRuntime.awrap(requestPermissions.call(_this3, langs, siteI18n));
-
-                      case 12:
-                        Templates.permissions.exitDialogs();
-
-                      case 13:
-                      case "end":
-                        return _context7.stop();
-                    }
-                  }
-                });
-              };
-              /*
-                  try {
-                      // Waits indefinitely without rejecting until active worker
-                      const {active} = await navigator.serviceWorker.ready;
-                  } catch (err) {
-                  }
-                  */
-
-              /*
-                  // Present normally if activated, but will be `null` if force-reload
-                  const {controller} = navigator.serviceWorker;
-                  */
-
-
-              if (r) {
-                _context9.next = 27;
-                break;
-              }
-
-              _context9.next = 25;
-              return regeneratorRuntime.awrap(register());
-
-            case 25:
-              _context9.next = 59;
-              break;
-
-            case 27:
-              worker = r.installing || r.waiting || r.active;
-
-              if (worker) {
-                _context9.next = 33;
-                break;
-              }
-
-              // Todo: Why wouldn't there be a worker here?
-              console.error('Unexpected error: worker registration received without a worker.'); // If anything, would probably need to register though
-
-              _context9.next = 32;
-              return regeneratorRuntime.awrap(register());
-
-            case 32:
-              return _context9.abrupt("return");
-
-            case 33:
-              Templates.permissions.main({
-                l: siteI18n
-              }); // "The browser checks for updates automatically after navigations and
-              //  functional events, but you can also trigger them manually"
-              //  -- https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#manual_updates
-
-              hourly = 60 * 60 * 1000;
-              setInterval(function () {
-                r.update();
-              }, hourly);
-              console.log('worker.state', worker.state);
-
-              respondToStateOfWorker = function respondToStateOfWorker() {
-                return regeneratorRuntime.async(function respondToStateOfWorker$(_context8) {
-                  while (1) {
-                    switch (_context8.prev = _context8.next) {
-                      case 0:
-                        _context8.prev = 0;
-                        return _context8.abrupt("return", respondToState({
-                          r: r,
-                          langs: langs,
-                          languages: _this3.languages,
-                          logger: Templates.permissions
-                        }));
-
-                      case 4:
-                        _context8.prev = 4;
-                        _context8.t0 = _context8["catch"](0);
-                        return _context8.abrupt("return", dialogs.alert("\n        There was an unexpected error activating the new version;\n        please save any unfinished work, close this tab, and try\n        opening this site again.\n\n        Please contact a service administrator if the problem\n        persists (Error type: worker activation).\n        "));
-
-                      case 7:
-                      case "end":
-                        return _context8.stop();
-                    }
-                  }
-                }, null, null, [[0, 4]]);
-              };
-
-              _context9.t0 = worker.state;
-              _context9.next = _context9.t0 === 'installing' ? 41 : _context9.t0 === 'installed' ? 44 : _context9.t0 === 'activating' ? 47 : _context9.t0 === 'activated' ? 52 : _context9.t0 === 'redundant' ? 54 : 57;
-              break;
-
-            case 41:
-              // If it fails, will instead be `redundant`; but will try again:
-              //     1. automatically (?) per https://developers.google.com/web/fundamentals/primers/service-workers/#the_service_worker_life_cycle
-              //     2. upon reattempting registration (?) per https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
-              // Supply file paths in case not completed and no
-              //    other tabs open to do so (assuming this is possible)
-              // Will use `r.installing`
-              // We don't await the fulfillment of this promise
-              respondToStateOfWorker();
-              listenForWorkerUpdate({
-                r: r,
-                logger: {
-                  addLogEntry: function addLogEntry(s) {
-                    // We don't put the log in the page as user using
-                    console.log(s);
-                  }
-                }
-              }); // Don't return as user may continue working until installed (though
-              //    will get message to close tab)
-
-              return _context9.abrupt("break", 59);
-
-            case 44:
-              _context9.next = 46;
-              return regeneratorRuntime.awrap(respondToStateOfWorker());
-
-            case 46:
-              return _context9.abrupt("break", 59);
-
-            case 47:
-              _context9.next = 49;
-              return regeneratorRuntime.awrap(dialogs.alert("\n    Please wait for a short while as we work to update to a new version.\n    "));
-
-            case 49:
-              respondToStateOfWorker();
-              navigator.serviceWorker.onmessage({
-                data: 'finishActivate'
-              }); // finishActivate({r, logger, namespace, files});
-
-              return _context9.abrupt("return");
-
-            case 52:
-              // Will use `r.active`
-              // We should be able to use the following to distinguish when
-              //    active but force-reloaded (will be `null` unlike `r.active` apparently)
-              // const {controller} = navigator.serviceWorker;
-              // Todo: Prevent from getting here as we should handle this differently
-              // May need to pass in arguments if new service worker appears and
-              //    it needs arguments for update
-              listenForWorkerUpdate({
-                r: r,
-                logger: {
-                  addLogEntry: function addLogEntry(s) {
-                    // We don't put the log in the page as user using
-                    console.log(s);
-                  }
-                }
-              });
-              return _context9.abrupt("break", 59);
-
-            case 54:
-              _context9.next = 56;
-              return regeneratorRuntime.awrap(respondToStateOfWorker());
-
-            case 56:
-              return _context9.abrupt("return");
-
-            case 57:
-              console.log('Unexpected worker.state', worker.state);
-              return _context9.abrupt("break", 59);
-
-            case 59:
-              Templates.permissions.exitDialogs();
-
-              if (languageParam) {
-                _context9.next = 65;
-                break;
-              }
-
-              // Also could use l('chooselanguage'), but assumes locale
-              //   as with page title
-              // eslint-disable-next-line require-atomic-updates
-              $p.l10n = siteI18n; // Is this in use?
-
-              document.title = siteI18n('languages-title');
-              Templates.languageSelect.main({
-                langs: langs,
-                languages: languages,
-                followParams: followParams,
-                $p: $p
-              });
-              return _context9.abrupt("return");
-
-            case 65:
-              localeCallback = function localeCallback(l
-              /* defineFormatter */
-              ) {
-                _this3.l10n = l;
-                $p.l10n = l;
-                var work = $p.get('work');
-
-                if (!work) {
-                  workSelect$1({
-                    // l,
-                    files: _this3.files,
-                    lang: lang,
-                    fallbackLanguages: fallbackLanguages,
-                    $p: $p,
-                    followParams: followParams
+                  var imfSite = IMFClass({
+                    locales: lang.map(localeFromSiteData),
+                    fallbackLocales: fallbackLanguages.map(localeFromSiteData)
                   });
-                  return true;
-                }
+                  return imfSite.getFormatter();
+                };
 
-                if (!result) {
-                  _this3.workDisplay({
-                    l: l,
-                    lang: lang,
-                    preferredLocale: preferredLocale,
-                    fallbackLanguages: fallbackLanguages,
-                    languageParam: languageParam,
-                    $p: $p,
-                    languages: languages
-                  });
+                siteI18n = getSiteI18n(); // Even if individual pages may end up changing, we need a
+                //   title now for accessibility
 
-                  return true;
-                }
+                document.title = siteI18n('browser-title');
+                refusedIndexedDB = // User may have persistence via bookmarks, etc. but just not
+                //     want commital on notification
+                // Notification.permission === 'default' ||
+                // We always expect a controller, so is probably first visit
+                localStorage.getItem(this.namespace + '-refused'); // This check goes further than `Notification.permission === 'granted'`
+                //   to see whether the browser actually considers the notification
+                //   sufficient to grant persistence (as it is supposed to do).
+                // Todo: For now, we won't give opportunity to store offline on
+                //    results page. We could add a small button to open a dialog,
+                //    but then it'd show up in each results window, making it less
+                //    embed-friendly. Probably best to implement
+                //    navigation bar/breadcrumbs, with option on work display page on
+                //    whether to show or not; also ensure we have navigation
+                //    bar/breadcrumbs on all non-results pages
 
-                return false;
-              };
+                _context5.next = 16;
+                return navigator.storage.persisted();
 
-              return _context9.abrupt("return", getIMFFallbackResults({
-                $p: $p,
-                lang: lang,
-                langs: langs,
-                langData: this.langData,
-                fallbackLanguages: fallbackLanguages,
-                resultsDisplay: function resultsDisplay(opts) {
-                  var noIndexedDB = refusedIndexedDB || !navigator.serviceWorker.controller; // No worker from which IndexedDB is available;
+              case 16:
+                persistent = _context5.sent;
+                _context5.next = 19;
+                return navigator.serviceWorker.getRegistration(this.serviceWorkerPath);
 
-                  return _this3.resultsDisplayClient(_objectSpread2({
-                    langData: _this3.langData
-                  }, opts, {
-                    noIndexedDB: noIndexedDB,
-                    dynamicBasePath: _this3.dynamicBasePath,
-                    files: _this3.files,
-                    allowPlugins: _this3.allowPlugins
+              case 19:
+                r = _context5.sent;
+                result = $p.get('result');
+
+                register =
+                /*#__PURE__*/
+                function () {
+                  var _ref3 = _asyncToGenerator(
+                  /*#__PURE__*/
+                  regeneratorRuntime.mark(function _callee3() {
+                    var tryRegistrationOrPersistence;
+                    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                      while (1) {
+                        switch (_context3.prev = _context3.next) {
+                          case 0:
+                            if (!result) {
+                              _context3.next = 2;
+                              break;
+                            }
+
+                            return _context3.abrupt("return");
+
+                          case 2:
+                            tryRegistrationOrPersistence = !refusedIndexedDB && ( // Not show if refused before
+                            !navigator.serviceWorker.controller || // This is `null` on a force-refresh too
+                            !persistent);
+
+                            if (!tryRegistrationOrPersistence) {
+                              _context3.next = 13;
+                              break;
+                            }
+
+                            if (!persistent) {
+                              _context3.next = 10;
+                              break;
+                            }
+
+                            // No need to ask permissions (e.g., if user bookmarked site instead),
+                            //   but we do need a worker
+                            Templates.permissions.main({
+                              l: siteI18n
+                            });
+                            _context3.next = 8;
+                            return prepareForServiceWorker.call(_this2);
+
+                          case 8:
+                            _context3.next = 12;
+                            break;
+
+                          case 10:
+                            _context3.next = 12;
+                            return requestPermissions.call(_this2, langs, siteI18n);
+
+                          case 12:
+                            Templates.permissions.exitDialogs();
+
+                          case 13:
+                          case "end":
+                            return _context3.stop();
+                        }
+                      }
+                    }, _callee3);
                   }));
-                },
-                localeCallback: localeCallback
-              }));
 
-            case 67:
-            case "end":
-              return _context9.stop();
+                  return function register() {
+                    return _ref3.apply(this, arguments);
+                  };
+                }();
+                /*
+                    try {
+                        // Waits indefinitely without rejecting until active worker
+                        const {active} = await navigator.serviceWorker.ready;
+                    } catch (err) {
+                    }
+                    */
+
+                /*
+                    // Present normally if activated, but will be `null` if force-reload
+                    const {controller} = navigator.serviceWorker;
+                    */
+
+
+                if (r) {
+                  _context5.next = 27;
+                  break;
+                }
+
+                _context5.next = 25;
+                return register();
+
+              case 25:
+                _context5.next = 59;
+                break;
+
+              case 27:
+                worker = r.installing || r.waiting || r.active;
+
+                if (worker) {
+                  _context5.next = 33;
+                  break;
+                }
+
+                // Todo: Why wouldn't there be a worker here?
+                console.error('Unexpected error: worker registration received without a worker.'); // If anything, would probably need to register though
+
+                _context5.next = 32;
+                return register();
+
+              case 32:
+                return _context5.abrupt("return");
+
+              case 33:
+                Templates.permissions.main({
+                  l: siteI18n
+                }); // "The browser checks for updates automatically after navigations and
+                //  functional events, but you can also trigger them manually"
+                //  -- https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#manual_updates
+
+                hourly = 60 * 60 * 1000;
+                setInterval(function () {
+                  r.update();
+                }, hourly);
+                console.log('worker.state', worker.state);
+
+                respondToStateOfWorker =
+                /*#__PURE__*/
+                function () {
+                  var _ref4 = _asyncToGenerator(
+                  /*#__PURE__*/
+                  regeneratorRuntime.mark(function _callee4() {
+                    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                      while (1) {
+                        switch (_context4.prev = _context4.next) {
+                          case 0:
+                            _context4.prev = 0;
+                            return _context4.abrupt("return", respondToState({
+                              r: r,
+                              langs: langs,
+                              languages: _this2.languages,
+                              logger: Templates.permissions
+                            }));
+
+                          case 4:
+                            _context4.prev = 4;
+                            _context4.t0 = _context4["catch"](0);
+                            return _context4.abrupt("return", dialogs.alert("\n        There was an unexpected error activating the new version;\n        please save any unfinished work, close this tab, and try\n        opening this site again.\n\n        Please contact a service administrator if the problem\n        persists (Error type: worker activation).\n        "));
+
+                          case 7:
+                          case "end":
+                            return _context4.stop();
+                        }
+                      }
+                    }, _callee4, null, [[0, 4]]);
+                  }));
+
+                  return function respondToStateOfWorker() {
+                    return _ref4.apply(this, arguments);
+                  };
+                }();
+
+                _context5.t0 = worker.state;
+                _context5.next = _context5.t0 === 'installing' ? 41 : _context5.t0 === 'installed' ? 44 : _context5.t0 === 'activating' ? 47 : _context5.t0 === 'activated' ? 52 : _context5.t0 === 'redundant' ? 54 : 57;
+                break;
+
+              case 41:
+                // If it fails, will instead be `redundant`; but will try again:
+                //     1. automatically (?) per https://developers.google.com/web/fundamentals/primers/service-workers/#the_service_worker_life_cycle
+                //     2. upon reattempting registration (?) per https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
+                // Supply file paths in case not completed and no
+                //    other tabs open to do so (assuming this is possible)
+                // Will use `r.installing`
+                // We don't await the fulfillment of this promise
+                respondToStateOfWorker();
+                listenForWorkerUpdate({
+                  r: r,
+                  logger: {
+                    addLogEntry: function addLogEntry(s) {
+                      // We don't put the log in the page as user using
+                      console.log(s);
+                    }
+                  }
+                }); // Don't return as user may continue working until installed (though
+                //    will get message to close tab)
+
+                return _context5.abrupt("break", 59);
+
+              case 44:
+                _context5.next = 46;
+                return respondToStateOfWorker();
+
+              case 46:
+                return _context5.abrupt("break", 59);
+
+              case 47:
+                _context5.next = 49;
+                return dialogs.alert("\n    Please wait for a short while as we work to update to a new version.\n    ");
+
+              case 49:
+                respondToStateOfWorker();
+                navigator.serviceWorker.onmessage({
+                  data: 'finishActivate'
+                }); // finishActivate({r, logger, namespace, files});
+
+                return _context5.abrupt("return");
+
+              case 52:
+                // Will use `r.active`
+                // We should be able to use the following to distinguish when
+                //    active but force-reloaded (will be `null` unlike `r.active` apparently)
+                // const {controller} = navigator.serviceWorker;
+                // Todo: Prevent from getting here as we should handle this differently
+                // May need to pass in arguments if new service worker appears and
+                //    it needs arguments for update
+                listenForWorkerUpdate({
+                  r: r,
+                  logger: {
+                    addLogEntry: function addLogEntry(s) {
+                      // We don't put the log in the page as user using
+                      console.log(s);
+                    }
+                  }
+                });
+                return _context5.abrupt("break", 59);
+
+              case 54:
+                _context5.next = 56;
+                return respondToStateOfWorker();
+
+              case 56:
+                return _context5.abrupt("return");
+
+              case 57:
+                console.log('Unexpected worker.state', worker.state);
+                return _context5.abrupt("break", 59);
+
+              case 59:
+                Templates.permissions.exitDialogs();
+
+                if (languageParam) {
+                  _context5.next = 65;
+                  break;
+                }
+
+                // Also could use l('chooselanguage'), but assumes locale
+                //   as with page title
+                $p.l10n = siteI18n; // Is this in use?
+
+                document.title = siteI18n('languages-title');
+                Templates.languageSelect.main({
+                  langs: langs,
+                  languages: languages,
+                  followParams: followParams,
+                  $p: $p
+                });
+                return _context5.abrupt("return");
+
+              case 65:
+                localeCallback = function localeCallback(l
+                /* defineFormatter */
+                ) {
+                  _this2.l10n = l;
+                  $p.l10n = l;
+                  var work = $p.get('work');
+
+                  if (!work) {
+                    workSelect$1({
+                      // l,
+                      files: _this2.files,
+                      lang: lang,
+                      fallbackLanguages: fallbackLanguages,
+                      $p: $p,
+                      followParams: followParams
+                    });
+                    return true;
+                  }
+
+                  if (!result) {
+                    _this2.workDisplay({
+                      l: l,
+                      lang: lang,
+                      preferredLocale: preferredLocale,
+                      fallbackLanguages: fallbackLanguages,
+                      languageParam: languageParam,
+                      $p: $p,
+                      languages: languages
+                    });
+
+                    return true;
+                  }
+
+                  return false;
+                };
+
+                return _context5.abrupt("return", getIMFFallbackResults({
+                  $p: $p,
+                  lang: lang,
+                  langs: langs,
+                  langData: this.langData,
+                  fallbackLanguages: fallbackLanguages,
+                  resultsDisplay: function resultsDisplay(opts) {
+                    var noIndexedDB = refusedIndexedDB || !navigator.serviceWorker.controller; // No worker from which IndexedDB is available;
+
+                    return _this2.resultsDisplayClient(_objectSpread2({
+                      langData: _this2.langData
+                    }, opts, {
+                      noIndexedDB: noIndexedDB,
+                      dynamicBasePath: _this2.dynamicBasePath,
+                      files: _this2.files,
+                      allowPlugins: _this2.allowPlugins
+                    }));
+                  },
+                  localeCallback: localeCallback
+                }));
+
+              case 67:
+              case "end":
+                return _context5.stop();
+            }
           }
-        }
-      }, null, this);
-    }
+        }, _callee5, this);
+      }));
+
+      function paramChange() {
+        return _paramChange.apply(this, arguments);
+      }
+
+      return paramChange;
+    }()
   }]);
 
   return TextBrowser;

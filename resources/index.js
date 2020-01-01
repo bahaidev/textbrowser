@@ -499,7 +499,6 @@ class TextBrowser {
     if (!languageParam) {
       // Also could use l('chooselanguage'), but assumes locale
       //   as with page title
-      // eslint-disable-next-line require-atomic-updates
       $p.l10n = siteI18n; // Is this in use?
       document.title = siteI18n('languages-title');
       Templates.languageSelect.main({

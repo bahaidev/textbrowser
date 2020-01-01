@@ -103,7 +103,11 @@ async function tryAndRetry (cb, timeout, errMessage, time = 0) {
 
 /**
 * @typedef {PlainObject} ConfigObject
-* @todo Define this
+* @property {string} namespace
+* @property {string} basePath
+* @property {string} languages
+* @property {string} files
+* @property {string[]} userStaticFiles
 */
 
 /**

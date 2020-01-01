@@ -3320,7 +3320,6 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     usePreferAlias: true
   }); // Todo: Repeats some code in workDisplay; probably need to reuse
   //   these functions more in `Templates.resultsDisplayServerOrClient` too
-  // eslint-disable-next-line require-atomic-updates
 
   const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
   const il = localizeParamNames ? key => l(['params', key]) : key => key;
