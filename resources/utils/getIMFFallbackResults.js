@@ -1,6 +1,5 @@
 import IMF from 'imf';
 
-// eslint-disable-next-line jsdoc/require-jsdoc
 export default function getIMFFallbackResults ({
   $p,
   lang, langs, langData, fallbackLanguages,

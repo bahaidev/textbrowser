@@ -69,7 +69,6 @@ module.exports = {
   "rules": {
     "array-bracket-newline": 0,
     "no-console": 0,
-    "require-jsdoc": 0,
     "require-unicode-regexp": 0,
     "max-len": 0,
     "no-shadow": 0,
@@ -83,6 +82,7 @@ module.exports = {
     "require-await": 0,
     "prefer-named-capture-group": 0,
 
+    "jsdoc/require-jsdoc": 0,
     "unicorn/no-fn-reference-in-iterator": 0,
     "promise/avoid-new": 0,
     "promise/prefer-await-to-callbacks": 0,
