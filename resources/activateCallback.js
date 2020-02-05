@@ -15,7 +15,9 @@ const arrayChunk = (arr, size) => {
 // Todo: Check `oldVersion` and run this first if still too old
 
 /**
-* @typedef {function} Logger
+* @callback Logger
+* @param {...any} args
+* @returns {void}
 */
 
 /**

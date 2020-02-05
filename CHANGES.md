@@ -2,6 +2,7 @@
 
 ## ?
 
+- Linting (ESLint): As per latest ash-nazg
 - npm: Switch to non-deprecated `@rollup/plugin-node-resolve`
 - npm: Update deps (`babel`-related, `indexeddbshim`,
   `url-search-param-polyfill`), peerDeps (`core-js-bundle`), devDeps
