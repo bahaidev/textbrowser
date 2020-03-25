@@ -1018,6 +1018,8 @@ it supports the following arguments:
 
 ## To-dos (Medium Priority)
 
+1.  Switch from IMF i18n to [intl-dom](https://github.com/brettz9/intl-dom) and
+    as needed [i18nizeElement](https://github.com/brettz9/i18nizeElement)
 1.  Remove need for separate metadata
     files per
     <https://github.com/json-schema-org/json-schema-spec/issues/587#issuecomment-389726603>
