@@ -5,10 +5,10 @@ import {PluginsForWork, escapePlugin} from './Plugin.js';
 
 let path, babelRegister;
 if (typeof process !== 'undefined') {
-  /* eslint-disable global-require */
+  /* eslint-disable node/global-require */
   path = require('path');
   babelRegister = require('@babel/register');
-  /* eslint-enable global-require */
+  /* eslint-enable node/global-require */
 }
 
 export const getWorkFiles = async function getWorkFiles (files = this.files) {
@@ -143,12 +143,13 @@ export const getWorkData = async function ({
               presets: ['@babel/env']
             });
             return Promise.resolve().then(() => {
-              return require(pluginPath); // eslint-disable-line global-require, import/no-dynamic-require
+              return require(pluginPath); // eslint-disable-line node/global-require, import/no-dynamic-require
             }).catch((err) => {
               // E.g., with tooltips plugin
               console.log('err', err);
             });
           }
+          // eslint-disable-next-line node/no-unsupported-features/es-syntax
           return import(pluginPath);
         })
       )

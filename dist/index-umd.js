@@ -164,19 +164,15 @@
   }
 
   function _slicedToArray(arr, i) {
-    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
   }
 
   function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
   }
 
   function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) {
-      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-      return arr2;
-    }
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
   }
 
   function _arrayWithHoles(arr) {
@@ -184,14 +180,11 @@
   }
 
   function _iterableToArray(iter) {
-    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+    if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
   }
 
   function _iterableToArrayLimit(arr, i) {
-    if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-      return;
-    }
-
+    if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
     var _arr = [];
     var _n = true;
     var _d = false;
@@ -217,12 +210,29 @@
     return _arr;
   }
 
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+    return arr2;
+  }
+
   function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance");
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
   function _nonIterableRest() {
-    throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
   function asyncGeneratorStep$1(gen, resolve, reject, _next, _throw, key, arg) {
@@ -286,9 +296,7 @@
   }
 
   function _getJSON() {
-    _getJSON = _asyncToGenerator$1(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(jsonURL, cb, errBack) {
+    _getJSON = _asyncToGenerator$1( /*#__PURE__*/regeneratorRuntime.mark(function _callee(jsonURL, cb, errBack) {
       var arrResult, result;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
@@ -2663,9 +2671,7 @@
   }
 
   function _getJSON$1() {
-    _getJSON$1 = _asyncToGenerator$1$1(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(jsonURL, cb, errBack) {
+    _getJSON$1 = _asyncToGenerator$1$1( /*#__PURE__*/regeneratorRuntime.mark(function _callee(jsonURL, cb, errBack) {
       var arrResult, result;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
@@ -3555,18 +3561,13 @@
           }).locale.$ref;
         },
         callback: function callback() {
-          for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-            args[_key2] = arguments[_key2];
-          }
-
-          return _asyncToGenerator(
-          /*#__PURE__*/
-          regeneratorRuntime.mark(function _callee() {
+          var _arguments = arguments;
+          return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
             return regeneratorRuntime.wrap(function _callee$(_context) {
               while (1) {
                 switch (_context.prev = _context.next) {
                   case 0:
-                    if (!(localeCallback && localeCallback.apply(void 0, args))) {
+                    if (!(localeCallback && localeCallback.apply(void 0, _toConsumableArray(_arguments)))) {
                       _context.next = 3;
                       break;
                     }
@@ -3576,7 +3577,7 @@
 
                   case 3:
                     _context.next = 5;
-                    return resultsCallback.apply(void 0, args);
+                    return resultsCallback.apply(void 0, _toConsumableArray(_arguments));
 
                   case 5:
                     resolve();
@@ -3661,6 +3662,11 @@
 
 
   function safeBlur(el) {
+    // Find the actual focused element when the active element is inside a shadow root
+    while (el && el.shadowRoot && el.shadowRoot.activeElement) {
+      el = el.shadowRoot.activeElement;
+    }
+
     if (el && el.blur && el !== document.body) {
       el.blur();
     }
@@ -3693,6 +3699,53 @@
     }
 
     return el.getAttribute('method').toLowerCase() === 'dialog';
+  }
+  /**
+   * @param {!DocumentFragment|!Element} hostElement
+   * @return {?Element}
+   */
+
+
+  function findFocusableElementWithin(hostElement) {
+    // Note that this is 'any focusable area'. This list is probably not exhaustive, but the
+    // alternative involves stepping through and trying to focus everything.
+    var opts = ['button', 'input', 'keygen', 'select', 'textarea'];
+    var query = opts.map(function (el) {
+      return el + ':not([disabled])';
+    }); // TODO(samthor): tabindex values that are not numeric are not focusable.
+
+    query.push('[tabindex]:not([disabled]):not([tabindex=""])'); // tabindex != "", not disabled
+
+    var target = hostElement.querySelector(query.join(', '));
+
+    if (!target && 'attachShadow' in Element.prototype) {
+      // If we haven't found a focusable target, see if the host element contains an element
+      // which has a shadowRoot.
+      // Recursively search for the first focusable item in shadow roots.
+      var elems = hostElement.querySelectorAll('*');
+
+      for (var i = 0; i < elems.length; i++) {
+        if (elems[i].tagName && elems[i].shadowRoot) {
+          target = findFocusableElementWithin(elems[i].shadowRoot);
+
+          if (target) {
+            break;
+          }
+        }
+      }
+    }
+
+    return target;
+  }
+  /**
+   * Determines if an element is attached to the DOM.
+   * @param {Element} element to check
+   * @return {Boolean} whether the element is in DOM
+   */
+
+
+  function isConnected(element) {
+    return element.isConnected || document.body.contains(element);
   }
   /**
    * @param {!HTMLDialogElement} dialog to upgrade
@@ -3764,7 +3817,9 @@
     this.backdrop_.addEventListener('click', this.backdropClick_.bind(this));
   }
 
-  dialogPolyfillInfo.prototype = {
+  dialogPolyfillInfo.prototype =
+  /** @type {HTMLDialogElement.prototype} */
+  {
     get dialog() {
       return this.dialog_;
     },
@@ -3775,7 +3830,7 @@
      * longer open or is no longer part of the DOM.
      */
     maybeHideModal: function () {
-      if (this.dialog_.hasAttribute('open') && document.body.contains(this.dialog_)) {
+      if (this.dialog_.hasAttribute('open') && isConnected(this.dialog_)) {
         return;
       }
 
@@ -3856,16 +3911,7 @@
       }
 
       if (!target) {
-        // Note that this is 'any focusable area'. This list is probably not exhaustive, but the
-        // alternative involves stepping through and trying to focus everything.
-        var opts = ['button', 'input', 'keygen', 'select', 'textarea'];
-        var query = opts.map(function (el) {
-          return el + ':not([disabled])';
-        }); // TODO(samthor): tabindex values that are not numeric are not focusable.
-
-        query.push('[tabindex]:not([disabled]):not([tabindex=""])'); // tabindex != "", not disabled
-
-        target = this.dialog_.querySelector(query.join(', '));
+        target = findFocusableElementWithin(this.dialog_);
       }
 
       safeBlur(document.activeElement);
@@ -3905,7 +3951,7 @@
         throw new Error('Failed to execute \'showModal\' on dialog: The element is already open, and therefore cannot be opened modally.');
       }
 
-      if (!document.body.contains(this.dialog_)) {
+      if (!isConnected(this.dialog_)) {
         throw new Error('Failed to execute \'showModal\' on dialog: The element is not in a Document.');
       }
 
@@ -4315,6 +4361,7 @@
         };
 
         var realSet = methodDescriptor.set;
+        /** @this {HTMLElement} */
 
         methodDescriptor.set = function (v) {
           if (typeof v === 'string' && v.toLowerCase() === 'dialog') {
@@ -4393,6 +4440,11 @@
      */
 
     document.addEventListener('submit', function (ev) {
+      if (ev.defaultPrevented) {
+        return;
+      } // e.g. a submit which prevents default submission
+
+
       var form =
       /** @type {HTMLFormElement} */
       ev.target;
@@ -4419,7 +4471,7 @@
       }
 
       dialogPolyfill.formSubmitter = null;
-    }, true);
+    }, false);
   }
 
   function _typeof$3(obj) {
@@ -4540,7 +4592,7 @@
     return _setPrototypeOf(o, p);
   }
 
-  function isNativeReflectConstruct() {
+  function _isNativeReflectConstruct() {
     if (typeof Reflect === "undefined" || !Reflect.construct) return false;
     if (Reflect.construct.sham) return false;
     if (typeof Proxy === "function") return true;
@@ -4554,7 +4606,7 @@
   }
 
   function _construct(Parent, args, Class) {
-    if (isNativeReflectConstruct()) {
+    if (_isNativeReflectConstruct()) {
       _construct = Reflect.construct;
     } else {
       _construct = function _construct(Parent, args, Class) {
@@ -4624,6 +4676,23 @@
     return _assertThisInitialized(self);
   }
 
+  function _createSuper(Derived) {
+    return function () {
+      var Super = _getPrototypeOf(Derived),
+          result;
+
+      if (_isNativeReflectConstruct()) {
+        var NewTarget = _getPrototypeOf(this).constructor;
+
+        result = Reflect.construct(Super, arguments, NewTarget);
+      } else {
+        result = Super.apply(this, arguments);
+      }
+
+      return _possibleConstructorReturn(this, result);
+    };
+  }
+
   function _superPropBase(object, property) {
     while (!Object.prototype.hasOwnProperty.call(object, property)) {
       object = _getPrototypeOf(object);
@@ -4655,19 +4724,15 @@
   }
 
   function _slicedToArray$2(arr, i) {
-    return _arrayWithHoles$2(arr) || _iterableToArrayLimit$2(arr, i) || _nonIterableRest$2();
+    return _arrayWithHoles$2(arr) || _iterableToArrayLimit$2(arr, i) || _unsupportedIterableToArray$1(arr, i) || _nonIterableRest$2();
   }
 
   function _toConsumableArray$3(arr) {
-    return _arrayWithoutHoles$3(arr) || _iterableToArray$3(arr) || _nonIterableSpread$3();
+    return _arrayWithoutHoles$3(arr) || _iterableToArray$3(arr) || _unsupportedIterableToArray$1(arr) || _nonIterableSpread$3();
   }
 
   function _arrayWithoutHoles$3(arr) {
-    if (Array.isArray(arr)) {
-      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-      return arr2;
-    }
+    if (Array.isArray(arr)) return _arrayLikeToArray$1(arr);
   }
 
   function _arrayWithHoles$2(arr) {
@@ -4675,14 +4740,11 @@
   }
 
   function _iterableToArray$3(iter) {
-    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+    if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
   }
 
   function _iterableToArrayLimit$2(arr, i) {
-    if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-      return;
-    }
-
+    if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
     var _arr = [];
     var _n = true;
     var _d = false;
@@ -4708,12 +4770,29 @@
     return _arr;
   }
 
+  function _unsupportedIterableToArray$1(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray$1(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$1(o, minLen);
+  }
+
+  function _arrayLikeToArray$1(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+    return arr2;
+  }
+
   function _nonIterableSpread$3() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance");
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
   function _nonIterableRest$2() {
-    throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
   /*
   Possible todos:
@@ -4758,6 +4837,8 @@
   var NS_HTML = 'http://www.w3.org/1999/xhtml',
       hyphenForCamelCase = /\x2D([a-z])/g;
   var ATTR_MAP = {
+    maxlength: 'maxLength',
+    minlength: 'minLength',
     readonly: 'readOnly'
   }; // We define separately from ATTR_DOM for clarity (and parity with JsonML) but no current need
   // We don't set attribute esp. for boolean atts as we want to allow setting of `undefined`
@@ -4781,7 +4862,7 @@
   var NULLABLES = ['autocomplete', 'dir', // HTMLElement
   'integrity', // script, link
   'lang', // HTMLElement
-  'max', 'min', 'title' // HTMLElement
+  'max', 'min', 'minLength', 'maxLength', 'title' // HTMLElement
   ];
 
   var $ = function $(sel) {
@@ -5335,20 +5416,20 @@
 
                 var def = customizedBuiltIn ? is : localName;
 
-                if (customElements.get(def)) {
+                if (window.customElements.get(def)) {
                   return "break";
                 }
 
                 var getConstructor = function getConstructor(cnstrct) {
-                  var baseClass = options && options["extends"] ? doc.createElement(options["extends"]).constructor : customizedBuiltIn ? doc.createElement(localName).constructor : HTMLElement;
+                  var baseClass = options && options["extends"] ? doc.createElement(options["extends"]).constructor : customizedBuiltIn ? doc.createElement(localName).constructor : window.HTMLElement;
                   /**
                    * Class wrapping base class.
                    */
 
-                  return cnstrct ?
-                  /*#__PURE__*/
-                  function (_baseClass) {
+                  return cnstrct ? /*#__PURE__*/function (_baseClass) {
                     _inherits(_class, _baseClass);
+
+                    var _super = _createSuper(_class);
                     /**
                      * Calls user constructor.
                      */
@@ -5359,21 +5440,21 @@
 
                       _classCallCheck$1(this, _class);
 
-                      _this = _possibleConstructorReturn(this, _getPrototypeOf(_class).call(this));
+                      _this = _super.call(this);
                       cnstrct.call(_assertThisInitialized(_this));
                       return _this;
                     }
 
                     return _class;
-                  }(baseClass) :
-                  /*#__PURE__*/
-                  function (_baseClass2) {
+                  }(baseClass) : /*#__PURE__*/function (_baseClass2) {
                     _inherits(_class2, _baseClass2);
+
+                    var _super2 = _createSuper(_class2);
 
                     function _class2() {
                       _classCallCheck$1(this, _class2);
 
-                      return _possibleConstructorReturn(this, _getPrototypeOf(_class2).apply(this, arguments));
+                      return _super2.apply(this, arguments);
                     }
 
                     return _class2;
@@ -5451,7 +5532,7 @@
                 } // console.log('def', def, '::', typeof options === 'object' ? options : undefined);
 
 
-                customElements.define(def, cnstrctr, _typeof$3(options) === 'object' ? options : undefined);
+                window.customElements.define(def, cnstrctr, _typeof$3(options) === 'object' ? options : undefined);
                 return "break";
               }();
 
@@ -6126,10 +6207,10 @@
       /**
        * Polyfill for `DOMException`.
        */
-      var DOMException =
-      /*#__PURE__*/
-      function (_Error) {
+      var DOMException = /*#__PURE__*/function (_Error) {
         _inherits(DOMException, _Error);
+
+        var _super3 = _createSuper(DOMException);
         /* eslint-enable no-shadow, unicorn/custom-error-definition */
 
         /**
@@ -6143,14 +6224,14 @@
 
           _classCallCheck$1(this, DOMException);
 
-          _this2 = _possibleConstructorReturn(this, _getPrototypeOf(DOMException).call(this, message)); // eslint-disable-next-line unicorn/custom-error-definition
+          _this2 = _super3.call(this, message); // eslint-disable-next-line unicorn/custom-error-definition
 
           _this2.name = name;
           return _this2;
         }
 
         return DOMException;
-      }(_wrapNativeSuper(Error));
+      }( /*#__PURE__*/_wrapNativeSuper(Error));
 
       if (reportInvalidState) {
         // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
@@ -6537,15 +6618,15 @@
    */
 
 
-  var JamilihMap =
-  /*#__PURE__*/
-  function (_Map) {
+  var JamilihMap = /*#__PURE__*/function (_Map) {
     _inherits(JamilihMap, _Map);
+
+    var _super4 = _createSuper(JamilihMap);
 
     function JamilihMap() {
       _classCallCheck$1(this, JamilihMap);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(JamilihMap).apply(this, arguments));
+      return _super4.apply(this, arguments);
     }
 
     _createClass$1(JamilihMap, [{
@@ -6594,21 +6675,21 @@
     }]);
 
     return JamilihMap;
-  }(_wrapNativeSuper(Map));
+  }( /*#__PURE__*/_wrapNativeSuper(Map));
   /**
    * Element-aware wrapper for `WeakMap`.
    */
 
 
-  var JamilihWeakMap =
-  /*#__PURE__*/
-  function (_WeakMap) {
+  var JamilihWeakMap = /*#__PURE__*/function (_WeakMap) {
     _inherits(JamilihWeakMap, _WeakMap);
+
+    var _super5 = _createSuper(JamilihWeakMap);
 
     function JamilihWeakMap() {
       _classCallCheck$1(this, JamilihWeakMap);
 
-      return _possibleConstructorReturn(this, _getPrototypeOf(JamilihWeakMap).apply(this, arguments));
+      return _super5.apply(this, arguments);
     }
 
     _createClass$1(JamilihWeakMap, [{
@@ -6657,7 +6738,7 @@
     }]);
 
     return JamilihWeakMap;
-  }(_wrapNativeSuper(WeakMap));
+  }( /*#__PURE__*/_wrapNativeSuper(WeakMap));
 
   jml.Map = JamilihMap;
   jml.WeakMap = JamilihWeakMap;
@@ -6806,9 +6887,7 @@
     }
   };
 
-  var Dialog =
-  /*#__PURE__*/
-  function () {
+  var Dialog = /*#__PURE__*/function () {
     function Dialog() {
       var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           locale = _ref.locale,
@@ -6829,7 +6908,7 @@
             locale = _ref2$locale === void 0 ? {} : _ref2$locale,
             _ref2$localeObject = _ref2.localeObject,
             localeObject = _ref2$localeObject === void 0 ? {} : _ref2$localeObject;
-        this.localeStrings = _objectSpread2({}, localeStrings[defaultLocale$1], {}, localeStrings[locale], {}, localeObject);
+        this.localeStrings = _objectSpread2(_objectSpread2(_objectSpread2({}, localeStrings[defaultLocale$1]), localeStrings[locale]), localeObject);
       }
     }, {
       key: "makeDialog",
@@ -6984,7 +7063,7 @@
           /* const dialog = */
 
 
-          _this2.makeSubmitDialog(_objectSpread2({}, submitArgs, {
+          _this2.makeSubmitDialog(_objectSpread2(_objectSpread2({}, submitArgs), {}, {
             submit: submit,
             cancel: function cancel() {
               reject(new Error('cancelled'));
@@ -7058,9 +7137,7 @@
     });
     return langArr;
   };
-  var Languages =
-  /*#__PURE__*/
-  function () {
+  var Languages = /*#__PURE__*/function () {
     function Languages(_ref2) {
       var langData = _ref2.langData;
 
@@ -7089,7 +7166,7 @@
             applicableFieldI18N = _ref3.applicableFieldI18N,
             meta = _ref3.meta,
             metaApplicableField = _ref3.metaApplicableField;
-        return lf(['plugins', pluginName, 'fieldname'], _objectSpread2({}, meta, {}, metaApplicableField, {
+        return lf(['plugins', pluginName, 'fieldname'], _objectSpread2(_objectSpread2(_objectSpread2({}, meta), metaApplicableField), {}, {
           applicableField: applicableFieldI18N,
           targetLanguage: targetLanguage ? this.getLanguageFromCode(targetLanguage) : ''
         }));
@@ -14230,12 +14307,8 @@
   //      file.anyOf.splice(1, 1, {$ref: schemaFile});
   // Todo: Allow use of dbs and fileGroup together in base directories?
 
-  var getMetadata =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(file, property, basePath) {
+  var getMetadata = /*#__PURE__*/function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(file, property, basePath) {
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -14383,9 +14456,7 @@
     });
   }; // Todo: Incorporate other methods into this class
 
-  var Metadata =
-  /*#__PURE__*/
-  function () {
+  var Metadata = /*#__PURE__*/function () {
     function Metadata(_ref6) {
       var metadataObj = _ref6.metadataObj;
 
@@ -14473,9 +14544,7 @@
         targetLanguage = _ref.targetLanguage;
     return escapePluginComponent(pluginName) + (applicableField ? '-' + escapePluginComponent(applicableField) : '-') + (targetLanguage ? '-' + escapePluginComponent(targetLanguage) : '');
   };
-  var PluginsForWork =
-  /*#__PURE__*/
-  function () {
+  var PluginsForWork = /*#__PURE__*/function () {
     function PluginsForWork(_ref2) {
       var pluginsInWork = _ref2.pluginsInWork,
           pluginFieldMappings = _ref2.pluginFieldMappings,
@@ -14555,6 +14624,7 @@
               }); // eslint-disable-line standard/no-callback-literal
             });
           } else {
+            // eslint-disable-next-line node/callback-return
             cb({
               applicableField: applicableField,
               targetLanguage: targetLanguage,
@@ -14602,18 +14672,14 @@
   var path, babelRegister;
 
   if (typeof process !== 'undefined') {
-    /* eslint-disable global-require */
+    /* eslint-disable node/global-require */
     path = require('path');
     babelRegister = require('@babel/register');
-    /* eslint-enable global-require */
+    /* eslint-enable node/global-require */
   }
 
-  var getWorkFiles =
-  /*#__PURE__*/
-  function () {
-    var _getWorkFiles = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee() {
+  var getWorkFiles = /*#__PURE__*/function () {
+    var _getWorkFiles = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
       var files,
           filesObj,
           dataFiles,
@@ -14671,21 +14737,17 @@
       metadataFile: metadataFile
     };
   };
-  var getWorkData =
-  /*#__PURE__*/
-  function () {
-    var _ref = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee2(_ref2) {
+  var getWorkData = /*#__PURE__*/function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(_ref) {
       var _this = this;
 
-      var lang, fallbackLanguages, work, files, allowPlugins, basePath, languages, preferredLocale, filesObj, localeFromFileData, imfFile, lf, fileData, fileGroup, groupsToWorks, fp, file, schemaFile, metadataFile, schemaProperty, metadataProperty, getPlugins, pluginsInWork, pluginFieldsForWork, pluginPaths, pluginFieldMappingForWork, pluginFieldMapping, pluginFieldMappingID, possiblePluginFieldMappingForWork, metadataObj, getFieldAliasOrName, pluginFieldMappings, _ref9, _ref10, schemaObj, pluginObjects, pluginsForWork, schemaItems, fieldInfo, metadata, _lang;
+      var lang, fallbackLanguages, work, files, allowPlugins, basePath, languages, preferredLocale, filesObj, localeFromFileData, imfFile, lf, fileData, fileGroup, groupsToWorks, fp, file, schemaFile, metadataFile, schemaProperty, metadataProperty, getPlugins, pluginsInWork, pluginFieldsForWork, pluginPaths, pluginFieldMappingForWork, pluginFieldMapping, pluginFieldMappingID, possiblePluginFieldMappingForWork, metadataObj, getFieldAliasOrName, pluginFieldMappings, _yield$Promise$all, _yield$Promise$all2, schemaObj, pluginObjects, pluginsForWork, schemaItems, fieldInfo, metadata, _lang;
 
       return regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              lang = _ref2.lang, fallbackLanguages = _ref2.fallbackLanguages, work = _ref2.work, files = _ref2.files, allowPlugins = _ref2.allowPlugins, basePath = _ref2.basePath, languages = _ref2.languages, preferredLocale = _ref2.preferredLocale;
+              lang = _ref.lang, fallbackLanguages = _ref.fallbackLanguages, work = _ref.work, files = _ref.files, allowPlugins = _ref.allowPlugins, basePath = _ref.basePath, languages = _ref.languages, preferredLocale = _ref.preferredLocale;
               _context2.next = 3;
               return getJSON(files);
 
@@ -14812,29 +14874,30 @@
                     presets: ['@babel/env']
                   });
                   return Promise.resolve().then(function () {
-                    return require(pluginPath); // eslint-disable-line global-require, import/no-dynamic-require
+                    return require(pluginPath); // eslint-disable-line node/global-require, import/no-dynamic-require
                   })["catch"](function (err) {
                     // E.g., with tooltips plugin
                     console.log('err', err);
                   });
-                }
+                } // eslint-disable-next-line node/no-unsupported-features/es-syntax
 
-                return import(pluginPath);
+
+                return window.importer(pluginPath);
               })) : null]);
 
             case 24:
-              _ref9 = _context2.sent;
-              _ref10 = _slicedToArray(_ref9, 2);
-              schemaObj = _ref10[0];
-              pluginObjects = _ref10[1];
+              _yield$Promise$all = _context2.sent;
+              _yield$Promise$all2 = _slicedToArray(_yield$Promise$all, 2);
+              schemaObj = _yield$Promise$all2[0];
+              pluginObjects = _yield$Promise$all2[1];
               pluginsForWork = new PluginsForWork({
                 pluginsInWork: pluginsInWork,
                 pluginFieldMappings: pluginFieldMappings,
                 pluginObjects: pluginObjects
               });
               schemaItems = schemaObj.items.items;
-              fieldInfo = schemaItems.map(function (_ref11) {
-                var field = _ref11.title;
+              fieldInfo = schemaItems.map(function (_ref9) {
+                var field = _ref9.title;
                 return {
                   field: field,
                   fieldAliasOrName: getFieldAliasOrName(field) || field
@@ -14849,21 +14912,21 @@
                 console.log('pluginsForWork', pluginsForWork);
                 _lang = this.lang; // array with first item as preferred
 
-                pluginsForWork.iterateMappings(function (_ref12) {
-                  var plugin = _ref12.plugin,
-                      pluginName = _ref12.pluginName,
-                      pluginLang = _ref12.pluginLang,
-                      onByDefaultDefault = _ref12.onByDefaultDefault,
-                      placement = _ref12.placement,
-                      applicableFields = _ref12.applicableFields,
-                      meta = _ref12.meta;
+                pluginsForWork.iterateMappings(function (_ref10) {
+                  var plugin = _ref10.plugin,
+                      pluginName = _ref10.pluginName,
+                      pluginLang = _ref10.pluginLang,
+                      onByDefaultDefault = _ref10.onByDefaultDefault,
+                      placement = _ref10.placement,
+                      applicableFields = _ref10.applicableFields,
+                      meta = _ref10.meta;
 
                   var processField = function processField() {
-                    var _ref13 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-                        applicableField = _ref13.applicableField,
-                        targetLanguage = _ref13.targetLanguage,
-                        onByDefault = _ref13.onByDefault,
-                        metaApplicableField = _ref13.metaApplicableField;
+                    var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                        applicableField = _ref11.applicableField,
+                        targetLanguage = _ref11.targetLanguage,
+                        onByDefault = _ref11.onByDefault,
+                        metaApplicableField = _ref11.metaApplicableField;
 
                     var plugin = pluginsForWork.getPluginObject(pluginName) || {};
                     var applicableFieldLang = metadata.getFieldLang(applicableField);
@@ -14957,7 +15020,7 @@
     }));
 
     return function getWorkData(_x) {
-      return _ref.apply(this, arguments);
+      return _ref2.apply(this, arguments);
     };
   }();
 
@@ -14983,11 +15046,7 @@
       console.log('update found', e);
       var newWorker = r.installing; // statechange won't catch this installing event as already installing
 
-      newWorker.addEventListener('statechange',
-      /*#__PURE__*/
-      _asyncToGenerator(
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee() {
+      newWorker.addEventListener('statechange', /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
         var state;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -15042,24 +15101,16 @@
       })));
     });
   };
-  var respondToState =
-  /*#__PURE__*/
-  function () {
-    var _ref3 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee3(_ref4) {
+  var respondToState = /*#__PURE__*/function () {
+    var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(_ref3) {
       var r, logger;
       return regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              r = _ref4.r, logger = _ref4.logger;
-              return _context3.abrupt("return", new Promise(
-              /*#__PURE__*/
-              function () {
-                var _ref5 = _asyncToGenerator(
-                /*#__PURE__*/
-                regeneratorRuntime.mark(function _callee2(resolve, reject) {
+              r = _ref3.r, logger = _ref3.logger;
+              return _context3.abrupt("return", new Promise( /*#__PURE__*/function () {
+                var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(resolve, reject) {
                   var worker;
                   return regeneratorRuntime.wrap(function _callee2$(_context2) {
                     while (1) {
@@ -15210,23 +15261,19 @@
     }));
 
     return function respondToState(_x) {
-      return _ref3.apply(this, arguments);
+      return _ref4.apply(this, arguments);
     };
   }(); // Keep in this file as may wish to avoid using for server (while still
   //   doing other service worker work)
 
-  var registerServiceWorker =
-  /*#__PURE__*/
-  function () {
-    var _ref7 = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee4(_ref8) {
+  var registerServiceWorker = /*#__PURE__*/function () {
+    var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(_ref7) {
       var serviceWorkerPath, logger, r;
       return regeneratorRuntime.wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
-              serviceWorkerPath = _ref8.serviceWorkerPath, logger = _ref8.logger;
+              serviceWorkerPath = _ref7.serviceWorkerPath, logger = _ref7.logger;
               // Todo: We might wish to allow avoiding the other locale files
               //   and if only one chosen, switch to the work selection page
               //   in that language
@@ -15292,7 +15339,7 @@
     }));
 
     return function registerServiceWorker(_x4) {
-      return _ref7.apply(this, arguments);
+      return _ref8.apply(this, arguments);
     };
   }();
 
@@ -15831,7 +15878,7 @@
         type: 'button',
         $on: {
           click: function click() {
-            var url = serializeParamsAsURL(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
+            var url = serializeParamsAsURL(_objectSpread2(_objectSpread2({}, getDataForSerializingParamsAsURL()), {}, {
               type: 'randomResult'
             }));
             $('#randomURL').value = url;
@@ -15916,9 +15963,7 @@
         title: l('bookmark_generation_tooltip'),
         $on: {
           click: function click() {
-            return _asyncToGenerator(
-            /*#__PURE__*/
-            regeneratorRuntime.mark(function _callee() {
+            return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
               var date, ADD_DATE, LAST_MODIFIED, blob, url, a;
               return regeneratorRuntime.wrap(function _callee$(_context) {
                 while (1) {
@@ -15941,7 +15986,7 @@
                       return getFieldAliasOrNames();
 
                     case 12:
-                      _context.t7 = function (_ref17) {
+                      _context.t7 = _context.sent.flatMap(function (_ref17) {
                         var groupName = _ref17.groupName,
                             worksToFields = _ref17.worksToFields;
                         return [['dt', [['h3', {
@@ -15955,7 +16000,7 @@
                           // Todo: option for additional browse field groups (startEnd2, etc.)
                           // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
                           // Todo: Make Chrome NativeExt add-on to manipulate its search engines (to read a bookmarks file from Firefox properly, i.e., including keywords) https://www.makeuseof.com/answers/export-google-chrome-search-engines-address-bar/
-                          var paramsCopy = paramsSetter(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
+                          var paramsCopy = paramsSetter(_objectSpread2(_objectSpread2({}, getDataForSerializingParamsAsURL()), {}, {
                             fieldAliasOrNames: fieldAliasOrNames,
                             workName: work,
                             // Delete work of current page
@@ -15970,31 +16015,29 @@
                             SHORTCUTURL: SHORTCUTURL
                           }, [workName]]]];
                         })))]];
-                      };
-
-                      _context.t8 = _context.sent.flatMap(_context.t7);
-                      _context.t9 = (0, _context.t6)(_context.t8);
-                      _context.t10 = _context.t5.concat.call(_context.t5, _context.t9);
-                      _context.t11 = {
+                      });
+                      _context.t8 = (0, _context.t6)(_context.t7);
+                      _context.t9 = _context.t5.concat.call(_context.t5, _context.t8);
+                      _context.t10 = {
                         $DOCTYPE: _context.t3,
                         title: _context.t4,
-                        body: _context.t10
+                        body: _context.t9
                       };
-                      _context.t12 = {
-                        $document: _context.t11
+                      _context.t11 = {
+                        $document: _context.t10
                       };
-                      _context.t13 = (0, _context.t2)(_context.t12);
-                      _context.t14 = _context.t1.serializeToString.call(_context.t1, _context.t13).replace( // Chrome has a quirk that requires this (and not
+                      _context.t12 = (0, _context.t2)(_context.t11);
+                      _context.t13 = _context.t1.serializeToString.call(_context.t1, _context.t12).replace( // Chrome has a quirk that requires this (and not
                       //   just any whitespace)
                       // We're not getting the keywords with Chrome,
                       //   but at least usable for bookmarks (though
                       //   not the groups apparently)
                       /<dt>/g, '\n<dt>');
-                      _context.t15 = [_context.t14];
-                      _context.t16 = {
+                      _context.t14 = [_context.t13];
+                      _context.t15 = {
                         type: 'text/html'
                       };
-                      blob = new _context.t0(_context.t15, _context.t16);
+                      blob = new _context.t0(_context.t14, _context.t15);
                       url = window.URL.createObjectURL(blob);
                       a = jml('a', {
                         hidden: true,
@@ -16004,7 +16047,7 @@
                       a.click();
                       URL.revokeObjectURL(url);
 
-                    case 27:
+                    case 26:
                     case "end":
                       return _context.stop();
                   }
@@ -16168,7 +16211,7 @@
 
       var serializeParamsAsURLWithData = function serializeParamsAsURLWithData(_ref24) {
         var type = _ref24.type;
-        return serializeParamsAsURL(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
+        return serializeParamsAsURL(_objectSpread2(_objectSpread2({}, getDataForSerializingParamsAsURL()), {}, {
           type: type
         }));
       };
@@ -16281,16 +16324,14 @@
       }], ['br'], ['button', {
         $on: {
           click: function click(e) {
-            return _asyncToGenerator(
-            /*#__PURE__*/
-            regeneratorRuntime.mark(function _callee2() {
+            return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
               var paramsCopy, url;
               return regeneratorRuntime.wrap(function _callee2$(_context2) {
                 while (1) {
                   switch (_context2.prev = _context2.next) {
                     case 0:
                       e.preventDefault();
-                      paramsCopy = paramsSetter(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
+                      paramsCopy = paramsSetter(_objectSpread2(_objectSpread2({}, getDataForSerializingParamsAsURL()), {}, {
                         workName: work,
                         // Delete work of current page
                         type: 'startEndResult'
@@ -16554,7 +16595,7 @@
             el = _ref11[0],
             atts = _ref11[1];
 
-        return [el, _objectSpread2({}, atts, {}, newAtts)];
+        return [el, _objectSpread2(_objectSpread2({}, atts), newAtts)];
       };
 
       var foundState = {
@@ -16711,8 +16752,8 @@
 
   var resultsDisplayClient = {
     anchorRowCol: function anchorRowCol(_ref) {
-      var _anchorRowCol = _ref.anchorRowCol;
-      return $('#' + _anchorRowCol);
+      var anchorRowCol = _ref.anchorRowCol;
+      return $('#' + anchorRowCol);
     },
     anchors: function anchors(_ref2) {
       var escapedRow = _ref2.escapedRow,
@@ -16895,9 +16936,7 @@
     return this.l10n(['params', param]);
   }
 
-  var IntlURLSearchParams =
-  /*#__PURE__*/
-  function () {
+  var IntlURLSearchParams = /*#__PURE__*/function () {
     function IntlURLSearchParams() {
       var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           l10n = _ref.l10n,
@@ -16963,9 +17002,7 @@
   }
 
   function _workSelect() {
-    _workSelect = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(_ref) {
+    _workSelect = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(_ref) {
       var files, lang, fallbackLanguages, $p, followParams, dbs, localeFromFileData, metadataObjs, imfFile, lf, metadataObjsIter, getNextAlias;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
@@ -17190,28 +17227,24 @@
   }
 
   function _workDisplay() {
-    _workDisplay = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee5(_ref) {
-      var l, languageParam, lang, preferredLocale, languages, fallbackLanguages, $p, langs, fallbackDirection, prefI18n, localizeParamNames, prefFormatting, hideFormattingSection, _displayWork, _displayWork2, _ref2, lf, fileData, metadataObj, args;
+    _workDisplay = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(_ref) {
+      var l, languageParam, lang, preferredLocale, languages, fallbackLanguages, $p, langs, fallbackDirection, prefI18n, localizeParamNames, prefFormatting, hideFormattingSection, _displayWork, _displayWork2, _yield$this$getWorkDa, lf, fileData, metadataObj, args;
 
       return regeneratorRuntime.wrap(function _callee5$(_context5) {
         while (1) {
           switch (_context5.prev = _context5.next) {
             case 0:
-              _displayWork2 = function _ref14() {
-                _displayWork2 = _asyncToGenerator(
-                /*#__PURE__*/
-                regeneratorRuntime.mark(function _callee4(_ref3) {
+              _displayWork2 = function _displayWork4() {
+                _displayWork2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(_ref2) {
                   var _this = this;
 
-                  var lf, metadataObj, getFieldAliasOrName, schemaObj, schemaItems, fieldInfo, metadata, pluginsForWork, groupsToWorks, il, iil, localeFromLangData, imfLang, imfl, le, ld, fieldMatchesLocale, content, serializeParamsAsURL, paramsSetter, _ref7, groups, heading, getFieldAliasOrNames;
+                  var lf, metadataObj, getFieldAliasOrName, schemaObj, schemaItems, fieldInfo, metadata, pluginsForWork, groupsToWorks, il, iil, localeFromLangData, imfLang, imfl, le, ld, fieldMatchesLocale, content, serializeParamsAsURL, paramsSetter, _yield$getJSON, groups, heading, getFieldAliasOrNames;
 
                   return regeneratorRuntime.wrap(function _callee4$(_context4) {
                     while (1) {
                       switch (_context4.prev = _context4.next) {
                         case 0:
-                          lf = _ref3.lf, metadataObj = _ref3.metadataObj, getFieldAliasOrName = _ref3.getFieldAliasOrName, schemaObj = _ref3.schemaObj, schemaItems = _ref3.schemaItems, fieldInfo = _ref3.fieldInfo, metadata = _ref3.metadata, pluginsForWork = _ref3.pluginsForWork, groupsToWorks = _ref3.groupsToWorks;
+                          lf = _ref2.lf, metadataObj = _ref2.metadataObj, getFieldAliasOrName = _ref2.getFieldAliasOrName, schemaObj = _ref2.schemaObj, schemaItems = _ref2.schemaItems, fieldInfo = _ref2.fieldInfo, metadata = _ref2.metadata, pluginsForWork = _ref2.pluginsForWork, groupsToWorks = _ref2.groupsToWorks;
                           il = localizeParamNames ? function (key) {
                             return l(['params', key]);
                           } : function (key) {
@@ -17233,8 +17266,8 @@
                           le = function le(key, el, attToLocalize, atts, children) {
                             atts[attToLocalize] = l({
                               key: key,
-                              fallback: function fallback(_ref4) {
-                                var message = _ref4.message;
+                              fallback: function fallback(_ref3) {
+                                var message = _ref3.message;
                                 atts.dir = fallbackDirection;
                                 return message;
                               }
@@ -17248,8 +17281,8 @@
                               key: key,
                               values: values,
                               formats: formats,
-                              fallback: function fallback(_ref5) {
-                                var message = _ref5.message;
+                              fallback: function fallback(_ref4) {
+                                var message = _ref4.message;
                                 return Templates.workDisplay.bdo({
                                   fallbackDirection: fallbackDirection,
                                   message: message
@@ -17269,9 +17302,9 @@
                             metadataObj: metadataObj,
                             schemaItems: schemaItems,
                             getFieldAliasOrName: getFieldAliasOrName,
-                            callback: function callback(_ref6) {
-                              var browseFields = _ref6.browseFields,
-                                  i = _ref6.i;
+                            callback: function callback(_ref5) {
+                              var browseFields = _ref5.browseFields,
+                                  i = _ref5.i;
                               Templates.workDisplay.addBrowseFields({
                                 browseFields: browseFields,
                                 fieldInfo: fieldInfo,
@@ -17303,33 +17336,25 @@
                           return getJSON(this.files);
 
                         case 15:
-                          _ref7 = _context4.sent;
-                          groups = _ref7.groups;
+                          _yield$getJSON = _context4.sent;
+                          groups = _yield$getJSON.groups;
                           // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
                           heading = getMetaProp(lang, metadataObj, 'heading');
 
                           getFieldAliasOrNames = function () {
                             // Avoid blocking but start now
                             // Let this run in the background to avoid blocking
-                            var all = Promise.all(groupsToWorks.map(
-                            /*#__PURE__*/
-                            function () {
-                              var _ref8 = _asyncToGenerator(
-                              /*#__PURE__*/
-                              regeneratorRuntime.mark(function _callee2(_ref9) {
+                            var all = Promise.all(groupsToWorks.map( /*#__PURE__*/function () {
+                              var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(_ref6) {
                                 var name, workNames, shortcuts, worksToFields;
                                 return regeneratorRuntime.wrap(function _callee2$(_context2) {
                                   while (1) {
                                     switch (_context2.prev = _context2.next) {
                                       case 0:
-                                        name = _ref9.name, workNames = _ref9.workNames, shortcuts = _ref9.shortcuts;
+                                        name = _ref6.name, workNames = _ref6.workNames, shortcuts = _ref6.shortcuts;
                                         _context2.next = 3;
-                                        return Promise.all(workNames.map(
-                                        /*#__PURE__*/
-                                        function () {
-                                          var _ref10 = _asyncToGenerator(
-                                          /*#__PURE__*/
-                                          regeneratorRuntime.mark(function _callee(workName, i) {
+                                        return Promise.all(workNames.map( /*#__PURE__*/function () {
+                                          var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(workName, i) {
                                             return regeneratorRuntime.wrap(function _callee$(_context) {
                                               while (1) {
                                                 switch (_context.prev = _context.next) {
@@ -17346,19 +17371,17 @@
                                                     });
 
                                                   case 4:
-                                                    _context.t2 = function (_ref11) {
-                                                      var fieldAliasOrName = _ref11.fieldAliasOrName;
+                                                    _context.t2 = _context.sent.fieldInfo.map(function (_ref9) {
+                                                      var fieldAliasOrName = _ref9.fieldAliasOrName;
                                                       return fieldAliasOrName;
-                                                    };
-
-                                                    _context.t3 = _context.sent.fieldInfo.map(_context.t2);
+                                                    });
                                                     return _context.abrupt("return", {
                                                       workName: _context.t0,
                                                       shortcut: _context.t1,
-                                                      fieldAliasOrNames: _context.t3
+                                                      fieldAliasOrNames: _context.t2
                                                     });
 
-                                                  case 7:
+                                                  case 6:
                                                   case "end":
                                                     return _context.stop();
                                                 }
@@ -17367,7 +17390,7 @@
                                           }));
 
                                           return function (_x4, _x5) {
-                                            return _ref10.apply(this, arguments);
+                                            return _ref8.apply(this, arguments);
                                           };
                                         }()));
 
@@ -17387,28 +17410,23 @@
                               }));
 
                               return function (_x3) {
-                                return _ref8.apply(this, arguments);
+                                return _ref7.apply(this, arguments);
                               };
                             }()));
-                            return (
-                              /*#__PURE__*/
-                              _asyncToGenerator(
-                              /*#__PURE__*/
-                              regeneratorRuntime.mark(function _callee3() {
-                                return regeneratorRuntime.wrap(function _callee3$(_context3) {
-                                  while (1) {
-                                    switch (_context3.prev = _context3.next) {
-                                      case 0:
-                                        return _context3.abrupt("return", all);
+                            return /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+                              return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                                while (1) {
+                                  switch (_context3.prev = _context3.next) {
+                                    case 0:
+                                      return _context3.abrupt("return", all);
 
-                                      case 1:
-                                      case "end":
-                                        return _context3.stop();
-                                    }
+                                    case 1:
+                                    case "end":
+                                      return _context3.stop();
                                   }
-                                }, _callee3);
-                              }))
-                            );
+                                }
+                              }, _callee3);
+                            }));
                           }();
 
                           Templates.workDisplay.main({
@@ -17451,7 +17469,7 @@
                 return _displayWork2.apply(this, arguments);
               };
 
-              _displayWork = function _ref13(_x2) {
+              _displayWork = function _displayWork3(_x2) {
                 return _displayWork2.apply(this, arguments);
               };
 
@@ -17461,8 +17479,7 @@
               prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
               localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
               prefFormatting = localStorage.getItem(this.namespace + '-hideFormattingSection');
-              hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : prefFormatting === 'true' || prefFormatting !== 'false' && this.hideFormattingSection; // eslint-disable-next-line jsdoc/require-jsdoc
-
+              hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : prefFormatting === 'true' || prefFormatting !== 'false' && this.hideFormattingSection;
               _context5.prev = 9;
               _context5.next = 12;
               return this.getWorkData({
@@ -17474,11 +17491,11 @@
               });
 
             case 12:
-              _ref2 = _context5.sent;
-              lf = _ref2.lf;
-              fileData = _ref2.fileData;
-              metadataObj = _ref2.metadataObj;
-              args = _objectWithoutProperties(_ref2, ["lf", "fileData", "metadataObj"]);
+              _yield$this$getWorkDa = _context5.sent;
+              lf = _yield$this$getWorkDa.lf;
+              fileData = _yield$this$getWorkDa.fileData;
+              metadataObj = _yield$this$getWorkDa.metadataObj;
+              args = _objectWithoutProperties(_yield$this$getWorkDa, ["lf", "fileData", "metadataObj"]);
               document.title = lf({
                 key: 'browserfile-workdisplay',
                 values: {
@@ -17772,15 +17789,11 @@
     }
   };
 
-  var resultsDisplayClient$1 =
-  /*#__PURE__*/
-  function () {
-    var _resultsDisplayClient = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(args) {
+  var resultsDisplayClient$1 = /*#__PURE__*/function () {
+    var _resultsDisplayClient = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(args) {
       var _this = this;
 
-      var persistent, skipIndexedDB, prefI18n, _ref2, fieldInfo, $p, browseFieldSets, applicableBrowseFieldSet, lang, metadataObj, fileData, fieldValueAliasMapPreferred, lf, iil, ilRaw, templateArgs;
+      var persistent, skipIndexedDB, prefI18n, _yield$resultsDisplay, fieldInfo, $p, browseFieldSets, applicableBrowseFieldSet, lang, metadataObj, fileData, fieldValueAliasMapPreferred, lf, iil, ilRaw, templateArgs;
 
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
@@ -17794,25 +17807,25 @@
               skipIndexedDB = this.skipIndexedDB || !persistent || !navigator.serviceWorker.controller;
               prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
               _context.next = 7;
-              return resultsDisplayServerOrClient$1.call(this, _objectSpread2({}, args, {
+              return resultsDisplayServerOrClient$1.call(this, _objectSpread2(_objectSpread2({}, args), {}, {
                 skipIndexedDB: skipIndexedDB,
                 prefI18n: prefI18n
               }));
 
             case 7:
-              _ref2 = _context.sent;
-              fieldInfo = _ref2.fieldInfo;
-              $p = _ref2.$p;
-              browseFieldSets = _ref2.browseFieldSets;
-              applicableBrowseFieldSet = _ref2.applicableBrowseFieldSet;
-              lang = _ref2.lang;
-              metadataObj = _ref2.metadataObj;
-              fileData = _ref2.fileData;
-              fieldValueAliasMapPreferred = _ref2.fieldValueAliasMapPreferred;
-              lf = _ref2.lf;
-              iil = _ref2.iil;
-              ilRaw = _ref2.ilRaw;
-              templateArgs = _ref2.templateArgs;
+              _yield$resultsDisplay = _context.sent;
+              fieldInfo = _yield$resultsDisplay.fieldInfo;
+              $p = _yield$resultsDisplay.$p;
+              browseFieldSets = _yield$resultsDisplay.browseFieldSets;
+              applicableBrowseFieldSet = _yield$resultsDisplay.applicableBrowseFieldSet;
+              lang = _yield$resultsDisplay.lang;
+              metadataObj = _yield$resultsDisplay.metadataObj;
+              fileData = _yield$resultsDisplay.fileData;
+              fieldValueAliasMapPreferred = _yield$resultsDisplay.fieldValueAliasMapPreferred;
+              lf = _yield$resultsDisplay.lf;
+              iil = _yield$resultsDisplay.iil;
+              ilRaw = _yield$resultsDisplay.ilRaw;
+              templateArgs = _yield$resultsDisplay.templateArgs;
               document.title = lf({
                 key: 'browserfile-resultsdisplay',
                 values: {
@@ -17829,11 +17842,11 @@
                 $p: args.$p,
                 max: browseFieldSets.length
               });
-              fieldInfo.forEach(function (_ref3) {
-                var plugin = _ref3.plugin,
-                    applicableField = _ref3.applicableField,
-                    meta = _ref3.meta,
-                    j = _ref3.j;
+              fieldInfo.forEach(function (_ref2) {
+                var plugin = _ref2.plugin,
+                    applicableField = _ref2.applicableField,
+                    meta = _ref2.meta,
+                    j = _ref2.j;
 
                 if (!plugin) {
                   return;
@@ -17864,31 +17877,27 @@
 
     return resultsDisplayClient;
   }();
-  var resultsDisplayServerOrClient$1 =
-  /*#__PURE__*/
-  function () {
-    var _resultsDisplayServerOrClient = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee3(_ref5) {
+  var resultsDisplayServerOrClient$1 = /*#__PURE__*/function () {
+    var _resultsDisplayServerOrClient = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(_ref3) {
       var _this2 = this;
 
-      var l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, noIndexedDB, prefI18n, files, allowPlugins, langData, _ref5$basePath, basePath, _ref5$dynamicBasePath, dynamicBasePath, languages, getCellValue, getCanonicalID, determineEnd, getCheckedAndInterlinearFieldInfo, getCaption, runPresort, getFieldValueAliasMap, $pRaw, escapeCSS, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, _ref21, fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginsForWork, heading, schemaItems, setNames, presorts, browseFieldSets, fieldInfo, _lang, preferredLocale, metadata, _lang2, localizedFieldNames, escapeColumnIndexes, fieldLangs, fieldValueAliasMap, fieldValueAliasMapPreferred, localizeParamNames, il, iil, ilRaw, iilRaw, browseFieldSetStartEndIdx, rangeSep, partSep, rawSearch, _rawSearch$split, _rawSearch$split2, startFull, endFull, startPartVals, endPartVals, startEndDiff, browseFieldSetIdx, applicableBrowseFieldSet, applicableBrowseFieldSetName, applicableBrowseFieldNames, canonicalBrowseFieldSet, canonicalBrowseFieldSetName, canonicalBrowseFieldNames, fieldSchemaTypes, buildRangePoint, starts, ends, _getCaption, _getCaption2, hasCaption, caption, showInterlinTitles, stripToRawFieldValue, unlocalizedWorkName, startsRaw, endsRaw, tableData, usingServerData, presort, _ref33, jsonURL, localeDir, fieldDirs, templateArgs;
+      var l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, noIndexedDB, prefI18n, files, allowPlugins, langData, _ref3$basePath, basePath, _ref3$dynamicBasePath, dynamicBasePath, languages, getCellValue, getCanonicalID, determineEnd, getCheckedAndInterlinearFieldInfo, getCaption, runPresort, getFieldValueAliasMap, $pRaw, escapeCSS, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, _yield$getWorkData, fileData, lf, getFieldAliasOrName, schemaObj, metadataObj, pluginsForWork, heading, schemaItems, setNames, presorts, browseFieldSets, fieldInfo, _lang, preferredLocale, metadata, _lang2, localizedFieldNames, escapeColumnIndexes, fieldLangs, fieldValueAliasMap, fieldValueAliasMapPreferred, localizeParamNames, il, iil, ilRaw, iilRaw, browseFieldSetStartEndIdx, rangeSep, partSep, rawSearch, _rawSearch$split, _rawSearch$split2, startFull, endFull, startPartVals, endPartVals, startEndDiff, browseFieldSetIdx, applicableBrowseFieldSet, applicableBrowseFieldSetName, applicableBrowseFieldNames, canonicalBrowseFieldSet, canonicalBrowseFieldSetName, canonicalBrowseFieldNames, fieldSchemaTypes, buildRangePoint, starts, ends, _getCaption, _getCaption2, hasCaption, caption, showInterlinTitles, stripToRawFieldValue, unlocalizedWorkName, startsRaw, endsRaw, tableData, usingServerData, presort, _yield$JsonRefs$resol, jsonURL, localeDir, fieldDirs, templateArgs;
 
       return regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              l = _ref5.l, lang = _ref5.lang, fallbackLanguages = _ref5.fallbackLanguages, imfLocales = _ref5.imfLocales, $p = _ref5.$p, skipIndexedDB = _ref5.skipIndexedDB, noIndexedDB = _ref5.noIndexedDB, prefI18n = _ref5.prefI18n, files = _ref5.files, allowPlugins = _ref5.allowPlugins, langData = _ref5.langData, _ref5$basePath = _ref5.basePath, basePath = _ref5$basePath === void 0 ? '' : _ref5$basePath, _ref5$dynamicBasePath = _ref5.dynamicBasePath, dynamicBasePath = _ref5$dynamicBasePath === void 0 ? '' : _ref5$dynamicBasePath;
+              l = _ref3.l, lang = _ref3.lang, fallbackLanguages = _ref3.fallbackLanguages, imfLocales = _ref3.imfLocales, $p = _ref3.$p, skipIndexedDB = _ref3.skipIndexedDB, noIndexedDB = _ref3.noIndexedDB, prefI18n = _ref3.prefI18n, files = _ref3.files, allowPlugins = _ref3.allowPlugins, langData = _ref3.langData, _ref3$basePath = _ref3.basePath, basePath = _ref3$basePath === void 0 ? '' : _ref3$basePath, _ref3$dynamicBasePath = _ref3.dynamicBasePath, dynamicBasePath = _ref3$dynamicBasePath === void 0 ? '' : _ref3$dynamicBasePath;
               languages = new Languages({
                 langData: langData
               });
 
-              getCellValue = function getCellValue(_ref6) {
-                var fieldValueAliasMapPreferred = _ref6.fieldValueAliasMapPreferred,
-                    escapeColumnIndexes = _ref6.escapeColumnIndexes;
-                return function (_ref7) {
-                  var tr = _ref7.tr,
-                      idx = _ref7.idx;
+              getCellValue = function getCellValue(_ref4) {
+                var fieldValueAliasMapPreferred = _ref4.fieldValueAliasMapPreferred,
+                    escapeColumnIndexes = _ref4.escapeColumnIndexes;
+                return function (_ref5) {
+                  var tr = _ref5.tr,
+                      idx = _ref5.idx;
                   var tdVal = fieldValueAliasMapPreferred[idx] !== undefined ? fieldValueAliasMapPreferred[idx][tr[idx]] : tr[idx];
 
                   if (tdVal && _typeof(tdVal) === 'object') {
@@ -17908,14 +17917,14 @@
                 };
               };
 
-              getCanonicalID = function getCanonicalID(_ref8) {
-                var fieldValueAliasMap = _ref8.fieldValueAliasMap,
-                    fieldValueAliasMapPreferred = _ref8.fieldValueAliasMapPreferred,
-                    localizedFieldNames = _ref8.localizedFieldNames,
-                    canonicalBrowseFieldNames = _ref8.canonicalBrowseFieldNames;
-                return function (_ref9) {
-                  var tr = _ref9.tr,
-                      foundState = _ref9.foundState;
+              getCanonicalID = function getCanonicalID(_ref6) {
+                var fieldValueAliasMap = _ref6.fieldValueAliasMap,
+                    fieldValueAliasMapPreferred = _ref6.fieldValueAliasMapPreferred,
+                    localizedFieldNames = _ref6.localizedFieldNames,
+                    canonicalBrowseFieldNames = _ref6.canonicalBrowseFieldNames;
+                return function (_ref7) {
+                  var tr = _ref7.tr,
+                      foundState = _ref7.foundState;
                   return canonicalBrowseFieldNames.map(function (fieldName) {
                     var idx = localizedFieldNames.indexOf(fieldName); // This works to put alias in anchor but this includes
                     //   our ending parenthetical, the alias may be harder
@@ -17933,16 +17942,16 @@
                 };
               };
 
-              determineEnd = function determineEnd(_ref10) {
-                var fieldValueAliasMap = _ref10.fieldValueAliasMap,
-                    fieldValueAliasMapPreferred = _ref10.fieldValueAliasMapPreferred,
-                    localizedFieldNames = _ref10.localizedFieldNames,
-                    applicableBrowseFieldNames = _ref10.applicableBrowseFieldNames,
-                    startsRaw = _ref10.startsRaw,
-                    endsRaw = _ref10.endsRaw;
-                return function (_ref11) {
-                  var tr = _ref11.tr,
-                      foundState = _ref11.foundState;
+              determineEnd = function determineEnd(_ref8) {
+                var fieldValueAliasMap = _ref8.fieldValueAliasMap,
+                    fieldValueAliasMapPreferred = _ref8.fieldValueAliasMapPreferred,
+                    localizedFieldNames = _ref8.localizedFieldNames,
+                    applicableBrowseFieldNames = _ref8.applicableBrowseFieldNames,
+                    startsRaw = _ref8.startsRaw,
+                    endsRaw = _ref8.endsRaw;
+                return function (_ref9) {
+                  var tr = _ref9.tr,
+                      foundState = _ref9.foundState;
                   var rowIDPartsPreferred = [];
                   var rowIDParts = applicableBrowseFieldNames.map(function (fieldName) {
                     var idx = localizedFieldNames.indexOf(fieldName); // This works to put alias in anchor but this includes
@@ -17960,7 +17969,7 @@
                     }
 
                     return tr[idx];
-                  }); // Todo: Use schema to determine field type and use `parseInt`
+                  }); // Todo: Use schema to determine field type and use `Number.parseInt`
                   //   on other value instead of `String` conversions
 
                   if (!foundState.start) {
@@ -17990,8 +17999,8 @@
                 };
               };
 
-              getCheckedAndInterlinearFieldInfo = function getCheckedAndInterlinearFieldInfo(_ref12) {
-                var localizedFieldNames = _ref12.localizedFieldNames;
+              getCheckedAndInterlinearFieldInfo = function getCheckedAndInterlinearFieldInfo(_ref10) {
+                var localizedFieldNames = _ref10.localizedFieldNames;
                 var i = 1;
                 var field, checked;
                 var checkedFields = [];
@@ -18018,7 +18027,7 @@
                   return interlin && interlin.split(/\s*,\s*/).map(function (col) {
                     return (// Todo: Avoid this when known to be integer or if string, though allow
                       //    string to be treated as number if config is set.
-                      parseInt(col) - 1
+                      Number.parseInt(col) - 1
                     );
                   }).filter(function (n) {
                     return !Number.isNaN(n);
@@ -18027,11 +18036,11 @@
                 return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
               };
 
-              getCaption = function getCaption(_ref13) {
-                var starts = _ref13.starts,
-                    ends = _ref13.ends,
-                    applicableBrowseFieldNames = _ref13.applicableBrowseFieldNames,
-                    heading = _ref13.heading;
+              getCaption = function getCaption(_ref11) {
+                var starts = _ref11.starts,
+                    ends = _ref11.ends,
+                    applicableBrowseFieldNames = _ref11.applicableBrowseFieldNames,
+                    heading = _ref11.heading;
                 var caption;
                 var hasCaption = $pRaw('caption') !== '0';
 
@@ -18098,11 +18107,11 @@
                 return [hasCaption, caption];
               };
 
-              runPresort = function runPresort(_ref14) {
-                var presort = _ref14.presort,
-                    tableData = _ref14.tableData,
-                    applicableBrowseFieldNames = _ref14.applicableBrowseFieldNames,
-                    localizedFieldNames = _ref14.localizedFieldNames;
+              runPresort = function runPresort(_ref12) {
+                var presort = _ref12.presort,
+                    tableData = _ref12.tableData,
+                    applicableBrowseFieldNames = _ref12.applicableBrowseFieldNames,
+                    localizedFieldNames = _ref12.localizedFieldNames;
 
                 // Todo: Ought to be checking against an aliased table
                 if (presort) {
@@ -18120,15 +18129,15 @@
                 }
               };
 
-              getFieldValueAliasMap = function getFieldValueAliasMap(_ref15) {
-                var schemaItems = _ref15.schemaItems,
-                    fieldInfo = _ref15.fieldInfo,
-                    metadataObj = _ref15.metadataObj,
-                    getFieldAliasOrName = _ref15.getFieldAliasOrName,
-                    usePreferAlias = _ref15.usePreferAlias;
-                return fieldInfo.map(function (_ref16) {
-                  var field = _ref16.field,
-                      plugin = _ref16.plugin;
+              getFieldValueAliasMap = function getFieldValueAliasMap(_ref13) {
+                var schemaItems = _ref13.schemaItems,
+                    fieldInfo = _ref13.fieldInfo,
+                    metadataObj = _ref13.metadataObj,
+                    getFieldAliasOrName = _ref13.getFieldAliasOrName,
+                    usePreferAlias = _ref13.usePreferAlias;
+                return fieldInfo.map(function (_ref14) {
+                  var field = _ref14.field,
+                      plugin = _ref14.plugin;
 
                   if (plugin) {
                     return undefined;
@@ -18149,10 +18158,10 @@
                   }
 
                   if (fieldValueAliasMap) {
-                    Object.entries(fieldValueAliasMap).forEach(function (_ref17) {
-                      var _ref18 = _slicedToArray(_ref17, 2),
-                          key = _ref18[0],
-                          val = _ref18[1];
+                    Object.entries(fieldValueAliasMap).forEach(function (_ref15) {
+                      var _ref16 = _slicedToArray(_ref15, 2),
+                          key = _ref16[0],
+                          val = _ref16[1];
 
                       if (Array.isArray(val)) {
                         fieldValueAliasMap[key] = val.map(function (value) {
@@ -18171,10 +18180,10 @@
                             value: val[preferAlias]
                           });
                         } else {
-                          Object.entries(val).forEach(function (_ref19) {
-                            var _ref20 = _slicedToArray(_ref19, 2),
-                                k = _ref20[0],
-                                value = _ref20[1];
+                          Object.entries(val).forEach(function (_ref17) {
+                            var _ref18 = _slicedToArray(_ref17, 2),
+                                k = _ref18[0],
+                                value = _ref18[1];
 
                             fieldValueAliasMap[key][k] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
                               key: key,
@@ -18263,13 +18272,13 @@
               });
 
             case 16:
-              _ref21 = _context3.sent;
-              fileData = _ref21.fileData;
-              lf = _ref21.lf;
-              getFieldAliasOrName = _ref21.getFieldAliasOrName;
-              schemaObj = _ref21.schemaObj;
-              metadataObj = _ref21.metadataObj;
-              pluginsForWork = _ref21.pluginsForWork;
+              _yield$getWorkData = _context3.sent;
+              fileData = _yield$getWorkData.fileData;
+              lf = _yield$getWorkData.lf;
+              getFieldAliasOrName = _yield$getWorkData.getFieldAliasOrName;
+              schemaObj = _yield$getWorkData.schemaObj;
+              metadataObj = _yield$getWorkData.metadataObj;
+              pluginsForWork = _yield$getWorkData.pluginsForWork;
               console.log('pluginsForWork', pluginsForWork);
               heading = getMetaProp(lang, metadataObj, 'heading');
               schemaItems = schemaObj.items.items;
@@ -18281,18 +18290,18 @@
                 schemaItems: schemaItems,
                 getFieldAliasOrName: getFieldAliasOrName,
                 lang: lang,
-                callback: function callback(_ref22) {
-                  var setName = _ref22.setName,
-                      browseFields = _ref22.browseFields,
-                      presort = _ref22.presort;
+                callback: function callback(_ref19) {
+                  var setName = _ref19.setName,
+                      browseFields = _ref19.browseFields,
+                      presort = _ref19.presort;
                   setNames.push(setName);
                   presorts.push(presort);
                   browseFieldSets.push(browseFields);
                 }
               });
-              fieldInfo = schemaItems.map(function (_ref23) {
-                var field = _ref23.title,
-                    format = _ref23.format;
+              fieldInfo = schemaItems.map(function (_ref20) {
+                var field = _ref20.title,
+                    format = _ref20.format;
                 return {
                   field: field,
                   fieldAliasOrName: getFieldAliasOrName(field) || field,
@@ -18309,23 +18318,23 @@
                 console.log('pluginsForWork', pluginsForWork);
                 _lang2 = this.lang; // array with first item as preferred
 
-                pluginsForWork.iterateMappings(function (_ref24) {
-                  var plugin = _ref24.plugin,
-                      pluginName = _ref24.pluginName,
-                      pluginLang = _ref24.pluginLang,
-                      onByDefaultDefault = _ref24.onByDefaultDefault,
-                      placement = _ref24.placement,
-                      applicableFields = _ref24.applicableFields,
-                      meta = _ref24.meta;
+                pluginsForWork.iterateMappings(function (_ref21) {
+                  var plugin = _ref21.plugin,
+                      pluginName = _ref21.pluginName,
+                      pluginLang = _ref21.pluginLang,
+                      onByDefaultDefault = _ref21.onByDefaultDefault,
+                      placement = _ref21.placement,
+                      applicableFields = _ref21.applicableFields,
+                      meta = _ref21.meta;
                   placement = placement === 'end' ? Infinity // push
                   : placement;
 
                   var processField = function processField() {
-                    var _ref25 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-                        applicableField = _ref25.applicableField,
-                        targetLanguage = _ref25.targetLanguage,
-                        onByDefault = _ref25.onByDefault,
-                        metaApplicableField = _ref25.metaApplicableField;
+                    var _ref22 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+                        applicableField = _ref22.applicableField,
+                        targetLanguage = _ref22.targetLanguage,
+                        onByDefault = _ref22.onByDefault,
+                        metaApplicableField = _ref22.metaApplicableField;
 
                     var plugin = pluginsForWork.getPluginObject(pluginName) || {};
                     var applicableFieldLang = metadata.getFieldLang(applicableField);
@@ -18400,8 +18409,8 @@
               escapeColumnIndexes = fieldInfo.map(function (fi) {
                 return fi.escapeColumn;
               });
-              fieldLangs = fieldInfo.map(function (_ref26) {
-                var fieldLang = _ref26.fieldLang;
+              fieldLangs = fieldInfo.map(function (_ref23) {
+                var fieldLang = _ref23.fieldLang;
                 return fieldLang !== preferredLocale ? fieldLang : null;
               });
               fieldValueAliasMap = getFieldValueAliasMap({
@@ -18536,10 +18545,10 @@
                     var fvEntries = Object.entries(rawFieldValueAliasMap);
 
                     if (Array.isArray(fvEntries[0][1])) {
-                      fvEntries.some(function (_ref27) {
-                        var _ref28 = _slicedToArray(_ref27, 2),
-                            key = _ref28[0],
-                            arr = _ref28[1];
+                      fvEntries.some(function (_ref24) {
+                        var _ref25 = _slicedToArray(_ref24, 2),
+                            key = _ref25[0],
+                            arr = _ref25[1];
 
                         if (arr.includes(v)) {
                           dealiased = key;
@@ -18549,10 +18558,10 @@
                         return false;
                       });
                     } else {
-                      fvEntries.some(function (_ref29) {
-                        var _ref30 = _slicedToArray(_ref29, 2),
-                            key = _ref30[0],
-                            obj = _ref30[1];
+                      fvEntries.some(function (_ref26) {
+                        var _ref27 = _slicedToArray(_ref26, 2),
+                            key = _ref27[0],
+                            obj = _ref27[1];
 
                         var arr = Object.values(obj);
 
@@ -18569,7 +18578,7 @@
                   val = dealiased === undefined ? v : dealiased;
                 }
 
-                return fieldSchemaTypes[i] === 'integer' ? parseInt(val) : val;
+                return fieldSchemaTypes[i] === 'integer' ? Number.parseInt(val) : val;
               };
 
               unlocalizedWorkName = fileData.name;
@@ -18593,8 +18602,8 @@
                 var dbName = _this2.namespace + '-textbrowser-cache-data';
                 var req = indexedDB.open(dbName);
 
-                req.onsuccess = function (_ref31) {
-                  var db = _ref31.target.result;
+                req.onsuccess = function (_ref28) {
+                  var db = _ref28.target.result;
                   var storeName = 'files-to-cache-' + unlocalizedWorkName;
                   var trans = db.transaction(storeName);
                   var store = trans.objectStore(storeName); // Get among browse field sets by index number within URL params
@@ -18605,8 +18614,8 @@
 
                   var r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
 
-                  r.onsuccess = function (_ref32) {
-                    var result = _ref32.target.result;
+                  r.onsuccess = function (_ref29) {
+                    var result = _ref29.target.result;
                     var converted = result.map(function (r) {
                       return r.value;
                     });
@@ -18637,8 +18646,8 @@
               return JsonRefs.resolveRefs(fileData.file);
 
             case 75:
-              _ref33 = _context3.sent;
-              tableData = _ref33.resolved.data;
+              _yield$JsonRefs$resol = _context3.sent;
+              tableData = _yield$JsonRefs$resol.resolved.data;
               runPresort({
                 presort: presort,
                 tableData: tableData,
@@ -18670,9 +18679,9 @@
 
             case 87:
               if (!usingServerData && pluginsForWork) {
-                fieldInfo.forEach(function (_ref34, j) {
-                  var plugin = _ref34.plugin,
-                      placement = _ref34.placement;
+                fieldInfo.forEach(function (_ref30, j) {
+                  var plugin = _ref30.plugin,
+                      placement = _ref30.placement;
 
                   if (!plugin) {
                     return;
@@ -18684,19 +18693,19 @@
                     );
                   });
                 });
-                fieldInfo.forEach(function (_ref35, j) {
-                  var plugin = _ref35.plugin,
-                      applicableField = _ref35.applicableField,
-                      fieldLang = _ref35.fieldLang,
-                      meta = _ref35.meta,
-                      metaApplicableField = _ref35.metaApplicableField;
+                fieldInfo.forEach(function (_ref31, j) {
+                  var plugin = _ref31.plugin,
+                      applicableField = _ref31.applicableField,
+                      fieldLang = _ref31.fieldLang,
+                      meta = _ref31.meta,
+                      metaApplicableField = _ref31.metaApplicableField;
 
                   if (!plugin) {
                     return;
                   }
 
-                  var applicableFieldIdx = fieldInfo.findIndex(function (_ref36) {
-                    var field = _ref36.field;
+                  var applicableFieldIdx = fieldInfo.findIndex(function (_ref32) {
+                    var field = _ref32.field;
                     return field === applicableField;
                   }); // Now safe to pass (and set) `j` value as tr array expanded
 
@@ -18830,9 +18839,7 @@
 
 
   function _prepareForServiceWorker() {
-    _prepareForServiceWorker = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee6() {
+    _prepareForServiceWorker = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
       var persistent, errorType;
       return regeneratorRuntime.wrap(function _callee6$(_context6) {
         while (1) {
@@ -18907,9 +18914,7 @@
   }
 
   function _requestPermissions() {
-    _requestPermissions = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee9(langs, l) {
+    _requestPermissions = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(langs, l) {
       var _this3 = this;
 
       return regeneratorRuntime.wrap(function _callee9$(_context9) {
@@ -18924,12 +18929,8 @@
                 //    of seeing how it goes. But for users who come directly to
                 //    the work or results page, the slow performance will be
                 //    unexplained so probably better to force a decision.
-                var ok =
-                /*#__PURE__*/
-                function () {
-                  var _ref5 = _asyncToGenerator(
-                  /*#__PURE__*/
-                  regeneratorRuntime.mark(function _callee7() {
+                var ok = /*#__PURE__*/function () {
+                  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
                     var permissionStatus;
                     return regeneratorRuntime.wrap(function _callee7$(_context7) {
                       while (1) {
@@ -18951,7 +18952,7 @@
                   }));
 
                   return function ok() {
-                    return _ref5.apply(this, arguments);
+                    return _ref3.apply(this, arguments);
                   };
                 }();
 
@@ -18963,18 +18964,14 @@
                   browserNotGrantingPersistenceAlert.close();
                 };
 
-                var close =
-                /*#__PURE__*/
-                function () {
-                  var _ref6 = _asyncToGenerator(
-                  /*#__PURE__*/
-                  regeneratorRuntime.mark(function _callee8() {
+                var close = /*#__PURE__*/function () {
+                  var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
                     var rememberRefusal;
                     return regeneratorRuntime.wrap(function _callee8$(_context8) {
                       while (1) {
                         switch (_context8.prev = _context8.next) {
                           case 0:
-                            rememberRefusal = function _ref7() {
+                            rememberRefusal = function _rememberRefusal() {
                               // Todo: We could go forward with worker, caching files, and
                               //    indexedDB regardless of permissions, but this way
                               //    we can continue to gauge performance differences for now
@@ -19046,7 +19043,7 @@
                   }));
 
                   return function close() {
-                    return _ref6.apply(this, arguments);
+                    return _ref4.apply(this, arguments);
                   };
                 }();
 
@@ -19075,9 +19072,7 @@
     return _requestPermissions.apply(this, arguments);
   }
 
-  var TextBrowser =
-  /*#__PURE__*/
-  function () {
+  var TextBrowser = /*#__PURE__*/function () {
     function TextBrowser(options) {
       _classCallCheck(this, TextBrowser);
 
@@ -19112,9 +19107,7 @@
     _createClass(TextBrowser, [{
       key: "init",
       value: function () {
-        var _init = _asyncToGenerator(
-        /*#__PURE__*/
-        regeneratorRuntime.mark(function _callee() {
+        var _init = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
           return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
               switch (_context.prev = _context.next) {
@@ -19143,12 +19136,10 @@
     }, {
       key: "displayLanguages",
       value: function () {
-        var _displayLanguages = _asyncToGenerator(
-        /*#__PURE__*/
-        regeneratorRuntime.mark(function _callee2() {
+        var _displayLanguages = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
           var _this = this;
 
-          var _ref, _ref2, langData, siteData, p;
+          var _yield$getJSON, _yield$getJSON2, langData, siteData, p;
 
           return regeneratorRuntime.wrap(function _callee2$(_context2) {
             while (1) {
@@ -19159,10 +19150,10 @@
                   return getJSON([this.languages, this.site]);
 
                 case 3:
-                  _ref = _context2.sent;
-                  _ref2 = _slicedToArray(_ref, 2);
-                  langData = _ref2[0];
-                  siteData = _ref2[1];
+                  _yield$getJSON = _context2.sent;
+                  _yield$getJSON2 = _slicedToArray(_yield$getJSON, 2);
+                  langData = _yield$getJSON2[0];
+                  siteData = _yield$getJSON2[1];
                   this.langData = langData;
                   this.siteData = siteData;
                   p = this.paramChange(); // INIT/ADD EVENTS
@@ -19197,7 +19188,7 @@
       key: "getWorkData",
       value: function getWorkData$1(opts) {
         try {
-          return getWorkData.call(this, _objectSpread2({}, opts, {
+          return getWorkData.call(this, _objectSpread2(_objectSpread2({}, opts), {}, {
             files: this.files,
             allowPlugins: this.allowPlugins
           }));
@@ -19222,23 +19213,21 @@
     }, {
       key: "getFieldNameAndValueAliases",
       value: function getFieldNameAndValueAliases$1(args) {
-        return getFieldNameAndValueAliases(_objectSpread2({}, args, {
+        return getFieldNameAndValueAliases(_objectSpread2(_objectSpread2({}, args), {}, {
           lang: this.lang
         }));
       }
     }, {
       key: "getBrowseFieldData",
       value: function getBrowseFieldData$1(args) {
-        return getBrowseFieldData(_objectSpread2({}, args, {
+        return getBrowseFieldData(_objectSpread2(_objectSpread2({}, args), {}, {
           lang: this.lang
         }));
       }
     }, {
       key: "paramChange",
       value: function () {
-        var _paramChange = _asyncToGenerator(
-        /*#__PURE__*/
-        regeneratorRuntime.mark(function _callee5() {
+        var _paramChange = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
           var _this2 = this;
 
           var $p, followParams, languages, _languages$getLanguag, lang, langs, languageParam, fallbackLanguages, _lang, preferredLocale, direction, getSiteI18n, siteI18n, refusedIndexedDB, persistent, r, result, register, worker, hourly, respondToStateOfWorker, localeCallback;
@@ -19261,6 +19250,7 @@
                       hash: true,
                       empty: true
                     }), document.title, url); // Get and set new state within URL
+                    // eslint-disable-next-line node/callback-return
 
                     cb();
                     location.hash = '#' + $p.toString();
@@ -19321,12 +19311,8 @@
                   r = _context5.sent;
                   result = $p.get('result');
 
-                  register =
-                  /*#__PURE__*/
-                  function () {
-                    var _ref3 = _asyncToGenerator(
-                    /*#__PURE__*/
-                    regeneratorRuntime.mark(function _callee3() {
+                  register = /*#__PURE__*/function () {
+                    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
                       var tryRegistrationOrPersistence;
                       return regeneratorRuntime.wrap(function _callee3$(_context3) {
                         while (1) {
@@ -19382,7 +19368,7 @@
                     }));
 
                     return function register() {
-                      return _ref3.apply(this, arguments);
+                      return _ref.apply(this, arguments);
                     };
                   }();
                   /*
@@ -19441,12 +19427,8 @@
                   }, hourly);
                   console.log('worker.state', worker.state);
 
-                  respondToStateOfWorker =
-                  /*#__PURE__*/
-                  function () {
-                    var _ref4 = _asyncToGenerator(
-                    /*#__PURE__*/
-                    regeneratorRuntime.mark(function _callee4() {
+                  respondToStateOfWorker = /*#__PURE__*/function () {
+                    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
                       return regeneratorRuntime.wrap(function _callee4$(_context4) {
                         while (1) {
                           switch (_context4.prev = _context4.next) {
@@ -19473,7 +19455,7 @@
                     }));
 
                     return function respondToStateOfWorker() {
-                      return _ref4.apply(this, arguments);
+                      return _ref2.apply(this, arguments);
                     };
                   }();
 
@@ -19619,9 +19601,9 @@
                     resultsDisplay: function resultsDisplay(opts) {
                       var noIndexedDB = refusedIndexedDB || !navigator.serviceWorker.controller; // No worker from which IndexedDB is available;
 
-                      return _this2.resultsDisplayClient(_objectSpread2({
+                      return _this2.resultsDisplayClient(_objectSpread2(_objectSpread2({
                         langData: _this2.langData
-                      }, opts, {
+                      }, opts), {}, {
                         noIndexedDB: noIndexedDB,
                         dynamicBasePath: _this2.dynamicBasePath,
                         files: _this2.files,

@@ -15,14 +15,14 @@ function cloneJSON (obj) {
 let appBase = '../';
 
 if (typeof exports !== 'undefined') {
-  /* eslint-disable global-require */
+  /* eslint-disable node/global-require */
   Ajv = require('ajv');
   JsonRefs = require('json-refs');
   jsonpatch = require('fast-json-patch');
   getJSON = require('simple-get-json');
   assert = require('assert');
   path = require('path');
-  /* eslint-enable global-require */
+  /* eslint-enable node/global-require */
 } else {
   ({assert} = chai);
   path = {

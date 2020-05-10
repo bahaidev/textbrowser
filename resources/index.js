@@ -271,6 +271,7 @@ class TextBrowser {
       const url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
       history.replaceState(formSerialize(form, {hash: true, empty: true}), document.title, url);
       // Get and set new state within URL
+      // eslint-disable-next-line node/callback-return
       cb();
       location.hash = '#' + $p.toString();
     };

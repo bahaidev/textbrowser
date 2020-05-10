@@ -207,7 +207,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       return tr[idx];
     });
 
-    // Todo: Use schema to determine field type and use `parseInt`
+    // Todo: Use schema to determine field type and use `Number.parseInt`
     //   on other value instead of `String` conversions
     if (!foundState.start) {
       if (startsRaw.some((part, i) => {
@@ -253,7 +253,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       return interlin && interlin.split(/\s*,\s*/).map((col) =>
       // Todo: Avoid this when known to be integer or if string, though allow
       //    string to be treated as number if config is set.
-        parseInt(col) - 1
+        Number.parseInt(col) - 1
       ).filter((n) => !Number.isNaN(n));
     });
     return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
@@ -667,7 +667,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       }
       val = dealiased === undefined ? v : dealiased;
     }
-    return fieldSchemaTypes[i] === 'integer' ? parseInt(val) : val;
+    return fieldSchemaTypes[i] === 'integer' ? Number.parseInt(val) : val;
   };
 
   const unlocalizedWorkName = fileData.name;

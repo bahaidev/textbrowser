@@ -93,7 +93,7 @@ setGlobalVars(null, {
 if (userParams.nodeActivate) {
   global.fetch = fetch;
   // const activateCallback = require('../resources/activateCallback.js');
-  const activateCallback = require('../dist/activateCallback-umd.js'); // eslint-disable-line global-require
+  const activateCallback = require('../dist/activateCallback-umd.js'); // eslint-disable-line node/global-require
   (async () => {
     await activateCallback(userParamsWithDefaults);
     console.log('Activated');

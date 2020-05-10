@@ -746,7 +746,7 @@ var workDisplay = {
       type: 'button',
       $on: {
         click() {
-          const url = serializeParamsAsURL(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
+          const url = serializeParamsAsURL(_objectSpread2(_objectSpread2({}, getDataForSerializingParamsAsURL()), {}, {
             type: 'randomResult'
           }));
           jamilih.$('#randomURL').value = url;
@@ -869,7 +869,7 @@ var workDisplay = {
                 // Todo: option for additional browse field groups (startEnd2, etc.)
                 // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
                 // Todo: Make Chrome NativeExt add-on to manipulate its search engines (to read a bookmarks file from Firefox properly, i.e., including keywords) https://www.makeuseof.com/answers/export-google-chrome-search-engines-address-bar/
-                const paramsCopy = paramsSetter(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
+                const paramsCopy = paramsSetter(_objectSpread2(_objectSpread2({}, getDataForSerializingParamsAsURL()), {}, {
                   fieldAliasOrNames,
                   workName: work,
                   // Delete work of current page
@@ -1064,7 +1064,7 @@ var workDisplay = {
     const serializeParamsAsURLWithData = ({
       type
     }) => {
-      return serializeParamsAsURL(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
+      return serializeParamsAsURL(_objectSpread2(_objectSpread2({}, getDataForSerializingParamsAsURL()), {}, {
         type
       }));
     };
@@ -1184,7 +1184,7 @@ var workDisplay = {
       $on: {
         async click(e) {
           e.preventDefault();
-          const paramsCopy = paramsSetter(_objectSpread2({}, getDataForSerializingParamsAsURL(), {
+          const paramsCopy = paramsSetter(_objectSpread2(_objectSpread2({}, getDataForSerializingParamsAsURL()), {}, {
             workName: work,
             // Delete work of current page
             type: 'startEndResult'
@@ -1505,7 +1505,7 @@ body {
       return el;
     };
 
-    const addAtts = ([el, atts], newAtts) => [el, _objectSpread2({}, atts, {}, newAtts)];
+    const addAtts = ([el, atts], newAtts) => [el, _objectSpread2(_objectSpread2({}, atts), newAtts)];
 
     const foundState = {
       start: false,
@@ -1688,7 +1688,7 @@ class Dialog {
     locale = {},
     localeObject = {}
   }) {
-    this.localeStrings = _objectSpread2({}, localeStrings[defaultLocale], {}, localeStrings[locale], {}, localeObject);
+    this.localeStrings = _objectSpread2(_objectSpread2(_objectSpread2({}, localeStrings[defaultLocale]), localeStrings[locale]), localeObject);
   }
 
   makeDialog({
@@ -1837,7 +1837,7 @@ class Dialog {
       /* const dialog = */
 
 
-      this.makeSubmitDialog(_objectSpread2({}, submitArgs, {
+      this.makeSubmitDialog(_objectSpread2(_objectSpread2({}, submitArgs), {}, {
         submit,
 
         cancel() {
@@ -2113,7 +2113,7 @@ class Languages {
     meta,
     metaApplicableField
   }) {
-    return lf(['plugins', pluginName, 'fieldname'], _objectSpread2({}, meta, {}, metaApplicableField, {
+    return lf(['plugins', pluginName, 'fieldname'], _objectSpread2(_objectSpread2(_objectSpread2({}, meta), metaApplicableField), {}, {
       applicableField: applicableFieldI18N,
       targetLanguage: targetLanguage ? this.getLanguageFromCode(targetLanguage) : ''
     }));
@@ -2446,6 +2446,7 @@ class PluginsForWork {
           }); // eslint-disable-line standard/no-callback-literal
         });
       } else {
+        // eslint-disable-next-line node/callback-return
         cb({
           applicableField,
           targetLanguage,
@@ -2485,10 +2486,10 @@ class PluginsForWork {
 let path, babelRegister;
 
 if (typeof process !== 'undefined') {
-  /* eslint-disable global-require */
+  /* eslint-disable node/global-require */
   path = require('path');
   babelRegister = require('@babel/register');
-  /* eslint-enable global-require */
+  /* eslint-enable node/global-require */
 }
 const getFilePaths = function getFilePaths(filesObj, fileGroup, fileData) {
   const baseDir = (filesObj.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
@@ -2624,14 +2625,15 @@ const getWorkData = async function ({
         presets: ['@babel/env']
       });
       return Promise.resolve().then(() => {
-        return require(pluginPath); // eslint-disable-line global-require, import/no-dynamic-require
+        return require(pluginPath); // eslint-disable-line node/global-require, import/no-dynamic-require
       }).catch(err => {
         // E.g., with tooltips plugin
         console.log('err', err);
       });
-    }
+    } // eslint-disable-next-line node/no-unsupported-features/es-syntax
 
-    return Promise.resolve().then(() => _interopRequireWildcard(require(`${pluginPath}`)));
+
+    return Promise.resolve(`${pluginPath}`).then(s => _interopRequireWildcard(require(s)));
   })) : null]);
   const pluginsForWork = new PluginsForWork({
     pluginsInWork,
@@ -2883,7 +2885,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
       }
 
       return tr[idx];
-    }); // Todo: Use schema to determine field type and use `parseInt`
+    }); // Todo: Use schema to determine field type and use `Number.parseInt`
     //   on other value instead of `String` conversions
 
     if (!foundState.start) {
@@ -2936,7 +2938,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
       const interlin = $p.get('interlin' + (cfi + 1), true);
       return interlin && interlin.split(/\s*,\s*/).map(col => // Todo: Avoid this when known to be integer or if string, though allow
       //    string to be treated as number if config is set.
-      parseInt(col) - 1).filter(n => !Number.isNaN(n));
+      Number.parseInt(col) - 1).filter(n => !Number.isNaN(n));
     });
     return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
   };
@@ -3430,7 +3432,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
       val = dealiased === undefined ? v : dealiased;
     }
 
-    return fieldSchemaTypes[i] === 'integer' ? parseInt(val) : val;
+    return fieldSchemaTypes[i] === 'integer' ? Number.parseInt(val) : val;
   };
 
   const unlocalizedWorkName = fileData.name;
@@ -3772,13 +3774,13 @@ const port = 'port' in userParams ? userParams.port : 8000;
 const domain = userParams.domain || `localhost`;
 const basePath = userParams.basePath || `http://${domain}${port ? ':' + port : ''}/`;
 
-const userParamsWithDefaults = _objectSpread2({}, setServiceWorkerDefaults({}, {
+const userParamsWithDefaults = _objectSpread2(_objectSpread2(_objectSpread2({}, setServiceWorkerDefaults({}, {
   namespace: 'textbrowser',
   files: `${basePath}files.json`,
   // `files` must be absolute path for node-fetch
   languages: `${basePath}node_modules/textbrowser/appdata/languages.json`,
   serviceWorkerPath: `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON || '')}`
-}), {}, userParams, {
+})), userParams), {}, {
   log(...args) {
     console.log(...args);
   },
@@ -3813,7 +3815,7 @@ setGlobalVars(null, {
 if (userParams.nodeActivate) {
   global.fetch = fetch$1; // const activateCallback = require('../resources/activateCallback.js');
 
-  const activateCallback = require('../dist/activateCallback-umd.js'); // eslint-disable-line global-require
+  const activateCallback = require('../dist/activateCallback-umd.js'); // eslint-disable-line node/global-require
 
 
   (async () => {
@@ -3892,14 +3894,14 @@ const srv = http.createServer(async (req, res) => {
       res.writeHead(200, {
         'Content-Type': isHTML ? 'text/html;charset=utf8' : 'application/json;charset=utf8'
       });
-      resultsArgs = _objectSpread2({}, resultsArgs, {
+      resultsArgs = _objectSpread2(_objectSpread2({}, resultsArgs), {}, {
         skipIndexedDB: false,
         serverOutput,
         langData,
         prefI18n: $p.get('prefI18n', true)
       }); // Todo: Move sw-sample.js to bahaiwritings and test
 
-      const result = await resultsDisplayServer.call(_objectSpread2({}, userParamsWithDefaults, {
+      const result = await resultsDisplayServer.call(_objectSpread2(_objectSpread2({}, userParamsWithDefaults), {}, {
         lang,
         langs,
         fallbackLanguages

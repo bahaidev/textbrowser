@@ -74,6 +74,7 @@ export class PluginsForWork {
           cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line standard/no-callback-literal
         });
       } else {
+        // eslint-disable-next-line node/callback-return
         cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line standard/no-callback-literal
       }
     });

@@ -1,4 +1,4 @@
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 // import nodeGlobals from 'rollup-plugin-node-globals';
@@ -61,7 +61,9 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
         }]
       }),
       json(),
-      babel(),
+      babel({
+        babelHelpers: 'bundled'
+      }),
       // nodeGlobals(),
       resolve({
         mainFields: ['module']
@@ -140,6 +142,7 @@ export default [
       }),
       json(),
       babel({
+        babelHelpers: 'bundled',
         plugins: ['dynamic-import-node'],
         presets: [
           ['@babel/preset-env', {
