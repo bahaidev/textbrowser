@@ -1,6 +1,0 @@
-{
-    "presets": [
-        ["@babel/preset-env"]
-    ],
-    "plugins": ["@babel/syntax-dynamic-import", "@babel/proposal-object-rest-spread"]
-}

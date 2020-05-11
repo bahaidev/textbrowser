@@ -127,14 +127,14 @@ export const resultsDisplayServer = async function resultsDisplayServer (args) {
     //         (as should also have option there to get JSON, Jamilih, etc.
     //         output)
   switch (args.serverOutput) {
-  case 'json': default:
-    return templateArgs.tableData;
   case 'jamilih':
     return Templates.resultsDisplayServerOrClient.main(templateArgs);
   case 'html': {
     const jamilih = Templates.resultsDisplayServerOrClient.main(templateArgs);
     return jml.toHTML(...jamilih);
   }
+  case 'json': default:
+    return templateArgs.tableData;
   }
 };
 

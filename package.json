@@ -1,43 +1,60 @@
 {
   "name": "textbrowser",
-  "version": "0.34.0",
+  "version": "0.35.0",
   "description": "Multilinear text browser",
   "main": "dist/index-umd.min.js",
+  "module": "resources/index.js",
   "bin": {
     "textbrowser": "./server/main-cjs.js"
   },
-  "module": "resources/index.js",
   "scripts": {
-    "node": "npm run eslint && npm run rollup && mocha test/textbrowserTests.js",
+    "server": "./server/main-cjs.js --allowPlugins --namespace=test",
+    "start": "static -p 8081",
     "rollup": "rollup -c",
     "eslint": "eslint --ext=js,md,html .",
-    "test": "npm run eslint && npm run rollup && open-cli http://127.0.0.1:8081/test/ && npm start",
-    "start": "static -p 8081"
+    "node": "npm run eslint && npm run rollup && mocha test/textbrowserTests.js",
+    "open-test": "open-cli http://127.0.0.1:8081/test/",
+    "start-open-test": "run-p start open-test",
+    "test": "npm run eslint && npm run rollup && npm run start-open-test"
   },
   "browserslist": [
     "cover 100%"
   ],
+  "bugs": {
+    "url": "https://github.com/bahaidev/textbrowser/issues"
+  },
+  "homepage": "https://github.com/bahaidev/textbrowser#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bahaidev/textbrowser.git"
   },
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "author": "Brett Zamir",
+  "contributors": [],
+  "license": "MIT",
+  "keywords": [
+    "text"
+  ],
   "dependencies": {
     "@babel/core": "^7.9.6",
     "@babel/register": "^7.9.0",
     "command-line-args": "^5.1.1",
     "dialog-polyfill": "^0.5.1",
     "dom-parser": "^0.1.6",
-    "form-serialization": "^0.10.0",
-    "imf": "4.1.1",
+    "form-serialization": "^0.11.0",
+    "imf": "4.1.2",
     "indexeddbshim": "^6.1.0",
-    "jamilih": "0.52.2",
+    "jamilih": "0.53.2",
+    "jsdom": "^16.2.2",
     "json-refs": "git+https://github.com/brettz9/json-refs.git#browser",
     "load-stylesheets": "0.9.0",
     "node-fetch": "^2.6.0",
     "node-serviceworker": "^0.3.0",
     "node-static": "^0.7.11",
     "rtl-detect": "^1.0.2",
-    "simple-get-json": "6.0.0",
+    "simple-get-json": "8.0.3",
     "url-search-params-polyfill": "^8.1.0"
   },
   "peerDependencies": {
@@ -57,14 +74,14 @@
     "chai": "^4.2.0",
     "core-js-bundle": "^3.6.5",
     "eslint": "^7.0.0",
-    "eslint-config-ash-nazg": "^21.0.0",
+    "eslint-config-ash-nazg": "^22.1.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-array-func": "^3.1.5",
-    "eslint-plugin-compat": "^3.5.1",
+    "eslint-plugin-compat": "^3.6.0",
     "eslint-plugin-eslint-comments": "^3.1.2",
     "eslint-plugin-html": "^6.0.2",
     "eslint-plugin-import": "^2.20.2",
-    "eslint-plugin-jsdoc": "^25.0.1",
+    "eslint-plugin-jsdoc": "^25.4.1",
     "eslint-plugin-markdown": "^1.0.2",
     "eslint-plugin-no-unsanitized": "^3.1.1",
     "eslint-plugin-no-use-extend-native": "^0.5.0",
@@ -72,32 +89,20 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-sonarjs": "^0.5.0",
     "eslint-plugin-standard": "^4.0.1",
-    "eslint-plugin-unicorn": "^19.0.1",
+    "eslint-plugin-unicorn": "^20.0.0",
     "fast-json-patch": "2.2.1",
     "json-metaschema": "1.3.0",
     "mocha": "^7.1.2",
+    "npm-run-all": "^4.1.5",
     "open-cli": "^6.0.1",
     "regenerator-runtime": "^0.13.5",
     "remark-lint": "7.0.0",
-    "rollup": "2.8.2",
+    "rollup": "2.10.2",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-json": "^4.0.0",
-    "rollup-plugin-postprocess": "^1.0.2",
+    "rollup-plugin-postprocess": "https://github.com/brettz9/rollup-plugin-postprocess#update",
     "rollup-plugin-re": "^1.0.7",
     "rollup-plugin-terser": "^5.3.0",
-    "typescript": "^3.8.3"
-  },
-  "engines": {
-    "node": ">=10.0.0"
-  },
-  "author": "Brett Zamir",
-  "contributors": [],
-  "license": "MIT",
-  "keywords": [
-    "text"
-  ],
-  "bugs": {
-    "url": "https://github.com/bahaidev/textbrowser/issues"
-  },
-  "homepage": "https://github.com/bahaidev/textbrowser#readme"
+    "typescript": "^3.9.2"
+  }
 }

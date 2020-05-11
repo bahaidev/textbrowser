@@ -4,7 +4,7 @@
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 require('url-search-params-polyfill');
-var getJSON = _interopDefault(require('simple-get-json'));
+var simpleGetJson = require('simple-get-json');
 var rtlDetect = require('rtl-detect');
 var jamilih = require('jamilih');
 var formSerialization = require('form-serialization');
@@ -2514,7 +2514,7 @@ const getWorkData = async function ({
   languages,
   preferredLocale
 }) {
-  const filesObj = await getJSON(files);
+  const filesObj = await simpleGetJson.getJSON(files);
 
   const localeFromFileData = lan => filesObj['localization-strings'][lan];
 
@@ -2774,10 +2774,6 @@ const resultsDisplayServer = async function resultsDisplayServer(args) {
   //         output)
 
   switch (args.serverOutput) {
-    case 'json':
-    default:
-      return templateArgs.tableData;
-
     case 'jamilih':
       return Templates.resultsDisplayServerOrClient.main(templateArgs);
 
@@ -2786,6 +2782,10 @@ const resultsDisplayServer = async function resultsDisplayServer(args) {
         const jamilih$1 = Templates.resultsDisplayServerOrClient.main(templateArgs);
         return jamilih.jml.toHTML(...jamilih$1);
       }
+
+    case 'json':
+    default:
+      return templateArgs.tableData;
   }
 };
 const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClient({
@@ -3836,7 +3836,7 @@ const fileServer = new statik.Server(); // Pass path; otherwise uses current dir
 let langData, languagesInstance;
 
 (async () => {
-  langData = await getJSON(userParamsWithDefaults.languages);
+  langData = await simpleGetJson.getJSON(userParamsWithDefaults.languages);
   languagesInstance = new Languages({
     langData
   });

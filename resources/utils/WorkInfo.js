@@ -1,4 +1,4 @@
-import getJSON from 'simple-get-json';
+import {getJSON} from 'simple-get-json';
 import IMF from 'imf';
 import {getMetaProp, getMetadata, Metadata} from './Metadata.js';
 import {PluginsForWork, escapePlugin} from './Plugin.js';

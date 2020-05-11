@@ -1,0 +1,13 @@
+{
+    "presets": [
+        ["@babel/preset-env", {
+          "targets": {
+            "node": "10"
+          }
+        }]
+    ],
+    "plugins": [
+      "@babel/syntax-dynamic-import",
+      "@babel/proposal-object-rest-spread"
+    ]
+}

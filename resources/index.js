@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import getJSON from 'simple-get-json';
+import {getJSON} from 'simple-get-json';
 import IMF from 'imf';
 import loadStylesheets from 'load-stylesheets';
 import {serialize as formSerialize} from 'form-serialization';
@@ -122,6 +122,7 @@ async function requestPermissions (langs, l) {
           return;
         }
       } catch (err) {
+        console.log('err', err);
         Templates.permissions.errorRegistering(
           escapeHTML(err && err.message)
         );
@@ -219,6 +220,7 @@ class TextBrowser {
 
       return p;
     } catch (err) {
+      console.log('err', err);
       dialogs.alert(err);
     }
   }
@@ -231,6 +233,7 @@ class TextBrowser {
         allowPlugins: this.allowPlugins
       });
     } catch (err) {
+      console.log('err', err);
       dialogs.alert('catch:' + err);
     }
   }
@@ -405,6 +408,7 @@ class TextBrowser {
             logger: Templates.permissions
           });
         } catch (err) {
+          console.log('err', err);
           // Todo: We could auto-reload if we tracked whether this
           //   error occurs immediately upon attempting registration or
           //   not, but probably would occur after some time

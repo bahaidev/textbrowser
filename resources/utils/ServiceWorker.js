@@ -255,6 +255,7 @@ export const registerServiceWorker = async ({
       serviceWorkerPath
     );
   } catch (err) {
+    console.log('serviceWorkerPath', serviceWorkerPath);
     await dialogs.alert(`
 There was an error during registration (for offline ability).
 Please refresh the page if you wish to reattempt.

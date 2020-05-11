@@ -40,6 +40,7 @@ module.exports = {
       'Symbol.iterator',
       'URL',
       'URLSearchParams',
+      'window',
       'XMLSerializer'
     ]
   },

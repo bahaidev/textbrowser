@@ -19,7 +19,7 @@ if (typeof exports !== 'undefined') {
   Ajv = require('ajv');
   JsonRefs = require('json-refs');
   jsonpatch = require('fast-json-patch');
-  getJSON = require('simple-get-json');
+  ({getJSON} = require('simple-get-json'));
   assert = require('assert');
   path = require('path');
   /* eslint-enable node/global-require */

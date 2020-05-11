@@ -16,7 +16,7 @@ const importerReplace = {
   test: 'return import(',
   replace: 'return window.importer('
 };
-const importerRevert = [/return window.importer\(/, 'return import('];
+const importerRevert = [/window.importer\(/, 'import('];
 
 // Todo: Monitor https://github.com/rollup/rollup/issues/1978
 //        to suppress (known) circular dependency warnings
@@ -35,6 +35,11 @@ const importerRevert = [/return window.importer\(/, 'return import('];
 function getRollupObject ({minifying, format = 'umd'} = {}) {
   const nonMinified = {
     input: 'resources/index.js',
+    external: [
+      // Not used in browser
+      'path', 'stream', 'http', 'url', 'https', 'zlib',
+      'child_process', 'fs'
+    ],
     output: {
       format,
       file: `dist/index-${format}${minifying ? '.min' : ''}.js`,
@@ -82,8 +87,8 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
 // console.log('typeof', typeof getRollupObject); // Keep for ESLint when commenting out below
 export default [
   /**/
-  getRollupObject(),
-  getRollupObject({minifying: true}),
+  getRollupObject({minifying: false, format: 'umd'}),
+  getRollupObject({minifying: true, format: 'umd'}),
   getRollupObject({minifying: false, format: 'es'}),
   getRollupObject({minifying: true, format: 'es'}),
   {

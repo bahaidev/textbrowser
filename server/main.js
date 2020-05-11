@@ -1,6 +1,6 @@
 /* eslint-env node */
 import 'url-search-params-polyfill';
-import getJSON from 'simple-get-json';
+import {getJSON} from 'simple-get-json';
 import IntlURLSearchParams from '../resources/utils/IntlURLSearchParams.js';
 import {resultsDisplayServer} from '../resources/resultsDisplay.js';
 import getIMFFallbackResults from '../resources/utils/getIMFFallbackResults.js';

@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import getJSON from 'simple-get-json';
+import {getJSON} from 'simple-get-json';
 import IMF from 'imf';
 
 import {getMetaProp} from './utils/Metadata.js';
@@ -50,6 +50,7 @@ export default async function workSelect ({
     };
     Templates.workSelect({groups: dbs.groups, lf, getNextAlias, $p, followParams});
   } catch (err) {
+    console.log('Error', err);
     dialogs.alert(err);
   }
 }

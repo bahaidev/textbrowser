@@ -4,169 +4,158 @@
   (global = global || self, factory(global.WorkInfo = {}));
 }(this, (function (exports) { 'use strict';
 
-  function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-    try {
-      var info = gen[key](arg);
-      var value = info.value;
-    } catch (error) {
-      reject(error);
-      return;
-    }
-
-    if (info.done) {
-      resolve(value);
-    } else {
-      Promise.resolve(value).then(_next, _throw);
-    }
-  }
-
-  function _asyncToGenerator(fn) {
-    return function () {
-      var self = this,
-          args = arguments;
-      return new Promise(function (resolve, reject) {
-        var gen = fn.apply(self, args);
-
-        function _next(value) {
-          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-        }
-
-        function _throw(err) {
-          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-        }
-
-        _next(undefined);
-      });
-    };
-  }
-
   function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
   }
 
   function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) {
-      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-      return arr2;
-    }
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
   }
 
   function _iterableToArray(iter) {
-    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+    if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+  }
+
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+    return arr2;
   }
 
   function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance");
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
-  function getJSON(_x, _x2, _x3) {
-    return _getJSON.apply(this, arguments);
+  /* eslint-disable node/no-unsupported-features/es-syntax */
+
+  /**
+   * @callback getJSONCallback
+   * @param {string|string[]} jsonURL
+   * @param {SimpleJSONCallback} cb
+   * @param {SimpleJSONErrback} errBack
+   * @returns {Promise<JSON>}
+   */
+
+  /**
+   * @param {PlainObject} cfg
+   * @param {fetch} cfg.fetch
+   * @returns {getJSONCallback}
+   */
+  function _await(value, then, direct) {
+    if (direct) {
+      return then ? then(value) : value;
+    }
+
+    if (!value || !value.then) {
+      value = Promise.resolve(value);
+    }
+
+    return then ? value.then(then) : value;
   }
 
-  function _getJSON() {
-    _getJSON = _asyncToGenerator(
-    /*#__PURE__*/
-    regeneratorRuntime.mark(function _callee(jsonURL, cb, errBack) {
-      var arrResult, result;
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _context.prev = 0;
+  function _invoke(body, then) {
+    var result = body();
 
-              if (!Array.isArray(jsonURL)) {
-                _context.next = 7;
-                break;
-              }
+    if (result && result.then) {
+      return result.then(then);
+    }
 
-              _context.next = 4;
-              return Promise.all(jsonURL.map(function (url) {
+    return then(result);
+  }
+
+  function _catch(body, recover) {
+    try {
+      var result = body();
+    } catch (e) {
+      return recover(e);
+    }
+
+    if (result && result.then) {
+      return result.then(void 0, recover);
+    }
+
+    return result;
+  }
+
+  function buildGetJSONWithFetch() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref$fetch = _ref.fetch,
+        fetch = _ref$fetch === void 0 ? typeof window !== 'undefined' ? window.fetch : self.fetch : _ref$fetch;
+
+    /**
+    * @callback SimpleJSONCallback
+    * @param {JSON} json
+    * @returns {void}
+    */
+
+    /**
+    * @callback SimpleJSONErrback
+    * @param {Error} err
+    * @param {string|string[]} jsonURL
+    * @returns {void}
+    */
+
+    /**
+    * @type {getJSONCallback}
+    */
+    return function getJSON(jsonURL, cb, errBack) {
+      try {
+        var _exit2 = false;
+        return _catch(function () {
+          return _invoke(function () {
+            if (Array.isArray(jsonURL)) {
+              return _await(Promise.all(jsonURL.map(function (url) {
                 return getJSON(url);
-              }));
+              })), function (arrResult) {
+                if (cb) {
+                  // eslint-disable-next-line node/callback-return, standard/no-callback-literal, promise/prefer-await-to-callbacks
+                  cb.apply(void 0, _toConsumableArray(arrResult));
+                }
 
-            case 4:
-              arrResult = _context.sent;
-
-              if (cb) {
-                // eslint-disable-next-line callback-return, standard/no-callback-literal
-                cb.apply(void 0, _toConsumableArray(arrResult));
-              }
-
-              return _context.abrupt("return", arrResult);
-
-            case 7:
-              _context.next = 9;
-              return fetch(jsonURL).then(function (r) {
-                return r.json();
+                _exit2 = true;
+                return arrResult;
               });
+            }
+          }, function (_result) {
+            return _exit2 ? _result : _await(fetch(jsonURL), function (resp) {
+              return _await(resp.json(), function (result) {
+                return typeof cb === 'function' // eslint-disable-next-line promise/prefer-await-to-callbacks
+                ? cb(result) : result; // https://github.com/bcoe/c8/issues/135
 
-            case 9:
-              result = _context.sent;
-              return _context.abrupt("return", typeof cb === 'function' ? cb(result) : result);
-
-            case 13:
-              _context.prev = 13;
-              _context.t0 = _context["catch"](0);
-              _context.t0.message += " (File: ".concat(jsonURL, ")");
-
-              if (!errBack) {
-                _context.next = 18;
-                break;
-              }
-
-              return _context.abrupt("return", errBack(_context.t0, jsonURL));
-
-            case 18:
-              throw _context.t0;
-
-            case 19:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, null, [[0, 13]]);
-    }));
-    return _getJSON.apply(this, arguments);
-  }
-
-  /* eslint-env node */
-
-  if (typeof fetch === 'undefined') {
-    global.fetch = function (jsonURL) {
-      return new Promise(function (resolve, reject) {
-        // eslint-disable-next-line global-require
-        var XMLHttpRequest = require('local-xmlhttprequest')({
-          basePath: __dirname
-        }); // Don't change to an import as won't resolve for browser testing
-
-
-        var r = new XMLHttpRequest();
-        r.open('GET', jsonURL, true); // r.responseType = 'json';
-
-        r.onreadystatechange = function () {
-          if (r.readyState !== 4) {
-            return;
-          }
-
-          if (r.status === 200) {
-            // var json = r.json;
-            var response = r.responseText;
-            resolve({
-              json: function json() {
-                return JSON.parse(response);
-              }
+                /* c8 ignore next */
+              });
             });
-            return;
+          });
+        }, function (e) {
+          e.message += " (File: ".concat(jsonURL, ")");
+
+          if (errBack) {
+            return errBack(e, jsonURL);
           }
 
-          reject(new SyntaxError('Failed to fetch URL: ' + jsonURL + 'state: ' + r.readyState + '; status: ' + r.status));
-        };
+          throw e; // https://github.com/bcoe/c8/issues/135
 
-        r.send();
-      });
+          /* c8 ignore next */
+        });
+      } catch (e) {
+        return Promise.reject(e);
+      }
     };
   }
+
+  /* eslint-disable node/no-unsupported-features/es-syntax */
+  var getJSON = buildGetJSONWithFetch();
 
   /*
   Copyright (c) 2014, Yahoo! Inc. All rights reserved.
@@ -2438,11 +2427,11 @@
   }
 
   function getJSON$1(_x, _x2, _x3) {
-    return _getJSON$1.apply(this, arguments);
+    return _getJSON.apply(this, arguments);
   }
 
-  function _getJSON$1() {
-    _getJSON$1 = _asyncToGenerator$1(
+  function _getJSON() {
+    _getJSON = _asyncToGenerator$1(
     /*#__PURE__*/
     regeneratorRuntime.mark(function _callee(jsonURL, cb, errBack) {
       var arrResult, result;
@@ -2503,7 +2492,7 @@
         }
       }, _callee, this, [[0, 13]]);
     }));
-    return _getJSON$1.apply(this, arguments);
+    return _getJSON.apply(this, arguments);
   }
   /* eslint-env node */
 
@@ -3090,7 +3079,7 @@
               });
             }
             // eslint-disable-next-line node/no-unsupported-features/es-syntax
-            return window.importer(pluginPath);
+            return import(pluginPath);
           })
         )
         : null

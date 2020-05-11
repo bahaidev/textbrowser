@@ -1,11 +1,21 @@
 # textbrowser CHANGES
 
-## ?
+## 0.35.0
 
+- Build: Rename Babelrc to include "json" extension
+- Build: Change Babel preset-env targets to Node 10
+- Build: Make local server file executable for local testing
 - Linting (ESLint): As per latest ash-nazg
+- npm: Cleaner property ordering
+- npm: Make separate script for test opening and run in parallel
+  using `npm-run-all`
+- npm: Add `server` script
+- npm: Add `jsdom` as dep. now that removed from jamilih
 - npm: Switch to non-deprecated `@rollup/plugin-node-resolve`
 - npm: Update deps (`babel`-related, `indexeddbshim`,
-  `url-search-param-polyfill`), peerDeps (`core-js-bundle`), devDeps
+  `url-search-param-polyfill`, `simple-get-json` and `jamilih`)
+- npm: Updat peerDeps (`core-js-bundle`)
+- npm: Update devDeps.
 
 ## 0.34.0
 

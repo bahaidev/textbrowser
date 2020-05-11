@@ -1,6 +1,6 @@
 /* eslint-env browser */
 import IMF from 'imf';
-import getJSON from 'simple-get-json';
+import {getJSON} from 'simple-get-json';
 
 import {replaceHash, getParamsSetter, getSerializeParamsAsURL} from './utils/Params.js';
 import {getMetaProp} from './utils/Metadata.js';
@@ -50,7 +50,7 @@ export default async function workDisplay ({
 
     // Returns option element with localized option text (as Jamilih), with
     //   optional fallback direction
-    const le = (key, el, attToLocalize, atts, children) => {
+    const le = (key, el, attToLocalize, atts, children = []) => {
       atts[attToLocalize] = l({
         key,
         fallback ({message}) {
@@ -157,6 +157,7 @@ export default async function workDisplay ({
     });
     await _displayWork.call(this, {lf, metadataObj, ...args});
   } catch (err) {
+    console.log('err', err);
     dialogs.alert(err);
   }
 }
