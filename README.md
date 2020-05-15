@@ -736,6 +736,10 @@ it supports the following arguments:
 
 ## To-dos (Highest priority)
 
+1.  Switch from IMF i18n to [intl-dom](https://github.com/brettz9/intl-dom) and
+    as needed [i18nizeElement](https://github.com/brettz9/i18nizeElement);
+    should allow us to drop `regenerator-runtime` as it was baking in an
+    older version of `simple-get-json` requiring it.
 1.  Document and add screen-casts along with one for developers showing
     JSON format, metadata, and schemas); also use with shortcuts (including
     Bahá'í Library Online ones)
@@ -1018,8 +1022,6 @@ it supports the following arguments:
 
 ## To-dos (Medium Priority)
 
-1.  Switch from IMF i18n to [intl-dom](https://github.com/brettz9/intl-dom) and
-    as needed [i18nizeElement](https://github.com/brettz9/i18nizeElement)
 1.  Remove need for separate metadata
     files per
     <https://github.com/json-schema-org/json-schema-spec/issues/587#issuecomment-389726603>
