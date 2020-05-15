@@ -148,14 +148,7 @@ export default [
       json(),
       babel({
         babelHelpers: 'bundled',
-        plugins: ['dynamic-import-node'],
-        presets: [
-          ['@babel/preset-env', {
-            targets: {
-              node: '10.11.0'
-            }
-          }]
-        ]
+        plugins: ['dynamic-import-node']
       }),
       resolve({
         preferBuiltins: true,

@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## ?
+
+- Breaking change: Explicitly require Node 10.11.0+
+
 ## 0.35.0
 
 - Build: Rename Babelrc to include "json" extension
