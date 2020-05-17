@@ -18,6 +18,7 @@ module.exports = {
       'DOMParser',
       'Error',
       'fetch',
+      'history',
       'history.replaceState',
       'IDBKeyRange',
       'JSON',
@@ -40,7 +41,6 @@ module.exports = {
       'Symbol.iterator',
       'URL',
       'URLSearchParams',
-      'window',
       'XMLSerializer'
     ]
   },
