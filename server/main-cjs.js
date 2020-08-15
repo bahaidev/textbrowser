@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 'use strict';
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
 require('url-search-params-polyfill');
 var simpleGetJson = require('simple-get-json');
 var rtlDetect = require('rtl-detect');
 var jamilih = require('jamilih');
 var formSerialization = require('form-serialization');
-var IMF = _interopDefault(require('imf'));
+var IMF = require('imf');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var IMF__default = /*#__PURE__*/_interopDefaultLegacy(IMF);
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -2518,7 +2520,7 @@ const getWorkData = async function ({
 
   const localeFromFileData = lan => filesObj['localization-strings'][lan];
 
-  const imfFile = IMF({
+  const imfFile = IMF__default['default']({
     locales: lang.map(localeFromFileData),
     fallbackLocales: fallbackLanguages.map(localeFromFileData)
   });
@@ -3660,7 +3662,7 @@ function getIMFFallbackResults({
       }, ...args);
     };
 
-    const imf = IMF({
+    const imf = IMF__default['default']({
       languages: lang,
       fallbackLanguages,
 

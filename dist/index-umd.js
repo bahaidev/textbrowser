@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.TextBrowser = factory());
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.TextBrowser = factory());
 }(this, (function () { 'use strict';
 
   function _defineProperty(obj, key, value) {
@@ -3453,6 +3453,25 @@
     supportCustomEvent.prototype = window.Event.prototype;
   }
   /**
+   * Dispatches the passed event to both an "on<type>" handler as well as via the
+   * normal dispatch operation. Does not bubble.
+   *
+   * @param {!EventTarget} target
+   * @param {!Event} event
+   * @return {boolean}
+   */
+
+
+  function safeDispatchEvent(target, event) {
+    var check = 'on' + event.type.toLowerCase();
+
+    if (typeof target[check] === 'function') {
+      target[check](event);
+    }
+
+    return target.dispatchEvent(event);
+  }
+  /**
    * @param {Element} el to check for stacking context
    * @return {boolean} whether this el or its parents creates a stacking context
    */
@@ -3659,7 +3678,9 @@
     });
     this.backdrop_ = document.createElement('div');
     this.backdrop_.className = 'backdrop';
-    this.backdrop_.addEventListener('click', this.backdropClick_.bind(this));
+    this.backdrop_.addEventListener('mouseup', this.backdropMouseEvent_.bind(this));
+    this.backdrop_.addEventListener('mousedown', this.backdropMouseEvent_.bind(this));
+    this.backdrop_.addEventListener('click', this.backdropMouseEvent_.bind(this));
   }
 
   dialogPolyfillInfo.prototype =
@@ -3718,12 +3739,12 @@
     },
 
     /**
-     * Handles clicks on the fake .backdrop element, redirecting them as if
+     * Handles mouse events ('mouseup', 'mousedown', 'click') on the fake .backdrop element, redirecting them as if
      * they were on the dialog itself.
      *
      * @param {!Event} e to redirect
      */
-    backdropClick_: function (e) {
+    backdropMouseEvent_: function (e) {
       if (!this.dialog_.hasAttribute('tabindex')) {
         // Clicking on the backdrop should move the implicit cursor, even if dialog cannot be
         // focused. Create a fake thing to focus on. If the backdrop was _before_ the dialog, this
@@ -3846,7 +3867,7 @@
         bubbles: false,
         cancelable: false
       });
-      this.dialog_.dispatchEvent(closeEvent);
+      safeDispatchEvent(this.dialog_, closeEvent);
     }
   };
   var dialogPolyfill = {};
@@ -4056,7 +4077,9 @@
   };
 
   dialogPolyfill.DialogManager.prototype.handleFocus_ = function (event) {
-    if (this.containedByTopDialog_(event.target)) {
+    var target = event.composedPath ? event.composedPath()[0] : event.target;
+
+    if (this.containedByTopDialog_(target)) {
       return;
     }
 
@@ -4068,7 +4091,7 @@
     event.stopPropagation();
     safeBlur(
     /** @type {Element} */
-    event.target);
+    target);
 
     if (this.forwardTab_ === undefined) {
       return;
@@ -4077,13 +4100,13 @@
 
     var dpi = this.pendingDialogStack[0];
     var dialog = dpi.dialog;
-    var position = dialog.compareDocumentPosition(event.target);
+    var position = dialog.compareDocumentPosition(target);
 
     if (position & Node.DOCUMENT_POSITION_PRECEDING) {
       if (this.forwardTab_) {
         // forward
         dpi.focus_();
-      } else if (event.target !== document.documentElement) {
+      } else if (target !== document.documentElement) {
         // backwards if we're not already focused on <html>
         document.documentElement.focus();
       }
@@ -4104,7 +4127,7 @@
       });
       var dpi = this.pendingDialogStack[0];
 
-      if (dpi && dpi.dialog.dispatchEvent(cancelEvent)) {
+      if (dpi && safeDispatchEvent(dpi.dialog, cancelEvent)) {
         dpi.dialog.close();
       }
     } else if (event.keyCode === 9) {
@@ -16799,7 +16822,6 @@ body {
     isRtlLang: rtlDetect.isRtlLang,
     getLangDir: rtlDetect.getLangDir
   };
-  var rtlDetect_3 = rtlDetect_1.getLangDir;
 
   const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 
@@ -17699,7 +17721,7 @@ body {
             applicableFieldIdx,
             applicableFieldText,
             fieldLang,
-            getLangDir: rtlDetect_3,
+            getLangDir: rtlDetect_1.getLangDir,
             meta,
             metaApplicableField,
             $p,
@@ -17710,13 +17732,13 @@ body {
       });
     }
 
-    const localeDir = rtlDetect_3(preferredLocale);
+    const localeDir = rtlDetect_1.getLangDir(preferredLocale);
     const fieldDirs = fieldLangs.map(langCode => {
       if (!langCode) {
         return null;
       }
 
-      const langDir = rtlDetect_3(langCode);
+      const langDir = rtlDetect_1.getLangDir(langCode);
       return langDir !== localeDir ? langDir : null;
     });
     const templateArgs = {

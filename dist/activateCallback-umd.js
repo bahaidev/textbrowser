@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.activateCallback = factory());
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.activateCallback = factory());
 }(this, (function () { 'use strict';
 
   /* eslint-env worker */

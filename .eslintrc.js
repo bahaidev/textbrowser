@@ -26,6 +26,7 @@ module.exports = {
       'location.href',
       'location.host',
       'location.protocol',
+      'navigator',
       'navigator.clipboard',
       'navigator.serviceWorker',
       'Notification.requestPermission',
@@ -86,6 +87,7 @@ module.exports = {
     }
   }],
   rules: {
+    // Disable for now
     'array-bracket-newline': 0,
     'no-console': 0,
     'require-unicode-regexp': 0,
@@ -100,11 +102,11 @@ module.exports = {
     'arrow-parens': 0,
     'require-await': 0,
     'prefer-named-capture-group': 0,
-
     'jsdoc/require-jsdoc': 0,
-    'unicorn/no-fn-reference-in-iterator': 0,
     'promise/avoid-new': 0,
     'promise/prefer-await-to-callbacks': 0,
-    'import/no-anonymous-default-export': 0
+    'import/no-anonymous-default-export': 0,
+    'unicorn/no-fn-reference-in-iterator': 0,
+    'eslint-comments/require-description': 0
   }
 };

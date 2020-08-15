@@ -3,6 +3,10 @@
 ## ?
 
 - Breaking change: Explicitly require Node 10.11.0+
+- Build: Update per latest devDeps.
+- Linting: As per latest ash-nazg
+- npm: Change to non-deprecated `@rollup/plugin-commonjs`
+- npm: Update deps., peerDeps, devDeps., package-lock
 
 ## 0.35.0
 

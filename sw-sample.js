@@ -183,6 +183,7 @@ console.log('sw stylesheets', stylesheets);
 /**
  *
  * @param {PositiveInteger} time
+ * @throws {Error} (This is actually caught internally.)
  * @returns {Promise<void>}
  */
 async function install (time) {
