@@ -149,7 +149,7 @@ export const getBrowseFieldData = function ({
         getFieldAliasOrName
       })
     );
-    callback({setName, browseFields, i, presort}); // eslint-disable-line standard/no-callback-literal
+    callback({setName, browseFields, i, presort}); // eslint-disable-line node/no-callback-literal
   });
 };
 

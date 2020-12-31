@@ -4,37 +4,56 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.WorkInfo = {}));
 }(this, (function (exports) { 'use strict';
 
-  function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+  function _getRequireWildcardCache() {
+    if (typeof WeakMap !== "function") return null;
+    var cache = new WeakMap();
+
+    _getRequireWildcardCache = function () {
+      return cache;
+    };
+
+    return cache;
   }
 
-  function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
-  }
+  function _interopRequireWildcard(obj) {
+    if (obj && obj.__esModule) {
+      return obj;
+    }
 
-  function _iterableToArray(iter) {
-    if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
-  }
+    if (obj === null || typeof obj !== "object" && typeof obj !== "function") {
+      return {
+        default: obj
+      };
+    }
 
-  function _unsupportedIterableToArray(o, minLen) {
-    if (!o) return;
-    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-    var n = Object.prototype.toString.call(o).slice(8, -1);
-    if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(o);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-  }
+    var cache = _getRequireWildcardCache();
 
-  function _arrayLikeToArray(arr, len) {
-    if (len == null || len > arr.length) len = arr.length;
+    if (cache && cache.has(obj)) {
+      return cache.get(obj);
+    }
 
-    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+    var newObj = {};
+    var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
 
-    return arr2;
-  }
+    for (var key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
 
-  function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+        if (desc && (desc.get || desc.set)) {
+          Object.defineProperty(newObj, key, desc);
+        } else {
+          newObj[key] = obj[key];
+        }
+      }
+    }
+
+    newObj.default = obj;
+
+    if (cache) {
+      cache.set(obj, newObj);
+    }
+
+    return newObj;
   }
 
   /* eslint-disable node/no-unsupported-features/es-syntax */
@@ -88,11 +107,10 @@
     return result;
   }
 
-  function buildGetJSONWithFetch() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref$fetch = _ref.fetch,
-        fetch = _ref$fetch === void 0 ? typeof window !== 'undefined' ? window.fetch : self.fetch : _ref$fetch;
-
+  function buildGetJSONWithFetch({
+    // eslint-disable-next-line no-shadow
+    fetch = typeof window !== 'undefined' ? window.fetch : self.fetch
+  } = {}) {
     /**
     * @callback SimpleJSONCallback
     * @param {JSON} json
@@ -111,24 +129,24 @@
     */
     return function getJSON(jsonURL, cb, errBack) {
       try {
-        var _exit2 = false;
+        let _exit = false;
         return _catch(function () {
           return _invoke(function () {
             if (Array.isArray(jsonURL)) {
-              return _await(Promise.all(jsonURL.map(function (url) {
+              return _await(Promise.all(jsonURL.map(url => {
                 return getJSON(url);
               })), function (arrResult) {
                 if (cb) {
                   // eslint-disable-next-line node/callback-return, standard/no-callback-literal, promise/prefer-await-to-callbacks
-                  cb.apply(void 0, _toConsumableArray(arrResult));
+                  cb(...arrResult);
                 }
 
-                _exit2 = true;
+                _exit = true;
                 return arrResult;
               });
             }
           }, function (_result) {
-            return _exit2 ? _result : _await(fetch(jsonURL), function (resp) {
+            return _exit ? _result : _await(fetch(jsonURL), function (resp) {
               return _await(resp.json(), function (result) {
                 return typeof cb === 'function' // eslint-disable-next-line promise/prefer-await-to-callbacks
                 ? cb(result) : result; // https://github.com/bcoe/c8/issues/135
@@ -138,7 +156,7 @@
             });
           });
         }, function (e) {
-          e.message += " (File: ".concat(jsonURL, ")");
+          e.message += ` (File: ${jsonURL})`;
 
           if (errBack) {
             return errBack(e, jsonURL);
@@ -154,8 +172,229 @@
     };
   }
 
-  /* eslint-disable node/no-unsupported-features/es-syntax */
-  var getJSON = buildGetJSONWithFetch();
+  function _await$1(value, then, direct) {
+    if (direct) {
+      return then ? then(value) : value;
+    }
+
+    if (!value || !value.then) {
+      value = Promise.resolve(value);
+    }
+
+    return then ? value.then(then) : value;
+  }
+
+  /* eslint-disable node/no-unsupported-features/node-builtins,
+    node/no-unsupported-features/es-syntax, compat/compat */
+  // Needed for polyglot support (no `path` in browser); even if
+  //  polyglot using dynamic `import` not supported by Rollup (complaining
+  //  of inability to do tree-shaking in UMD builds), still useful to delay
+  //  path import for our testing, so that test can import this file in
+  //  the browser without compilation without it choking
+  let dirname, isWindows;
+
+  function _empty() {}
+  /**
+   * @param {string} path
+   * @returns {string}
+   */
+
+
+  function _invokeIgnored(body) {
+    var result = body();
+
+    if (result && result.then) {
+      return result.then(_empty);
+    }
+  }
+
+  function _async(f) {
+    return function () {
+      for (var args = [], i = 0; i < arguments.length; i++) {
+        args[i] = arguments[i];
+      }
+
+      try {
+        return Promise.resolve(f.apply(this, args));
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    };
+  }
+
+  const setDirname = _async(function () {
+    return _invokeIgnored(function () {
+      if (!dirname) {
+        return _await$1(Promise.resolve().then(() => _interopRequireWildcard(require('path'))), function (_import) {
+          ({
+            dirname
+          } = _import);
+        });
+      }
+    });
+  });
+
+  function fixWindowsPath(path) {
+    if (!isWindows) {
+      isWindows = process.platform === 'win32';
+    }
+
+    return path.slice( // https://github.com/bcoe/c8/issues/135
+
+    /* c8 ignore next */
+    isWindows ? 1 : 0);
+  }
+  /**
+   * @param {string} url
+   * @returns {string}
+   */
+
+
+  function getDirectoryForURL(url) {
+    // Node should be ok with this, but transpiling
+    //  to `require` doesn't work, so detect Windows
+    //  to remove slash instead
+    // "file://" +
+    return fixWindowsPath(dirname(new URL(url).pathname));
+  }
+
+  function _await$2(value, then, direct) {
+    if (direct) {
+      return then ? then(value) : value;
+    }
+
+    if (!value || !value.then) {
+      value = Promise.resolve(value);
+    }
+
+    return then ? value.then(then) : value;
+  }
+
+  let nodeFetch;
+  /**
+   * @param {PlainObject} cfg
+   * @param {string} cfg.baseURL
+   * @param {string} cfg.cwd
+   * @returns {getJSONCallback}
+   */
+
+  function _invoke$1(body, then) {
+    var result = body();
+
+    if (result && result.then) {
+      return result.then(then);
+    }
+
+    return then(result);
+  }
+
+  function _call(body, then, direct) {
+    if (direct) {
+      return then ? then(body()) : body();
+    }
+
+    try {
+      var result = Promise.resolve(body());
+      return then ? result.then(then) : result;
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
+
+  function _async$1(f) {
+    return function () {
+      for (var args = [], i = 0; i < arguments.length; i++) {
+        args[i] = arguments[i];
+      }
+
+      try {
+        return Promise.resolve(f.apply(this, args));
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    };
+  }
+
+  function buildGetJSON({
+    baseURL,
+    cwd: basePath
+  } = {}) {
+    const _fetch = typeof fetch !== 'undefined' ? fetch : _async$1(function (jsonURL) {
+      let _exit = false;
+      return _invoke$1(function () {
+        if (/^https?:/u.test(jsonURL)) {
+          return _invoke$1(function () {
+            if (!nodeFetch) {
+              return _await$2(Promise.resolve().then(() => _interopRequireWildcard(require('node-fetch'))), function (_import) {
+                nodeFetch = _import;
+              });
+            }
+          }, function () {
+            _exit = true;
+            return nodeFetch.default(jsonURL);
+          });
+        }
+      }, function (_result) {
+        return _exit ? _result : _invoke$1(function () {
+          if (!basePath) {
+            return _call(setDirname, function () {
+              basePath = baseURL ? getDirectoryForURL(baseURL) : typeof fetch === 'undefined' && process.cwd();
+            });
+          }
+        }, function () {
+          // Filed https://github.com/bergos/file-fetch/issues/12 to see
+          //  about getting relative basePaths in `file-fetch` and using
+          //  that better-tested package instead
+          return _await$2(Promise.resolve().then(() => _interopRequireWildcard(require('local-xmlhttprequest'))), function (localXMLHttpRequest) {
+            // eslint-disable-next-line no-shadow
+            const XMLHttpRequest = localXMLHttpRequest.default({
+              basePath
+            }); // Don't change to an import as won't resolve for browser testing
+            // eslint-disable-next-line promise/avoid-new
+
+            return new Promise((resolve, reject) => {
+              const r = new XMLHttpRequest();
+              r.open('GET', jsonURL, true); // r.responseType = 'json';
+
+              r.onreadystatechange = function () {
+                // Not sure how to simulate `if`
+
+                /* c8 ignore next */
+                if (r.readyState !== 4) {
+                  return;
+                }
+
+                if (r.status === 200) {
+                  // var json = r.json;
+                  const response = r.responseText;
+                  resolve({
+                    json: () => JSON.parse(response)
+                  });
+                  return;
+                }
+
+                reject(new SyntaxError('Failed to fetch URL: ' + jsonURL + 'state: ' + r.readyState + '; status: ' + r.status));
+              };
+
+              r.send(); // https://github.com/bcoe/c8/issues/135
+
+              /* c8 ignore next */
+            });
+          });
+        });
+      });
+    });
+
+    const ret = buildGetJSONWithFetch({
+      fetch: _fetch
+    });
+    ret._fetch = _fetch;
+    ret.hasURLBasePath = Boolean(baseURL);
+    ret.basePath = basePath;
+    return ret;
+  }
+
+  const getJSON = buildGetJSON();
 
   /*
   Copyright (c) 2014, Yahoo! Inc. All rights reserved.
@@ -2888,7 +3127,7 @@
           onByDefault: onByDefaultDefault, lang: pluginLang, meta
         }] = this.pluginsInWork[i];
         const plugin = this.getPluginObject(pluginName);
-        cb({ // eslint-disable-line standard/no-callback-literal
+        cb({ // eslint-disable-line node/no-callback-literal
           plugin,
           placement,
           applicableFields,
@@ -2908,11 +3147,11 @@
       }]) => {
         if (Array.isArray(targetLanguage)) {
           targetLanguage.forEach((targetLanguage) => {
-            cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line standard/no-callback-literal
+            cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line node/no-callback-literal
           });
         } else {
           // eslint-disable-next-line node/callback-return
-          cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line standard/no-callback-literal
+          cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line node/no-callback-literal
         }
       });
       return true;
@@ -3078,7 +3317,7 @@
                 console.log('err', err);
               });
             }
-            // eslint-disable-next-line node/no-unsupported-features/es-syntax
+            // eslint-disable-next-line node/no-unsupported-features/es-syntax, no-unsanitized/method
             return import(pluginPath);
           })
         )
@@ -3156,7 +3395,7 @@
             // Todo: Allow default placement overriding for
             //    non-plugins
             placement === 'end'
-              ? Infinity // push
+              ? Number.POSITIVE_INFINITY // push
               : placement,
             0,
             {

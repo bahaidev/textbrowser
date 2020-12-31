@@ -51,7 +51,7 @@ export class PluginsForWork {
         onByDefault: onByDefaultDefault, lang: pluginLang, meta
       }] = this.pluginsInWork[i];
       const plugin = this.getPluginObject(pluginName);
-      cb({ // eslint-disable-line standard/no-callback-literal
+      cb({ // eslint-disable-line node/no-callback-literal
         plugin,
         placement,
         applicableFields,
@@ -71,11 +71,11 @@ export class PluginsForWork {
     }]) => {
       if (Array.isArray(targetLanguage)) {
         targetLanguage.forEach((targetLanguage) => {
-          cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line standard/no-callback-literal
+          cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line node/no-callback-literal
         });
       } else {
         // eslint-disable-next-line node/callback-return
-        cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line standard/no-callback-literal
+        cb({applicableField, targetLanguage, onByDefault, metaApplicableField}); // eslint-disable-line node/no-callback-literal
       }
     });
     return true;

@@ -16,7 +16,7 @@ let appBase = '../';
 
 if (typeof exports !== 'undefined') {
   /* eslint-disable node/global-require */
-  Ajv = require('ajv');
+  Ajv = require('ajv').default;
   JsonRefs = require('json-refs');
   jsonpatch = require('fast-json-patch');
   ({getJSON} = require('simple-get-json'));
@@ -35,6 +35,7 @@ if (typeof exports !== 'undefined') {
 const schemaBase = appBase + 'general-schemas/';
 const localesBase = appBase + 'locales/';
 const appdataBase = appBase + 'appdata/';
+const jsonSchemaSpec = 'node_modules/json-metaschema/draft-07-schema.json';
 
 /**
 * @external JSONSchema
@@ -53,7 +54,7 @@ const appdataBase = appBase + 'appdata/';
 * @returns {boolean} Whether validation succeeded
 */
 function validate (testName, schema, data, extraSchemas = [], additionalOptions = {}) {
-  const ajv = new Ajv({extendRefs: 'fail', ...additionalOptions});
+  const ajv = new Ajv({...additionalOptions});
   let valid;
   try {
     extraSchemas.forEach(([key, val]) => {
@@ -74,7 +75,7 @@ describe('textbrowser tests', function () {
     const [jsonSchema, schema, ...locales] = await Promise.all([
       getJSON(path.join(
         __dirname,
-        appBase + 'node_modules/json-metaschema/draft-07-schema.json'
+        appBase + jsonSchemaSpec
       )),
       ...[
         'locale.jsonschema',
@@ -110,7 +111,7 @@ describe('textbrowser tests', function () {
   it('languages.json test', async () => {
     const results = await Promise.all([
       JsonRefs.resolveRefsAt(path.join(__dirname, appdataBase, 'languages.json')),
-      getJSON(path.join(__dirname, appBase + 'node_modules/json-metaschema/draft-07-schema.json')),
+      getJSON(path.join(__dirname, appBase + jsonSchemaSpec)),
       getJSON(path.join(__dirname, schemaBase, 'languages.jsonschema')),
       getJSON(path.join(__dirname, schemaBase, 'locale.jsonschema'))
     ]);
@@ -141,7 +142,7 @@ describe('textbrowser tests', function () {
     const [jsonSchema, userJSONSchema, userJSON] = await getJSON([
       path.join(
         __dirname,
-        appBase + 'node_modules/json-metaschema/draft-07-schema.json'
+        appBase + jsonSchemaSpec
       ),
       path.join(
         __dirname,

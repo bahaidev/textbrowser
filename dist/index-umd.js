@@ -89,37 +89,56 @@
     return target;
   }
 
-  function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+  function _getRequireWildcardCache() {
+    if (typeof WeakMap !== "function") return null;
+    var cache = new WeakMap();
+
+    _getRequireWildcardCache = function () {
+      return cache;
+    };
+
+    return cache;
   }
 
-  function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
-  }
+  function _interopRequireWildcard(obj) {
+    if (obj && obj.__esModule) {
+      return obj;
+    }
 
-  function _iterableToArray(iter) {
-    if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
-  }
+    if (obj === null || typeof obj !== "object" && typeof obj !== "function") {
+      return {
+        default: obj
+      };
+    }
 
-  function _unsupportedIterableToArray(o, minLen) {
-    if (!o) return;
-    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-    var n = Object.prototype.toString.call(o).slice(8, -1);
-    if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(o);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-  }
+    var cache = _getRequireWildcardCache();
 
-  function _arrayLikeToArray(arr, len) {
-    if (len == null || len > arr.length) len = arr.length;
+    if (cache && cache.has(obj)) {
+      return cache.get(obj);
+    }
 
-    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+    var newObj = {};
+    var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
 
-    return arr2;
-  }
+    for (var key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
 
-  function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+        if (desc && (desc.get || desc.set)) {
+          Object.defineProperty(newObj, key, desc);
+        } else {
+          newObj[key] = obj[key];
+        }
+      }
+    }
+
+    newObj.default = obj;
+
+    if (cache) {
+      cache.set(obj, newObj);
+    }
+
+    return newObj;
   }
   /* eslint-disable node/no-unsupported-features/es-syntax */
 
@@ -174,10 +193,10 @@
     return result;
   }
 
-  function buildGetJSONWithFetch() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        _ref$fetch = _ref.fetch,
-        fetch = _ref$fetch === void 0 ? typeof window !== 'undefined' ? window.fetch : self.fetch : _ref$fetch;
+  function buildGetJSONWithFetch({
+    // eslint-disable-next-line no-shadow
+    fetch = typeof window !== 'undefined' ? window.fetch : self.fetch
+  } = {}) {
     /**
     * @callback SimpleJSONCallback
     * @param {JSON} json
@@ -194,28 +213,26 @@
     /**
     * @type {getJSONCallback}
     */
-
-
     return function getJSON(jsonURL, cb, errBack) {
       try {
-        var _exit2 = false;
+        let _exit = false;
         return _catch(function () {
           return _invoke(function () {
             if (Array.isArray(jsonURL)) {
-              return _await(Promise.all(jsonURL.map(function (url) {
+              return _await(Promise.all(jsonURL.map(url => {
                 return getJSON(url);
               })), function (arrResult) {
                 if (cb) {
                   // eslint-disable-next-line node/callback-return, standard/no-callback-literal, promise/prefer-await-to-callbacks
-                  cb.apply(void 0, _toConsumableArray(arrResult));
+                  cb(...arrResult);
                 }
 
-                _exit2 = true;
+                _exit = true;
                 return arrResult;
               });
             }
           }, function (_result) {
-            return _exit2 ? _result : _await(fetch(jsonURL), function (resp) {
+            return _exit ? _result : _await(fetch(jsonURL), function (resp) {
               return _await(resp.json(), function (result) {
                 return typeof cb === 'function' // eslint-disable-next-line promise/prefer-await-to-callbacks
                 ? cb(result) : result; // https://github.com/bcoe/c8/issues/135
@@ -225,7 +242,7 @@
             });
           });
         }, function (e) {
-          e.message += " (File: ".concat(jsonURL, ")");
+          e.message += ` (File: ${jsonURL})`;
 
           if (errBack) {
             return errBack(e, jsonURL);
@@ -240,10 +257,231 @@
       }
     };
   }
-  /* eslint-disable node/no-unsupported-features/es-syntax */
+
+  function _await$1(value, then, direct) {
+    if (direct) {
+      return then ? then(value) : value;
+    }
+
+    if (!value || !value.then) {
+      value = Promise.resolve(value);
+    }
+
+    return then ? value.then(then) : value;
+  }
+  /* eslint-disable node/no-unsupported-features/node-builtins,
+    node/no-unsupported-features/es-syntax, compat/compat */
+  // Needed for polyglot support (no `path` in browser); even if
+  //  polyglot using dynamic `import` not supported by Rollup (complaining
+  //  of inability to do tree-shaking in UMD builds), still useful to delay
+  //  path import for our testing, so that test can import this file in
+  //  the browser without compilation without it choking
 
 
-  var getJSON = buildGetJSONWithFetch();
+  let dirname, isWindows;
+
+  function _empty() {}
+  /**
+   * @param {string} path
+   * @returns {string}
+   */
+
+
+  function _invokeIgnored(body) {
+    var result = body();
+
+    if (result && result.then) {
+      return result.then(_empty);
+    }
+  }
+
+  function _async(f) {
+    return function () {
+      for (var args = [], i = 0; i < arguments.length; i++) {
+        args[i] = arguments[i];
+      }
+
+      try {
+        return Promise.resolve(f.apply(this, args));
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    };
+  }
+
+  const setDirname = _async(function () {
+    return _invokeIgnored(function () {
+      if (!dirname) {
+        return _await$1(Promise.resolve().then(() => _interopRequireWildcard(require('path'))), function (_import) {
+          ({
+            dirname
+          } = _import);
+        });
+      }
+    });
+  });
+
+  function fixWindowsPath(path) {
+    if (!isWindows) {
+      isWindows = process.platform === 'win32';
+    }
+
+    return path.slice( // https://github.com/bcoe/c8/issues/135
+
+    /* c8 ignore next */
+    isWindows ? 1 : 0);
+  }
+  /**
+   * @param {string} url
+   * @returns {string}
+   */
+
+
+  function getDirectoryForURL(url) {
+    // Node should be ok with this, but transpiling
+    //  to `require` doesn't work, so detect Windows
+    //  to remove slash instead
+    // "file://" +
+    return fixWindowsPath(dirname(new URL(url).pathname));
+  }
+
+  function _await$2(value, then, direct) {
+    if (direct) {
+      return then ? then(value) : value;
+    }
+
+    if (!value || !value.then) {
+      value = Promise.resolve(value);
+    }
+
+    return then ? value.then(then) : value;
+  }
+
+  let nodeFetch;
+  /**
+   * @param {PlainObject} cfg
+   * @param {string} cfg.baseURL
+   * @param {string} cfg.cwd
+   * @returns {getJSONCallback}
+   */
+
+  function _invoke$1(body, then) {
+    var result = body();
+
+    if (result && result.then) {
+      return result.then(then);
+    }
+
+    return then(result);
+  }
+
+  function _call(body, then, direct) {
+    if (direct) {
+      return then ? then(body()) : body();
+    }
+
+    try {
+      var result = Promise.resolve(body());
+      return then ? result.then(then) : result;
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
+
+  function _async$1(f) {
+    return function () {
+      for (var args = [], i = 0; i < arguments.length; i++) {
+        args[i] = arguments[i];
+      }
+
+      try {
+        return Promise.resolve(f.apply(this, args));
+      } catch (e) {
+        return Promise.reject(e);
+      }
+    };
+  }
+
+  function buildGetJSON({
+    baseURL,
+    cwd: basePath
+  } = {}) {
+    const _fetch = typeof fetch !== 'undefined' ? fetch : _async$1(function (jsonURL) {
+      let _exit = false;
+      return _invoke$1(function () {
+        if (/^https?:/u.test(jsonURL)) {
+          return _invoke$1(function () {
+            if (!nodeFetch) {
+              return _await$2(Promise.resolve().then(() => _interopRequireWildcard(require('node-fetch'))), function (_import) {
+                nodeFetch = _import;
+              });
+            }
+          }, function () {
+            _exit = true;
+            return nodeFetch.default(jsonURL);
+          });
+        }
+      }, function (_result) {
+        return _exit ? _result : _invoke$1(function () {
+          if (!basePath) {
+            return _call(setDirname, function () {
+              basePath = baseURL ? getDirectoryForURL(baseURL) : typeof fetch === 'undefined' && process.cwd();
+            });
+          }
+        }, function () {
+          // Filed https://github.com/bergos/file-fetch/issues/12 to see
+          //  about getting relative basePaths in `file-fetch` and using
+          //  that better-tested package instead
+          return _await$2(Promise.resolve().then(() => _interopRequireWildcard(require('local-xmlhttprequest'))), function (localXMLHttpRequest) {
+            // eslint-disable-next-line no-shadow
+            const XMLHttpRequest = localXMLHttpRequest.default({
+              basePath
+            }); // Don't change to an import as won't resolve for browser testing
+            // eslint-disable-next-line promise/avoid-new
+
+            return new Promise((resolve, reject) => {
+              const r = new XMLHttpRequest();
+              r.open('GET', jsonURL, true); // r.responseType = 'json';
+
+              r.onreadystatechange = function () {
+                // Not sure how to simulate `if`
+
+                /* c8 ignore next */
+                if (r.readyState !== 4) {
+                  return;
+                }
+
+                if (r.status === 200) {
+                  // var json = r.json;
+                  const response = r.responseText;
+                  resolve({
+                    json: () => JSON.parse(response)
+                  });
+                  return;
+                }
+
+                reject(new SyntaxError('Failed to fetch URL: ' + jsonURL + 'state: ' + r.readyState + '; status: ' + r.status));
+              };
+
+              r.send(); // https://github.com/bcoe/c8/issues/135
+
+              /* c8 ignore next */
+            });
+          });
+        });
+      });
+    });
+
+    const ret = buildGetJSONWithFetch({
+      fetch: _fetch
+    });
+    ret._fetch = _fetch;
+    ret.hasURLBasePath = Boolean(baseURL);
+    ret.basePath = basePath;
+    return ret;
+  }
+
+  const getJSON = buildGetJSON();
 
   /*
   Copyright (c) 2014, Yahoo! Inc. All rights reserved.
@@ -2914,22 +3152,22 @@
   }
 
   function _slicedToArray(arr, i) {
-    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray$1(arr, i) || _nonIterableRest();
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
   }
 
-  function _toConsumableArray$1(arr) {
-    return _arrayWithoutHoles$1(arr) || _iterableToArray$1(arr) || _unsupportedIterableToArray$1(arr) || _nonIterableSpread$1();
+  function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
   }
 
-  function _arrayWithoutHoles$1(arr) {
-    if (Array.isArray(arr)) return _arrayLikeToArray$1(arr);
+  function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
   }
 
   function _arrayWithHoles(arr) {
     if (Array.isArray(arr)) return arr;
   }
 
-  function _iterableToArray$1(iter) {
+  function _iterableToArray(iter) {
     if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
   }
 
@@ -2960,16 +3198,16 @@
     return _arr;
   }
 
-  function _unsupportedIterableToArray$1(o, minLen) {
+  function _unsupportedIterableToArray(o, minLen) {
     if (!o) return;
-    if (typeof o === "string") return _arrayLikeToArray$1(o, minLen);
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
     var n = Object.prototype.toString.call(o).slice(8, -1);
     if (n === "Object" && o.constructor) n = o.constructor.name;
     if (n === "Map" || n === "Set") return Array.from(o);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$1(o, minLen);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
   }
 
-  function _arrayLikeToArray$1(arr, len) {
+  function _arrayLikeToArray(arr, len) {
     if (len == null || len > arr.length) len = arr.length;
 
     for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
@@ -2977,7 +3215,7 @@
     return arr2;
   }
 
-  function _nonIterableSpread$1() {
+  function _nonIterableSpread() {
     throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
@@ -3040,7 +3278,7 @@
 
     var result = options.hash ? {} : '';
     var serializer = options.serializer || (options.hash ? hashSerializer : strSerialize);
-    var elements = form && form.elements ? _toConsumableArray$1(form.elements) : []; // Object store each radio and set if it's empty or not
+    var elements = form && form.elements ? _toConsumableArray(form.elements) : []; // Object store each radio and set if it's empty or not
 
     var radioStore = Object.create(null);
     elements.forEach(function (element) {
@@ -3094,7 +3332,7 @@
       if (type === 'select-multiple') {
         var isSelectedOptions = false;
 
-        _toConsumableArray$1(element.options).forEach(function (option) {
+        _toConsumableArray(element.options).forEach(function (option) {
           var allowedEmpty = options.empty && !option.value;
           var hasValue = option.value || allowedEmpty;
 
@@ -3331,13 +3569,13 @@
       }
 
       if (type === 'radio' || control[0] && control[0].type === 'radio') {
-        _toConsumableArray$1(form.querySelectorAll("[name=\"".concat(name + (hasBrackets ? '[]' : ''), "\"]"))).forEach(function (radio) {
+        _toConsumableArray(form.querySelectorAll("[name=\"".concat(name + (hasBrackets ? '[]' : ''), "\"]"))).forEach(function (radio) {
           radio.checked = value === radio.value;
         });
       }
 
       if (control[0] && control[0].type === 'select-multiple') {
-        _toConsumableArray$1(control[0].options).forEach(function (o) {
+        _toConsumableArray(control[0].options).forEach(function (o) {
           if (value.includes(o.value)) {
             o.selected = true;
           }
@@ -3349,7 +3587,7 @@
       if (Array.isArray(value)) {
         // options on a multiple select
         if (type === 'select-multiple') {
-          _toConsumableArray$1(control.options).forEach(function (o) {
+          _toConsumableArray(control.options).forEach(function (o) {
             if (value.includes(o.value)) {
               o.selected = true;
             }
@@ -3368,7 +3606,7 @@
           }
 
           if (c.type === 'select-multiple') {
-            _toConsumableArray$1(c.options).forEach(function (o) {
+            _toConsumableArray(c.options).forEach(function (o) {
               if (v.includes(o.value)) {
                 o.selected = true;
               }
@@ -3612,6 +3850,80 @@
     return element.isConnected || document.body.contains(element);
   }
   /**
+   * @param {!Event} event
+   */
+
+
+  function findFormSubmitter(event) {
+    if (event.submitter) {
+      return event.submitter;
+    }
+
+    var form = event.target;
+
+    if (!(form instanceof HTMLFormElement)) {
+      return null;
+    }
+
+    var submitter = dialogPolyfill.formSubmitter;
+
+    if (!submitter) {
+      var target = event.target;
+      var root = 'getRootNode' in target && target.getRootNode() || document;
+      submitter = root.activeElement;
+    }
+
+    if (submitter.form !== form) {
+      return null;
+    }
+
+    return submitter;
+  }
+  /**
+   * @param {!Event} event
+   */
+
+
+  function maybeHandleSubmit(event) {
+    if (event.defaultPrevented) {
+      return;
+    }
+
+    var form =
+    /** @type {!HTMLFormElement} */
+    event.target; // We'd have a value if we clicked on an imagemap.
+
+    var value = dialogPolyfill.useValue;
+    var submitter = findFormSubmitter(event);
+
+    if (value === null && submitter) {
+      value = submitter.value;
+    } // There should always be a dialog as this handler is added specifically on them, but check just
+    // in case.
+
+
+    var dialog = findNearestDialog(form);
+
+    if (!dialog) {
+      return;
+    } // Prefer formmethod on the button.
+
+
+    var formmethod = submitter && submitter.getAttribute('formmethod') || form.getAttribute('method');
+
+    if (formmethod !== 'dialog') {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (submitter) {
+      dialog.close(value);
+    } else {
+      dialog.close();
+    }
+  }
+  /**
    * @param {!HTMLDialogElement} dialog to upgrade
    * @constructor
    */
@@ -3629,6 +3941,7 @@
     dialog.show = this.show.bind(this);
     dialog.showModal = this.showModal.bind(this);
     dialog.close = this.close.bind(this);
+    dialog.addEventListener('submit', maybeHandleSubmit, false);
 
     if (!('returnValue' in dialog)) {
       dialog.returnValue = '';
@@ -4262,6 +4575,11 @@
       /** @type {Element} */
       ev.target;
 
+      if ('composedPath' in ev) {
+        var path = ev.composedPath();
+        target = path.shift() || target;
+      }
+
       if (!target || !isFormMethodDialog(target.form)) {
         return;
       }
@@ -4286,6 +4604,26 @@
       dialogPolyfill.formSubmitter = target;
     }, false);
     /**
+     * Global 'submit' handler. This handles submits of `method="dialog"` which are invalid, i.e.,
+     * outside a dialog. They get prevented.
+     */
+
+    document.addEventListener('submit', function (ev) {
+      var form = ev.target;
+      var dialog = findNearestDialog(form);
+
+      if (dialog) {
+        return; // ignore, handle there
+      }
+
+      var submitter = findFormSubmitter(ev);
+      var formmethod = submitter && submitter.getAttribute('formmethod') || form.getAttribute('method');
+
+      if (formmethod === 'dialog') {
+        ev.preventDefault();
+      }
+    });
+    /**
      * Replace the native HTMLFormElement.submit() method, as it won't fire the
      * submit event and give us a chance to respond.
      */
@@ -4302,44 +4640,6 @@
     };
 
     HTMLFormElement.prototype.submit = replacementFormSubmit;
-    /**
-     * Global form 'dialog' method handler. Closes a dialog correctly on submit
-     * and possibly sets its return value.
-     */
-
-    document.addEventListener('submit', function (ev) {
-      if (ev.defaultPrevented) {
-        return;
-      } // e.g. a submit which prevents default submission
-
-
-      var form =
-      /** @type {HTMLFormElement} */
-      ev.target;
-
-      if (!isFormMethodDialog(form)) {
-        return;
-      }
-
-      ev.preventDefault();
-      var dialog = findNearestDialog(form);
-
-      if (!dialog) {
-        return;
-      } // Forms can only be submitted via .submit() or a click (?), but anyway: sanity-check that
-      // the submitter is correct before using its value as .returnValue.
-
-
-      var s = dialogPolyfill.formSubmitter;
-
-      if (s && s.form === form) {
-        dialog.close(dialogPolyfill.useValue || s.value);
-      } else {
-        dialog.close();
-      }
-
-      dialogPolyfill.formSubmitter = null;
-    }, false);
   }
 
   /*
@@ -13784,7 +14084,7 @@
         browseFields,
         i,
         presort
-      }); // eslint-disable-line standard/no-callback-literal
+      }); // eslint-disable-line node/no-callback-literal
     });
   }; // Todo: Incorporate other methods into this class
 
@@ -13906,7 +14206,7 @@
         }] = this.pluginsInWork[i];
         const plugin = this.getPluginObject(pluginName);
         cb({
-          // eslint-disable-line standard/no-callback-literal
+          // eslint-disable-line node/no-callback-literal
           plugin,
           placement,
           applicableFields,
@@ -13935,7 +14235,7 @@
               targetLanguage,
               onByDefault,
               metaApplicableField
-            }); // eslint-disable-line standard/no-callback-literal
+            }); // eslint-disable-line node/no-callback-literal
           });
         } else {
           // eslint-disable-next-line node/callback-return
@@ -13944,7 +14244,7 @@
             targetLanguage,
             onByDefault,
             metaApplicableField
-          }); // eslint-disable-line standard/no-callback-literal
+          }); // eslint-disable-line node/no-callback-literal
         }
       });
       return true;
@@ -14139,7 +14439,7 @@
           // E.g., with tooltips plugin
           console.log('err', err);
         });
-      } // eslint-disable-next-line node/no-unsupported-features/es-syntax
+      } // eslint-disable-next-line node/no-unsupported-features/es-syntax, no-unsanitized/method
 
 
       return import(pluginPath);
@@ -14232,7 +14532,7 @@
           });
           fieldInfo.splice( // Todo: Allow default placement overriding for
           //    non-plugins
-          placement === 'end' ? Infinity // push
+          placement === 'end' ? Number.POSITIVE_INFINITY // push
           : placement, 0, {
             field: `${this.namespace}-plugin-${field}`,
             fieldAliasOrName,
@@ -15169,7 +15469,7 @@ Please refresh the page if you wish to reattempt.
       $on: {
         async click() {
           // Todo: Give option to edit (keywords and work URLs)
-          const date = new Date().getTime();
+          const date = Date.now();
           const ADD_DATE = date;
           const LAST_MODIFIED = date;
           const blob = new Blob([new XMLSerializer().serializeToString(jml({
@@ -16818,6 +17118,13 @@ body {
   });
   var rtlDetect = RtlDetectLib;
 
+  /**
+   * Copyright 2015, Yahoo! Inc.
+   * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
+   */
+
+
+
   var rtlDetect_1 = {
     isRtlLang: rtlDetect.isRtlLang,
     getLangDir: rtlDetect.getLangDir
@@ -17390,7 +17697,7 @@ body {
         applicableFields,
         meta
       }) => {
-        placement = placement === 'end' ? Infinity // push
+        placement = placement === 'end' ? Number.POSITIVE_INFINITY // push
         : placement;
 
         const processField = ({

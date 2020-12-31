@@ -846,7 +846,7 @@ var workDisplay = {
     $on: {
       async click() {
         // Todo: Give option to edit (keywords and work URLs)
-        const date = new Date().getTime();
+        const date = Date.now();
         const ADD_DATE = date;
         const LAST_MODIFIED = date;
         const blob = new Blob([new XMLSerializer().serializeToString(jamilih.jml({
@@ -2294,7 +2294,7 @@ const getBrowseFieldData = function ({
       browseFields,
       i,
       presort
-    }); // eslint-disable-line standard/no-callback-literal
+    }); // eslint-disable-line node/no-callback-literal
   });
 }; // Todo: Incorporate other methods into this class
 
@@ -2416,7 +2416,7 @@ class PluginsForWork {
       }] = this.pluginsInWork[i];
       const plugin = this.getPluginObject(pluginName);
       cb({
-        // eslint-disable-line standard/no-callback-literal
+        // eslint-disable-line node/no-callback-literal
         plugin,
         placement,
         applicableFields,
@@ -2445,7 +2445,7 @@ class PluginsForWork {
             targetLanguage,
             onByDefault,
             metaApplicableField
-          }); // eslint-disable-line standard/no-callback-literal
+          }); // eslint-disable-line node/no-callback-literal
         });
       } else {
         // eslint-disable-next-line node/callback-return
@@ -2454,7 +2454,7 @@ class PluginsForWork {
           targetLanguage,
           onByDefault,
           metaApplicableField
-        }); // eslint-disable-line standard/no-callback-literal
+        }); // eslint-disable-line node/no-callback-literal
       }
     });
     return true;
@@ -2632,7 +2632,7 @@ const getWorkData = async function ({
         // E.g., with tooltips plugin
         console.log('err', err);
       });
-    } // eslint-disable-next-line node/no-unsupported-features/es-syntax
+    } // eslint-disable-next-line node/no-unsupported-features/es-syntax, no-unsanitized/method
 
 
     return Promise.resolve(`${pluginPath}`).then(s => _interopRequireWildcard(require(s)));
@@ -2725,7 +2725,7 @@ const getWorkData = async function ({
         });
         fieldInfo.splice( // Todo: Allow default placement overriding for
         //    non-plugins
-        placement === 'end' ? Infinity // push
+        placement === 'end' ? Number.POSITIVE_INFINITY // push
         : placement, 0, {
           field: `${this.namespace}-plugin-${field}`,
           fieldAliasOrName,
@@ -3226,7 +3226,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
       applicableFields,
       meta
     }) => {
-      placement = placement === 'end' ? Infinity // push
+      placement = placement === 'end' ? Number.POSITIVE_INFINITY // push
       : placement;
 
       const processField = ({

@@ -106,7 +106,7 @@ module.exports = {
     'promise/avoid-new': 0,
     'promise/prefer-await-to-callbacks': 0,
     'import/no-anonymous-default-export': 0,
-    'unicorn/no-fn-reference-in-iterator': 0,
+    'unicorn/no-array-callback-reference': 0,
     'eslint-comments/require-description': 0
   }
 };

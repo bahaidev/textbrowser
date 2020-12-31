@@ -149,7 +149,7 @@ export const getWorkData = async function ({
               console.log('err', err);
             });
           }
-          // eslint-disable-next-line node/no-unsupported-features/es-syntax
+          // eslint-disable-next-line node/no-unsupported-features/es-syntax, no-unsanitized/method
           return import(pluginPath);
         })
       )
@@ -227,7 +227,7 @@ export const getWorkData = async function ({
           // Todo: Allow default placement overriding for
           //    non-plugins
           placement === 'end'
-            ? Infinity // push
+            ? Number.POSITIVE_INFINITY // push
             : placement,
           0,
           {

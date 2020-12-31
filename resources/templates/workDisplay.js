@@ -616,7 +616,7 @@ export default {
         title: l('bookmark_generation_tooltip'),
         $on: {
           async click () { // Todo: Give option to edit (keywords and work URLs)
-            const date = new Date().getTime();
+            const date = Date.now();
             const ADD_DATE = date;
             const LAST_MODIFIED = date;
             const blob = new Blob([

@@ -459,7 +459,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       placement, applicableFields, meta
     }) => {
       placement = placement === 'end'
-        ? Infinity // push
+        ? Number.POSITIVE_INFINITY // push
         : placement;
       const processField = ({applicableField, targetLanguage, onByDefault, metaApplicableField} = {}) => {
         const plugin = pluginsForWork.getPluginObject(pluginName) || {};

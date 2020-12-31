@@ -29,7 +29,7 @@ const minutes = 60 * 1000;
  *
  * @param {PlainObject} args
  * @param {"log"|"error"|"beginInstall"|"finishedInstall"|"beginActivate"|"finishedActivate"} args.type
- * @param {string} [args.message=type}]
+ * @param {string} [args.message=type]
  * @returns {Promise<void>}
  */
 async function post ({type, message = type}) {
