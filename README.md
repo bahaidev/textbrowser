@@ -849,6 +849,8 @@ it supports the following arguments:
             for whole table (or if necessary `Promise.all` on each row)?
     1.  **Caching for automated field content** like translations (with ability
         to rebuild)
+    1. **Collapsible columns** with click status remembered from last time as
+        to whether collapsed or not
     1.  Specific **automated fields**
         1. Previously implemented:
             1.  Option to show renamed fields (like "Book #" -> "Book Name"
@@ -866,9 +868,10 @@ it supports the following arguments:
         1.  Auto-links by verse to relevant forums, wikis, blogs, or personal
             notes pertaining to a given verse; also Q&A and (federated)
             social media
+            1. Offers advantage of not needing to reinvent login control
             1.  Built-in (including offline or only offline) note-taking
-               (local/remote and wiki WYSIWYG with Git version control?);
-               modular loading of others' notes?
+                (local/remote and wiki WYSIWYG with Git version control?);
+                modular loading of others' notes?
         1.  Back-links for index entries (which needs its own JSON Schema-based
             project for the hierarchical representations (see
             [TEI](http://www.tei-c.org/release/doc/tei-p5-doc/en/html/CO.html#CONOIX)
