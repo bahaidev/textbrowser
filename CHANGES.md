@@ -1,6 +1,6 @@
 # textbrowser CHANGES
 
-## ?
+## 0.36.0
 
 - Breaking change: Explicitly require Node 10.11.0+
 - Build: Update per latest devDeps.
