@@ -6,7 +6,7 @@
 // Todo: Replace with ES6 modules (and remove Rollup routines) once browsers
 //    support:
 //    https://stackoverflow.com/a/45578811/271577
-//    https://bugs.chromium.org/p/chromium/issues/detail?id=680046
+//    https://bugs.chromium.org/p/chromium/issues/detail?id=824647
 // import getJSON from './node_modules/simple-get-json/dist/index-es.js';
 // import activateCallback from 'node_modules/textbrowser/resources/activateCallback.js';
 // import {getWorkFiles} from './WorkInfo.js';
