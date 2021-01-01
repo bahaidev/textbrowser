@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.36.1
+
+- Fix: Properly encode stylesheets
+
 ## 0.36.0
 
 - Breaking change: Explicitly require Node 10.11.0+

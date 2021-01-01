@@ -13,7 +13,7 @@ export const setServiceWorkerDefaults = (target, source) => {
         `sw.js?pathToUserJSON=${
           encodeURIComponent(target.userJSON)
         }&stylesheets=${
-          JSON.stringify(target.stylesheets || [])
+          encodeURIComponent(JSON.stringify(target.stylesheets || []))
         }`;
   target.files = source.files || 'files.json';
   target.namespace = source.namespace || 'textbrowser';
