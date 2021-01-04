@@ -1095,6 +1095,10 @@ it supports the following arguments:
 
 1.  Waiting: Avoid superagent warning:
     <https://github.com/whitlockjc/path-loader/issues/17>
+1.  Allow copy-pasting a search as a custom web protocol (make
+    site-configurable), e.g., to support `web+bahaiwritings:` links per
+    [bahai-writings-handler](https://github.com/brettz9/bahai-writings-handler)
+    ([demo](https://bahai-library.com/test-bahai-web-protocol/test-bahai-web-protocol.html))
 1.  In schema, let `$locale` or `*` indicate all fields to be translated
     where possible?
 1.  Preferences
