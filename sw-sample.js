@@ -10,9 +10,6 @@
 // import getJSON from './node_modules/simple-get-json/dist/index-es.js';
 // import activateCallback from 'node_modules/textbrowser/resources/activateCallback.js';
 // import {getWorkFiles} from './WorkInfo.js';
-importScripts('node_modules/core-js-bundle/minified.js');
-importScripts('node_modules/regenerator-runtime/runtime.js');
-
 importScripts('node_modules/simple-get-json/dist/index.js');
 importScripts('node_modules/textbrowser/dist/WorkInfo-umd.js');
 importScripts('node_modules/textbrowser/dist/activateCallback-umd.js');
@@ -147,8 +144,6 @@ const defaultUserStaticFiles = [
 //   get these as reliable full paths without hard-coding or needing to
 //   actually be in `node_modules/textbrowser`; see `resources/index.js`
 const textbrowserStaticResourceFiles = [
-  'node_modules/core-js-bundle/minified.js',
-  'node_modules/regenerator-runtime/runtime.js',
   'node_modules/dialog-polyfill/dist/dialog-polyfill.esm.js',
 
   'node_modules/textbrowser/appdata/languages.json',
@@ -308,17 +303,18 @@ self.addEventListener('activate', (e) => {
 // We cannot make this async as `e.respondWith` must be called synchronously
 self.addEventListener('fetch', (e) => {
   // DevTools opening will trigger these o-i-c requests
-  const {request: {cache, mode, url}} = e;
+  const {request} = e;
+  const {cache, mode, url} = request;
   if (cache === 'only-if-cached' &&
         mode !== 'same-origin') {
     return;
   }
   console.log('fetching', url);
   e.respondWith((async () => {
-    const cached = await caches.match(e.request);
+    const cached = await caches.match(request);
     if (!cached) {
       console.log('no cached found', url);
     }
-    return cached || fetch(e.request);
+    return cached || fetch(request);
   })());
 });

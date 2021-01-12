@@ -1,5 +1,11 @@
 # textbrowser CHANGES
 
+## 0.37.0
+
+- Fix: `nodeActivate` and base path
+- Change: Drop core-js-bundle and regenerator-runtime
+- npm: Update imf, dialog-polyfill, simple-get-json deps. and devDeps
+
 ## 0.36.1
 
 - Fix: Properly encode stylesheets

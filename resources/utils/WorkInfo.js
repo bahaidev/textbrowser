@@ -1,5 +1,5 @@
 import {getJSON} from 'simple-get-json';
-import IMF from 'imf';
+import {IMF} from 'imf';
 import {getMetaProp, getMetadata, Metadata} from './Metadata.js';
 import {PluginsForWork, escapePlugin} from './Plugin.js';
 
@@ -170,7 +170,7 @@ export const getWorkData = async function ({
         pluginsForWork
   ) {
     console.log('pluginsForWork', pluginsForWork);
-    const {lang} = this; // array with first item as preferred
+    const {lang, namespace} = this; // array with first item as preferred
     pluginsForWork.iterateMappings(({
       plugin,
       pluginName, pluginLang,
@@ -231,7 +231,7 @@ export const getWorkData = async function ({
             : placement,
           0,
           {
-            field: `${this.namespace}-plugin-${field}`,
+            field: `${namespace}-plugin-${field}`,
             fieldAliasOrName,
             // Plug-in specific (todo: allow specifying
             //    for non-plugins)

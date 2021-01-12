@@ -1,4 +1,4 @@
-import IMF from 'imf';
+import {IMF} from 'imf';
 
 export default function getIMFFallbackResults ({
   $p,

@@ -1,6 +1,6 @@
 /* eslint-env browser */
 import {getJSON} from 'simple-get-json';
-import IMF from 'imf';
+import {IMF} from 'imf';
 
 import {getMetaProp} from './utils/Metadata.js';
 import {dialogs} from './utils/dialogs.js';

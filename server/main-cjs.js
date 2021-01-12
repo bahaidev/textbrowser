@@ -6,11 +6,7 @@ var simpleGetJson = require('simple-get-json');
 var rtlDetect = require('rtl-detect');
 var jamilih = require('jamilih');
 var formSerialization = require('form-serialization');
-var IMF = require('imf');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var IMF__default = /*#__PURE__*/_interopDefaultLegacy(IMF);
+var imf = require('imf');
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -2520,7 +2516,7 @@ const getWorkData = async function ({
 
   const localeFromFileData = lan => filesObj['localization-strings'][lan];
 
-  const imfFile = IMF__default['default']({
+  const imfFile = imf.IMF({
     locales: lang.map(localeFromFileData),
     fallbackLocales: fallbackLanguages.map(localeFromFileData)
   });
@@ -2659,7 +2655,8 @@ const getWorkData = async function ({
   pluginsForWork) {
     console.log('pluginsForWork', pluginsForWork);
     const {
-      lang
+      lang,
+      namespace
     } = this; // array with first item as preferred
 
     pluginsForWork.iterateMappings(({
@@ -2727,7 +2724,7 @@ const getWorkData = async function ({
         //    non-plugins
         placement === 'end' ? Number.POSITIVE_INFINITY // push
         : placement, 0, {
-          field: `${this.namespace}-plugin-${field}`,
+          field: `${namespace}-plugin-${field}`,
           fieldAliasOrName,
           // Plug-in specific (todo: allow specifying
           //    for non-plugins)
@@ -3358,7 +3355,9 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         // e.g., 5 - 6:2:1 gets all of book 5 to 6:2:1
         // Todo: We should fill with '0' but since that often
         //    doesn't find anything, we default for now to '1'.
-        startPartVals.push(...new Array(-startEndDiff).fill('1'));
+        startPartVals.push(...Array.from({
+          length: -startEndDiff
+        }).fill('1'));
       }
 
       console.log('startPartVals', startPartVals);
@@ -3396,7 +3395,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
   const stripToRawFieldValue = (v, i) => {
     let val;
 
-    if (v.match(/^\d+$/) || v.match(fieldValueAliasRegex)) {
+    if (/^\d+$/.test(v) || fieldValueAliasRegex.test(v)) {
       val = getRawFieldValue(v);
     } else {
       const {
@@ -3656,13 +3655,13 @@ function getIMFFallbackResults({
         l: l10n,
         lang,
         fallbackLanguages,
-        imfLocales: imf.locales,
+        imfLocales: imf$1.locales,
         $p,
         basePath
       }, ...args);
     };
 
-    const imf = IMF__default['default']({
+    const imf$1 = imf.IMF({
       languages: lang,
       fallbackLanguages,
 
@@ -3821,7 +3820,9 @@ if (userParams.nodeActivate) {
 
 
   (async () => {
-    await activateCallback(userParamsWithDefaults);
+    await activateCallback(_objectSpread2(_objectSpread2({}, userParamsWithDefaults), {}, {
+      basePath
+    }));
     console.log('Activated');
   })();
 }

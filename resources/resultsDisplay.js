@@ -591,7 +591,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       } else if (startEndDiff < 0) { // e.g., 5 - 6:2:1 gets all of book 5 to 6:2:1
         // Todo: We should fill with '0' but since that often
         //    doesn't find anything, we default for now to '1'.
-        startPartVals.push(...new Array(-startEndDiff).fill('1'));
+        startPartVals.push(...Array.from({length: -startEndDiff}).fill('1'));
       }
       console.log('startPartVals', startPartVals);
       console.log('endPartVals', endPartVals);
@@ -638,7 +638,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
 
   const stripToRawFieldValue = (v, i) => {
     let val;
-    if (v.match(/^\d+$/) || v.match(fieldValueAliasRegex)) {
+    if ((/^\d+$/).test(v) || fieldValueAliasRegex.test(v)) {
       val = getRawFieldValue(v);
     } else {
       const {rawFieldValueAliasMap} = applicableBrowseFieldSet[i];

@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import IMF from 'imf';
+import {IMF} from 'imf';
 import {getJSON} from 'simple-get-json';
 
 import {replaceHash, getParamsSetter, getSerializeParamsAsURL} from './utils/Params.js';

@@ -95,7 +95,7 @@ if (userParams.nodeActivate) {
   // const activateCallback = require('../resources/activateCallback.js');
   const activateCallback = require('../dist/activateCallback-umd.js'); // eslint-disable-line node/global-require
   (async () => {
-    await activateCallback(userParamsWithDefaults);
+    await activateCallback({...userParamsWithDefaults, basePath});
     console.log('Activated');
   })();
 }
