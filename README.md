@@ -738,6 +738,10 @@ it supports the following arguments:
 
 1.  Switch from IMF i18n to [intl-dom](https://github.com/brettz9/intl-dom) and
     as needed [i18nizeElement](https://github.com/brettz9/i18nizeElement)
+1.  Simplify `languages.json` by using `Intl.DisplayNames` (`type: 'language'`)
+    to localize language names (and can avoid direction if [intl-locale-info proposal](https://github.com/tc39/proposal-intl-locale-info) is
+    implemented); consider using with plugins so can, e.g., show language
+    visibly into which a targeted content language field was translated
 1.  Document and add screen-casts along with one for developers showing
     JSON format, metadata, and schemas); also use with shortcuts (including
     Bahá'í Library Online ones)
