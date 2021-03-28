@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.38.1
+
+- Fix: Add back `node-static` for programmatic use
+
 ## 0.38.0
 
 - npm: Update `simple-get-json`, `imf`
