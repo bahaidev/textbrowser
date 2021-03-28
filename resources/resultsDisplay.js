@@ -416,7 +416,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     pluginsForWork
   } = await getWorkData({
     files: files || this.files,
-    allowPlugins: allowPlugins || this.allowPlugins,
+    allowPlugins: typeof allowPlugins === 'boolean' ? allowPlugins : this.allowPlugins,
     lang, fallbackLanguages,
     work: $p.get('work'),
     basePath

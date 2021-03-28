@@ -1,5 +1,11 @@
 # textbrowser CHANGES
 
+## 0.38.0
+
+- npm: Update `simple-get-json`, `imf`
+- Dev securty: Switch to server (`http-server`) without reported
+    vulnerabilities
+
 ## 0.37.0
 
 - Fix: `nodeActivate` and base path

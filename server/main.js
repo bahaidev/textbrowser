@@ -147,6 +147,7 @@ const srv = http.createServer(async (req, res) => {
     langData,
     async resultsDisplay (resultsArgs, ...args) {
       const serverOutput = $p.get('serverOutput', true);
+      const allowPlugins = $p.get('allowPlugins', true);
       const isHTML = serverOutput === 'html';
       res.writeHead(200, {'Content-Type': isHTML
         ? 'text/html;charset=utf8'
@@ -155,6 +156,7 @@ const srv = http.createServer(async (req, res) => {
       resultsArgs = {
         ...resultsArgs,
         skipIndexedDB: false,
+        allowPlugins,
         serverOutput,
         langData,
         prefI18n: $p.get('prefI18n', true)

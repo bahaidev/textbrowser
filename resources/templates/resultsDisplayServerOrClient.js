@@ -212,14 +212,22 @@ body {
       'json-object': 'json'
     };
     const outputmode = $p.get('outputmode', true); // Why not $pRaw?
+
+    switch (outputmode) {
+    case 'json-object': // Can later fall through if supporting
+    case 'json-array':
+      // tableOptions[outputmode] = tableOptions.table;
+      // break;
+      throw new Error('JSON object support is currently not available');
+    default:
+      break;
+    }
+
     const tableElems = tableOptions[
-      Object.keys(tableOptions).includes(outputmode) // Exclude __proto__ or whatever
+      Object.prototype.hasOwnProperty.call(tableOptions, outputmode)
         ? outputmode
         : 'table' // Default
     ];
-    if (tableElems === 'json') {
-      throw new Error('JSON support is currently not available');
-    }
     const [
       tableElem, trElem, tdElem, thElem, captionElem, theadElem, tbodyElem, tfootElem
     ] = tableElems; // colgroupElem, colElem

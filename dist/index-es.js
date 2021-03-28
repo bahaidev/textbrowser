@@ -18885,14 +18885,17 @@ body {
     };
     const outputmode = $p.get('outputmode', true); // Why not $pRaw?
 
-    const tableElems = tableOptions[Object.keys(tableOptions).includes(outputmode) // Exclude __proto__ or whatever
-    ? outputmode : 'table' // Default
-    ];
+    switch (outputmode) {
+      case 'json-object': // Can later fall through if supporting
 
-    if (tableElems === 'json') {
-      throw new Error('JSON support is currently not available');
+      case 'json-array':
+        // tableOptions[outputmode] = tableOptions.table;
+        // break;
+        throw new Error('JSON object support is currently not available');
     }
 
+    const tableElems = tableOptions[Object.prototype.hasOwnProperty.call(tableOptions, outputmode) ? outputmode : 'table' // Default
+    ];
     const [tableElem, trElem, tdElem, thElem, captionElem, theadElem, tbodyElem, tfootElem] = tableElems; // colgroupElem, colElem
 
     const [checkedFields, checkedFieldIndexes, allInterlinearColIndexes] = checkedAndInterlinearFieldInfo;
@@ -20421,7 +20424,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
     pluginsForWork
   } = await getWorkData({
     files: files || this.files,
-    allowPlugins: allowPlugins || this.allowPlugins,
+    allowPlugins: typeof allowPlugins === 'boolean' ? allowPlugins : this.allowPlugins,
     lang,
     fallbackLanguages,
     work: $p.get('work'),

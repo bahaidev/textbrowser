@@ -71,6 +71,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
       }),
       // nodeGlobals(),
       resolve({
+        // exportConditions: ['module'],
         mainFields: ['module']
       }),
       commonjs(),
