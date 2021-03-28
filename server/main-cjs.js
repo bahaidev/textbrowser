@@ -1241,7 +1241,7 @@ var workDisplay = {
 
 };
 
-var resultsDisplayServerOrClient = {
+var resultsDisplayServerOrClient$1 = {
   caption({
     heading,
     ranges
@@ -1661,10 +1661,6 @@ const $e = (el, descendentsSel) => {
   return el.querySelector(descendentsSel);
 };
 
-const dialogPolyfill = {
-  registerDialog() {}
-
-};
 const defaultLocale = 'en';
 const localeStrings = {
   en: {
@@ -1709,7 +1705,6 @@ class Dialog {
     }
 
     const dialog = jamilih.jml('dialog', atts, children, jamilih.$('#main'));
-    dialogPolyfill.registerDialog(dialog);
     dialog.showModal();
 
     if (remove) {
@@ -1804,7 +1799,6 @@ class Dialog {
 
         }
       }, [this.localeStrings.ok]]]]] : [])], jamilih.$('#main'));
-      dialogPolyfill.registerDialog(dialog);
       dialog.showModal();
     });
   }
@@ -1878,7 +1872,6 @@ class Dialog {
 
         }
       }, [this.localeStrings.cancel]]]]], jamilih.$('#main'));
-      dialogPolyfill.registerDialog(dialog);
       dialog.showModal();
     });
   }
@@ -1923,7 +1916,7 @@ const Templates = {
   languageSelect,
   workSelect,
   workDisplay,
-  resultsDisplayServerOrClient,
+  resultsDisplayServerOrClient: resultsDisplayServerOrClient$1,
   resultsDisplayClient,
 
   defaultBody() {
@@ -2140,7 +2133,7 @@ class Languages {
 
     const language = languageParam || fallbackLanguages[0];
     const preferredLangs = language.split('.');
-    const lang = preferredLangs.concat(fallbackLanguages);
+    const lang = [...preferredLangs, ...fallbackLanguages];
     return {
       lang,
       langs,
@@ -2153,7 +2146,7 @@ class Languages {
 
 /* eslint-env browser */
 
-const JsonRefs = require('json-refs'); // eslint-disable-line import/order
+const JsonRefs$1 = require('json-refs'); // eslint-disable-line import/order
 
 
 const getCurrDir = () => window.location.href.replace(/(index\.html)?#.*$/, '');
@@ -2184,7 +2177,7 @@ const getMetaProp = function getMetaProp(lang, metadataObj, properties, allowObj
 // Todo: Allow use of dbs and fileGroup together in base directories?
 
 const getMetadata = async (file, property, basePath) => {
-  return (await JsonRefs.resolveRefsAt((basePath || getCurrDir()) + file + (property ? '#/' + property : ''), {
+  return (await JsonRefs$1.resolveRefsAt((basePath || getCurrDir()) + file + (property ? '#/' + property : ''), {
     loaderOptions: {
       processContent(res, callback) {
         callback(undefined, JSON.parse(res.text || // `.metadata` not a recognized extension, so
@@ -2631,7 +2624,7 @@ const getWorkData = async function ({
         // E.g., with tooltips plugin
         console.log('err', err);
       });
-    } // eslint-disable-next-line node/no-unsupported-features/es-syntax, no-unsanitized/method
+    } // eslint-disable-next-line no-unsanitized/method
 
 
     return Promise.resolve(`${pluginPath}`).then(s => _interopRequireWildcard(require(s)));
@@ -2761,7 +2754,7 @@ const getWorkData = async function ({
   };
 };
 
-const JsonRefs$1 = require('json-refs');
+const JsonRefs = require('json-refs');
 
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 
@@ -2771,7 +2764,7 @@ const getRawFieldValue = v => {
 const resultsDisplayServer = async function resultsDisplayServer(args) {
   const {
     templateArgs
-  } = await resultsDisplayServerOrClient$1.call(this, _objectSpread2({}, args)); // Todo: Should really reconcile this with client-side output options
+  } = await resultsDisplayServerOrClient.call(this, _objectSpread2({}, args)); // Todo: Should really reconcile this with client-side output options
   //         (as should also have option there to get JSON, Jamilih, etc.
   //         output)
 
@@ -2790,7 +2783,7 @@ const resultsDisplayServer = async function resultsDisplayServer(args) {
       return templateArgs.tableData;
   }
 };
-const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClient({
+const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient({
   l,
   lang,
   fallbackLanguages,
@@ -3494,7 +3487,7 @@ const resultsDisplayServerOrClient$1 = async function resultsDisplayServerOrClie
         resolved: {
           data: tableData
         }
-      } = await JsonRefs$1.resolveRefs(fileData.file));
+      } = await JsonRefs.resolveRefs(fileData.file));
       runPresort({
         presort,
         tableData,

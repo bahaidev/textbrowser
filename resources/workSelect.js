@@ -21,7 +21,7 @@ export default async function workSelect ({
       const metadataBaseDir = (dbs.metadataBaseDirectory || '') +
                 (fileGroup.metadataBaseDirectory || '') + '/';
       return fileGroup.files.reduce((ar, fileData) =>
-        ar.concat(metadataBaseDir + fileData.metadataFile),
+        [...ar, metadataBaseDir + fileData.metadataFile],
       arr);
     }, []));
     const imfFile = IMF({

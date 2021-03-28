@@ -1,5 +1,19 @@
 # textbrowser CHANGES
 
+## 0.38.3
+
+### User-facing
+
+- npm: Update deps. (`@babel/core`, `@babel/register`, `imf`, `indexeddbshim`,
+    `jamilih`, `jsdom`, `load-stylesheets`, `url-search-params-polyfill`)
+
+### Dev-facing
+
+- Linting: As per latest ash-nazg (and switch to `overrides`)
+- npm: Switch to updated `rollup-plugin-postprocess` fork
+- npm: Switch from deprecated `babel-eslint`
+- npm: Update devDeps. including changed `eslint-config-ash-nazg` peerDeps.
+
 ## 0.38.2
 
 - Fix: `allowPlugins` behavior

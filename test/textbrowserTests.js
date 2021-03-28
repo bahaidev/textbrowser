@@ -1,7 +1,8 @@
-/* eslint-env node, mocha */
-'use strict'; // eslint-disable-line strict
+/* eslint-disable no-console -- Test file */
+'use strict';
 
-var JsonRefs, chai, assert, jsonpatch, Ajv, getJSON, __dirname, path; // eslint-disable-line no-var
+// eslint-disable-next-line no-var, no-shadow -- Polyglot
+var JsonRefs, chai, assert, jsonpatch, Ajv, getJSON, __dirname, path;
 
 /**
  *
@@ -14,15 +15,16 @@ function cloneJSON (obj) {
 
 let appBase = '../';
 
+// eslint-disable-next-line node/exports-style -- Check
 if (typeof exports !== 'undefined') {
-  /* eslint-disable node/global-require */
+  /* eslint-disable node/global-require -- For Node */
   Ajv = require('ajv').default;
   JsonRefs = require('json-refs');
   jsonpatch = require('fast-json-patch');
   ({getJSON} = require('simple-get-json'));
   assert = require('assert');
   path = require('path');
-  /* eslint-enable node/global-require */
+  /* eslint-enable node/global-require -- For Node */
 } else {
   ({assert} = chai);
   path = {
@@ -53,7 +55,9 @@ const jsonSchemaSpec = 'node_modules/json-metaschema/draft-07-schema.json';
 * @param {external:AJVOptions} additionalOptions
 * @returns {boolean} Whether validation succeeded
 */
-function validate (testName, schema, data, extraSchemas = [], additionalOptions = {}) {
+function validate (
+  testName, schema, data, extraSchemas = [], additionalOptions = {}
+) {
   const ajv = new Ajv({...additionalOptions});
   let valid;
   try {
@@ -110,7 +114,9 @@ describe('textbrowser tests', function () {
   });
   it('languages.json test', async () => {
     const results = await Promise.all([
-      JsonRefs.resolveRefsAt(path.join(__dirname, appdataBase, 'languages.json')),
+      JsonRefs.resolveRefsAt(
+        path.join(__dirname, appdataBase, 'languages.json')
+      ),
       getJSON(path.join(__dirname, appBase + jsonSchemaSpec)),
       getJSON(path.join(__dirname, schemaBase, 'languages.jsonschema')),
       getJSON(path.join(__dirname, schemaBase, 'locale.jsonschema'))
@@ -121,17 +127,17 @@ describe('textbrowser tests', function () {
     assert.strictEqual(valid, true);
 
     const schemas = results.slice(2);
-    schemas.forEach((schema, i) => {
-      validate('Schema test', jsonSchema, schema, undefined, {
+    schemas.forEach((schma, i) => {
+      validate('Schema test', jsonSchema, schma, undefined, {
         validateSchema: false
       });
 
-      const schema2 = cloneJSON(schema);
+      const schema2 = cloneJSON(schma);
       validate('Schema test 2', jsonSchema, schema2, extraSchemas, {
         removeAdditional: 'all',
         validateSchema: false
       });
-      const diff = jsonpatch.compare(schema, schema2);
+      const diff = jsonpatch.compare(schma, schema2);
       if (diff.length) {
         console.log(`diff for schema at index ${i}`, diff);
       }

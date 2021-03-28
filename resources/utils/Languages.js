@@ -59,7 +59,7 @@ export class Languages {
     const language = languageParam || fallbackLanguages[0];
 
     const preferredLangs = language.split('.');
-    const lang = preferredLangs.concat(fallbackLanguages);
+    const lang = [...preferredLangs, ...fallbackLanguages];
 
     return {
       lang,

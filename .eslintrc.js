@@ -1,10 +1,10 @@
 'use strict';
 
 module.exports = {
-  extends: ['ash-nazg/sauron-node'],
-  parser: 'babel-eslint',
+  extends: ['ash-nazg/sauron-node-overrides'],
+  parser: '@babel/eslint-parser',
   parserOptions: {
-    sourceType: 'module'
+    requireConfigFile: false
   },
   settings: {
     polyfills: [
@@ -46,12 +46,6 @@ module.exports = {
     ]
   },
   overrides: [{
-    files: '.eslintrc.js',
-    extends: ['plugin:node/recommended-script'],
-    rules: {
-      'import/no-commonjs': 0
-    }
-  }, {
     files: ['resources/user-sample.js'],
     rules: {
       'node/no-missing-import': 0,
@@ -65,6 +59,7 @@ module.exports = {
     }
   }, {
     files: ['test/index.html'],
+    extends: ['ash-nazg/sauron-node-script-overrides'],
     globals: {
       mocha: false
     },
@@ -73,13 +68,7 @@ module.exports = {
     }
   }, {
     files: ['test/textbrowserTests.js'],
-    globals: {
-      require: true
-    },
-    rules: {
-      'import/unambiguous': 0,
-      'import/no-commonjs': 0
-    }
+    extends: ['ash-nazg/sauron-node-script-overrides']
   }, {
     files: ['server/**', 'resources/utils/WorkInfo.js'],
     globals: {

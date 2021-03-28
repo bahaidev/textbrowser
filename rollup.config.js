@@ -5,7 +5,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import replace from 'rollup-plugin-re';
 import {terser} from 'rollup-plugin-terser';
-import postProcess from 'rollup-plugin-postprocess';
+import postProcess from '@stadtlandnetz/rollup-plugin-postprocess';
 import pkg from './package.json';
 
 const importerReplace = {

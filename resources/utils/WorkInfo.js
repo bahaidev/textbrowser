@@ -149,7 +149,7 @@ export const getWorkData = async function ({
               console.log('err', err);
             });
           }
-          // eslint-disable-next-line node/no-unsupported-features/es-syntax, no-unsanitized/method
+          // eslint-disable-next-line no-unsanitized/method
           return import(pluginPath);
         })
       )

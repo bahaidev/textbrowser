@@ -137,7 +137,7 @@ async function requestPermissions (langs, l) {
         // rememberRefusal();
         resolve();
         return;
-        // eslint-disable-next-line sonarjs/no-duplicated-branches
+        // eslint-disable-next-line radar/no-duplicated-branches
       case 'default':
         resolve();
         return;
