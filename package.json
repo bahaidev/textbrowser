@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.38.1",
+  "version": "0.38.2",
   "description": "Multilinear text browser",
   "main": "dist/index-umd.min.js",
   "module": "resources/index.js",

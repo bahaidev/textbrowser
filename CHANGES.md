@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.38.2
+
+- Fix: `allowPlugins` behavior
+
 ## 0.38.1
 
 - Fix: Add back `node-static` for programmatic use

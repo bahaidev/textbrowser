@@ -147,7 +147,10 @@ const srv = http.createServer(async (req, res) => {
     langData,
     async resultsDisplay (resultsArgs, ...args) {
       const serverOutput = $p.get('serverOutput', true);
-      const allowPlugins = $p.get('allowPlugins', true);
+      let allowPlugins = $p.get('allowPlugins', true);
+      if (allowPlugins === '0') {
+        allowPlugins = false;
+      }
       const isHTML = serverOutput === 'html';
       res.writeHead(200, {'Content-Type': isHTML
         ? 'text/html;charset=utf8'
