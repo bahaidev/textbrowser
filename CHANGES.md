@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.38.6
+
+- Fix: Avoid race condition with language loading
+
 ## 0.38.5
 
 - Fix: Don't fail if no `accept-language` header (e.g., with `curl`)

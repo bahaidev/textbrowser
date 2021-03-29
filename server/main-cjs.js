@@ -3833,14 +3833,6 @@ const statik = require('@brettz9/node-static');
 const fileServer = new statik.Server(); // Pass path; otherwise uses current directory
 
 let langData, languagesInstance;
-
-(async () => {
-  langData = await simpleGetJson.getJSON(userParamsWithDefaults.languages);
-  languagesInstance = new Languages({
-    langData
-  });
-})();
-
 const srv = http.createServer(async (req, res) => {
   var _req$headers$acceptL, _req$headers$acceptL2;
 
@@ -3874,6 +3866,14 @@ const srv = http.createServer(async (req, res) => {
   const $p = new IntlURLSearchParams({
     params: search
   });
+
+  if (!langData || !languagesInstance) {
+    langData = await simpleGetJson.getJSON(userParamsWithDefaults.languages);
+    languagesInstance = new Languages({
+      langData
+    });
+  }
+
   const {
     lang,
     langs,
