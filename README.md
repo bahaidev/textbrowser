@@ -738,6 +738,8 @@ it supports the following arguments:
 
 1.  Switch from IMF i18n to [intl-dom](https://github.com/brettz9/intl-dom) and
     as needed [i18nizeElement](https://github.com/brettz9/i18nizeElement)
+1.  Ensure works with `pnpm` in all environments (didn't work when deployed,
+    but would need to recall the problem and resolve)
 1.  Simplify `languages.json` by using `Intl.DisplayNames` (`type: 'language'`)
     to localize language names (and can avoid direction if [intl-locale-info proposal](https://github.com/tc39/proposal-intl-locale-info) is
     implemented); consider using with plugins so can, e.g., show language
