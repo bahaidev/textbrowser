@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.38.4
+
+- Fix: Switch to `@brettz9/node-static` to fix vulnerabilities and strict error
+
 ## 0.38.3
 
 ### User-facing
