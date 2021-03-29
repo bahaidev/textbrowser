@@ -129,7 +129,7 @@ const srv = http.createServer(async (req, res) => {
         */
     return;
   }
-  const languages = req.headers['accept-language'].replace(/;q=.*?$/, '').split(',');
+  const languages = (req.headers['accept-language']?.replace(/;q=.*?$/, '') ?? 'en-US').split(',');
   global.navigator = {
     language: languages[0],
     languages

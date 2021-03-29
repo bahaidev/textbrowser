@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.38.5
+
+- Fix: Don't fail if no `accept-language` header (e.g., with `curl`)
+
 ## 0.38.4
 
 - Fix: Switch to `@brettz9/node-static` to fix vulnerabilities and strict error

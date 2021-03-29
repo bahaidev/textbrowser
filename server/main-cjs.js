@@ -3842,6 +3842,8 @@ let langData, languagesInstance;
 })();
 
 const srv = http.createServer(async (req, res) => {
+  var _req$headers$acceptL, _req$headers$acceptL2;
+
   // console.log('URL::', new URL(req.url));
   const {
     pathname,
@@ -3864,7 +3866,7 @@ const srv = http.createServer(async (req, res) => {
     return;
   }
 
-  const languages = req.headers['accept-language'].replace(/;q=.*?$/, '').split(',');
+  const languages = ((_req$headers$acceptL = (_req$headers$acceptL2 = req.headers['accept-language']) === null || _req$headers$acceptL2 === void 0 ? void 0 : _req$headers$acceptL2.replace(/;q=.*?$/, '')) !== null && _req$headers$acceptL !== void 0 ? _req$headers$acceptL : 'en-US').split(',');
   global.navigator = {
     language: languages[0],
     languages
