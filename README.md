@@ -736,6 +736,14 @@ it supports the following arguments:
 
 ## To-dos (Highest priority)
 
+0.  Progressive web app? / Electron?
+1.  Mention idea that it works offline
+1.  **Default field(s) and default value(s)** for when no text is entered and
+    a reasonable sample is desired to be shown. Use `default_view` already
+    spec'd in metadata schema and used in files.
+    1. Also have `&checked1=Yes` omitted when generating results display
+        (since now defaulting to this)
+    1.  Drop unused fields in URL by default
 1.  Switch from IMF i18n to [intl-dom](https://github.com/brettz9/intl-dom) and
     as needed [i18nizeElement](https://github.com/brettz9/i18nizeElement)
 1.  Ensure works with `pnpm` in all environments (didn't work when deployed,
@@ -752,11 +760,6 @@ it supports the following arguments:
 1.  **Progress meter** with hidden console to avoid intimidating loading
     messages of service worker; also retrieve latest in `CHANGES.md`!
 1.  **Move "Go"** to right (or immediate bottom) of paragraph selections
-1.  **Default field(s) and default value(s)** for when no text is entered and
-    a reasonable sample is desired to be shown. Use `default_view` already
-    spec'd in metadata schema and used in files.
-    1. Also have `&checked1=Yes` omitted when generating results display
-        (since now defaulting to this)
 1.  Overflow on cells past a certain height—especially for indexes
 1.  In place of passing in `files`, `namespace` and `languages`, pass
     in `userJSON`
