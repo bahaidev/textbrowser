@@ -1021,7 +1021,8 @@ it supports the following arguments:
         content with option for highlighting these (e.g., to highlight a
         parts of a sentence, including one spanning multiple rows/verses);
         consider range for highlighting if verse range + added context range
-        not enough
+        not enough; "emphasis added", "passim", customization of citations
+        (moving caption to bottom)
     1.  Ability to run XPath/`querySelector`-like queries against
         `format: "html"` fields relative to specific cells (or against
         original source HTML or XML document); also highlighting as
