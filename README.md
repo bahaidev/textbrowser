@@ -737,6 +737,8 @@ it supports the following arguments:
 ## To-dos (Highest priority)
 
 0.  Progressive web app? / Electron?
+1.  Adapt approach of <https://suttacentral.net/offline> in providing form for
+    choice of items to offline (also add to individual work pages).
 1.  Mention idea that it works offline
 1.  **Default field(s) and default value(s)** for when no text is entered and
     a reasonable sample is desired to be shown. Use `default_view` already
