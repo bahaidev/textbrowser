@@ -120,9 +120,9 @@ const srv = http.createServer(async (req, res) => {
       fileServer.serve(req, res);
     }).resume();
     /*
-        res.writeHead(404, {'Content-Type': 'text/html'});
-        res.end('<h1>File not found</h1>');
-        */
+    res.writeHead(404, {'Content-Type': 'text/html'});
+    res.end('<h1>File not found</h1>');
+    */
     return;
   }
   const languages = (req.headers['accept-language']?.replace(/;q=.*?$/, '') ?? 'en-US').split(',');
