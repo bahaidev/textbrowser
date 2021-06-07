@@ -3768,6 +3768,9 @@ const optionDefinitions = [// Node-server-specific
 }, {
   name: 'namespace',
   type: String
+}, {
+  name: 'expressServer',
+  type: String
 }];
 
 const userParams = require('command-line-args')(optionDefinitions);
@@ -3848,13 +3851,24 @@ const srv = http.createServer(async (req, res) => {
   } = new URL(req.url, basePath);
 
   if (pathname !== '/textbrowser' || !search) {
-    req.addListener('end', function () {
+    const staticServer = () => {
       if (pathname.includes('.git')) {
         req.url = '/index.html';
       }
 
       fileServer.serve(req, res);
-    }).resume();
+    };
+
+    if (userParams.expressServer) {
+      // eslint-disable-next-line node/global-require, import/no-dynamic-require
+      const server = require(userParams.expressServer)();
+
+      server.get('*', staticServer);
+      server(req, res);
+      return;
+    }
+
+    req.addListener('end', staticServer).resume();
     /*
     res.writeHead(404, {'Content-Type': 'text/html'});
     res.end('<h1>File not found</h1>');
