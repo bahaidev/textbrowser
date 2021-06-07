@@ -1,5 +1,19 @@
 # textbrowser CHANGES
 
+## 0.39.0 (unreleased)
+
+### User-facing
+
+- Breaking change: Require Node 12
+- npm: Update dep. babel/core (minor), babel/register (patch), jsdom (minor),
+    rtl-detect (patch)
+
+### Dev-facing
+
+- Linting: As per latest ash-nazg
+- npm: Update devDeps.
+- npm: Add `lint` script
+
 ## 0.38.6
 
 - Fix: Avoid race condition with language loading

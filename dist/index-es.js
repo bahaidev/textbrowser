@@ -1,26 +1,15 @@
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
 
   if (Object.getOwnPropertySymbols) {
     var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
+
+    if (enumerableOnly) {
+      symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+    }
+
     keys.push.apply(keys, symbols);
   }
 
@@ -45,6 +34,21 @@ function _objectSpread2(target) {
   }
 
   return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
 }
 
 function _objectWithoutPropertiesLoose(source, excluded) {
@@ -7762,6 +7766,9 @@ const $e = (el, descendentsSel) => {
   return el.querySelector(descendentsSel);
 };
 
+const _excluded$1 = ["submit", "submitClass"],
+      _excluded2 = ["submit", "cancel", "cancelClass", "submitClass"],
+      _excluded3 = ["message", "submit"];
 const defaultLocale = 'en';
 const localeStrings = {
   en: {
@@ -7824,7 +7831,7 @@ class Dialog {
       // Don't pass this on to `args` if present
       submitClass = 'submit'
     } = _ref,
-        args = _objectWithoutProperties(_ref, ["submit", "submitClass"]);
+        args = _objectWithoutProperties(_ref, _excluded$1);
 
     const dialog = this.makeCancelDialog(args);
     $e(dialog, `button.${args.cancelClass || 'cancel'}`).before(jml('button', {
@@ -7852,7 +7859,7 @@ class Dialog {
       cancelClass = 'cancel',
       submitClass = 'submit'
     } = _ref2,
-        args = _objectWithoutProperties(_ref2, ["submit", "cancel", "cancelClass", "submitClass"]);
+        args = _objectWithoutProperties(_ref2, _excluded2);
 
     const dialog = this.makeDialog(args);
     jml('div', {
@@ -7915,7 +7922,7 @@ class Dialog {
       message: msg,
       submit: userSubmit
     } = message,
-          submitArgs = _objectWithoutProperties(message, ["message", "submit"]);
+          submitArgs = _objectWithoutProperties(message, _excluded3);
 
     return new Promise((resolve, reject) => {
       const submit = function ({
@@ -15150,7 +15157,7 @@ const getMetaProp = function getMetaProp(lang, metadataObj, properties, allowObj
   let prop;
   properties = typeof properties === 'string' ? [properties] : properties;
   lang.some(lan => {
-    const p = properties.slice(0);
+    const p = [...properties];
     let strings = metadataObj['localization-strings'][lan];
 
     while (strings && p.length) {
@@ -17928,6 +17935,7 @@ const getParamsSetter = function ({
   };
 };
 
+const _excluded = ["lf", "fileData", "metadataObj"];
 async function workDisplay({
   l,
   languageParam,
@@ -17956,7 +17964,8 @@ async function workDisplay({
     groupsToWorks
   }) {
     const il = localizeParamNames ? key => l(['params', key]) : key => key;
-    const iil = localizeParamNames ? key => l(['params', 'indexed', key]) : key => key;
+    const iil = localizeParamNames ? key => l(['params', 'indexed', key]) : key => key; // eslint-disable-next-line unicorn/prefer-prototype-methods -- Convenient
+
     const localeFromLangData = languages.localeFromLangData.bind(languages);
     const imfLang = IMF({
       locales: lang.map(localeFromLangData),
@@ -18120,7 +18129,7 @@ async function workDisplay({
       fileData,
       metadataObj
     } = _await$this$getWorkDa,
-          args = _objectWithoutProperties(_await$this$getWorkDa, ["lf", "fileData", "metadataObj"]);
+          args = _objectWithoutProperties(_await$this$getWorkDa, _excluded);
 
     document.title = lf({
       key: 'browserfile-workdisplay',
@@ -18147,13 +18156,18 @@ async function workDisplay({
 var self$1;
 var RtlDetectLib = self$1 = {
   // eslint-disable-line consistent-this
+  // Private vars - star
+  _regexEscape: /([\.\*\+\^\$\[\]\\\(\)\|\{\}\,\-\:\?])/g,
+  // eslint-disable-line no-useless-escape
+  _regexParseLocale: /^([a-zA-Z]*)([_\-a-zA-Z]*)$/,
+  // Private vars - end
   // Private functions - star
   _escapeRegExpPattern: function (str) {
     if (typeof str !== 'string') {
       return str;
     }
 
-    return str.replace(/([\.\*\+\^\$\[\]\\\(\)\|\{\}\,\-\:\?])/g, '\\$1'); // eslint-disable-line no-useless-escape
+    return str.replace(self$1._regexEscape, '\\$1');
   },
   _toLowerCase: function (str, reserveReturnValue) {
     if (typeof str !== 'string') {
@@ -18228,9 +18242,8 @@ var RtlDetectLib = self$1 = {
     return str;
   },
   _parseLocale: function (strLocale) {
-    // parse locale regex object
-    var regex = /^([a-zA-Z]*)([_\-a-zA-Z]*)$/;
-    var matches = regex.exec(strLocale); // exec regex
+    var matches = self$1._regexParseLocale.exec(strLocale); // exec regex
+
 
     var parsedLocale;
     var lang;
@@ -18292,8 +18305,6 @@ Object.defineProperty(self$1, '_BIDI_RTL_LANGS', {
   /* 'فارسی', Persian */
   'glk',
   /* 'گیلکی', Gilaki */
-  'he',
-  /* 'עברית', Hebrew */
   'ku',
   /* 'Kurdî / كوردی', Kurdish */
   'mzn',
@@ -18308,23 +18319,21 @@ Object.defineProperty(self$1, '_BIDI_RTL_LANGS', {
   /* 'سنڌي', Sindhi */
   'ug',
   /* 'Uyghurche / ئۇيغۇرچە', Uyghur */
-  'ur',
+  'ur'
   /* 'اردو', Urdu */
-  'yi'
-  /* 'ייִדיש', Yiddish */
   ],
   writable: false,
   enumerable: true,
   configurable: false
 });
-var rtlDetect = RtlDetectLib;
+var rtlDetect$1 = RtlDetectLib;
 
 /**
  * Copyright 2015, Yahoo! Inc.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
  */
 
-
+var rtlDetect = rtlDetect$1;
 
 var rtlDetect_1 = {
   isRtlLang: rtlDetect.isRtlLang,

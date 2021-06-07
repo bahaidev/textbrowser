@@ -8,29 +8,18 @@ var jamilih = require('jamilih');
 var formSerialization = require('form-serialization');
 var imf = require('imf');
 
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
 
   if (Object.getOwnPropertySymbols) {
     var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
+
+    if (enumerableOnly) {
+      symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+    }
+
     keys.push.apply(keys, symbols);
   }
 
@@ -57,19 +46,32 @@ function _objectSpread2(target) {
   return target;
 }
 
-function _getRequireWildcardCache() {
-  if (typeof WeakMap !== "function") return null;
-  var cache = new WeakMap();
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
 
-  _getRequireWildcardCache = function () {
-    return cache;
-  };
-
-  return cache;
+  return obj;
 }
 
-function _interopRequireWildcard(obj) {
-  if (obj && obj.__esModule) {
+function _getRequireWildcardCache(nodeInterop) {
+  if (typeof WeakMap !== "function") return null;
+  var cacheBabelInterop = new WeakMap();
+  var cacheNodeInterop = new WeakMap();
+  return (_getRequireWildcardCache = function (nodeInterop) {
+    return nodeInterop ? cacheNodeInterop : cacheBabelInterop;
+  })(nodeInterop);
+}
+
+function _interopRequireWildcard(obj, nodeInterop) {
+  if (!nodeInterop && obj && obj.__esModule) {
     return obj;
   }
 
@@ -79,7 +81,7 @@ function _interopRequireWildcard(obj) {
     };
   }
 
-  var cache = _getRequireWildcardCache();
+  var cache = _getRequireWildcardCache(nodeInterop);
 
   if (cache && cache.has(obj)) {
     return cache.get(obj);
@@ -89,7 +91,7 @@ function _interopRequireWildcard(obj) {
   var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
 
   for (var key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+    if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
       var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
 
       if (desc && (desc.get || desc.set)) {
@@ -1661,6 +1663,9 @@ const $e = (el, descendentsSel) => {
   return el.querySelector(descendentsSel);
 };
 
+const _excluded = ["submit", "submitClass"],
+      _excluded2 = ["submit", "cancel", "cancelClass", "submitClass"],
+      _excluded3 = ["message", "submit"];
 const defaultLocale = 'en';
 const localeStrings = {
   en: {
@@ -1722,7 +1727,7 @@ class Dialog {
       // Don't pass this on to `args` if present
       submitClass = 'submit'
     } = _ref,
-        args = _objectWithoutProperties(_ref, ["submit", "submitClass"]);
+        args = _objectWithoutProperties(_ref, _excluded);
 
     const dialog = this.makeCancelDialog(args);
     $e(dialog, `button.${args.cancelClass || 'cancel'}`).before(jamilih.jml('button', {
@@ -1750,7 +1755,7 @@ class Dialog {
       cancelClass = 'cancel',
       submitClass = 'submit'
     } = _ref2,
-        args = _objectWithoutProperties(_ref2, ["submit", "cancel", "cancelClass", "submitClass"]);
+        args = _objectWithoutProperties(_ref2, _excluded2);
 
     const dialog = this.makeDialog(args);
     jamilih.jml('div', {
@@ -1812,7 +1817,7 @@ class Dialog {
       message: msg,
       submit: userSubmit
     } = message,
-          submitArgs = _objectWithoutProperties(message, ["message", "submit"]);
+          submitArgs = _objectWithoutProperties(message, _excluded3);
 
     return new Promise((resolve, reject) => {
       const submit = function ({
@@ -2155,7 +2160,7 @@ const getMetaProp = function getMetaProp(lang, metadataObj, properties, allowObj
   let prop;
   properties = typeof properties === 'string' ? [properties] : properties;
   lang.some(lan => {
-    const p = properties.slice(0);
+    const p = [...properties];
     let strings = metadataObj['localization-strings'][lan];
 
     while (strings && p.length) {
@@ -3851,9 +3856,9 @@ const srv = http.createServer(async (req, res) => {
       fileServer.serve(req, res);
     }).resume();
     /*
-        res.writeHead(404, {'Content-Type': 'text/html'});
-        res.end('<h1>File not found</h1>');
-        */
+    res.writeHead(404, {'Content-Type': 'text/html'});
+    res.end('<h1>File not found</h1>');
+    */
 
     return;
   }

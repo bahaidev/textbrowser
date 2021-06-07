@@ -4212,7 +4212,7 @@
     let prop;
     properties = typeof properties === 'string' ? [properties] : properties;
     lang.some((lan) => {
-      const p = properties.slice(0);
+      const p = [...properties];
       let strings = metadataObj['localization-strings'][lan];
       while (strings && p.length) {
         strings = strings[p.shift()];
