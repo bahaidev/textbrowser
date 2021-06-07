@@ -1,10 +1,12 @@
 # textbrowser CHANGES
 
-## 0.39.0 (unreleased)
+## 0.39.0
 
 ### User-facing
 
 - Breaking change: Require Node 12
+- Enhancement: Add `expressServer` option to allow injecting express server
+    on top of static server for fallback
 - npm: Update dep. babel/core (minor), babel/register (patch), jsdom (minor),
     rtl-detect (patch)
 
