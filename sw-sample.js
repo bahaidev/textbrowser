@@ -1,12 +1,11 @@
 /* eslint-env browser, serviceworker -- Service worker */
 
 import {getJSON} from './node_modules/simple-get-json/dist/index-es.js';
-import activateCallback from './node_modules/textbrowser/resources/activateCallback.js';
-import {getWorkFiles} from './node_modules/textbrowser/resources/utils/WorkInfo.js';
+import activateCallback from './node_modules/textbrowser/dist/activateCallback-es.js';
+import {getWorkFiles} from './node_modules/textbrowser/dist/WorkInfo-es.js';
 
-const CACHE_VERSION = '0.40.0';
 const CURRENT_CACHES = {
-  prefetch: 'prefetch-cache-v' + CACHE_VERSION
+  prefetch: 'prefetch-cache-v'
 };
 const minutes = 60 * 1000;
 
@@ -50,7 +49,7 @@ function log (...messages) {
  *
  * @param {Error} error
  * @param {string[]} messages
-* @returns {Promise<void>}
+ * @returns {Promise<void>}
  */
 function logError (error, ...messages) {
   const message = messages.join(' ');
@@ -182,13 +181,15 @@ async function install (time) {
     namespace, languages, files, userStaticFiles
   } = getConfigDefaults(json);
 
-  console.log('opening cache', namespace + CURRENT_CACHES.prefetch);
+  const {version} = await getJSON('./package.json');
+
+  console.log('opening cache', namespace + CURRENT_CACHES.prefetch + version);
   const [
     cache,
     userDataFiles,
     {languages: langs}
   ] = await Promise.all([
-    caches.open(namespace + CURRENT_CACHES.prefetch),
+    caches.open(namespace + CURRENT_CACHES.prefetch + version),
     getWorkFiles(files),
     getJSON(languages)
   ]);
@@ -263,8 +264,9 @@ async function activate (time) {
     caches.keys()
   ]);
   const {namespace, files, basePath} = getConfigDefaults(json);
+  const {version} = await getJSON('./package.json');
 
-  const expectedCacheNames = Object.values(CURRENT_CACHES).map((n) => namespace + n);
+  const expectedCacheNames = Object.values(CURRENT_CACHES).map((n) => namespace + n + version);
   cacheNames.map(async (cacheName) => {
     if (!expectedCacheNames.includes(cacheName)) {
       log('Activate: Deleting out of date cache:', cacheName);
