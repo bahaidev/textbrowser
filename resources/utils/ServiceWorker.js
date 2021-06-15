@@ -252,7 +252,9 @@ export const registerServiceWorker = async ({
   let r;
   try {
     r = await navigator.serviceWorker.register(
-      serviceWorkerPath
+      serviceWorkerPath, {
+        type: 'module'
+      }
     );
   } catch (err) {
     console.log('serviceWorkerPath', serviceWorkerPath);

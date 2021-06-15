@@ -1,5 +1,16 @@
 # textbrowser CHANGES
 
+## 0.40.0
+
+### User-facing
+
+- Breaking change: Switch to ESM for service worker; remove CJS dependencies
+- npm: Update `@babel/core` (patch), `@babel/register` (minor)
+
+### Dev-facing
+
+- npm: Update devDeps.
+
 ## 0.39.0
 
 ### User-facing

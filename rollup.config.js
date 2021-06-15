@@ -92,38 +92,6 @@ export default [
   getRollupObject({minifying: true, format: 'umd'}),
   getRollupObject({minifying: false, format: 'es'}),
   getRollupObject({minifying: true, format: 'es'}),
-  {
-    input: 'resources/utils/WorkInfo.js',
-    output: {
-      format: 'umd',
-      file: 'dist/WorkInfo-umd.js',
-      name: 'WorkInfo'
-    },
-    plugins: [
-      replace({
-        // ... do replace before commonjs
-        patterns: [importerReplace, {
-          include: ['node_modules/json-refs/dist/json-refs-min.js'],
-          test: 'SCHEMES.urn.serialize(t,e)}}}]);', // End of file
-          // replace: '$&\nexport default JsonRefs;'
-          replace: 'SCHEMES.urn.serialize(t,e)}}}]);export default JsonRefs;'
-        }]
-      }),
-      resolve(),
-      commonjs(),
-      postProcess([
-        importerRevert
-      ])
-    ]
-  },
-  {
-    input: 'resources/activateCallback.js',
-    output: {
-      format: 'umd',
-      file: 'dist/activateCallback-umd.js',
-      name: 'activateCallback'
-    }
-  },
   /**/
   {
     input: 'server/main.js',

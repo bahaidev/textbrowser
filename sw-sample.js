@@ -1,20 +1,10 @@
-/* eslint-env browser, serviceworker */
+/* eslint-env browser, serviceworker -- Service worker */
 
-'use strict';
+import {getJSON} from './node_modules/simple-get-json/dist/index-es.js';
+import activateCallback from './node_modules/textbrowser/resources/activateCallback.js';
+import {getWorkFiles} from './node_modules/textbrowser/resources/utils/WorkInfo.js';
 
-/* globals getJSON, activateCallback, WorkInfo */
-// Todo: Replace with ES6 modules (and remove Rollup routines) once browsers
-//    support:
-//    https://stackoverflow.com/a/45578811/271577
-//    https://bugs.chromium.org/p/chromium/issues/detail?id=824647
-// import getJSON from './node_modules/simple-get-json/dist/index-es.js';
-// import activateCallback from 'node_modules/textbrowser/resources/activateCallback.js';
-// import {getWorkFiles} from './WorkInfo.js';
-importScripts('node_modules/simple-get-json/dist/index.js');
-importScripts('node_modules/textbrowser/dist/WorkInfo-umd.js');
-importScripts('node_modules/textbrowser/dist/activateCallback-umd.js');
-
-const CACHE_VERSION = '0.34.0';
+const CACHE_VERSION = '0.40.0';
 const CURRENT_CACHES = {
   prefetch: 'prefetch-cache-v' + CACHE_VERSION
 };
@@ -199,7 +189,7 @@ async function install (time) {
     {languages: langs}
   ] = await Promise.all([
     caches.open(namespace + CURRENT_CACHES.prefetch),
-    WorkInfo.getWorkFiles(files),
+    getWorkFiles(files),
     getJSON(languages)
   ]);
   log('Install: Retrieved dependency values');

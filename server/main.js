@@ -7,7 +7,7 @@ import getIMFFallbackResults from '../resources/utils/getIMFFallbackResults.js';
 import {setServiceWorkerDefaults} from '../resources/utils/ServiceWorker.js';
 // import setGlobalVars from 'indexeddbshim/src/node-UnicodeIdentifiers.js';
 import {Languages} from '../resources/utils/Languages.js';
-// import activateCallback from '../resources/activateCallback.js';
+import activateCallback from '../resources/activateCallback.js';
 
 /* eslint-disable import/no-commonjs */
 const http = require('http');
@@ -94,8 +94,6 @@ setGlobalVars(null, {
 
 if (userParams.nodeActivate) {
   global.fetch = fetch;
-  // const activateCallback = require('../resources/activateCallback.js');
-  const activateCallback = require('../dist/activateCallback-umd.js'); // eslint-disable-line node/global-require
   (async () => {
     await activateCallback({...userParamsWithDefaults, basePath});
     console.log('Activated');

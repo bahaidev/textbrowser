@@ -16027,7 +16027,9 @@ const registerServiceWorker = async ({
   let r;
 
   try {
-    r = await navigator.serviceWorker.register(serviceWorkerPath);
+    r = await navigator.serviceWorker.register(serviceWorkerPath, {
+      type: 'module'
+    });
   } catch (err) {
     console.log('serviceWorkerPath', serviceWorkerPath);
     await dialogs.alert(`

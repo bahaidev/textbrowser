@@ -54,6 +54,7 @@ module.exports = {
   }, {
     files: ['sw-sample.js'],
     rules: {
+      'import/no-unresolved': 0,
       'import/unambiguous': 0,
       strict: 0
     }
