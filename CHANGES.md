@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.40.1
+
+- npm: Bump `indexeddbshim`
+
 ## 0.40.0
 
 ### User-facing

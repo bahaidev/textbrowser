@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.40.0",
+  "version": "0.40.1",
   "description": "Multilinear text browser",
   "main": "dist/index-umd.min.js",
   "module": "resources/index.js",
@@ -47,7 +47,7 @@
     "dom-parser": "^0.1.6",
     "form-serialization": "^0.11.0",
     "imf": "5.0.2",
-    "indexeddbshim": "^7.1.0",
+    "indexeddbshim": "^8.0.0",
     "jamilih": "0.54.0",
     "jsdom": "^16.6.0",
     "json-refs": "git+https://github.com/brettz9/json-refs.git#browser",
