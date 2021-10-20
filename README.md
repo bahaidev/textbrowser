@@ -910,7 +910,9 @@ it supports the following arguments:
             and/or syntax (generic to *TextBrowser* and/or canonical, ideally
             human-readable based on JSON-supplied information; e.g., for the
             Bible, `Matt. 5:10-12`); use with `postMessage` to-do to supply
-            syntax back to another site
+            syntax back to another site; see
+            [Scroll To Text fragment](https://wicg.github.io/ScrollToTextFragment/);
+            [Stack answer](https://stackoverflow.com/a/62162093/271577)
         1.  Correct any field easily by links within TB to editing interface
         1.  Add an "overlay" column like interlinear, but which overlays by
             tooltip if any data is present; can also use metadata if the
