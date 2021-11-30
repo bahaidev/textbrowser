@@ -785,7 +785,8 @@ it supports the following arguments:
 1.  **Move plug-in set-up** to run so setting indexedDB within
     `activateCallback.js`
 1.  Have **IndexedDB handle all pages** language select, work select, and
-    work display (JSON) be part of too?
+    work display be part of too?
+    1.  `indexedDB` for JSON data
 1.  **Node.js** (or PHP?)
     1.  Delivery of HTML content by same URL so third parties can
         consume without JavaScript and optimized when not offline
@@ -969,11 +970,11 @@ it supports the following arguments:
         <https://github.com/json-schema-org/json-schema-spec/issues/587#issuecomment-389726603>
         by using initial `$`?
 1.  Find way to avoid need for `!important` in column CSS
-1.  Offer more border styling tuning controls (including right/left/top/bottom,
+1.  Offer more **border styling** tuning controls (including right/left/top/bottom,
     color, etc.); then offer this along with other styles if we replace CSS
     input box with pop-up styling form (like Advanced Formatting, but for columns)
-1.  Refactoring: Try to use `deserialize` of `form-serialization` fork for initial population
-    or hash change?
+1.  Refactoring: Try to use `deserialize` of `form-serialization` fork for
+    initial population or hash change? (if not `FormData`)
 1.  We should try to allow `onByDefault` and `placement` for non-plugin
     fields also
 1.  [ES6 Modules in browser](https://jakearchibald.com/2017/es-modules-in-browsers/):
@@ -1047,8 +1048,8 @@ it supports the following arguments:
     with multiselect
 1.  Preview styling changes (or move all controls to results page for
     immediate real feedback)
-1.  Separate formatting within Jamilih code to CSS; unit test and performance
-    by being able to use a natively stringifying version of Jamilih
+1.  Separate **formatting within Jamilih code** to CSS; unit test and
+    performance by being able to use a natively stringifying version of Jamilih
     (once complete)
 1.  Utilize meta-data properties, `primary_text_field`, `orig_lang_field`,
     `orig_langs`, e.g., to allow for user to display main language and
@@ -1108,7 +1109,7 @@ it supports the following arguments:
 
 1.  Waiting: Avoid superagent warning:
     <https://github.com/whitlockjc/path-loader/issues/17>
-1.  Remember columns enabled, etc. since last visit, and/or saved as
+1.  **Remember columns enabled**, etc. since last visit, and/or saved as
     preferences.
 1.  Allow copy-pasting a search as a custom web protocol (make
     site-configurable), e.g., to support `web+bahaiwritings:` links per
@@ -1127,8 +1128,6 @@ it supports the following arguments:
         1.  Preference to remember enabled checkboxes and formatting
 1.  Change to utilize history.pushState?
     <https://developer.mozilla.org/en-US/docs/Web/API/History_API>
-1.  Use ES6 modules (babel)
-    1.  dynamic or hierarchical loading of CSS too?
 1.  Sort file selection listing per locale?
 1.  Node.js synchronization of locale files?
 1.  Could allow Node to built schemas, optionally allowing or disallowing
@@ -1145,7 +1144,6 @@ it supports the following arguments:
     the i18n of "lang"?).
 1.  `window.postMessage` API (since CORS is only for Ajax and
     `document.domain` is only for subdomains).
-1.  `indexedDB` for JSON data
 1.  Restore `tabindex` usage
 1.  Restore option from work page to have a checkbox on whether to go to
     "Advanced mode", opening the styling options by default or not.
