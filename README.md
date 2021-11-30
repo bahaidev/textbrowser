@@ -736,6 +736,9 @@ it supports the following arguments:
 
 ## To-dos (Highest priority)
 
+1.  Document and add **screen-casts** along with one for developers showing
+    JSON format, metadata, and schemas); also use with shortcuts (including
+    Bahá'í Library Online ones)
 0.  Progressive web app? / Electron?
 1.  Adapt approach of <https://suttacentral.net/offline> in providing form for
     choice of items to offline (also add to individual work pages).
@@ -751,12 +754,10 @@ it supports the following arguments:
 1.  Ensure works with `pnpm` in all environments (didn't work when deployed,
     but would need to recall the problem and resolve)
 1.  Simplify `languages.json` by using `Intl.DisplayNames` (`type: 'language'`)
-    to localize language names (and can avoid direction if [intl-locale-info proposal](https://github.com/tc39/proposal-intl-locale-info) is
-    implemented); consider using with plugins so can, e.g., show language
+    to localize language names (and can avoid direction if
+    [intl-locale-info proposal](https://github.com/tc39/proposal-intl-locale-info)
+    is implemented); consider using with plugins so can, e.g., show language
     visibly into which a targeted content language field was translated
-1.  Document and add screen-casts along with one for developers showing
-    JSON format, metadata, and schemas); also use with shortcuts (including
-    Bahá'í Library Online ones)
 1.  For plugins, allow export of `stylesheets` array to add to
     `loadStylesheets`, so they don't have to do the importing and executing.
 1.  **Progress meter** with hidden console to avoid intimidating loading
@@ -784,7 +785,7 @@ it supports the following arguments:
 1.  **Move plug-in set-up** to run so setting indexedDB within
     `activateCallback.js`
 1.  Have **IndexedDB handle all pages** language select, work select, and
-    work display be part of too?
+    work display (JSON) be part of too?
 1.  **Node.js** (or PHP?)
     1.  Delivery of HTML content by same URL so third parties can
         consume without JavaScript and optimized when not offline
