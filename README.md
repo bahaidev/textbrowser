@@ -778,7 +778,7 @@ it supports the following arguments:
     1. Fix limitation that 0's don't change to 1's if
         not present as a minimum (e.g., if no 0 for Chapter
         number, then won't show anything).
-    1. Avoid need for separate `startEnd` for browse set;
+    1. Avoid need for separate `<work name>-startEnd` for browse set;
         e.g., parse Rodwell or Sale?
     1. Ideally work across even book
     1. Support anchor portion (e.g., `1:2:3-1:2:5#1:2:4`)
