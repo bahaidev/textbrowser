@@ -970,6 +970,8 @@ it supports the following arguments:
         <https://github.com/json-schema-org/json-schema-spec/issues/587#issuecomment-389726603>
         by using initial `$`?
 1.  Find way to avoid need for `!important` in column CSS
+1.  Redirect automatically by accepted language, though have a link or
+    preference to change the default
 1.  Offer more **border styling** tuning controls (including right/left/top/bottom,
     color, etc.); then offer this along with other styles if we replace CSS
     input box with pop-up styling form (like Advanced Formatting, but for columns)
