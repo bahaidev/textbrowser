@@ -739,6 +739,8 @@ it supports the following arguments:
 1.  Document and add **screen-casts** along with one for developers showing
     JSON format, metadata, and schemas); also use with shortcuts (including
     Bahá'í Library Online ones)
+1.  Fix so as to ignore other items of query string such as `?fbclid=...`
+    from Facebook.
 0.  Progressive web app? / Electron?
 1.  Adapt approach of <https://suttacentral.net/offline> in providing form for
     choice of items to offline (also add to individual work pages).
