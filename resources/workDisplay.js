@@ -41,7 +41,6 @@ export default async function workDisplay ({
       ? key => l(['params', 'indexed', key])
       : key => key;
 
-    // eslint-disable-next-line unicorn/prefer-prototype-methods -- Convenient
     const localeFromLangData = languages.localeFromLangData.bind(languages);
     const imfLang = IMF({
       locales: lang.map(localeFromLangData),

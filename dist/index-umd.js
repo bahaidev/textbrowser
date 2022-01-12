@@ -17965,8 +17965,7 @@ body {
       groupsToWorks
     }) {
       const il = localizeParamNames ? key => l(['params', key]) : key => key;
-      const iil = localizeParamNames ? key => l(['params', 'indexed', key]) : key => key; // eslint-disable-next-line unicorn/prefer-prototype-methods -- Convenient
-
+      const iil = localizeParamNames ? key => l(['params', 'indexed', key]) : key => key;
       const localeFromLangData = languages.localeFromLangData.bind(languages);
       const imfLang = IMF({
         locales: lang.map(localeFromLangData),
@@ -19439,7 +19438,7 @@ body {
             // rememberRefusal();
             resolve();
             return;
-          // eslint-disable-next-line radar/no-duplicated-branches
+          // eslint-disable-next-line sonarjs/no-duplicated-branches
 
           case 'default':
             resolve();

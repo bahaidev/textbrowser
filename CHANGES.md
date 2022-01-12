@@ -10,6 +10,7 @@
 
 ### Dev-facing
 
+- chore: lint and add ncurc.js
 - chore: update devDeps.
 
 ## 0.40.2

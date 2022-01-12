@@ -15,6 +15,7 @@ module.exports = {
       'document.dir',
       'document.querySelector',
       'document.querySelectorAll',
+      'document.title',
       'DOMParser',
       'Error',
       'fetch',

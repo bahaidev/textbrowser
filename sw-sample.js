@@ -30,6 +30,7 @@ async function post ({type, message = type}) {
   clients.forEach((client) => {
     // Although we only need one client to which to send
     //   arguments, we want to signal phase complete to all
+    // eslint-disable-next-line unicorn/require-post-message-target-origin -- In worker
     client.postMessage({message, type});
   });
 }
@@ -231,7 +232,7 @@ async function install (time) {
         return cache.put(urlToPrefetch, response);
       } catch (error) {
         logError(error, 'Not caching ' + urlToPrefetch + ' due to ' + error);
-        return Promise.reject(error);
+        throw error;
       }
     });
     await Promise.all(cachePromises);
