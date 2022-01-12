@@ -1,5 +1,10 @@
 # textbrowser CHANGES
 
+## 0.40.3
+
+- fix: clear out extra query string, e.g., from Facebook when querying for
+    metadata file
+
 ## 0.40.2
 
 - Fix: Add ESM `dist` versions for `activateCallback` and `WorkInfo`
