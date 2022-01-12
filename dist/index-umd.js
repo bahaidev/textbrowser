@@ -15185,7 +15185,12 @@
   // Todo: Allow use of dbs and fileGroup together in base directories?
 
   const getMetadata = async (file, property, basePath) => {
-    return (await JsonRefs.resolveRefsAt((basePath || getCurrDir()) + file + (property ? '#/' + property : ''), {
+    const url = new URL(basePath || getCurrDir());
+    url.search = ''; // Clear out query string, e.g., `?fbclid` from Facebook
+
+    url.pathname = file;
+    url.hash = property ? '#/' + property : '';
+    return (await JsonRefs.resolveRefsAt(url.toString(), {
       loaderOptions: {
         processContent(res, callback) {
           callback(undefined, JSON.parse(res.text || // `.metadata` not a recognized extension, so
