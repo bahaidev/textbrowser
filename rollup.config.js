@@ -1,5 +1,5 @@
-import babel from '@rollup/plugin-babel';
-import resolve from '@rollup/plugin-node-resolve';
+import {babel} from '@rollup/plugin-babel';
+import {nodeResolve} from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 // import nodeGlobals from 'rollup-plugin-node-globals';
 import json from '@rollup/plugin-json';
@@ -70,7 +70,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
         babelHelpers: 'bundled'
       }),
       // nodeGlobals(),
-      resolve({
+      nodeResolve({
         // exportConditions: ['module'],
         mainFields: ['module']
       }),
@@ -109,7 +109,7 @@ export default [
           replace: 'SCHEMES.urn.serialize(t,e)}}}]);export default JsonRefs;'
         }]
       }),
-      resolve(),
+      nodeResolve(),
       commonjs(),
       postProcess([
         importerRevert
@@ -151,7 +151,7 @@ export default [
         babelHelpers: 'bundled',
         plugins: ['dynamic-import-node']
       }),
-      resolve({
+      nodeResolve({
         preferBuiltins: true,
         mainFields: ['main']
       })

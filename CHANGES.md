@@ -2,8 +2,15 @@
 
 ## 0.40.3
 
+### User-facing
+
 - fix: clear out extra query string, e.g., from Facebook when querying for
     metadata file
+- chore: update deps.
+
+### Dev-facing
+
+- chore: update devDeps.
 
 ## 0.40.2
 

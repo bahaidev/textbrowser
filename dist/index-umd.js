@@ -2,21 +2,16 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.TextBrowser = factory());
-}(this, (function () { 'use strict';
+})(this, (function () { 'use strict';
 
   function ownKeys(object, enumerableOnly) {
     var keys = Object.keys(object);
 
     if (Object.getOwnPropertySymbols) {
       var symbols = Object.getOwnPropertySymbols(object);
-
-      if (enumerableOnly) {
-        symbols = symbols.filter(function (sym) {
-          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-        });
-      }
-
-      keys.push.apply(keys, symbols);
+      enumerableOnly && (symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      })), keys.push.apply(keys, symbols);
     }
 
     return keys;
@@ -24,19 +19,12 @@
 
   function _objectSpread2(target) {
     for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i] != null ? arguments[i] : {};
-
-      if (i % 2) {
-        ownKeys(Object(source), true).forEach(function (key) {
-          _defineProperty(target, key, source[key]);
-        });
-      } else if (Object.getOwnPropertyDescriptors) {
-        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-      } else {
-        ownKeys(Object(source)).forEach(function (key) {
-          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-        });
-      }
+      var source = null != arguments[i] ? arguments[i] : {};
+      i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
     }
 
     return target;
@@ -1491,15 +1479,15 @@
           result.maximumSignificantDigits = g1.length;
         } // @@@+ case
         else if (g2 === '+') {
-            result.minimumSignificantDigits = g1.length;
-          } // .### case
-          else if (g1[0] === '#') {
-              result.maximumSignificantDigits = g1.length;
-            } // .@@## or .@@@ case
-            else {
-                result.minimumSignificantDigits = g1.length;
-                result.maximumSignificantDigits = g1.length + (typeof g2 === 'string' ? g2.length : 0);
-              }
+          result.minimumSignificantDigits = g1.length;
+        } // .### case
+        else if (g1[0] === '#') {
+          result.maximumSignificantDigits = g1.length;
+        } // .@@## or .@@@ case
+        else {
+          result.minimumSignificantDigits = g1.length;
+          result.maximumSignificantDigits = g1.length + (typeof g2 === 'string' ? g2.length : 0);
+        }
 
         return '';
       });
@@ -1739,15 +1727,15 @@
               result.minimumFractionDigits = g1.length;
             } // .### case
             else if (g3 && g3[0] === '#') {
-                result.maximumFractionDigits = g3.length;
-              } // .00## case
-              else if (g4 && g5) {
-                  result.minimumFractionDigits = g4.length;
-                  result.maximumFractionDigits = g4.length + g5.length;
-                } else {
-                  result.minimumFractionDigits = g1.length;
-                  result.maximumFractionDigits = g1.length;
-                }
+              result.maximumFractionDigits = g3.length;
+            } // .00## case
+            else if (g4 && g5) {
+              result.minimumFractionDigits = g4.length;
+              result.maximumFractionDigits = g4.length + g5.length;
+            } else {
+              result.minimumFractionDigits = g1.length;
+              result.maximumFractionDigits = g1.length;
+            }
 
             return '';
           });
@@ -1972,14 +1960,14 @@
           if (char === 123
           /* `{` */
           ) {
-              var result = this.parseArgument(nestingLevel, expectingCloseTag);
+            var result = this.parseArgument(nestingLevel, expectingCloseTag);
 
-              if (result.err) {
-                return result;
-              }
+            if (result.err) {
+              return result;
+            }
 
-              elements.push(result.val);
-            } else if (char === 125
+            elements.push(result.val);
+          } else if (char === 125
           /* `}` */
           && nestingLevel > 0) {
             break;
@@ -1996,12 +1984,12 @@
           /* `<` */
           && !this.ignoreTag && this.peek() === 47 // char code for '/'
           ) {
-              if (expectingCloseTag) {
-                break;
-              } else {
-                return this.error(error.ErrorKind.UNMATCHED_CLOSING_TAG, createLocation(this.clonePosition(), this.clonePosition()));
-              }
-            } else if (char === 60
+            if (expectingCloseTag) {
+              break;
+            } else {
+              return this.error(error.ErrorKind.UNMATCHED_CLOSING_TAG, createLocation(this.clonePosition(), this.clonePosition()));
+            }
+          } else if (char === 60
           /* `<` */
           && !this.ignoreTag && _isAlpha(this.peek() || 0)) {
             var result = this.parseTag(nestingLevel, parentArgType);
@@ -2186,8 +2174,8 @@
         if (this.isEOF() || this.char() !== 39
         /* `'` */
         ) {
-            return null;
-          } // Parse escaped char following the apostrophe, or early return if there is no escaped char.
+          return null;
+        } // Parse escaped char following the apostrophe, or early return if there is no escaped char.
         // Check if is valid escaped character
 
 
@@ -2231,18 +2219,18 @@
           if (ch === 39
           /* `'` */
           ) {
-              if (this.peek() === 39
-              /* `'` */
-              ) {
-                  codePoints.push(39); // Bump one more time because we need to skip 2 characters.
+            if (this.peek() === 39
+            /* `'` */
+            ) {
+              codePoints.push(39); // Bump one more time because we need to skip 2 characters.
 
-                  this.bump();
-                } else {
-                // Optional closing apostrophe.
-                this.bump();
-                break;
-              }
+              this.bump();
             } else {
+              // Optional closing apostrophe.
+              this.bump();
+              break;
+            }
+          } else {
             codePoints.push(ch);
           }
 
@@ -2288,9 +2276,9 @@
         if (this.char() === 125
         /* `}` */
         ) {
-            this.bump();
-            return this.error(error.ErrorKind.EMPTY_ARGUMENT, createLocation(openingBracePosition, this.clonePosition()));
-          } // argument name
+          this.bump();
+          return this.error(error.ErrorKind.EMPTY_ARGUMENT, createLocation(openingBracePosition, this.clonePosition()));
+        } // argument name
 
 
         var value = this.parseIdentifierIfPossible().value;
@@ -2569,8 +2557,8 @@
         if (this.isEOF() || this.char() !== 125
         /* `}` */
         ) {
-            return this.error(error.ErrorKind.EXPECT_ARGUMENT_CLOSING_BRACE, createLocation(openingBracePosition, this.clonePosition()));
-          }
+          return this.error(error.ErrorKind.EXPECT_ARGUMENT_CLOSING_BRACE, createLocation(openingBracePosition, this.clonePosition()));
+        }
 
         this.bump(); // `}`
 
@@ -2780,10 +2768,10 @@
           && ch <= 57
           /* `9` */
           ) {
-              hasDigits = true;
-              decimal = decimal * 10 + (ch - 48);
-              this.bump();
-            } else {
+            hasDigits = true;
+            decimal = decimal * 10 + (ch - 48);
+            this.bump();
+          } else {
             break;
           }
         }
@@ -2867,10 +2855,10 @@
         if (code === 10
         /* '\n' */
         ) {
-            this.position.line += 1;
-            this.position.column = 1;
-            this.position.offset += 1;
-          } else {
+          this.position.line += 1;
+          this.position.column = 1;
+          this.position.offset += 1;
+        } else {
           this.position.column += 1; // 0 ~ 0x10000 -> unicode BMP, otherwise skip the surrogate pair.
 
           this.position.offset += code < 0x10000 ? 1 : 2;
@@ -18318,6 +18306,8 @@ body {
     /* 'فارسی', Persian */
     'glk',
     /* 'گیلکی', Gilaki */
+    'he',
+    /* 'עברית', Hebrew */
     'ku',
     /* 'Kurdî / كوردی', Kurdish */
     'mzn',
@@ -18332,8 +18322,10 @@ body {
     /* 'سنڌي', Sindhi */
     'ug',
     /* 'Uyghurche / ئۇيغۇرچە', Uyghur */
-    'ur'
+    'ur',
     /* 'اردو', Urdu */
+    'yi'
+    /* 'ייִדיש', Yiddish */
     ],
     writable: false,
     enumerable: true,
@@ -18395,8 +18387,8 @@ body {
             if (i === max || // No more field sets to check
             anchors.length // Already had anchors found
             ) {
-                breakout = true;
-              }
+              breakout = true;
+            }
 
             break;
           }
@@ -19913,4 +19905,4 @@ body {
 
   return TextBrowser;
 
-})));
+}));

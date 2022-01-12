@@ -155,4 +155,4 @@ async function activateCallback ({
   });
 }
 
-export default activateCallback;
+export { activateCallback as default };
