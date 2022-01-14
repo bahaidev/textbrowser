@@ -9,6 +9,8 @@ const CURRENT_CACHES = {
 };
 const minutes = 60 * 1000;
 
+// Changeable text to trigger worker change: 1
+
 // Utilities
 
 /**
