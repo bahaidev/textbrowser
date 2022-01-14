@@ -1,5 +1,10 @@
 # textbrowser CHANGES
 
+## 0.41.0
+
+- feat: factor out undocumented Bahá'í Writings-specific bookmark generator
+    to new generic `preferencesPlugin` option
+
 ## 0.40.3
 
 ### User-facing

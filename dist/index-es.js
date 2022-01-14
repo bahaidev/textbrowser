@@ -16597,7 +16597,8 @@ var workDisplay$1 = {
     localizeParamNames,
     namespace,
     hideFormattingSection,
-    groups
+    groups,
+    preferencesPlugin
   }) => ['div', {
     style: {
       textAlign: 'left'
@@ -16664,73 +16665,16 @@ var workDisplay$1 = {
     }
 
     return ['option', atts, [imfl(['languages', lan.code])]];
-  })]]], ['div', [['button', {
-    title: l('bookmark_generation_tooltip'),
-    $on: {
-      async click() {
-        // Todo: Give option to edit (keywords and work URLs)
-        const date = Date.now();
-        const ADD_DATE = date;
-        const LAST_MODIFIED = date;
-        const blob = new Blob([new XMLSerializer().serializeToString(jml({
-          $document: {
-            $DOCTYPE: {
-              name: 'NETSCAPE-Bookmark-file-1'
-            },
-            title: l('Bookmarks'),
-            body: [['h1', [l('Bookmarks_Menu')]], ...(await getFieldAliasOrNames()).flatMap(({
-              groupName,
-              worksToFields
-            }) => {
-              return [['dt', [['h3', {
-                ADD_DATE,
-                LAST_MODIFIED
-              }, [groupName]]]], ['dl', [['p'], ...worksToFields.map(({
-                fieldAliasOrNames,
-                workName,
-                shortcut: SHORTCUTURL
-              }) => {
-                // Todo (low): Add anchor, etc. (until handled by `work-startEnd`); &aqdas-anchor1-1=2&anchorfield1=Paragraph
-                // Todo: option for additional browse field groups (startEnd2, etc.)
-                // Todo: For link text, use `heading` or `alias` from metadata files in place of workName (requires loading all metadata files though)
-                // Todo: Make Chrome NativeExt add-on to manipulate its search engines (to read a bookmarks file from Firefox properly, i.e., including keywords) https://www.makeuseof.com/answers/export-google-chrome-search-engines-address-bar/
-                const paramsCopy = paramsSetter(_objectSpread2(_objectSpread2({}, getDataForSerializingParamsAsURL()), {}, {
-                  fieldAliasOrNames,
-                  workName: work,
-                  // Delete work of current page
-                  type: 'shortcutResult'
-                }));
-                const url = replaceHash(paramsCopy) + `&work=${workName}&${workName}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here
-
-                return ['dt', [['a', {
-                  href: url,
-                  ADD_DATE,
-                  LAST_MODIFIED,
-                  SHORTCUTURL
-                }, [workName]]]];
-              })]]];
-            })]
-          }
-        })).replace( // Chrome has a quirk that requires this (and not
-        //   just any whitespace)
-        // We're not getting the keywords with Chrome,
-        //   but at least usable for bookmarks (though
-        //   not the groups apparently)
-        /<dt>/g, '\n<dt>')], {
-          type: 'text/html'
-        });
-        const url = window.URL.createObjectURL(blob);
-        const a = jml('a', {
-          hidden: true,
-          download: 'bookmarks.html',
-          href: url
-        }, $$1('#main'));
-        a.click();
-        URL.revokeObjectURL(url);
-      }
-
-    }
-  }, [l('Generate_bookmarks')]]]]]],
+  })]]], preferencesPlugin ? preferencesPlugin({
+    $: $$1,
+    l,
+    jml,
+    paramsSetter,
+    getDataForSerializingParamsAsURL,
+    work,
+    replaceHash,
+    getFieldAliasOrNames
+  }) : '']],
 
   addBrowseFields({
     browseFields,
@@ -16882,7 +16826,8 @@ var workDisplay$1 = {
     preferredLocale,
     schemaItems,
     content,
-    groups
+    groups,
+    preferencesPlugin
   }) {
     const work = $p.get('work');
 
@@ -16933,7 +16878,8 @@ var workDisplay$1 = {
       localizeParamNames,
       namespace,
       groups,
-      hideFormattingSection
+      hideFormattingSection,
+      preferencesPlugin
     })]], ['h2', [heading]], ['br'], ['form', {
       id: 'browse',
       $custom: {
@@ -17940,6 +17886,9 @@ async function workDisplay({
   fallbackLanguages,
   $p
 }) {
+  const {
+    preferencesPlugin
+  } = this;
   const langs = this.langData.languages;
   const fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
   const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
@@ -18106,7 +18055,8 @@ async function workDisplay({
       fieldMatchesLocale,
       preferredLocale,
       schemaItems,
-      content
+      content,
+      preferencesPlugin
     });
   }
 
@@ -19488,6 +19438,7 @@ class TextBrowser {
     this.requestPersistentStorage = options.requestPersistentStorage;
     this.localizeParamNames = options.localizeParamNames === undefined ? true : options.localizeParamNames;
     this.hideFormattingSection = Boolean(options.hideFormattingSection);
+    this.preferencesPlugin = options.preferencesPlugin;
     this.interlinearSeparator = options.interlinearSeparator; // Todo: Make these user facing options
 
     this.showEmptyInterlinear = options.showEmptyInterlinear;
@@ -19859,7 +19810,8 @@ class TextBrowser {
           fallbackLanguages,
           languageParam,
           $p,
-          languages
+          languages,
+          preferencesPlugin: this.preferencesPlugin
         });
         return true;
       }

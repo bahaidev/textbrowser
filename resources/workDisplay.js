@@ -12,6 +12,7 @@ export default async function workDisplay ({
   l, languageParam,
   lang, preferredLocale, languages, fallbackLanguages, $p
 }) {
+  const {preferencesPlugin} = this;
   const langs = this.langData.languages;
 
   const fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
@@ -136,7 +137,8 @@ export default async function workDisplay ({
       hideFormattingSection, $p,
       metadataObj, il, le, ld, iil,
       fieldMatchesLocale,
-      preferredLocale, schemaItems, content
+      preferredLocale, schemaItems, content,
+      preferencesPlugin
     });
   }
 

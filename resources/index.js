@@ -191,6 +191,8 @@ class TextBrowser {
       ? true
       : options.localizeParamNames;
     this.hideFormattingSection = Boolean(options.hideFormattingSection);
+
+    this.preferencesPlugin = options.preferencesPlugin;
     this.interlinearSeparator = options.interlinearSeparator;
     // Todo: Make these user facing options
     this.showEmptyInterlinear = options.showEmptyInterlinear;
@@ -532,7 +534,8 @@ class TextBrowser {
           lang, preferredLocale,
           fallbackLanguages,
           languageParam,
-          $p, languages
+          $p, languages,
+          preferencesPlugin: this.preferencesPlugin
         });
         return true;
       }

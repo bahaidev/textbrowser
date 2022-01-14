@@ -680,6 +680,11 @@ as a `npm` dependency).
         This section might be changed to a plugin in the future in which case
         you'd just avoid designating it within `files.json`.
 
+    -   `preferencesPlugin` - A function to be passed the following arguments
+        and to return a Jamilih array: `$`, `l`, `jml`, `paramsSetter`,
+        `getDataForSerializingParamsAsURL`, `work`, `replaceHash`,
+        `getFieldAliasOrNames`
+
     -   `interlinearSeparator` - HTML code to be injected between each
         interlinear entry; this is not exposed to the user for
         security reasons (preventing [cross-site scripting](https://en.wikipedia.org/wiki/Cross-site_scripting)
