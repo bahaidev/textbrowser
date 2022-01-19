@@ -1046,6 +1046,8 @@ it supports the following arguments:
 
 ## To-dos (Medium Priority)
 
+1.  Build "Preferred language(s)" to use awareness of content languages rather
+    than locales.
 1.  Remove need for separate metadata
     files per
     <https://github.com/json-schema-org/json-schema-spec/issues/587#issuecomment-389726603>
