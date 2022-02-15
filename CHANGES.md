@@ -5,6 +5,7 @@
 - chore: update `.editorconfig`, devDeps. and deps. (babel-related,
     `command-line-args`)
 - feat: make array-of-arrays schema more precise
+- feat: make table.jsonschema more precise
 
 ## 0.41.0
 

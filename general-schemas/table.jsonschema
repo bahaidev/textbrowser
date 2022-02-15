@@ -21,7 +21,35 @@
             "properties": {
                 "type": {"$ref": "#/definitions/typeArray"},
                 "items": {
-                    "type": "array"
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "enum": ["string", "integer"]
+                            },
+                            "enum": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "format": {
+                                "type": "string",
+                                "enum": ["html"]
+                            },
+                            "title": {
+                                "type": "string"
+                            },
+                            "minimum": {
+                                "type": "integer"
+                            },
+                            "maximum": {
+                                "type": "integer"
+                            }
+                        }
+                    }
                 }
             }
         }
