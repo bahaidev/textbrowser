@@ -2,6 +2,16 @@
     "$schema": "http://json-schema.org/schema#",
     "type": "array",
     "items": {
-        "type": "array"
+        "type": "array",
+        "items": {
+            "anyOf": [
+                {
+                    "type": "integer"
+                },
+                {
+                    "type": "string"
+                }
+            ]
+        }
     }
 }
