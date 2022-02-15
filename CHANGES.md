@@ -1,5 +1,10 @@
 # textbrowser CHANGES
 
+## ?
+
+- chore: update `.editorconfig`, devDeps. and deps. (babel-related,
+    `command-line-args`)
+
 ## 0.41.0
 
 - feat: factor out undocumented Bahá'í Writings-specific bookmark generator

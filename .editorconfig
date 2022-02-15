@@ -17,3 +17,6 @@ trim_trailing_whitespace = true
 
 [*.md]
 indent_size = 4
+
+[*.{json,jsonschema}]
+indent_size = 4
