@@ -176,7 +176,7 @@ class TextBrowser {
         builtinIndex,
         1,
         new URL('index.css', moduleURL).href,
-        new URL('node_modules/textbrowser/node_modules/dialog-polyfill/dist/dialog-polyfill.css', location).href
+        new URL('../../dialog-polyfill/dist/dialog-polyfill.css', moduleURL).href
       );
     }
     this.stylesheets = stylesheets;

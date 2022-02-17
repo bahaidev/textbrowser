@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.41.2
+
+- fix: fix dialog polyfill CSS link
+
 ## 0.41.1
 
 - fix: fix dialog polyfill CSS link
