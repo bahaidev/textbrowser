@@ -1,11 +1,13 @@
 # textbrowser CHANGES
 
-## ?
+## 0.41.1
 
+- fix: fix dialog polyfill CSS link
+- refactor: make array-of-arrays schema more precise
+- refactor: make table.jsonschema more precise
+- refactor: drop redundant locale file listing in sample service worker
 - chore: update `.editorconfig`, devDeps. and deps. (babel-related,
     `command-line-args`)
-- feat: make array-of-arrays schema more precise
-- feat: make table.jsonschema more precise
 
 ## 0.41.0
 

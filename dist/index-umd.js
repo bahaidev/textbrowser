@@ -19433,7 +19433,7 @@ body {
       const builtinIndex = stylesheets.indexOf('@builtin');
 
       if (builtinIndex !== -1) {
-        stylesheets.splice(builtinIndex, 1, new URL('index.css', moduleURL).href, new URL('../../dialog-polyfill/dist/dialog-polyfill.css', moduleURL).href);
+        stylesheets.splice(builtinIndex, 1, new URL('index.css', moduleURL).href, new URL('node_modules/textbrowser/node_modules/dialog-polyfill/dist/dialog-polyfill.css', location).href);
       }
 
       this.stylesheets = stylesheets;

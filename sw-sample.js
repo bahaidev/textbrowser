@@ -136,7 +136,7 @@ const defaultUserStaticFiles = [
 //   get these as reliable full paths without hard-coding or needing to
 //   actually be in `node_modules/textbrowser`; see `resources/index.js`
 const textbrowserStaticResourceFiles = [
-  'node_modules/dialog-polyfill/dist/dialog-polyfill.esm.js',
+  'node_modules/textbrowser/node_modules/dialog-polyfill/dist/dialog-polyfill.esm.js',
 
   'node_modules/textbrowser/appdata/languages.json',
 
@@ -148,14 +148,6 @@ const textbrowserStaticResourceFiles = [
     'node_modules/textbrowser/general-schemas/metadata.jsonschema',
     'node_modules/textbrowser/general-schemas/table.jsonschema', // Not currently using for validation or meta-data
     */
-
-  // Todo: Ought to make these locales only conditionally required and
-  //      then only show those specified in languages menu or go directly
-  //      to work selection
-  'node_modules/textbrowser/locales/ar.json',
-  'node_modules/textbrowser/locales/en-US.json',
-  'node_modules/textbrowser/locales/fa.json',
-  'node_modules/textbrowser/locales/ru.json',
 
   'node_modules/textbrowser/dist/index-es.js'
 ];
@@ -199,6 +191,10 @@ async function install (time) {
   log('Install: Retrieved dependency values');
 
   const langPathParts = languages.split('/');
+
+  // Todo: Ought to make these locales only conditionally required and
+  //      then only show those specified in languages menu or go directly
+  //      to work selection
   // Todo: We might give option to only download
   //        one locale and avoid language splash page
   const localeFiles = langs.map(
