@@ -511,7 +511,7 @@ methods.
 
 - `getCellData({tr, tableData, i, j, applicableField, fieldInfo, applicableFieldIdx, applicableFieldText, fieldLang, getLangDir, meta, metaApplicableField, $p, thisObj})`
     - Used to build the plugin field's cell contents. The return value will
-    seÂt `tr[j]` unless the return is falsy in which case `applicableFieldText`
+    set `tr[j]` unless the return is falsy in which case `applicableFieldText`
     will be used. Invoked for each cell of the data. To return HTML, must use
     in conjunction with `escapeColumn: false`. Besides properties shared with
     other methods, `getCellData` is passed the following:
