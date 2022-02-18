@@ -172,7 +172,7 @@ project.
 
 Projects derivative to *TextBrowser* will need to adhere to the following:
 
-1.  Add the *TextBrowser* dependency per the [Installation](#Installation)
+1.  Add the *TextBrowser* dependency per the [Installation](#installation)
     section.
 
 1.  Prepare JSON data files, JSON Schema files, and JSON meta-data files
@@ -180,7 +180,7 @@ Projects derivative to *TextBrowser* will need to adhere to the following:
     [JSON Formats](#json-formats).
     To provide a common naming mechanism across projects and to avoid
     the need to tweak the default `TextBrowser` JavaScript class set-up, a
-    [specific directory structure](#Recommended Project Directory Structure)
+    [specific directory structure](#recommended-project-directory-structure)
     is recommended for hosting these files.
 
 1.  Prepare JSON files to indicate the specific grouping of files you wish
@@ -188,13 +188,13 @@ Projects derivative to *TextBrowser* will need to adhere to the following:
     make available (and for which you have locales), and after it may be
     ready, and if you wish, the JSON files to indicate your site hierarchy.
     See the
-    [recommended directory structure](#Recommended Project Directory Structure)
+    [recommended directory structure](#recommended-project-directory-structure)
     section for more.
 
 1.  Create an HTML page (see `index-sample.html` for an example) which includes
     *TextBrowser*'s own project scripts and your own script to instantiate
     the `TextBrowser` class (and if you did not follow the
-    [recommended directory structure](#Recommended Project Directory Structure),
+    [recommended directory structure](#recommended-project-directory-structure),
     you will need to point to the above-mentioned JSON
     files). Page titles are set dynamically for each page, so there is no
     need to provide a `<title>`.
