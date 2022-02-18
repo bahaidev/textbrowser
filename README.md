@@ -725,7 +725,7 @@ The properties are:
 - `userStaticFiles` - Array of files additional to those of
     *TextBrowser* which you will need offline. Defaults to the minimum
     recommended files:
-    `['/',  'index.html', 'files.json', 'site.json', 'resources/user.js', 'resources/user.css']`
+    `['/',  'index.html', 'files.json', 'site.json', 'resources/user.js']`
 
 ## Server API
 
