@@ -177,7 +177,7 @@ Projects derivative to *TextBrowser* will need to adhere to the following:
 
 1.  Prepare JSON data files, JSON Schema files, and JSON meta-data files
     to represent your texts. See the section
-    [JSON Formats](#JSON Formats).
+    [JSON Formats](#json-formats).
     To provide a common naming mechanism across projects and to avoid
     the need to tweak the default `TextBrowser` JavaScript class set-up, a
     [specific directory structure](#Recommended Project Directory Structure)
@@ -236,18 +236,18 @@ The recommended project directory structure (which are used by default by the
     file group, and within each file group, have the JSON data files
     as well as "schema" and "metadata" subdirectories containing the
     specific JSON schemas for each data file and the
-    *TextBrowser*-specific meta-data files. See [JSON Formats](#JSON Formats).
--   ***files.json*** - See [JSON Formats](#JSON Formats).
--   ***site.json*** - See [JSON Formats](#JSON Formats).
+    *TextBrowser*-specific meta-data files. See [JSON Formats](#json-formats).
+-   ***files.json*** - See [JSON Formats](#json-formats).
+-   ***site.json*** - See [JSON Formats](#json-formats).
 -   ***locales/*** - Only needed if providing an alternate to *TextBrowser*'s
     own built-in `locales/`. It is recommended to rely on the default
     files and not add any custom files (contributing back here any
     localization fixes or additions you may have done!). See
-    [JSON Formats](#JSON Formats).
+    [JSON Formats](#json-formats).
 -   ***languages.json*** - As with `locales/`, only needed if providing an
     alternate to *TextBrowser*'s own built-in `appdata/languages.json` file.
     It is recommended to rely on the default and not add any custom file. See
-    [JSON Formats](#JSON Formats).
+    [JSON Formats](#json-formats).
 
 ## JSON Formats
 
