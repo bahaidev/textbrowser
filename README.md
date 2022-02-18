@@ -225,9 +225,9 @@ The recommended project directory structure (which are used by default by the
     service worker
 -   ***plugins/*** - While *not yet in use*, this is the convention we wish
     to begin enforcing for hosting plugins (e.g., for automated columns).
-    See [Plugin Format](#Plugin Format).
+    See [Plugin Format](#plugin-format).
 -   ***sw.js*** - Although you can change the name of this file via
-    `serviceWorkerPath` (see [JavaScript API](#JavaScript API)), this
+    `serviceWorkerPath` (see [JavaScript API](#javascript-api)), this
     file should be at or higher than the files you are caching (including
     *TextBrowser*'s). Copying `sw-sample.js` as `sw.js` at your project
     root is the recommended approach.
@@ -280,9 +280,9 @@ and its simple
 to which they adhere):
 
 1. A `schema` JSON reference pointer to your data's JSON schema.
-    See [JSON Schema](#JSON Schema).
+    See [JSON Schema](#json-schema).
 2. A `metadata` JSON reference pointer to your data's JSON metadata.
-    See [JSON Metadata](#JSON Metadata).
+    See [JSON Metadata](#json-metadata).
 3. A `data` property which is an an array of arrays containing your tabular
     text itself. This property must adhere to the specific JSON schema
     referenced in the `schema` property above for this file.
@@ -433,7 +433,7 @@ Its keys are plug-in names and whose value objects have the required property
 code string. There may also be a `meta` key which is used to pass data to the
 plug-in. This object currently only allows string keys.
 
-See [Plugin Format](#Plugin Format) for the structure of the plug-in pointed
+See [Plugin Format](#plugin-format) for the structure of the plug-in pointed
 to by the path.
 
 The `plugin-field-mapping` object property has keys which act as groups and
@@ -458,7 +458,7 @@ changes you may need of the generic localizations within `locales/` and
 `appdata/languages.json`, if you need to provide your own interface
 localization, you may supply a `languages` property when creating the
 `TextBrowser` object to point to a languages JSON file of your own
-choosing (see the [JavaScript API](#JavaScript API)).
+choosing (see the [JavaScript API](#javascript-api)).
 
 *TextBrowser* comes with the `languages.json` file at
 [`appdata/languages.json`](https://github.com/brettz9/textbrowser/blob/master/appdata/languages.json) which, as mentioned, is used by default. It adheres to
