@@ -1,8 +1,12 @@
 # TextBrowser
 
 *Please note that this project, while now preliminarily functional,
-is in its early stages. There are some bugs to iron out such as
-with localization.*
+is in its early stages. It is currently unstyled, Chromium-only, and
+potentially intimidating to those unfamiliar with how to work it. There are
+also some bugs to iron out such as with localization.*
+
+See the [web app within an app using TextBrowser](https://bahai-browser.org/)
+or see some videos [introducing the app](https://bahai-library.com/zamir_textbrowser_bahaiwritings_browser).
 
 *TextBrowser* supports power-user browsing of arbitrary multi-linear
 texts following the "offline first" motto.
