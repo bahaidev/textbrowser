@@ -1,6 +1,15 @@
+#!/usr/bin/env node
+
 /* eslint-env node */
-import 'url-search-params-polyfill';
+import http from 'http';
+
+import statik from '@brettz9/node-static';
+import fetch from 'node-fetch';
+import commandLineArgs from 'command-line-args';
+import DOMParser from 'dom-parser';
+import setGlobalVars from 'indexeddbshim/dist/indexeddbshim-UnicodeIdentifiers-node.js';
 import {getJSON} from 'simple-get-json';
+
 import IntlURLSearchParams from '../resources/utils/IntlURLSearchParams.js';
 import {resultsDisplayServer} from '../resources/resultsDisplay.js';
 import getIMFFallbackResults from '../resources/utils/getIMFFallbackResults.js';
@@ -8,11 +17,6 @@ import {setServiceWorkerDefaults} from '../resources/utils/ServiceWorker.js';
 // import setGlobalVars from 'indexeddbshim/src/node-UnicodeIdentifiers.js';
 import {Languages} from '../resources/utils/Languages.js';
 import activateCallback from '../resources/activateCallback.js';
-
-/* eslint-disable import/no-commonjs */
-const http = require('http');
-const fetch = require('node-fetch'); // Problems as `import` since 2.1.2
-const setGlobalVars = require('indexeddbshim/dist/indexeddbshim-UnicodeIdentifiers-node.js');
 
 // Todo (low): See
 //   https://gist.github.com/brettz9/0993fbde6f7352b2bb05f38078cefb29
@@ -51,7 +55,7 @@ const optionDefinitions = [
 
   {name: 'expressServer', type: String}
 ];
-const userParams = require('command-line-args')(optionDefinitions);
+const userParams = commandLineArgs(optionDefinitions);
 
 const port = 'port' in userParams ? userParams.port : 8000;
 const domain = userParams.domain || `localhost`;
@@ -101,10 +105,8 @@ if (userParams.nodeActivate) {
 }
 console.log('past activate check');
 
-global.DOMParser = require('dom-parser'); // potentially used within resultsDisplay.js
+global.DOMParser = DOMParser; // potentially used within resultsDisplay.js
 
-const statik = require('@brettz9/node-static');
-/* eslint-enable import/no-commonjs */
 const fileServer = new statik.Server(); // Pass path; otherwise uses current directory
 
 let langData, languagesInstance;
@@ -120,8 +122,8 @@ const srv = http.createServer(async (req, res) => {
       fileServer.serve(req, res);
     };
     if (userParams.expressServer) {
-      // eslint-disable-next-line node/global-require, import/no-dynamic-require
-      const server = require(userParams.expressServer)();
+      // eslint-disable-next-line no-unsanitized/method -- Site-specified plugin
+      const server = import(userParams.expressServer)();
       server.get('*', staticServer);
       server(req, res);
       return;

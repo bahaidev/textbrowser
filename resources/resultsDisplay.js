@@ -1,6 +1,6 @@
 /* eslint-env browser */
-import {getLangDir} from 'rtl-detect';
-import JsonRefs from 'json-refs/dist/json-refs-min.js';
+import rtlDetect from 'rtl-detect';
+import JsonRefs from 'json-refs';
 import {jml} from 'jamilih';
 
 import Templates from './templates/index.js';
@@ -12,6 +12,7 @@ import {Languages} from './utils/Languages.js';
 import {getWorkData} from './utils/WorkInfo.js';
 // Keep this as the last import for Rollup
 
+const {getLangDir} = rtlDetect;
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 
 const getRawFieldValue = (v) => {

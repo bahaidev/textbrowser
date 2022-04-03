@@ -3,14 +3,6 @@ import {IMF} from 'imf';
 import {getMetaProp, getMetadata, Metadata} from './Metadata.js';
 import {PluginsForWork, escapePlugin} from './Plugin.js';
 
-let path, babelRegister;
-if (typeof process !== 'undefined') {
-  /* eslint-disable node/global-require */
-  path = require('path');
-  babelRegister = require('@babel/register');
-  /* eslint-enable node/global-require */
-}
-
 export const getWorkFiles = async function getWorkFiles (files = this.files) {
   const filesObj = await getJSON(files);
   const dataFiles = [];
@@ -135,20 +127,6 @@ export const getWorkData = async function ({
     getPlugins
       ? Promise.all(
         pluginPaths.map((pluginPath) => {
-          if (typeof process !== 'undefined') {
-            pluginPath = path.resolve(path.join(
-              process.cwd(), 'node_modules/textbrowser/server', pluginPath
-            ));
-            babelRegister({
-              presets: ['@babel/env']
-            });
-            return Promise.resolve().then(() => {
-              return require(pluginPath); // eslint-disable-line node/global-require, import/no-dynamic-require
-            }).catch((err) => {
-              // E.g., with tooltips plugin
-              console.log('err', err);
-            });
-          }
           // eslint-disable-next-line no-unsanitized/method
           return import(pluginPath);
         })

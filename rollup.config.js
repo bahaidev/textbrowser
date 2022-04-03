@@ -5,18 +5,6 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import replace from 'rollup-plugin-re';
 import {terser} from 'rollup-plugin-terser';
-import postProcess from '@stadtlandnetz/rollup-plugin-postprocess';
-import pkg from './package.json';
-
-const importerReplace = {
-  // Temporarily hide this from parser (using the Babel
-  //   syntax plugin or experimental Rollup flag didn't
-  //   seem to work)
-  include: ['resources/utils/WorkInfo.js'],
-  test: 'return import(',
-  replace: 'return window.importer('
-};
-const importerRevert = [/window.importer\(/, 'import('];
 
 // Todo: Monitor https://github.com/rollup/rollup/issues/1978
 //        to suppress (known) circular dependency warnings
@@ -49,6 +37,15 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
             } */
     },
     plugins: [
+      // Switch to browser-friendly version
+      replace({
+        // ... do replace before commonjs
+        patterns: [{
+          include: ['resources/resultsDisplay.js', 'resources/utils/Metadata.js'],
+          test: "import JsonRefs from 'json-refs';",
+          replace: "import JsonRefs from 'json-refs/dist/json-refs-min.js';"
+        }]
+      }),
       replace({
         // ... do replace before commonjs
         patterns: [{
@@ -56,7 +53,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
           test: 'SCHEMES.urn.serialize(t,e)}}}]);', // End of file
           // replace: '$&\nexport default JsonRefs;'
           replace: 'SCHEMES.urn.serialize(t,e)}}}]);export default JsonRefs;'
-        }, importerReplace, {
+        }, {
           // regexp match with resolved path
           match: /formidable(\/|\\)lib/,
           // string or regexp
@@ -74,10 +71,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
         // exportConditions: ['module'],
         mainFields: ['module']
       }),
-      commonjs(),
-      postProcess([
-        importerRevert
-      ])
+      commonjs()
     ]
   };
   if (minifying) {
@@ -100,9 +94,19 @@ export default [
       name: 'WorkInfo'
     },
     plugins: [
+      // Switch to browser-friendly version
       replace({
         // ... do replace before commonjs
-        patterns: [importerReplace, {
+        patterns: [{
+          include: ['resources/resultsDisplay.js', 'resources/utils/Metadata.js'],
+          test: "import JsonRefs from 'json-refs';",
+          replace: "import JsonRefs from 'json-refs/dist/json-refs-min.js';"
+        }]
+      }),
+      // Let's at least pretend there are no globals here
+      replace({
+        // ... do replace before commonjs
+        patterns: [{
           include: ['node_modules/json-refs/dist/json-refs-min.js'],
           test: 'SCHEMES.urn.serialize(t,e)}}}]);', // End of file
           // replace: '$&\nexport default JsonRefs;'
@@ -110,10 +114,7 @@ export default [
         }]
       }),
       nodeResolve(),
-      commonjs(),
-      postProcess([
-        importerRevert
-      ])
+      commonjs()
     ]
   },
   {
@@ -123,38 +124,5 @@ export default [
       file: 'dist/activateCallback-es.js',
       name: 'activateCallback'
     }
-  },
-  /**/
-  {
-    input: 'server/main.js',
-    output: {
-      banner: '#!/usr/bin/env node',
-      format: 'cjs',
-      file: `server/main-cjs.js`
-    },
-    external: Object.keys(pkg.dependencies),
-    plugins: [
-      replace({
-        // ... do replace before commonjs
-        patterns: [/* importerReplace, */{
-          include: ['resources/resultsDisplay.js', 'resources/utils/Metadata.js'],
-          test: "import JsonRefs from 'json-refs/dist/json-refs-min.js';",
-          replace: "const JsonRefs = require('json-refs');"
-        }, {
-          include: ['resources/utils/dialogs.js'],
-          test: "import dialogPolyfill from 'dialog-polyfill';",
-          replace: 'const dialogPolyfill = {registerDialog () {}};'
-        }]
-      }),
-      json(),
-      babel({
-        babelHelpers: 'bundled',
-        plugins: ['dynamic-import-node']
-      }),
-      nodeResolve({
-        preferBuiltins: true,
-        mainFields: ['main']
-      })
-    ]
   }
 ];

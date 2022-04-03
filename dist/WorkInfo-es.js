@@ -4400,14 +4400,6 @@ class PluginsForWork {
   }
 }
 
-let path, babelRegister;
-if (typeof process !== 'undefined') {
-  /* eslint-disable node/global-require */
-  path = require('path');
-  babelRegister = require('@babel/register');
-  /* eslint-enable node/global-require */
-}
-
 const getWorkFiles = async function getWorkFiles (files = this.files) {
   const filesObj = await getJSON$1(files);
   const dataFiles = [];
@@ -4532,20 +4524,6 @@ const getWorkData = async function ({
     getPlugins
       ? Promise.all(
         pluginPaths.map((pluginPath) => {
-          if (typeof process !== 'undefined') {
-            pluginPath = path.resolve(path.join(
-              process.cwd(), 'node_modules/textbrowser/server', pluginPath
-            ));
-            babelRegister({
-              presets: ['@babel/env']
-            });
-            return Promise.resolve().then(() => {
-              return require(pluginPath); // eslint-disable-line node/global-require, import/no-dynamic-require
-            }).catch((err) => {
-              // E.g., with tooltips plugin
-              console.log('err', err);
-            });
-          }
           // eslint-disable-next-line no-unsanitized/method
           return import(pluginPath);
         })

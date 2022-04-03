@@ -1,4 +1,3 @@
-import dialogPolyfill from 'dialog-polyfill';
 import {jml, nbsp, $} from 'jamilih';
 import {$e} from '../templates/utils/dom.js';
 
@@ -32,7 +31,6 @@ class Dialog {
       }
     }
     const dialog = jml('dialog', atts, children, $('#main'));
-    dialogPolyfill.registerDialog(dialog);
     dialog.showModal();
     if (remove) {
       dialog.addEventListener('close', () => {
@@ -109,7 +107,6 @@ class Dialog {
           ])
           : [])
       ], $('#main'));
-      dialogPolyfill.registerDialog(dialog);
       dialog.showModal();
     });
   }
@@ -159,7 +156,6 @@ class Dialog {
           }}}, [this.localeStrings.cancel]]
         ]]
       ], $('#main'));
-      dialogPolyfill.registerDialog(dialog);
       dialog.showModal();
     });
   }

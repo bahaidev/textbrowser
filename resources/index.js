@@ -175,8 +175,7 @@ class TextBrowser {
       stylesheets.splice(
         builtinIndex,
         1,
-        new URL('index.css', moduleURL).href,
-        new URL('../../dialog-polyfill/dist/dialog-polyfill.css', moduleURL).href
+        new URL('index.css', moduleURL).href
       );
     }
     this.stylesheets = stylesheets;

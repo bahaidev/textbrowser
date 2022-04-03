@@ -2,6 +2,5 @@ extraction:
   javascript:
     index:
       filters:
-        - exclude: "server/main-cjs.js"
         - exclude: "files-to-incorporate-and-delete"
         - exclude: "dist"

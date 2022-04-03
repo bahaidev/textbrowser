@@ -1,4 +1,3 @@
 files-to-incorporate-and-delete
 node_modules
 dist
-server/main-cjs.js
