@@ -1,5 +1,10 @@
 # textbrowser CHANGES
 
+## 0.42.1
+
+- fix: tweak for Node `import()` path
+- fix: rollup issues with `import()`
+
 ## 0.42.0
 
 - BREAKING CHANGE: refactor: Native ESM (plugins must be ESM also)

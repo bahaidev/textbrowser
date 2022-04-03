@@ -5,6 +5,17 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import replace from 'rollup-plugin-re';
 import {terser} from 'rollup-plugin-terser';
+import postProcess from '@stadtlandnetz/rollup-plugin-postprocess';
+
+const importerReplace = {
+  // Temporarily hide this from parser (using the Babel
+  //   syntax plugin or experimental Rollup flag didn't
+  //   seem to work)
+  include: ['resources/utils/WorkInfo.js', 'node_modules/simple-get-json/dist/index-polyglot.mjs'],
+  test: 'import(',
+  replace: 'window.xyz('
+};
+const importerRevert = [/window.xyz\(/, 'import('];
 
 // Todo: Monitor https://github.com/rollup/rollup/issues/1978
 //        to suppress (known) circular dependency warnings
@@ -25,8 +36,9 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
     input: 'resources/index.js',
     external: [
       // Not used in browser
-      'path', 'stream', 'http', 'url', 'https', 'zlib',
-      'child_process', 'fs'
+      'node:path', 'node:stream', 'node:http', 'node:url', 'node:https',
+      'node:zlib', 'node:child_process', 'node:fs', 'node:buffer',
+      'node:util', 'node:net'
     ],
     output: {
       format,
@@ -37,23 +49,19 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
             } */
     },
     plugins: [
-      // Switch to browser-friendly version
+      // ... do replace before commonjs
       replace({
-        // ... do replace before commonjs
+        // Switch to browser-friendly version
         patterns: [{
           include: ['resources/resultsDisplay.js', 'resources/utils/Metadata.js'],
           test: "import JsonRefs from 'json-refs';",
           replace: "import JsonRefs from 'json-refs/dist/json-refs-min.js';"
-        }]
-      }),
-      replace({
-        // ... do replace before commonjs
-        patterns: [{
+        }, {
           include: ['node_modules/json-refs/dist/json-refs-min.js'],
           test: 'SCHEMES.urn.serialize(t,e)}}}]);', // End of file
           // replace: '$&\nexport default JsonRefs;'
           replace: 'SCHEMES.urn.serialize(t,e)}}}]);export default JsonRefs;'
-        }, {
+        }, importerReplace, {
           // regexp match with resolved path
           match: /formidable(\/|\\)lib/,
           // string or regexp
@@ -71,7 +79,10 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
         // exportConditions: ['module'],
         mainFields: ['module']
       }),
-      commonjs()
+      commonjs(),
+      postProcess([
+        importerRevert
+      ])
     ]
   };
   if (minifying) {
@@ -82,8 +93,6 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
 // console.log('typeof', typeof getRollupObject); // Keep for ESLint when commenting out below
 export default [
   /**/
-  getRollupObject({minifying: false, format: 'umd'}),
-  getRollupObject({minifying: true, format: 'umd'}),
   getRollupObject({minifying: false, format: 'es'}),
   getRollupObject({minifying: true, format: 'es'}),
   {
@@ -97,7 +106,7 @@ export default [
       // Switch to browser-friendly version
       replace({
         // ... do replace before commonjs
-        patterns: [{
+        patterns: [importerReplace, {
           include: ['resources/resultsDisplay.js', 'resources/utils/Metadata.js'],
           test: "import JsonRefs from 'json-refs';",
           replace: "import JsonRefs from 'json-refs/dist/json-refs-min.js';"
@@ -114,7 +123,10 @@ export default [
         }]
       }),
       nodeResolve(),
-      commonjs()
+      commonjs(),
+      postProcess([
+        importerRevert
+      ])
     ]
   },
   {

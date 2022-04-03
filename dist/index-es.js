@@ -75,57 +75,6 @@ function _objectWithoutProperties(source, excluded) {
   return target;
 }
 
-function _getRequireWildcardCache$1() {
-  if (typeof WeakMap !== "function") return null;
-  var cache = new WeakMap();
-
-  _getRequireWildcardCache$1 = function () {
-    return cache;
-  };
-
-  return cache;
-}
-
-function _interopRequireWildcard$1(obj) {
-  if (obj && obj.__esModule) {
-    return obj;
-  }
-
-  if (obj === null || typeof obj !== "object" && typeof obj !== "function") {
-    return {
-      default: obj
-    };
-  }
-
-  var cache = _getRequireWildcardCache$1();
-
-  if (cache && cache.has(obj)) {
-    return cache.get(obj);
-  }
-
-  var newObj = {};
-  var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
-
-  for (var key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
-
-      if (desc && (desc.get || desc.set)) {
-        Object.defineProperty(newObj, key, desc);
-      } else {
-        newObj[key] = obj[key];
-      }
-    }
-  }
-
-  newObj.default = obj;
-
-  if (cache) {
-    cache.set(obj, newObj);
-  }
-
-  return newObj;
-}
 /* eslint-disable node/no-unsupported-features/es-syntax */
 
 /**
@@ -141,9 +90,7 @@ function _interopRequireWildcard$1(obj) {
  * @param {fetch} cfg.fetch
  * @returns {getJSONCallback}
  */
-
-
-function _await$3(value, then, direct) {
+function _await$2$1(value, then, direct) {
   if (direct) {
     return then ? then(value) : value;
   }
@@ -155,7 +102,7 @@ function _await$3(value, then, direct) {
   return then ? value.then(then) : value;
 }
 
-function _invoke$2(body, then) {
+function _invoke$1$1(body, then) {
   var result = body();
 
   if (result && result.then) {
@@ -202,10 +149,10 @@ function buildGetJSONWithFetch$1({
   return function getJSON(jsonURL, cb, errBack) {
     try {
       let _exit = false;
-      return _catch$1(function () {
-        return _invoke$2(function () {
+      return _await$2$1(_catch$1(function () {
+        return _invoke$1$1(function () {
           if (Array.isArray(jsonURL)) {
-            return _await$3(Promise.all(jsonURL.map(url => {
+            return _await$2$1(Promise.all(jsonURL.map(url => {
               return getJSON(url);
             })), function (arrResult) {
               if (cb) {
@@ -218,8 +165,8 @@ function buildGetJSONWithFetch$1({
             });
           }
         }, function (_result) {
-          return _exit ? _result : _await$3(fetch(jsonURL), function (resp) {
-            return _await$3(resp.json(), function (result) {
+          return _exit ? _result : _await$2$1(fetch(jsonURL), function (resp) {
+            return _await$2$1(resp.json(), function (result) {
               return typeof cb === 'function' // eslint-disable-next-line promise/prefer-await-to-callbacks
               ? cb(result) : result; // https://github.com/bcoe/c8/issues/135
 
@@ -237,7 +184,7 @@ function buildGetJSONWithFetch$1({
         throw e; // https://github.com/bcoe/c8/issues/135
 
         /* c8 ignore next */
-      });
+      }));
       /* c8 ignore next */
     } catch (e) {
       return Promise.reject(e);
@@ -282,7 +229,7 @@ function _invokeIgnored$1(body) {
   }
 }
 
-function _async$2(f) {
+function _async$1$1(f) {
   return function () {
     for (var args = [], i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
@@ -296,10 +243,10 @@ function _async$2(f) {
   };
 }
 
-const setDirname$1 = _async$2(function () {
+const setDirname$1 = _async$1$1(function () {
   return _invokeIgnored$1(function () {
     if (!dirname$1) {
-      return _await$1$1(Promise.resolve().then(() => _interopRequireWildcard$1(require('path'))), function (_import) {
+      return _await$1$1(import('path'), function (_import) {
         ({
           dirname: dirname$1
         } = _import);
@@ -331,8 +278,10 @@ function getDirectoryForURL$1(url) {
   // "file://" +
   return fixWindowsPath$1(dirname$1(new URL(url).pathname));
 }
+/* eslint-disable node/no-unsupported-features/es-syntax */
 
-function _await$2$1(value, then, direct) {
+
+function _await$3(value, then, direct) {
   if (direct) {
     return then ? then(value) : value;
   }
@@ -352,7 +301,7 @@ let nodeFetch$1;
  * @returns {getJSONCallback}
  */
 
-function _invoke$1$1(body, then) {
+function _invoke$2(body, then) {
   var result = body();
 
   if (result && result.then) {
@@ -375,7 +324,7 @@ function _call$1(body, then, direct) {
   }
 }
 
-function _async$1$1(f) {
+function _async$2(f) {
   return function () {
     for (var args = [], i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
@@ -393,23 +342,25 @@ function buildGetJSON$1({
   baseURL,
   cwd: basePath
 } = {}) {
-  const _fetch = typeof fetch !== 'undefined' ? fetch : _async$1$1(function (jsonURL) {
+  const _fetch = typeof fetch !== 'undefined' ? fetch : _async$2(function (jsonURL) {
     let _exit = false;
-    return _invoke$1$1(function () {
+    return _invoke$2(function () {
       if (/^https?:/u.test(jsonURL)) {
-        return _invoke$1$1(function () {
+        return _invoke$2(function () {
           if (!nodeFetch$1) {
-            return _await$2$1(Promise.resolve().then(() => _interopRequireWildcard$1(require('node-fetch'))), function (_import) {
+            return _await$3(import('node-fetch'), function (_import) {
               nodeFetch$1 = _import;
             });
           }
         }, function () {
+          const _nodeFetch$default = nodeFetch$1.default(jsonURL);
+
           _exit = true;
-          return nodeFetch$1.default(jsonURL);
+          return _nodeFetch$default;
         });
       }
     }, function (_result) {
-      return _exit ? _result : _invoke$1$1(function () {
+      return _exit ? _result : _invoke$2(function () {
         if (!basePath) {
           return _call$1(setDirname$1, function () {
             basePath = baseURL ? getDirectoryForURL$1(baseURL) : typeof fetch === 'undefined' && process.cwd();
@@ -419,7 +370,7 @@ function buildGetJSON$1({
         // Filed https://github.com/bergos/file-fetch/issues/12 to see
         //  about getting relative basePaths in `file-fetch` and using
         //  that better-tested package instead
-        return _await$2$1(Promise.resolve().then(() => _interopRequireWildcard$1(require('local-xmlhttprequest'))), function (localXMLHttpRequest) {
+        return _await$3(import('local-xmlhttprequest'), function (localXMLHttpRequest) {
           // eslint-disable-next-line no-shadow
           const XMLHttpRequest = localXMLHttpRequest.default({
             basePath
@@ -429,6 +380,7 @@ function buildGetJSON$1({
           return new Promise((resolve, reject) => {
             const r = new XMLHttpRequest();
             r.open('GET', jsonURL, true); // r.responseType = 'json';
+            // eslint-disable-next-line unicorn/prefer-add-event-listener -- May not be available
 
             r.onreadystatechange = function () {
               // Not sure how to simulate `if`
