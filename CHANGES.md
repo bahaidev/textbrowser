@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.42.2
+
+- fix: server import path fix
+
 ## 0.42.1
 
 - fix: tweak for Node `import()` path

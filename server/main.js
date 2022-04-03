@@ -123,7 +123,7 @@ const srv = http.createServer(async (req, res) => {
     };
     if (userParams.expressServer) {
       // eslint-disable-next-line no-unsanitized/method -- Site-specified plugin
-      const server = import(userParams.expressServer)();
+      const server = (await import(userParams.expressServer)).default();
       server.get('*', staticServer);
       server(req, res);
       return;
