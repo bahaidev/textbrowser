@@ -1,5 +1,11 @@
 # textbrowser CHANGES
 
+## 0.42.0
+
+- BREAKING CHANGE: refactor: Native ESM (plugins must be ESM also)
+- chore: removes babel/register, `url-search-params-polyfill` and dialog-polyfill
+- chore: bumps @babel/core (patch) and `simple-get-json` (minor), pins rtl-detect
+
 ## 0.41.2
 
 - fix: fix dialog polyfill CSS link
