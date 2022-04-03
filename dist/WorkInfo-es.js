@@ -4478,7 +4478,7 @@ const getWorkData = async function ({
       ? Promise.all(
         pluginPaths.map((pluginPath) => {
           // eslint-disable-next-line no-unsanitized/method
-          return import(pluginPath);
+          return import(typeof process === 'undefined' ? pluginPath : '../' + pluginPath);
         })
       )
       : null

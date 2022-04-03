@@ -14593,7 +14593,7 @@ const getWorkData = async function ({
   const pluginFieldMappings = pluginFieldMappingForWork;
   const [schemaObj, pluginObjects] = await Promise.all([getMetadata(schemaFile, schemaProperty, basePath), getPlugins ? Promise.all(pluginPaths.map(pluginPath => {
     // eslint-disable-next-line no-unsanitized/method
-    return import(pluginPath);
+    return import(typeof process === 'undefined' ? pluginPath : '../' + pluginPath);
   })) : null]);
   const pluginsForWork = new PluginsForWork({
     pluginsInWork,
