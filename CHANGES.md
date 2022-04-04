@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.42.5
+
+- fix: try fixing cwd for `import`
+
 ## 0.42.4
 
 - fix: remove `node-serviceworker`
