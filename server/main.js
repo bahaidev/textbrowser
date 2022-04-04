@@ -122,6 +122,19 @@ const srv = http.createServer(async (req, res) => {
       }
       fileServer.serve(req, res);
     };
+
+    const next = function () {
+      req.addListener('end', staticServer).resume();
+    };
+
+    /**
+     * @returns {Promise<void>}
+     */
+    const runHttpServer = async function () {
+      // eslint-disable-next-line no-unsanitized/method -- Site-specified plugin
+      const server = (await import(userParams.httpServer)).default();
+      server(req, res, next);
+    };
     if (userParams.expressServer) {
       // eslint-disable-next-line no-unsanitized/method -- Site-specified plugin
       const app = (await import(userParams.expressServer)).default();
@@ -131,9 +144,7 @@ const srv = http.createServer(async (req, res) => {
         //   not get any other)
         return regexp.source !== '^\\/?(?=\\/|$)' && regexp.test(req.url);
       })) {
-        // eslint-disable-next-line no-unsanitized/method -- Site-specified plugin
-        const server = (await import(userParams.httpServer)).default();
-        server(req, res);
+        runHttpServer();
         return;
       }
 
@@ -141,8 +152,12 @@ const srv = http.createServer(async (req, res) => {
       app(req, res);
 
       return;
+    } else if (userParams.httpServer) {
+      runHttpServer();
+      return;
     }
-    req.addListener('end', staticServer).resume();
+
+    next();
     /*
     res.writeHead(404, {'Content-Type': 'text/html'});
     res.end('<h1>File not found</h1>');

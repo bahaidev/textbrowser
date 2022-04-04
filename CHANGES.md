@@ -1,4 +1,8 @@
-# textbrowser CHANGES
+# CHANGES to `textbrowser`
+
+## 0.44.0
+
+- fix: allow passing on if middleware does not match
 
 ## 0.43.0
 
