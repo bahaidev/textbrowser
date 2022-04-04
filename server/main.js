@@ -53,6 +53,7 @@ const optionDefinitions = [
   {name: 'files', type: String},
   {name: 'namespace', type: String},
 
+  {name: 'httpServer', type: String},
   {name: 'expressServer', type: String}
 ];
 const userParams = commandLineArgs(optionDefinitions);
@@ -123,9 +124,22 @@ const srv = http.createServer(async (req, res) => {
     };
     if (userParams.expressServer) {
       // eslint-disable-next-line no-unsanitized/method -- Site-specified plugin
-      const server = (await import(userParams.expressServer)).default();
-      server.get('*', staticServer);
-      server(req, res);
+      const app = (await import(userParams.expressServer)).default();
+
+      if (userParams.httpServer && !app._router.stack.some(({regexp}) => {
+        // Hack to ignore middleware like jsonParser (and hopefully
+        //   not get any other)
+        return regexp.source !== '^\\/?(?=\\/|$)' && regexp.test(req.url);
+      })) {
+        // eslint-disable-next-line no-unsanitized/method -- Site-specified plugin
+        const server = (await import(userParams.httpServer)).default();
+        server(req, res);
+        return;
+      }
+
+      app.get('*', staticServer);
+      app(req, res);
+
       return;
     }
     req.addListener('end', staticServer).resume();

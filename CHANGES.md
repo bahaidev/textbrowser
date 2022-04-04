@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.43.0
+
+- feat: if Express route not detected and `httpServer` present, defer to that
+
 ## 0.42.6
 
 - fix: remove logging
