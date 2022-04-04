@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.42.4
+
+- fix: remove `node-serviceworker`
+
 ## 0.42.3
 
 - fix: server import path fix
