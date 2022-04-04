@@ -1,5 +1,9 @@
 # textbrowser CHANGES
 
+## 0.42.6
+
+- fix: remove logging
+
 ## 0.42.5
 
 - fix: try fixing cwd for `import`
