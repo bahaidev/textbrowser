@@ -127,8 +127,6 @@ export const getWorkData = async function ({
     : process.cwd() + '/'
   );
 
-  console.log('cwd-textbrowser', cwd);
-
   const [schemaObj, pluginObjects] = await Promise.all([
     getMetadata(schemaFile, schemaProperty, basePath),
     getPlugins

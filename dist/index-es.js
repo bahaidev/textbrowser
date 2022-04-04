@@ -14592,7 +14592,6 @@ const getWorkData = async function ({
 
   const pluginFieldMappings = pluginFieldMappingForWork;
   const cwd = typeof process === 'undefined' ? location.href.slice(0, location.href.lastIndexOf('/') + 1) : process.cwd() + '/';
-  console.log('cwd-textbrowser', cwd);
   const [schemaObj, pluginObjects] = await Promise.all([getMetadata(schemaFile, schemaProperty, basePath), getPlugins ? Promise.all(pluginPaths.map(pluginPath => {
     // eslint-disable-next-line no-unsanitized/method
     return import(cwd + pluginPath);
