@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.45.1
+
+- fix: issue with `next`
+
 ## 0.45.0
 
 - fix: proper use of `await`

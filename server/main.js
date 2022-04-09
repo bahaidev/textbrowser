@@ -153,6 +153,10 @@ const srv = http.createServer(async (req, res) => {
         return regexp.source !== '^\\/?(?=\\/|$)' && regexp.test(req.url);
       }))) {
         await runHttpServer();
+        app(req, res, () => {
+          // Empty
+        });
+        return;
       }
 
       // app.get('*', staticServer);
