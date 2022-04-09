@@ -133,27 +133,34 @@ const srv = http.createServer(async (req, res) => {
     const runHttpServer = async function () {
       // eslint-disable-next-line no-unsanitized/method -- Site-specified plugin
       const server = (await import(userParams.httpServer)).default();
-      server(req, res, next);
+      return await server(
+        req,
+        res,
+        // For express, we'll first give a chance to other static servers
+        //  they might supply
+        userParams.expressServer ? () => {
+          // Empty
+        } : next
+      );
     };
     if (userParams.expressServer) {
       // eslint-disable-next-line no-unsanitized/method -- Site-specified plugin
       const app = (await import(userParams.expressServer)).default();
 
-      if (userParams.httpServer && !app._router.stack.some(({regexp}) => {
+      if (userParams.httpServer && (!app._router || !app._router.stack.some(({regexp}) => {
         // Hack to ignore middleware like jsonParser (and hopefully
         //   not get any other)
         return regexp.source !== '^\\/?(?=\\/|$)' && regexp.test(req.url);
-      })) {
-        runHttpServer();
-        return;
+      }))) {
+        await runHttpServer();
       }
 
-      app.get('*', staticServer);
-      app(req, res);
+      // app.get('*', staticServer);
+      app(req, res, next);
 
       return;
     } else if (userParams.httpServer) {
-      runHttpServer();
+      await runHttpServer();
       return;
     }
 

@@ -1,5 +1,13 @@
 # CHANGES to `textbrowser`
 
+## 0.45.0
+
+- fix: proper use of `await`
+- fix: avoid extra problematic static server call
+- fix: allow for empty router
+- fix: allow fall-through to express if http server fails to match
+- fix: pass on `next` to express
+
 ## 0.44.0
 
 - fix: allow passing on if middleware does not match
