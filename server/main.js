@@ -153,6 +153,11 @@ const srv = http.createServer(async (req, res) => {
         return regexp.source !== '^\\/?(?=\\/|$)' && regexp.test(req.url);
       }))) {
         await runHttpServer();
+
+        // Ideally we could use `next` here to serve as a back-up static
+        //  server (i.e., for the bahaiwritings app proper), but the indexes
+        //  app apparently tries to use it (and fails) after a single
+        //  successful HTML page load. So we let the Express app handle
         app(req, res, () => {
           // Empty
         });
