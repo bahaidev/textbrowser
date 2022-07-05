@@ -14,7 +14,7 @@ export const getSerializeParamsAsURL = function (...args) {
   };
 };
 
-export const getParamsSetter = function ({l, il, $p}) {
+export const getParamsSetter = function ({l, lParam, $p}) {
   return function ({form, random = {
     checked: false
   }, checkboxes, type, fieldAliasOrNames = [], workName}) {
@@ -26,8 +26,8 @@ export const getParamsSetter = function ({l, il, $p}) {
     });
 
     // Follow the same style (and order) for checkboxes
-    paramsCopy.delete(il('rand'));
-    paramsCopy.set(il('rand'), random.checked ? l('yes') : l('no'));
+    paramsCopy.delete(lParam('rand'));
+    paramsCopy.set(lParam('rand'), random.checked ? l('yes') : l('no'));
 
     // We want checkboxes to typically show by default, so we cannot use the
     //    standard serialization
@@ -62,11 +62,11 @@ export const getParamsSetter = function ({l, il, $p}) {
     case 'saveSettings': {
       // In case it was added previously on
       //    this page, let's remove it.
-      paramsCopy.delete(il('rand'));
+      paramsCopy.delete(lParam('rand'));
       break;
     }
     case 'shortcutResult': {
-      paramsCopy.delete(il('rand'));
+      paramsCopy.delete(lParam('rand'));
       let num = 1;
       while (paramsCopy.has(`anchorfield${num}`, true)) {
         paramsCopy.delete(`anchorfield${num}`, true);
@@ -102,10 +102,10 @@ export const getParamsSetter = function ({l, il, $p}) {
       // In case it was added previously on this page,
       //    let's put random again toward the end.
       if (type === 'randomResult' || random.checked) {
-        paramsCopy.delete(il('rand'));
-        paramsCopy.set(il('rand'), l('yes'));
+        paramsCopy.delete(lParam('rand'));
+        paramsCopy.set(lParam('rand'), l('yes'));
       }
-      paramsCopy.set(il('result'), l('yes'));
+      paramsCopy.set(lParam('result'), l('yes'));
       break;
     }
     default: {

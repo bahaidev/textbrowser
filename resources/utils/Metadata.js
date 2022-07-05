@@ -149,7 +149,7 @@ export const getBrowseFieldData = function ({
     const setName = browseFieldSetObject.name;
     const fieldSets = browseFieldSetObject.set;
     const {presort} = browseFieldSetObject;
-    // Todo: Deal with ['td', [['h3', [ld(browseFieldObject.name)]]]]
+    // Todo: Deal with ['td', [['h3', [lDirectional(browseFieldObject.name)]]]]
     //          as kind of fieldset
 
     const browseFields = fieldSets.map((field) =>

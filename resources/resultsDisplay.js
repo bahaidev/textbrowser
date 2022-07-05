@@ -23,7 +23,7 @@ const getRawFieldValue = (v) => {
 
 const setAnchor = ({
   applicableBrowseFieldSet,
-  fieldValueAliasMapPreferred, ilRaw, iil, max, $p
+  fieldValueAliasMapPreferred, lParamRaw, lIndexedParam, max, $p
 }) => {
   const applicableBrowseFieldSchemaIndexes = applicableBrowseFieldSet.map((abfs) => {
     return abfs.fieldSchemaIndex;
@@ -32,7 +32,7 @@ const setAnchor = ({
     //   other anchor params)
   const work = $p.get('work');
   let anchor;
-  const anchorRowCol = ilRaw('anchorrowcol');
+  const anchorRowCol = lParamRaw('anchorrowcol');
   if (anchorRowCol) {
     anchor = Templates.resultsDisplayClient.anchorRowCol({anchorRowCol});
   }
@@ -51,7 +51,7 @@ const setAnchor = ({
           }
           break;
         }
-        anchorField = $p.get(iil('anchorfield') + i, true);
+        anchorField = $p.get(lIndexedParam('anchorfield') + i, true);
 
         const x = applicableBrowseFieldSchemaIndexes[j - 1];
         const rawVal = getRawFieldValue(anchor);
@@ -87,24 +87,23 @@ export const resultsDisplayClient = async function resultsDisplayClient (args) {
     browseFieldSets,
     applicableBrowseFieldSet,
     lang, metadataObj, fileData,
-    fieldValueAliasMapPreferred, lf, iil, ilRaw,
+    fieldValueAliasMapPreferred, workI18n, lIndexedParam, lParamRaw,
     templateArgs
   } = await resultsDisplayServerOrClient.call(this, {
     ...args, skipIndexedDB, prefI18n
   });
-  document.title = lf({
-    key: 'browserfile-resultsdisplay',
-    values: {
+  document.title = workI18n(
+    'browserfile-resultsdisplay',
+    {
       work: fileData
         ? getMetaProp(lang, metadataObj, 'alias')
         : ''
-    },
-    fallback: true
-  });
+    }
+  );
   Templates.resultsDisplayClient.main(templateArgs);
   setAnchor({
     applicableBrowseFieldSet,
-    fieldValueAliasMapPreferred, iil, ilRaw,
+    fieldValueAliasMapPreferred, lIndexedParam, lParamRaw,
     $p: args.$p,
     max: browseFieldSets.length
   });
@@ -141,7 +140,7 @@ export const resultsDisplayServer = async function resultsDisplayServer (args) {
 };
 
 export const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient ({
-  l, lang, fallbackLanguages, imfLocales, $p, skipIndexedDB, noIndexedDB, prefI18n,
+  l, lang, fallbackLanguages, locales, $p, skipIndexedDB, noIndexedDB, prefI18n,
   files, allowPlugins, langData, basePath = '', dynamicBasePath = ''
 }) {
   const languages = new Languages({langData});
@@ -179,7 +178,12 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       //   for a number representing a book); we may wish to
       //   switch this (and also for other browse field-based
       //   items).
-      if (fieldValueAliasMap[idx] !== undefined) {
+      if (
+        fieldValueAliasMap[idx] !== undefined &&
+        // Added this condition after imf->intl-dom conversion; concealing a
+        //   bug?
+        fieldValueAliasMap[idx] !== null
+      ) {
         return fieldValueAliasMapPreferred[idx][tr[idx]];
       }
       return tr[idx];
@@ -201,7 +205,12 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       //   be multiple aliases for a value; we may wish to
       //   switch this (and also for other browse field-based
       //   items).
-      if (fieldValueAliasMap[idx] !== undefined) {
+      if (
+        fieldValueAliasMap[idx] !== undefined &&
+        // Added this condition after imf->intl-dom conversion; concealing a
+        //   bug?
+        fieldValueAliasMap[idx] !== null
+      ) {
         rowIDPartsPreferred.push(fieldValueAliasMapPreferred[idx][tr[idx]]);
       } else {
         rowIDPartsPreferred.push(tr[idx]);
@@ -399,7 +408,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         return false;
       });
     }
-    reverseLocaleLookup(imfLocales);
+    reverseLocaleLookup(locales);
     if (!key && !avoidLog) {
       console.log('Bad param/value', param, '::', p);
     }
@@ -414,7 +423,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
   const escapeQuotedCSS = (s) => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
   const {
-    fileData, lf, getFieldAliasOrName, schemaObj, metadataObj,
+    fileData, workI18n, getFieldAliasOrName, schemaObj, metadataObj,
     pluginsForWork
   } = await getWorkData({
     files: files || this.files,
@@ -485,7 +494,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         const fieldAliasOrName = plugin.getFieldAliasOrName
           ? plugin.getFieldAliasOrName({
             locales: lang,
-            lf,
+            workI18n,
             targetLanguage,
             applicableField,
             applicableFieldI18N,
@@ -496,7 +505,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
           : languages.getFieldNameFromPluginNameAndLocales({
             pluginName,
             locales: lang,
-            lf,
+            workI18n,
             targetLanguage,
             applicableFieldI18N,
             // Todo: Should have formal way to i18nize meta
@@ -554,22 +563,22 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     : prefI18n === 'true' || (
       prefI18n !== 'false' && this.localizeParamNames
     );
-  const il = localizeParamNames
+  const lParam = localizeParamNames
     ? key => l(['params', key])
     : key => key;
-  const iil = localizeParamNames
+  const lIndexedParam = localizeParamNames
     ? key => l(['params', 'indexed', key])
     : key => key;
-  const ilRaw = localizeParamNames
-    ? (key, suffix = '') => $p.get(il(key) + suffix, true)
+  const lParamRaw = localizeParamNames
+    ? (key, suffix = '') => $p.get(lParam(key) + suffix, true)
     : (key, suffix = '') => $p.get(key + suffix, true);
-  const iilRaw = localizeParamNames
-    ? (key, suffix = '') => $p.get($p.get('work') + '-' + iil(key) + suffix, true)
+  const lIndexedParamRaw = localizeParamNames
+    ? (key, suffix = '') => $p.get($p.get('work') + '-' + lIndexedParam(key) + suffix, true)
     : (key, suffix = '') => $p.get($p.get('work') + '-' + key + suffix, true);
 
   // Now that we know `browseFieldSets`, we can parse `startEnd`
   const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) =>
-    iilRaw('startEnd', (i + 1))
+    lIndexedParamRaw('startEnd', (i + 1))
   );
   if (browseFieldSetStartEndIdx !== -1) {
     // Todo: i18nize (by work and/or by whole app?)
@@ -582,7 +591,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     // Todo: Change query beginning at 0 to 1 if none present?
     // Todo: Support i18nized or canonical aliases (but don't
     //         over-trim in such cases)
-    const rawSearch = (iilRaw('startEnd', browseFieldSetStartEndIdx + 1) || '').trim();
+    const rawSearch = (lIndexedParamRaw('startEnd', browseFieldSetStartEndIdx + 1) || '').trim();
     const [startFull, endFull] = rawSearch.split(rangeSep);
     if (endFull !== undefined) {
       const startPartVals = startFull.split(partSep);
@@ -606,7 +615,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
   }
 
   const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
-    iilRaw('start', (i + 1) + '-1')
+    lIndexedParamRaw('start', (i + 1) + '-1')
   );
   const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
   const applicableBrowseFieldSetName = setNames[browseFieldSetIdx];
@@ -636,7 +645,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
   });
   const showInterlinTitles = $pRaw('interlintitle') === '1';
 
-  console.log('rand', ilRaw('rand') === 'yes');
+  console.log('rand', lParamRaw('rand') === 'yes');
 
   const stripToRawFieldValue = (v, i) => {
     let val;
@@ -810,7 +819,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     fieldInfo,
     $p,
     applicableBrowseFieldSet, fieldValueAliasMapPreferred,
-    lf, iil, ilRaw, browseFieldSets,
+    workI18n, lIndexedParam, lParamRaw, browseFieldSets,
     lang, metadataObj, fileData,
     templateArgs
   };

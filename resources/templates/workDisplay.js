@@ -21,7 +21,7 @@ export default {
   //    seemed to have issues in Firefox)
     ['div', {style: 'display: inline; direction: ' + fallbackDirection}, [message]],
   columnsTable: ({
-    ld, fieldInfo, $p, le, iil, l,
+    lDirectional, fieldInfo, $p, lElement, lIndexedParam, l,
     metadataObj, preferredLocale, schemaItems,
     fieldMatchesLocale
   }) => ['table', {
@@ -29,25 +29,25 @@ export default {
   }, [
     ['tr', [
       ['th', [
-        ld('fieldno')
+        lDirectional('fieldno')
       ]],
       ['th', {align: 'left', width: '20'}, [
-        ld('field_enabled')
+        lDirectional('field_enabled')
       ]],
       ['th', [
-        ld('field_title')
+        lDirectional('field_title')
       ]],
       ['th', [
-        ld('fieldinterlin')
+        lDirectional('fieldinterlin')
       ]],
       ['th', [
-        ld('fieldcss')
+        lDirectional('fieldcss')
       ]]
       /*
             Todo: Support search?
             ,
             ['th', [
-                ld('fieldsearch')
+                lDirectional('fieldsearch')
             ]]
             */
     ]],
@@ -60,18 +60,18 @@ export default {
         // Todo: Get Jamilih to accept numbers and
         //    booleans (`toString` is too dangerous)
         ['td', [String(idx)]],
-        le('check-columns-to-browse', 'td', 'title', {}, [
-          le('yes', 'input', 'value', {
+        lElement('check-columns-to-browse', 'td', 'title', {}, [
+          lElement('yes', 'input', 'value', {
             class: 'fieldSelector',
             id: checkedIndex,
-            name: iil('checked') + idx,
+            name: lIndexedParam('checked') + idx,
             checked: $p.get(checkedIndex) !== l('no') &&
                             ($p.has(checkedIndex) || fieldInfoItem.onByDefault !== false),
             type: 'checkbox'
           })
         ]),
-        le('check-sequence', 'td', 'title', {}, [
-          ['select', {name: iil('field') + idx, id: fieldIndex, size: '1'},
+        lElement('check-sequence', 'td', 'title', {}, [
+          ['select', {name: lIndexedParam('field') + idx, id: fieldIndex, size: '1'},
             fieldInfo.map(({field, fieldAliasOrName}, j) => {
               const matchedFieldParam = fieldParam && fieldParam === fieldAliasOrName;
               return ['option', {
@@ -86,25 +86,25 @@ export default {
           ]
         ]),
         ['td', [ // Todo: Make as tag selector with fields as options
-          le('interlinear-tips', 'input', 'title', {
-            name: iil('interlin') + idx,
+          lElement('interlinear-tips', 'input', 'title', {
+            name: lIndexedParam('interlin') + idx,
             value: $p.get('interlin' + idx)
           }) // Todo: Could allow i18n of numbers here
         ]],
         ['td', [ // Todo: Make as CodeMirror-highlighted CSS
-          ['input', {name: iil('css') + idx, value: $p.get('css' + idx)}]
+          ['input', {name: lIndexedParam('css') + idx, value: $p.get('css' + idx)}]
         ]]
         /*
                 ,
                 ['td', [ // Todo: Allow plain or regexp searching
-                    ['input', {name: iil('search') + idx, value: $p.get('search' + idx)}]
+                    ['input', {name: lIndexedParam('search') + idx, value: $p.get('search' + idx)}]
                 ]]
                 */
       ]];
     }),
     ['tr', [
       ['td', {colspan: 3}, [
-        le('check_all', 'input', 'value', {
+        lElement('check_all', 'input', 'value', {
           type: 'button',
           $on: {
             click () {
@@ -114,7 +114,7 @@ export default {
             }
           }
         }),
-        le('uncheck_all', 'input', 'value', {
+        lElement('uncheck_all', 'input', 'value', {
           type: 'button',
           $on: {
             click () {
@@ -124,7 +124,7 @@ export default {
             }
           }
         }),
-        le('checkmark_locale_fields_only', 'input', 'value', {
+        lElement('checkmark_locale_fields_only', 'input', 'value', {
           type: 'button',
           $on: {
             click () {
@@ -141,13 +141,13 @@ export default {
       ]]
     ]]
   ]],
-  advancedFormatting: ({ld, il, l, lo, le, $p, hideFormattingSection}) => ['td', {
+  advancedFormatting: ({lDirectional, lParam, l, lOption, lElement, $p, hideFormattingSection}) => ['td', {
     id: 'advancedformatting', style: {display: (hideFormattingSection ? 'none' : 'block')}
   }, [
-    ['h3', [ld('advancedformatting')]],
+    ['h3', [lDirectional('advancedformatting')]],
     ['label', [
-      ld('textcolor'), nbsp2,
-      ['select', {name: il('colorName')}, colors.map((color, i) => {
+      lDirectional('textcolor'), nbsp2,
+      ['select', {name: lParam('colorName')}, colors.map((color, i) => {
         const atts = {
           value: l(['param_values', 'colors', color]),
           selected: null
@@ -156,13 +156,13 @@ export default {
                     (i === 1 && !$p.has('colorName'))) {
           atts.selected = 'selected';
         }
-        return lo(['param_values', 'colors', color], atts);
+        return lOption(['param_values', 'colors', color], atts);
       })]
     ]],
     ['label', [
-      nbsp, ld('or_entercolor'), nbsp2,
+      nbsp, lDirectional('or_entercolor'), nbsp2,
       ['input', {
-        name: il('color'),
+        name: lParam('color'),
         type: 'text',
         value: ($p.get('color') || '#'),
         size: '7',
@@ -170,8 +170,8 @@ export default {
     ]],
     ['br'], ['br'],
     ['label', [
-      ld('backgroundcolor'), nbsp2,
-      ['select', {name: il('bgcolorName')}, colors.map((color, i) => {
+      lDirectional('backgroundcolor'), nbsp2,
+      ['select', {name: lParam('bgcolorName')}, colors.map((color, i) => {
         const atts = {
           value: l(['param_values', 'colors', color]),
           selected: null
@@ -180,13 +180,13 @@ export default {
                     (i === 14 && !$p.has('bgcolorName'))) {
           atts.selected = 'selected';
         }
-        return lo(['param_values', 'colors', color], atts);
+        return lOption(['param_values', 'colors', color], atts);
       })]
     ]],
     ['label', [
-      nbsp, ld('or_entercolor'), nbsp2,
+      nbsp, lDirectional('or_entercolor'), nbsp2,
       ['input', {
-        name: il('bgcolor'),
+        name: lParam('bgcolor'),
         type: 'text',
         value: ($p.get('bgcolor') || '#'),
         size: '7',
@@ -194,9 +194,9 @@ export default {
     ]],
     ['br'], ['br'],
     ['label', [
-      ld('text_font'), nbsp2,
+      lDirectional('text_font'), nbsp2,
       // Todo: remove hard-coded direction if i81nizing; also i18nize fontSeq param
-      ['select', {name: il('fontSeq'), dir: 'ltr'}, fonts.map((fontSeq, i) => {
+      ['select', {name: lParam('fontSeq'), dir: 'ltr'}, fonts.map((fontSeq, i) => {
         const atts = {
           value: fontSeq,
           selected: null
@@ -209,8 +209,8 @@ export default {
     ]],
     ['br'], ['br'],
     ['label', [
-      ld('font_style'), nbsp2,
-      ['select', {name: il('fontstyle')}, [
+      lDirectional('font_style'), nbsp2,
+      ['select', {name: lParam('fontstyle')}, [
         'italic',
         'normal',
         'oblique'
@@ -223,39 +223,39 @@ export default {
                     (i === 1 && !$p.has('fontstyle'))) {
           atts.selected = 'selected';
         }
-        return lo(['param_values', 'fontstyle', fontstyle], atts);
+        return lOption(['param_values', 'fontstyle', fontstyle], atts);
       })]
     ]],
     ['br'],
     ['div', [
-      ld('font_variant'), nbsp3,
+      lDirectional('font_variant'), nbsp3,
       ['label', [
         ['input', {
-          name: il('fontvariant'),
+          name: lParam('fontvariant'),
           type: 'radio',
           value: l(['param_values', 'fontvariant', 'normal']),
           checked: $p.get('fontvariant') !==
-                        ld(['param_values', 'fontvariant', 'small-caps'])
+                        lDirectional(['param_values', 'fontvariant', 'small-caps'])
         }],
-        ld(['param_values', 'fontvariant', 'normal']), nbsp
+        lDirectional(['param_values', 'fontvariant', 'normal']), nbsp
       ]],
       ['label', [
         ['input', {
-          name: il('fontvariant'),
+          name: lParam('fontvariant'),
           type: 'radio',
           value: l(['param_values', 'fontvariant', 'small-caps']),
           checked: $p.get('fontvariant') ===
-                        ld(['param_values', 'fontvariant', 'small-caps'])
+                        lDirectional(['param_values', 'fontvariant', 'small-caps'])
         }],
-        ld(['param_values', 'fontvariant', 'small-caps']), nbsp
+        lDirectional(['param_values', 'fontvariant', 'small-caps']), nbsp
       ]]
     ]],
     ['br'],
     ['label', [
       // Todo: i18n and allow for normal/bold pulldown and float input?
-      ld('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp2,
+      lDirectional('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp2,
       ['input', {
-        name: il('fontweight'),
+        name: lParam('fontweight'),
         type: 'text',
         value: $p.has('fontweight') ? $p.get('fontweight') : 'normal',
         size: '7',
@@ -263,9 +263,9 @@ export default {
     ]],
     ['br'],
     ['label', [
-      ld('font_size'), ' (14pt, 14px, small, 75%, etc.):', nbsp2,
+      lDirectional('font_size'), ' (14pt, 14px, small, 75%, etc.):', nbsp2,
       ['input', {
-        name: il('fontsize'),
+        name: lParam('fontsize'),
         type: 'text',
         value: $p.get('fontsize'),
         size: '7',
@@ -277,30 +277,30 @@ export default {
     ['label', {
       dir: 'ltr'
     }, [
-      ld('font_stretch'), nbsp,
-      ['select', {name: il('fontstretch')},
+      lDirectional('font_stretch'), nbsp,
+      ['select', {name: lParam('fontstretch')},
         [
           'ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed',
           'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'
         ].map((stretch) => {
           const atts = {
-            value: ld(['param_values', 'font-stretch', stretch]),
+            value: lDirectional(['param_values', 'font-stretch', stretch]),
             selected: null
           };
           if ($p.get('fontstretch') === stretch ||
                         (!$p.has('fontstretch') && stretch === 'normal')) {
             atts.selected = 'selected';
           }
-          return ['option', atts, [ld(['param_values', 'font-stretch', stretch])]];
+          return ['option', atts, [lDirectional(['param_values', 'font-stretch', stretch])]];
         })
       ]
     ]],
     /**/
     ['br'], ['br'],
     ['label', [
-      ld('letter_spacing'), ' (normal, .9em, -.05cm): ',
+      lDirectional('letter_spacing'), ' (normal, .9em, -.05cm): ',
       ['input', {
-        name: il('letterspacing'),
+        name: lParam('letterspacing'),
         type: 'text',
         value: $p.has('letterspacing') ? $p.get('letterspacing') : 'normal',
         size: '7',
@@ -308,131 +308,131 @@ export default {
     ]],
     ['br'],
     ['label', [
-      ld('line_height'), ' (normal, 1.5, 22px, 150%): ',
+      lDirectional('line_height'), ' (normal, 1.5, 22px, 150%): ',
       ['input', {
-        name: il('lineheight'),
+        name: lParam('lineheight'),
         type: 'text',
         value: $p.has('lineheight') ? $p.get('lineheight') : 'normal',
         size: '7',
         maxlength: '12'}]
     ]],
     ['br'], ['br'],
-    le('tableformatting_tips', 'h3', 'title', {}, [
-      ld('tableformatting')
+    lElement('tableformatting_tips', 'h3', 'title', {}, [
+      lDirectional('tableformatting')
     ]),
     ['div', [
-      ld('header_wstyles'), nbsp2,
+      lDirectional('header_wstyles'), nbsp2,
       ...([
-        ['yes', ld(['param_values', 'y'])],
-        ['no', ld(['param_values', 'n'])],
-        ['none', ld(['param_values', '0'])]
+        ['yes', lDirectional(['param_values', 'y'])],
+        ['no', lDirectional(['param_values', 'n'])],
+        ['none', lDirectional(['param_values', '0'])]
       ].map(([key, val], i, arr) =>
         ['label', [
           ['input', {
-            name: il('header'),
+            name: lParam('header'),
             type: 'radio',
             value: val,
             checked: $p.get('header') === val ||
                             (!$p.has('header') && i === 1)
           }],
-          ld(key), (i === arr.length - 1 ? '' : nbsp3)
+          lDirectional(key), (i === arr.length - 1 ? '' : nbsp3)
         ]]
       ))
     ]],
     ['div', [
-      ld('footer_wstyles'), nbsp2,
+      lDirectional('footer_wstyles'), nbsp2,
       ...([
-        ['yes', ld(['param_values', 'y'])],
-        ['no', ld(['param_values', 'n'])],
-        ['none', ld(['param_values', '0'])]
+        ['yes', lDirectional(['param_values', 'y'])],
+        ['no', lDirectional(['param_values', 'n'])],
+        ['none', lDirectional(['param_values', '0'])]
       ].map(([key, val], i, arr) =>
         ['label', [
           ['input', {
-            name: il('footer'),
+            name: lParam('footer'),
             type: 'radio',
             value: val,
             checked: $p.get('footer') === val ||
                             (!$p.has('footer') && i === 2)
           }],
-          ld(key), (i === arr.length - 1 ? '' : nbsp3)
+          lDirectional(key), (i === arr.length - 1 ? '' : nbsp3)
         ]]
       ))
     ]],
     ['label', [
       ['input', {
-        name: il('headerfooterfixed'),
+        name: lParam('headerfooterfixed'),
         type: 'checkbox',
         value: l('yes'),
         checked: $p.get('headerfooterfixed') === l('yes')
       }],
-      nbsp2, ld('headerfooterfixed-wishtoscroll')
+      nbsp2, lDirectional('headerfooterfixed-wishtoscroll')
     ]],
     ['br'],
     ['div', [
-      ld('caption_wstyles'), nbsp2,
+      lDirectional('caption_wstyles'), nbsp2,
       ...([
-        ['yes', ld(['param_values', 'y'])],
-        ['no', ld(['param_values', 'n'])],
-        ['none', ld(['param_values', '0'])]
+        ['yes', lDirectional(['param_values', 'y'])],
+        ['no', lDirectional(['param_values', 'n'])],
+        ['none', lDirectional(['param_values', '0'])]
       ].map(([key, val], i, arr) =>
         ['label', [
           ['input', {
-            name: il('caption'),
+            name: lParam('caption'),
             type: 'radio',
             value: val,
             checked: $p.get('caption') === val ||
                             (!$p.has('caption') && i === 2)
           }],
-          ld(key), (i === arr.length - 1 ? '' : nbsp3)
+          lDirectional(key), (i === arr.length - 1 ? '' : nbsp3)
         ]]
       ))
     ]],
     ['br'],
     ['div', [
-      ld('table_wborder'), nbsp2,
+      lDirectional('table_wborder'), nbsp2,
       ['label', [
         ['input', {
-          name: il('border'),
+          name: lParam('border'),
           type: 'radio',
           value: '1',
           checked: $p.get('border') !== '0'
         }],
-        ld('yes'), nbsp3
+        lDirectional('yes'), nbsp3
       ]],
       ['label', [
         ['input', {
-          name: il('border'),
+          name: lParam('border'),
           type: 'radio',
           value: '0',
           checked: $p.get('border') === '0'}],
-        ld('no')
+        lDirectional('no')
       ]]
     ]],
     ['div', [
-      ld('interlin_repeat_field_names'), nbsp2,
+      lDirectional('interlin_repeat_field_names'), nbsp2,
       ['label', [
         ['input', {
-          name: il('interlintitle'),
+          name: lParam('interlintitle'),
           type: 'radio',
           value: '1',
           checked: $p.get('interlintitle') !== '0'
         }],
-        ld('yes'), nbsp3
+        lDirectional('yes'), nbsp3
       ]],
       ['label', [
         ['input', {
-          name: il('interlintitle'),
+          name: lParam('interlintitle'),
           type: 'radio',
           value: '0',
           checked: $p.get('interlintitle') === '0'
         }],
-        ld('no')
+        lDirectional('no')
       ]]
     ]],
     ['label', [
-      ld('interlintitle_css'), nbsp2,
+      lDirectional('interlintitle_css'), nbsp2,
       ['input', {
-        name: il('interlintitle_css'),
+        name: lParam('interlintitle_css'),
         type: 'text',
         value: $p.get('interlintitle_css') || '',
         size: '12'
@@ -443,55 +443,55 @@ export default {
         ['br'],
         ['label', [
             ['input', {
-                name: il('transpose'),
+                name: lParam('transpose'),
                 type: 'checkbox',
                 value: l('yes'),
                 checked: $p.get('transpose') === l('yes')
             }],
-            nbsp2, ld('transpose')
+            nbsp2, lDirectional('transpose')
         ]],
         */
     ['br'],
-    le('pageformatting_tips', 'h3', 'title', {}, [
-      ld('pageformatting')
+    lElement('pageformatting_tips', 'h3', 'title', {}, [
+      lDirectional('pageformatting')
     ]),
     /*
         ['label', [
-            ld('speech_controls'), nbsp2,
+            lDirectional('speech_controls'), nbsp2,
             ['label', [
                 ['input', {
-                    name: il('speech'),
+                    name: lParam('speech'),
                     type: 'radio',
                     value: '1',
                     checked: $p.get('speech') === '1'
                 }],
-                ld('yes'), nbsp3
+                lDirectional('yes'), nbsp3
             ]],
             ['label', [
                 ['input', {
-                    name: il('speech'),
+                    name: lParam('speech'),
                     type: 'radio',
                     value: '0',
                     checked: $p.get('speech') !== '1'
                 }],
-                ld('no')
+                lDirectional('no')
             ]]
         ]],
         ['br'],
         */
     ['label', [
-      ld('page_css'), nbsp2,
+      lDirectional('page_css'), nbsp2,
       ['textarea', {
-        name: il('pagecss'),
+        name: lParam('pagecss'),
         title: l('page_css_tips'),
         value: $p.get('pagecss')
       }]
     ]],
     ['br'],
-    le('outputmode_tips', 'label', 'title', {}, [
-      ld('outputmode'), nbsp2,
+    lElement('outputmode_tips', 'label', 'title', {}, [
+      lDirectional('outputmode'), nbsp2,
       // Todo: Could i18nize, but would need smaller values
-      ['select', {name: il('outputmode')}, [
+      ['select', {name: lParam('outputmode')}, [
         'table',
         'div'
         // , 'json-array',
@@ -504,12 +504,12 @@ export default {
         if ($p.get('outputmode') === mode) {
           atts.selected = 'selected';
         }
-        return lo(['param_values', 'outputmode', mode], atts);
+        return lOption(['param_values', 'outputmode', mode], atts);
       })]
     ])
   ]],
   addRandomFormFields ({
-    il, ld, l, le, $p, serializeParamsAsURL, content
+    lParam, lDirectional, l, lElement, $p, serializeParamsAsURL, content
   }) {
     const addRowContent = (rowContent) => {
       if (!rowContent || !rowContent.length) { return; }
@@ -517,16 +517,16 @@ export default {
     };
     [
       [
-        ['td', {colspan: 12, align: 'center'}, [['br'], ld('or'), ['br'], ['br']]]
+        ['td', {colspan: 12, align: 'center'}, [['br'], lDirectional('or'), ['br'], ['br']]]
       ],
       [
         ['td', {colspan: 12, align: 'center'}, [
           // Todo: Could allow random with fixed starting and/or ending range
           ['label', [
-            ld('rnd'), nbsp3,
+            lDirectional('rnd'), nbsp3,
             ['input', {
               id: 'rand',
-              name: il('rand'),
+              name: lParam('rand'),
               type: 'checkbox',
               value: l('yes'),
               checked: $p.get('rand') === l('yes')
@@ -534,9 +534,9 @@ export default {
           ]],
           nbsp3,
           ['label', [
-            ld('verses-context'), nbsp,
+            lDirectional('verses-context'), nbsp,
             ['input', {
-              name: il('context'),
+              name: lParam('context'),
               type: 'number',
               min: 1,
               size: 4,
@@ -544,7 +544,7 @@ export default {
             }]
           ]],
           nbsp3,
-          le('view-random-URL', 'input', 'value', {
+          lElement('view-random-URL', 'input', 'value', {
             type: 'button',
             $on: {
               click () {
@@ -562,9 +562,9 @@ export default {
     ].forEach(addRowContent);
   },
   getPreferences: ({
-    languageParam, lf, paramsSetter, replaceHash,
+    languageParam, workI18n, paramsSetter, replaceHash,
     getFieldAliasOrNames, work,
-    langs, imfl, l, localizeParamNames, namespace,
+    langs, languageI18n, l, localizeParamNames, namespace,
     hideFormattingSection, groups, preferencesPlugin
   }) => ['div', {
     style: {textAlign: 'left'}, id: 'preferences', hidden: 'true'
@@ -628,7 +628,7 @@ export default {
           atts.selected = 'selected';
         }
         return ['option', atts, [
-          imfl(['languages', lan.code])
+          languageI18n(lan.code)
         ]];
       })]
     ]],
@@ -637,7 +637,7 @@ export default {
       replaceHash, getFieldAliasOrNames
     }) : '')
   ]],
-  addBrowseFields ({browseFields, fieldInfo, ld, i, iil, $p, content}) {
+  addBrowseFields ({browseFields, fieldInfo, lDirectional, i, lIndexedParam, $p, content}) {
     const work = $p.get('work');
     const addRowContent = (rowContent) => {
       if (!rowContent || !rowContent.length) { return; }
@@ -647,7 +647,7 @@ export default {
       // Todo: Separate formatting to CSS
       i > 0
         ? [
-          ['td', {colspan: 12, align: 'center'}, [['br'], ld('or'), ['br'], ['br']]]
+          ['td', {colspan: 12, align: 'center'}, [['br'], lDirectional('or'), ['br'], ['br']]]
         ]
         : '',
       [
@@ -657,7 +657,7 @@ export default {
               fieldName, aliases, fieldSchema: {minimum, maximum}
             }, j) => {
               // Namespace by work for sake of browser auto-complete caching
-              const name = work + '-' + iil(setType) + (i + 1) + '-' + (j + 1);
+              const name = work + '-' + lIndexedParam(setType) + (i + 1) + '-' + (j + 1);
               const id = name;
               rowContent['#'].push(
                 ['td', [
@@ -697,14 +697,14 @@ export default {
           return [
             addBrowseFieldSet('start'),
             ['td', [
-              ['b', [ld('to')]],
+              ['b', [lDirectional('to')]],
               nbsp3
             ]],
             addBrowseFieldSet('end')
           ];
         })(),
         ['td', [
-          browseFields.length > 1 ? ld('versesendingdataoptional') : ''
+          browseFields.length > 1 ? lDirectional('versesendingdataoptional') : ''
         ]]
       ],
       [
@@ -717,7 +717,7 @@ export default {
                 }, j
               ) => {
                 // Namespace by work for sake of browser auto-complete caching
-                const name = work + '-' + iil('anchor') + (i + 1) + '-' + (j + 1);
+                const name = work + '-' + lIndexedParam('anchor') + (i + 1) + '-' + (j + 1);
                 const id = name;
                 rowContent['#'].push(
                   ['td', [
@@ -746,15 +746,15 @@ export default {
                 return rowContent;
               }, {'#': [
                 ['td', {style: 'font-weight: bold; vertical-align: bottom;'}, [
-                  ld('anchored-at') + nbsp3
+                  lDirectional('anchored-at') + nbsp3
                 ]]
               ]}),
               ['td', [
                 ['label', [
-                  ld('field') + nbsp2,
-                  ['select', {name: iil('anchorfield') + (i + 1), size: '1'},
+                  lDirectional('field') + nbsp2,
+                  ['select', {name: lIndexedParam('anchorfield') + (i + 1), size: '1'},
                     fieldInfo.map(({fieldAliasOrName}) => {
-                      const val = $p.get(iil('anchorfield') + (i + 1), true);
+                      const val = $p.get(lIndexedParam('anchorfield') + (i + 1), true);
                       if (val === fieldAliasOrName) {
                         return ['option', {selected: true}, [fieldAliasOrName]];
                       }
@@ -770,12 +770,12 @@ export default {
     ].forEach(addRowContent);
   },
   main ({
-    lf, languageParam,
-    l, namespace, heading, fallbackDirection, imfl, langs, fieldInfo, localizeParamNames,
+    workI18n, languageParam,
+    l, namespace, heading, fallbackDirection, languageI18n, langs, fieldInfo, localizeParamNames,
     serializeParamsAsURL, paramsSetter, replaceHash,
     getFieldAliasOrNames,
     hideFormattingSection, $p,
-    metadataObj, il, le, ld, iil, fieldMatchesLocale,
+    metadataObj, lParam, lElement, lDirectional, lIndexedParam, fieldMatchesLocale,
     preferredLocale, schemaItems, content, groups, preferencesPlugin
   }) {
     const work = $p.get('work');
@@ -784,15 +784,15 @@ export default {
         {...getDataForSerializingParamsAsURL(), type}
       );
     };
-    const lo = (key, atts) =>
+    const lOption = (key, atts) =>
       ['option', atts, [
-        l({
-          key,
-          fallback ({message}) {
-            atts.dir = fallbackDirection;
-            return message;
-          }
-        })
+        l(key
+          // Ensure `intl-dom` supports
+          // , fallback ({message}) {
+          //   atts.dir = fallbackDirection;
+          //   return message;
+          // }
+        )
       ]];
     // Returns element with localized or fallback attribute value (as Jamilih);
     //   also adds direction
@@ -806,9 +806,9 @@ export default {
             prefs.hidden = !prefs.hidden;
           }}}, [l('Preferences')]],
           Templates.workDisplay.getPreferences({
-            languageParam, lf, paramsSetter, replaceHash,
+            languageParam, workI18n, paramsSetter, replaceHash,
             getFieldAliasOrNames, work,
-            langs, imfl, l, localizeParamNames, namespace,
+            langs, languageI18n, l, localizeParamNames, namespace,
             groups, hideFormattingSection, preferencesPlugin
           })
         ]],
@@ -840,7 +840,7 @@ export default {
             e.preventDefault();
             this.$submit();
           }
-        }, name: il('browse')}, [
+        }, name: lParam('browse')}, [
           ['table', {align: 'center'}, content],
           ['br'],
           ['div', {style: 'margin-left: 20px'}, [
@@ -849,11 +849,11 @@ export default {
               ['tr', {valign: 'top'}, [
                 ['td', [
                   Templates.workDisplay.columnsTable({
-                    ld, fieldInfo, $p, le, iil, l,
+                    lDirectional, fieldInfo, $p, lElement, lIndexedParam, l,
                     metadataObj, preferredLocale, schemaItems,
                     fieldMatchesLocale
                   }),
-                  le('save-settings-URL', 'input', 'value', {
+                  lElement('save-settings-URL', 'input', 'value', {
                     type: 'button',
                     $on: {
                       click () {
@@ -886,40 +886,40 @@ export default {
                   }, [l('Copy_shortcut_URL')]]
                 ]],
                 Templates.workDisplay.advancedFormatting({
-                  ld, il, l, lo, le, $p, hideFormattingSection
+                  lDirectional, lParam, l, lOption, lElement, $p, hideFormattingSection
                 })
                 /*
-                                // Todo: Is this still the case? No way to control with CSS?
-                                ,arabicContent ?
-                                    // If there is Arabic content, a text box will be created for
-                                    //    each field with such content to allow the user to choose
-                                    //    how wide the field should be (since the Arabic is smaller).
-                                    // Todo: Allow naming of the field differently for Persian?
-                                    //    Allowing any column to be resized would probably be most
-                                    //    consistent with this project's aim to not make arbitrary
-                                    //    decisions on what should be customizable, but rather make
-                                    //    as much as possible customizable. It may also be helpful
-                                    //    for Chinese, etc. If adding, also need $p.get() for
-                                    //    defaulting behavior
-                                    {'#': arabicContent.map((item, i) =>
-                                        {'#': [
-                                            'Width of Arabic column: ', // Todo: i18n
-                                            ['input', {
-                                                name: il('arw') + i,
-                                                type: 'text',
-                                                value: '',
-                                                size: '7',
-                                                maxlength: '12'
-                                            }]
-                                        ]}
-                                    )} :
-                                    ''
-                                */
+                // Todo: Is this still the case? No way to control with CSS?
+                ,arabicContent ?
+                    // If there is Arabic content, a text box will be created for
+                    //    each field with such content to allow the user to choose
+                    //    how wide the field should be (since the Arabic is smaller).
+                    // Todo: Allow naming of the field differently for Persian?
+                    //    Allowing any column to be resized would probably be most
+                    //    consistent with this project's aim to not make arbitrary
+                    //    decisions on what should be customizable, but rather make
+                    //    as much as possible customizable. It may also be helpful
+                    //    for Chinese, etc. If adding, also need $p.get() for
+                    //    defaulting behavior
+                    {'#': arabicContent.map((item, i) =>
+                        {'#': [
+                            'Width of Arabic column: ', // Todo: i18n
+                            ['input', {
+                                name: lParam('arw') + i,
+                                type: 'text',
+                                value: '',
+                                size: '7',
+                                maxlength: '12'
+                            }]
+                        ]}
+                    )} :
+                    ''
+                */
               ]]
             ]]
           ]],
           ['p', {align: 'center'}, [
-            le('submitgo', 'input', 'value', {
+            lElement('submitgo', 'input', 'value', {
               type: 'submit'
             })
           ]]

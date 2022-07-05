@@ -569,7 +569,7 @@ methods.
     the plug-in (from `files.json`). `applicableFieldLang` is the default
     lang when there is no target language or plugin lang; it is the `lang`
     of the applicable field.
-- `getFieldAliasOrName({locales, lf, targetLanguage, applicableField, applicableFieldI18N, meta, metaApplicableField, targetLanguageI18N})` -
+- `getFieldAliasOrName({locales, workI18n, targetLanguage, applicableField, applicableFieldI18N, meta, metaApplicableField, targetLanguageI18N})` -
     Called for each plug-in (after `getTargetLanguage`). Sets the `fieldInfo`
     `fieldAliasOrName` which is used for labeling the field. Besides
     properties shared with other methods, `getFieldAliasOrName` is passed
@@ -577,8 +577,8 @@ methods.
     - `locales` - The app `lang` array (URL-specified `lang` languages or
         fallback-specified ones from `navigator.languages` that are
         supported by the app)
-    - `lf` - An [imf](https://github.com/brettz9/imf) locale formatter based
-        on `files.json` locale strings.
+    - `workI18n` - An [intl-dom](https://github.com/brettz9/intl-dom) locale
+        formatter based on `files.json` locale strings.
     - `applicableFieldI18N` - The localized metadata `fieldnames` `applicableField`
     - `targetLanguageI18N` - The localized name of `targetLanguage`
     - `targetLanguage` - The result of `getTargetLanguage` (or the
@@ -757,8 +757,6 @@ it supports the following arguments:
     1. Also have `&checked1=Yes` omitted when generating results display
         (since now defaulting to this)
     1.  Drop unused fields in URL by default
-1.  Switch from IMF i18n to [intl-dom](https://github.com/brettz9/intl-dom) and
-    as needed [i18nizeElement](https://github.com/brettz9/i18nizeElement)
 1.  Ensure works with `pnpm` in all environments (didn't work when deployed,
     but would need to recall the problem and resolve)
 1.  Waiting: Avoid `rtl-detect` if

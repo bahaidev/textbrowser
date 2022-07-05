@@ -2,7 +2,7 @@
 import {jml, $} from 'jamilih';
 import {deserialize as formDeserialize} from 'form-serialization';
 
-export default ({groups, lf, getNextAlias, $p, followParams}) => {
+export default ({groups, workI18n, getNextAlias, $p, followParams}) => {
   const form = jml(
     'form',
     {id: 'workSelect', class: 'focus', $on: {
@@ -10,11 +10,11 @@ export default ({groups, lf, getNextAlias, $p, followParams}) => {
         e.preventDefault();
       }
     }},
-    groups.map((group, i) =>
-      ['div', [
+    groups.map((group, i) => {
+      return ['div', [
         i > 0 ? ['br', 'br', 'br'] : '',
         ['div', [
-          lf({key: group.directions.localeKey, fallback: true})
+          workI18n(group.directions.localeKey)
         ]],
         ['br'],
         ['select', {
@@ -40,14 +40,14 @@ export default ({groups, lf, getNextAlias, $p, followParams}) => {
           ['option', {value: ''}, ['--']],
           ...group.files.map(({name: fileName}) =>
             ['option', {
-              value: lf(['workNames', group.id, fileName])
+              value: workI18n(['workNames', group.id, fileName])
             }, [getNextAlias()]]
           )
         ]]
         // Todo: Add in Go button (with 'submitgo' localization string) to
         //    avoid need for pull-down if using first selection?
-      ]]
-    ),
+      ]];
+    }),
     $('#main')
   );
   if (history.state && typeof history.state === 'object') {

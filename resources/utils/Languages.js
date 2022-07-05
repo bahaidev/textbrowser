@@ -33,15 +33,18 @@ export class Languages {
     // || new Intl.DisplayNames([locale], {type: 'language'}).of(code);
   }
   getFieldNameFromPluginNameAndLocales ({
-    pluginName, locales, lf, targetLanguage, applicableFieldI18N, meta, metaApplicableField
+    pluginName, locales, workI18n, targetLanguage, applicableFieldI18N, meta, metaApplicableField
   }) {
-    return lf(['plugins', pluginName, 'fieldname'], {
+    return workI18n(['plugins', pluginName, 'fieldname'], {
       ...meta,
       ...metaApplicableField,
       applicableField: applicableFieldI18N,
       targetLanguage: targetLanguage
         ? this.getLanguageFromCode(targetLanguage)
         : ''
+    }, {
+      // We provide more than may be desired by the plugin
+      throwOnExtraSuppliedFormatters: false
     });
   }
   getLanguageInfo ({$p}) {

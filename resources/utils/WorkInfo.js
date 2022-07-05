@@ -1,5 +1,5 @@
 import {getJSON} from 'simple-get-json';
-import {IMF} from 'imf';
+import {i18n} from 'intl-dom';
 import {getMetaProp, getMetadata, Metadata} from './Metadata.js';
 import {PluginsForWork, escapePlugin} from './Plugin.js';
 
@@ -37,27 +37,42 @@ export const getWorkData = async function ({
   languages, preferredLocale
 }) {
   const filesObj = await getJSON(files);
-  const localeFromFileData = (lan) =>
-    filesObj['localization-strings'][lan];
-  const imfFile = IMF({
-    locales: lang.map(localeFromFileData),
-    fallbackLocales: fallbackLanguages.map(localeFromFileData)
+  const localizationStrings = filesObj['localization-strings'];
+
+  const workI18n = await i18n({
+    messageStyle: 'plainNested',
+    locales: lang,
+    defaultLocales: fallbackLanguages,
+    // Todo: Could at least share this with `index.js`
+    localeStringFinder ({
+      locales, defaultLocales
+    }) {
+      const locale = [...locales, ...defaultLocales].find((language) => {
+        return language in localizationStrings;
+      });
+      return {
+        locale,
+        strings: {
+          head: {},
+          body: localizationStrings[locale]
+        }
+      };
+    }
   });
-  const lf = imfFile.getFormatter();
 
   let fileData;
   const fileGroup = filesObj.groups.find((fg) => {
     fileData = fg.files.find((file) =>
-      work === lf(['workNames', fg.id, file.name])
+      work === workI18n(['workNames', fg.id, file.name])
     );
     return Boolean(fileData);
   });
     // This is not specific to the work, but we export it anyways
   const groupsToWorks = filesObj.groups.map((fg) => {
     return {
-      name: lf({key: fg.name.localeKey, fallback: true}),
+      name: workI18n(fg.name.localeKey),
       workNames: fg.files.map((file) => {
-        return lf(['workNames', fg.id, file.name]);
+        return workI18n(['workNames', fg.id, file.name]);
       }),
       shortcuts: fg.files.map((file) => file.shortcut)
     };
@@ -191,7 +206,7 @@ export const getWorkData = async function ({
         const fieldAliasOrName = plugin.getFieldAliasOrName
           ? plugin.getFieldAliasOrName({
             locales: lang,
-            lf,
+            workI18n,
             targetLanguage,
             applicableField,
             applicableFieldI18N,
@@ -202,7 +217,7 @@ export const getWorkData = async function ({
           : languages.getFieldNameFromPluginNameAndLocales({
             pluginName,
             locales: lang,
-            lf,
+            workI18n,
             targetLanguage,
             applicableFieldI18N,
             // Todo: Should have formal way to i18nize meta
@@ -239,7 +254,7 @@ export const getWorkData = async function ({
     });
   }
   return {
-    fileData, lf, getFieldAliasOrName, metadataObj,
+    fileData, workI18n, getFieldAliasOrName, metadataObj,
     schemaObj, schemaItems, fieldInfo,
     pluginsForWork, groupsToWorks, metadata
   };

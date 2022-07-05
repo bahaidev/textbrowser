@@ -64,7 +64,7 @@ const Templates = {
     },
     /**
      * @param {PlainObject} cfg
-     * @param {Logger} cfg.l
+     * @param {I18NCallback} cfg.siteI18n
      * @param {() => Promise<void>} cfg.ok
      * @param {() => void} cfg.refuse
      * @param {() => Promise<void>} cfg.close
@@ -74,14 +74,14 @@ const Templates = {
      *   HTMLDialogElement, HTMLDialogElement, HTMLDialogElement
      * ]}
      */
-    main ({l, ok, refuse, close, closeBrowserNotGranting}) {
+    main ({siteI18n, ok, refuse, close, closeBrowserNotGranting}) {
       const installationDialog = jml('dialog', {
         style: 'text-align: center; height: 100%',
         id: 'installationLogContainer',
         class: 'focus'
       }, [
         ['p', [
-          l('wait-installing')
+          siteI18n('wait-installing')
         ]],
         ['div', {style: 'height: 80%; overflow: auto;'}, [
           ['pre', {id: 'installationLog'}, [
@@ -97,16 +97,16 @@ const Templates = {
             $on: {close}
           }, [
             ['section', [
-              l('will-request-storage-permissions')
+              siteI18n('will-request-storage-permissions')
             ]],
             ['br'],
             ['div', {class: 'focus'}, [
               ['button', {$on: {click: ok}}, [
-                l('OK')
+                siteI18n('OK')
               ]],
               ['br'], ['br'],
               ['button', {$on: {click: refuse}}, [
-                l('refuse-request-storage-permissions')
+                siteI18n('refuse-request-storage-permissions')
               ]]
             ]]
           ]
@@ -117,7 +117,7 @@ const Templates = {
           id: 'errorRegistering'
         }, [
           ['section', [
-            l('errorRegistering')
+            siteI18n('errorRegistering')
           ]]
         ]
       );
@@ -128,12 +128,12 @@ const Templates = {
             id: 'browserNotGrantingPersistence'
           }, [
             ['section', [
-              l('browser-not-granting-persistence')
+              siteI18n('browser-not-granting-persistence')
             ]],
             ['br'],
             ['div', {class: 'focus'}, [
               ['button', {$on: {click: closeBrowserNotGranting}}, [
-                l('OK')
+                siteI18n('OK')
               ]]
             ]]
           ]
@@ -144,7 +144,7 @@ const Templates = {
           id: 'versionChange'
         }, [
           ['section', [
-            l('versionChange')
+            siteI18n('versionChange')
           ]]
         ]
       );
@@ -153,7 +153,7 @@ const Templates = {
           id: 'dbError'
         }, [
           ['section', [
-            l('dbError')
+            siteI18n('dbError')
           ]]
         ]
       );

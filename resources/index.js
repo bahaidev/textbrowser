@@ -1,10 +1,10 @@
 /* eslint-env browser */
 import {getJSON} from 'simple-get-json';
-import {IMF} from 'imf';
+import {i18n} from 'intl-dom';
 import loadStylesheets from 'load-stylesheets';
 import {serialize as formSerialize} from 'form-serialization';
 
-import getIMFFallbackResults from './utils/getIMFFallbackResults.js';
+import getLocaleFallbackResults from './utils/getLocaleFallbackResults.js';
 import {dialogs} from './utils/dialogs.js';
 import {getFieldNameAndValueAliases, getBrowseFieldData} from './utils/Metadata.js';
 import {getWorkFiles, getWorkData} from './utils/WorkInfo.js';
@@ -294,18 +294,27 @@ class TextBrowser {
     document.documentElement.lang = preferredLocale;
     document.dir = direction;
 
-    const getSiteI18n = () => {
-      const localeFromSiteData = (lan) => {
-        return this.siteData['localization-strings'][lan];
-      };
-      const imfSite = IMF({
-        locales: lang.map(localeFromSiteData),
-        fallbackLocales: fallbackLanguages.map(localeFromSiteData)
-      });
-      return imfSite.getFormatter();
-    };
+    const localizationStrings = this.siteData['localization-strings'];
+    const siteI18n = await i18n({
+      messageStyle: 'plainNested',
+      locales: lang,
+      defaultLocales: fallbackLanguages,
+      localeStringFinder ({
+        locales, defaultLocales
+      }) {
+        const locale = [...locales, ...defaultLocales].find((language) => {
+          return language in localizationStrings;
+        });
+        return {
+          locale,
+          strings: {
+            head: {},
+            body: localizationStrings[locale]
+          }
+        };
+      }
+    });
 
-    const siteI18n = getSiteI18n();
     // Even if individual pages may end up changing, we need a
     //   title now for accessibility
     document.title = siteI18n('browser-title');
@@ -335,11 +344,11 @@ class TextBrowser {
     const result = $p.get('result');
     const register = async () => {
       /*
-            console.log(
-                'navigator.serviceWorker.controller',
-                navigator.serviceWorker.controller
-            );
-            */
+      console.log(
+          'navigator.serviceWorker.controller',
+          navigator.serviceWorker.controller
+      );
+      */
       if (result) {
         return;
       }
@@ -357,7 +366,7 @@ class TextBrowser {
         if (persistent) {
           // No need to ask permissions (e.g., if user bookmarked site instead),
           //   but we do need a worker
-          Templates.permissions.main({l: siteI18n});
+          Templates.permissions.main({siteI18n});
           await prepareForServiceWorker.call(this);
         } else { // Keep asking if not persistent (unless refused)
           await requestPermissions.call(this, langs, siteI18n);
@@ -372,11 +381,11 @@ class TextBrowser {
             const {active} = await navigator.serviceWorker.ready;
         } catch (err) {
         }
-        */
+    */
     /*
         // Present normally if activated, but will be `null` if force-reload
         const {controller} = navigator.serviceWorker;
-        */
+    */
 
     if (!r) {
       await register();
@@ -390,7 +399,7 @@ class TextBrowser {
         return;
       }
 
-      Templates.permissions.main({l: siteI18n});
+      Templates.permissions.main({siteI18n});
 
       // "The browser checks for updates automatically after navigations and
       //  functional events, but you can also trigger them manually"
@@ -503,9 +512,9 @@ class TextBrowser {
 
     Templates.permissions.exitDialogs();
     if (!languageParam) {
-      // Also could use l('chooselanguage'), but assumes locale
+      // Also could use siteI18n('chooselanguage'), but assumes locale
       //   as with page title
-      $p.l10n = siteI18n; // Is this in use?
+      // $p.l10n = siteI18n; // Is this in use? No `params`, so not currently
       document.title = siteI18n('languages-title');
       Templates.languageSelect.main({
         langs, languages, followParams, $p
@@ -513,7 +522,14 @@ class TextBrowser {
       return;
     }
 
-    const localeCallback = (l /* defineFormatter */) => {
+    const l = await getLocaleFallbackResults({
+      $p,
+      lang, langs,
+      langData: this.langData,
+      fallbackLanguages
+    });
+
+    const localeCallback = () => {
       this.l10n = l;
       $p.l10n = l;
 
@@ -540,25 +556,30 @@ class TextBrowser {
       }
       return false;
     };
-    return getIMFFallbackResults({
-      $p,
-      lang, langs,
-      langData: this.langData,
-      fallbackLanguages,
-      resultsDisplay: (opts) => {
-        const noIndexedDB = refusedIndexedDB ||
-                    !navigator.serviceWorker.controller; // No worker from which IndexedDB is available;
-        return this.resultsDisplayClient({
-          langData: this.langData,
-          ...opts,
-          noIndexedDB,
-          dynamicBasePath: this.dynamicBasePath,
-          files: this.files,
-          allowPlugins: this.allowPlugins
-        });
-      },
-      localeCallback
-    });
+
+    if (localeCallback()) {
+      return;
+    }
+
+    const resultsDisplay = async () => {
+      const noIndexedDB = refusedIndexedDB ||
+        // No worker from which IndexedDB is available;
+        !navigator.serviceWorker.controller;
+      return await this.resultsDisplayClient({
+        langData: this.langData,
+        l,
+        lang,
+        fallbackLanguages,
+        locales: l.strings,
+        $p,
+        basePath: '',
+        noIndexedDB,
+        dynamicBasePath: this.dynamicBasePath,
+        files: this.files,
+        allowPlugins: this.allowPlugins
+      });
+    };
+    return await resultsDisplay();
   }
 }
 

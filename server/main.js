@@ -12,7 +12,7 @@ import {getJSON} from 'simple-get-json';
 
 import IntlURLSearchParams from '../resources/utils/IntlURLSearchParams.js';
 import {resultsDisplayServer} from '../resources/resultsDisplay.js';
-import getIMFFallbackResults from '../resources/utils/getIMFFallbackResults.js';
+import getLocaleFallbackResults from '../resources/utils/getLocaleFallbackResults.js';
 import {setServiceWorkerDefaults} from '../resources/utils/ServiceWorker.js';
 // import setGlobalVars from 'indexeddbshim/src/node-UnicodeIdentifiers.js';
 import {Languages} from '../resources/utils/Languages.js';
@@ -194,40 +194,50 @@ const srv = http.createServer(async (req, res) => {
 
   const {lang, langs, fallbackLanguages} = languagesInstance.getLanguageInfo({$p});
 
-  getIMFFallbackResults({
+  const l = await getLocaleFallbackResults({
     $p,
-    basePath,
-    lang, langs, fallbackLanguages,
-    langData,
-    async resultsDisplay (resultsArgs, ...args) {
-      const serverOutput = $p.get('serverOutput', true);
-      let allowPlugins = $p.get('allowPlugins', true);
-      if (allowPlugins === '0') {
-        allowPlugins = false;
-      }
-      const isHTML = serverOutput === 'html';
-      res.writeHead(200, {'Content-Type': isHTML
-        ? 'text/html;charset=utf8'
-        : 'application/json;charset=utf8'
-      });
-      resultsArgs = {
-        ...resultsArgs,
+    lang, langs, langData, fallbackLanguages,
+    basePath
+  });
+
+  const resultsDisplay = async function () {
+    const serverOutput = $p.get('serverOutput', true);
+    let allowPlugins = $p.get('allowPlugins', true);
+    if (allowPlugins === '0') {
+      allowPlugins = false;
+    }
+    const isHTML = serverOutput === 'html';
+    res.writeHead(200, {'Content-Type': isHTML
+      ? 'text/html;charset=utf8'
+      : 'application/json;charset=utf8'
+    });
+    // Todo: Move sw-sample.js to bahaiwritings and test
+    const result = await resultsDisplayServer.call(
+      // Context
+      {
+        ...userParamsWithDefaults, lang, langs, fallbackLanguages
+      },
+      // resultsArgs
+      {
+        l,
+        lang,
+        fallbackLanguages,
+        locales: l.strings,
+        $p,
+        basePath,
         skipIndexedDB: false,
         allowPlugins,
         serverOutput,
         langData,
         prefI18n: $p.get('prefI18n', true)
-      };
-      // Todo: Move sw-sample.js to bahaiwritings and test
-      const result = await resultsDisplayServer.call(
-        {
-          ...userParamsWithDefaults, lang, langs, fallbackLanguages
-        }, resultsArgs, ...args
-      );
-      res.end(isHTML ? result : JSON.stringify(result));
-    }
-  });
+      }
+    );
+    res.end(isHTML ? result : JSON.stringify(result));
+  };
+
+  await resultsDisplay();
 });
+
 if (!userParams.domain) {
   srv.listen(port);
 } else {

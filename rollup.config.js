@@ -4,7 +4,7 @@ import commonjs from '@rollup/plugin-commonjs';
 // import nodeGlobals from 'rollup-plugin-node-globals';
 import json from '@rollup/plugin-json';
 import replace from 'rollup-plugin-re';
-import {terser} from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import postProcess from '@stadtlandnetz/rollup-plugin-postprocess';
 
 const importerReplace = {

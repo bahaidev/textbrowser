@@ -20,6 +20,8 @@ export default {
     } catch (err) {
       if (err.message === 'JSON support is currently not available') {
         dialogs.alert(err.message);
+      } else {
+        console.error(err);
       }
     }
     jml(...html, $('#main'));

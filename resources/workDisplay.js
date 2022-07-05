@@ -1,5 +1,4 @@
 /* eslint-env browser */
-import {IMF} from 'imf';
 import {getJSON} from 'simple-get-json';
 
 import {replaceHash, getParamsSetter, getSerializeParamsAsURL} from './utils/Params.js';
@@ -32,45 +31,40 @@ export default async function workDisplay ({
     );
 
   async function _displayWork ({
-    lf, metadataObj, getFieldAliasOrName, schemaObj, schemaItems, fieldInfo,
-    metadata, pluginsForWork, groupsToWorks
+    workI18n, metadataObj, getFieldAliasOrName, schemaObj, schemaItems,
+    fieldInfo, metadata, pluginsForWork, groupsToWorks
   }) {
-    const il = localizeParamNames
+    const lParam = localizeParamNames
       ? key => l(['params', key])
       : key => key;
-    const iil = localizeParamNames
+    const lIndexedParam = localizeParamNames
       ? key => l(['params', 'indexed', key])
       : key => key;
 
-    const localeFromLangData = languages.localeFromLangData.bind(languages);
-    const imfLang = IMF({
-      locales: lang.map(localeFromLangData),
-      fallbackLocales: fallbackLanguages.map(localeFromLangData)
-    });
-    const imfl = imfLang.getFormatter();
-
-    // Returns option element with localized option text (as Jamilih), with
+    // Returns element with localized option text (as Jamilih), with
     //   optional fallback direction
-    const le = (key, el, attToLocalize, atts, children = []) => {
-      atts[attToLocalize] = l({
-        key,
-        fallback ({message}) {
-          atts.dir = fallbackDirection;
-          return message;
-        }
-      });
+    const lElement = (key, el, attToLocalize, atts, children = []) => {
+      atts[attToLocalize] = l(
+        key
+        // Restore this if `intl-dom` supports
+        // fallback ({message}) {
+        //   atts.dir = fallbackDirection;
+        //   return message;
+        // }
+      );
       return [el, atts, children];
     };
 
     // Returns plain text node or element (as Jamilih) with fallback direction
-    const ld = (key, values, formats) =>
-      l({
+    const lDirectional = (key, substitutions) =>
+      l(
         key,
-        values,
-        formats,
-        fallback: ({message}) =>
-          Templates.workDisplay.bdo({fallbackDirection, message})
-      });
+        substitutions
+        // formats
+        // Restore if `intl-dom` supports
+        // fallback: ({message}) =>
+        //   Templates.workDisplay.bdo({fallbackDirection, message})
+      );
 
     const fieldMatchesLocale = metadata.getFieldMatchesLocale({
       namespace: this.namespace,
@@ -84,18 +78,18 @@ export default async function workDisplay ({
       callback ({browseFields, i}) {
         Templates.workDisplay.addBrowseFields({
           browseFields, fieldInfo,
-          ld, i, iil, $p, content
+          lDirectional, i, lIndexedParam, $p, content
         });
       }
     });
 
     /*
-        Templates.workDisplay.addRandomFormFields({
-            il, l, ld, le, $p, serializeParamsAsURL, content
-        });
-        */
-    const serializeParamsAsURL = getSerializeParamsAsURL({l, il, $p});
-    const paramsSetter = getParamsSetter({l, il, $p});
+      Templates.workDisplay.addRandomFormFields({
+          lParam, l, lDirectional, lElement, $p, serializeParamsAsURL, content
+      });
+    */
+    const serializeParamsAsURL = getSerializeParamsAsURL({l, lParam, $p});
+    const paramsSetter = getParamsSetter({l, lParam, $p});
 
     const {groups} = await getJSON(this.files);
 
@@ -127,15 +121,28 @@ export default async function workDisplay ({
       };
     })();
 
+    const displayNames = new Intl.DisplayNames(
+      [...lang, ...fallbackLanguages],
+      {
+        type: 'language',
+        // Dialect: "American English"
+        // Standard: "English (United States)"
+        languageDisplay: 'standard' // 'dialect'
+      }
+    );
+    const languageI18n = (code) => {
+      return displayNames.of(code);
+    };
+
     Templates.workDisplay.main({
-      languageParam, lang, lf,
+      languageParam, lang, workI18n,
       l, namespace: this.namespace, groups, heading,
-      imfl, fallbackDirection,
+      languageI18n, fallbackDirection,
       langs, fieldInfo, localizeParamNames,
       serializeParamsAsURL, paramsSetter, replaceHash,
       getFieldAliasOrNames,
       hideFormattingSection, $p,
-      metadataObj, il, le, ld, iil,
+      metadataObj, lParam, lElement, lDirectional, lIndexedParam,
       fieldMatchesLocale,
       preferredLocale, schemaItems, content,
       preferencesPlugin
@@ -143,21 +150,20 @@ export default async function workDisplay ({
   }
 
   try {
-    const {lf, fileData, metadataObj, ...args} = await this.getWorkData({
+    const {workI18n, fileData, metadataObj, ...args} = await this.getWorkData({
       lang, fallbackLanguages, preferredLocale,
       languages, work: $p.get('work')
     });
 
-    document.title = lf({
-      key: 'browserfile-workdisplay',
-      values: {
+    document.title = workI18n(
+      'browserfile-workdisplay',
+      {
         work: fileData
           ? getMetaProp(lang, metadataObj, 'alias')
           : ''
-      },
-      fallback: true
-    });
-    await _displayWork.call(this, {lf, metadataObj, ...args});
+      }
+    );
+    await _displayWork.call(this, {workI18n, metadataObj, ...args});
   } catch (err) {
     console.log('err', err);
     dialogs.alert(err);
