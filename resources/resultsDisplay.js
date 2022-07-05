@@ -134,7 +134,8 @@ export const resultsDisplayServer = async function resultsDisplayServer (args) {
     const jamilih = Templates.resultsDisplayServerOrClient.main(templateArgs);
     return jml.toHTML(...jamilih);
   }
-  case 'json': default:
+  // case 'json':
+  default:
     return templateArgs.tableData;
   }
 };

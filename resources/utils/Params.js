@@ -15,7 +15,9 @@ export const getSerializeParamsAsURL = function (...args) {
 };
 
 export const getParamsSetter = function ({l, il, $p}) {
-  return function ({form, random = {}, checkboxes, type, fieldAliasOrNames = [], workName}) {
+  return function ({form, random = {
+    checked: false
+  }, checkboxes, type, fieldAliasOrNames = [], workName}) {
     const paramsCopy = new URLSearchParams($p.params);
     const formParamsHash = formSerialize(form, {hash: true, empty: true});
 

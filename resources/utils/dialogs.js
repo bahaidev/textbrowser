@@ -21,7 +21,9 @@ class Dialog {
       ...localeObject
     };
   }
-  makeDialog ({atts = {}, children = [], close, remove = true}) {
+  makeDialog ({atts = {
+    $on: null
+  }, children = [], close, remove = true}) {
     if (close) {
       if (!atts.$on) {
         atts.$on = {};
@@ -30,7 +32,7 @@ class Dialog {
         atts.$on.close = close;
       }
     }
-    const dialog = jml('dialog', atts, children, $('#main'));
+    const dialog = /** @type {HTMLDialog} */ (jml('dialog', atts, children, $('#main')));
     dialog.showModal();
     if (remove) {
       dialog.addEventListener('close', () => {
@@ -93,7 +95,7 @@ class Dialog {
       submitClass = 'submit'
     } = message;
     return new Promise((resolve, reject) => {
-      const dialog = jml('dialog', [
+      const dialog = /** @type {HTMLDialog} */ (jml('dialog', [
         msg,
         ...(includeOk
           ? ([
@@ -106,7 +108,7 @@ class Dialog {
             ]]
           ])
           : [])
-      ], $('#main'));
+      ], $('#main')));
       dialog.showModal();
     });
   }
@@ -141,7 +143,7 @@ class Dialog {
     message = typeof message === 'string' ? {message} : message;
     const {message: msg, submitClass = 'submit'} = message;
     return new Promise((resolve, reject) => {
-      const dialog = jml('dialog', [
+      const dialog = /** @type {HTMLDialog} */ (jml('dialog', [
         msg,
         ['br'], ['br'],
         ['div', {class: submitClass}, [
@@ -155,7 +157,7 @@ class Dialog {
             reject(new Error('cancelled'));
           }}}, [this.localeStrings.cancel]]
         ]]
-      ], $('#main'));
+      ], $('#main')));
       dialog.showModal();
     });
   }

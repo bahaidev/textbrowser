@@ -148,7 +148,10 @@ export default {
     ['label', [
       ld('textcolor'), nbsp2,
       ['select', {name: il('colorName')}, colors.map((color, i) => {
-        const atts = {value: l(['param_values', 'colors', color])};
+        const atts = {
+          value: l(['param_values', 'colors', color]),
+          selected: null
+        };
         if ($p.get('colorName') === l(['param_values', 'colors', color]) ||
                     (i === 1 && !$p.has('colorName'))) {
           atts.selected = 'selected';
@@ -169,7 +172,10 @@ export default {
     ['label', [
       ld('backgroundcolor'), nbsp2,
       ['select', {name: il('bgcolorName')}, colors.map((color, i) => {
-        const atts = {value: l(['param_values', 'colors', color])};
+        const atts = {
+          value: l(['param_values', 'colors', color]),
+          selected: null
+        };
         if ($p.get('bgcolorName') === l(['param_values', 'colors', color]) ||
                     (i === 14 && !$p.has('bgcolorName'))) {
           atts.selected = 'selected';
@@ -191,7 +197,10 @@ export default {
       ld('text_font'), nbsp2,
       // Todo: remove hard-coded direction if i81nizing; also i18nize fontSeq param
       ['select', {name: il('fontSeq'), dir: 'ltr'}, fonts.map((fontSeq, i) => {
-        const atts = {value: fontSeq};
+        const atts = {
+          value: fontSeq,
+          selected: null
+        };
         if ($p.get('fontSeq') === fontSeq || (i === 7 && !$p.has('fontSeq'))) {
           atts.selected = 'selected';
         }
@@ -206,7 +215,10 @@ export default {
         'normal',
         'oblique'
       ].map((fontstyle, i) => {
-        const atts = {value: l(['param_values', 'fontstyle', fontstyle])};
+        const atts = {
+          value: l(['param_values', 'fontstyle', fontstyle]),
+          selected: null
+        };
         if ($p.get('fontstyle') === l(['param_values', 'fontstyle', fontstyle]) ||
                     (i === 1 && !$p.has('fontstyle'))) {
           atts.selected = 'selected';
@@ -271,7 +283,10 @@ export default {
           'ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed',
           'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'
         ].map((stretch) => {
-          const atts = {value: ld(['param_values', 'font-stretch', stretch])};
+          const atts = {
+            value: ld(['param_values', 'font-stretch', stretch]),
+            selected: null
+          };
           if ($p.get('fontstretch') === stretch ||
                         (!$p.has('fontstretch') && stretch === 'normal')) {
             atts.selected = 'selected';
@@ -482,7 +497,10 @@ export default {
         // , 'json-array',
         // 'json-object'
       ].map((mode) => {
-        const atts = {value: mode};
+        const atts = {
+          value: mode,
+          selected: null
+        };
         if ($p.get('outputmode') === mode) {
           atts.selected = 'selected';
         }
@@ -602,7 +620,10 @@ export default {
       }, langs.map((lan) => {
         let langCodes = localStorage.getItem(namespace + '-langCodes');
         langCodes = langCodes && JSON.parse(langCodes);
-        const atts = {value: lan.code};
+        const atts = {
+          value: lan.code,
+          selected: null
+        };
         if (langCodes && langCodes.includes(lan.code)) {
           atts.selected = 'selected';
         }

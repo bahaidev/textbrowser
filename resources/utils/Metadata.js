@@ -64,13 +64,22 @@ export const getFieldNameAndValueAliases = function ({
   );
   const fieldSchema = schemaItems[fieldSchemaIndex];
 
+  const fieldInfo = metadataObj.fields[field];
+
   const ret = {
     // field,
-    fieldName: getFieldAliasOrName(field)
+    aliases: null,
+    fieldValueAliasMap: null,
+    rawFieldValueAliasMap: null,
+    fieldName: getFieldAliasOrName(field),
+    fieldSchema,
+    fieldSchemaIndex,
+    preferAlias: fieldInfo.prefer_alias,
+    lang: fieldInfo.lang
   };
 
-  const fieldInfo = metadataObj.fields[field];
   let fieldValueAliasMap = fieldInfo && fieldInfo['fieldvalue-aliases'];
+
   if (fieldValueAliasMap) {
     if (fieldValueAliasMap.localeKey) {
       fieldValueAliasMap = getMetaProp(
@@ -123,10 +132,6 @@ export const getFieldNameAndValueAliases = function ({
     ret.fieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap));
     // ret.aliases.sort();
   }
-  ret.fieldSchema = fieldSchema;
-  ret.fieldSchemaIndex = fieldSchemaIndex;
-  ret.preferAlias = fieldInfo.prefer_alias;
-  ret.lang = fieldInfo.lang;
   return ret;
 };
 
