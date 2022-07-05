@@ -6,7 +6,9 @@ potentially intimidating to those unfamiliar with how to work it. There are
 also some bugs to iron out such as with localization.*
 
 See the [web app within an app using TextBrowser](https://bahai-browser.org/)
-or see some videos [introducing the app](https://bahai-library.com/zamir_textbrowser_bahaiwritings_browser).
+or see some videos [introducing the app](https://bahai-library.com/zamir_textbrowser_bahaiwritings_browser). For use with [shortcuts](https://bahai-library.com/zamir_efficient_searches_shortcuts),
+see the [video](https://bahai-library.com/zamir/shortcuts/Efficient-Searches-and-Shortcuts-5-SD-480p.webm)
+at 5:25.
 
 *TextBrowser* supports power-user browsing of arbitrary multi-linear
 texts following the "offline first" motto.
@@ -745,9 +747,6 @@ it supports the following arguments:
 
 ## To-dos (Highest priority)
 
-1.  Document and add **screen-casts** along with one for developers showing
-    JSON format, metadata, and schemas); also use with shortcuts (including
-    Bahá'í Library Online ones)
 1.  Progressive web app? / Electron?
 1.  Adapt approach of <https://suttacentral.net/offline> in providing form for
     choice of items to offline (also add to individual work pages).
@@ -762,11 +761,13 @@ it supports the following arguments:
     as needed [i18nizeElement](https://github.com/brettz9/i18nizeElement)
 1.  Ensure works with `pnpm` in all environments (didn't work when deployed,
     but would need to recall the problem and resolve)
-1.  Simplify `languages.json` by using `Intl.DisplayNames` (`type: 'language'`)
-    to localize language names (and can avoid direction if
+1.  Waiting: Avoid `rtl-detect` if
     [intl-locale-info proposal](https://github.com/tc39/proposal-intl-locale-info)
-    is implemented); consider using with plugins so can, e.g., show language
-    visibly into which a targeted content language field was translated
+    gets implemented)
+1.  [`navigator.storage.estimate`](https://developers.google.com/web/updates/2017/08/estimating-available-storage-space)
+1.  Consider using `Intl.DisplayNames` (`type: 'language'`) with plugins so
+    can, e.g., show language visibly into which a targeted content language
+    field was translated? Avoid need for `languages.json` codes and directions?
 1.  For plugins, allow export of `stylesheets` array to add to
     `loadStylesheets`, so they don't have to do the importing and executing.
 1.  **Progress meter** with hidden console to avoid intimidating loading
@@ -1120,8 +1121,13 @@ it supports the following arguments:
 
 ## To-dos (Lower priority)
 
-1.  Waiting: Avoid superagent warning:
-    <https://github.com/whitlockjc/path-loader/issues/17>
+1.  Use or publish [rollup-plugin-postprocess](git+https://github.com/brettz9/rollup-plugin-postprocess.git#update)
+    as stable version?
+1.  Check if still getting superagent warning:
+    <https://github.com/whitlockjc/path-loader/issues/17> (if `json-refs` can
+    be updated to stable version)
+1.  Use [i18nizeElement](https://github.com/brettz9/i18nizeElement)? (probably
+    not as need RTL detection for more than setting on element)
 1.  **Remember columns enabled**, etc. since last visit, and/or saved as
     preferences.
 1.  Allow copy-pasting a search as a custom web protocol (make
