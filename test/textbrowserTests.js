@@ -15,16 +15,16 @@ function cloneJSON (obj) {
 
 let appBase = '../';
 
-// eslint-disable-next-line node/exports-style -- Check
+// eslint-disable-next-line n/exports-style -- Check
 if (typeof exports !== 'undefined') {
-  /* eslint-disable node/global-require -- For Node */
+  /* eslint-disable n/global-require -- For Node */
   Ajv = require('ajv').default;
   JsonRefs = require('json-refs');
   jsonpatch = require('fast-json-patch');
   ({getJSON} = require('simple-get-json'));
   assert = require('assert');
   path = require('path');
-  /* eslint-enable node/global-require -- For Node */
+  /* eslint-enable n/global-require -- For Node */
 } else {
   ({assert} = chai);
   path = {
@@ -49,10 +49,10 @@ const jsonSchemaSpec = 'node_modules/json-metaschema/draft-07-schema.json';
 
 /**
 * @param {string} testName Name of the current test
-* @param {external:JSONSchema} schema Schema object
+* @param {JSONSchema} schema Schema object
 * @param {PlainObject} data Data object
 * @param {string[][]} extraSchemas
-* @param {external:AJVOptions} additionalOptions
+* @param {AJVOptions} additionalOptions
 * @returns {boolean} Whether validation succeeded
 */
 function validate (

@@ -29,7 +29,7 @@ const importerRevert = [/window.xyz\(/, 'import('];
  * @param {PlainObject} [config = {}]
  * @param {boolean} [config.minifying]
  * @param {string} [config.format="umd"]
- * @returns {external:RollupConfig}
+ * @returns {RollupConfig}
  */
 function getRollupObject ({minifying, format = 'umd'} = {}) {
   const nonMinified = {

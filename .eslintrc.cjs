@@ -7,6 +7,9 @@ module.exports = {
     requireConfigFile: false
   },
   settings: {
+    jsdoc: {
+      mode: 'typescript'
+    },
     polyfills: [
       'Array.isArray',
       'Blob',

@@ -32,7 +32,7 @@ class Dialog {
         atts.$on.close = close;
       }
     }
-    const dialog = /** @type {HTMLDialog} */ (jml('dialog', atts, children, $('#main')));
+    const dialog = /** @type {HTMLDialogElement} */ (jml('dialog', atts, children, $('#main')));
     dialog.showModal();
     if (remove) {
       dialog.addEventListener('close', () => {
@@ -95,7 +95,7 @@ class Dialog {
       submitClass = 'submit'
     } = message;
     return new Promise((resolve, reject) => {
-      const dialog = /** @type {HTMLDialog} */ (jml('dialog', [
+      const dialog = /** @type {HTMLDialogElement} */ (jml('dialog', [
         msg,
         ...(includeOk
           ? ([
@@ -143,7 +143,7 @@ class Dialog {
     message = typeof message === 'string' ? {message} : message;
     const {message: msg, submitClass = 'submit'} = message;
     return new Promise((resolve, reject) => {
-      const dialog = /** @type {HTMLDialog} */ (jml('dialog', [
+      const dialog = /** @type {HTMLDialogElement} */ (jml('dialog', [
         msg,
         ['br'], ['br'],
         ['div', {class: submitClass}, [

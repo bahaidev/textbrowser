@@ -99,10 +99,8 @@ setGlobalVars(null, {
 
 if (userParams.nodeActivate) {
   global.fetch = fetch;
-  (async () => {
-    await activateCallback({...userParamsWithDefaults, basePath});
-    console.log('Activated');
-  })();
+  await activateCallback({...userParamsWithDefaults, basePath});
+  console.log('Activated');
 }
 console.log('past activate check');
 

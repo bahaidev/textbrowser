@@ -62,6 +62,18 @@ const Templates = {
     browserNotGrantingPersistence () {
       $('#browserNotGrantingPersistence').showModal();
     },
+    /**
+     * @param {PlainObject} cfg
+     * @param {Logger} cfg.l
+     * @param {() => Promise<void>} cfg.ok
+     * @param {() => void} cfg.refuse
+     * @param {() => Promise<void>} cfg.close
+     * @param {() => void} cfg.closeBrowserNotGranting
+     * @returns {[
+     *   HTMLDialogElement, HTMLDialogElement, HTMLDialogElement,
+     *   HTMLDialogElement, HTMLDialogElement, HTMLDialogElement
+     * ]}
+     */
     main ({l, ok, refuse, close, closeBrowserNotGranting}) {
       const installationDialog = jml('dialog', {
         style: 'text-align: center; height: 100%',
@@ -156,7 +168,8 @@ const Templates = {
 
       return [
         installationDialog,
-        requestPermissionsDialog, browserNotGrantingPersistenceAlert,
+        requestPermissionsDialog,
+        browserNotGrantingPersistenceAlert,
         errorRegisteringNotice, versionChangeNotice, dbErrorNotice
       ];
     }

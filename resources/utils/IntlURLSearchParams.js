@@ -2,7 +2,7 @@
  *
  * @param {string} param
  * @param {boolean} skip
- * @this IntlURLSearchParams
+ * @this {IntlURLSearchParams}
  * @returns {string}
  */
 function _prepareParam (param, skip) {

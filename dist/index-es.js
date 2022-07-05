@@ -6764,7 +6764,9 @@ class Dialog {
   }
 
   makeDialog({
-    atts = {},
+    atts = {
+      $on: null
+    },
     children = [],
     close,
     remove = true
@@ -6779,7 +6781,9 @@ class Dialog {
       }
     }
 
-    const dialog = jml('dialog', atts, children, $$1('#main'));
+    const dialog =
+    /** @type {HTMLDialogElement} */
+    jml('dialog', atts, children, $$1('#main'));
     dialog.showModal();
 
     if (remove) {
@@ -6863,7 +6867,9 @@ class Dialog {
       submitClass = 'submit'
     } = message;
     return new Promise((resolve, reject) => {
-      const dialog = jml('dialog', [msg, ...(includeOk ? [['br'], ['br'], ['div', {
+      const dialog =
+      /** @type {HTMLDialogElement} */
+      jml('dialog', [msg, ...(includeOk ? [['br'], ['br'], ['div', {
         class: submitClass
       }, [['button', {
         $on: {
@@ -6928,7 +6934,9 @@ class Dialog {
       submitClass = 'submit'
     } = message;
     return new Promise((resolve, reject) => {
-      const dialog = jml('dialog', [msg, ['br'], ['br'], ['div', {
+      const dialog =
+      /** @type {HTMLDialogElement} */
+      jml('dialog', [msg, ['br'], ['br'], ['div', {
         class: submitClass
       }, [['button', {
         $on: {
@@ -14168,11 +14176,18 @@ const getFieldNameAndValueAliases = function ({
 }) {
   const fieldSchemaIndex = schemaItems.findIndex(item => item.title === field);
   const fieldSchema = schemaItems[fieldSchemaIndex];
+  const fieldInfo = metadataObj.fields[field];
   const ret = {
     // field,
-    fieldName: getFieldAliasOrName(field)
+    aliases: null,
+    fieldValueAliasMap: null,
+    rawFieldValueAliasMap: null,
+    fieldName: getFieldAliasOrName(field),
+    fieldSchema,
+    fieldSchemaIndex,
+    preferAlias: fieldInfo.prefer_alias,
+    lang: fieldInfo.lang
   };
-  const fieldInfo = metadataObj.fields[field];
   let fieldValueAliasMap = fieldInfo && fieldInfo['fieldvalue-aliases'];
 
   if (fieldValueAliasMap) {
@@ -14214,10 +14229,6 @@ const getFieldNameAndValueAliases = function ({
     ret.fieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap)); // ret.aliases.sort();
   }
 
-  ret.fieldSchema = fieldSchema;
-  ret.fieldSchemaIndex = fieldSchemaIndex;
-  ret.preferAlias = fieldInfo.prefer_alias;
-  ret.lang = fieldInfo.lang;
   return ret;
 };
 const getBrowseFieldData = function ({
@@ -14257,7 +14268,7 @@ const getBrowseFieldData = function ({
       browseFields,
       i,
       presort
-    }); // eslint-disable-line node/no-callback-literal
+    }); // eslint-disable-line n/no-callback-literal
   });
 }; // Todo: Incorporate other methods into this class
 
@@ -14379,7 +14390,7 @@ class PluginsForWork {
       }] = this.pluginsInWork[i];
       const plugin = this.getPluginObject(pluginName);
       cb({
-        // eslint-disable-line node/no-callback-literal
+        // eslint-disable-line n/no-callback-literal
         plugin,
         placement,
         applicableFields,
@@ -14408,16 +14419,16 @@ class PluginsForWork {
             targetLanguage,
             onByDefault,
             metaApplicableField
-          }); // eslint-disable-line node/no-callback-literal
+          }); // eslint-disable-line n/no-callback-literal
         });
       } else {
-        // eslint-disable-next-line node/callback-return
+        // eslint-disable-next-line n/callback-return
         cb({
           applicableField,
           targetLanguage,
           onByDefault,
           metaApplicableField
-        }); // eslint-disable-line node/no-callback-literal
+        }); // eslint-disable-line n/no-callback-literal
       }
     });
     return true;
@@ -15271,7 +15282,8 @@ var workDisplay$1 = {
     name: il('colorName')
   }, colors.map((color, i) => {
     const atts = {
-      value: l(['param_values', 'colors', color])
+      value: l(['param_values', 'colors', color]),
+      selected: null
     };
 
     if ($p.get('colorName') === l(['param_values', 'colors', color]) || i === 1 && !$p.has('colorName')) {
@@ -15289,7 +15301,8 @@ var workDisplay$1 = {
     name: il('bgcolorName')
   }, colors.map((color, i) => {
     const atts = {
-      value: l(['param_values', 'colors', color])
+      value: l(['param_values', 'colors', color]),
+      selected: null
     };
 
     if ($p.get('bgcolorName') === l(['param_values', 'colors', color]) || i === 14 && !$p.has('bgcolorName')) {
@@ -15309,7 +15322,8 @@ var workDisplay$1 = {
     dir: 'ltr'
   }, fonts.map((fontSeq, i) => {
     const atts = {
-      value: fontSeq
+      value: fontSeq,
+      selected: null
     };
 
     if ($p.get('fontSeq') === fontSeq || i === 7 && !$p.has('fontSeq')) {
@@ -15321,7 +15335,8 @@ var workDisplay$1 = {
     name: il('fontstyle')
   }, ['italic', 'normal', 'oblique'].map((fontstyle, i) => {
     const atts = {
-      value: l(['param_values', 'fontstyle', fontstyle])
+      value: l(['param_values', 'fontstyle', fontstyle]),
+      selected: null
     };
 
     if ($p.get('fontstyle') === l(['param_values', 'fontstyle', fontstyle]) || i === 1 && !$p.has('fontstyle')) {
@@ -15360,7 +15375,8 @@ var workDisplay$1 = {
     name: il('fontstretch')
   }, ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(stretch => {
     const atts = {
-      value: ld(['param_values', 'font-stretch', stretch])
+      value: ld(['param_values', 'font-stretch', stretch]),
+      selected: null
     };
 
     if ($p.get('fontstretch') === stretch || !$p.has('fontstretch') && stretch === 'normal') {
@@ -15476,7 +15492,8 @@ var workDisplay$1 = {
   // 'json-object'
   ].map(mode => {
     const atts = {
-      value: mode
+      value: mode,
+      selected: null
     };
 
     if ($p.get('outputmode') === mode) {
@@ -15612,7 +15629,8 @@ var workDisplay$1 = {
     let langCodes = localStorage.getItem(namespace + '-langCodes');
     langCodes = langCodes && JSON.parse(langCodes);
     const atts = {
-      value: lan.code
+      value: lan.code,
+      selected: null
     };
 
     if (langCodes && langCodes.includes(lan.code)) {
@@ -16432,135 +16450,147 @@ const Templates = {
       id: 'main',
       role: 'main'
     }, body);
-  }
-
-};
-Templates.permissions = {
-  versionChange() {
-    $$1('#versionChange').showModal();
   },
 
-  addLogEntry({
-    text
-  }) {
-    const installationDialog = $$1('#installationLogContainer');
+  permissions: {
+    versionChange() {
+      $$1('#versionChange').showModal();
+    },
 
-    try {
-      installationDialog.showModal();
+    addLogEntry({
+      text
+    }) {
+      const installationDialog = $$1('#installationLogContainer');
+
+      try {
+        installationDialog.showModal();
+        const container = $$1('#dialogContainer');
+        container.hidden = false;
+      } catch (err) {// May already be open
+      }
+
+      $$1('#installationLog').append(text + '\n');
+    },
+
+    exitDialogs() {
       const container = $$1('#dialogContainer');
-      container.hidden = false;
-    } catch (err) {// May already be open
-    }
 
-    $$1('#installationLog').append(text + '\n');
-  },
+      if (container) {
+        container.hidden = true;
+      }
+    },
 
-  exitDialogs() {
-    const container = $$1('#dialogContainer');
+    dbError({
+      type,
+      escapedErrorMessage
+    }) {
+      if (type) {
+        jml('span', [type, ' ', escapedErrorMessage], $$1('#dbError'));
+      }
 
-    if (container) {
-      container.hidden = true;
-    }
-  },
+      $$1('#dbError').showModal();
+    },
 
-  dbError({
-    type,
-    escapedErrorMessage
-  }) {
-    if (type) {
-      jml('span', [type, ' ', escapedErrorMessage], $$1('#dbError'));
-    }
+    errorRegistering(escapedErrorMessage) {
+      if (escapedErrorMessage) {
+        jml('span', [escapedErrorMessage], $$1('#errorRegistering'));
+      }
 
-    $$1('#dbError').showModal();
-  },
+      $$1('#errorRegistering').showModal();
+    },
 
-  errorRegistering(escapedErrorMessage) {
-    if (escapedErrorMessage) {
-      jml('span', [escapedErrorMessage], $$1('#errorRegistering'));
-    }
+    browserNotGrantingPersistence() {
+      $$1('#browserNotGrantingPersistence').showModal();
+    },
 
-    $$1('#errorRegistering').showModal();
-  },
-
-  browserNotGrantingPersistence() {
-    $$1('#browserNotGrantingPersistence').showModal();
-  },
-
-  main({
-    l,
-    ok,
-    refuse,
-    close,
-    closeBrowserNotGranting
-  }) {
-    const installationDialog = jml('dialog', {
-      style: 'text-align: center; height: 100%',
-      id: 'installationLogContainer',
-      class: 'focus'
-    }, [['p', [l('wait-installing')]], ['div', {
-      style: 'height: 80%; overflow: auto;'
-    }, [['pre', {
-      id: 'installationLog'
-    }, []]]] // ['textarea', {readonly: true, style: 'width: 80%; height: 80%;'}]
-    ]);
-    let requestPermissionsDialog = '';
-
-    if (ok) {
-      requestPermissionsDialog = jml('dialog', {
-        id: 'willRequestStoragePermissions',
-        $on: {
-          close
-        }
-      }, [['section', [l('will-request-storage-permissions')]], ['br'], ['div', {
+    /**
+     * @param {PlainObject} cfg
+     * @param {Logger} cfg.l
+     * @param {() => Promise<void>} cfg.ok
+     * @param {() => void} cfg.refuse
+     * @param {() => Promise<void>} cfg.close
+     * @param {() => void} cfg.closeBrowserNotGranting
+     * @returns {[
+     *   HTMLDialogElement, HTMLDialogElement, HTMLDialogElement,
+     *   HTMLDialogElement, HTMLDialogElement, HTMLDialogElement
+     * ]}
+     */
+    main({
+      l,
+      ok,
+      refuse,
+      close,
+      closeBrowserNotGranting
+    }) {
+      const installationDialog = jml('dialog', {
+        style: 'text-align: center; height: 100%',
+        id: 'installationLogContainer',
         class: 'focus'
-      }, [['button', {
-        $on: {
-          click: ok
-        }
-      }, [l('OK')]], ['br'], ['br'], ['button', {
-        $on: {
-          click: refuse
-        }
-      }, [l('refuse-request-storage-permissions')]]]]]);
+      }, [['p', [l('wait-installing')]], ['div', {
+        style: 'height: 80%; overflow: auto;'
+      }, [['pre', {
+        id: 'installationLog'
+      }, []]]] // ['textarea', {readonly: true, style: 'width: 80%; height: 80%;'}]
+      ]);
+      let requestPermissionsDialog = '';
+
+      if (ok) {
+        requestPermissionsDialog = jml('dialog', {
+          id: 'willRequestStoragePermissions',
+          $on: {
+            close
+          }
+        }, [['section', [l('will-request-storage-permissions')]], ['br'], ['div', {
+          class: 'focus'
+        }, [['button', {
+          $on: {
+            click: ok
+          }
+        }, [l('OK')]], ['br'], ['br'], ['button', {
+          $on: {
+            click: refuse
+          }
+        }, [l('refuse-request-storage-permissions')]]]]]);
+      }
+
+      const errorRegisteringNotice = jml('dialog', {
+        id: 'errorRegistering'
+      }, [['section', [l('errorRegistering')]]]);
+      let browserNotGrantingPersistenceAlert = '';
+
+      if (closeBrowserNotGranting) {
+        browserNotGrantingPersistenceAlert = jml('dialog', {
+          id: 'browserNotGrantingPersistence'
+        }, [['section', [l('browser-not-granting-persistence')]], ['br'], ['div', {
+          class: 'focus'
+        }, [['button', {
+          $on: {
+            click: closeBrowserNotGranting
+          }
+        }, [l('OK')]]]]]);
+      }
+
+      const versionChangeNotice = jml('dialog', {
+        id: 'versionChange'
+      }, [['section', [l('versionChange')]]]);
+      const dbErrorNotice = jml('dialog', {
+        id: 'dbError'
+      }, [['section', [l('dbError')]]]);
+      jml('div', {
+        id: 'dialogContainer',
+        style: 'height: 100%'
+      }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], $$1('#main'));
+      return [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice];
     }
 
-    const errorRegisteringNotice = jml('dialog', {
-      id: 'errorRegistering'
-    }, [['section', [l('errorRegistering')]]]);
-    let browserNotGrantingPersistenceAlert = '';
-
-    if (closeBrowserNotGranting) {
-      browserNotGrantingPersistenceAlert = jml('dialog', {
-        id: 'browserNotGrantingPersistence'
-      }, [['section', [l('browser-not-granting-persistence')]], ['br'], ['div', {
-        class: 'focus'
-      }, [['button', {
-        $on: {
-          click: closeBrowserNotGranting
-        }
-      }, [l('OK')]]]]]);
-    }
-
-    const versionChangeNotice = jml('dialog', {
-      id: 'versionChange'
-    }, [['section', [l('versionChange')]]]);
-    const dbErrorNotice = jml('dialog', {
-      id: 'dbError'
-    }, [['section', [l('dbError')]]]);
-    jml('div', {
-      id: 'dialogContainer',
-      style: 'height: 100%'
-    }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], $$1('#main'));
-    return [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice];
   }
-
 };
 
 /**
  *
  * @param {string} param
  * @param {boolean} skip
- * @this IntlURLSearchParams
+ * @this {IntlURLSearchParams}
  * @returns {string}
  */
 function _prepareParam(param, skip) {
@@ -16711,7 +16741,9 @@ const getParamsSetter = function ({
 }) {
   return function ({
     form,
-    random = {},
+    random = {
+      checked: false
+    },
     checkboxes,
     type,
     fieldAliasOrNames = [],
@@ -18288,7 +18320,7 @@ async function prepareForServiceWorker() {
 
 
 async function requestPermissions(langs, l) {
-  await new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
     // Todo: We could run the dialog code below for every page if
     //    `Notification.permission === 'default'` (i.e., not choice
     //    yet made by user), but user may avoid denying with intent
@@ -18305,15 +18337,15 @@ async function requestPermissions(langs, l) {
       requestPermissionsDialog.close();
     };
 
-    const closeBrowserNotGranting = e => {
+    const closeBrowserNotGranting = () => {
       browserNotGrantingPersistenceAlert.close();
     };
 
     const close = async () => {
       /**
-             *
-             * @returns {void}
-             */
+       *
+       * @returns {void}
+       */
       function rememberRefusal() {
         // Todo: We could go forward with worker, caching files, and
         //    indexedDB regardless of permissions, but this way
@@ -18480,7 +18512,7 @@ class TextBrowser {
         hash: true,
         empty: true
       }), document.title, url); // Get and set new state within URL
-      // eslint-disable-next-line node/callback-return
+      // eslint-disable-next-line n/callback-return
 
       cb();
       location.hash = '#' + $p.toString();

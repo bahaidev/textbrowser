@@ -84,7 +84,7 @@ async function prepareForServiceWorker () {
  * @returns {Promise<void>}
  */
 async function requestPermissions (langs, l) {
-  await new Promise((resolve, reject) => {
+  return await new Promise((resolve, reject) => {
     // Todo: We could run the dialog code below for every page if
     //    `Notification.permission === 'default'` (i.e., not choice
     //    yet made by user), but user may avoid denying with intent
@@ -99,14 +99,14 @@ async function requestPermissions (langs, l) {
     const refuse = () => {
       requestPermissionsDialog.close();
     };
-    const closeBrowserNotGranting = (e) => {
+    const closeBrowserNotGranting = () => {
       browserNotGrantingPersistenceAlert.close();
     };
     const close = async () => {
       /**
-             *
-             * @returns {void}
-             */
+       *
+       * @returns {void}
+       */
       function rememberRefusal () {
         // Todo: We could go forward with worker, caching files, and
         //    indexedDB regardless of permissions, but this way
@@ -275,7 +275,7 @@ class TextBrowser {
       const url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
       history.replaceState(formSerialize(form, {hash: true, empty: true}), document.title, url);
       // Get and set new state within URL
-      // eslint-disable-next-line node/callback-return
+      // eslint-disable-next-line n/callback-return
       cb();
       location.hash = '#' + $p.toString();
     };

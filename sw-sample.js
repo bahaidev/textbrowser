@@ -77,7 +77,7 @@ function logError (error, ...messages) {
 async function tryAndRetry (cb, timeout, errMessage, time = 0) {
   time++;
   try {
-    // eslint-disable-next-line node/callback-return
+    // eslint-disable-next-line n/callback-return
     await cb(time);
     return undefined;
   } catch (err) {

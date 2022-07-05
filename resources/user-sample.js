@@ -1,6 +1,5 @@
 import TextBrowser from '../node_modules/textbrowser/dist/index-es.js';
 
-(async () => {
 const tb = new TextBrowser({
   // languages: 'node_modules/textbrowser/appdata/languages.json', // Default
   // serviceWorkerPath: 'sw.js', // Default
@@ -20,4 +19,3 @@ const tb = new TextBrowser({
   // , interlinearSeparator: '<hr />' // Defaults to `<br /><br />`
 });
 await tb.init();
-})();
