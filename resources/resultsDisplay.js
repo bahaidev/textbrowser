@@ -1,8 +1,8 @@
 /* eslint-env browser */
 import rtlDetect from 'rtl-detect';
+import JsonRefs from 'json-refs';
 import {jml} from 'jamilih';
 
-import JsonRefs from './vendor/json-refs-min.js';
 import Templates from './templates/index.js';
 import {escapeHTML} from './utils/sanitize.js';
 import {

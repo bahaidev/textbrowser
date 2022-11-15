@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.46.0",
+  "version": "0.46.1",
   "description": "Multilinear text browser",
   "type": "module",
   "main": "dist/index-es.min.js",
@@ -68,7 +68,7 @@
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-terser": "^0.1.0",
     "@stadtlandnetz/rollup-plugin-postprocess": "^1.1.0",
-    "ajv": "8.11.0",
+    "ajv": "8.11.2",
     "babel-plugin-dynamic-import-node": "^2.3.3",
     "chai": "^4.3.7",
     "eslint": "^8.27.0",

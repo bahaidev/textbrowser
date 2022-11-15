@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.46.1
+
+- fix: regression with live data
+
 ## 0.46.0
 
 - BREAKING chore: require Node 14.19.1+

@@ -68,7 +68,15 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
       // ... do replace before commonjs
       replace({
         // Switch to browser-friendly version
-        patterns: [importerReplace]
+        patterns: [{
+          include: ['resources/resultsDisplay.js'],
+          test: "import JsonRefs from 'json-refs';",
+          replace: "import JsonRefs from './vendor/json-refs-min.js';"
+        }, {
+          include: ['resources/utils/Metadata.js'],
+          test: "import JsonRefs from 'json-refs';",
+          replace: "import JsonRefs from '../vendor/json-refs-min.js';"
+        }, importerReplace]
       }),
       json(),
       babel({
@@ -106,7 +114,15 @@ export default [
       // Switch to browser-friendly version
       replace({
         // ... do replace before commonjs
-        patterns: [importerReplace]
+        patterns: [importerReplace, {
+          include: ['resources/resultsDisplay.js'],
+          test: "import JsonRefs from 'json-refs';",
+          replace: "import JsonRefs from './vendor/json-refs-min.js';"
+        }, {
+          include: ['resources/utils/Metadata.js'],
+          test: "import JsonRefs from 'json-refs';",
+          replace: "import JsonRefs from '../vendor/json-refs-min.js';"
+        }]
       }),
       nodeResolve(),
       commonjs(),
