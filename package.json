@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.45.2",
+  "version": "0.46.0",
   "description": "Multilinear text browser",
   "type": "module",
   "main": "dist/index-es.min.js",
@@ -50,7 +50,7 @@
     "intl-dom": "^0.16.0",
     "jamilih": "0.54.0",
     "jsdom": "^20.0.2",
-    "json-refs": "git+https://github.com/brettz9/json-refs.git#browser",
+    "json-refs": "^3.0.15",
     "load-stylesheets": "0.10.0",
     "node-fetch": "^2.6.6",
     "rtl-detect": "1.0.4",

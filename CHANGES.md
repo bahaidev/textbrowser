@@ -1,5 +1,14 @@
 # CHANGES to `textbrowser`
 
+## 0.46.0
+
+- BREAKING chore: require Node 14.19.1+
+- feat: routine to utilize updated `json-refs`
+- feat: `imf` -> `intl-dom`
+- refactor: linting/TS fixes
+- chore: update babel/core, indexeddbshim, jsdom, babel/core deps.
+- chore: update devDeps.
+
 ## 0.45.2
 
 - fix: issue with `next`

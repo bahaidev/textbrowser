@@ -1,3 +1,5 @@
+import {appendFile, copyFile} from 'fs/promises';
+
 import {babel} from '@rollup/plugin-babel';
 import {nodeResolve} from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
@@ -6,6 +8,20 @@ import json from '@rollup/plugin-json';
 import replace from 'rollup-plugin-re';
 import terser from '@rollup/plugin-terser';
 import postProcess from '@stadtlandnetz/rollup-plugin-postprocess';
+
+/*
+Because JsonRefs does not have an ESM version, and adding appears to be
+difficult in that Rollup's ecosystem for polyfilling Node is apparently
+less mature than for Webpack (though Webpack may now have ESM export),
+we convert the global file to ESM which can be modularly imported by the
+including files (yet safely tree-shaked, avoiding dupes).
+*/
+const jsonRefsTarget = new URL('resources/vendor/json-refs-min.js', import.meta.url);
+await copyFile(
+  new URL('node_modules/json-refs/dist/json-refs-min.js', import.meta.url),
+  jsonRefsTarget
+);
+await appendFile(jsonRefsTarget, '\nexport default JsonRefs;');
 
 const importerReplace = {
   // Temporarily hide this from parser (using the Babel
@@ -52,23 +68,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
       // ... do replace before commonjs
       replace({
         // Switch to browser-friendly version
-        patterns: [{
-          include: ['resources/resultsDisplay.js', 'resources/utils/Metadata.js'],
-          test: "import JsonRefs from 'json-refs';",
-          replace: "import JsonRefs from 'json-refs/dist/json-refs-min.js';"
-        }, {
-          include: ['node_modules/json-refs/dist/json-refs-min.js'],
-          test: 'SCHEMES.urn.serialize(t,e)}}}]);', // End of file
-          // replace: '$&\nexport default JsonRefs;'
-          replace: 'SCHEMES.urn.serialize(t,e)}}}]);export default JsonRefs;'
-        }, importerReplace, {
-          // regexp match with resolved path
-          match: /formidable(\/|\\)lib/,
-          // string or regexp
-          test: 'if (global.GENTLY) require = GENTLY.hijack(require);',
-          // string or function to replaced with
-          replace: ''
-        }]
+        patterns: [importerReplace]
       }),
       json(),
       babel({
@@ -106,21 +106,7 @@ export default [
       // Switch to browser-friendly version
       replace({
         // ... do replace before commonjs
-        patterns: [importerReplace, {
-          include: ['resources/resultsDisplay.js', 'resources/utils/Metadata.js'],
-          test: "import JsonRefs from 'json-refs';",
-          replace: "import JsonRefs from 'json-refs/dist/json-refs-min.js';"
-        }]
-      }),
-      // Let's at least pretend there are no globals here
-      replace({
-        // ... do replace before commonjs
-        patterns: [{
-          include: ['node_modules/json-refs/dist/json-refs-min.js'],
-          test: 'SCHEMES.urn.serialize(t,e)}}}]);', // End of file
-          // replace: '$&\nexport default JsonRefs;'
-          replace: 'SCHEMES.urn.serialize(t,e)}}}]);export default JsonRefs;'
-        }]
+        patterns: [importerReplace]
       }),
       nodeResolve(),
       commonjs(),
