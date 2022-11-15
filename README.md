@@ -748,6 +748,10 @@ it supports the following arguments:
 ## To-dos (Highest priority)
 
 1.  Progressive web app? / Electron?
+1.  Fix regression upon converting from `imf` to `intl-dom` that locales
+    do not properly default (to English) when missing and give errors
+1.  Figure out why `/textbrowser?lang=...` isn't working now on
+    <https://bahai-browser.org> despite working locally
 1.  Adapt approach of <https://suttacentral.net/offline> in providing form for
     choice of items to offline (also add to individual work pages).
 1.  Mention idea that it works offline
