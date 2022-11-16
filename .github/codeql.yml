@@ -1,0 +1,3 @@
+paths-ignore:
+  - files-to-incorporate-and-delete
+  - dist
