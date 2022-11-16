@@ -67,7 +67,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
     plugins: [
       // ... do replace before commonjs
       replace({
-        // Switch to browser-friendly version
+        // Switch to non-bundled ESM browser-friendly version
         patterns: [{
           include: ['resources/resultsDisplay.js'],
           test: "import JsonRefs from 'json-refs';",
@@ -111,7 +111,7 @@ export default [
       name: 'WorkInfo'
     },
     plugins: [
-      // Switch to browser-friendly version
+      // Switch to non-bundled ESM browser-friendly version
       replace({
         // ... do replace before commonjs
         patterns: [importerReplace, {
