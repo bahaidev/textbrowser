@@ -9,6 +9,7 @@ import commandLineArgs from 'command-line-args';
 import DOMParser from 'dom-parser';
 import setGlobalVars from 'indexeddbshim/dist/indexeddbshim-UnicodeIdentifiers-node.js';
 import {getJSON} from 'simple-get-json';
+import {setFetch} from 'intl-dom';
 
 import IntlURLSearchParams from '../resources/utils/IntlURLSearchParams.js';
 import {resultsDisplayServer} from '../resources/resultsDisplay.js';
@@ -17,6 +18,8 @@ import {setServiceWorkerDefaults} from '../resources/utils/ServiceWorker.js';
 // import setGlobalVars from 'indexeddbshim/src/node-UnicodeIdentifiers.js';
 import {Languages} from '../resources/utils/Languages.js';
 import activateCallback from '../resources/activateCallback.js';
+
+setFetch(fetch);
 
 // Todo (low): See
 //   https://gist.github.com/brettz9/0993fbde6f7352b2bb05f38078cefb29

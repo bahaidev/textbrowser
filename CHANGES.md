@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.46.2
+
+- fix: ensure `fetch` is set on server for locale retrieval for `/textbrowser`
+
 ## 0.46.1
 
 - fix: regression with live data
