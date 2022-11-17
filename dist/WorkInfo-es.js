@@ -223,7 +223,7 @@ let nodeFetch;
  * @returns {getJSONCallback}
  */
 
-function _invoke(body, then) {
+function _invoke$2(body, then) {
   var result = body();
 
   if (result && result.then) {
@@ -266,9 +266,9 @@ function buildGetJSON({
 } = {}) {
   const _fetch = typeof fetch !== 'undefined' ? fetch : _async$2(function (jsonURL) {
     let _exit = false;
-    return _invoke(function () {
+    return _invoke$2(function () {
       if (/^https?:/u.test(jsonURL)) {
-        return _invoke(function () {
+        return _invoke$2(function () {
           if (!nodeFetch) {
             return _await$3(import('node-fetch'), function (_import) {
               nodeFetch = _import;
@@ -282,7 +282,7 @@ function buildGetJSON({
         });
       }
     }, function (_result) {
-      return _exit ? _result : _invoke(function () {
+      return _exit ? _result : _invoke$2(function () {
         if (!basePath) {
           return _call(setDirname, function () {
             basePath = baseURL ? getDirectoryForURL(baseURL) : typeof fetch === 'undefined' && process.cwd();
@@ -2083,9 +2083,7 @@ var getStringFromMessageAndDefaults = function getStringFromMessageAndDefaults()
   } else if (defaults === false || defaults === undefined || defaults === null) {
     str = false;
   } else if (defaults && _typeof(defaults) === 'object') {
-    str = messageForKey({
-      body: defaults
-    }, key);
+    str = messageForKey(defaults, key);
     if (str) {
       str = str.value;
     }
@@ -2369,7 +2367,7 @@ var _findLocale = _async(function (_ref4) {
   } else if (typeof localeMatcher !== 'function') {
     throw new TypeError('`localeMatcher` must be "lookup" or a function!');
   }
-  return promiseChainForValues([].concat(_toConsumableArray(locales), _toConsumableArray(defaultLocales)), getLocale, 'No matching locale found!');
+  return promiseChainForValues([].concat(_toConsumableArray(locales), _toConsumableArray(defaultLocales)), getLocale, 'No matching locale found for ' + [].concat(_toConsumableArray(locales), _toConsumableArray(defaultLocales)).join(', '));
 });
 
 /**
@@ -2440,6 +2438,14 @@ function _await(value, then, direct) {
  * @param {boolean} [cfg.throwOnExtraSuppliedFormatters=true]
  * @returns {Promise<I18NCallback>} Rejects if no suitable locale is found.
  */
+
+function _invoke(body, then) {
+  var result = body();
+  if (result && result.then) {
+    return result.then(then);
+  }
+  return then(result);
+}
 var i18nServer = function i18nServer(_ref) {
   var strings = _ref.strings,
     resolvedLocale = _ref.resolvedLocale,
@@ -2555,20 +2561,39 @@ var i18n = function i18n() {
     }), function (_ref4) {
       var strings = _ref4.strings,
         resolvedLocale = _ref4.locale;
-      return i18nServer({
-        strings: strings,
-        resolvedLocale: resolvedLocale,
-        messageStyle: messageStyle,
-        allSubstitutions: allSubstitutions,
-        insertNodes: insertNodes,
-        keyCheckerConverter: keyCheckerConverter,
-        defaults: defaults,
-        substitutions: substitutions,
-        maximumLocalNestingDepth: maximumLocalNestingDepth,
-        dom: dom,
-        forceNodeReturn: forceNodeReturn,
-        throwOnMissingSuppliedFormatters: throwOnMissingSuppliedFormatters,
-        throwOnExtraSuppliedFormatters: throwOnExtraSuppliedFormatters
+      return _invoke(function () {
+        if (!defaults && defaultLocales) {
+          var defaultLocale;
+          return _await(localeStringFinder({
+            locales: defaultLocales,
+            defaultLocales: [],
+            localeResolver: localeResolver,
+            localesBasePath: localesBasePath,
+            localeMatcher: localeMatcher
+          }), function (_localeStringFinder) {
+            defaults = _localeStringFinder.strings;
+            defaultLocale = _localeStringFinder.locale;
+            if (defaultLocale === resolvedLocale) {
+              defaults = null; // No need to fall back
+            }
+          });
+        }
+      }, function () {
+        return i18nServer({
+          strings: strings,
+          resolvedLocale: resolvedLocale,
+          messageStyle: messageStyle,
+          allSubstitutions: allSubstitutions,
+          insertNodes: insertNodes,
+          keyCheckerConverter: keyCheckerConverter,
+          defaults: defaults,
+          substitutions: substitutions,
+          maximumLocalNestingDepth: maximumLocalNestingDepth,
+          dom: dom,
+          forceNodeReturn: forceNodeReturn,
+          throwOnMissingSuppliedFormatters: throwOnMissingSuppliedFormatters,
+          throwOnExtraSuppliedFormatters: throwOnExtraSuppliedFormatters
+        });
       });
     });
   } catch (e) {

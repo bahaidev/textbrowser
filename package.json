@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.46.2",
+  "version": "0.46.3",
   "description": "Multilinear text browser",
   "type": "module",
   "main": "dist/index-es.min.js",
@@ -47,7 +47,7 @@
     "dom-parser": "^0.1.6",
     "form-serialization": "^0.11.0",
     "indexeddbshim": "^10.0.0",
-    "intl-dom": "^0.16.0",
+    "intl-dom": "^0.17.0",
     "jamilih": "0.54.0",
     "jsdom": "^20.0.2",
     "json-refs": "^3.0.15",
