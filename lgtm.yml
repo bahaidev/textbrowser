@@ -2,5 +2,4 @@ extraction:
   javascript:
     index:
       filters:
-        - exclude: "files-to-incorporate-and-delete"
         - exclude: "dist"
