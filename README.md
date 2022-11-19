@@ -153,19 +153,6 @@ Run the following from your project root.
 npm install textbrowser --save
 ```
 
-You can also target the latest code in `master` with the following:
-
-```json
-"dependencies": {
-    "textbrowser": "git@github.com:brettz9/textbrowser.git#master"
-}
-```
-
-And then run `npm install` on your project path.
-
-(To update, you can remove `node_modules/textbrowser/` from your project
-and reinstall.)
-
 ## Usage
 
 The following instructions are aimed at those adding *TextBrowser* as a
@@ -173,8 +160,9 @@ dependency of their own project.
 
 If you would like to see a sample package implementing the
 following, see the
-[bahaiwritings](https://bitbucket.org/brettz9/bahaiwritings)
-project.
+[bahai-browser](https://github.com/bahaidev/bahai-browser)
+project or for a project just implementing the JSON files, see
+[bahaiwritings](https://github.com/bahaidev/bahaiwritings).
 
 Projects derivative to *TextBrowser* will need to adhere to the following:
 
@@ -269,128 +257,8 @@ more cumbersome though standards-track
 
 ### Work-Specific JSON
 
-JSON data files, the individual JSON schema file against which the data
-file can be validated (and enhanced in a standard manner with type
-information), and our custom JSON metadata format file for indicating
-information such as designating fields for browsing ranges, are covered
-in this section.
-
-#### JSON Data
-
-JSON data files to represent your data (e.g.,
-[this file](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/peace.json?at=master&fileviewer=file-view-default))
-expect 3 fields (per the simple
-[schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema)
-and its simple
-[array-of-arrays subschema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/array-of-arrays.jsonschema)
-to which they adhere):
-
-1. A `schema` JSON reference pointer to your data's JSON schema.
-    See [JSON Schema](#json-schema).
-2. A `metadata` JSON reference pointer to your data's JSON metadata.
-    See [JSON Metadata](#json-metadata).
-3. A `data` property which is an an array of arrays containing your tabular
-    text itself. This property must adhere to the specific JSON schema
-    referenced in the `schema` property above for this file.
-
-#### JSON Schema
-
-This document must itself be a valid
-[JSON Schema](http://json-schema.org/documentation.html)
-and must, moreover, adhere to the
-[table format schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table.jsonschema).
-
-This simple document, besides including the text content, designates a more precise JSON schema to indicate precise column types (e.g.,
-[this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/schemas/Bible.jsonschema?at=master&fileviewer=file-view-default)).
-
-This schema is expected to designate an array of arrays, with the items
-of the inner arrays being more flexible JSON schemas representing individual
-fields of your works, but expecting a `type` and `title` in all cases.
-
-It may, for integers, optionally also have `minimum` and `maximum` properties
-which can be used to set numeric inputs (assuming the min or max is not
-dependent on another value, as often will be paragraph numbers within
-chapters).
-
-For strings, an optional `"format": "html"` can be present, though raw HTML in
-the so-designated fields will only be output in the results display as HTML
-if the `TextBrowser` option `trustFormatHTML` is set to `true`. This
-is for security reasons in case an untrusted schema is being deployed, but
-one will probably normally wish to set this to `true` for trusted data.
-
-Also for string type fields may one use `enum`, and its values are
-currently used to determine field values (looking in the metadata
-file under the localized `fieldvalue` object whose key is the column in which
-the value occurs) which are used in place of the original content within
-pull-down menus for selecting verse ranges and in the corresponding
-column for the field of the results display. (The `fieldvalue-aliases`
-property of the specific field key of the main `fields` property will
-also be checked in that file for indicating optional aliases of the given
-field value.)
-
-#### JSON Metadata
-
-[Meta-data JSON](https://github.com/brettz9/textbrowser/blob/master/general-schemas/metadata.jsonschema) (e.g.,
-[this one](https://bitbucket.org/brettz9/bahaiwritings/src/6b07fb41d11ed76570f7da03ffc9d11aa8ff0a5d/data/writings/metadata/Bible.metadata?at=master&fileviewer=file-view-default))
-is required so as for you to indicate for the app how the multilinear text
-is to be browsed (e.g., which fields can be used as sequential
-chapter/paragraph/verse numbers, how its columns should be translated, etc.).
-
-This file has two main properties, `table` and `fields`.
-
-`table` has two properties, `browse_fields` and `default_view`.
-
-`browse_fields` is a name-set object or an array of string field names or
-name-set objects. Name-set objects have an optional `name` string, a `set`
-array of field name strings, and an optional `presort` boolean to
-indicate whether the table must first sort the elements (in order of
-listing); the default is to follow the original array order.
-
-The keys of `default_view` are field names which point to a string or
-integer, or array thereof. These are *not currently in use*, but are intended
-to indicate the values that will be used for a default range when a user makes
-a form submission without supplying a range.
-
-For `fields`, the `lang` string property indicates the language code for the
-content of this field. It is used for letting the user quickly enable
-fields which match their desired locale language(s). It is also used for
-setting HTML table column `lang` values to properly display fonts for
-languages that leverage it, such as the CJK languages.
-
-One other set of types for `fields` are `name` and `alias` strings (or
-`localeKey` pointing to strings). The `name` points to the regular
-name for the column, whereas `alias` is currently used to point to an
-alias name of the field (more specifically to an alternate name after
-converting its values via `fieldvalue-aliases`). The boolean or string
-`prefer_alias` property in turn determines whether this alias will be
-used by default (currently if it is `false`, it is not used at all).
-This functionality might be moved into a plug-in in the future.
-
-Also in `fields`, `fieldvalue-aliases` can after any `localeKey` processing,
-be an object of field name keys pointing to an array of alias names (as
-strings or integers) or to an object whose keys indicating the type of
-alias and string values. This can provide alternate values for what is
-actually present in the data table (e.g., replacing numeric codes with
-human-readable strings).
-
-For `fields`, the `primary_text_field` and `orig_lang_field` booleans
-and `orig_langs` array of string language codes are *not currently in use*
-but intended to indicate the main work under consideration (as opposed
-to translations), whether it is the source of translations or a target
-translation, and what its source languages are (if not itself marked as
-an original language).
-
-The `roman` property of `fields` is intended to indicate Roman numerals.
-It is *not currently in use* and where not automated from Arabic numerals,
-it might be indicated in the future via a language code and more generic
-`numeric` property (so as to support multiple non-Arabic counting systems
-which are hard-coded as opposed to built via an automated plug-in).
-
-As with other files, there is also a `localization-strings` key object, keyed
-to language code, which is keyed to an object of keys (which can be strings
-(e.g., `heading` or `alias`), arrays of strings, or other objects of keys,
-including specifically for JSON metadata, `fieldnames`, `fieldaliases`,
-`fieldvalue`, and `fieldvalue-aliases`).
+The specific works adhere to particular schemas. See [textbrowser-data-schemas](https://github.com/bahaidev/textbrowser-data-schemas).
+for more details.
 
 ### Application-wide JSON files
 
@@ -400,8 +268,8 @@ whole.
 
 #### `files.json`
 
-This format is defined by [this](https://github.com/brettz9/textbrowser/blob/master/general-schemas/files.jsonschema).
-See [this file](https://bitbucket.org/brettz9/bahaiwritings/src/5f2602f122134d2013e013a477ae94ee29548a13/files.json?at=master&fileviewer=file-view-default) for an example.
+This format is defined by [this](https://github.com/bahaidev/textbrowser/blob/main/general-schemas/files.jsonschema).
+See [this file](https://github.com/bahaidev/bahai-browser/blob/main/files.json) for an example.
 
 It allows you to point the application to the data files you desire for
 inclusion (e.g., any kept in `data/`).
@@ -419,7 +287,7 @@ a `name` string or localization key (or a file group display name),
 `schemaFile` and `metadataFile` string file paths (resolved relative to the
 respective base path properties), and `file` which is an reference to a
 specific JSON data file
-[table-container.jsonschema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/table-container.jsonschema)).
+[table-container.jsonschema](https://github.com/bahaidev/textbrowser-data-schemas/blob/main/schemas/table-container.jsonschema)).
 There can also be a `shortcut` property which is used for indicating the
 keyword to use when the "Generate bookmarks" button in Preferences or
 "Copy shortcut URL" is used to build URL keyword shortcuts (what Chrome
@@ -467,8 +335,8 @@ localization, you may supply a `languages` property when creating the
 choosing (see the [JavaScript API](#javascript-api)).
 
 *TextBrowser* comes with the `languages.json` file at
-[`appdata/languages.json`](https://github.com/brettz9/textbrowser/blob/master/appdata/languages.json) which, as mentioned, is used by default. It adheres to
-[this schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/languages.jsonschema)
+[`appdata/languages.json`](https://github.com/bahaidev/textbrowser/blob/main/appdata/languages.json) which, as mentioned, is used by default. It adheres to
+[this schema](https://github.com/bahaidev/textbrowser/blob/main/general-schemas/languages.jsonschema)
 
 If you need to implement your own, the properties include the string
 `localeFileBasePath` and the property `languages` which is an array
@@ -481,7 +349,8 @@ arrays of strings, or other objects of keys).
 
 The locale files referenced by the `locale` property within `languages.json`
 (by default, those at `locales/`, e.g., `locales/en-US.json`), adhere to
-[this schema](https://github.com/brettz9/textbrowser/blob/master/general-schemas/locale.jsonschema).
+[this schema](https://github.com/bahaidev/textbrowser-data-schemas/blob/main/schemas/locale.jsonschema).
+This schema is also used for localization within metadata files. See [textbrowser-data-schemas](https://github.com/bahaidev/textbrowser-data-schemas).
 
 Locales are an object of keys (which may be strings, arrays of strings, or
 are themselves objects).
@@ -732,6 +601,8 @@ The properties are:
     *TextBrowser* which you will need offline. Defaults to the minimum
     recommended files:
     `['/',  'index.html', 'files.json', 'site.json', 'resources/user.js']`
+
+This user JSON follows the [user-json schema](https://github.com/bahaidev/textbrowser-data-schemas/blob/main/schemas/user-json.jsonschema).
 
 ## Server API
 
@@ -1123,18 +994,13 @@ it supports the following arguments:
 
 ## To-dos (Lower priority)
 
-1.  Use or publish [rollup-plugin-postprocess](git+https://github.com/brettz9/rollup-plugin-postprocess.git#update)
-    as stable version?
-1.  Check if still getting superagent warning:
-    <https://github.com/whitlockjc/path-loader/issues/17> (if `json-refs` can
-    be updated to stable version)
 1.  Use [i18nizeElement](https://github.com/brettz9/i18nizeElement)? (probably
     not as need RTL detection for more than setting on element)
 1.  **Remember columns enabled**, etc. since last visit, and/or saved as
     preferences.
 1.  Allow copy-pasting a search as a custom web protocol (make
     site-configurable), e.g., to support `web+bahaiwritings:` links per
-    [bahai-writings-handler](https://github.com/brettz9/bahai-writings-handler)
+    [bahai-writings-handler](https://github.com/bahaidev/bahai-writings-handler)
     ([demo](https://bahai-library.com/test-bahai-web-protocol/test-bahai-web-protocol.html));
     could even use last visit or preferences status to tweak the resulting
     appearance, column selection, etc.
@@ -1185,7 +1051,7 @@ npm test
 ```
 
 Note, however, that much of testing will depend on a particular
-application. The [bahaiwritings](https://bitbucket.org/brettz9/bahaiwritings/)
+application. The [bahai-browser](https://github.com/bahaidev/bahai-browser)
 project hosts validation of specific files expected by TextBrowser, such as
 `files.json` and specific schemas and meta-data files needed for that project.
 
