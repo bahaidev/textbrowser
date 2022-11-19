@@ -82,7 +82,7 @@ describe('textbrowser tests', function () {
         appBase + jsonSchemaSpec
       )),
       ...[
-        'locale.jsonschema',
+        '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema',
         'en-US.json',
         'ar.json',
         'fa.json',
@@ -119,10 +119,17 @@ describe('textbrowser tests', function () {
       ),
       getJSON(path.join(__dirname, appBase + jsonSchemaSpec)),
       getJSON(path.join(__dirname, schemaBase, 'languages.jsonschema')),
-      getJSON(path.join(__dirname, schemaBase, 'locale.jsonschema'))
+      getJSON(path.join(
+        __dirname,
+        schemaBase,
+        '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema'
+      ))
     ]);
     const [{resolved: data}, jsonSchema, schema, localeSchema] = results;
-    const extraSchemas = [['locale.jsonschema', localeSchema]];
+    const extraSchemas = [[
+      '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema',
+      localeSchema
+    ]];
     const valid = validate('languages.json test', schema, data, extraSchemas);
     assert.strictEqual(valid, true);
 

@@ -18,7 +18,7 @@
         "site": {"$ref": "#/definitions/siteType"},
         "navigation": {"$ref": "#/definitions/siteType"},
         "localization-strings": {
-            "$ref": "locale.jsonschema"
+            "$ref": "../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema"
         }
     }
 }

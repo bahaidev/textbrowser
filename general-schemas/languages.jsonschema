@@ -6,7 +6,7 @@
             "type": "string"
         },
         "localization-strings": {
-            "$ref": "locale.jsonschema"
+            "$ref": "../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema"
         },
         "languages": {
             "type": "array",
@@ -24,7 +24,7 @@
                         "enum": ["ltr", "rtl"]
                     },
                     "locale": {
-                        "$ref": "locale.jsonschema"
+                        "$ref": "../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema"
                     }
                 }
             }

@@ -142,9 +142,9 @@ const textbrowserStaticResourceFiles = [
     // Only needed atm for browser validation
     'node_modules/textbrowser/general-schemas/files.jsonschema',
     'node_modules/textbrowser/general-schemas/languages.jsonschema',
-    'node_modules/textbrowser/general-schemas/locale.jsonschema',
+    'node_modules/textbrowser-data-schemas/schemas/locale.jsonschema',
     'node_modules/textbrowser/general-schemas/metadata.jsonschema',
-    'node_modules/textbrowser/general-schemas/table.jsonschema', // Not currently using for validation or meta-data
+    '../node_modules/textbrowser-data-schemas/schemas/table.jsonschema', // Not currently using for validation or meta-data
     */
 
   'node_modules/textbrowser/dist/index-es.js'
