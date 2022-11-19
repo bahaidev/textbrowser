@@ -836,7 +836,7 @@ it supports the following arguments:
                 put it as a mouseover)
             1.  Allow for dynamic addition of JSON overlay sources or metadata
                 to work selection/work display files?
-            1.  See bahaiwritings project re: using Firefox's
+            1.  See bahai-browser project re: using Firefox's
                 [Browser API](https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API)
                 to allow independent navigation controls for each iframe (and
                 side-by-side viewing of verses/lines and commentary)
