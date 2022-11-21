@@ -115,22 +115,12 @@ describe('textbrowser tests', function () {
           }
         }
       )
-      // getJSON(path.join(
-      //   __dirname,
-      //   schemaBase,
-      //   '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema'
-      // ))
     ]);
     const [
       {resolved: data},
       // jsonSchema,
       {resolved: schema}
-      // localeSchema
     ] = results;
-    // const extraSchemas = [[
-    //   '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema',
-    //   localeSchema
-    // ]];
 
     const valid = validate('languages.json test', schema, data);
     assert.strictEqual(valid, true);
