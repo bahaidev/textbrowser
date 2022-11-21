@@ -1,5 +1,10 @@
 # CHANGES to `textbrowser`
 
+## 0.47.0 (beta 0)
+
+- BREAKING fix: drop schemas now moved to textbrowser-data-schemas
+- fix: adjust paths per new expected locations
+
 ## 0.46.3
 
 - fix: update `intl-dom` (affecting fallbacks for non-English locales)
