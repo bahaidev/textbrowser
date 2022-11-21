@@ -39,7 +39,7 @@ function validate (
   } catch (e) {
     console.log('(' + testName + ') ' + e);
   } finally {
-    if (!valid && ajv.errors.length) {
+    if (!valid && ajv.errors?.length) {
       console.log(JSON.stringify(ajv.errors, null, 2));
     }
   }
