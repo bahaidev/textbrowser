@@ -7,7 +7,7 @@
 const schemaBase = appBase + 'general-schemas/';
 const localesBase = appBase + 'locales/';
 const appdataBase = appBase + 'appdata/';
-const jsonSchemaSpec = 'node_modules/json-metaschema/draft-07-schema.json';
+// const jsonSchemaSpec = 'node_modules/json-metaschema/draft-07-schema.json';
 
 /**
 * @external JSONSchema
@@ -52,21 +52,16 @@ describe('textbrowser tests', function () {
       // jsonSchema,
       schema,
       ...locales
-    ] = await Promise.all([
-      getJSON(path.join(
-        __dirname,
-        appBase + jsonSchemaSpec
-      )),
-      ...[
-        '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema',
-        'en-US.json',
-        'ar.json',
-        'fa.json',
-        'ru.json'
-      ].map((file, i) => getJSON(
-        path.join(__dirname, i ? localesBase : schemaBase, file)
-      ))
-    ]);
+    ] = await getJSON([
+      '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema',
+      'en-US.json',
+      'ar.json',
+      'fa.json',
+      'ru.json'
+    ].map(
+      (file, i) => path.join(__dirname, i ? localesBase : schemaBase, file)
+    ));
+
     locales.forEach(function (locale) {
       const valid = validate('locales tests', schema, locale);
       assert.strictEqual(valid, true);
@@ -96,7 +91,7 @@ describe('textbrowser tests', function () {
       JsonRefs.resolveRefsAt(
         path.join(__dirname, appdataBase, 'languages.json')
       ),
-      getJSON(path.join(__dirname, appBase + jsonSchemaSpec)),
+      // getJSON(path.join(__dirname, appBase + jsonSchemaSpec)),
       getJSON(path.join(__dirname, schemaBase, 'languages.jsonschema')),
       getJSON(path.join(
         __dirname,
