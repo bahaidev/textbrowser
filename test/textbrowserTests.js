@@ -92,24 +92,47 @@ describe('textbrowser tests', function () {
         path.join(__dirname, appdataBase, 'languages.json')
       ),
       // getJSON(path.join(__dirname, appBase + jsonSchemaSpec)),
-      getJSON(path.join(__dirname, schemaBase, 'languages.jsonschema')),
-      getJSON(path.join(
-        __dirname,
-        schemaBase,
-        '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema'
-      ))
+      JsonRefs.resolveRefsAt(
+        path.join(__dirname, schemaBase, 'languages.jsonschema'),
+        {
+          refPreProcessor (obj, pth) {
+            if (
+              obj.$ref === '#' &&
+              // Extra sanity check to ensure we're only changing for the
+              //  known self-reference we need to adjust
+              JsonRefs.pathToPtr(pth) === '#/patternProperties/.*/anyOf/2'
+            ) {
+              // We hard-code the absolute path since the `pth` supplied is
+              //  relative to the local (locale.jsonschema) document only,
+              //  and we want to get rid of this self-reference with JsonRefs
+              //  otherwise insists on adding as a file name reference (which
+              //  we don't want for ajv)
+              obj.$ref = JsonRefs.pathToPtr([
+                'properties', 'localization-strings'
+              ]);
+            }
+            return obj;
+          }
+        }
+      )
+      // getJSON(path.join(
+      //   __dirname,
+      //   schemaBase,
+      //   '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema'
+      // ))
     ]);
     const [
       {resolved: data},
       // jsonSchema,
-      schema,
-      localeSchema
+      {resolved: schema}
+      // localeSchema
     ] = results;
-    const extraSchemas = [[
-      '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema',
-      localeSchema
-    ]];
-    const valid = validate('languages.json test', schema, data, extraSchemas);
+    // const extraSchemas = [[
+    //   '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema',
+    //   localeSchema
+    // ]];
+
+    const valid = validate('languages.json test', schema, data);
     assert.strictEqual(valid, true);
 
     // This doesn't remove all as hoped as don't have
