@@ -269,7 +269,8 @@ whole.
 #### `files.json`
 
 This format is defined by [this](https://github.com/bahaidev/textbrowser/blob/main/general-schemas/files.jsonschema).
-See [this file](https://github.com/bahaidev/bahai-browser/blob/main/files.json) for an example.
+See [this file](https://github.com/bahaidev/bahai-browser/blob/main/files.json)
+for an example.
 
 It allows you to point the application to the data files you desire for
 inclusion (e.g., any kept in `data/`).
