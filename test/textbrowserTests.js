@@ -122,6 +122,13 @@ describe('textbrowser tests', function () {
       {resolved: schema}
     ] = results;
 
+    // This wasn't being reported by the JsonRefs preprocessor, so we have
+    //   to graft it ourselves after the fact
+    schema.properties.languages.items.properties
+      .locale.patternProperties['.*'].anyOf[2].$ref = JsonRefs.pathToPtr([
+        'properties', 'languages', 'items', 'properties', 'locale'
+      ]);
+
     const valid = validate('languages.json test', schema, data);
     assert.strictEqual(valid, true);
 
