@@ -5,11 +5,10 @@
     <title>TextBrowser Test Suite</title>
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
 
-    <!-- Todo: Move to ESM, for browser here and Node where available -->
+    <!-- Todo: Switch to ESM, for browser here and Node where available -->
     <script src="../node_modules/ajv/dist/ajv.bundle.js"></script>
     <script src="../node_modules/simple-get-json/dist/index.js"></script>
     <script src="../node_modules/json-refs/dist/json-refs-min.js"></script>
-    <script src="../node_modules/fast-json-patch/dist/fast-json-patch.min.js"></script>
 
     <!-- Testing dependencies -->
     <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
@@ -19,14 +18,17 @@
   <body>
     <h1>TextBrowser Test Suite</h1>
     <div id="mocha"></div>
-    <script>
-    'use strict';
+    <script type="module">
+    /* globals mocha -- No ESM */
     mocha.setup('bdd');
+    window.assert = chai.assert;
+    window.__dirname = '';
+    window.path = {
+      join: (...args) => args.join('')
+    };
+    window.appBase = location.protocol + '//' + location.host + '/';
+    window.Ajv = window.ajv7;
     </script>
-    <script src="textbrowserTests.js"></script>
-    <script>
-    'use strict';
-    mocha.run();
-    </script>
+    <script type="module" src="textbrowserTests.js"></script>
   </body>
 </html>

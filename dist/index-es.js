@@ -293,7 +293,7 @@ function buildGetJSON({
   baseURL,
   cwd: basePath
 } = {}) {
-  const _fetch = typeof fetch !== 'undefined' ? fetch : _async$2(function (jsonURL) {
+  const _fetch = typeof window !== 'undefined' ? window.fetch : _async$2(function (jsonURL) {
     let _exit = false;
     return _invoke$2(function () {
       if (/^https?:/u.test(jsonURL)) {
@@ -313,7 +313,7 @@ function buildGetJSON({
       return _exit ? _result : _invoke$2(function () {
         if (!basePath) {
           return _call(setDirname, function () {
-            basePath = baseURL ? getDirectoryForURL(baseURL) : typeof fetch === 'undefined' && process.cwd();
+            basePath = baseURL ? getDirectoryForURL(baseURL) : typeof window === 'undefined' && process.cwd();
           });
         }
       }, function () {

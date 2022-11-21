@@ -1,38 +1,8 @@
+/* eslint-disable import/unambiguous -- Imports are boostrapped */
+/* globals path, appBase, JsonRefs, Ajv,
+    getJSON, __dirname -- Polyglot */
+
 /* eslint-disable no-console -- Test file */
-'use strict';
-
-// eslint-disable-next-line no-var, no-shadow -- Polyglot
-var JsonRefs, chai, assert, jsonpatch, Ajv, getJSON, __dirname, path;
-
-/**
- *
- * @param {null|number|string|GenericArray|PlainObject} obj
- * @returns {null|number|string|GenericArray|PlainObject}
- */
-function cloneJSON (obj) {
-  return JSON.parse(JSON.stringify(obj));
-}
-
-let appBase = '../';
-
-// eslint-disable-next-line n/exports-style -- Check
-if (typeof exports !== 'undefined') {
-  /* eslint-disable n/global-require -- For Node */
-  Ajv = require('ajv').default;
-  JsonRefs = require('json-refs');
-  jsonpatch = require('fast-json-patch');
-  ({getJSON} = require('simple-get-json'));
-  assert = require('assert');
-  path = require('path');
-  /* eslint-enable n/global-require -- For Node */
-} else {
-  ({assert} = chai);
-  path = {
-    join: (...args) => args.join('')
-  };
-  appBase = location.protocol + '//' + location.host + '/';
-  __dirname = '';
-}
 
 const schemaBase = appBase + 'general-schemas/';
 const localesBase = appBase + 'locales/';
@@ -76,7 +46,11 @@ function validate (
 
 describe('textbrowser tests', function () {
   it('locales tests', async () => {
-    const [jsonSchema, schema, ...locales] = await Promise.all([
+    const [
+      // jsonSchema,
+      schema,
+      ...locales
+    ] = await Promise.all([
       getJSON(path.join(
         __dirname,
         appBase + jsonSchemaSpec
@@ -96,21 +70,24 @@ describe('textbrowser tests', function () {
       assert.strictEqual(valid, true);
     });
 
-    validate('Schema test', jsonSchema, schema, undefined, {
-      validateSchema: false
-    });
-
-    const schema2 = cloneJSON(schema);
-    validate('Schema test 2', jsonSchema, schema2, undefined, {
-      removeAdditional: 'all',
-      validateSchema: false
-    });
-
-    const diff = jsonpatch.compare(schema, schema2);
-    if (diff.length) {
-      console.log('diff', diff);
-    }
-    assert.strictEqual(diff.length, 0);
+    // This doesn't remove all as hoped as don't have
+    //   `additionalProperties: false` set; see
+    //   https://github.com/ajv-validator/ajv/issues/2170
+    // validate('Schema test', jsonSchema, schema, undefined, {
+    //   validateSchema: false
+    // });
+    //
+    // const schema2 = cloneJSON(schema);
+    // validate('Schema test 2', jsonSchema, schema2, undefined, {
+    //   removeAdditional: 'all',
+    //   validateSchema: false
+    // });
+    //
+    // const diff = jsonpatch.compare(schema, schema2);
+    // if (diff.length) {
+    //   console.log('diff', diff);
+    // }
+    // assert.strictEqual(diff.length, 0);
   });
   it('languages.json test', async () => {
     const results = await Promise.all([
@@ -125,7 +102,12 @@ describe('textbrowser tests', function () {
         '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema'
       ))
     ]);
-    const [{resolved: data}, jsonSchema, schema, localeSchema] = results;
+    const [
+      {resolved: data},
+      // jsonSchema,
+      schema,
+      localeSchema
+    ] = results;
     const extraSchemas = [[
       '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema',
       localeSchema
@@ -133,59 +115,25 @@ describe('textbrowser tests', function () {
     const valid = validate('languages.json test', schema, data, extraSchemas);
     assert.strictEqual(valid, true);
 
-    const schemas = results.slice(2);
-    schemas.forEach((schma, i) => {
-      validate('Schema test', jsonSchema, schma, undefined, {
-        validateSchema: false
-      });
-
-      const schema2 = cloneJSON(schma);
-      validate('Schema test 2', jsonSchema, schema2, extraSchemas, {
-        removeAdditional: 'all',
-        validateSchema: false
-      });
-      const diff = jsonpatch.compare(schma, schema2);
-      if (diff.length) {
-        console.log(`diff for schema at index ${i}`, diff);
-      }
-      assert.strictEqual(diff.length, 0);
-    });
-  });
-  it('userJSON tests', async () => {
-    const [jsonSchema, userJSONSchema, userJSON] = await getJSON([
-      path.join(
-        __dirname,
-        appBase + jsonSchemaSpec
-      ),
-      path.join(
-        __dirname,
-        schemaBase,
-        'user-json.jsonschema'
-      ),
-      path.join(
-        __dirname,
-        appBase + 'resources/user-sample.json'
-      )
-    ]);
-
-    const userJSONSchema2 = cloneJSON(userJSONSchema);
-    validate('Schema test', jsonSchema, userJSONSchema, undefined, {
-      validateSchema: false
-    });
-    const diff = jsonpatch.compare(userJSONSchema, userJSONSchema2);
-    if (diff.length) {
-      console.log(`diff for data file`, diff);
-    }
-    assert.strictEqual(diff.length, 0);
-
-    const userJSON2 = cloneJSON(userJSON);
-    validate('Schema test', userJSONSchema, userJSON, undefined, {
-      validateSchema: false
-    });
-    const diff2 = jsonpatch.compare(userJSON, userJSON2);
-    if (diff2.length) {
-      console.log(`diff for data file`, diff2);
-    }
-    assert.strictEqual(diff2.length, 0);
+    // This doesn't remove all as hoped as don't have
+    //   `additionalProperties: false` set; see
+    //   https://github.com/ajv-validator/ajv/issues/2170
+    // const schemas = results.slice(2);
+    // schemas.forEach((schma, i) => {
+    //   validate('Schema test', jsonSchema, schma, undefined, {
+    //     validateSchema: false
+    //   });
+    //
+    //   const schema2 = cloneJSON(schma);
+    //   validate('Schema test 2', jsonSchema, schema2, extraSchemas, {
+    //     removeAdditional: 'all',
+    //     validateSchema: false
+    //   });
+    //   const diff = jsonpatch.compare(schma, schema2);
+    //   if (diff.length) {
+    //     console.log(`diff for schema at index ${i}`, diff);
+    //   }
+    //   assert.strictEqual(diff.length, 0);
+    // });
   });
 });

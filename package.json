@@ -15,7 +15,8 @@
     "rollup": "rollup -c",
     "lint": "npm run eslint",
     "eslint": "eslint --ext=js,md,html .",
-    "node": "npm run eslint && npm run rollup && mocha test/textbrowserTests.js",
+    "mocha": "mocha --require test/bootstrap/node.js --require chai/register-assert.js test/textbrowserTests.js",
+    "node": "npm run eslint && npm run rollup && npm run mocha",
     "open-test": "open-cli http://127.0.0.1:8081/test/",
     "start-open-test": "run-p start open-test",
     "test": "npm run eslint && npm run rollup && npm run start-open-test"
@@ -49,12 +50,12 @@
     "indexeddbshim": "^10.0.0",
     "intl-dom": "^0.17.0",
     "jamilih": "0.54.0",
-    "jsdom": "^20.0.2",
+    "jsdom": "^20.0.3",
     "json-refs": "^3.0.15",
     "load-stylesheets": "0.10.0",
     "node-fetch": "^2.6.6",
     "rtl-detect": "1.0.4",
-    "simple-get-json": "^8.2.0"
+    "simple-get-json": "^9.0.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
@@ -71,7 +72,7 @@
     "ajv": "8.11.2",
     "babel-plugin-dynamic-import-node": "^2.3.3",
     "chai": "^4.3.7",
-    "eslint": "^8.27.0",
+    "eslint": "^8.28.0",
     "eslint-config-ash-nazg": "^34.4.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-array-func": "^3.1.7",
@@ -95,6 +96,6 @@
     "open-cli": "^7.1.0",
     "rollup": "^3.3.0",
     "rollup-plugin-re": "^1.0.7",
-    "textbrowser-data-schemas": "^0.1.0"
+    "textbrowser-data-schemas": "^0.2.0"
   }
 }

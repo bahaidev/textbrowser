@@ -130,7 +130,8 @@ const defaultUserStaticFiles = [
   'files.json',
   'site.json',
   'resources/user.js'
-  // We do not put the user.json here as that is obtained live with service worker
+  // We do not put the user.json here as that is obtained live with this
+  //   service worker via `pathToUserJSON`
 ];
 // Todo: We could supply `new URL(fileName, moduleURL).href` to
 //   get these as reliable full paths without hard-coding or needing to

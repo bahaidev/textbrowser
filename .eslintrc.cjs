@@ -64,7 +64,7 @@ module.exports = {
     }
   }, {
     files: ['test/index.html'],
-    extends: ['ash-nazg/sauron-node-script-overrides'],
+    extends: ['ash-nazg/sauron-node-overrides'],
     globals: {
       mocha: false
     },
@@ -73,7 +73,7 @@ module.exports = {
     }
   }, {
     files: ['test/textbrowserTests.js'],
-    extends: ['ash-nazg/sauron-node-script-overrides']
+    extends: ['ash-nazg/sauron-node-overrides']
   }, {
     files: ['server/**', 'resources/utils/WorkInfo.js'],
     globals: {
