@@ -6,7 +6,7 @@
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
 
     <!-- Todo: Switch to ESM, for browser here and Node where available -->
-    <script src="../node_modules/ajv/dist/ajv.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ajv/8.11.2/ajv7.bundle.js"></script>
     <script src="../node_modules/simple-get-json/dist/index.js"></script>
     <script src="../node_modules/json-refs/dist/json-refs-min.js"></script>
 
@@ -30,5 +30,8 @@
     window.Ajv = window.ajv7;
     </script>
     <script type="module" src="textbrowserTests.js"></script>
+    <script type="module">
+    mocha.run();
+    </script>
   </body>
 </html>
