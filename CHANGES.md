@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.47.0
+
+BREAKING CHANGES; see betas for changes
+
 ## 0.47.0 (beta 2)
 
 - fix: update `simple-get-json` (and devDep.)
