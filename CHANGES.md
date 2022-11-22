@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.47.0 (beta 2)
+
+- fix: update `simple-get-json` (and devDep.)
+
 ## 0.47.0 (beta 1)
 
 - fix: path regression
