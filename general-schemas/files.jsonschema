@@ -177,7 +177,7 @@
                                     }
                                 },
                                 {
-                                    "$ref": "../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema"
+                                    "$ref": "../../textbrowser-data-schemas/schemas/locale.jsonschema"
                                 }
                             ]
                         }
@@ -205,7 +205,7 @@
                             "type": "object",
                             "properties": {
                                 "file": {
-                                    "$ref": "../node_modules/textbrowser-data-schemas/schemas/table-container.jsonschema"
+                                    "$ref": "../../textbrowser-data-schemas/schemas/table-container.jsonschema"
                                 },
                                 "name": {
                                     "type": "string"

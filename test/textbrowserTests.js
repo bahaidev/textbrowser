@@ -96,20 +96,14 @@ describe('textbrowser tests', function () {
         path.join(__dirname, schemaBase, 'languages.jsonschema'),
         {
           refPreProcessor (obj, pth) {
+            // Need to fix given that we are not in the expected
+            //   app project of a web project
             if (
-              obj.$ref === '#' &&
-              // Extra sanity check to ensure we're only changing for the
-              //  known self-reference we need to adjust
-              JsonRefs.pathToPtr(pth) === '#/patternProperties/.*/anyOf/2'
+              obj.$ref ===
+                '../../textbrowser-data-schemas/schemas/locale.jsonschema'
             ) {
-              // We hard-code the absolute path since the `pth` supplied is
-              //  relative to the local (locale.jsonschema) document only,
-              //  and we want to get rid of this self-reference with JsonRefs
-              //  otherwise insists on adding as a file name reference (which
-              //  we don't want for ajv)
-              obj.$ref = JsonRefs.pathToPtr([
-                'properties', 'localization-strings'
-              ]);
+              obj.$ref = '../node_modules/textbrowser-data-schemas/' +
+                'schemas/locale.jsonschema';
             }
             return obj;
           }
@@ -122,8 +116,7 @@ describe('textbrowser tests', function () {
       {resolved: schema}
     ] = results;
 
-    // This wasn't being reported by the JsonRefs preprocessor, so we have
-    //   to graft it ourselves after the fact
+    // JsonRefs doesn't handle circular references the way we want here:
     schema.properties.languages.items.properties
       .locale.patternProperties['.*'].anyOf[2].$ref = JsonRefs.pathToPtr([
         'properties', 'languages', 'items', 'properties', 'locale'

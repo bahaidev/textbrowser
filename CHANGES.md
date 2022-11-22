@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.47.0 (beta 1)
+
+- fix: path regression
+
 ## 0.47.0 (beta 0)
 
 - BREAKING fix: drop schemas now moved to textbrowser-data-schemas
