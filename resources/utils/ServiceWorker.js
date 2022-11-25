@@ -2,6 +2,18 @@
 // import {escapeHTML} from './sanitize.js';
 import {dialogs} from './dialogs.js';
 
+/**
+ * Note that this function be kept as a polyglot client-server file.
+ * @param {PlainObject} target
+ * @param {PlainObject} source
+ * @returns {{
+ *   userJSON: string,
+ *   languages: string,
+ *   serviceWorkerPath: string,
+ *   files: string,
+ *   namespace: string
+ * }}
+ */
 export const setServiceWorkerDefaults = (target, source) => {
   target.userJSON = source.userJSON || 'resources/user.json';
   target.languages = source.languages || new URL(

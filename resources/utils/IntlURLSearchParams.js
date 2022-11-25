@@ -1,4 +1,7 @@
 /**
+ * @file Note that this should be kept as a polyglot client-server file.
+ */
+/**
  *
  * @param {string} param
  * @param {boolean} skip

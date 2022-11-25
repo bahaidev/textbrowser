@@ -15,7 +15,6 @@ import IntlURLSearchParams from '../resources/utils/IntlURLSearchParams.js';
 import {resultsDisplayServer} from '../resources/resultsDisplay.js';
 import getLocaleFallbackResults from '../resources/utils/getLocaleFallbackResults.js';
 import {setServiceWorkerDefaults} from '../resources/utils/ServiceWorker.js';
-// import setGlobalVars from 'indexeddbshim/src/node-UnicodeIdentifiers.js';
 import {Languages} from '../resources/utils/Languages.js';
 import activateCallback from '../resources/activateCallback.js';
 

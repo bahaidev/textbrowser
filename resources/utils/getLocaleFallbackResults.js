@@ -1,3 +1,6 @@
+/**
+ * @file Note that this should be kept as a polyglot client-server file.
+ */
 import {i18n} from 'intl-dom';
 
 export default async function getLocaleFallbackResults ({

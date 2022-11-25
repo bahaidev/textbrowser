@@ -20,6 +20,9 @@ export const getPreferredLanguages = ({namespace, preferredLocale}) => {
   return langArr;
 };
 
+/**
+ * @classdesc Note that this should be kept as a polyglot client-server class.
+ */
 export class Languages {
   constructor ({langData}) {
     this.langData = langData;

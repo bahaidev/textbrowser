@@ -117,6 +117,11 @@ export const resultsDisplayClient = async function resultsDisplayClient (args) {
   });
 };
 
+/**
+ * This is server-only code, but kept here as the function is similar.
+ * @param {{serverOutput: "jamilih"|"html"|"json"}} args
+ * @returns {Promise<Array|string>}
+ */
 export const resultsDisplayServer = async function resultsDisplayServer (args) {
   const {
     templateArgs
