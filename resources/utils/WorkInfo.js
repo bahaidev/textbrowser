@@ -3,7 +3,7 @@ import {i18n} from 'intl-dom';
 import {getMetaProp, getMetadata, Metadata} from './Metadata.js';
 import {PluginsForWork, escapePlugin} from './Plugin.js';
 
-export const getWorkFiles = async function getWorkFiles (files = this.files) {
+export const getWorkFiles = async function getWorkFiles (files) {
   const filesObj = await getJSON(files);
   const dataFiles = [];
   filesObj.groups.forEach((fileGroup) => {

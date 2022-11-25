@@ -3143,6 +3143,9 @@ function deserialize(form, hash) {
   });
 }
 
+/**
+ * @file Note that this should be kept as a polyglot client-server file.
+ */
 async function getLocaleFallbackResults({
   $p,
   lang,
@@ -5073,6 +5076,10 @@ const getPreferredLanguages = ({
   });
   return langArr;
 };
+
+/**
+ * @classdesc Note that this should be kept as a polyglot client-server class.
+ */
 class Languages {
   constructor({
     langData
@@ -13369,22 +13376,6 @@ class PluginsForWork {
   }
 }
 
-const getWorkFiles = async function getWorkFiles(files = this.files) {
-  const filesObj = await getJSON(files);
-  const dataFiles = [];
-  filesObj.groups.forEach(fileGroup => {
-    fileGroup.files.forEach(fileData => {
-      const {
-        file,
-        schemaFile,
-        metadataFile
-      } = getFilePaths(filesObj, fileGroup, fileData);
-      dataFiles.push(file, schemaFile, metadataFile);
-    });
-  });
-  dataFiles.push(...Object.values(filesObj.plugins).map(pl => pl.path));
-  return dataFiles;
-};
 const getFilePaths = function getFilePaths(filesObj, fileGroup, fileData) {
   const baseDir = (filesObj.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
   const schemaBaseDir = (filesObj.schemaBaseDirectory || '') + (fileGroup.schemaBaseDirectory || '') + '/';
@@ -13636,6 +13627,19 @@ const getWorkData = async function ({
 };
 
 /* globals console, location, URL */
+
+/**
+ * Note that this function be kept as a polyglot client-server file.
+ * @param {PlainObject} target
+ * @param {PlainObject} source
+ * @returns {{
+ *   userJSON: string,
+ *   languages: string,
+ *   serviceWorkerPath: string,
+ *   files: string,
+ *   namespace: string
+ * }}
+ */
 const setServiceWorkerDefaults = (target, source) => {
   target.userJSON = source.userJSON || 'resources/user.json';
   target.languages = source.languages || new URL('../appdata/languages.json',
@@ -15398,6 +15402,9 @@ const Templates = {
 };
 
 /**
+ * @file Note that this should be kept as a polyglot client-server file.
+ */
+/**
  *
  * @param {string} param
  * @param {boolean} skip
@@ -16033,8 +16040,6 @@ var rtlDetect_1 = {
   isRtlLang: rtlDetect.isRtlLang,
   getLangDir: rtlDetect.getLangDir
 };
-
-// Keep this as the last import for Rollup
 
 const {
   getLangDir
@@ -17108,9 +17113,7 @@ class TextBrowser {
   }
   async init() {
     this._stylesheetElements = await loadStylesheets(this.stylesheets);
-    return this.displayLanguages();
-  }
-  async displayLanguages() {
+
     // We use getJSON instead of JsonRefs as we do not need to resolve the locales here
     try {
       const [langData, siteData] = await getJSON([this.languages, this.site]);
@@ -17497,6 +17500,5 @@ class TextBrowser {
 // Todo: Definable as public fields?
 TextBrowser.prototype.workDisplay = workDisplay;
 TextBrowser.prototype.resultsDisplayClient = resultsDisplayClient;
-TextBrowser.prototype.getWorkFiles = getWorkFiles;
 
 export { TextBrowser as default };

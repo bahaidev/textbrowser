@@ -8,7 +8,7 @@ import {serialize as formSerialize} from 'form-serialization';
 import getLocaleFallbackResults from './utils/getLocaleFallbackResults.js';
 import {dialogs} from './utils/dialogs.js';
 import {getFieldNameAndValueAliases, getBrowseFieldData} from './utils/Metadata.js';
-import {getWorkFiles, getWorkData} from './utils/WorkInfo.js';
+import {getWorkData} from './utils/WorkInfo.js';
 import {
   respondToState, listenForWorkerUpdate, registerServiceWorker, setServiceWorkerDefaults
 } from './utils/ServiceWorker.js';
@@ -203,10 +203,7 @@ class TextBrowser {
 
   async init () {
     this._stylesheetElements = await loadStylesheets(this.stylesheets);
-    return this.displayLanguages();
-  }
 
-  async displayLanguages () {
     // We use getJSON instead of JsonRefs as we do not need to resolve the locales here
     try {
       const [langData, siteData] = await getJSON([this.languages, this.site]);
@@ -587,6 +584,5 @@ class TextBrowser {
 // Todo: Definable as public fields?
 TextBrowser.prototype.workDisplay = workDisplay;
 TextBrowser.prototype.resultsDisplayClient = resultsDisplayClient;
-TextBrowser.prototype.getWorkFiles = getWorkFiles;
 
 export default TextBrowser;

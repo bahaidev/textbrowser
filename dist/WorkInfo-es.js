@@ -2841,7 +2841,7 @@ class PluginsForWork {
   }
 }
 
-const getWorkFiles = async function getWorkFiles (files = this.files) {
+const getWorkFiles = async function getWorkFiles (files) {
   const filesObj = await getJSON(files);
   const dataFiles = [];
   filesObj.groups.forEach((fileGroup) => {

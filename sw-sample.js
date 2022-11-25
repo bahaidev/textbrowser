@@ -1,4 +1,4 @@
-/* eslint-env browser, serviceworker -- Service worker */
+/* eslint-env serviceworker -- Service worker */
 
 import {getJSON} from './node_modules/simple-get-json/dist/index-es.js';
 import activateCallback from './node_modules/textbrowser/dist/activateCallback-es.js';
