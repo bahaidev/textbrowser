@@ -10,7 +10,6 @@ import {
 } from './utils/Metadata.js';
 import {Languages} from './utils/Languages.js';
 import {getWorkData} from './utils/WorkInfo.js';
-// Keep this as the last import for Rollup
 
 const {getLangDir} = rtlDetect;
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;
