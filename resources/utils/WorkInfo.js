@@ -3,6 +3,11 @@ import {i18n} from 'intl-dom';
 import {getMetaProp, getMetadata, Metadata} from './Metadata.js';
 import {PluginsForWork, escapePlugin} from './Plugin.js';
 
+/**
+ * Imported by the `dist/sw-helper.js`
+ * @param {string} files The files.json file path
+ * @returns {PlainObject}
+ */
 export const getWorkFiles = async function getWorkFiles (files) {
   const filesObj = await getJSON(files);
   const dataFiles = [];

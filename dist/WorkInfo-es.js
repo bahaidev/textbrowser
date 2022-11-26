@@ -2841,6 +2841,11 @@ class PluginsForWork {
   }
 }
 
+/**
+ * Imported by the `dist/sw-helper.js`
+ * @param {string} files The files.json file path
+ * @returns {PlainObject}
+ */
 const getWorkFiles = async function getWorkFiles (files) {
   const filesObj = await getJSON(files);
   const dataFiles = [];

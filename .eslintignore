@@ -1,3 +1,4 @@
 node_modules
-dist
 resources/vendor
+dist/**
+!dist/sw-helper.js

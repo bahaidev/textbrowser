@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.48.0
+
+- feat: service worker helper
+
 ## 0.47.0
 
 BREAKING CHANGES; see betas for changes
