@@ -13642,9 +13642,7 @@ const getWorkData = async function ({
  */
 const setServiceWorkerDefaults = (target, source) => {
   target.userJSON = source.userJSON || 'resources/user.json';
-  target.languages = source.languages || new URL('../appdata/languages.json',
-  // Todo: Substitute with `import.meta.url`
-  new URL('node_modules/textbrowser/resources/index.js', location)).href;
+  target.languages = source.languages || new URL(new URL('assets/languages-fcf1c836.json', import.meta.url).href, import.meta.url).href;
   target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?pathToUserJSON=${encodeURIComponent(target.userJSON)}&stylesheets=${encodeURIComponent(JSON.stringify(target.stylesheets || []))}`;
   target.files = source.files || 'files.json';
   target.namespace = source.namespace || 'textbrowser';
@@ -17085,15 +17083,11 @@ async function requestPermissions(langs, l) {
 }
 class TextBrowser {
   constructor(options) {
-    // Todo: Replace the `languages` default with `import.meta.url`
-    //  (`new URL('../appdata/languages.json', import.meta.url).href`?)
-    //  https://github.com/tc39/proposal-import-meta
-    const moduleURL = new URL('node_modules/textbrowser/resources/index.js', location);
     this.site = options.site || 'site.json';
     const stylesheets = options.stylesheets || ['@builtin'];
     const builtinIndex = stylesheets.indexOf('@builtin');
     if (builtinIndex !== -1) {
-      stylesheets.splice(builtinIndex, 1, new URL('index.css', moduleURL).href);
+      stylesheets.splice(builtinIndex, 1, new URL(new URL('assets/index-c987c995.css', import.meta.url).href, import.meta.url).href);
     }
     this.stylesheets = stylesheets;
     setServiceWorkerDefaults(this, options);

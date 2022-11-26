@@ -8,6 +8,7 @@ import json from '@rollup/plugin-json';
 import replace from 'rollup-plugin-re';
 import terser from '@rollup/plugin-terser';
 import postProcess from '@stadtlandnetz/rollup-plugin-postprocess';
+import {importMetaAssets} from '@web/rollup-plugin-import-meta-assets';
 
 /*
 Because JsonRefs does not have an ESM version, and adding appears to be
@@ -82,6 +83,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
       babel({
         babelHelpers: 'bundled'
       }),
+      importMetaAssets(),
       // nodeGlobals(),
       nodeResolve({
         // exportConditions: ['module'],

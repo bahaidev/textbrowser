@@ -165,10 +165,6 @@ async function requestPermissions (langs, l) {
 
 class TextBrowser {
   constructor (options) {
-    // Todo: Replace the `languages` default with `import.meta.url`
-    //  (`new URL('../appdata/languages.json', import.meta.url).href`?)
-    //  https://github.com/tc39/proposal-import-meta
-    const moduleURL = new URL('node_modules/textbrowser/resources/index.js', location);
     this.site = options.site || 'site.json';
     const stylesheets = options.stylesheets || ['@builtin'];
     const builtinIndex = stylesheets.indexOf('@builtin');
@@ -176,7 +172,7 @@ class TextBrowser {
       stylesheets.splice(
         builtinIndex,
         1,
-        new URL('index.css', moduleURL).href
+        new URL('index.css', import.meta.url).href
       );
     }
     this.stylesheets = stylesheets;

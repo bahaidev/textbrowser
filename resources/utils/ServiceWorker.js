@@ -17,9 +17,8 @@ import {dialogs} from './dialogs.js';
 export const setServiceWorkerDefaults = (target, source) => {
   target.userJSON = source.userJSON || 'resources/user.json';
   target.languages = source.languages || new URL(
-    '../appdata/languages.json',
-    // Todo: Substitute with `import.meta.url`
-    new URL('node_modules/textbrowser/resources/index.js', location)
+    '../../appdata/languages.json',
+    import.meta.url
   ).href;
   target.serviceWorkerPath = source.serviceWorkerPath ||
         `sw.js?pathToUserJSON=${
