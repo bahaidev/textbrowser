@@ -64,12 +64,7 @@ function swHelper (self) {
     return {
       namespace: 'textbrowser',
       basePath: '',
-      languages: new URL(
-        '../appdata/languages.json',
-        // Todo: Substitute with `import.meta.url` once implemented in
-        //   service workers
-        new URL('node_modules/textbrowser/resources/index.js', location)
-      ).href,
+      languages: new URL('../appdata/languages.json', import.meta.url).href,
       files: 'files.json',
       userStaticFiles: defaultUserStaticFiles,
       // Opportunity to override
