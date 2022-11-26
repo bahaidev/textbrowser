@@ -6,7 +6,7 @@
 
 const {ceil} = Math;
 const arrayChunk = (arr, size) => {
-  return [...Array.from({length: ceil(arr.length / size)})].map((_, i) => {
+  return Array.from({length: ceil(arr.length / size)}, (_, i) => {
     const offset = i * size;
     return arr.slice(offset, offset + size);
   });
