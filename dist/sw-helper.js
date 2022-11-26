@@ -202,11 +202,11 @@ function swHelper (self) {
       ...userDataFiles,
       ...stylesheets
     ];
-      // .map((url) => url === 'index.html' ? new Request(url, {cache: 'reload'}) : url)
+    // .map((url) => url === 'index.html' ? new Request(url, {cache: 'reload'}) : url)
     try {
       const cachePromises = urlsToPrefetch.map(async (urlToPrefetch) => {
-        // This constructs a new URL object using the service worker's script location as the base
-        // for relative URLs.
+        // This constructs a new URL object using the service worker's script
+        //   location as the base for relative URLs.
         const url = new URL(urlToPrefetch, location.href);
         url.search += (url.search ? '&' : '?') + 'cache-bust=' + now;
         const request = new Request(url, {mode: 'no-cors'});
