@@ -7,7 +7,8 @@ import {dialogs} from './utils/dialogs.js';
 import Templates from './templates/index.js';
 
 export default async function workSelect ({
-  files, lang, fallbackLanguages, $p, followParams
+  files, lang, namespace,
+  fallbackLanguages, $p, l, followParams, prepareForServiceWorker
   /* , l, defineFormatter */
 }) {
   // We use getJSON instead of JsonRefs as we do not necessarily need to
@@ -62,13 +63,41 @@ export default async function workSelect ({
     }
     */
 
+    // See if we still want an iterator (we need two copies, so can't
+    //  exhaust one)
     const metadataObjsIter = metadataObjs[Symbol.iterator]();
+    const metadataObjValues = [...metadataObjsIter];
+    const metaprops = [];
+    metadataObjValues.forEach((metadataObjValue) => {
+      metaprops.push(getMetaProp(lang, metadataObjValue, 'alias'));
+    });
+    let i = 0;
     const getNextAlias = () => {
-      const metadataObj = metadataObjsIter.next().value;
-      return getMetaProp(lang, metadataObj, 'alias');
+      const metaprop = metaprops[i++];
+      if (i === metaprops.length) {
+        i = 0;
+      }
+      return metaprop;
     };
-    Templates.workSelect({
-      groups: works.groups, workI18n, getNextAlias, $p, followParams
+
+    const {groups} = works;
+
+    Templates.workSelect.main({
+      groups, workI18n, getNextAlias, $p, followParams,
+      async worksToOffline () {
+        dialogs.makeSubmitDialog({
+          children: Templates.workSelect.children({
+            groups, l, workI18n, getNextAlias
+          }),
+          async submit () {
+            const works = Templates.workSelect.getCheckedWorks();
+            // Already bound to `TextBrowser`
+            await prepareForServiceWorker({
+              works
+            });
+          }
+        });
+      }
     });
   } catch (err) {
     console.log('Error', err);

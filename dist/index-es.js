@@ -3256,7 +3256,7 @@ const NULLABLES = ['autocomplete', 'dir',
 'max', 'min', 'minLength', 'maxLength', 'title' // HTMLElement
 ];
 
-const $$1 = sel => doc.querySelector(sel);
+const $ = sel => doc.querySelector(sel);
 const $$ = sel => [...doc.querySelectorAll(sel)];
 /**
 * Retrieve the (lower-cased) HTML name of a node.
@@ -3679,7 +3679,7 @@ const jml = function jml(...args) {
               if (Array.isArray(template)) {
                 template = _getType(template[0]) === 'object' ? jml('template', ...template, doc.body) : jml('template', template, doc.body);
               } else if (typeof template === 'string') {
-                template = $$1(template);
+                template = $(template);
               }
               jml(template.content.cloneNode(true), shadowRoot);
             } else {
@@ -4694,7 +4694,7 @@ class JamilihMap extends Map {
    * @returns {any}
    */
   get(elem) {
-    elem = typeof elem === 'string' ? $$1(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     return super.get.call(this, elem);
   }
   /**
@@ -4704,7 +4704,7 @@ class JamilihMap extends Map {
    */
 
   set(elem, value) {
-    elem = typeof elem === 'string' ? $$1(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     return super.set.call(this, elem, value);
   }
   /**
@@ -4715,7 +4715,7 @@ class JamilihMap extends Map {
    */
 
   invoke(elem, methodName, ...args) {
-    elem = typeof elem === 'string' ? $$1(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     return this.get(elem)[methodName](elem, ...args);
   }
 }
@@ -4729,7 +4729,7 @@ class JamilihWeakMap extends WeakMap {
    * @returns {any}
    */
   get(elem) {
-    elem = typeof elem === 'string' ? $$1(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     return super.get.call(this, elem);
   }
   /**
@@ -4739,7 +4739,7 @@ class JamilihWeakMap extends WeakMap {
    */
 
   set(elem, value) {
-    elem = typeof elem === 'string' ? $$1(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     return super.set.call(this, elem, value);
   }
   /**
@@ -4750,7 +4750,7 @@ class JamilihWeakMap extends WeakMap {
    */
 
   invoke(elem, methodName, ...args) {
-    elem = typeof elem === 'string' ? $$1(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     return this.get(elem)[methodName](elem, ...args);
   }
 }
@@ -4795,7 +4795,7 @@ jml.strong = function (obj, ...args) {
  */
 
 jml.symbol = jml.sym = jml.for = function (elem, sym) {
-  elem = typeof elem === 'string' ? $$1(elem) : elem;
+  elem = typeof elem === 'string' ? $(elem) : elem;
   return elem[typeof sym === 'symbol' ? sym : Symbol.for(sym)];
 };
 /**
@@ -4808,7 +4808,7 @@ jml.symbol = jml.sym = jml.for = function (elem, sym) {
  */
 
 jml.command = function (elem, symOrMap, methodName, ...args) {
-  elem = typeof elem === 'string' ? $$1(elem) : elem;
+  elem = typeof elem === 'string' ? $(elem) : elem;
   let func;
   if (['symbol', 'string'].includes(typeof symOrMap)) {
     func = jml.sym(elem, symOrMap);
@@ -4852,9 +4852,8 @@ let body = doc && doc.body; // eslint-disable-line import/no-mutable-exports
 
 const nbsp = '\u00A0'; // Very commonly needed in templates
 
-const $ = sel => document.querySelector(sel);
 const $e = (el, descendentsSel) => {
-  el = typeof el === 'string' ? $(el) : el;
+  // el = typeof el === 'string' ? $(el) : el;
   return el.querySelector(descendentsSel);
 };
 
@@ -4901,7 +4900,7 @@ class Dialog {
         atts.$on.close = close;
       }
     }
-    const dialog = /** @type {HTMLDialogElement} */jml('dialog', atts, children, $$1('#main'));
+    const dialog = /** @type {HTMLDialogElement} */jml('dialog', atts, children, $('#main'));
     dialog.showModal();
     if (remove) {
       dialog.addEventListener('close', () => {
@@ -4983,7 +4982,7 @@ class Dialog {
             resolve();
           }
         }
-      }, [this.localeStrings.ok]]]]] : [])], $$1('#main'));
+      }, [this.localeStrings.ok]]]]] : [])], $('#main'));
       dialog.showModal();
     });
   }
@@ -5045,7 +5044,7 @@ class Dialog {
             reject(new Error('cancelled'));
           }
         }
-      }, [this.localeStrings.cancel]]]]], $$1('#main'));
+      }, [this.localeStrings.cancel]]]]], $('#main'));
       dialog.showModal();
     });
   }
@@ -13091,16 +13090,21 @@ const getMetadata = async (file, property, basePath) => {
   url.search = ''; // Clear out query string, e.g., `?fbclid` from Facebook
   url.pathname = file;
   url.hash = property ? '#/' + property : '';
-  return (await JsonRefs.resolveRefsAt(url.toString(), {
-    loaderOptions: {
-      processContent(res, callback) {
-        callback(undefined, JSON.parse(res.text ||
-        // `.metadata` not a recognized extension, so
-        //    convert to string for JSON in Node
-        res.body.toString()));
+  try {
+    return (await JsonRefs.resolveRefsAt(url.toString(), {
+      loaderOptions: {
+        processContent(res, callback) {
+          callback(undefined, JSON.parse(res.text ||
+          // `.metadata` not a recognized extension, so
+          //    convert to string for JSON in Node
+          res.body.toString()));
+        }
       }
-    }
-  })).resolved;
+    })).resolved;
+  } catch (err) {
+    dialogs.alert(err);
+    throw err;
+  }
 };
 const getFieldNameAndValueAliases = function ({
   field,
@@ -13643,7 +13647,10 @@ const getWorkData = async function ({
 const setServiceWorkerDefaults = (target, source) => {
   target.userJSON = source.userJSON || 'resources/user.json';
   target.languages = source.languages || new URL(new URL('assets/languages-fcf1c836.json', import.meta.url).href, import.meta.url).href;
-  target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?pathToUserJSON=${encodeURIComponent(target.userJSON)}&stylesheets=${encodeURIComponent(JSON.stringify(target.stylesheets || []))}`;
+  target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?${new URLSearchParams({
+    pathToUserJSON: target.userJSON,
+    stylesheets: JSON.stringify(target.stylesheets || [])
+  })}`;
   target.files = source.files || 'files.json';
   target.namespace = source.namespace || 'textbrowser';
   return target;
@@ -13722,6 +13729,7 @@ const respondToState = async ({
   r,
   logger
 }) => {
+  console.log('responding to state...');
   // We use this promise for rejecting (inside a listener)
   //    to a common catch and to prevent continuation by
   //    failing to return
@@ -13807,6 +13815,7 @@ const respondToState = async ({
       }
     });
     const worker = r.installing || r.waiting || r.active;
+    console.log('has worker?', worker);
     // Failed or new worker in use
     if (worker && worker.state === 'redundant') {
       // Todo: We could call `register()` below instead (on a timeout)?
@@ -13900,7 +13909,7 @@ Please refresh the page if you wish to reattempt.
   });
 
   // Todo: Catch errors?
-  return respondToState({
+  return await respondToState({
     r,
     logger
   });
@@ -13920,25 +13929,15 @@ var languageSelect = {
   }) {
     jml('form', {
       class: 'focus',
-      id: 'languageSelectionContainer',
-      $on: {
-        submit(e) {
-          e.preventDefault();
-        }
-      }
+      id: 'languageSelectionContainer'
     }, [['select', {
       name: 'lang',
       size: langs.length,
       $on: {
-        click({
-          target: {
-            parentNode: {
-              selectedOptions
-            }
-          }
-        }) {
+        click() {
+          const option = this.options[this.selectedIndex];
           followParams('#languageSelectionContainer', () => {
-            $p.set('lang', selectedOptions[0].value, true);
+            $p.set('lang', option.value, true);
           });
         }
       }
@@ -13946,7 +13945,9 @@ var languageSelect = {
       code
     }) => ['option', {
       value: code
-    }, [languages.getLanguageFromCode(code)]])]], $$1('#main'));
+    }, [languages.getLanguageFromCode(code)]])]], $('#main'));
+
+    // Show the most recently chosen language if user hits back button
     if (history.state && typeof history.state === 'object') {
       deserialize(document.querySelector('#languageSelectionContainer'), history.state);
     }
@@ -13964,12 +13965,13 @@ var languageSelect = {
 };
 
 /* eslint-env browser */
-var workSelect$1 = (({
+const main = ({
   groups,
   workI18n,
   getNextAlias,
   $p,
-  followParams
+  followParams,
+  worksToOffline
 }) => {
   const form = jml('form', {
     id: 'workSelect',
@@ -13979,7 +13981,16 @@ var workSelect$1 = (({
         e.preventDefault();
       }
     }
-  }, groups.map((group, i) => {
+  }, [['button', {
+    style: 'float: right;',
+    $on: {
+      click() {
+        worksToOffline();
+      }
+    }
+  }, ['Choose works to take offline']], ['br', {
+    style: 'clear: right;'
+  }], ...groups.map((group, i) => {
     return ['div', [i > 0 ? ['br', 'br', 'br'] : '', ['div', [workI18n(group.directions.localeKey)]], ['br'], ['select', {
       class: 'file',
       name: 'work' + i,
@@ -14013,11 +14024,71 @@ var workSelect$1 = (({
     // Todo: Add in Go button (with 'submitgo' localization string) to
     //    avoid need for pull-down if using first selection?
     ]];
-  }), $$1('#main'));
+  })], $('#main'));
   if (history.state && typeof history.state === 'object') {
     deserialize(document.querySelector('#workSelect'), history.state);
   }
   return form;
+};
+const children = ({
+  groups,
+  l,
+  workI18n,
+  getNextAlias
+}) => {
+  return [['form', {
+    id: 'workSelect',
+    class: 'focus',
+    $on: {
+      submit(e) {
+        e.preventDefault();
+      }
+    }
+  }, [['h2', [l('works_to_offline')]], ['i', [l('works_to_offline_explanation')]], ['div', {
+    style: 'height: 300px; overflow: auto;'
+  }, groups.flatMap((group, i) => {
+    return [i > 0 ? ['br', 'br', 'br'] : '', ['fieldset', {
+      style: 'text-align: left;'
+    }, [['legend', [workI18n(group.name.localeKey)]], ...group.files.map(({
+      name: fileName
+    }) => ['label', [['input', {
+      type: 'checkbox',
+      value: workI18n(['workNames', group.id, fileName])
+    }], getNextAlias(), ['br']]]).sort((a, b) => {
+      // Sort by localized alias
+      return a[1][1] < b[1][1] ? -1 : 1;
+    })]]];
+  })], ['br', 'br'], ['button', {
+    $on: {
+      click() {
+        $$('#workSelect input[type=checkbox]').forEach(checkbox => {
+          checkbox.checked = true;
+        });
+      }
+    }
+  }, [l('check_all')]], ['button', {
+    $on: {
+      click() {
+        $$('#workSelect input[type=checkbox]').forEach(checkbox => {
+          checkbox.checked = false;
+        });
+      }
+    }
+  }, [l('uncheck_all')]]]]];
+};
+const getCheckedWorks = () => {
+  return $$('#workSelect input[type=checkbox]:checked').map(({
+    value
+  }) => {
+    return value;
+  });
+};
+
+var workSelect$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  main: main,
+  children: children,
+  getCheckedWorks: getCheckedWorks
 });
 
 const colors = ['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'];
@@ -14026,23 +14097,20 @@ const fonts = ['Helvetica, sans-serif', 'Verdana, sans-serif', 'Gill Sans, sans-
 const nbsp2 = nbsp.repeat(2);
 const nbsp3 = nbsp.repeat(3);
 const getDataForSerializingParamsAsURL = () => ({
-  form: $$1('form#browse'),
+  form: $('form#browse'),
   // Todo: We don't need any default once random
   //    functionality is completed
-  random: $$1('#rand') || {},
+  random: $('#rand') || {},
   checkboxes: $$('input[type=checkbox]')
 });
 var workDisplay$1 = {
-  bdo: ({
-    fallbackDirection,
-    message
-  }) =>
+  /*
+  bdo: ({fallbackDirection, message}) =>
   // Displaying as div with inline display instead of span since
   //    Firefox puts punctuation at left otherwise (bdo dir
   //    seemed to have issues in Firefox)
-  ['div', {
-    style: 'display: inline; direction: ' + fallbackDirection
-  }, [message]],
+    ['div', {style: 'display: inline; direction: ' + fallbackDirection}, [message]],
+  */
   columnsTable: ({
     lDirectional,
     fieldInfo,
@@ -14146,8 +14214,8 @@ var workDisplay$1 = {
           const idx = i + 1;
           // The following is redundant with 'field' but may need to
           //     retrieve later out of order?
-          const fld = $$1('#field' + idx).selectedOptions[0].dataset.name;
-          $$1('#checked' + idx).checked = fieldMatchesLocale(fld);
+          const fld = $('#field' + idx).selectedOptions[0].dataset.name;
+          $('#checked' + idx).checked = fieldMatchesLocale(fld);
         });
       }
     }
@@ -14381,56 +14449,62 @@ var workDisplay$1 = {
     }
     return lOption(['param_values', 'outputmode', mode], atts);
   })]])]],
-  addRandomFormFields({
-    lParam,
-    lDirectional,
-    l,
-    lElement,
-    $p,
-    serializeParamsAsURL,
-    content
+  /*
+  addRandomFormFields ({
+    lParam, lDirectional, l, lElement, $p, serializeParamsAsURL, content
   }) {
-    const addRowContent = rowContent => {
-      if (!rowContent || !rowContent.length) {
-        return;
-      }
+    const addRowContent = (rowContent) => {
+      if (!rowContent || !rowContent.length) { return; }
       content.push(['tr', rowContent]);
     };
-    [[['td', {
-      colspan: 12,
-      align: 'center'
-    }, [['br'], lDirectional('or'), ['br'], ['br']]]], [['td', {
-      colspan: 12,
-      align: 'center'
-    }, [
-    // Todo: Could allow random with fixed starting and/or ending range
-    ['label', [lDirectional('rnd'), nbsp3, ['input', {
-      id: 'rand',
-      name: lParam('rand'),
-      type: 'checkbox',
-      value: l('yes'),
-      checked: $p.get('rand') === l('yes')
-    }]]], nbsp3, ['label', [lDirectional('verses-context'), nbsp, ['input', {
-      name: lParam('context'),
-      type: 'number',
-      min: 1,
-      size: 4,
-      value: $p.get('context')
-    }]]], nbsp3, lElement('view-random-URL', 'input', 'value', {
-      type: 'button',
-      $on: {
-        click() {
-          const url = serializeParamsAsURL(_objectSpread2$1(_objectSpread2$1({}, getDataForSerializingParamsAsURL()), {}, {
-            type: 'randomResult'
-          }));
-          $$1('#randomURL').value = url;
-        }
-      }
-    }), ['input', {
-      id: 'randomURL',
-      type: 'text'
-    }]]]]].forEach(addRowContent);
+    [
+      [
+        ['td', {colspan: 12, align: 'center'}, [['br'], lDirectional('or'), ['br'], ['br']]]
+      ],
+      [
+        ['td', {colspan: 12, align: 'center'}, [
+          // Todo: Could allow random with fixed starting and/or ending range
+          ['label', [
+            lDirectional('rnd'), nbsp3,
+            ['input', {
+              id: 'rand',
+              name: lParam('rand'),
+              type: 'checkbox',
+              value: l('yes'),
+              checked: $p.get('rand') === l('yes')
+            }]
+          ]],
+          nbsp3,
+          ['label', [
+            lDirectional('verses-context'), nbsp,
+            ['input', {
+              name: lParam('context'),
+              type: 'number',
+              min: 1,
+              size: 4,
+              value: $p.get('context')
+            }]
+          ]],
+          nbsp3,
+          lElement('view-random-URL', 'input', 'value', {
+            type: 'button',
+            $on: {
+              click () {
+                const url = serializeParamsAsURL({
+                  ...getDataForSerializingParamsAsURL(),
+                  type: 'randomResult'
+                });
+                $('#randomURL').value = url;
+              }
+            }
+          }),
+          ['input', {id: 'randomURL', type: 'text'}]
+        ]]
+      ]
+    ].forEach(addRowContent);
   },
+  */
+
   getPreferences: ({
     languageParam,
     workI18n,
@@ -14477,7 +14551,7 @@ var workDisplay$1 = {
           checked
         }
       }) {
-        $$1('#advancedformatting').style.display = checked ? 'none' : 'block';
+        $('#advancedformatting').style.display = checked ? 'none' : 'block';
         localStorage.setItem(namespace + '-hideFormattingSection', checked);
       }
     }
@@ -14488,13 +14562,9 @@ var workDisplay$1 = {
     multiple: 'multiple',
     size: langs.length,
     $on: {
-      change({
-        target: {
-          selectedOptions
-        }
-      }) {
+      change() {
         // Todo: EU disclaimer re: storage?
-        localStorage.setItem(namespace + '-langCodes', JSON.stringify([...selectedOptions].map(opt => opt.value)));
+        localStorage.setItem(namespace + '-langCodes', JSON.stringify([...this.selectedOptions].map(opt => opt.value)));
       }
     }
   }, langs.map(lan => {
@@ -14509,7 +14579,7 @@ var workDisplay$1 = {
     }
     return ['option', atts, [languageI18n(lan.code)]];
   })]]], preferencesPlugin ? preferencesPlugin({
-    $: $$1,
+    $,
     l,
     jml,
     paramsSetter,
@@ -14517,7 +14587,8 @@ var workDisplay$1 = {
     work,
     replaceHash,
     getFieldAliasOrNames
-  }) : '']],
+  })
+  /* istanbul ignore next -- Using just one app */ : '']],
   addBrowseFields({
     browseFields,
     fieldInfo,
@@ -14637,7 +14708,9 @@ var workDisplay$1 = {
   },
   main({
     workI18n,
+    work,
     languageParam,
+    prepareForServiceWorker,
     l,
     namespace,
     heading,
@@ -14662,9 +14735,9 @@ var workDisplay$1 = {
     schemaItems,
     content,
     groups,
-    preferencesPlugin
+    preferencesPlugin,
+    isOfflined
   }) {
-    const work = $p.get('work');
     const serializeParamsAsURLWithData = ({
       type
     }) => {
@@ -14688,7 +14761,7 @@ var workDisplay$1 = {
     }, [['button', {
       $on: {
         click() {
-          const prefs = $$1('#preferences');
+          const prefs = $('#preferences');
           prefs.hidden = !prefs.hidden;
         }
       }
@@ -14707,7 +14780,23 @@ var workDisplay$1 = {
       groups,
       hideFormattingSection,
       preferencesPlugin
-    })]], ['h2', [heading]], ['br'], ['form', {
+    })]], ['h2', [heading]], ['div', {
+      style: 'float: right;'
+    }, [['label', [['input', {
+      id: 'offline-available',
+      type: 'checkbox',
+      checked: isOfflined,
+      $on: {
+        async click(e) {
+          // Already bound to `TextBrowser`
+          await prepareForServiceWorker(e.target.checked ? {
+            works: [work]
+          } : {
+            removals: [work]
+          });
+        }
+      }
+    }], l('offline_available')]]]], ['form', {
       id: 'browse',
       $custom: {
         $submit() {
@@ -14769,7 +14858,7 @@ var workDisplay$1 = {
           const url = serializeParamsAsURLWithData({
             type: 'saveSettings'
           });
-          $$1('#settings-URL').value = url;
+          $('#settings-URL').value = url;
         }
       }
     }), ['input', {
@@ -14830,7 +14919,7 @@ var workDisplay$1 = {
       align: 'center'
     }, [lElement('submitgo', 'input', 'value', {
       type: 'submit'
-    })]]]]], $$1('#main'));
+    })]]]]], $('#main'));
   }
 };
 
@@ -15006,6 +15095,7 @@ body {
     canonicalBrowseFieldSetName,
     getCellValue,
     checkedAndInterlinearFieldInfo,
+    /* istanbul ignore next -- Just testing one config */
     interlinearSeparator = '<br /><br />'
   }) {
     const tableOptions = {
@@ -15070,7 +15160,7 @@ body {
       case 'json-array':
         // tableOptions[outputmode] = tableOptions.table;
         // break;
-        throw new Error('JSON object support is currently not available');
+        throw new Error('JSON support is currently not available');
     }
     const tableElems = tableOptions[Object.prototype.hasOwnProperty.call(tableOptions, outputmode) ? outputmode : 'table' // Default
     ];
@@ -15158,14 +15248,14 @@ body {
           if (isEmpty) {
             return '';
           }
-          return showInterlins ? Templates.resultsDisplayServerOrClient.interlinearSegment({
+          return Templates.resultsDisplayServerOrClient.interlinearSegment({
             lang: fieldLangs[idx],
             dir: fieldDirs[idx],
             html: (showInterlinTitles ? Templates.resultsDisplayServerOrClient.interlinearTitle({
               l,
               val: localizedFieldNames[idx]
             }) : '') + tdVal
-          }) : tdVal;
+          });
         }).filter(cell => cell !== '');
         return addAtts(tdElem, {
           // We could remove these (and add to <col>) for optimizing delivery,
@@ -15236,27 +15326,32 @@ var resultsDisplayClient$1 = {
   anchorRowCol({
     anchorRowCol
   }) {
-    return $$1('#' + anchorRowCol);
+    return $('#' + anchorRowCol);
   },
   anchors({
     escapedRow,
     escapedCol
   }) {
     const sel = 'tr[data-row="' + escapedRow + '"]' + (escapedCol ? '> td[data-col="' + escapedCol + '"]' : '');
-    return $$1(sel);
+    return $(sel);
   },
   main(...args) {
     let html;
     try {
       html = Templates.resultsDisplayServerOrClient.main(...args);
     } catch (err) {
+      /* istanbul ignore else */
       if (err.message === 'JSON support is currently not available') {
         dialogs.alert(err.message);
-      } else {
-        console.error(err);
+        return;
       }
+
+      /* istanbul ignore next */
+      console.error(err);
+      /* istanbul ignore next */
+      return;
     }
-    jml(...html, $$1('#main'));
+    jml(...html, $('#main'));
   }
 };
 
@@ -15280,23 +15375,23 @@ const Templates = {
   },
   permissions: {
     versionChange() {
-      $$1('#versionChange').showModal();
+      $('#versionChange').showModal();
     },
     addLogEntry({
       text
     }) {
-      const installationDialog = $$1('#installationLogContainer');
+      const installationDialog = $('#installationLogContainer');
       try {
         installationDialog.showModal();
-        const container = $$1('#dialogContainer');
+        const container = $('#dialogContainer');
         container.hidden = false;
       } catch (err) {
         // May already be open
       }
-      $$1('#installationLog').append(text + '\n');
+      $('#installationLog').append(text + '\n');
     },
     exitDialogs() {
-      const container = $$1('#dialogContainer');
+      const container = $('#dialogContainer');
       if (container) {
         container.hidden = true;
       }
@@ -15306,18 +15401,18 @@ const Templates = {
       escapedErrorMessage
     }) {
       if (type) {
-        jml('span', [type, ' ', escapedErrorMessage], $$1('#dbError'));
+        jml('span', [type, ' ', escapedErrorMessage], $('#dbError'));
       }
-      $$1('#dbError').showModal();
+      $('#dbError').showModal();
     },
     errorRegistering(escapedErrorMessage) {
       if (escapedErrorMessage) {
-        jml('span', [escapedErrorMessage], $$1('#errorRegistering'));
+        jml('span', [escapedErrorMessage], $('#errorRegistering'));
       }
-      $$1('#errorRegistering').showModal();
+      $('#errorRegistering').showModal();
     },
     browserNotGrantingPersistence() {
-      $$1('#browserNotGrantingPersistence').showModal();
+      $('#browserNotGrantingPersistence').showModal();
     },
     /**
      * @param {PlainObject} cfg
@@ -15393,7 +15488,7 @@ const Templates = {
       jml('div', {
         id: 'dialogContainer',
         style: 'height: 100%'
-      }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], $$1('#main'));
+      }, [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice], $('#main'));
       return [installationDialog, requestPermissionsDialog, browserNotGrantingPersistenceAlert, errorRegisteringNotice, versionChangeNotice, dbErrorNotice];
     }
   }
@@ -15465,9 +15560,12 @@ class IntlURLSearchParams {
 async function workSelect({
   files,
   lang,
+  namespace,
   fallbackLanguages,
   $p,
-  followParams
+  l,
+  followParams,
+  prepareForServiceWorker
   /* , l, defineFormatter */
 }) {
   // We use getJSON instead of JsonRefs as we do not necessarily need to
@@ -15517,17 +15615,48 @@ async function workSelect({
     }
     */
 
+    // See if we still want an iterator (we need two copies, so can't
+    //  exhaust one)
     const metadataObjsIter = metadataObjs[Symbol.iterator]();
+    const metadataObjValues = [...metadataObjsIter];
+    const metaprops = [];
+    metadataObjValues.forEach(metadataObjValue => {
+      metaprops.push(getMetaProp(lang, metadataObjValue, 'alias'));
+    });
+    let i = 0;
     const getNextAlias = () => {
-      const metadataObj = metadataObjsIter.next().value;
-      return getMetaProp(lang, metadataObj, 'alias');
+      const metaprop = metaprops[i++];
+      if (i === metaprops.length) {
+        i = 0;
+      }
+      return metaprop;
     };
-    Templates.workSelect({
-      groups: works.groups,
+    const {
+      groups
+    } = works;
+    Templates.workSelect.main({
+      groups,
       workI18n,
       getNextAlias,
       $p,
-      followParams
+      followParams,
+      async worksToOffline() {
+        dialogs.makeSubmitDialog({
+          children: Templates.workSelect.children({
+            groups,
+            l,
+            workI18n,
+            getNextAlias
+          }),
+          async submit() {
+            const works = Templates.workSelect.getCheckedWorks();
+            // Already bound to `TextBrowser`
+            await prepareForServiceWorker({
+              works
+            });
+          }
+        });
+      }
     });
   } catch (err) {
     console.log('Error', err);
@@ -15672,17 +15801,20 @@ async function workDisplay({
   preferredLocale,
   languages,
   fallbackLanguages,
-  $p
+  $p,
+  prepareForServiceWorker
 }) {
   const {
     preferencesPlugin
   } = this;
   const langs = this.langData.languages;
+  const work = $p.get('work');
   const fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
   const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
   const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
   const prefFormatting = localStorage.getItem(this.namespace + '-hideFormattingSection');
-  const hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : prefFormatting === 'true' || prefFormatting !== 'false' && this.hideFormattingSection;
+  const hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : prefFormatting === 'true' || /* istabul ignore next -- Not configuring to true */
+  prefFormatting !== 'false' && this.hideFormattingSection;
   async function _displayWork({
     workI18n,
     metadataObj,
@@ -15810,10 +15942,31 @@ async function workDisplay({
     const languageI18n = code => {
       return displayNames.of(code);
     };
+    const dbName = this.namespace + '-textbrowser-cache-data';
+    const req = indexedDB.open(dbName);
+    const isOfflined = await new Promise((resolve, reject) => {
+      req.onsuccess = ({
+        target: {
+          result: db
+        }
+      }) => {
+        const storeName = 'files-to-cache-' + work;
+        try {
+          db.transaction(storeName);
+          resolve(true);
+        } catch (err) {
+          resolve(false);
+        } finally {
+          db.close();
+        }
+      };
+    });
     Templates.workDisplay.main({
       languageParam,
       lang,
       workI18n,
+      work,
+      prepareForServiceWorker,
       l,
       namespace: this.namespace,
       groups,
@@ -15838,7 +15991,8 @@ async function workDisplay({
       preferredLocale,
       schemaItems,
       content,
-      preferencesPlugin
+      preferencesPlugin,
+      isOfflined
     });
   }
   try {
@@ -15847,7 +16001,7 @@ async function workDisplay({
         fallbackLanguages,
         preferredLocale,
         languages,
-        work: $p.get('work')
+        work
       }),
       {
         workI18n,
@@ -15868,180 +16022,9 @@ async function workDisplay({
   }
 }
 
-/**
- * Copyright 2015, Yahoo! Inc.
- * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
-
-var self$1;
-var RtlDetectLib = self$1 = {
-  // eslint-disable-line consistent-this
-  // Private vars - star
-  _regexEscape: /([\.\*\+\^\$\[\]\\\(\)\|\{\}\,\-\:\?])/g,
-  // eslint-disable-line no-useless-escape
-  _regexParseLocale: /^([a-zA-Z]*)([_\-a-zA-Z]*)$/,
-  // Private vars - end
-
-  // Private functions - star
-  _escapeRegExpPattern: function (str) {
-    if (typeof str !== 'string') {
-      return str;
-    }
-    return str.replace(self$1._regexEscape, '\\$1');
-  },
-  _toLowerCase: function (str, reserveReturnValue) {
-    if (typeof str !== 'string') {
-      return reserveReturnValue && str;
-    }
-    return str.toLowerCase();
-  },
-  _toUpperCase: function (str, reserveReturnValue) {
-    if (typeof str !== 'string') {
-      return reserveReturnValue && str;
-    }
-    return str.toUpperCase();
-  },
-  _trim: function (str, delimiter, reserveReturnValue) {
-    var patterns = [];
-    var regexp;
-    var addPatterns = function (pattern) {
-      // Build trim RegExp pattern and push it to patterns array
-      patterns.push('^' + pattern + '+|' + pattern + '+$');
-    };
-
-    // fix reserveReturnValue value
-    if (typeof delimiter === 'boolean') {
-      reserveReturnValue = delimiter;
-      delimiter = null;
-    }
-    if (typeof str !== 'string') {
-      return reserveReturnValue && str;
-    }
-
-    // Trim based on delimiter array values
-    if (Array.isArray(delimiter)) {
-      // Loop through delimiter array
-      delimiter.map(function (item) {
-        // Escape delimiter to be valid RegExp Pattern
-        var pattern = self$1._escapeRegExpPattern(item);
-        // Push pattern to patterns array
-        addPatterns(pattern);
-      });
-    }
-
-    // Trim based on delimiter string value
-    if (typeof delimiter === 'string') {
-      // Escape delimiter to be valid RegExp Pattern
-      var patternDelimiter = self$1._escapeRegExpPattern(delimiter);
-      // push pattern to patterns array
-      addPatterns(patternDelimiter);
-    }
-
-    // If delimiter  is not defined, Trim white spaces
-    if (!delimiter) {
-      // Push white space pattern to patterns array
-      addPatterns('\\s');
-    }
-
-    // Build RegExp pattern
-    var pattern = '(' + patterns.join('|') + ')';
-    // Build RegExp object
-    regexp = new RegExp(pattern, 'g');
-
-    // trim string for all patterns
-    while (str.match(regexp)) {
-      str = str.replace(regexp, '');
-    }
-
-    // Return trim string
-    return str;
-  },
-  _parseLocale: function (strLocale) {
-    var matches = self$1._regexParseLocale.exec(strLocale); // exec regex
-    var parsedLocale;
-    var lang;
-    var countryCode;
-    if (!strLocale || !matches) {
-      return;
-    }
-
-    // fix countryCode string by trimming '-' and '_'
-    matches[2] = self$1._trim(matches[2], ['-', '_']);
-    lang = self$1._toLowerCase(matches[1]);
-    countryCode = self$1._toUpperCase(matches[2]) || countryCode;
-
-    // object with lang, countryCode properties
-    parsedLocale = {
-      lang: lang,
-      countryCode: countryCode
-    };
-
-    // return parsed locale object
-    return parsedLocale;
-  },
-  // Private functions - End
-
-  // Public functions - star
-  isRtlLang: function (strLocale) {
-    var objLocale = self$1._parseLocale(strLocale);
-    if (!objLocale) {
-      return;
-    }
-    // return true if the intel string lang exists in the BID RTL LANGS array else return false
-    return self$1._BIDI_RTL_LANGS.indexOf(objLocale.lang) >= 0;
-  },
-  getLangDir: function (strLocale) {
-    // return 'rtl' if the intel string lang exists in the BID RTL LANGS array else return 'ltr'
-    return self$1.isRtlLang(strLocale) ? 'rtl' : 'ltr';
-  }
-
-  // Public functions - End
+const getLangDir = locale => {
+  return new Intl.Locale(locale).textInfo.direction;
 };
-
-// Const BIDI_RTL_LANGS Array
-// BIDI_RTL_LANGS ref: http://en.wikipedia.org/wiki/Right-to-left
-// Table of scripts in Unicode: https://en.wikipedia.org/wiki/Script_(Unicode)
-Object.defineProperty(self$1, '_BIDI_RTL_LANGS', {
-  value: ['ae', /* Avestan */
-  'ar', /* 'العربية', Arabic */
-  'arc', /* Aramaic */
-  'bcc', /* 'بلوچی مکرانی', Southern Balochi */
-  'bqi', /* 'بختياري', Bakthiari */
-  'ckb', /* 'Soranî / کوردی', Sorani */
-  'dv', /* Dhivehi */
-  'fa', /* 'فارسی', Persian */
-  'glk', /* 'گیلکی', Gilaki */
-  'he', /* 'עברית', Hebrew */
-  'ku', /* 'Kurdî / كوردی', Kurdish */
-  'mzn', /* 'مازِرونی', Mazanderani */
-  'nqo', /* N'Ko */
-  'pnb', /* 'پنجابی', Western Punjabi */
-  'ps', /* 'پښتو', Pashto, */
-  'sd', /* 'سنڌي', Sindhi */
-  'ug', /* 'Uyghurche / ئۇيغۇرچە', Uyghur */
-  'ur', /* 'اردو', Urdu */
-  'yi' /* 'ייִדיש', Yiddish */],
-
-  writable: false,
-  enumerable: true,
-  configurable: false
-});
-var rtlDetect$1 = RtlDetectLib;
-
-/**
- * Copyright 2015, Yahoo! Inc.
- * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
-
-var rtlDetect = rtlDetect$1;
-var rtlDetect_1 = {
-  isRtlLang: rtlDetect.isRtlLang,
-  getLangDir: rtlDetect.getLangDir
-};
-
-const {
-  getLangDir
-} = rtlDetect_1;
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 const getRawFieldValue = v => {
   return typeof v === 'string' ? v.replace(fieldValueAliasRegex, '$1') : v;
@@ -16432,12 +16415,15 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
             return;
           }
           if (val && typeof val === 'object') {
+            /* istanbul ignore else -- Not in data */
             if (typeof preferAlias === 'string') {
               fieldValueAliasMap[key] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
                 key,
                 value: val[preferAlias]
               });
+              /* istanbul ignore next -- Not in data */
             } else {
+              /* istanbul ignore next -- Not in data */
               Object.entries(val).forEach(([k, value]) => {
                 fieldValueAliasMap[key][k] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
                   key,
@@ -16447,6 +16433,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
             }
             return;
           }
+          /* istanbul ignore next -- Not in data */
           fieldValueAliasMap[key] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
             key,
             value: val
@@ -16493,7 +16480,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   const $pRawEsc = param => escapeHTML($pRaw(param));
   const $pEscArbitrary = param => escapeHTML($p.get(param, true));
 
-  // Not currently in use
+  /* istanbul ignore next -- Not currently in use */
   const escapeQuotedCSS = s => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
   const {
     fileData,
@@ -16760,6 +16747,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   let tableData,
     usingServerData = false;
   // Site owner may have configured to skip (e.g., testing)
+  let tryHttp = true;
   if (!skipIndexedDB &&
   // User may have refused, not yet agreed, or are visiting the
   //   results page directly where we don't ask for the permissions
@@ -16767,37 +16755,53 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   //   be brought to a results page without needing to agree to persist
   //   through notifications (or however)
   !noIndexedDB) {
-    tableData = await new Promise((resolve, reject) => {
-      // Todo: Fetch the work in code based on the non-localized `datafileName`
-      const dbName = this.namespace + '-textbrowser-cache-data';
-      const req = indexedDB.open(dbName);
-      req.onsuccess = ({
-        target: {
-          result: db
-        }
-      }) => {
-        const storeName = 'files-to-cache-' + unlocalizedWorkName;
-        const trans = db.transaction(storeName);
-        const store = trans.objectStore(storeName);
-        // Get among browse field sets by index number within URL params
-        const index = store.index('browseFields-' + applicableBrowseFieldSetName);
-
-        // console.log('dbName', dbName);
-        // console.log('storeName', storeName);
-        // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
-
-        const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
-        r.onsuccess = ({
+    try {
+      tableData = await new Promise((resolve, reject) => {
+        // Todo: Fetch the work in code based on the non-localized `datafileName`
+        const dbName = this.namespace + '-textbrowser-cache-data';
+        const req = indexedDB.open(dbName);
+        req.onsuccess = ({
           target: {
-            result
+            result: db
           }
         }) => {
-          const converted = result.map(r => r.value);
-          resolve(converted);
+          const storeName = 'files-to-cache-' + unlocalizedWorkName;
+          let trans;
+          try {
+            // We might be trying bad store if *some* work(s) were cached
+            //   but not this one
+            trans = db.transaction(storeName);
+          } catch (err) {
+            console.log('err', err);
+            reject(err);
+            return;
+          }
+          const store = trans.objectStore(storeName);
+          // Get among browse field sets by index number within URL params
+          const index = store.index('browseFields-' + applicableBrowseFieldSetName);
+
+          // console.log('dbName', dbName);
+          // console.log('storeName', storeName);
+          // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
+
+          const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
+          r.onsuccess = ({
+            target: {
+              result
+            }
+          }) => {
+            const converted = result.map(r => r.value);
+            resolve(converted);
+          };
         };
-      };
-    });
-  } else {
+      });
+      // If successful, we do not want to try http
+      tryHttp = false;
+    } catch (err) {
+      console.log('err', err);
+    }
+  }
+  if (tryHttp) {
     // No need for presorting in indexedDB, given indexes
     const presort = presorts[browseFieldSetIdx];
     // Given that we are not currently wishing to add complexity to
@@ -16819,14 +16823,23 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
       });
     } else {
       /*
-            const jsonURL = Object.entries({
-                prefI18n, unlocalizedWorkName, startsRaw, endsRaw
-            }).reduce((url, [arg, argVal]) => {
-                return url + '&' + arg + '=' + encodeURIComponent((argVal));
-            }, `${dynamicBasePath}textbrowser?`);
-            */
+          const jsonURL = Object.entries({
+              prefI18n, unlocalizedWorkName, startsRaw, endsRaw
+          }).reduce((url, [arg, argVal]) => {
+              return url + '&' + arg + '=' + encodeURIComponent((argVal));
+          }, `${dynamicBasePath}textbrowser?`);
+      */
       const jsonURL = `${dynamicBasePath}textbrowser?${$p.toString()}`;
-      tableData = await (await fetch(jsonURL)).json();
+      try {
+        tableData = await (await fetch(jsonURL)).json();
+      } catch (err) {
+        if (err.message.trim() === 'Failed to fetch') {
+          dialogs.alert('Failed to fetch; check if your connection is down. Any works you wish to be available offline must be downloaded ahead of time.');
+        } else {
+          dialogs.alert(err);
+        }
+        throw err;
+      }
       usingServerData = true;
     }
   }
@@ -16951,11 +16964,17 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
 /* eslint-enable no-unused-vars */
 
 /**
- *
+ * @param {object} cfg
+ * @param {string[]} cfg.works
+ * @param {string[]} cfg.removals
  * @returns {Promise<void>}
  */
-async function prepareForServiceWorker() {
+async function prepareForServiceWorker({
+  works,
+  removals
+}) {
   try {
+    var _await$indexedDB$data, _await$indexedDB$data2;
     // Todo: No possible resolving after this point? (except
     //          to reload or if worker somehow active already)
     Templates.permissions.addLogEntry({
@@ -16966,13 +16985,29 @@ async function prepareForServiceWorker() {
       Templates.permissions.browserNotGrantingPersistence();
       return;
     }
+
+    // Force a higher version
+    const dbName = this.namespace + '-textbrowser-cache-data';
+    const dbVersion = ((_await$indexedDB$data = (_await$indexedDB$data2 = (await indexedDB.databases()).find(({
+      name,
+      version
+    }) => {
+      return name === dbName;
+    })) === null || _await$indexedDB$data2 === void 0 ? void 0 : _await$indexedDB$data2.version) !== null && _await$indexedDB$data !== void 0 ? _await$indexedDB$data : 0) + 1;
+    const serviceWorkerPath = `${this.serviceWorkerPath}&${new URLSearchParams({
+      dbVersion,
+      works: JSON.stringify(works !== null && works !== void 0 ? works : []),
+      removals: JSON.stringify(removals !== null && removals !== void 0 ? removals : [])
+    })}`;
+
     /*
         Templates.permissions.addLogEntry({
             text: 'Install: received work files'
         });
-        */
+    */
     await registerServiceWorker({
-      serviceWorkerPath: this.serviceWorkerPath,
+      works,
+      serviceWorkerPath,
       logger: Templates.permissions
     });
   } catch (err) {
@@ -16981,7 +17016,7 @@ async function prepareForServiceWorker() {
       const {
         errorType
       } = err;
-      if (errorType === 'versionChange') {
+      if (errorType === 'versionchange') {
         Templates.permissions.versionChange();
         return;
       }
@@ -17001,9 +17036,10 @@ async function prepareForServiceWorker() {
  *
  * @param {Langs} langs
  * @param {Logger} l
+ * @param {I18nFormatter} siteI18n
  * @returns {Promise<void>}
  */
-async function requestPermissions(langs, l) {
+async function requestPermissions(langs, l, siteI18n) {
   return await new Promise((resolve, reject) => {
     // Todo: We could run the dialog code below for every page if
     //    `Notification.permission === 'default'` (i.e., not choice
@@ -17059,10 +17095,10 @@ async function requestPermissions(langs, l) {
         case 'granted':
           if (navigator.serviceWorker.controller) {
             resolve();
-            return;
+            // return;
           }
           // Has own error-handling
-          await prepareForServiceWorker.call(this);
+          // await prepareForServiceWorker.call(this);
           break;
         default:
           console.error('Unexpected returnValue', requestPermissionsDialog.returnValue);
@@ -17072,6 +17108,7 @@ async function requestPermissions(langs, l) {
     const [, requestPermissionsDialog, browserNotGrantingPersistenceAlert] =
     // , errorRegisteringNotice
     Templates.permissions.main({
+      siteI18n,
       l,
       ok,
       refuse,
@@ -17104,6 +17141,9 @@ class TextBrowser {
     this.showTitleOnSingleInterlinear = options.showTitleOnSingleInterlinear;
     this.noDynamic = options.noDynamic;
     this.skipIndexedDB = options.skipIndexedDB;
+    this.updates = options.updates;
+    this.version = options.version;
+    this.removals = options.removals;
   }
   async init() {
     this._stylesheetElements = await loadStylesheets(this.stylesheets);
@@ -17139,7 +17179,7 @@ class TextBrowser {
 
   // Need for directionality even if language specified (and we don't want
   //   to require it as a param)
-  // Todo: Use rtl-detect (already included)
+  // Todo: Use `intl-locale-textinfo-polyfill` (already included)
   getDirectionForLanguageCode(code) {
     const langs = this.langData.languages;
     const exactMatch = langs.find(lang => {
@@ -17240,9 +17280,25 @@ class TextBrowser {
     //    whether to show or not; also ensure we have navigation
     //    bar/breadcrumbs on all non-results pages
     const persistent = await navigator.storage.persisted();
-    const r = await navigator.serviceWorker.getRegistration(this.serviceWorkerPath);
+
+    // If adding `updates` to indicate works that need to be replaced even if
+    //  existing, then check `localStorage` version and compare with a
+    //  browser-capable semver compare function
+    // const lastVersion = localStorage.getItem(this.namespace + '-last-version');
+    // this.updates.forEach(([workVersion, work]) => {
+    //   if (!works.includes(work) && semver.lt(lastVersion, workVersion)) {
+    //     works.push(work);
+    //   }
+    // });
+    localStorage.setItem(this.namespace + '-last-version', this.version);
+    const {
+      removals
+    } = this;
+    const r = await navigator.serviceWorker.getRegistration(`${this.serviceWorkerPath}&${new URLSearchParams({
+      removals
+    })}`);
     const result = $p.get('result');
-    const register = async () => {
+    const triggerPersistence = async () => {
       /*
       console.log(
           'navigator.serviceWorker.controller',
@@ -17264,15 +17320,12 @@ class TextBrowser {
         //        or being on the main page per
         //        https://developers.google.com/web/updates/2016/06/persistent-storage
         if (persistent) {
-          // No need to ask permissions (e.g., if user bookmarked site instead),
-          //   but we do need a worker
           Templates.permissions.main({
             siteI18n
           });
-          await prepareForServiceWorker.call(this);
         } else {
           // Keep asking if not persistent (unless refused)
-          await requestPermissions.call(this, langs, siteI18n);
+          await requestPermissions.call(this, langs, siteI18n, siteI18n);
         }
         Templates.permissions.exitDialogs();
       }
@@ -17291,14 +17344,14 @@ class TextBrowser {
     */
 
     if (!r) {
-      await register();
+      await triggerPersistence();
     } else {
       const worker = r.installing || r.waiting || r.active;
       if (!worker) {
         // Todo: Why wouldn't there be a worker here?
         console.error('Unexpected error: worker registration received without a worker.');
         // If anything, would probably need to register though
-        await register();
+        await triggerPersistence();
         return;
       }
       Templates.permissions.main({
@@ -17442,18 +17495,23 @@ class TextBrowser {
       const work = $p.get('work');
       if (!work) {
         workSelect({
-          // l,
+          l,
+          namespace: this.namespace,
           files: this.files,
           lang,
           fallbackLanguages,
           $p,
-          followParams
+          followParams,
+          prepareForServiceWorker: prepareForServiceWorker.bind(this)
         });
         return true;
       }
       if (!result) {
+        // Todo: Restore this upon button click
+        // await prepareForServiceWorker.call(this);
         this.workDisplay({
           l,
+          prepareForServiceWorker: prepareForServiceWorker.bind(this),
           lang,
           preferredLocale,
           fallbackLanguages,
@@ -17470,6 +17528,7 @@ class TextBrowser {
       return;
     }
     const resultsDisplay = async () => {
+      // Todo: also "no" if specific work database is missing locally
       const noIndexedDB = refusedIndexedDB ||
       // No worker from which IndexedDB is available;
       !navigator.serviceWorker.controller;
@@ -17496,3 +17555,4 @@ TextBrowser.prototype.workDisplay = workDisplay;
 TextBrowser.prototype.resultsDisplayClient = resultsDisplayClient;
 
 export { TextBrowser as default };
+//# sourceMappingURL=index-es.js.map

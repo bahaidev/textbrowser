@@ -39,8 +39,9 @@ function swHelper (self) {
       'node_modules/textbrowser-data-schemas/schemas/locale.jsonschema',
       'node_modules/textbrowser-data-schemas/schemas/metadata.jsonschema',
       'node_modules/textbrowser-data-schemas/schemas/table.jsonschema', // Not currently using for validation or meta-data
-      */
-
+    */
+    'node_modules/textbrowser/dist/assets/index-c987c995.css',
+    'node_modules/textbrowser/dist/assets/languages-fcf1c836.json',
     'node_modules/textbrowser/dist/index-es.js'
   ];
 
@@ -174,7 +175,7 @@ function swHelper (self) {
       {languages: langs}
     ] = await Promise.all([
       caches.open(namespace + CURRENT_CACHES.prefetch + version),
-      getWorkFiles(files),
+      getWorkFiles(files, {works}),
       getJSON(languages)
     ]);
     log('Install: Retrieved dependency values');
@@ -262,7 +263,9 @@ function swHelper (self) {
       }
     });
 
-    await activateCallback({namespace, files, basePath, log});
+    await activateCallback({
+      namespace, files, basePath, log, works, removals, dbVersion
+    });
     log('Activate: Database changes completed');
 
     log(`Activate: Posting finished message to clients`);
@@ -272,6 +275,15 @@ function swHelper (self) {
 
   const params = new URL(location).searchParams;
   const pathToUserJSON = params.get('pathToUserJSON');
+  const works = JSON.parse(params.get('works') || '[]');
+  const removals = JSON.parse(params.get('removals') || '[]');
+  const dbVersion = JSON.parse(params.get('dbVersion') || '1');
+
+  // Use this array of two-item arrays (version and work) against the
+  //  latest `localStorage` stored version to determine if have a more
+  //  up-to-date version that needs to replace the old one
+  // const updates = JSON.parse(params.get('updates') || '[]');
+
   const stylesheets = JSON.parse(params.get('stylesheets') || []);
 
   console.log('sw info', pathToUserJSON);

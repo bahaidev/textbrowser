@@ -6,15 +6,23 @@ import {PluginsForWork, escapePlugin} from './Plugin.js';
 /**
  * Imported by the `dist/sw-helper.js`
  * @param {string} files The files.json file path
+ * @param {object} cfg
+ * @param {string[]} cfg.works
  * @returns {PlainObject}
  */
-export const getWorkFiles = async function getWorkFiles (files) {
+export const getWorkFiles = async function getWorkFiles (files, {works}) {
   const filesObj = await getJSON(files);
   const dataFiles = [];
   filesObj.groups.forEach((fileGroup) => {
     fileGroup.files.forEach((fileData) => {
       const {file, schemaFile, metadataFile} =
                 getFilePaths(filesObj, fileGroup, fileData);
+      if (!works.includes(fileData.name)) {
+        // We do currently need all metadata/schema files for sake of bookmark
+        //   generation
+        dataFiles.push(schemaFile, metadataFile);
+        return;
+      }
       dataFiles.push(file, schemaFile, metadataFile);
     });
   });

@@ -1,8 +1,7 @@
 /* eslint-env browser */
-import rtlDetect from 'rtl-detect';
 import JsonRefs from 'json-refs';
 import {jml} from 'jamilih';
-
+import {dialogs} from './utils/dialogs.js';
 import Templates from './templates/index.js';
 import {escapeHTML} from './utils/sanitize.js';
 import {
@@ -11,7 +10,9 @@ import {
 import {Languages} from './utils/Languages.js';
 import {getWorkData} from './utils/WorkInfo.js';
 
-const {getLangDir} = rtlDetect;
+const getLangDir = (locale) => {
+  return new Intl.Locale(locale).textInfo.direction;
+};
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 
 const getRawFieldValue = (v) => {
@@ -364,12 +365,15 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             return;
           }
           if (val && typeof val === 'object') {
+            /* istanbul ignore else -- Not in data */
             if (typeof preferAlias === 'string') {
               fieldValueAliasMap[key] =
                                 Templates.resultsDisplayServerOrClient.fieldValueAlias({
                                   key, value: val[preferAlias]
                                 });
+            /* istanbul ignore next -- Not in data */
             } else {
+              /* istanbul ignore next -- Not in data */
               Object.entries(val).forEach(([k, value]) => {
                 fieldValueAliasMap[key][k] =
                                     Templates.resultsDisplayServerOrClient.fieldValueAlias({
@@ -379,8 +383,9 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             }
             return;
           }
+          /* istanbul ignore next -- Not in data */
           fieldValueAliasMap[key] =
-                        Templates.resultsDisplayServerOrClient.fieldValueAlias({key, value: val});
+            Templates.resultsDisplayServerOrClient.fieldValueAlias({key, value: val});
         });
         return preferAlias !== false ? fieldValueAliasMap : undefined;
       }
@@ -392,10 +397,10 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     let key;
     const p = $p.get(param, true);
     /**
-         *
-         * @param {GenericArray|PlainObject} locale
-         * @returns {boolean}
-         */
+     *
+     * @param {GenericArray|PlainObject} locale
+     * @returns {boolean}
+     */
     function reverseLocaleLookup (locale) {
       if (Array.isArray(locale)) {
         return locale.some(reverseLocaleLookup);
@@ -423,7 +428,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
   const $pRawEsc = (param) => escapeHTML($pRaw(param));
   const $pEscArbitrary = (param) => escapeHTML($p.get(param, true));
 
-  // Not currently in use
+  /* istanbul ignore next -- Not currently in use */
   const escapeQuotedCSS = (s) => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 
   const {
@@ -692,6 +697,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
 
   let tableData, usingServerData = false;
   // Site owner may have configured to skip (e.g., testing)
+  let tryHttp = true;
   if (!skipIndexedDB &&
         // User may have refused, not yet agreed, or are visiting the
         //   results page directly where we don't ask for the permissions
@@ -700,31 +706,48 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         //   through notifications (or however)
         !noIndexedDB
   ) {
-    tableData = await new Promise((resolve, reject) => {
-      // Todo: Fetch the work in code based on the non-localized `datafileName`
-      const dbName = this.namespace + '-textbrowser-cache-data';
-      const req = indexedDB.open(dbName);
-      req.onsuccess = ({target: {result: db}}) => {
-        const storeName = 'files-to-cache-' + unlocalizedWorkName;
-        const trans = db.transaction(storeName);
-        const store = trans.objectStore(storeName);
-        // Get among browse field sets by index number within URL params
-        const index = store.index(
-          'browseFields-' + applicableBrowseFieldSetName
-        );
+    try {
+      tableData = await new Promise((resolve, reject) => {
+        // Todo: Fetch the work in code based on the non-localized `datafileName`
+        const dbName = this.namespace + '-textbrowser-cache-data';
+        const req = indexedDB.open(dbName);
+        req.onsuccess = ({target: {result: db}}) => {
+          const storeName = 'files-to-cache-' + unlocalizedWorkName;
+          let trans;
+          try {
+            // We might be trying bad store if *some* work(s) were cached
+            //   but not this one
+            trans = db.transaction(storeName);
+          } catch (err) {
+            console.log('err', err);
+            reject(err);
+            return;
+          }
+          const store = trans.objectStore(storeName);
+          // Get among browse field sets by index number within URL params
+          const index = store.index(
+            'browseFields-' + applicableBrowseFieldSetName
+          );
 
-        // console.log('dbName', dbName);
-        // console.log('storeName', storeName);
-        // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
+          // console.log('dbName', dbName);
+          // console.log('storeName', storeName);
+          // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
 
-        const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
-        r.onsuccess = ({target: {result}}) => {
-          const converted = result.map((r) => r.value);
-          resolve(converted);
+          const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
+          r.onsuccess = ({target: {result}}) => {
+            const converted = result.map((r) => r.value);
+            resolve(converted);
+          };
         };
-      };
-    });
-  } else {
+      });
+      // If successful, we do not want to try http
+      tryHttp = false;
+    } catch (err) {
+      console.log('err', err);
+    }
+  }
+
+  if (tryHttp) {
     // No need for presorting in indexedDB, given indexes
     const presort = presorts[browseFieldSetIdx];
     // Given that we are not currently wishing to add complexity to
@@ -739,14 +762,23 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
     } else {
       /*
-            const jsonURL = Object.entries({
-                prefI18n, unlocalizedWorkName, startsRaw, endsRaw
-            }).reduce((url, [arg, argVal]) => {
-                return url + '&' + arg + '=' + encodeURIComponent((argVal));
-            }, `${dynamicBasePath}textbrowser?`);
-            */
+          const jsonURL = Object.entries({
+              prefI18n, unlocalizedWorkName, startsRaw, endsRaw
+          }).reduce((url, [arg, argVal]) => {
+              return url + '&' + arg + '=' + encodeURIComponent((argVal));
+          }, `${dynamicBasePath}textbrowser?`);
+      */
       const jsonURL = `${dynamicBasePath}textbrowser?${$p.toString()}`;
-      tableData = await (await fetch(jsonURL)).json();
+      try {
+        tableData = await (await fetch(jsonURL)).json();
+      } catch (err) {
+        if (err.message.trim() === 'Failed to fetch') {
+          dialogs.alert('Failed to fetch; check if your connection is down. Any works you wish to be available offline must be downloaded ahead of time.');
+        } else {
+          dialogs.alert(err);
+        }
+        throw err;
+      }
       usingServerData = true;
     }
   }

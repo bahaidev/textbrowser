@@ -4,18 +4,15 @@ import {deserialize as formDeserialize} from 'form-serialization';
 
 export default {
   main ({langs, languages, followParams, $p}) {
-    jml('form', {class: 'focus', id: 'languageSelectionContainer', $on: {
-      submit (e) {
-        e.preventDefault();
-      }
-    }}, [
+    jml('form', {class: 'focus', id: 'languageSelectionContainer'}, [
       ['select', {
         name: 'lang',
         size: langs.length,
         $on: {
-          click ({target: {parentNode: {selectedOptions}}}) {
+          click () {
+            const option = this.options[this.selectedIndex];
             followParams('#languageSelectionContainer', () => {
-              $p.set('lang', selectedOptions[0].value, true);
+              $p.set('lang', option.value, true);
             });
           }
         }
@@ -23,6 +20,8 @@ export default {
         ['option', {value: code}, [languages.getLanguageFromCode(code)]]
       )]
     ], $('#main'));
+
+    // Show the most recently chosen language if user hits back button
     if (history.state && typeof history.state === 'object') {
       formDeserialize(document.querySelector('#languageSelectionContainer'), history.state);
     }

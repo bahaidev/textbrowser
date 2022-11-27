@@ -1,5 +1,6 @@
 /* eslint-env browser */
 import {getPreferredLanguages} from './Languages.js';
+import {dialogs} from './dialogs.js';
 // Keep this as the last import for Rollup
 import JsonRefs from 'json-refs'; // eslint-disable-line import/order
 
@@ -38,22 +39,27 @@ export const getMetadata = async (file, property, basePath) => {
   url.pathname = file;
   url.hash = property ? '#/' + property : '';
 
-  return (await JsonRefs
-    .resolveRefsAt(
-      url.toString(),
-      {
-        loaderOptions: {
-          processContent (res, callback) {
-            callback(undefined, JSON.parse(
-              res.text ||
-                            // `.metadata` not a recognized extension, so
-                            //    convert to string for JSON in Node
-                            res.body.toString()
-            ));
+  try {
+    return (await JsonRefs
+      .resolveRefsAt(
+        url.toString(),
+        {
+          loaderOptions: {
+            processContent (res, callback) {
+              callback(undefined, JSON.parse(
+                res.text ||
+                              // `.metadata` not a recognized extension, so
+                              //    convert to string for JSON in Node
+                              res.body.toString()
+              ));
+            }
           }
         }
-      }
-    )).resolved;
+      )).resolved;
+  } catch (err) {
+    dialogs.alert(err);
+    throw err;
+  }
 };
 
 export const getFieldNameAndValueAliases = function ({

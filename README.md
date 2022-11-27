@@ -421,7 +421,7 @@ methods.
         - `applicableFieldText` - Equivalent to `tr[applicableFieldIdx]`
         - `fieldLang` - The `fieldLang` property of `fieldInfo[j]`
         - `getLangDir` - A method from
-            [`rtl-detect`](https://github.com/shadiabuhilal/rtl-detect)
+            [`intl-locale-textinfo-polyfill`](https://github.com/brettz9/intl-locale-textinfo-polyfill)
             for determining directionality ("rtl" or "ltr") for a given
             language code. May be useful with
             `fieldInfo[applicableFieldIdx].fieldLang`
@@ -580,6 +580,18 @@ as a `npm` dependency).
         an interlinear-enabled column, this determines whether a title (if
         enabled) will be shown. We may put this under user control in the
         future.
+
+    -   `removals` - Array of works to remove (e.g., if added in an earlier
+        version where the works are no longer relevant)
+<!--
+Need to add semver to implement; see `lastVersion` in `resources/index.js`
+    -   `version` - A semantic version. Used with `updates`.
+
+    -   `updates` - An array of a two-item key-value array, with the key as
+        a semantic version and the value as a work title. Will determine
+        whether a work needs to be updated if the last `version` was less than
+        the version in the array.
+-->
 
 As per [semantic versioning](http://semver.org/) used by `npm`,
 our API should continue to work until an increment in the major release
@@ -1076,12 +1088,21 @@ You can also use this latter option to run the browser tests
 
 PRs are most welcome, including for additional languages/locales.
 
+Since it should often be necessary to test the repository doing the including
+of `textbrowser`, it is recommended to use scripts such as the `rollup` script
+in this repository and then the `copy-tb` and `server` scripts of
+[bahai-browser](https://github.com/bahaidev/bahai-browser). Note that the
+former script assumes the source containing `bahai-browser` is a sibling
+folder to the source of `textbrowser`.
+
 Tests will ideally be run before submission of a PR.
 
-At present we only have schema validation and lack UI and unit
-testing coverage (PR's welcome for this too!).
+At present we only have schema validation and due to the nature of the project,
+we will probably only want full UI and unit testing coverage within projects
+like [bahai-browser](https://github.com/bahaidev/bahai-browser) as these are
+conducive to such testing (PR's welcome for this too!).
 
-Note that we hope to create an extensible plug-in system, so
+Note that we have created an extensible plug-in system, so
 enhancements to the core ought to be confined to the
 main project goals and be oriented toward reuse across all
 projects, relegating any specialized tools to plugins (though

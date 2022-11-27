@@ -21,11 +21,12 @@ export const setServiceWorkerDefaults = (target, source) => {
     import.meta.url
   ).href;
   target.serviceWorkerPath = source.serviceWorkerPath ||
-        `sw.js?pathToUserJSON=${
-          encodeURIComponent(target.userJSON)
-        }&stylesheets=${
-          encodeURIComponent(JSON.stringify(target.stylesheets || []))
-        }`;
+    `sw.js?${
+      new URLSearchParams({
+        pathToUserJSON: target.userJSON,
+        stylesheets: JSON.stringify(target.stylesheets || [])
+      })
+    }`;
   target.files = source.files || 'files.json';
   target.namespace = source.namespace || 'textbrowser';
   return target;
@@ -102,6 +103,7 @@ for offline installation.
 export const respondToState = async ({
   r, logger
 }) => {
+  console.log('responding to state...');
   // We use this promise for rejecting (inside a listener)
   //    to a common catch and to prevent continuation by
   //    failing to return
@@ -180,6 +182,7 @@ export const respondToState = async ({
       }
     });
     const worker = r.installing || r.waiting || r.active;
+    console.log('has worker?', worker);
     // Failed or new worker in use
     if (worker && worker.state === 'redundant') {
       // Todo: We could call `register()` below instead (on a timeout)?
@@ -263,7 +266,8 @@ export const registerServiceWorker = async ({
   let r;
   try {
     r = await navigator.serviceWorker.register(
-      serviceWorkerPath, {
+      serviceWorkerPath,
+      {
         type: 'module'
       }
     );
@@ -281,7 +285,7 @@ Please refresh the page if you wish to reattempt.
   });
 
   // Todo: Catch errors?
-  return respondToState({
+  return await respondToState({
     r, logger
   });
 };

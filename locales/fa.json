@@ -15,6 +15,9 @@
             "returnediting": "تا ادامه به استفاده از زبان ترجمه قبلی خود دهید اینجا کلک کنید",
             "rancommand": "command اجرا کنید"
         },
+        "works_to_offline": "Works to offline",
+        "works_to_offline_explanation": "Works that you add to offline will load faster in the future and be available even without an Internet connection.",
+        "offline_available": "Offline available",
         "submitgo": "بروید",
         "search": "search",
         "field_enabled": "قابل انجام",

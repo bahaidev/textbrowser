@@ -18,6 +18,11 @@ const arrayChunk = (arr, size) => {
 //          files in cache?
 // Todo: Check `oldVersion` and run this first if still too old
 
+async function getJSON (url) {
+  const resp = await fetch(url);
+  return await resp.json();
+}
+
 /**
 * @callback Logger
 * @param {...any} args
@@ -29,23 +34,25 @@ const arrayChunk = (arr, size) => {
  * @param {string} cfg.namespace
  * @param {string[]} cfg.files
  * @param {Logger} cfg.log
+ * @param {string[]} [cfg.works=[]]
+ * @param {string[]} [cfg.removals=[]]
  * @param {string} [cfg.basePath=""]
+ * @param {string} [cfg.dbVersion=1]
  * @returns {Promise<void>}
  */
 async function activateCallback ({
-  namespace, files, log, basePath = ''
+  namespace, files, log, works = [], removals = [], basePath = '', dbVersion = 1
 }) {
   // Now we know we have the files cached, we can postpone
   //  the `indexedDB` processing (which will work offline
   //  anyways); also important to avoid conflicts with
   //  already-running versions upon future sw updates
   log('Activate: Callback called');
-  const r = await fetch(files);
-  const {groups} = await r.json();
+  const {groups} = await getJSON(files);
 
   const addJSONFetch = (arr, path) => {
     arr.push(
-      (async () => (await fetch(basePath + path)).json())()
+      (async () => await getJSON(basePath + path))()
     );
   };
 
@@ -55,7 +62,11 @@ async function activateCallback ({
   const metadataFiles = [];
   groups.forEach(
     ({files: fileObjs, metadataBaseDirectory, schemaBaseDirectory}) => {
-      fileObjs.forEach(({file: {$ref: filePath}, metadataFile, schemaFile, name}) => {
+      fileObjs.filter(({name}) => {
+        // We don't want to import files unless specified by user (or if
+        //   needed due to a version update)
+        return works.includes(name);
+      }).forEach(({file: {$ref: filePath}, metadataFile, schemaFile, name}) => {
         // We don't i18nize the name here
         dataFileNames.push(name);
         addJSONFetch(dataFiles, filePath);
@@ -69,14 +80,16 @@ async function activateCallback ({
   ]);
   const chunked = arrayChunk(promises, dataFiles.length);
   const [
-    dataFileResponses, schemaFileResponses, metadataFileResponses
+    dataFileResponses = [], schemaFileResponses, metadataFileResponses
   ] = chunked;
 
   log('Activate: Files fetched');
+
   const dbName = namespace + '-textbrowser-cache-data';
-  indexedDB.deleteDatabase(dbName);
+
+  // indexedDB.deleteDatabase(dbName);
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(dbName);
+    const req = indexedDB.open(dbName, dbVersion);
     req.addEventListener('upgradeneeded', ({target: {result: db}}) => {
       db.onversionchange = () => {
         db.close();
@@ -84,9 +97,23 @@ async function activateCallback ({
         err.type = 'versionchange';
         reject(err);
       };
+
+      removals.forEach((removal) => {
+        db.deleteObjectStore('files-to-cache-' + removal);
+      });
+
       dataFileResponses.forEach(({data: tableRows}, i) => {
         const dataFileName = dataFileNames[i];
-        const store = db.createObjectStore('files-to-cache-' + dataFileName);
+
+        let store;
+        try {
+          store = db.createObjectStore('files-to-cache-' + dataFileName);
+        } catch (err) {
+          // User has specified an existing item again, so ignore
+          return;
+        }
+        // Todo: Should also look at `works` and object stores and clean up
+        //  any that were not supplied.
 
         const schemaFileResponse = schemaFileResponses[i];
         const metadataFileResponse = metadataFileResponses[i];
@@ -150,7 +177,10 @@ async function activateCallback ({
       //   in calling code?
       resolve();
     });
-    const onerr = ({error = new Error('dbError')}) => {
+    const onerr = (e) => {
+      console.log('eeee', e);
+      const {error = new Error('dbError')} = e;
+      console.log('error', error);
       error.type = 'dbError';
       reject(error);
     };
@@ -160,3 +190,4 @@ async function activateCallback ({
 }
 
 export { activateCallback as default };
+//# sourceMappingURL=activateCallback-es.js.map

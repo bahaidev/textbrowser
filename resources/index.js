@@ -32,10 +32,14 @@ function s (obj) { dialogs.alert(JSON.stringify(obj)); } // lgtm [js/unused-loca
 /* eslint-enable no-unused-vars */
 
 /**
- *
+ * @param {object} cfg
+ * @param {string[]} cfg.works
+ * @param {string[]} cfg.removals
  * @returns {Promise<void>}
  */
-async function prepareForServiceWorker () {
+async function prepareForServiceWorker ({
+  works, removals
+}) {
   try {
     // Todo: No possible resolving after this point? (except
     //          to reload or if worker somehow active already)
@@ -47,20 +51,37 @@ async function prepareForServiceWorker () {
       Templates.permissions.browserNotGrantingPersistence();
       return;
     }
+
+    // Force a higher version
+    const dbName = this.namespace + '-textbrowser-cache-data';
+    const dbVersion = ((
+      await indexedDB.databases()
+    ).find(({name, version}) => {
+      return name === dbName;
+    })?.version ?? 0) + 1;
+
+    const serviceWorkerPath = `${this.serviceWorkerPath}&${
+      new URLSearchParams({
+        dbVersion,
+        works: JSON.stringify(works ?? []),
+        removals: JSON.stringify(removals ?? [])
+      })}`;
+
     /*
         Templates.permissions.addLogEntry({
             text: 'Install: received work files'
         });
-        */
+    */
     await registerServiceWorker({
-      serviceWorkerPath: this.serviceWorkerPath,
+      works,
+      serviceWorkerPath,
       logger: Templates.permissions
     });
   } catch (err) {
     console.log('err', err);
     if (err && typeof err === 'object') {
       const {errorType} = err;
-      if (errorType === 'versionChange') {
+      if (errorType === 'versionchange') {
         Templates.permissions.versionChange();
         return;
       }
@@ -82,9 +103,10 @@ async function prepareForServiceWorker () {
  *
  * @param {Langs} langs
  * @param {Logger} l
+ * @param {I18nFormatter} siteI18n
  * @returns {Promise<void>}
  */
-async function requestPermissions (langs, l) {
+async function requestPermissions (langs, l, siteI18n) {
   return await new Promise((resolve, reject) => {
     // Todo: We could run the dialog code below for every page if
     //    `Notification.permission === 'default'` (i.e., not choice
@@ -145,10 +167,10 @@ async function requestPermissions (langs, l) {
       case 'granted':
         if (navigator.serviceWorker.controller) {
           resolve();
-          return;
+          // return;
         }
         // Has own error-handling
-        await prepareForServiceWorker.call(this);
+        // await prepareForServiceWorker.call(this);
         break;
       default:
         console.error('Unexpected returnValue', requestPermissionsDialog.returnValue);
@@ -157,6 +179,7 @@ async function requestPermissions (langs, l) {
     };
     const [, requestPermissionsDialog, browserNotGrantingPersistenceAlert] = // , errorRegisteringNotice
             Templates.permissions.main({
+              siteI18n,
               l, ok, refuse, close, closeBrowserNotGranting
             });
     requestPermissionsDialog.showModal();
@@ -195,6 +218,9 @@ class TextBrowser {
     this.showTitleOnSingleInterlinear = options.showTitleOnSingleInterlinear;
     this.noDynamic = options.noDynamic;
     this.skipIndexedDB = options.skipIndexedDB;
+    this.updates = options.updates;
+    this.version = options.version;
+    this.removals = options.removals;
   }
 
   async init () {
@@ -235,7 +261,7 @@ class TextBrowser {
 
   // Need for directionality even if language specified (and we don't want
   //   to require it as a param)
-  // Todo: Use rtl-detect (already included)
+  // Todo: Use `intl-locale-textinfo-polyfill` (already included)
   getDirectionForLanguageCode (code) {
     const langs = this.langData.languages;
     const exactMatch = langs.find((lang) => {
@@ -333,10 +359,28 @@ class TextBrowser {
     //    bar/breadcrumbs on all non-results pages
     const persistent = await navigator.storage.persisted();
 
-    const r = await navigator.serviceWorker.getRegistration(this.serviceWorkerPath);
+    // If adding `updates` to indicate works that need to be replaced even if
+    //  existing, then check `localStorage` version and compare with a
+    //  browser-capable semver compare function
+    // const lastVersion = localStorage.getItem(this.namespace + '-last-version');
+    // this.updates.forEach(([workVersion, work]) => {
+    //   if (!works.includes(work) && semver.lt(lastVersion, workVersion)) {
+    //     works.push(work);
+    //   }
+    // });
+    localStorage.setItem(this.namespace + '-last-version', this.version);
+
+    const {removals} = this;
+
+    const r = await navigator.serviceWorker.getRegistration(
+      `${this.serviceWorkerPath}&${
+        new URLSearchParams({
+          removals
+        })}`
+    );
 
     const result = $p.get('result');
-    const register = async () => {
+    const triggerPersistence = async () => {
       /*
       console.log(
           'navigator.serviceWorker.controller',
@@ -358,12 +402,9 @@ class TextBrowser {
         //        or being on the main page per
         //        https://developers.google.com/web/updates/2016/06/persistent-storage
         if (persistent) {
-          // No need to ask permissions (e.g., if user bookmarked site instead),
-          //   but we do need a worker
           Templates.permissions.main({siteI18n});
-          await prepareForServiceWorker.call(this);
         } else { // Keep asking if not persistent (unless refused)
-          await requestPermissions.call(this, langs, siteI18n);
+          await requestPermissions.call(this, langs, siteI18n, siteI18n);
         }
         Templates.permissions.exitDialogs();
       }
@@ -382,14 +423,14 @@ class TextBrowser {
     */
 
     if (!r) {
-      await register();
+      await triggerPersistence();
     } else {
       const worker = r.installing || r.waiting || r.active;
       if (!worker) {
         // Todo: Why wouldn't there be a worker here?
         console.error('Unexpected error: worker registration received without a worker.');
         // If anything, would probably need to register though
-        await register();
+        await triggerPersistence();
         return;
       }
 
@@ -530,16 +571,21 @@ class TextBrowser {
       const work = $p.get('work');
       if (!work) {
         workSelect({
-          // l,
+          l,
+          namespace: this.namespace,
           files: this.files,
           lang, fallbackLanguages,
-          $p, followParams
+          $p, followParams,
+          prepareForServiceWorker: prepareForServiceWorker.bind(this)
         });
         return true;
       }
       if (!result) {
+        // Todo: Restore this upon button click
+        // await prepareForServiceWorker.call(this);
         this.workDisplay({
           l,
+          prepareForServiceWorker: prepareForServiceWorker.bind(this),
           lang, preferredLocale,
           fallbackLanguages,
           languageParam,
@@ -556,6 +602,7 @@ class TextBrowser {
     }
 
     const resultsDisplay = async () => {
+      // Todo: also "no" if specific work database is missing locally
       const noIndexedDB = refusedIndexedDB ||
         // No worker from which IndexedDB is available;
         !navigator.serviceWorker.controller;

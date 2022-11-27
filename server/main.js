@@ -69,7 +69,10 @@ const userParamsWithDefaults = {
     namespace: 'textbrowser',
     files: `${basePath}files.json`, // `files` must be absolute path for node-fetch
     languages: `${basePath}node_modules/textbrowser/appdata/languages.json`,
-    serviceWorkerPath: `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON || '')}`
+    serviceWorkerPath: `${basePath}sw.js?${
+      new URLSearchParams({
+        pathToUserJSON: userParams.userJSON || ''
+      })}`
   }),
   ...userParams,
   log (...args) {

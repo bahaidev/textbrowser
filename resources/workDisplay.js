@@ -9,10 +9,12 @@ import Templates from './templates/index.js';
 
 export default async function workDisplay ({
   l, languageParam,
-  lang, preferredLocale, languages, fallbackLanguages, $p
+  lang, preferredLocale, languages, fallbackLanguages, $p,
+  prepareForServiceWorker
 }) {
   const {preferencesPlugin} = this;
   const langs = this.langData.languages;
+  const work = $p.get('work');
 
   const fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
 
@@ -27,6 +29,7 @@ export default async function workDisplay ({
   const hideFormattingSection = $p.has('formatting', true)
     ? $p.get('formatting', true) === '0'
     : prefFormatting === 'true' || (
+      /* istabul ignore next -- Not configuring to true */
       prefFormatting !== 'false' && this.hideFormattingSection
     );
 
@@ -134,8 +137,24 @@ export default async function workDisplay ({
       return displayNames.of(code);
     };
 
+    const dbName = this.namespace + '-textbrowser-cache-data';
+    const req = indexedDB.open(dbName);
+    const isOfflined = await new Promise((resolve, reject) => {
+      req.onsuccess = ({target: {result: db}}) => {
+        const storeName = 'files-to-cache-' + work;
+        try {
+          db.transaction(storeName);
+          resolve(true);
+        } catch (err) {
+          resolve(false);
+        } finally {
+          db.close();
+        }
+      };
+    });
+
     Templates.workDisplay.main({
-      languageParam, lang, workI18n,
+      languageParam, lang, workI18n, work, prepareForServiceWorker,
       l, namespace: this.namespace, groups, heading,
       languageI18n, fallbackDirection,
       langs, fieldInfo, localizeParamNames,
@@ -145,14 +164,14 @@ export default async function workDisplay ({
       metadataObj, lParam, lElement, lDirectional, lIndexedParam,
       fieldMatchesLocale,
       preferredLocale, schemaItems, content,
-      preferencesPlugin
+      preferencesPlugin, isOfflined
     });
   }
 
   try {
     const {workI18n, fileData, metadataObj, ...args} = await this.getWorkData({
       lang, fallbackLanguages, preferredLocale,
-      languages, work: $p.get('work')
+      languages, work
     });
 
     document.title = workI18n(

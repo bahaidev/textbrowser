@@ -1,10 +1,6 @@
-const nbsp = '\u00A0';
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => [...document.querySelectorAll(sel)];
-
 const $e = (el, descendentsSel) => {
-  el = typeof el === 'string' ? $(el) : el;
+  // el = typeof el === 'string' ? $(el) : el;
   return el.querySelector(descendentsSel);
 };
 
-export {nbsp, $, $$, $e};
+export {$e};

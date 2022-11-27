@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.49.0
+
+- refactor: use `intl-locale-textinfo-polyfill` fork over `rtl-detect`
+
 ## 0.48.0
 
 - feat: service worker helper

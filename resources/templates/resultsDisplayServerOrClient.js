@@ -181,6 +181,7 @@ body {
     caption, hasCaption, showInterlinTitles,
     determineEnd, getCanonicalID, canonicalBrowseFieldSetName,
     getCellValue, checkedAndInterlinearFieldInfo,
+    /* istanbul ignore next -- Just testing one config */
     interlinearSeparator = '<br /><br />'
   }) {
     const tableOptions = {
@@ -218,7 +219,7 @@ body {
     case 'json-array':
       // tableOptions[outputmode] = tableOptions.table;
       // break;
-      throw new Error('JSON object support is currently not available');
+      throw new Error('JSON support is currently not available');
     default:
       break;
     }
@@ -303,17 +304,15 @@ body {
               return '';
             }
 
-            return (showInterlins
-              ? Templates.resultsDisplayServerOrClient.interlinearSegment({
-                lang: fieldLangs[idx],
-                dir: fieldDirs[idx],
-                html: (showInterlinTitles
-                  ? Templates.resultsDisplayServerOrClient.interlinearTitle({
-                    l, val: localizedFieldNames[idx]
-                  })
-                  : '') + tdVal
-              })
-              : tdVal);
+            return Templates.resultsDisplayServerOrClient.interlinearSegment({
+              lang: fieldLangs[idx],
+              dir: fieldDirs[idx],
+              html: (showInterlinTitles
+                ? Templates.resultsDisplayServerOrClient.interlinearTitle({
+                  l, val: localizedFieldNames[idx]
+                })
+                : '') + tdVal
+            });
           }).filter((cell) => cell !== '');
           return addAtts(tdElem, {
             // We could remove these (and add to <col>) for optimizing delivery,
@@ -326,23 +325,23 @@ body {
               col: localizedFieldNames[idx]
             },
             innerHTML:
-                            (showInterlins && !checkEmpty(tdVal, htmlEscaped) &&
-                                (showTitleOnSingleInterlinear || interlins.length)
-                              ? Templates.resultsDisplayServerOrClient.interlinearSegment({
-                                lang: fieldLangs[idx],
-                                html: (showInterlinTitles
-                                  ? Templates.resultsDisplayServerOrClient.interlinearTitle({
-                                    l, val: localizedFieldNames[idx]
-                                  })
-                                  : '') + tdVal
-                              })
-                              : tdVal
-                            ) +
-                            (interlinearColIndexes && interlins.length
-                              ? interlinearSeparator +
-                                    interlins.join(interlinearSeparator)
-                              : ''
-                            )
+              (showInterlins && !checkEmpty(tdVal, htmlEscaped) &&
+                  (showTitleOnSingleInterlinear || interlins.length)
+                ? Templates.resultsDisplayServerOrClient.interlinearSegment({
+                  lang: fieldLangs[idx],
+                  html: (showInterlinTitles
+                    ? Templates.resultsDisplayServerOrClient.interlinearTitle({
+                      l, val: localizedFieldNames[idx]
+                    })
+                    : '') + tdVal
+                })
+                : tdVal
+              ) +
+              (interlinearColIndexes && interlins.length
+                ? interlinearSeparator +
+                      interlins.join(interlinearSeparator)
+                : ''
+              )
           });
         })
       ));

@@ -15,11 +15,13 @@ const getDataForSerializingParamsAsURL = () => ({
 });
 
 export default {
+  /*
   bdo: ({fallbackDirection, message}) =>
   // Displaying as div with inline display instead of span since
   //    Firefox puts punctuation at left otherwise (bdo dir
   //    seemed to have issues in Firefox)
     ['div', {style: 'display: inline; direction: ' + fallbackDirection}, [message]],
+  */
   columnsTable: ({
     lDirectional, fieldInfo, $p, lElement, lIndexedParam, l,
     metadataObj, preferredLocale, schemaItems,
@@ -508,6 +510,8 @@ export default {
       })]
     ])
   ]],
+
+  /*
   addRandomFormFields ({
     lParam, lDirectional, l, lElement, $p, serializeParamsAsURL, content
   }) {
@@ -561,6 +565,8 @@ export default {
       ]
     ].forEach(addRowContent);
   },
+  */
+
   getPreferences: ({
     languageParam, workI18n, paramsSetter, replaceHash,
     getFieldAliasOrNames, work,
@@ -608,10 +614,10 @@ export default {
         multiple: 'multiple',
         size: langs.length,
         $on: {
-          change ({target: {selectedOptions}}) {
+          change () {
             // Todo: EU disclaimer re: storage?
             localStorage.setItem(namespace + '-langCodes', JSON.stringify(
-              [...selectedOptions].map((opt) =>
+              [...this.selectedOptions].map((opt) =>
                 opt.value
               )
             ));
@@ -632,10 +638,14 @@ export default {
         ]];
       })]
     ]],
-    (preferencesPlugin ? preferencesPlugin({
-      $, l, jml, paramsSetter, getDataForSerializingParamsAsURL, work,
-      replaceHash, getFieldAliasOrNames
-    }) : '')
+    (preferencesPlugin
+      ? preferencesPlugin({
+        $, l, jml, paramsSetter, getDataForSerializingParamsAsURL, work,
+        replaceHash, getFieldAliasOrNames
+      })
+      /* istanbul ignore next -- Using just one app */
+      : ''
+    )
   ]],
   addBrowseFields ({browseFields, fieldInfo, lDirectional, i, lIndexedParam, $p, content}) {
     const work = $p.get('work');
@@ -770,15 +780,14 @@ export default {
     ].forEach(addRowContent);
   },
   main ({
-    workI18n, languageParam,
+    workI18n, work, languageParam, prepareForServiceWorker,
     l, namespace, heading, fallbackDirection, languageI18n, langs, fieldInfo, localizeParamNames,
     serializeParamsAsURL, paramsSetter, replaceHash,
     getFieldAliasOrNames,
     hideFormattingSection, $p,
     metadataObj, lParam, lElement, lDirectional, lIndexedParam, fieldMatchesLocale,
-    preferredLocale, schemaItems, content, groups, preferencesPlugin
+    preferredLocale, schemaItems, content, groups, preferencesPlugin, isOfflined
   }) {
-    const work = $p.get('work');
     const serializeParamsAsURLWithData = ({type}) => {
       return serializeParamsAsURL(
         {...getDataForSerializingParamsAsURL(), type}
@@ -813,7 +822,30 @@ export default {
           })
         ]],
         ['h2', [heading]],
-        ['br'],
+        ['div', {style: 'float: right;'}, [
+          ['label', [
+            ['input', {
+              id: 'offline-available',
+              type: 'checkbox',
+              checked: isOfflined,
+              $on: {
+                async click (e) {
+                  // Already bound to `TextBrowser`
+                  await prepareForServiceWorker(
+                    e.target.checked
+                      ? {
+                        works: [work]
+                      }
+                      : {
+                        removals: [work]
+                      }
+                  );
+                }
+              }
+            }],
+            l('offline_available')
+          ]]
+        ]],
         ['form', {id: 'browse', $custom: {
           $submit () {
             const thisParams = serializeParamsAsURLWithData({

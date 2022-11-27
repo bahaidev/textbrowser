@@ -59,6 +59,7 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
     ],
     output: {
       format,
+      sourcemap: true,
       file: `dist/index-${format}${minifying ? '.min' : ''}.js`,
       name: 'TextBrowser' /* ,
             globals: {
@@ -109,6 +110,7 @@ export default [
     input: 'resources/utils/WorkInfo.js',
     output: {
       format: 'esm',
+      sourcemap: true,
       file: 'dist/WorkInfo-es.js',
       name: 'WorkInfo'
     },
@@ -137,6 +139,7 @@ export default [
     input: 'resources/activateCallback.js',
     output: {
       format: 'esm',
+      sourcemap: true,
       file: 'dist/activateCallback-es.js',
       name: 'activateCallback'
     }

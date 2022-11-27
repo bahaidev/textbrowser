@@ -18,11 +18,16 @@ export default {
     try {
       html = Templates.resultsDisplayServerOrClient.main(...args);
     } catch (err) {
+      /* istanbul ignore else */
       if (err.message === 'JSON support is currently not available') {
         dialogs.alert(err.message);
-      } else {
-        console.error(err);
+        return;
       }
+
+      /* istanbul ignore next */
+      console.error(err);
+      /* istanbul ignore next */
+      return;
     }
     jml(...html, $('#main'));
   }
