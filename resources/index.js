@@ -235,7 +235,7 @@ class TextBrowser {
 
   // Need for directionality even if language specified (and we don't want
   //   to require it as a param)
-  // Todo: Use rtl-detect (already included)
+  // Todo: Use intl-locale-textinfo-polyfill (already included)
   getDirectionForLanguageCode (code) {
     const langs = this.langData.languages;
     const exactMatch = langs.find((lang) => {

@@ -49,12 +49,12 @@
     "form-serialization": "^0.11.0",
     "indexeddbshim": "^12.0.0",
     "intl-dom": "^0.19.0",
+    "intl-locale-textinfo-polyfill": "^2.1.1",
     "jamilih": "0.58.2",
     "jsdom": "^22.1.0",
     "json-refs": "^3.0.15",
     "load-stylesheets": "0.10.0",
     "node-fetch": "^2.6.6",
-    "rtl-detect": "1.1.2",
     "simple-get-json": "^9.0.1"
   },
   "devDependencies": {

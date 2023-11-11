@@ -17198,47 +17198,81 @@ async function workDisplay({
   }
 }
 
-function getDefaultExportFromCjs (x) {
-	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
-}
-
 /**
  * Copyright 2015, Yahoo! Inc.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
  */
 
-var self$1;
-var RtlDetectLib = self$1 = {
+// Private vars - star
+const _regexEscape = /([\.\*\+\^\$\[\]\\\(\)\|\{\}\,\-\:\?])/g; // eslint-disable-line no-useless-escape
+const _regexParseLocale = /^([a-zA-Z]{2,3}|[a-zA-Z]{5,8})(-[a-zA-Z]{4})?(-(?:[a-zA-Z]{2}|\d{3}))?(-(?:[a-zA-Z\d]{5,8}|\d[a-zA-Z\d]{3}))?$/;
+// Private vars - end
+
+class Locale {
   // eslint-disable-line consistent-this
-  // Private vars - star
-  _regexEscape: /([\.\*\+\^\$\[\]\\\(\)\|\{\}\,\-\:\?])/g,
-  // eslint-disable-line no-useless-escape
-  _regexParseLocale: /^([a-zA-Z]*)([_\-a-zA-Z]*)$/,
-  // Private vars - end
+
+  /**
+   * @param {string} locale
+   */
+  constructor(locale) {
+    if (typeof locale !== 'string') {
+      throw new TypeError('A string argument is expected');
+    }
+    if (!_regexParseLocale.test(locale)) {
+      throw new RangeError('A proper locale must be provided');
+    }
+    this._locale = locale;
+  }
 
   // Private functions - star
-  _escapeRegExpPattern: function (str) {
+
+  /**
+   * @param {null|undefined|string} [str]
+   * @returns {null|undefined|string}
+   */
+  static _escapeRegExpPattern(str) {
     if (typeof str !== 'string') {
       return str;
     }
-    return str.replace(self$1._regexEscape, '\\$1');
-  },
-  _toLowerCase: function (str, reserveReturnValue) {
+    return str.replace(_regexEscape, '\\$1');
+  }
+
+  /**
+   * @param {string|null} [str]
+   * @param {boolean} [reserveReturnValue]
+   */
+  static _toLowerCase(str, reserveReturnValue) {
     if (typeof str !== 'string') {
       return reserveReturnValue && str;
     }
     return str.toLowerCase();
-  },
-  _toUpperCase: function (str, reserveReturnValue) {
+  }
+
+  /**
+   * @param {string|null} [str]
+   * @param {boolean} [reserveReturnValue]
+   */
+  static _toUpperCase(str, reserveReturnValue) {
     if (typeof str !== 'string') {
       return reserveReturnValue && str;
     }
     return str.toUpperCase();
-  },
-  _trim: function (str, delimiter, reserveReturnValue) {
-    var patterns = [];
-    var regexp;
-    var addPatterns = function (pattern) {
+  }
+
+  /**
+   * @param {string|null} [str]
+   * @param {string|null|string[]|boolean} [delimiter]
+   * @param {boolean} [reserveReturnValue]
+   */
+  static _trim(str, delimiter, reserveReturnValue) {
+    /** @type {string[]} */
+    const patterns = [];
+    let regexp;
+
+    /**
+     * @param {string|null|undefined} pattern
+     */
+    const addPatterns = function (pattern) {
       // Build trim RegExp pattern and push it to patterns array
       patterns.push('^' + pattern + '+|' + pattern + '+$');
     };
@@ -17249,15 +17283,15 @@ var RtlDetectLib = self$1 = {
       delimiter = null;
     }
     if (typeof str !== 'string') {
-      return reserveReturnValue && str;
+      return reserveReturnValue ? str : undefined;
     }
 
     // Trim based on delimiter array values
     if (Array.isArray(delimiter)) {
       // Loop through delimiter array
-      delimiter.map(function (item) {
-        // Escape delimiter to be valid RegExp Pattern
-        var pattern = self$1._escapeRegExpPattern(item);
+      delimiter.map(item => {
+        // Escape delimiter to be valid RegExp pattern
+        const pattern = this._escapeRegExpPattern(item);
         // Push pattern to patterns array
         addPatterns(pattern);
       });
@@ -17265,20 +17299,20 @@ var RtlDetectLib = self$1 = {
 
     // Trim based on delimiter string value
     if (typeof delimiter === 'string') {
-      // Escape delimiter to be valid RegExp Pattern
-      var patternDelimiter = self$1._escapeRegExpPattern(delimiter);
+      // Escape delimiter to be valid RegExp pattern
+      const patternDelimiter = this._escapeRegExpPattern(delimiter);
       // push pattern to patterns array
       addPatterns(patternDelimiter);
     }
 
-    // If delimiter  is not defined, Trim white spaces
+    // If delimiter is not defined, trim white spaces
     if (!delimiter) {
       // Push white space pattern to patterns array
       addPatterns('\\s');
     }
 
     // Build RegExp pattern
-    var pattern = '(' + patterns.join('|') + ')';
+    const pattern = '(' + patterns.join('|') + ')';
     // Build RegExp object
     regexp = new RegExp(pattern, 'g');
 
@@ -17289,96 +17323,319 @@ var RtlDetectLib = self$1 = {
 
     // Return trim string
     return str;
-  },
-  _parseLocale: function (strLocale) {
-    var matches = self$1._regexParseLocale.exec(strLocale); // exec regex
-    var parsedLocale;
-    var lang;
-    var countryCode;
+  }
+
+  /**
+   * @typedef {{
+   *   lang: string,
+   *   script: string|undefined,
+   *   countryCode: string|undefined
+   * }} LocaleInfo
+   */
+
+  /**
+   * @param {string|null} [strLocale]
+   * @returns {undefined|LocaleInfo}
+   */
+  static _parseLocale(strLocale) {
+    if (typeof strLocale !== 'string') {
+      return undefined;
+    }
+    const matches = _regexParseLocale.exec(strLocale); // exec regex
+    let lang;
+    let script;
+    let countryCode;
     if (!strLocale || !matches) {
-      return;
+      return undefined;
     }
 
-    // fix countryCode string by trimming '-' and '_'
-    matches[2] = self$1._trim(matches[2], ['-', '_']);
-    lang = self$1._toLowerCase(matches[1]);
-    countryCode = self$1._toUpperCase(matches[2]) || countryCode;
+    // fix script string by trimming '-' and '_'
+    const matches2 = this._trim(matches[2], ['-', '_']);
 
-    // object with lang, countryCode properties
-    parsedLocale = {
-      lang: lang,
-      countryCode: countryCode
+    // fix countryCode string by trimming '-' and '_'
+    const matches3 = this._trim(matches[3], ['-', '_']);
+    lang = /** @type {string} */this._toLowerCase(matches[1]);
+    script = this._toLowerCase(matches2) || script;
+    countryCode = this._toUpperCase(matches3) || countryCode;
+
+    // object with lang, script properties
+    const parsedLocale = {
+      lang,
+      script,
+      countryCode
     };
 
     // return parsed locale object
     return parsedLocale;
-  },
+  }
   // Private functions - End
 
-  // Public functions - star
-  isRtlLang: function (strLocale) {
-    var objLocale = self$1._parseLocale(strLocale);
-    if (!objLocale) {
-      return;
+  _isRtlLang() {
+    const {
+      lang,
+      script
+    } = /** @type {LocaleInfo} */
+    Locale._parseLocale(this._locale);
+    if (script) {
+      return Locale._RTL_SCRIPTS.indexOf(script) >= 0;
     }
+
     // return true if the intel string lang exists in the BID RTL LANGS array else return false
-    return self$1._BIDI_RTL_LANGS.indexOf(objLocale.lang) >= 0;
-  },
-  getLangDir: function (strLocale) {
+    return Locale._BIDI_RTL_LANGS.indexOf(lang) >= 0;
+  }
+
+  // Public functions - star
+  get textInfo() {
     // return 'rtl' if the intel string lang exists in the BID RTL LANGS array else return 'ltr'
-    return self$1.isRtlLang(strLocale) ? 'rtl' : 'ltr';
+    const direction = this._isRtlLang() ? 'rtl' : 'ltr';
+    return {
+      direction
+    };
   }
 
   // Public functions - End
-};
+}
 
+Locale._RTL_SCRIPTS = ['adlm', 'arab', 'armi', 'avst', 'chrs', 'cprt', 'elym', 'hatr', 'hebr', 'hung', 'khar', 'lydi', 'mand', 'mani', 'mend', 'merc', 'mero', 'narb', 'nbat', 'nkoo', 'orkh', 'ougr', 'palm', 'phli', 'phlp', 'phnx', 'prti', 'rohg', 'samr', 'sarb', 'sogd', 'sogo', 'syrc', 'thaa', 'yezi'];
+
+// Why not working as static property
+Locale._BIDI_RTL_LANGS = [
 // Const BIDI_RTL_LANGS Array
 // BIDI_RTL_LANGS ref: http://en.wikipedia.org/wiki/Right-to-left
 // Table of scripts in Unicode: https://en.wikipedia.org/wiki/Script_(Unicode)
-Object.defineProperty(self$1, '_BIDI_RTL_LANGS', {
-  value: ['ae', /* Avestan */
-  'ar', /* 'العربية', Arabic */
-  'arc', /* Aramaic */
-  'bcc', /* 'بلوچی مکرانی', Southern Balochi */
-  'bqi', /* 'بختياري', Bakthiari */
-  'ckb', /* 'Soranî / کوردی', Sorani */
-  'dv', /* Dhivehi */
-  'fa', /* 'فارسی', Persian */
-  'glk', /* 'گیلکی', Gilaki */
-  'he', /* 'עברית', Hebrew */
-  'ku', /* 'Kurdî / كوردی', Kurdish */
-  'mzn', /* 'مازِرونی', Mazanderani */
-  'nqo', /* N'Ko */
-  'pnb', /* 'پنجابی', Western Punjabi */
-  'prs', /* 'دری', Darī */
-  'ps', /* 'پښتو', Pashto, */
-  'sd', /* 'سنڌي', Sindhi */
-  'ug', /* 'Uyghurche / ئۇيغۇرچە', Uyghur */
-  'ur', /* 'اردو', Urdu */
-  'yi' /* 'ייִדיש', Yiddish */],
+'ae',
+// Avestan
+'aeb',
+// Tunisian Arabic
+'ajt',
+// Tunisian Arabic (old)
+'apc',
+// Levantine Arabic
+'apd',
+// Sudanese Arabic
+'ar',
+// 'العربية', Arabic
+'ara',
+// Arabic
+'arb',
+// Standard Arabic
+'arc',
+// Aramaic
+'arq',
+// Algerian Arabic
+'ars',
+// Najdi Arabic
+'ary',
+// Moroccan Arabic
+'arz',
+// Egyptian Arabic
+'ave',
+// Avestan
+'avl',
+// Eastern Egyptian Bedawi Arabic
+'bal',
+// Baluchi
+'bcc',
+// 'بلوچی مکرانی', Southern Balochi
+'bej',
+// Beja; Bedawiyet
+'bft',
+// Balti
+'bgn',
+// Western Balochi
+'bqi',
+// 'بختياري', Bakthiari
+'brh',
+// Brahui
+'cja',
+// Cham, Western
+'ckb',
+// 'Soranî / کوردی', Sorani
+'cld',
+// Chaldean Neo-Aramaic
+'dcc',
+// Deccan
+'dgl',
+// Andaandi
+'div',
+// Divehi
+'drw',
+// Darwazi (old)
+'dv',
+// Dhivehi
+'fa',
+// 'فارسی', Persian
+'fas',
+// Persian
+'fia',
+// Nobiin
+'fub',
+// Fulfulde (Adamawa)
+'gbz',
+// Dari, Zoroastrian
+'gjk',
+// Koli, Kachi
+'gju',
+// Gujari
+'glk',
+// 'گیلکی', Gilaki
+'grc',
+// Greek, Ancient (to 1453)
+'gwc',
+// Kalami
+'gwt',
+// Gawar-Bati
+'haz',
+// Hazaragi
+'he',
+// 'עברית', Hebrew
+'heb',
+// Hebrew
+'hnd',
+// Hindko, Southern
+'hno',
+// Hindko, Northern
+'iw',
+// Hebrew (old)
+'ji',
+// Yiddish (old)
+'kas',
+// Kashmiri
+'kby',
+// Kanuri, Manga
+'khw',
+// Khowar
+'ks',
+// Kashmiri
+'kvx',
+// Koli, Parkari
+'kxp',
+// Koli, Wadiyara
+'kzh',
+// Kenuzi-Dongola (old)
+'lad',
+// Ladino
+'lah',
+// Lahnda
+'lki',
+// Laki
+'lrc',
+// Luri, Northern
+'luz',
+// Luri, Southern
+'mde',
+// Maba (Chad)
+'mfa',
+// Malay, Pattani
+'mki',
+// Dhatki
+'mvy',
+// Kohistani, Indus
+'myz',
+// Mandaic, Classical
+'mzn',
+// 'مازِرونی', Mazanderani
+'nqo',
+// N'Ko
+'oru',
+// Ormuri
+'ota',
+// Turkish, Ottoman (1500–1928)
+'otk',
+// Turkish, Old
+'oui',
+// Uighur, Old
+'pal',
+// Pahlavi
+'pbu',
+// Pashto, Northern
+'per',
+// Persian
+'pes',
+// Western Farsi
+'phl',
+// Phalura
+'phn',
+// Phoenician
+'pnb',
+// 'پنجابی', Western Punjabi
+'pra',
+// Prakrit languages
+'prd',
+// Dari (Persian)
+'prs',
+// 'دری', Darī
+'ps',
+// 'پښتو', Pashto,
+'pus',
+// Pushto
+'rhg',
+// Rohingya
+'rmt',
+// Domari
+'scl',
+// Shina
+'sd',
+// 'سنڌي', Sindhi
+'sdh',
+// Kurdish, Southern
+'shu',
+// Arabic (Chadian)
+'skr',
+// Saraiki
+'smp',
+// Samaritan
+'snd',
+// Sindhi
+'sog',
+// Sogdian
+'swb',
+// Comorian
+'syr',
+// Syriac
+'tnf',
+// Tangshewi (old)
+'trw',
+// Torwali
+'ug',
+// 'Uyghurche / ئۇيغۇرچە', Uyghur
+'uig',
+// Uighur
+'ur',
+// 'اردو', Urdu
+'urd',
+// Urdu
+'wni',
+// Comorian, Ndzwani
+'xco',
+// Chorasmian
+'xld',
+// Lydian
+'xmn',
+// Manichaean Middle Persian
+'xmr',
+// Meroitic
+'xna',
+// North Arabian, Ancient
+'xpr',
+// Parthian
+'xsa',
+// Sabaean
+'ydd',
+// Yiddish, Eastern
+'yi',
+// 'ייִדיש', Yiddish
+'yid',
+// Yiddish
+'zdj' // Comorian, Ngazidja
+];
 
-  writable: false,
-  enumerable: true,
-  configurable: false
-});
-var rtlDetect$2 = RtlDetectLib;
-
-/**
- * Copyright 2015, Yahoo! Inc.
- * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
- */
-
-var rtlDetect = rtlDetect$2;
-var rtlDetect_1 = {
-  isRtlLang: rtlDetect.isRtlLang,
-  getLangDir: rtlDetect.getLangDir
+const getLangDir = locale => {
+  const {
+    direction
+  } = new Locale(locale).textInfo;
+  return direction;
 };
-
-var rtlDetect$1 = /*@__PURE__*/getDefaultExportFromCjs(rtlDetect_1);
-
-const {
-  getLangDir
-} = rtlDetect$1;
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 const getRawFieldValue = v => {
   return typeof v === 'string' ? v.replace(fieldValueAliasRegex, '$1') : v;
@@ -18490,7 +18747,7 @@ class TextBrowser {
 
   // Need for directionality even if language specified (and we don't want
   //   to require it as a param)
-  // Todo: Use rtl-detect (already included)
+  // Todo: Use intl-locale-textinfo-polyfill (already included)
   getDirectionForLanguageCode(code) {
     const langs = this.langData.languages;
     const exactMatch = langs.find(lang => {

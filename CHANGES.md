@@ -1,5 +1,10 @@
 # CHANGES to `textbrowser`
 
+## ?
+
+- chore: update deps., devDeps. and lint
+- chore: use `intl-locale-textinfo-polyfill` over `rtl-detect`
+
 ## 0.48.0
 
 - feat: service worker helper

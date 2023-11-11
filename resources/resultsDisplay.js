@@ -1,5 +1,5 @@
 /* eslint-env browser */
-import rtlDetect from 'rtl-detect';
+import Locale from 'intl-locale-textinfo-polyfill';
 import JsonRefs from 'json-refs';
 import {jml} from 'jamilih';
 
@@ -11,7 +11,11 @@ import {
 import {Languages} from './utils/Languages.js';
 import {getWorkData} from './utils/WorkInfo.js';
 
-const {getLangDir} = rtlDetect;
+const getLangDir = (locale) => {
+  const {direction} = new Locale(locale).textInfo;
+  return direction;
+};
+
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 
 const getRawFieldValue = (v) => {

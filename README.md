@@ -420,9 +420,8 @@ methods.
         - `applicableFieldIdx` - The `fieldInfo` item whose `field` property is equal to `applicableField`.
         - `applicableFieldText` - Equivalent to `tr[applicableFieldIdx]`
         - `fieldLang` - The `fieldLang` property of `fieldInfo[j]`
-        - `getLangDir` - A method from
-            [`rtl-detect`](https://github.com/shadiabuhilal/rtl-detect)
-            for determining directionality ("rtl" or "ltr") for a given
+        - `getLangDir` - A method for determining directionality
+            ("rtl" or "ltr") for a given
             language code. May be useful with
             `fieldInfo[applicableFieldIdx].fieldLang`
 - `escapeColumn` - Boolean (defaults to `true`). If set to `false`, will avoid
@@ -635,9 +634,6 @@ it supports the following arguments:
     1.  Drop unused fields in URL by default
 1.  Ensure works with `pnpm` in all environments (didn't work when deployed,
     but would need to recall the problem and resolve)
-1.  Waiting: Avoid `rtl-detect` if
-    [intl-locale-info proposal](https://github.com/tc39/proposal-intl-locale-info)
-    gets implemented)
 1.  [`navigator.storage.estimate`](https://developers.google.com/web/updates/2017/08/estimating-available-storage-space)
 1.  Consider using `Intl.DisplayNames` (`type: 'language'`) with plugins so
     can, e.g., show language visibly into which a targeted content language
