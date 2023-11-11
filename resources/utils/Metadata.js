@@ -3,8 +3,9 @@ import {getPreferredLanguages} from './Languages.js';
 // Keep this as the last import for Rollup
 import JsonRefs from 'json-refs'; // eslint-disable-line import/order
 
-const getCurrDir = () =>
-  window.location.href.replace(/(index\.html)?#.*$/, '');
+const getCurrDir = () => {
+  return window.location.href.replace(/(index\.html)?#.*$/, '');
+};
 
 export const getMetaProp = function getMetaProp (lang, metadataObj, properties, allowObjects) {
   let prop;
@@ -38,8 +39,8 @@ export const getMetadata = async (file, property, basePath) => {
   url.pathname = file;
   url.hash = property ? '#/' + property : '';
 
-  return (await JsonRefs
-    .resolveRefsAt(
+  return (await JsonRefs.
+    resolveRefsAt(
       url.toString(),
       {
         loaderOptions: {
@@ -59,9 +60,9 @@ export const getMetadata = async (file, property, basePath) => {
 export const getFieldNameAndValueAliases = function ({
   field, schemaItems, metadataObj, getFieldAliasOrName, lang
 }) {
-  const fieldSchemaIndex = schemaItems.findIndex((item) =>
-    item.title === field
-  );
+  const fieldSchemaIndex = schemaItems.findIndex((item) => {
+    return item.title === field;
+  });
   const fieldSchema = schemaItems[fieldSchemaIndex];
 
   const fieldInfo = metadataObj.fields[field];
@@ -118,13 +119,13 @@ export const getFieldNameAndValueAliases = function ({
         // We'll assume the longest version is best for auto-complete
         ret.aliases.push(
           ...(
-            aliases.filter((v) =>
-              aliases.every((x) =>
-                x === v || !(
+            aliases.filter((v) => {
+              return aliases.every((x) => {
+                return x === v || !(
                   x.toLowerCase().startsWith(v.toLowerCase())
-                )
-              )
-            ).map((v) => v + ' (' + key + ')') // Todo: i18nize
+                );
+              });
+            }).map((v) => v + ' (' + key + ')') // Todo: i18nize
           )
         );
       });
@@ -152,13 +153,13 @@ export const getBrowseFieldData = function ({
     // Todo: Deal with ['td', [['h3', [lDirectional(browseFieldObject.name)]]]]
     //          as kind of fieldset
 
-    const browseFields = fieldSets.map((field) =>
-      getFieldNameAndValueAliases({
+    const browseFields = fieldSets.map((field) => {
+      return getFieldNameAndValueAliases({
         lang,
         field, schemaItems, metadataObj,
         getFieldAliasOrName
-      })
-    );
+      });
+    });
     callback({setName, browseFields, i, presort}); // eslint-disable-line n/no-callback-literal
   });
 };
@@ -199,7 +200,7 @@ export class Metadata {
       // If this is a localized field (e.g., enum), we don't want
       //  to avoid as may be translated (should check though)
       const hasFieldValue = localeStrings &&
-                Object.keys(localeStrings).some(lng => {
+                Object.keys(localeStrings).some((lng) => {
                   const fv = localeStrings[lng] &&
                         localeStrings[lng].fieldvalue;
                   return fv && fv[field];
@@ -207,9 +208,9 @@ export class Metadata {
 
       return hasFieldValue ||
                 (metaLang && preferredLanguages.includes(metaLang)) ||
-                schemaItems.some(item =>
-                  item.title === field && item.type !== 'string'
-                );
+                schemaItems.some((item) => {
+                  return item.title === field && item.type !== 'string';
+                });
     };
   }
 }

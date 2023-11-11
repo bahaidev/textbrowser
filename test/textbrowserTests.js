@@ -95,7 +95,7 @@ describe('textbrowser tests', function () {
       JsonRefs.resolveRefsAt(
         path.join(__dirname, schemaBase, 'languages.jsonschema'),
         {
-          refPreProcessor (obj, pth) {
+          refPreProcessor (obj /* , pth */) {
             // Need to fix given that we are not in the expected
             //   app project of a web project
             if (
@@ -117,8 +117,8 @@ describe('textbrowser tests', function () {
     ] = results;
 
     // JsonRefs doesn't handle circular references the way we want here:
-    schema.properties.languages.items.properties
-      .locale.patternProperties['.*'].anyOf[2].$ref = JsonRefs.pathToPtr([
+    schema.properties.languages.items.properties.
+      locale.patternProperties['.*'].anyOf[2].$ref = JsonRefs.pathToPtr([
         'properties', 'languages', 'items', 'properties', 'locale'
       ]);
 

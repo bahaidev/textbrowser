@@ -19,9 +19,9 @@ export default {
             });
           }
         }
-      }, langs.map(({code}) =>
-        ['option', {value: code}, [languages.getLanguageFromCode(code)]]
-      )]
+      }, langs.map(({code}) => {
+        return ['option', {value: code}, [languages.getLanguageFromCode(code)]];
+      })]
     ], $('#main'));
     if (history.state && typeof history.state === 'object') {
       formDeserialize(document.querySelector('#languageSelectionContainer'), history.state);

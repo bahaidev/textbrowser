@@ -19,8 +19,9 @@ export default async function workSelect ({
     const metadataObjs = await getJSON(works.groups.reduce((arr, fileGroup) => {
       const metadataBaseDir = (works.metadataBaseDirectory || '') +
                 (fileGroup.metadataBaseDirectory || '') + '/';
-      return fileGroup.files.reduce((ar, fileData) =>
-        [...ar, metadataBaseDir + fileData.metadataFile],
+      return fileGroup.files.reduce((ar, fileData) => [
+        ...ar, metadataBaseDir + fileData.metadataFile
+      ],
       arr);
     }, []));
 

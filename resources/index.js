@@ -22,14 +22,14 @@ import workSelect from './workSelect.js';
 import workDisplay from './workDisplay.js';
 import {resultsDisplayClient} from './resultsDisplay.js';
 
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars, @stylistic/brace-style */
 /**
  *
  * @param {null|number|string|PlainObject|GenericArray} obj
  * @returns {void}
  */
 function s (obj) { dialogs.alert(JSON.stringify(obj)); } // lgtm [js/unused-local-variable]
-/* eslint-enable no-unused-vars */
+/* eslint-enable no-unused-vars, @stylistic/brace-style */
 
 /**
  *
@@ -85,7 +85,7 @@ async function prepareForServiceWorker () {
  * @returns {Promise<void>}
  */
 async function requestPermissions (langs, l) {
-  return await new Promise((resolve, reject) => {
+  return await new Promise((resolve) => {
     // Todo: We could run the dialog code below for every page if
     //    `Notification.permission === 'default'` (i.e., not choice
     //    yet made by user), but user may avoid denying with intent

@@ -67,9 +67,9 @@ export const getWorkData = async function ({
 
   let fileData;
   const fileGroup = filesObj.groups.find((fg) => {
-    fileData = fg.files.find((file) =>
-      work === workI18n(['workNames', fg.id, file.name])
-    );
+    fileData = fg.files.find((file) => {
+      return work === workI18n(['workNames', fg.id, file.name]);
+    });
     return Boolean(fileData);
   });
     // This is not specific to the work, but we export it anyways
@@ -178,7 +178,7 @@ export const getWorkData = async function ({
     console.log('pluginsForWork', pluginsForWork);
     const {lang, namespace} = this; // array with first item as preferred
     pluginsForWork.iterateMappings(({
-      plugin,
+      // plugin,
       pluginName, pluginLang,
       onByDefaultDefault,
       placement, applicableFields, meta

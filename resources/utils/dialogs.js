@@ -63,6 +63,7 @@ class Dialog {
     return dialog;
   }
   makeCancelDialog ({
+    // eslint-disable-next-line no-unused-vars -- Discarding
     submit, // Don't pass this on to `args` if present
     cancel,
     cancelClass = 'cancel', submitClass = 'submit',
@@ -94,7 +95,7 @@ class Dialog {
       message: msg,
       submitClass = 'submit'
     } = message;
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const dialog = /** @type {HTMLDialogElement} */ (jml('dialog', [
         msg,
         ...(includeOk

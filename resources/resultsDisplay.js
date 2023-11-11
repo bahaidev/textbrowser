@@ -61,7 +61,7 @@ const setAnchor = ({
       }
     }
     if (anchors.length) {
-      const escapeSelectorAttValue = (str) => (str || '').replace(/["\\]/g, '\\$&');
+      const escapeSelectorAttValue = (str) => (str || '').replaceAll(/["\\]/g, '\\$&');
       const escapedRow = escapeSelectorAttValue(anchors.join('-'));
       const escapedCol = anchorField
         ? escapeSelectorAttValue(anchorField)
@@ -172,7 +172,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,
     canonicalBrowseFieldNames
   }) => ({
-    tr, foundState
+    tr // , foundState
   }) => {
     return canonicalBrowseFieldNames.map((fieldName) => {
       const idx = localizedFieldNames.indexOf(fieldName);
@@ -263,13 +263,13 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     } while (field);
     checkedFields = checkedFields.filter((cf) => localizedFieldNames.includes(cf));
     const checkedFieldIndexes = checkedFields.map((cf) => localizedFieldNames.indexOf(cf));
-    const allInterlinearColIndexes = checkedFieldIndexes.map((cfi, i) => {
+    const allInterlinearColIndexes = checkedFieldIndexes.map((cfi) => {
       const interlin = $p.get('interlin' + (cfi + 1), true);
-      return interlin && interlin.split(/\s*,\s*/).map((col) =>
+      return interlin && interlin.split(/\s*,\s*/).map((col) => {
       // Todo: Avoid this when known to be integer or if string, though allow
       //    string to be treated as number if config is set.
-        Number.parseInt(col) - 1
-      ).filter((n) => !Number.isNaN(n));
+        return Number.parseInt(col) - 1;
+      }).filter((n) => !Number.isNaN(n));
     });
     return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
   };
@@ -298,8 +298,8 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             );
             */
       const startSep = Templates.resultsDisplayServerOrClient.startSeparator({l});
-      const innerBrowseFieldSeparator = Templates.resultsDisplayServerOrClient
-        .innerBrowseFieldSeparator({l});
+      const innerBrowseFieldSeparator = Templates.resultsDisplayServerOrClient.
+        innerBrowseFieldSeparator({l});
 
       const buildRanges = () => {
         const endVals = [];
@@ -358,9 +358,9 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       if (fieldValueAliasMap) {
         Object.entries(fieldValueAliasMap).forEach(([key, val]) => {
           if (Array.isArray(val)) {
-            fieldValueAliasMap[key] = val.map((value) =>
-              Templates.resultsDisplayServerOrClient.fieldValueAlias({key, value})
-            );
+            fieldValueAliasMap[key] = val.map((value) => {
+              return Templates.resultsDisplayServerOrClient.fieldValueAlias({key, value});
+            });
             return;
           }
           if (val && typeof val === 'object') {
@@ -424,7 +424,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
   const $pEscArbitrary = (param) => escapeHTML($p.get(param, true));
 
   // Not currently in use
-  const escapeQuotedCSS = (s) => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  const escapeQuotedCSS = (s) => s.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
 
   const {
     fileData, workI18n, getFieldAliasOrName, schemaObj, metadataObj,
@@ -468,7 +468,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     console.log('pluginsForWork', pluginsForWork);
     const {lang} = this; // array with first item as preferred
     pluginsForWork.iterateMappings(({
-      plugin,
+      // plugin,
       pluginName, pluginLang,
       onByDefaultDefault,
       placement, applicableFields, meta
@@ -568,11 +568,11 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       prefI18n !== 'false' && this.localizeParamNames
     );
   const lParam = localizeParamNames
-    ? key => l(['params', key])
-    : key => key;
+    ? (key) => l(['params', key])
+    : (key) => key;
   const lIndexedParam = localizeParamNames
-    ? key => l(['params', 'indexed', key])
-    : key => key;
+    ? (key) => l(['params', 'indexed', key])
+    : (key) => key;
   const lParamRaw = localizeParamNames
     ? (key, suffix = '') => $p.get(lParam(key) + suffix, true)
     : (key, suffix = '') => $p.get(key + suffix, true);
@@ -581,9 +581,9 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     : (key, suffix = '') => $p.get($p.get('work') + '-' + key + suffix, true);
 
   // Now that we know `browseFieldSets`, we can parse `startEnd`
-  const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) =>
-    lIndexedParamRaw('startEnd', (i + 1))
-  );
+  const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) => {
+    return lIndexedParamRaw('startEnd', (i + 1));
+  });
   if (browseFieldSetStartEndIdx !== -1) {
     // Todo: i18nize (by work and/or by whole app?)
     const rangeSep = '-';
@@ -618,29 +618,30 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     }
   }
 
-  const browseFieldSetIdx = browseFieldSets.findIndex((item, i) =>
-    lIndexedParamRaw('start', (i + 1) + '-1')
-  );
+  const browseFieldSetIdx = browseFieldSets.findIndex((item, i) => {
+    return lIndexedParamRaw('start', (i + 1) + '-1');
+  });
   const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
   const applicableBrowseFieldSetName = setNames[browseFieldSetIdx];
-  const applicableBrowseFieldNames = applicableBrowseFieldSet.map((abfs) =>
-    abfs.fieldName
-  );
+  const applicableBrowseFieldNames = applicableBrowseFieldSet.map((abfs) => {
+    return abfs.fieldName;
+  });
 
   const canonicalBrowseFieldSet = browseFieldSets[0];
   const canonicalBrowseFieldSetName = setNames[0];
-  const canonicalBrowseFieldNames = canonicalBrowseFieldSet.map((abfs) =>
-    abfs.fieldName
-  );
+  const canonicalBrowseFieldNames = canonicalBrowseFieldSet.map((abfs) => {
+    return abfs.fieldName;
+  });
 
   const fieldSchemaTypes = applicableBrowseFieldSet.map((abfs) => abfs.fieldSchema.type);
-  const buildRangePoint = (startOrEnd) =>
-    applicableBrowseFieldNames.map((bfn, j) =>
-      $p.get(
+  const buildRangePoint = (startOrEnd) => {
+    return applicableBrowseFieldNames.map((bfn, j) => {
+      return $p.get(
         $p.get('work') + '-' + startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
         true
-      )
-    );
+      );
+    });
+  };
   const starts = buildRangePoint('start');
   const ends = buildRangePoint('end');
 
@@ -700,7 +701,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         //   through notifications (or however)
         !noIndexedDB
   ) {
-    tableData = await new Promise((resolve, reject) => {
+    tableData = await new Promise((resolve) => {
       // Todo: Fetch the work in code based on the non-localized `datafileName`
       const dbName = this.namespace + '-textbrowser-cache-data';
       const req = indexedDB.open(dbName);
@@ -751,11 +752,11 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     }
   }
   if (!usingServerData && pluginsForWork) {
-    fieldInfo.forEach(({plugin, placement}, j) => {
+    fieldInfo.forEach(({plugin, placement}) => {
       if (!plugin) {
         return;
       }
-      tableData.forEach((tr, i) => {
+      tableData.forEach((tr) => {
         // Todo: We should pass on other arguments (like `meta` but on `applicableFields`)
         tr.splice(
           placement,

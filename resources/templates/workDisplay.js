@@ -15,14 +15,15 @@ const getDataForSerializingParamsAsURL = () => ({
 });
 
 export default {
-  bdo: ({fallbackDirection, message}) =>
-  // Displaying as div with inline display instead of span since
-  //    Firefox puts punctuation at left otherwise (bdo dir
-  //    seemed to have issues in Firefox)
-    ['div', {style: 'display: inline; direction: ' + fallbackDirection}, [message]],
+  bdo ({fallbackDirection, message}) {
+    // Displaying as div with inline display instead of span since
+    //    Firefox puts punctuation at left otherwise (bdo dir
+    //    seemed to have issues in Firefox)
+    return ['div', {style: 'display: inline; direction: ' + fallbackDirection}, [message]];
+  },
   columnsTable: ({
     lDirectional, fieldInfo, $p, lElement, lIndexedParam, l,
-    metadataObj, preferredLocale, schemaItems,
+    // metadataObj, preferredLocale, schemaItems,
     fieldMatchesLocale
   }) => ['table', {
     border: '1', cellpadding: '5', align: 'center'
@@ -71,19 +72,21 @@ export default {
           })
         ]),
         lElement('check-sequence', 'td', 'title', {}, [
-          ['select', {name: lIndexedParam('field') + idx, id: fieldIndex, size: '1'},
-            fieldInfo.map(({field, fieldAliasOrName}, j) => {
-              const matchedFieldParam = fieldParam && fieldParam === fieldAliasOrName;
-              return ['option', {
-                dataset: {name: field},
-                value: fieldAliasOrName,
-                selected: (
-                  matchedFieldParam ||
-                                    (j === i && !$p.has(fieldIndex))
-                )
-              }, [fieldAliasOrName]];
-            })
-          ]
+          ['select', {
+            name: lIndexedParam('field') + idx,
+            id: fieldIndex,
+            size: '1'
+          }, fieldInfo.map(({field, fieldAliasOrName}, j) => {
+            const matchedFieldParam = fieldParam && fieldParam === fieldAliasOrName;
+            return ['option', {
+              dataset: {name: field},
+              value: fieldAliasOrName,
+              selected: (
+                matchedFieldParam ||
+                                  (j === i && !$p.has(fieldIndex))
+              )
+            }, [fieldAliasOrName]];
+          })]
         ]),
         ['td', [ // Todo: Make as tag selector with fields as options
           lElement('interlinear-tips', 'input', 'title', {
@@ -128,7 +131,7 @@ export default {
           type: 'button',
           $on: {
             click () {
-              fieldInfo.forEach(({field}, i) => {
+              fieldInfo.forEach((/* {field} */_, i) => {
                 const idx = i + 1;
                 // The following is redundant with 'field' but may need to
                 //     retrieve later out of order?
@@ -278,22 +281,20 @@ export default {
       dir: 'ltr'
     }, [
       lDirectional('font_stretch'), nbsp,
-      ['select', {name: lParam('fontstretch')},
-        [
-          'ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed',
-          'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'
-        ].map((stretch) => {
-          const atts = {
-            value: lDirectional(['param_values', 'font-stretch', stretch]),
-            selected: null
-          };
-          if ($p.get('fontstretch') === stretch ||
-                        (!$p.has('fontstretch') && stretch === 'normal')) {
-            atts.selected = 'selected';
-          }
-          return ['option', atts, [lDirectional(['param_values', 'font-stretch', stretch])]];
-        })
-      ]
+      ['select', {name: lParam('fontstretch')}, [
+        'ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed',
+        'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'
+      ].map((stretch) => {
+        const atts = {
+          value: lDirectional(['param_values', 'font-stretch', stretch]),
+          selected: null
+        };
+        if ($p.get('fontstretch') === stretch ||
+                      (!$p.has('fontstretch') && stretch === 'normal')) {
+          atts.selected = 'selected';
+        }
+        return ['option', atts, [lDirectional(['param_values', 'font-stretch', stretch])]];
+      })]
     ]],
     /**/
     ['br'], ['br'],
@@ -326,8 +327,8 @@ export default {
         ['yes', lDirectional(['param_values', 'y'])],
         ['no', lDirectional(['param_values', 'n'])],
         ['none', lDirectional(['param_values', '0'])]
-      ].map(([key, val], i, arr) =>
-        ['label', [
+      ].map(([key, val], i, arr) => {
+        return ['label', [
           ['input', {
             name: lParam('header'),
             type: 'radio',
@@ -336,8 +337,8 @@ export default {
                             (!$p.has('header') && i === 1)
           }],
           lDirectional(key), (i === arr.length - 1 ? '' : nbsp3)
-        ]]
-      ))
+        ]];
+      }))
     ]],
     ['div', [
       lDirectional('footer_wstyles'), nbsp2,
@@ -345,8 +346,8 @@ export default {
         ['yes', lDirectional(['param_values', 'y'])],
         ['no', lDirectional(['param_values', 'n'])],
         ['none', lDirectional(['param_values', '0'])]
-      ].map(([key, val], i, arr) =>
-        ['label', [
+      ].map(([key, val], i, arr) => {
+        return ['label', [
           ['input', {
             name: lParam('footer'),
             type: 'radio',
@@ -355,8 +356,8 @@ export default {
                             (!$p.has('footer') && i === 2)
           }],
           lDirectional(key), (i === arr.length - 1 ? '' : nbsp3)
-        ]]
-      ))
+        ]];
+      }))
     ]],
     ['label', [
       ['input', {
@@ -374,8 +375,8 @@ export default {
         ['yes', lDirectional(['param_values', 'y'])],
         ['no', lDirectional(['param_values', 'n'])],
         ['none', lDirectional(['param_values', '0'])]
-      ].map(([key, val], i, arr) =>
-        ['label', [
+      ].map(([key, val], i, arr) => {
+        return ['label', [
           ['input', {
             name: lParam('caption'),
             type: 'radio',
@@ -384,8 +385,8 @@ export default {
                             (!$p.has('caption') && i === 2)
           }],
           lDirectional(key), (i === arr.length - 1 ? '' : nbsp3)
-        ]]
-      ))
+        ]];
+      }))
     ]],
     ['br'],
     ['div', [
@@ -512,7 +513,9 @@ export default {
     lParam, lDirectional, l, lElement, $p, serializeParamsAsURL, content
   }) {
     const addRowContent = (rowContent) => {
-      if (!rowContent || !rowContent.length) { return; }
+      if (!rowContent || !rowContent.length) {
+        return;
+      }
       content.push(['tr', rowContent]);
     };
     [
@@ -562,10 +565,11 @@ export default {
     ].forEach(addRowContent);
   },
   getPreferences: ({
-    languageParam, workI18n, paramsSetter, replaceHash,
+    // languageParam, workI18n, groups,
+    paramsSetter, replaceHash,
     getFieldAliasOrNames, work,
     langs, languageI18n, l, localizeParamNames, namespace,
-    hideFormattingSection, groups, preferencesPlugin
+    hideFormattingSection, preferencesPlugin
   }) => ['div', {
     style: {textAlign: 'left'}, id: 'preferences', hidden: 'true'
   }, [
@@ -611,9 +615,9 @@ export default {
           change ({target: {selectedOptions}}) {
             // Todo: EU disclaimer re: storage?
             localStorage.setItem(namespace + '-langCodes', JSON.stringify(
-              [...selectedOptions].map((opt) =>
-                opt.value
-              )
+              [...selectedOptions].map((opt) => {
+                return opt.value;
+              })
             ));
           }
         }
@@ -632,15 +636,20 @@ export default {
         ]];
       })]
     ]],
-    (preferencesPlugin ? preferencesPlugin({
-      $, l, jml, paramsSetter, getDataForSerializingParamsAsURL, work,
-      replaceHash, getFieldAliasOrNames
-    }) : '')
+    (preferencesPlugin
+      ? preferencesPlugin({
+        $, l, jml, paramsSetter, getDataForSerializingParamsAsURL, work,
+        replaceHash, getFieldAliasOrNames
+      })
+      : ''
+    )
   ]],
   addBrowseFields ({browseFields, fieldInfo, lDirectional, i, lIndexedParam, $p, content}) {
     const work = $p.get('work');
     const addRowContent = (rowContent) => {
-      if (!rowContent || !rowContent.length) { return; }
+      if (!rowContent || !rowContent.length) {
+        return;
+      }
       content.push(['tr', rowContent]);
     };
     [
@@ -652,8 +661,8 @@ export default {
         : '',
       [
         ...(() => {
-          const addBrowseFieldSet = (setType) =>
-            browseFields.reduce((rowContent, {
+          const addBrowseFieldSet = (setType) => {
+            return browseFields.reduce((rowContent, {
               fieldName, aliases, fieldSchema: {minimum, maximum}
             }, j) => {
               // Namespace by work for sake of browser auto-complete caching
@@ -664,36 +673,41 @@ export default {
                   ['label', {for: name}, [fieldName]]
                 ]],
                 ['td', [
-                  aliases ? ['datalist', {id: 'dl-' + id},
-                    aliases.map((alias) => ['option', [alias]])
-                  ] : '',
-                  aliases ? ['input', {
-                    name, id, class: 'browseField',
-                    list: 'dl-' + id,
-                    value: $p.get(name, true),
-                    $on: setType === 'start'
-                      ? {change (e) {
-                        $$('input.browseField').forEach((bf) => {
-                          if (bf.id.includes((i + 1) + '-' +
-                                                        (j + 1))
-                          ) {
-                            bf.value = e.target.value;
-                          }
-                        });
-                      }}
-                      : undefined
-                  }] : ['input', {
-                    name, id,
-                    type: 'number',
-                    min: minimum,
-                    max: maximum,
-                    value: $p.get(name, true)
-                  }],
+                  aliases
+                    ? ['datalist', {
+                      id: 'dl-' + id
+                    }, aliases.map((alias) => ['option', [alias]])]
+                    : '',
+                  aliases
+                    ? ['input', {
+                      name, id, class: 'browseField',
+                      list: 'dl-' + id,
+                      value: $p.get(name, true),
+                      $on: setType === 'start'
+                        ? {change (e) {
+                          $$('input.browseField').forEach((bf) => {
+                            if (bf.id.includes((i + 1) + '-' +
+                                                          (j + 1))
+                            ) {
+                              bf.value = e.target.value;
+                            }
+                          });
+                        }}
+                        : undefined
+                    }]
+                    : ['input', {
+                      name, id,
+                      type: 'number',
+                      min: minimum,
+                      max: maximum,
+                      value: $p.get(name, true)
+                    }],
                   nbsp3
                 ]]
               );
               return rowContent;
             }, {'#': []});
+          };
           return [
             addBrowseFieldSet('start'),
             ['td', [
@@ -708,7 +722,7 @@ export default {
         ]]
       ],
       [
-        ['td', {colspan: 4 * browseFields.length + 2 + 1, align: 'center'}, [
+        ['td', {colspan: (4 * browseFields.length) + 2 + 1, align: 'center'}, [
           ['table', [
             ['tr', [
               browseFields.reduce((
@@ -724,9 +738,11 @@ export default {
                     ['label', {for: name}, [fieldName]]
                   ]],
                   ['td', [
-                    aliases ? ['datalist', {id: 'dl-' + id},
-                      aliases.map((alias) => ['option', [alias]])
-                    ] : '',
+                    aliases
+                      ? ['datalist', {
+                        id: 'dl-' + id
+                      }, aliases.map((alias) => ['option', [alias]])]
+                      : '',
                     aliases
                       ? ['input', {
                         name, id, class: 'browseField',
@@ -752,15 +768,16 @@ export default {
               ['td', [
                 ['label', [
                   lDirectional('field') + nbsp2,
-                  ['select', {name: lIndexedParam('anchorfield') + (i + 1), size: '1'},
-                    fieldInfo.map(({fieldAliasOrName}) => {
-                      const val = $p.get(lIndexedParam('anchorfield') + (i + 1), true);
-                      if (val === fieldAliasOrName) {
-                        return ['option', {selected: true}, [fieldAliasOrName]];
-                      }
-                      return ['option', [fieldAliasOrName]];
-                    })
-                  ]
+                  ['select', {
+                    name: lIndexedParam('anchorfield') + (i + 1),
+                    size: '1'
+                  }, fieldInfo.map(({fieldAliasOrName}) => {
+                    const val = $p.get(lIndexedParam('anchorfield') + (i + 1), true);
+                    if (val === fieldAliasOrName) {
+                      return ['option', {selected: true}, [fieldAliasOrName]];
+                    }
+                    return ['option', [fieldAliasOrName]];
+                  })]
                 ]]
               ]]
             ]]
@@ -771,7 +788,8 @@ export default {
   },
   main ({
     workI18n, languageParam,
-    l, namespace, heading, fallbackDirection, languageI18n, langs, fieldInfo, localizeParamNames,
+    l, namespace, heading, // fallbackDirection,
+    languageI18n, langs, fieldInfo, localizeParamNames,
     serializeParamsAsURL, paramsSetter, replaceHash,
     getFieldAliasOrNames,
     hideFormattingSection, $p,
@@ -784,9 +802,10 @@ export default {
         {...getDataForSerializingParamsAsURL(), type}
       );
     };
-    const lOption = (key, atts) =>
-      ['option', atts, [
-        l(key
+    const lOption = (key, atts) => {
+      return ['option', atts, [
+        l(
+          key
           // Ensure `intl-dom` supports
           // , fallback ({message}) {
           //   atts.dir = fallbackDirection;
@@ -794,6 +813,7 @@ export default {
           // }
         )
       ]];
+    };
     // Returns element with localized or fallback attribute value (as Jamilih);
     //   also adds direction
     jml(

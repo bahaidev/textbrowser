@@ -17,9 +17,9 @@ export default async function getLocaleFallbackResults ({
       //    `$ref` (as with <https://github.com/whitlockjc/json-refs>) and
       //    replace `loadLocales` behavior with our own now resolved
       //    locales; see https://github.com/jdorn/json-editor/issues/132
-      return basePath + (langData.localeFileBasePath) + langs.find((l) =>
-        l.code === code
-      ).locale.$ref;
+      return basePath + (langData.localeFileBasePath) + langs.find((l) => {
+        return l.code === code;
+      }).locale.$ref;
     }
   });
   if (!$p.l10n) {

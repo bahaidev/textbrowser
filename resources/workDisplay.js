@@ -31,15 +31,15 @@ export default async function workDisplay ({
     );
 
   async function _displayWork ({
-    workI18n, metadataObj, getFieldAliasOrName, schemaObj, schemaItems,
+    workI18n, metadataObj, getFieldAliasOrName, schemaItems, // schemaObj,
     fieldInfo, metadata, pluginsForWork, groupsToWorks
   }) {
     const lParam = localizeParamNames
-      ? key => l(['params', key])
-      : key => key;
+      ? (key) => l(['params', key])
+      : (key) => key;
     const lIndexedParam = localizeParamNames
-      ? key => l(['params', 'indexed', key])
-      : key => key;
+      ? (key) => l(['params', 'indexed', key])
+      : (key) => key;
 
     // Returns element with localized option text (as Jamilih), with
     //   optional fallback direction
@@ -56,15 +56,14 @@ export default async function workDisplay ({
     };
 
     // Returns plain text node or element (as Jamilih) with fallback direction
-    const lDirectional = (key, substitutions) =>
-      l(
-        key,
-        substitutions
-        // formats
-        // Restore if `intl-dom` supports
-        // fallback: ({message}) =>
-        //   Templates.workDisplay.bdo({fallbackDirection, message})
-      );
+    const lDirectional = (key, substitutions) => l(
+      key,
+      substitutions
+      // formats
+      // Restore if `intl-dom` supports
+      // fallback: ({message}) =>
+      //   Templates.workDisplay.bdo({fallbackDirection, message})
+    );
 
     const fieldMatchesLocale = metadata.getFieldMatchesLocale({
       namespace: this.namespace,

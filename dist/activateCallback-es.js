@@ -29,7 +29,7 @@ const arrayChunk = (arr, size) => {
  * @param {string} cfg.namespace
  * @param {string[]} cfg.files
  * @param {Logger} cfg.log
- * @param {string} [cfg.basePath=""]
+ * @param {string} [cfg.basePath]
  * @returns {Promise<void>}
  */
 async function activateCallback ({

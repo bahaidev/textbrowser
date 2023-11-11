@@ -1,25 +1,26 @@
-function ownKeys$1(object, enumerableOnly) {
-  var keys = Object.keys(object);
+function ownKeys$1(e, r) {
+  var t = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    enumerableOnly && (symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    })), keys.push.apply(keys, symbols);
+    var o = Object.getOwnPropertySymbols(e);
+    r && (o = o.filter(function (r) {
+      return Object.getOwnPropertyDescriptor(e, r).enumerable;
+    })), t.push.apply(t, o);
   }
-  return keys;
+  return t;
 }
-function _objectSpread2$1(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = null != arguments[i] ? arguments[i] : {};
-    i % 2 ? ownKeys$1(Object(source), !0).forEach(function (key) {
-      _defineProperty$1(target, key, source[key]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$1(Object(source)).forEach(function (key) {
-      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+function _objectSpread2$1(e) {
+  for (var r = 1; r < arguments.length; r++) {
+    var t = null != arguments[r] ? arguments[r] : {};
+    r % 2 ? ownKeys$1(Object(t), !0).forEach(function (r) {
+      _defineProperty$1(e, r, t[r]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys$1(Object(t)).forEach(function (r) {
+      Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
     });
   }
-  return target;
+  return e;
 }
 function _defineProperty$1(obj, key, value) {
+  key = _toPropertyKey$1(key);
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -58,6 +59,20 @@ function _objectWithoutProperties(source, excluded) {
     }
   }
   return target;
+}
+function _toPrimitive$1(input, hint) {
+  if (typeof input !== "object" || input === null) return input;
+  var prim = input[Symbol.toPrimitive];
+  if (prim !== undefined) {
+    var res = prim.call(input, hint || "default");
+    if (typeof res !== "object") return res;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return (hint === "string" ? String : Number)(input);
+}
+function _toPropertyKey$1(arg) {
+  var key = _toPrimitive$1(arg, "string");
+  return typeof key === "symbol" ? key : String(key);
 }
 
 /* eslint-disable node/no-unsupported-features/es-syntax */
@@ -369,6 +384,33 @@ function buildGetJSON({
 }
 const getJSON = buildGetJSON();
 
+function _iterableToArrayLimit$1(arr, i) {
+  var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"];
+  if (null != _i) {
+    var _s,
+      _e,
+      _x,
+      _r,
+      _arr = [],
+      _n = !0,
+      _d = !1;
+    try {
+      if (_x = (_i = _i.call(arr)).next, 0 === i) {
+        if (Object(_i) !== _i) return;
+        _n = !1;
+      } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0);
+    } catch (err) {
+      _d = !0, _e = err;
+    } finally {
+      try {
+        if (!_n && null != _i.return && (_r = _i.return(), Object(_r) !== _r)) return;
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+    return _arr;
+  }
+}
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
   if (Object.getOwnPropertySymbols) {
@@ -457,7 +499,7 @@ function _defineProperties(target, props) {
     descriptor.enumerable = descriptor.enumerable || false;
     descriptor.configurable = true;
     if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
+    Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor);
   }
 }
 function _createClass(Constructor, protoProps, staticProps) {
@@ -469,6 +511,7 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 function _defineProperty(obj, key, value) {
+  key = _toPropertyKey(key);
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -564,30 +607,6 @@ function _arrayWithHoles$1(arr) {
 function _iterableToArray$1(iter) {
   if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
 }
-function _iterableToArrayLimit$1(arr, i) {
-  var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
-  if (_i == null) return;
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _s, _e;
-  try {
-    for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-  return _arr;
-}
 function _unsupportedIterableToArray$1(o, minLen) {
   if (!o) return;
   if (typeof o === "string") return _arrayLikeToArray$1(o, minLen);
@@ -607,17 +626,50 @@ function _nonIterableSpread$1() {
 function _nonIterableRest$1() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
+function _toPrimitive(input, hint) {
+  if (typeof input !== "object" || input === null) return input;
+  var prim = input[Symbol.toPrimitive];
+  if (prim !== undefined) {
+    var res = prim.call(input, hint || "default");
+    if (typeof res !== "object") return res;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return (hint === "string" ? String : Number)(input);
+}
+function _toPropertyKey(arg) {
+  var key = _toPrimitive(arg, "string");
+  return typeof key === "symbol" ? key : String(key);
+}
 
 // We want it to work in the browser, so commenting out
 // import jsonExtra from 'json5';
 // import jsonExtra from 'json-6';
 
+/**
+ * @typedef {any} JSON6
+ */
+
+// @ts-expect-error Need typing for JSON6
 var _jsonExtra = globalThis.jsonExtra;
+
+/**
+ * @param {string} str
+ * @returns {string}
+ */
 var unescapeBackslashes = function unescapeBackslashes(str) {
   return str.replace(/\\+/g, function (esc) {
     return esc.slice(0, esc.length / 2);
   });
 };
+
+/**
+ * @typedef {any} AnyValue
+ */
+
+/**
+ * @param {string} args
+ * @returns {AnyValue}
+ */
 var parseJSONExtra = function parseJSONExtra(args) {
   return _jsonExtra.parse(
   // Doesn't actually currently allow explicit brackets,
@@ -626,6 +678,36 @@ var parseJSONExtra = function parseJSONExtra(args) {
 };
 
 // Todo: Extract to own library (RegExtras?)
+
+/**
+ * @callback BetweenMatches
+ * @param {string} str
+ * @returns {void}
+ */
+
+/**
+ * @callback AfterMatch
+ * @param {string} str
+ * @returns {void}
+ */
+
+/**
+ * @callback EscapeAtOne
+ * @param {string} str
+ * @returns {void}
+ */
+
+/**
+ * @param {RegExp} regex
+ * @param {string} str
+ * @param {{
+ *   onMatch: (...arg0: string[]) => void,
+ *   extra?: BetweenMatches|AfterMatch|EscapeAtOne
+ *   betweenMatches?: BetweenMatches,
+ *   afterMatch?: AfterMatch,
+ *   escapeAtOne?: EscapeAtOne
+ * }} cfg
+ */
 var processRegex = function processRegex(regex, str, _ref) {
   var onMatch = _ref.onMatch,
     extra = _ref.extra,
@@ -638,6 +720,9 @@ var processRegex = function processRegex(regex, str, _ref) {
     betweenMatches = extra;
     afterMatch = extra;
     escapeAtOne = extra;
+  }
+  if (!betweenMatches || !afterMatch) {
+    throw new Error('You must have `extra` or `betweenMatches` and `afterMatch` arguments.');
   }
   while ((match = regex.exec(str)) !== null) {
     var _match = match,
@@ -664,20 +749,31 @@ var processRegex = function processRegex(regex, str, _ref) {
 };
 
 /* globals fetch, document */
+
+/**
+ * @typedef {(
+ *   input: RequestInfo|URL, init?: RequestInit
+ * ) => Promise<Response>} Fetch
+ */
+/**
+ * @type {null|Fetch}
+ */
 var _fetch = typeof fetch !== 'undefined' ? fetch
 /* c8 ignore next */ : null;
 
 /**
- * @returns {fetch}
+ * @returns {Fetch|null}
  */
 var getFetch = function getFetch() {
   return _fetch;
 };
+
+/** @type {Document|null} */
 var _doc = typeof document !== 'undefined'
 /* c8 ignore next */ ? document : null;
 
 /**
- * @returns {document}
+ * @returns {Document|null}
  */
 var getDocument = function getDocument() {
   return _doc;
@@ -704,28 +800,74 @@ function generateUUID() {
   });
 }
 
+/**
+ *
+ * @param {string} locale
+ * @param {string[]} arrayOfItems
+ * @param {Intl.CollatorOptions|undefined} options
+ * @returns {string[]}
+ */
 var sort = function sort(locale, arrayOfItems, options) {
   return arrayOfItems.sort(new Intl.Collator(locale, options).compare);
 };
+
+/**
+ *
+ * @param {string} locale
+ * @param {string[]} arrayOfItems
+ * @param {Intl.ListFormatOptions|undefined} [options]
+ * @returns {string}
+ */
 var list = function list(locale, arrayOfItems, options) {
   return new Intl.ListFormat(locale, options).format(arrayOfItems);
 };
+
+/**
+ *
+ * @param {string} locale
+ * @param {string[]} arrayOfItems
+ * @param {Intl.ListFormatOptions|undefined} [listOptions]
+ * @param {Intl.CollatorOptions|undefined} [collationOptions]
+ * @returns {string}
+ */
 var sortListSimple = function sortListSimple(locale, arrayOfItems, listOptions, collationOptions) {
   sort(locale, arrayOfItems, collationOptions);
   return list(locale, arrayOfItems, listOptions);
 };
+
+/**
+ * @typedef {number} Integer
+ */
+
+/**
+ *
+ * @param {string} locale
+ * @param {string[]} arrayOfItems
+ * @param {((str: string, idx: Integer) => any)|
+ *   Intl.ListFormatOptions|undefined} map
+ * @param {Intl.ListFormatOptions|undefined} [listOptions]
+ * @param {Intl.CollatorOptions|undefined} [collationOptions]
+ * @returns {DocumentFragment|string}
+ */
 var sortList = function sortList(locale, arrayOfItems, map, listOptions, collationOptions) {
   if (typeof map !== 'function') {
-    return sortListSimple(locale, arrayOfItems, map, listOptions);
+    return sortListSimple(locale, /** @type {string[]} */arrayOfItems, map, listOptions);
   }
   sort(locale, arrayOfItems, collationOptions);
   var randomId = generateUUID();
   var placeholderArray = _toConsumableArray$1(arrayOfItems).map(function (_, i) {
     return "<<".concat(randomId).concat(i, ">>");
   });
+
+  /** @type {(string|Node)[]} */
   var nodes = [];
-  var push = function push() {
-    nodes.push.apply(nodes, arguments);
+
+  /**
+   * @param {string} arg
+   * @returns {void}
+   */
+  var push = function push(arg) {
+    nodes.push(arg);
   };
   processRegex(
   // // eslint-disable-next-line prefer-named-capture-group
@@ -733,19 +875,45 @@ var sortList = function sortList(locale, arrayOfItems, map, listOptions, collati
     betweenMatches: push,
     afterMatch: push,
     onMatch: function onMatch(_, idx) {
-      push(map(arrayOfItems[idx], idx));
+      push(map(arrayOfItems[Number(idx)], Number(idx)));
     }
   });
-  var _doc = getDocument();
+  var _doc = /** @type {Document} */getDocument();
   var container = _doc.createDocumentFragment();
   container.append.apply(container, nodes);
   return container;
 };
+
+/**
+ * @typedef {number} Integer
+ */
+
+/**
+ * @param {{
+ *   object: import('./defaultLocaleResolver.js').DateRangeValueArray|
+ *     import('./defaultLocaleResolver.js').ListValueArray|
+ *     import('./defaultLocaleResolver.js').RelativeValueArray|
+ *     import('./defaultLocaleResolver.js').ValueArray
+ * }} cfg
+ * @returns {{
+ *   value: number|string|string[]|Date,
+ *   options?: Intl.NumberFormatOptions|Intl.PluralRulesOptions|
+ *     string|Date|number,
+ *   extraOpts?: object,
+ *   callback?: (item: string, i: Integer) => Element
+ * }}
+ */
 var getFormatterInfo = function getFormatterInfo(_ref) {
   var object = _ref.object;
   if (Array.isArray(object)) {
     if (typeof object[1] === 'function') {
-      var _object = _slicedToArray$1(object, 4),
+      var _object = _slicedToArray$1(
+        /**
+         * @type {[
+         *   string[], (item: string, i: Integer) => Element, object, object
+         * ]}
+         */
+        object, 4),
         _value = _object[0],
         callback = _object[1],
         _options = _object[2],
@@ -772,25 +940,25 @@ var getFormatterInfo = function getFormatterInfo(_ref) {
   };
 };
 
-/* eslint-disable max-len */
 /**
  * Callback to give replacement text based on a substitution value.
- * @callback AllSubstitutionCallback
- * @param {PlainObject} cfg
- * @param {string|Node|number|Date|RelativeTimeInfo|ListInfo|NumberInfo|DateInfo} cfg.value Contains
- *   the value returned by the individual substitution
- * @param {string} cfg.arg See `cfg.arg` of {@link SubstitutionCallback}.
- * @param {string} cfg.key The substitution key Not currently in use
- * @param {string} cfg.locale The locale
- * @returns {string|Element} The replacement text or element
+ *
+ * `value` - contains the value returned by the individual substitution.
+ * `arg` - See `cfg.arg` of {@link SubstitutionCallback}.
+ * `key` - The substitution key Not currently in use
+ * `locale` - The locale.
+ * @typedef {(info: {
+ *   value: import('./defaultLocaleResolver.js').SubstitutionObjectValue
+ *   arg?: string,
+ *   key?: string,
+ *   locale?: string
+ * }) => string|Node} AllSubstitutionCallback
 */
-/* eslint-enable max-len */
 
 /**
  * @type {AllSubstitutionCallback}
  */
 var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
-  var _Intl$DateTimeFormat;
   var value = _ref2.value,
     arg = _ref2.arg;
   _ref2.key;
@@ -799,11 +967,23 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
   if (typeof value === 'string' || value && _typeof$1(value) === 'object' && 'nodeType' in value) {
     return value;
   }
+
+  /** @type {object|string|Date|number|undefined} */
   var opts;
+
+  /**
+   * @param {{
+   *   type: string,
+   *   options?: object,
+   *   checkArgOptions?: boolean;
+   * }} cfg
+   * @returns {object|undefined}
+   */
   var applyArgs = function applyArgs(_ref3) {
     var type = _ref3.type,
       _ref3$options = _ref3.options,
-      options = _ref3$options === void 0 ? opts : _ref3$options,
+      options = _ref3$options === void 0 ? /** @type {object|undefined} */
+      opts : _ref3$options,
       _ref3$checkArgOptions = _ref3.checkArgOptions,
       checkArgOptions = _ref3$checkArgOptions === void 0 ? false : _ref3$checkArgOptions;
     if (typeof arg === 'string') {
@@ -832,8 +1012,29 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
     var singleKey = Object.keys(value)[0];
     if (['number', 'date', 'datetime', 'dateRange', 'datetimeRange', 'relative', 'region', 'language', 'script', 'currency', 'list', 'plural'].includes(singleKey)) {
       var extraOpts, callback;
+      /**
+       * @typedef {any} AnyValue
+       */
+
+      var obj = /** @type {unknown} */
+      /** @type {AnyValue} */
+      value[
+      /**
+        * @type {"number"|"date"|"datetime"|"dateRange"|
+        *   "datetimeRange"|"relative"|"region"|"language"|
+        *   "script"|"currency"|"list"|"plural"}
+        */
+      singleKey];
       var _getFormatterInfo = getFormatterInfo({
-        object: value[singleKey]
+        object:
+        /**
+         * @type {import('./defaultLocaleResolver.js').DateRangeValueArray|
+         *   import('./defaultLocaleResolver.js').ListValueArray|
+         *   import('./defaultLocaleResolver.js').RelativeValueArray|
+         *   import('./defaultLocaleResolver.js').ValueArray
+         * }
+         */
+        obj
       });
       value = _getFormatterInfo.value;
       opts = _getFormatterInfo.options;
@@ -846,34 +1047,44 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
           break;
         case 'dateRange':
         case 'datetimeRange':
-          return (_Intl$DateTimeFormat = new Intl.DateTimeFormat(locale, applyArgs({
-            type: 'DATERANGE',
-            options: extraOpts
-          }))).formatRange.apply(_Intl$DateTimeFormat, _toConsumableArray$1([value, opts].map(function (val) {
-            return typeof val === 'number' ? new Date(val) : val;
-          })));
+          {
+            var dtf = new Intl.DateTimeFormat(locale, applyArgs({
+              type: 'DATERANGE',
+              options: extraOpts
+            }));
+            return dtf.formatRange.apply(dtf, _toConsumableArray$1( /** @type {[Date, Date]} */
+            [/** @type {number|Date} */
+            value, /** @type {Date} */
+            opts].map(function (val) {
+              return typeof val === 'number' ? new Date(val) : val;
+            })));
+          }
         case 'region':
         case 'language':
         case 'script':
         case 'currency':
-          return new Intl.DisplayNames(locale, _objectSpread2(_objectSpread2({}, applyArgs({
-            type: singleKey.toUpperCase()
-          })), {}, {
-            type: singleKey
-          })).of(value);
+          return (/** @type {string} */new Intl.DisplayNames(locale, _objectSpread2(_objectSpread2({}, applyArgs({
+              type: singleKey.toUpperCase()
+            })), {}, {
+              type: singleKey
+            })).of( /** @type {string} */value)
+          );
         case 'relative':
           // The second argument actually contains the primary options, so swap
-          var _ref4 = [opts, extraOpts];
+          // eslint-disable-next-line max-len -- Long
+          var _ref4 = /** @type {[Intl.RelativeTimeFormatUnit, object?]} */
+          [opts, extraOpts];
           extraOpts = _ref4[0];
           opts = _ref4[1];
           return new Intl.RelativeTimeFormat(locale, applyArgs({
             type: 'RELATIVE'
-          })).format(value, extraOpts);
+          })).format( /** @type {number} */value, extraOpts);
 
         // ListFormat (with Collator)
         case 'list':
           if (callback) {
-            return sortList(locale, value, callback, applyArgs({
+            return sortList( /** @type {string} */locale, /** @type {string[]} */
+            value, callback, applyArgs({
               type: 'LIST'
             }), applyArgs({
               type: 'LIST',
@@ -881,7 +1092,8 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
               checkArgOptions: true
             }));
           }
-          return sortList(locale, value, applyArgs({
+          return sortList( /** @type {string} */locale, /** @type {string[]} */
+          value, applyArgs({
             type: 'LIST'
           }), applyArgs({
             type: 'LIST',
@@ -894,10 +1106,10 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
 
   // Dates
   if (value) {
-    if (typeof value === 'number' && (expectsDatetime || /^DATE(?:TIME)(?:\||$)/.test(arg))) {
+    if (typeof value === 'number' && (expectsDatetime || /^DATE(?:TIME)(?:\||$)/.test( /** @type {string} */arg))) {
       value = new Date(value);
     }
-    if (_typeof$1(value) === 'object' && typeof value.getTime === 'function') {
+    if (_typeof$1(value) === 'object' && 'getTime' in value && typeof value.getTime === 'function') {
       return new Intl.DateTimeFormat(locale, applyArgs({
         type: 'DATETIME'
       })).format(value);
@@ -906,12 +1118,14 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
 
   // Date range
   if (Array.isArray(value)) {
-    var _Intl$DateTimeFormat2;
-    var _extraOpts2 = value[2];
-    return (_Intl$DateTimeFormat2 = new Intl.DateTimeFormat(locale, applyArgs({
+    var _Intl$DateTimeFormat;
+    var _extraOpts2 = /** @type {Intl.DateTimeFormatOptions|undefined} */
+    value[2];
+    return (_Intl$DateTimeFormat = new Intl.DateTimeFormat(locale, applyArgs({
       type: 'DATERANGE',
       options: _extraOpts2
-    }))).formatRange.apply(_Intl$DateTimeFormat2, _toConsumableArray$1(value.slice(0, 2).map(function (val) {
+    }))).formatRange.apply(_Intl$DateTimeFormat, _toConsumableArray$1( /** @type {[Date, Date]} */
+    value.slice(0, 2).map(function (val) {
       return typeof val === 'number' ? new Date(val) : val;
     })));
   }
@@ -935,13 +1149,14 @@ var Formatter = /*#__PURE__*/_createClass(function Formatter() {
 });
 
 /**
- * @param {PlainObject} cfg
+ * @param {object} cfg
  * @param {string} cfg.key
- * @param {LocaleBody} cfg.body
+ * @param {import('./getMessageForKeyByStyle.js').LocaleBody} cfg.body
  * @param {string} cfg.type
  * @param {"richNested"|"rich"|"plain"|
- *   "plainNested"|MessageStyleCallback} cfg.messageStyle
- * @returns {string|Element}
+ *   "plainNested"|import('./getMessageForKeyByStyle.js').
+ *   MessageStyleCallback} [cfg.messageStyle="richNested"]
+ * @returns {string}
  */
 var _getSubstitution = function getSubstitution(_ref) {
   var key = _ref.key,
@@ -970,7 +1185,7 @@ var LocalFormatter = /*#__PURE__*/function (_Formatter) {
   _inherits(LocalFormatter, _Formatter);
   var _super = _createSuper(LocalFormatter);
   /**
-   * @param {LocalObject} locals
+   * @param {import('./getMessageForKeyByStyle.js').LocalObject} locals
    */
   function LocalFormatter(locals) {
     var _this;
@@ -1000,12 +1215,30 @@ var LocalFormatter = /*#__PURE__*/function (_Formatter) {
     key: "isMatch",
     value: function isMatch(key) {
       var components = key.slice(1).split('.');
+      /** @type {import('./getMessageForKeyByStyle.js').LocaleBody} */
       var parent = this.locals;
-      return this.constructor.isMatchingKey(key) && components.every(function (cmpt) {
-        var result = (cmpt in parent);
-        parent = parent[cmpt];
-        return result;
-      });
+      return (/** @type {typeof LocalFormatter} */this.constructor.isMatchingKey(key) && components.every(function (cmpt) {
+          var result = (cmpt in parent);
+          parent =
+          /**
+           * @type {import('./defaultLocaleResolver.js').
+           *     RichNestedLocaleStringBodyObject|
+           *   import('./defaultLocaleResolver.js').
+           *     PlainNestedLocaleStringBodyObject|
+           *   import('./defaultLocaleResolver.js').RichLocaleStringSubObject
+           * }
+           */
+          /**
+           * @type {import('./defaultLocaleResolver.js').
+           *     RichNestedLocaleStringBodyObject|
+           *   import('./defaultLocaleResolver.js').
+           *     PlainNestedLocaleStringBodyObject
+           * }
+           */
+          parent[cmpt];
+          return result;
+        })
+      );
     }
     /**
      * @param {string} key
@@ -1027,7 +1260,8 @@ var RegularFormatter = /*#__PURE__*/function (_Formatter2) {
   _inherits(RegularFormatter, _Formatter2);
   var _super2 = _createSuper(RegularFormatter);
   /**
-   * @param {SubstitutionObject} substitutions
+   * @param {import('./defaultLocaleResolver.js').SubstitutionObject
+   * } substitutions
    */
   function RegularFormatter(substitutions) {
     var _this2;
@@ -1043,7 +1277,8 @@ var RegularFormatter = /*#__PURE__*/function (_Formatter2) {
   _createClass(RegularFormatter, [{
     key: "isMatch",
     value: function isMatch(key) {
-      return this.constructor.isMatchingKey(key) && key in this.substitutions;
+      return (/** @type {typeof RegularFormatter} */this.constructor.isMatchingKey(key) && key in this.substitutions
+      );
     }
     /**
      * @param {string} key
@@ -1065,8 +1300,10 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
   _inherits(SwitchFormatter, _Formatter3);
   var _super3 = _createSuper(SwitchFormatter);
   /**
-   * @param {Switches} switches
-   * @param {SubstitutionObject} substitutions
+   * @param {import('./defaultLocaleResolver.js').Switches} switches
+   * @param {object} cfg
+   * @param {import('./defaultLocaleResolver.js').
+   *   SubstitutionObject} cfg.substitutions
    */
   function SwitchFormatter(switches, _ref2) {
     var _this3;
@@ -1080,11 +1317,12 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
 
   /**
    * @param {string} key
-   * @param {PlainObject} cfg
+   * @param {object} cfg
    * @param {string} cfg.locale
-   * @param {string[]} cfg.usedKeys
+   * @param {(string|undefined)[]} cfg.usedKeys
    * @param {string} cfg.arg
-   * @param {MissingSuppliedFormattersCallback} cfg.missingSuppliedFormatters
+   * @param {import('./getDOMForLocaleString.js').
+   *   MissingSuppliedFormattersCallback} cfg.missingSuppliedFormatters
    * @returns {string}
    */
   _createClass(SwitchFormatter, [{
@@ -1094,7 +1332,7 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
         usedKeys = _ref3.usedKeys,
         arg = _ref3.arg,
         missingSuppliedFormatters = _ref3.missingSuppliedFormatters;
-      var ky = this.constructor.getKey(key).slice(1);
+      var ky = /** @type {typeof SwitchFormatter} */this.constructor.getKey(key).slice(1);
       // Expression might not actually use formatter, e.g., for singular,
       //  the conditional might just write out "one"
 
@@ -1104,7 +1342,9 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
         body = _this$getMatch2[1],
         keySegment = _this$getMatch2[2];
       usedKeys.push(keySegment);
-      var type, opts;
+      var type;
+      /** @type {string} */
+      var opts;
       if (objKey && objKey.includes('|')) {
         var _objKey$split = objKey.split('|');
         var _objKey$split2 = _slicedToArray$1(_objKey$split, 3);
@@ -1125,15 +1365,26 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
       }
       */
 
+      /**
+       * @param {number} value
+       * @param {Intl.NumberFormatOptions|undefined} [defaultOptions]
+       * @returns {string}
+       */
       var getNumberFormat = function getNumberFormat(value, defaultOptions) {
         var numberOpts = parseJSONExtra(opts);
         return new Intl.NumberFormat(locale, _objectSpread2(_objectSpread2({}, defaultOptions), numberOpts)).format(value);
       };
+
+      /**
+       * @param {number} value
+       * @param {Intl.PluralRulesOptions|undefined} [defaultOptions]
+       * @returns {Intl.LDMLPluralRule}
+       */
       var getPluralFormat = function getPluralFormat(value, defaultOptions) {
         var pluralOpts = parseJSONExtra(opts);
         return new Intl.PluralRules(locale, _objectSpread2(_objectSpread2({}, defaultOptions), pluralOpts)).select(value);
       };
-      var formatterValue = this.substitutions[keySegment];
+      var formatterValue = this.substitutions[/** @type {string} */keySegment];
       var match = formatterValue;
       if (typeof formatterValue === 'number') {
         switch (type) {
@@ -1151,7 +1402,13 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
         var singleKey = Object.keys(formatterValue)[0];
         if (['number', 'plural'].includes(singleKey)) {
           var _getFormatterInfo = getFormatterInfo({
-              object: formatterValue[singleKey]
+              object:
+              /**
+               * @type {import('./defaultLocaleResolver.js').NumberInfo|
+               *   import('./defaultLocaleResolver.js').PluralInfo}
+               */
+              // @ts-expect-error Ok
+              formatterValue[/** @type {"number"|"plural"} */singleKey]
             }),
             value = _getFormatterInfo.value,
             options = _getFormatterInfo.options;
@@ -1165,10 +1422,12 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
           // eslint-disable-next-line default-case
           switch (type) {
             case 'NUMBER':
-              match = getNumberFormat(value, options);
+              match = getNumberFormat( /** @type {number} */value, /** @type {Intl.NumberFormatOptions} */
+              options);
               break;
             case 'PLURAL':
-              match = getPluralFormat(value, options);
+              match = getPluralFormat( /** @type {number} */value, /** @type {Intl.PluralRulesOptions} */
+              options);
               break;
           }
         }
@@ -1177,13 +1436,18 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
       // We do not want the default `richNested` here as that will split
       //  up the likes of `0.0`
       var messageStyle = 'richNested';
+
+      /**
+       * @param {string} s
+       * @returns {string}
+       */
       var preventNesting = function preventNesting(s) {
         return s.replace(/\\/g, '\\\\').replace(/\./g, '\\.');
       };
       try {
         return _getSubstitution({
           messageStyle: messageStyle,
-          key: match ? preventNesting(match) : arg,
+          key: match ? preventNesting( /** @type {string} */match) : arg,
           body: body,
           type: 'switch'
         });
@@ -1191,7 +1455,7 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
         try {
           return _getSubstitution({
             messageStyle: messageStyle,
-            key: '*' + preventNesting(match),
+            key: '*' + preventNesting( /** @type {string} */match),
             body: body,
             type: 'switch'
           });
@@ -1219,15 +1483,20 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
   }, {
     key: "isMatch",
     value: function isMatch(key) {
-      return key && this.constructor.isMatchingKey(key) && Boolean(this.getMatch(key.slice(1)).length);
+      return Boolean(key && /** @type {typeof SwitchFormatter} */this.constructor.isMatchingKey(key) && this.getMatch(key.slice(1)).length);
     }
 
     /**
-    * @typedef {GenericArray} SwitchMatch
-    * @property {string} 0 objKey
-    * @property {LocaleBody} 1 body
-    * @property {string} 2 keySegment
+    * @typedef {[
+    *   objKey?: string,
+    *   body?: import('./getMessageForKeyByStyle.js').LocaleBody,
+    *   keySegment?: string
+    * ]} SwitchMatch
     */
+
+    /**
+     * @typedef {number} Integer
+     */
 
     /**
      * @param {string} ky
@@ -1238,7 +1507,19 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
     value: function getMatch(ky) {
       var _this4 = this;
       var ks = ky.split('.');
-      return ks.reduce(function (obj, k, i) {
+      var returnValue = /** @type {unknown} */ks.reduce(
+      /**
+       * @param {import('./defaultLocaleResolver.js').SwitchArrays|
+       *   import('./defaultLocaleResolver.js').SwitchArray} obj
+       * @param {string} k
+       * @param {Integer} i
+       * @throws {Error}
+       * @returns {SwitchMatch|
+       *   import('./defaultLocaleResolver.js').SwitchCaseArray|
+       *   import('./defaultLocaleResolver.js').SwitchArray}
+       */
+      // @ts-expect-error It works
+      function (obj, k, i) {
         if (i < ks.length - 1) {
           if (!(k in obj)) {
             throw new Error("Switch key \"".concat(k, "\" not found (from \"~").concat(ky, "\")"));
@@ -1250,10 +1531,12 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
         var ret = Object.entries(obj).find(function (_ref4) {
           var _ref5 = _slicedToArray$1(_ref4, 1),
             switchKey = _ref5[0];
-          return k === _this4.constructor.getKey(switchKey);
+          return k === /** @type {typeof SwitchFormatter} */_this4.constructor.getKey(switchKey);
         });
         return ret ? [].concat(_toConsumableArray$1(ret), [k]) : [];
       }, this.switches);
+      return (/** @type {SwitchMatch} */returnValue
+      );
     }
 
     /**
@@ -1272,18 +1555,17 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
   }, {
     key: "getKey",
     value: function getKey(key) {
-      var match = key.match(/^(?:(?!\|)[\s\S])*/);
-      return match && match[0];
+      var match = key.match(/^(?:[\0-\{\}-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*/);
+      return (/** @type {string} */match && match[0]
+      );
     }
   }]);
   return SwitchFormatter;
 }(Formatter);
 
 /**
-* @callback PromiseChainErrback
-* @param {(value: any) => Promise<any>} errBack
-* @returns {Promise<any>|any}
-*/
+ * @typedef {(value: any) => Promise<any>|any} PromiseChainErrback
+ */
 
 /**
  * The given array will have its items processed in series; if the supplied
@@ -1540,92 +1822,201 @@ var promiseChainForValues = function promiseChainForValues(values, errBack) {
 };
 
 /**
-* @callback SubstitutionCallback
-* @param {PlainObject} cfg
-* @param {string} cfg.arg By default, accepts the third portion of the
+* `arg` - By default, accepts the third portion of the
 *   `formattingRegex` within `insertNodes`, i.e., to allow the locale to
 *   supply arguments back to the calling script.
-* @param {string} cfg.key The substitution key
+* `key` - The substitution key.
+* @callback SubstitutionCallback
+* @param {{
+*   arg: string,
+*   key: string
+* }} cfg
 * @returns {string|Element} The replacement text or element
 */
 
 /**
  * May have additional properties if supplying options to an underlying
  * formatter.
- * @typedef {GenericArray} ValueArray
- * @property {string|Node|number|Date} 0 The main value
- * @property {PlainObject} [1] The options related to the main value
- * @property {PlainObject} [2] Any additional options
-*/
+ * The first value is the main value.
+ * The second are the options related to the main value.
+ * The third are any additional options.
+ * @typedef {[string|number|Date, object?, object?]} ValueArray
+ */
 
 /**
-* @typedef {PlainObject} RelativeTimeInfo
-* @property {ValueArray} relative
-*/
+ * @typedef {number} Integer
+ */
 
 /**
-* @typedef {PlainObject} ListInfo
-* @property {ValueArray} list
-*/
+ * @typedef {[
+ *   string[],
+ *   (((item: string, i: Integer) => Element)|object)?,
+ *   object?,
+ *   object?
+ * ]} ListValueArray
+ */
 
 /**
-* @typedef {PlainObject} NumberInfo
-* @property {ValueArray} number
-*/
+ * @typedef {[
+ *   Date|number, Date|number, Intl.DateTimeFormatOptions|undefined
+ * ]} DateRangeValueArray
+ */
 
 /**
-* @typedef {PlainObject} DateInfo
-* @property {ValueArray} date
-*/
+ * @typedef {[number, Intl.RelativeTimeFormatUnit, object?]} RelativeValueArray
+ */
 
 /**
-* @typedef {Object<string, string>} PlainLocaleStringBodyObject
-*/
+ * @typedef {object} RelativeTimeInfo
+ * @property {RelativeValueArray} relative
+ */
 
 /**
-* @typedef {PlainObject} SwitchCaseInfo
-* @property {boolean} [default=false] Whether this conditional is the default
-*/
+ * @typedef {object} ListInfo
+ * @property {ListValueArray} list
+ */
 
 /**
-* @typedef {GenericArray} SwitchCase
-* @property {string} 0 The type
-* @property {string} 1 The message
-* @property {SwitchCaseInfo} [2] Info about the switch case
-*/
+ * @typedef {object} NumberInfo
+ * @property {ValueArray|number} number
+ */
 
 /**
-* @typedef {PlainObject<string, SwitchCase>} Switch
-*/
+ * @typedef {object} DateInfo
+ * @property {ValueArray} date
+ */
 
 /**
-* @typedef {PlainObject<{string, Switch}>} Switches
-*/
+ * @typedef {object} DateTimeInfo
+ * @property {ValueArray} datetime
+ */
 
 /**
-* @typedef {PlainObject} LocaleStringSubObject
-* @property {string} [message] The locale message with any formatting
-*   place-holders; defaults to use of any single conditional
-* @property {string} [description] A description to add translators
-* @property {Switches} [switches] Conditionals
-*/
+ * @typedef {object} DateRangeInfo
+ * @property {DateRangeValueArray} dateRange
+ */
 
 /**
-* @typedef {PlainObject<string, LocaleStringSubObject>} LocaleStringBodyObject
-*/
+ * @typedef {object} DatetimeRangeInfo
+ * @property {DateRangeValueArray} datetimeRange
+ */
+
+/**
+ * @typedef {object} RegionInfo
+ * @property {ValueArray} region
+ */
+
+/**
+ * @typedef {object} LanguageInfo
+ * @property {ValueArray} language
+ */
+
+/**
+ * @typedef {object} ScriptInfo
+ * @property {ValueArray} script
+ */
+
+/**
+ * @typedef {object} CurrencyInfo
+ * @property {ValueArray} currency
+ */
+
+/**
+ * @typedef {object} PluralInfo
+ * @property {ValueArray} plural
+ */
+
+/**
+ * @typedef {{[key: string]: string}} PlainLocaleStringBodyObject
+ */
+
+/**
+ * @typedef {{
+ *   [key: string]: string|PlainNestedLocaleStringBodyObject
+ * }} PlainNestedLocaleStringBodyObject
+ */
+
+/**
+ * @typedef {object} SwitchCaseInfo
+ * @property {boolean} [default=false] Whether this conditional is the default
+ */
+
+/**
+ * Contains the type, the message, and optional info about the switch case.
+ * @typedef {[string, string, SwitchCaseInfo?]} SwitchCaseArray
+ */
+
+/**
+ * @typedef {Object<string, SwitchCaseArray>} SwitchArray
+ */
+
+/**
+ * @typedef {Object<string, SwitchArray>} SwitchArrays
+ */
+
+/**
+ * @typedef {object} SwitchCase
+ * @property {string} message The locale message with any formatting
+ *   place-holders; defaults to use of any single conditional
+ * @property {string} [description] A description to add for translators
+ */
+
+/**
+ * @typedef {Object<string, SwitchCase>} Switch
+ */
+
+/**
+ * @typedef {Object<string, Switch>} Switches
+ */
+
+/**
+ * @typedef {object} RichLocaleStringSubObject
+ * @property {string} message The locale message with any formatting
+ *   place-holders; defaults to use of any single conditional
+ * @property {string} [description] A description to add for translators
+ * @property {Switches} [switches] Conditionals
+ */
+
+/**
+ * @typedef {{
+ *   [key: string]: RichLocaleStringSubObject
+ * }} RichLocaleStringBodyObject
+ */
+
+/**
+ * @typedef {{
+ *   [key: string]: RichLocaleStringSubObject|RichNestedLocaleStringBodyObject
+ * }} RichNestedLocaleStringBodyObject
+ */
 
 /**
  * Takes a base path and locale and gives a URL.
  * @callback LocaleResolver
  * @param {string} localesBasePath (Trailing slash optional)
  * @param {string} locale BCP-47 language string
- * @returns {string} URL of the locale file to be fetched
-*/
+ * @returns {string|false} URL of the locale file to be fetched
+ */
 
 /**
-* @typedef {PlainObject<string, string|Element|
-* SubstitutionCallback>} SubstitutionObject
-*/
+ * @typedef {[
+ *   Date|number, Date|number, (Intl.DateTimeFormatOptions|undefined)?
+ * ]} DateRange
+ */
+
+/**
+ * @typedef {string|string[]|number|Date|DateRange|
+ *     Element|Node|SubstitutionCallback|
+ *     NumberInfo|PluralInfo|CurrencyInfo|LanguageInfo|ScriptInfo|
+ *     DatetimeRangeInfo|DateRangeInfo|RegionInfo|DateTimeInfo|DateInfo|
+ *     ListInfo|RelativeTimeInfo
+ * } SubstitutionObjectValue
+ */
+
+/**
+ * @typedef {{
+ *   [key: string]: SubstitutionObjectValue
+ * }} SubstitutionObject
+ */
 
 /**
  * @type {LocaleResolver}
@@ -1643,29 +2034,75 @@ var defaultLocaleResolver = function defaultLocaleResolver(localesBasePath, loca
   return "".concat(localesBasePath.replace(/\/$/, ''), "/_locales/").concat(locale, "/messages.json");
 };
 
-/* eslint-disable max-len */
 /**
- * Callback to return a string or array of nodes and strings based on a localized
- * string, substitutions object, and other metadata.
- * @callback InsertNodesCallback
- * @param {PlainObject} cfg
- * @param {string} cfg.string The localized string
- * @param {boolean} [cfg.dom] If substitutions known to contain DOM, can be set
- *   to `true` to optimize
- * @param {string[]} [cfg.usedKeys=[]] Array for tracking which keys have been used
- * @param {SubstitutionObject} cfg.substitutions The formatting substitutions object
- * @param {?(AllSubstitutionCallback|AllSubstitutionCallback[])} [cfg.allSubstitutions] The
+ * @typedef {number} Integer
+ */
+
+/**
+ * @callback Replace
+ * @param {{
+ *   str: string,
+ *   substs?: import('./defaultLocaleResolver.js').SubstitutionObject,
+ *   formatter?: import('./Formatter.js').RegularFormatter|
+ *     import('./Formatter.js').LocalFormatter|
+ *     import('./Formatter.js').SwitchFormatter
+ * }} cfg
+ * @returns {string}
+ */
+
+/**
+ * @callback ProcessSubstitutions
+ * @param {{
+ *   str: string,
+ *   substs?: import('./defaultLocaleResolver.js').SubstitutionObject,
+ *   formatter?: import('./Formatter.js').RegularFormatter|
+ *     import('./Formatter.js').LocalFormatter|
+ *     import('./Formatter.js').SwitchFormatter
+ * }} cfg
+ * @returns {(string|Node)[]}
+ */
+
+/**
+ * Callback to return a string or array of nodes and strings based on
+ *   a localized string, substitutions object, and other metadata.
+ *
+ * `string` - The localized string.
+ * `dom` - If substitutions known to contain DOM, can be set
+ *    to `true` to optimize.
+ * `usedKeys` - Array for tracking which keys have been used. Defaults
+ *   to empty array.
+ * `substitutions` - The formatting substitutions object.
+ * `allSubstitutions` - The
  *   callback or array composed thereof for applying to each substitution.
- * @param {string} locale The successfully resolved locale
- * @param {Integer} [maximumLocalNestingDepth=3] Depth of local variable resolution to
- *   check before reporting a recursion error
- * @param {MissingSuppliedFormattersCallback} [cfg.missingSuppliedFormatters] Callback
+ * `locale` - The successfully resolved locale
+ * `locals` - The local section.
+ * `switches` - The switch section.
+ * `maximumLocalNestingDepth` - Depth of local variable resolution to
+ *   check before reporting a recursion error. Defaults to 3.
+ * `missingSuppliedFormatters` - Callback
  *   supplied key to throw if the supplied key is present (if
  *   `throwOnMissingSuppliedFormatters` is enabled). Defaults to no-op.
- * @param {CheckExtraSuppliedFormattersCallback} [cfg.checkExtraSuppliedFormatters] No
+ * `checkExtraSuppliedFormatters` - No
  *   argument callback to check if any formatters are not present in `string`
  *   (if `throwOnExtraSuppliedFormatters` is enabled). Defaults to no-op.
- * @returns {string|Array<Node|string>}
+ * @typedef {(cfg: {
+ *   string: string,
+ *   dom?: boolean,
+ *   usedKeys: string[],
+ *   substitutions: import('./defaultLocaleResolver.js').SubstitutionObject,
+ *   allSubstitutions?: ?(
+ *     import('./defaultAllSubstitutions.js').AllSubstitutionCallback|
+ *     import('./defaultAllSubstitutions.js').AllSubstitutionCallback[]
+ *   )
+ *   locale: string|undefined,
+ *   locals?: import('./getMessageForKeyByStyle.js').LocalObject|undefined,
+ *   switches: import('./defaultLocaleResolver.js').Switches|undefined,
+ *   maximumLocalNestingDepth?: Integer,
+ *   missingSuppliedFormatters: import('./getDOMForLocaleString.js').
+ *     MissingSuppliedFormattersCallback,
+ *   checkExtraSuppliedFormatters: import('./getDOMForLocaleString.js').
+ *     CheckExtraSuppliedFormattersCallback
+ * }) => string|(Node|string)[]} InsertNodesCallback
  */
 
 /**
@@ -1698,29 +2135,49 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
     });
   };
   addFunctionKeys();
-  var localFormatter = new LocalFormatter(locals);
+  var localFormatter = new LocalFormatter( /** @type {import('./getMessageForKeyByStyle.js').LocalObject} */locals);
   var regularFormatter = new RegularFormatter(substitutions);
-  var switchFormatter = new SwitchFormatter(switches, {
+  var switchFormatter = new SwitchFormatter( /** @type {import('./defaultLocaleResolver.js').Switches} */
+  switches, {
     substitutions: substitutions
   });
 
   // eslint-disable-next-line max-len
   // eslint-disable-next-line prefer-named-capture-group, unicorn/no-unsafe-regex
-  var formattingRegex = /(\\*)\{((?:(?:(?!\})[\s\S])|\\\})*?)(?:(\|)((?:(?!\})[\s\S])*))?\}/g;
+  var formattingRegex = /(\\*)\{((?:(?:[\0-\|~-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])|\\\})*?)(?:(\|)((?:[\0-\|~-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*))?\}/g;
   if (allSubstitutions) {
     allSubstitutions = Array.isArray(allSubstitutions) ? allSubstitutions : [allSubstitutions];
   }
+
+  /**
+   * @param {{
+   *   key: string,
+   *   arg: string,
+   *   substs: import('./defaultLocaleResolver.js').SubstitutionObject
+   * }} cfg
+   * @returns {string|Node}
+   */
   var getSubstitution = function getSubstitution(_ref4) {
     var key = _ref4.key,
       arg = _ref4.arg,
       substs = _ref4.substs;
+    /** @type {import('./defaultLocaleResolver.js').SubstitutionObjectValue} */
     var substitution;
-    var isLocalKey = localFormatter.constructor.isMatchingKey(key);
+    var isLocalKey =
+    /**
+     * @type {typeof import('./Formatter.js').LocalFormatter}
+     */
+    localFormatter.constructor.isMatchingKey(key);
     if (isLocalKey) {
       substitution = localFormatter.getSubstitution(key);
-    } else if (switchFormatter.constructor.isMatchingKey(key)) {
+    } else if (
+    /**
+     * @type {typeof import('./Formatter.js').SwitchFormatter}
+     */
+    switchFormatter.constructor.isMatchingKey(key)) {
       substitution = switchFormatter.getSubstitution(key, {
-        locale: locale,
+        // eslint-disable-next-line object-shorthand -- TS casting
+        locale: /** @type {string} */locale,
         usedKeys: usedKeys,
         arg: arg,
         missingSuppliedFormatters: missingSuppliedFormatters
@@ -1739,7 +2196,20 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
     //  a mode to throw for non-string/non-DOM (non-numbers?),
     //  or whatever is not likely intended as a target for `toString()`.
     if (allSubstitutions) {
-      substitution = allSubstitutions.reduce(function (subst, allSubst) {
+      substitution = /** @type {string|Node} */
+      /**
+       * @type {import('./defaultAllSubstitutions.js').
+       *   AllSubstitutionCallback[]
+       * }
+       */allSubstitutions.reduce(
+      /**
+       * @param {import('./defaultLocaleResolver.js').
+       *   SubstitutionObjectValue} subst
+       * @param {import('./defaultAllSubstitutions.js').
+       *   AllSubstitutionCallback} allSubst
+       * @returns {string|Node}
+       */
+      function (subst, allSubst) {
         return allSubst({
           value: subst,
           arg: arg,
@@ -1755,26 +2225,40 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
         locale: locale
       });
     }
-    return substitution;
+
+    // Change this and return type if other substitutions possible
+    return (/** @type {string|Node} */substitution
+    );
   };
   var recursiveLocalCount = 1;
+  /**
+   * @param {{
+   *   substitution: string|Node,
+   *   ky: string,
+   *   arg: string,
+   *   processSubsts: Replace|ProcessSubstitutions
+   * }} cfg
+   * @returns {number|string|Node|(string|Node)[]}
+   */
   var checkLocalVars = function checkLocalVars(_ref5) {
     var substitution = _ref5.substitution,
       ky = _ref5.ky,
       arg = _ref5.arg,
       processSubsts = _ref5.processSubsts;
+    /** @type {number|string|Node|(string|Node)[]} */
+    var subst = substitution;
     if (typeof substitution === 'string' && substitution.includes('{')) {
       if (recursiveLocalCount++ > maximumLocalNestingDepth) {
         throw new TypeError('Too much recursion in local variables.');
       }
-      if (localFormatter.constructor.isMatchingKey(ky)) {
+      if ( /** @type {typeof import('./Formatter.js').LocalFormatter} */localFormatter.constructor.isMatchingKey(ky)) {
         var extraSubsts = substitutions;
         var localFormatters;
         if (arg) {
           localFormatters = parseJSONExtra(arg);
           extraSubsts = _objectSpread2(_objectSpread2({}, substitutions), localFormatters);
         }
-        substitution = processSubsts({
+        subst = processSubsts({
           str: substitution,
           substs: extraSubsts,
           formatter: localFormatter
@@ -1784,26 +2268,38 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
             substitutions: localFormatters
           });
         }
-      } else if (switchFormatter.constructor.isMatchingKey(ky)) {
-        substitution = processSubsts({
+      } else if ( /** @type {typeof import('./Formatter.js').SwitchFormatter} */
+      switchFormatter.constructor.isMatchingKey(ky)) {
+        subst = processSubsts({
           str: substitution
         });
       }
     }
-    return substitution;
+    return subst;
   };
 
   // Give chance to avoid this block when known to contain DOM
   if (!dom) {
     // Run this block to optimize non-DOM substitutions
     var returnsDOM = false;
+
+    /** @type {Replace} */
     var replace = function replace(_ref6) {
       var str = _ref6.str,
         _ref6$substs = _ref6.substs,
         substs = _ref6$substs === void 0 ? substitutions : _ref6$substs,
         _ref6$formatter = _ref6.formatter,
         formatter = _ref6$formatter === void 0 ? regularFormatter : _ref6$formatter;
-      return str.replace(formattingRegex, function (_, esc, ky, pipe, arg) {
+      return str.replace(formattingRegex,
+      /**
+       * @param {string} _
+       * @param {string} esc
+       * @param {string} ky
+       * @param {string} pipe
+       * @param {string} arg
+       * @returns {string}
+       */
+      function (_, esc, ky, pipe, arg) {
         if (esc.length % 2) {
           return _;
         }
@@ -1813,6 +2309,7 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
         })) {
           return _;
         }
+        /** @type {string|number|Node|(string|Node)[]} */
         var substitution = getSubstitution({
           key: ky,
           arg: arg,
@@ -1824,7 +2321,7 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
           arg: arg,
           processSubsts: replace
         });
-        returnsDOM = returnsDOM || substitution && _typeof$1(substitution) === 'object' && 'nodeType' in substitution;
+        returnsDOM = returnsDOM || substitution !== null && _typeof$1(substitution) === 'object' && 'nodeType' in substitution;
         usedKeys.push(ky);
         return esc + substitution;
       });
@@ -1844,18 +2341,25 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
     addFunctionKeys();
   }
   recursiveLocalCount = 1;
+
+  /** @type {ProcessSubstitutions} */
   var processSubstitutions = function processSubstitutions(_ref7) {
     var str = _ref7.str,
       _ref7$substs = _ref7.substs,
       substs = _ref7$substs === void 0 ? substitutions : _ref7$substs,
       _ref7$formatter = _ref7.formatter,
       formatter = _ref7$formatter === void 0 ? regularFormatter : _ref7$formatter;
+    /** @type {(string|Node)[]} */
     var nodes = [];
 
     // Copy to ensure we are resetting index on each instance (manually
     // resetting on `formattingRegex` is problematic with recursion that
     // uses the same regex copy)
     var regex = new RegExp(formattingRegex, 'gu');
+
+    /**
+     * @param {...(string|Node)} args
+     */
     var push = function push() {
       nodes.push.apply(nodes, arguments);
     };
@@ -1871,6 +2375,8 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
           if (esc.length) {
             push(esc);
           }
+
+          /** @type {string|number|Node|(string|Node)[]} */
           var substitution = getSubstitution({
             key: ky,
             arg: arg,
@@ -1890,7 +2396,8 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
           substitution && _typeof$1(substitution) === 'object' && 'nodeType' in substitution) {
             push(substitution.cloneNode(true));
           } else {
-            push(substitution);
+            // Why no number here?
+            push( /** @type {string} */substitution);
           }
         }
         usedKeys.push(ky);
@@ -1918,7 +2425,9 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
  * @param {string|string[]} key By default may be an array (if the type ends
  *   with "Nested") or a string, but a non-default validator may do otherwise.
  * @param {"plain"|"plainNested"|"rich"|
- *   "richNested"|MessageStyleCallback} messageStyle
+ *   "richNested"|
+ *   import('./getMessageForKeyByStyle.js').MessageStyleCallback
+ * } messageStyle
  * @throws {TypeError}
  * @returns {string} The converted (or unconverted) key
  */
@@ -1949,26 +2458,34 @@ function defaultKeyCheckerConverter(key, messageStyle) {
 /**
  * May also contain language code and direction, translator name and
  * contact, etc., but no defaults currently apply besides reserving `locals`
- * @typedef {PlainObject} LocaleHead
- * @property {LocalObject} locals
+ * @typedef {object} LocaleHead
+ * @property {LocalObject} [locals]
+ * @property {import('./defaultLocaleResolver.js').Switches} [switches]
 */
 
 /**
-* @typedef {LocaleStringBodyObject|
-* PlainLocaleStringBodyObject|PlainObject} LocaleBody
-*/
+ * @typedef {import('./defaultLocaleResolver.js').
+ *   RichNestedLocaleStringBodyObject|
+ *   import('./defaultLocaleResolver.js').RichLocaleStringBodyObject|
+ *   import('./defaultLocaleResolver.js').PlainLocaleStringBodyObject|
+ *   import('./defaultLocaleResolver.js').PlainNestedLocaleStringBodyObject|
+ *   object
+ * } LocaleBody
+ */
 
 /**
-* @typedef {PlainObject} LocaleObject
+* @typedef {object} LocaleObject
 * @property {LocaleHead} [head]
 * @property {LocaleBody} body
 */
 
 /**
-* @typedef {PlainObject} MessageStyleCallbackResult
-* @property {string} value Regardless of message style, will contain the
-*   string result
-* @property {LocaleStringSubObject} [info] Full info on the localized item
+* @typedef {object} MessageStyleCallbackResult
+* @property {string} value Regardless of message style, will contain
+*    the string result
+* @property {import(
+*  './defaultLocaleResolver.js'
+*  ).RichLocaleStringSubObject} [info] Full info on the localized item
 *   (for rich message styles only)
 */
 
@@ -1982,7 +2499,7 @@ function defaultKeyCheckerConverter(key, messageStyle) {
 
 /* eslint-disable max-len */
 /**
- * @param {PlainObject} [cfg]
+ * @param {object} [cfg]
  * @param {"richNested"|"rich"|"plain"|"plainNested"|MessageStyleCallback} [cfg.messageStyle="richNested"]
  * @returns {MessageStyleCallback}
  */
@@ -1991,10 +2508,25 @@ var getMessageForKeyByStyle = function getMessageForKeyByStyle() {
     _ref$messageStyle = _ref.messageStyle,
     messageStyle = _ref$messageStyle === void 0 ? 'richNested' : _ref$messageStyle;
   return typeof messageStyle === 'function' ? messageStyle : messageStyle === 'richNested' ? function (mainObj, key) {
-    var obj = mainObj && _typeof$1(mainObj) === 'object' && mainObj.body;
+    var obj =
+    /**
+     * @type {import('./defaultLocaleResolver.js').
+     *   RichNestedLocaleStringBodyObject
+     * }
+     */
+    mainObj && _typeof$1(mainObj) === 'object' && mainObj.body;
+
+    /**
+     * @type {string[]}
+     */
     var keys = [];
     // eslint-disable-next-line prefer-named-capture-group
     var possiblyEscapedCharPattern = /(\\*)\./g;
+
+    /**
+     * @param {string} val
+     * @returns {void}
+     */
     var mergeWithPreviousOrStart = function mergeWithPreviousOrStart(val) {
       if (!keys.length) {
         keys[0] = '';
@@ -2016,6 +2548,14 @@ var getMessageForKeyByStyle = function getMessageForKeyByStyle() {
     var keysUnescaped = keys.map(function (ky) {
       return unescapeBackslashes(ky);
     });
+
+    /**
+     * @type {false|{
+     *   value: string|undefined,
+     *   info: import('./defaultLocaleResolver.js').
+     *     RichLocaleStringSubObject
+     * }}
+     */
     var ret = false;
     var currObj = obj;
     keysUnescaped.some(function (ky, i, kys) {
@@ -2028,16 +2568,33 @@ var getMessageForKeyByStyle = function getMessageForKeyByStyle() {
       // NECESSARY FOR SECURITY ON UNTRUSTED LOCALES
       typeof currObj[ky].message === 'string') {
         ret = {
-          value: currObj[ky].message,
-          info: currObj[ky]
+          value: /** @type {string} */currObj[ky].message,
+          info:
+          /**
+           * @type {import('./defaultLocaleResolver.js').
+           *   RichLocaleStringSubObject}
+           */
+          currObj[ky]
         };
       }
-      currObj = currObj[ky];
+      currObj =
+      /**
+       * @type {import('./defaultLocaleResolver.js').
+       *   RichNestedLocaleStringBodyObject
+       * }
+       */
+      currObj[ky];
       return false;
     });
     return ret;
   } : messageStyle === 'rich' ? function (mainObj, key) {
-    var obj = mainObj && _typeof$1(mainObj) === 'object' && mainObj.body;
+    var obj =
+    /**
+     * @type {import('./defaultLocaleResolver.js').
+     *   RichLocaleStringBodyObject
+     * }
+     */
+    mainObj && _typeof$1(mainObj) === 'object' && mainObj.body;
     if (obj && _typeof$1(obj) === 'object' && key in obj && obj[key] && _typeof$1(obj[key]) === 'object' && 'message' in obj[key] &&
     // NECESSARY FOR SECURITY ON UNTRUSTED LOCALES
     typeof obj[key].message === 'string') {
@@ -2048,7 +2605,13 @@ var getMessageForKeyByStyle = function getMessageForKeyByStyle() {
     }
     return false;
   } : messageStyle === 'plain' ? function (mainObj, key) {
-    var obj = mainObj && _typeof$1(mainObj) === 'object' && mainObj.body;
+    var obj =
+    /**
+     * @type {import('./defaultLocaleResolver.js').
+     *   PlainLocaleStringBodyObject
+     * }
+     */
+    mainObj && _typeof$1(mainObj) === 'object' && mainObj.body;
     if (obj && _typeof$1(obj) === 'object' && key in obj && obj[key] && typeof obj[key] === 'string') {
       return {
         value: obj[key]
@@ -2056,13 +2619,27 @@ var getMessageForKeyByStyle = function getMessageForKeyByStyle() {
     }
     return false;
   } : messageStyle === 'plainNested' ? function (mainObj, key) {
-    var obj = mainObj && _typeof$1(mainObj) === 'object' && mainObj.body;
+    var obj =
+    /**
+     * @type {import('./defaultLocaleResolver.js').
+     *   PlainNestedLocaleStringBodyObject
+     * }
+     */
+    mainObj && _typeof$1(mainObj) === 'object' && mainObj.body;
     if (obj && _typeof$1(obj) === 'object') {
       // Should really be counting that it is an odd number
       //  of backslashes only
       var keys = key.split(/(?<!\\)\./);
-      var value = keys.reduce(function (o, k) {
-        if (o && o[k]) {
+      var value = keys.reduce(
+      /**
+       * @param {null|string|import('./defaultLocaleResolver.js').
+       *   PlainNestedLocaleStringBodyObject} o
+       * @param {string} k
+       * @returns {null|string|import('./defaultLocaleResolver.js').
+       *   PlainNestedLocaleStringBodyObject}
+       */
+      function (o, k) {
+        if (o && _typeof$1(o) === 'object' && o[k]) {
           return o[k];
         }
         return null;
@@ -2079,19 +2656,26 @@ var getMessageForKeyByStyle = function getMessageForKeyByStyle() {
   }();
 };
 
-/* eslint-disable max-len */
 /**
- * @param {PlainObject} cfg
- * @param {string} [cfg.message] If present, this string will be the return value.
- * @param {false|null|undefined|LocaleObject} [cfg.defaults]
- * @param {"richNested"|"rich"|"plain"|"plainNested"|MessageStyleCallback} [cfg.messageStyle="richNested"]
- * @param {MessageStyleCallback} [cfg.messageForKey] Defaults to getting `MessageStyleCallback` based on `messageStyle`
- * @param {string} cfg.key Key to check against object of strings; used to find a default if no string `message` is provided.
+ * @param {object} cfg
+ * @param {string|false} [cfg.message] If present, this string will be
+ *   the return value.
+ * @param {false|null|undefined|
+ *   import('./getMessageForKeyByStyle.js').LocaleObject
+ * } [cfg.defaults]
+ * @param {"richNested"|"rich"|"plain"|"plainNested"|
+ *   import('./getMessageForKeyByStyle.js').MessageStyleCallback
+ * } [cfg.messageStyle="richNested"]
+ * @param {import('./getMessageForKeyByStyle.js').
+ *   MessageStyleCallback
+ * } [cfg.messageForKey] Defaults to getting `MessageStyleCallback` based
+ *   on `messageStyle`
+ * @param {string} cfg.key Key to check against object of strings;
+ *   used to find a default if no string `message` is provided.
  * @returns {string}
  */
-var getStringFromMessageAndDefaults = function getStringFromMessageAndDefaults() {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-    message = _ref.message,
+var getStringFromMessageAndDefaults = function getStringFromMessageAndDefaults(_ref) {
+  var message = _ref.message,
     defaults = _ref.defaults,
     messageStyle = _ref.messageStyle,
     _ref$messageForKey = _ref.messageForKey,
@@ -2100,16 +2684,15 @@ var getStringFromMessageAndDefaults = function getStringFromMessageAndDefaults()
     }) : _ref$messageForKey,
     key = _ref.key;
   // NECESSARY CHECK FOR SECURITY ON UNTRUSTED LOCALES
+  /** @type {string|false} */
   var str;
   if (typeof message === 'string') {
     str = message;
   } else if (defaults === false || defaults === undefined || defaults === null) {
     str = false;
   } else if (defaults && _typeof$1(defaults) === 'object') {
-    str = messageForKey(defaults, key);
-    if (str) {
-      str = str.value;
-    }
+    var msg = messageForKey(defaults, key);
+    str = msg ? msg.value : msg;
   } else {
     throw new TypeError("Default locale strings must resolve to `false`, " + "nullish, or an object!");
   }
@@ -2119,28 +2702,54 @@ var getStringFromMessageAndDefaults = function getStringFromMessageAndDefaults()
   return str;
 };
 
-/* eslint-disable max-len */
+/**
+ * @typedef {number} Integer
+ */
+
+/**
+ * @callback CheckExtraSuppliedFormattersCallback
+ * @param {import('./defaultLocaleResolver.js').SubstitutionObject|{
+ *   substitutions: import('./defaultLocaleResolver.js').SubstitutionObject
+ * }} substs (Why is an arg. of `substitutions` being passed in?)
+ * @throws {Error} Upon an extra formatting key being found
+ * @returns {void}
+ */
+
+/**
+ * @typedef {(
+ *   cfg: {
+ *     key: string,
+ *     formatter: import('./Formatter.js').LocalFormatter|
+ *       import('./Formatter.js').RegularFormatter|
+ *       import('./Formatter.js').SwitchFormatter
+ *   }
+ * ) => boolean} MissingSuppliedFormattersCallback
+ */
+
 /**
  *
- * @param {PlainObject} cfg
+ * @param {object} cfg
  * @param {string} cfg.string
- * @param {string} cfg.locale The (possibly already resolved) locale for use by
- *   configuring formatters
- * @param {LocalObject} [cfg.locals]
- * @param {LocalObject} [cfg.switches]
+ * @param {string} [cfg.locale] The (possibly already resolved) locale
+ *   for use by configuring formatters
+ * @param {import('./getMessageForKeyByStyle.js').LocalObject} [cfg.locals]
+ * @param {import('./defaultLocaleResolver.js').Switches} [cfg.switches]
  * @param {Integer} [cfg.maximumLocalNestingDepth=3]
- * @param {?(AllSubstitutionCallback|AllSubstitutionCallback[])} [cfg.allSubstitutions=[defaultAllSubstitutions]]
- * @param {InsertNodesCallback} [cfg.insertNodes=defaultInsertNodes]
- * @param {false|SubstitutionObject} [cfg.substitutions=false]
+ * @param {?(import('./defaultAllSubstitutions.js').AllSubstitutionCallback|
+ *   import('./defaultAllSubstitutions.js').AllSubstitutionCallback[])
+ * } [cfg.allSubstitutions=[defaultAllSubstitutions]]
+ * @param {import('./defaultInsertNodes.js').InsertNodesCallback
+ * } [cfg.insertNodes=defaultInsertNodes]
+ * @param {false|import('./defaultLocaleResolver.js').SubstitutionObject
+ * } [cfg.substitutions=false]
  * @param {boolean} [cfg.dom=false]
  * @param {boolean} [cfg.forceNodeReturn=false]
  * @param {boolean} [cfg.throwOnMissingSuppliedFormatters=true]
  * @param {boolean} [cfg.throwOnExtraSuppliedFormatters=true]
- * @returns {string|DocumentFragment}
+ * @returns {string|Text|DocumentFragment}
  */
-var getDOMForLocaleString = function getDOMForLocaleString() {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-    string = _ref.string,
+var getDOMForLocaleString = function getDOMForLocaleString(_ref) {
+  var string = _ref.string,
     locale = _ref.locale,
     locals = _ref.locals,
     switches = _ref.switches;
@@ -2162,18 +2771,18 @@ var getDOMForLocaleString = function getDOMForLocaleString() {
   if (typeof string !== 'string') {
     throw new TypeError('An options object with a `string` property set to a string must ' + 'be provided for `getDOMForLocaleString`.');
   }
-  var stringOrTextNode = function stringOrTextNode(str) {
-    var _doc = getDocument();
-    return forceNodeReturn ? _doc.createTextNode(str) : str;
-  };
-  var usedKeys = [];
 
   /**
-  * @callback CheckExtraSuppliedFormattersCallback
-  * @param {SubstitutionObject} substs
-  * @throws {Error} Upon an extra formatting key being found
-  * @returns {void}
-  */
+   * @param {string} str
+   * @returns {Text|string}
+   */
+  var stringOrTextNode = function stringOrTextNode(str) {
+    var _doc = getDocument();
+    return forceNodeReturn ? /** @type {Document} */_doc.createTextNode(str) : str;
+  };
+
+  /** @type {string[]} */
+  var usedKeys = [];
 
   /**
    * @type {CheckExtraSuppliedFormattersCallback}
@@ -2190,20 +2799,19 @@ var getDOMForLocaleString = function getDOMForLocaleString() {
   };
 
   /**
-  * @callback MissingSuppliedFormattersCallback
-  * @param {string} key
-  * @param {SubstitutionObject} substs
-  * @throws {Error} If missing formatting key
-  * @returns {boolean}
-  */
-  /**
    * @type {MissingSuppliedFormattersCallback}
    */
   var missingSuppliedFormatters = function missingSuppliedFormatters(_ref3) {
     var key = _ref3.key,
       formatter = _ref3.formatter;
     var matching = formatter.isMatch(key);
-    if (formatter.constructor.isMatchingKey(key) && !matching) {
+    if (
+    /**
+     * @type {typeof import('./Formatter.js').LocalFormatter|
+     *       typeof import('./Formatter.js').RegularFormatter|
+     *       typeof import('./Formatter.js').SwitchFormatter}
+     */
+    formatter.constructor.isMatchingKey(key) && !matching) {
       if (throwOnMissingSuppliedFormatters) {
         throw new Error("Missing formatting key: ".concat(key));
       }
@@ -2233,7 +2841,7 @@ var getDOMForLocaleString = function getDOMForLocaleString() {
     return stringOrTextNode(nodes);
   }
   var _doc = getDocument();
-  var container = _doc.createDocumentFragment();
+  var container = /** @type {Document} */_doc.createDocumentFragment();
   container.append.apply(container, _toConsumableArray$1(nodes));
   return container;
 };
@@ -2287,24 +2895,34 @@ var defaultLocaleMatcher = function defaultLocaleMatcher(locale) {
   // Try without hyphen, i.e., the "lookup" algorithm:
   // See https://tools.ietf.org/html/rfc4647#section-3.4 and
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl
-  return locale.replace(/\x2D(?:(?!\x2D)[\s\S])*$/, '');
+  return locale.replace(/\x2D(?:[\0-,\.-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*$/, '');
 };
 
 /**
-* @typedef {PlainObject} LocaleObjectInfo
-* @property {LocaleObject} strings The successfully retrieved locale strings
-* @property {string} locale The successfully resolved locale
-*/
+ * @typedef {object} LocaleObjectInfo
+ * @property {import('./getMessageForKeyByStyle.js').
+ *   LocaleObject} strings The successfully retrieved locale strings
+ * @property {string} locale The successfully resolved locale
+ */
 
 /**
- * @callback LocaleStringFinder
- * @param {PlainObject} [cfg={}]
- * @param {string[]} [cfg.locales=navigator.languages] BCP-47 language strings
- * @param {string[]} [cfg.defaultLocales=["en-US"]]
- * @param {string} [cfg.localesBasePath="."]
- * @param {LocaleResolver} [cfg.localeResolver=defaultLocaleResolver]
- * @param {"lookup"|LocaleMatcher} [cfg.localeMatcher]
- * @returns {Promise<LocaleObjectInfo>}
+ * @typedef {{
+ *   locales?: string[],
+ *   defaultLocales?: string[],
+ *   localesBasePath?: string,
+ *   localeResolver?: import('./defaultLocaleResolver.js').LocaleResolver,
+ *   localeMatcher?: "lookup"|LocaleMatcher
+ * }} LocaleStringArgs
+ */
+
+/**
+ * `locales` - BCP-47 language strings. Defaults to `navigator.languages`.
+ * `defaultLocales` - Defaults to ["en-US"].
+ * `localesBasePath` - Defaults to `.`.
+ * `localeResolver` - Defaults to `defaultLocaleResolver`.
+ * @typedef {(
+ *   cfg?: LocaleStringArgs
+ * ) => Promise<LocaleObjectInfo>} LocaleStringFinder
  */
 
 /**
@@ -2318,17 +2936,22 @@ var findLocaleStrings = function findLocaleStrings() {
     localeResolver = _ref2.localeResolver,
     localesBasePath = _ref2.localesBasePath,
     localeMatcher = _ref2.localeMatcher;
-  return _findLocale({
-    locales: locales,
-    defaultLocales: defaultLocales,
-    localeResolver: localeResolver,
-    localesBasePath: localesBasePath,
-    localeMatcher: localeMatcher
-  });
+  return (/** @type {Promise<LocaleObjectInfo>} */_findLocale({
+      locales: locales,
+      defaultLocales: defaultLocales,
+      localeResolver: localeResolver,
+      localesBasePath: localesBasePath,
+      localeMatcher: localeMatcher
+    })
+  );
 };
 
 /**
- * @type {LocaleStringFinder|LocaleFinder} Also has a `headOnly` boolean
+ * @type {(
+ *   cfg: LocaleStringArgs & {
+ *     headOnly?: boolean
+ *   }
+ * ) => Promise<string|LocaleObjectInfo>} Also has a `headOnly` boolean
  *  property to determine whether to make a simple HEAD and resolve to
  *  the locale rather than locale and contents
  */
@@ -2337,7 +2960,7 @@ var _findLocale = _async(function (_ref4) {
    * @callback getLocale
    * @throws {SyntaxError|TypeError|Error}
    * @param {string} locale
-   * @returns {Promise<LocaleObjectInfo>}
+   * @returns {Promise<LocaleObjectInfo|string>}
    */
   var getLocale = _async(function (locale) {
     if (typeof locale !== 'string') {
@@ -2348,7 +2971,7 @@ var _findLocale = _async(function (_ref4) {
       throw new TypeError('`localeResolver` expected to resolve to (URL) string.');
     }
     return _catch(function () {
-      var _fetch = getFetch();
+      var _fetch = /** @type {import('./shared.js').Fetch} */getFetch();
       return _await$1(headOnly ? _fetch(url, {
         method: 'HEAD'
       }) : _fetch(url), function (resp) {
@@ -2366,10 +2989,10 @@ var _findLocale = _async(function (_ref4) {
         });
       });
     }, function (err) {
-      if (err.name === 'SyntaxError') {
+      if ( /** @type {Error} */err.name === 'SyntaxError') {
         throw err;
       }
-      return _await$1(localeMatcher(locale), getLocale);
+      return _await$1( /** @type {LocaleMatcher} */localeMatcher(locale), getLocale);
     });
   });
   var _ref4$locales = _ref4.locales,
@@ -2393,39 +3016,43 @@ var _findLocale = _async(function (_ref4) {
 });
 
 /**
- * Checks a key (against an object of strings). Optionally
- *  accepts an object of substitutions which are used when finding text
- *  within curly brackets (pipe symbol not allowed in its keys); the
- *  substitutions may be DOM elements as well as strings and may be
- *  functions which return the same (being provided the text after the
- *  pipe within brackets as the single argument).) Optionally accepts a
- *  config object, with the optional key "dom" which if set to `true`
- *  optimizes when DOM elements are (known to be) present.
- * @callback I18NCallback
- * @param {string} key Key to check against object of strings
- * @param {false|SubstitutionObject} [substitutions=false]
- * @param {PlainObject} [cfg={}]
- * @param {boolean} [cfg.dom=false]
- * @returns {string|DocumentFragment}
-*/
-
-/* eslint-disable max-len */
+ * @typedef {import('./index.js').Sort} Sort
+ */
 /**
- * @param {PlainObject} cfg
- * @param {LocaleObject} cfg.strings
+ * @typedef {import('./index.js').SortList} SortList
+ */
+/**
+ * @typedef {import('./index.js').List} List
+ */
+
+/**
+ * @typedef {import('./index.js').I18NCallback} I18NCallback
+ */
+
+/**
+ * @param {object} cfg
+ * @param {import('./getMessageForKeyByStyle.js').LocaleObject} cfg.strings
  * @param {string} cfg.resolvedLocale
- * @param {"richNested"|"rich"|"plain"|"plainNested"|MessageStyleCallback} [cfg.messageStyle="richNested"]
- * @param {?AllSubstitutionCallback|AllSubstitutionCallback[]} [cfg.allSubstitutions]
- * @param {InsertNodesCallback} [cfg.insertNodes=defaultInsertNodes]
- * @param {KeyCheckerConverterCallback} [cfg.keyCheckerConverter]
- * @param {false|null|undefined|LocaleObject} [cfg.defaults]
- * @param {false|SubstitutionObject} [cfg.substitutions={}]
+ * @param {"richNested"|"rich"|"plain"|"plainNested"|
+ *   import('./getMessageForKeyByStyle.js').
+ *     MessageStyleCallback} [cfg.messageStyle="richNested"]
+ * @param {?import('./defaultAllSubstitutions.js').AllSubstitutionCallback|
+ *   import('./defaultAllSubstitutions.js').
+ *     AllSubstitutionCallback[]} [cfg.allSubstitutions]
+ * @param {import('./defaultInsertNodes.js').
+ *   InsertNodesCallback} [cfg.insertNodes=defaultInsertNodes]
+ * @param {import('./defaultKeyCheckerConverter.js').
+ *   KeyCheckerConverterCallback} [cfg.keyCheckerConverter]
+ * @param {false|null|undefined|
+ *   import('./getMessageForKeyByStyle.js').LocaleObject} [cfg.defaults]
+ * @param {false|import('./defaultLocaleResolver.js').
+ *   SubstitutionObject} [cfg.substitutions={}]
  * @param {Integer} [cfg.maximumLocalNestingDepth=3]
  * @param {boolean} [cfg.dom=false]
  * @param {boolean} [cfg.forceNodeReturn=false]
  * @param {boolean} [cfg.throwOnMissingSuppliedFormatters=true]
  * @param {boolean} [cfg.throwOnExtraSuppliedFormatters=true]
- * @returns {Promise<I18NCallback>} Rejects if no suitable locale is found.
+ * @returns {I18NCallback} Rejects if no suitable locale is found.
  */
 
 function _await(value, then, direct) {
@@ -2438,21 +3065,36 @@ function _await(value, then, direct) {
   return then ? value.then(then) : value;
 }
 
-/* eslint-disable max-len */
 /**
- * @param {PlainObject} [cfg={}]
+ * @typedef {number} Integer
+ */
+
+/**
+ * @param {object} [cfg={}]
  * @param {string[]} [cfg.locales=navigator.languages] BCP-47 language strings
  * @param {string[]} [cfg.defaultLocales=["en-US"]]
- * @param {LocaleStringFinder} [cfg.localeStringFinder=findLocaleStrings]
+ * @param {import('./findLocaleStrings.js').
+ *   LocaleStringFinder} [cfg.localeStringFinder=findLocaleStrings]
  * @param {string} [cfg.localesBasePath="."]
- * @param {LocaleResolver} [cfg.localeResolver=defaultLocaleResolver]
- * @param {"lookup"|LocaleMatcher} [cfg.localeMatcher="lookup"]
- * @param {"richNested"|"rich"|"plain"|"plainNested"|MessageStyleCallback} [cfg.messageStyle="richNested"]
- * @param {?AllSubstitutionCallback|AllSubstitutionCallback[]} [cfg.allSubstitutions]
- * @param {InsertNodesCallback} [cfg.insertNodes=defaultInsertNodes]
- * @param {KeyCheckerConverterCallback} [cfg.keyCheckerConverter]
- * @param {false|null|undefined|LocaleObject} [cfg.defaults]
- * @param {false|SubstitutionObject} [cfg.substitutions={}]
+ * @param {import('./defaultLocaleResolver.js').
+ *   LocaleResolver} [cfg.localeResolver=defaultLocaleResolver]
+ * @param {"lookup"|import('./findLocaleStrings.js').
+ *   LocaleMatcher} [cfg.localeMatcher="lookup"]
+ * @param {"richNested"|"rich"|"plain"|"plainNested"|
+ *   import('./getMessageForKeyByStyle.js').
+ *     MessageStyleCallback} [cfg.messageStyle="richNested"]
+ * @param {?(import('./defaultAllSubstitutions.js').AllSubstitutionCallback|
+ *   import('./defaultAllSubstitutions.js').
+ *     AllSubstitutionCallback[])} [cfg.allSubstitutions]
+ * @param {import('./defaultInsertNodes.js').
+ *   InsertNodesCallback} [cfg.insertNodes=defaultInsertNodes]
+ * @param {import('./defaultKeyCheckerConverter.js').
+ *   KeyCheckerConverterCallback} [cfg.keyCheckerConverter]
+ * @param {false|null|undefined|
+ *   import('./getMessageForKeyByStyle.js').LocaleObject} [cfg.defaults]
+ * @param {false|
+ *   import('./defaultLocaleResolver.js').
+ *     SubstitutionObject} [cfg.substitutions={}]
  * @param {Integer} [cfg.maximumLocalNestingDepth=3]
  * @param {boolean} [cfg.dom=false]
  * @param {boolean} [cfg.forceNodeReturn=false]
@@ -2494,6 +3136,10 @@ var i18nServer = function i18nServer(_ref) {
   var messageForKey = getMessageForKeyByStyle({
     messageStyle: messageStyle
   });
+
+  /**
+   * @type {I18NCallback}
+   */
   var formatter = function formatter(key, substitutions) {
     var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
       _ref2$allSubstitution = _ref2.allSubstitutions,
@@ -2508,7 +3154,7 @@ var i18nServer = function i18nServer(_ref) {
       throwOnMissingSuppliedFormatters = _ref2$throwOnMissingS === void 0 ? throwOnMissingSuppliedFormattersDefault : _ref2$throwOnMissingS,
       _ref2$throwOnExtraSup = _ref2.throwOnExtraSuppliedFormatters,
       throwOnExtraSuppliedFormatters = _ref2$throwOnExtraSup === void 0 ? throwOnExtraSuppliedFormattersDefault : _ref2$throwOnExtraSup;
-    key = keyCheckerConverter(key, messageStyle);
+    key = /** @type {string} */keyCheckerConverter(key, messageStyle);
     var message = messageForKey(strings, key);
     var string = getStringFromMessageAndDefaults({
       message: message && typeof message.value === 'string' ? message.value : false,
@@ -2533,23 +3179,20 @@ var i18nServer = function i18nServer(_ref) {
   };
   formatter.resolvedLocale = resolvedLocale;
   formatter.strings = strings;
-  formatter.sort = function () {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-    return sort.apply(void 0, [resolvedLocale].concat(args));
+
+  /** @type {Sort} */
+  formatter.sort = function (arrayOfItems, options) {
+    return sort(resolvedLocale, arrayOfItems, options);
   };
-  formatter.sortList = function () {
-    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
-    }
-    return sortList.apply(void 0, [resolvedLocale].concat(args));
+
+  /** @type {SortList} */
+  formatter.sortList = function (arrayOfItems, map, listOptions, collationOptions) {
+    return sortList(resolvedLocale, arrayOfItems, map, listOptions, collationOptions);
   };
-  formatter.list = function () {
-    for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      args[_key3] = arguments[_key3];
-    }
-    return list.apply(void 0, [resolvedLocale].concat(args));
+
+  /** @type {List} */
+  formatter.list = function (arrayOfItems, options) {
+    return list(resolvedLocale, arrayOfItems, options);
   };
   return formatter;
 };
@@ -3163,7 +3806,9 @@ async function getLocaleFallbackResults({
       //    `$ref` (as with <https://github.com/whitlockjc/json-refs>) and
       //    replace `loadLocales` behavior with our own now resolved
       //    locales; see https://github.com/jdorn/json-editor/issues/132
-      return basePath + langData.localeFileBasePath + langs.find(l => l.code === code).locale.$ref;
+      return basePath + langData.localeFileBasePath + langs.find(l => {
+        return l.code === code;
+      }).locale.$ref;
     }
   });
   if (!$p.l10n) {
@@ -3172,6 +3817,7 @@ async function getLocaleFallbackResults({
   return l;
 }
 
+var _win;
 /*
 Possible todos:
 0. Add XSLT to JML-string stylesheet (or even vice versa)
@@ -3201,10 +3847,47 @@ Other Todos:
 0. Support JsonML empty string element name to represent fragments?
 0. Redo browser testing of jml (including ensuring IE7 can work even if test framework can't work)
 */
-// istanbul ignore next
-let win = typeof window !== 'undefined' && window; // istanbul ignore next
 
-let doc = typeof document !== 'undefined' && document || win && win.document; // STATIC PROPERTIES
+/**
+ * @typedef {Window & {DocumentFragment: any}} HTMLWindow
+ */
+
+/**
+ * @typedef {any} ArbitraryValue
+ */
+
+/**
+ * @typedef {number} Integer
+ */
+
+/**
+ * @typedef {{
+ *   element: Document|HTMLElement|DocumentFragment,
+ *   attribute: {name: string|null, value: JamilihAttValue},
+ *   opts: JamilihOptions
+ * }} PluginSettings
+ */
+
+/**
+ * @typedef {object} JamilihPlugin
+ * @property {string} name
+ * @property {(opts: PluginSettings) => string|Promise<void>} set
+ */
+
+/**
+ * @type {import('jsdom').DOMWindow|HTMLWindow|undefined}
+ */
+let win;
+
+/* c8 ignore next 3 */
+if (typeof window !== 'undefined' && window) {
+  win = window;
+}
+
+/* c8 ignore next */
+let doc = typeof document !== 'undefined' && document || ((_win = win) === null || _win === void 0 ? void 0 : _win.document);
+
+// STATIC PROPERTIES
 
 const possibleOptions = ['$plugins',
 // '$mode', // Todo (SVG/XML)
@@ -3214,19 +3897,17 @@ const possibleOptions = ['$plugins',
 
 const NS_HTML = 'http://www.w3.org/1999/xhtml',
   hyphenForCamelCase = /-([a-z])/gu;
-const ATTR_MAP = {
-  maxlength: 'maxLength',
-  minlength: 'minLength',
-  readonly: 'readOnly'
-}; // We define separately from ATTR_DOM for clarity (and parity with JsonML) but no current need
+const ATTR_MAP = new Map([['maxlength', 'maxLength'], ['minlength', 'minLength'], ['readonly', 'readOnly']]);
+
+// We define separately from ATTR_DOM for clarity (and parity with JsonML) but no current need
 // We don't set attribute esp. for boolean atts as we want to allow setting of `undefined`
 //   (e.g., from an empty variable) on templates to have no effect
-
 const BOOL_ATTS = ['checked', 'defaultChecked', 'defaultSelected', 'disabled', 'indeterminate', 'open',
 // Dialog elements
-'readOnly', 'selected']; // From JsonML
+'readOnly', 'selected'];
 
-const ATTR_DOM = BOOL_ATTS.concat(['accessKey',
+// From JsonML
+const ATTR_DOM = [...BOOL_ATTS, 'accessKey',
 // HTMLElement
 'async', 'autocapitalize',
 // HTMLElement
@@ -3244,9 +3925,9 @@ const ATTR_DOM = BOOL_ATTS.concat(['accessKey',
 // HTMLElement
 'translate',
 // HTMLElement
-'value', 'willvalidate']); // Todo: Add more to this as useful for templating
+'value', 'willvalidate'];
+// Todo: Add more to this as useful for templating
 //   to avoid setting through nullish value
-
 const NULLABLES = ['autocomplete', 'dir',
 // HTMLElement
 'integrity',
@@ -3256,103 +3937,70 @@ const NULLABLES = ['autocomplete', 'dir',
 'max', 'min', 'minLength', 'maxLength', 'title' // HTMLElement
 ];
 
-const $$1 = sel => doc.querySelector(sel);
-const $$ = sel => [...doc.querySelectorAll(sel)];
+/**
+ * @param {string} sel
+ * @returns {HTMLElement|null}
+ */
+const $$1 = sel => {
+  if (!doc) {
+    throw new Error('No document object');
+  }
+  return doc.querySelector(sel);
+};
+
+/**
+ * @param {string} sel
+ * @returns {HTMLElement[]}
+ */
+const $$ = sel => {
+  if (!doc) {
+    throw new Error('No document object');
+  }
+  return [... /** @type {NodeListOf<HTMLElement>} */doc.querySelectorAll(sel)];
+};
+
 /**
 * Retrieve the (lower-cased) HTML name of a node.
 * @static
 * @param {Node} node The HTML node
 * @returns {string} The lower-cased node name
 */
-
 function _getHTMLNodeName(node) {
   return node.nodeName && node.nodeName.toLowerCase();
 }
+
 /**
-* Apply styles if this is a style tag.
-* @static
-* @param {Node} node The element to check whether it is a style tag
-* @returns {void}
-*/
-
-function _applyAnyStylesheet(node) {
-  // Only used in IE
-  // istanbul ignore else
-  if (!doc.createStyleSheet) {
-    return;
-  } // istanbul ignore next
-
-  if (_getHTMLNodeName(node) === 'style') {
-    // IE
-    const ss = doc.createStyleSheet(); // Create a stylesheet to actually do something useful
-
-    ss.cssText = node.cssText; // We continue to add the style tag, however
-  }
-}
-/**
- * Need this function for IE since options weren't otherwise getting added.
  * @private
  * @static
- * @param {Element} parent The parent to which to append the element
- * @param {Node} child The element or other node to append to the parent
+ * @param {Document|DocumentFragment|HTMLElement} parent The parent to which to append the element
+ * @param {Node|string} child The element or other node to append to the parent
  * @throws {Error} Rethrow if problem with `append` and unhandled
  * @returns {void}
  */
-
 function _appendNode(parent, child) {
-  const parentName = _getHTMLNodeName(parent); // IE only
-  // istanbul ignore if
-
-  if (doc.createStyleSheet) {
-    if (parentName === 'script') {
-      parent.text = child.nodeValue;
-      return;
-    }
-    if (parentName === 'style') {
-      parent.cssText = child.nodeValue; // This will not apply it--just make it available within the DOM cotents
-
-      return;
-    }
-  }
+  const parentName = _getHTMLNodeName(parent);
   if (parentName === 'template') {
-    parent.content.append(child);
+    /** @type {HTMLTemplateElement} */parent.content.append(child);
     return;
   }
-  try {
-    parent.append(child); // IE9 is now ok with this
-  } catch (e) {
-    // istanbul ignore next
-    const childName = _getHTMLNodeName(child); // istanbul ignore next
-
-    if (parentName === 'select' && childName === 'option') {
-      try {
-        // Since this is now DOM Level 4 standard behavior (and what IE7+ can handle), we try it first
-        parent.add(child);
-      } catch (err) {
-        // DOM Level 2 did require a second argument, so we try it too just in case the user is using an older version of Firefox, etc.
-        parent.add(child, null); // IE7 has a problem with this, but IE8+ is ok
-      }
-
-      return;
-    } // istanbul ignore next
-
-    throw e;
-  }
+  parent.append(child); // IE9 is now ok with this
 }
+
 /**
  * Attach event in a cross-browser fashion.
  * @static
- * @param {Element} el DOM element to which to attach the event
+ * @param {HTMLElement} el DOM element to which to attach the event
  * @param {string} type The DOM event (without 'on') to attach to the element
- * @param {EventListener} handler The event handler to attach to the element
+ * @param {(evt: Event & {target: HTMLElement}) => void} handler The event handler to attach to the element
  * @param {boolean} [capturing] Whether or not the event should be
  *   capturing (W3C-browsers only); default is false; NOT IN USE
  * @returns {void}
  */
-
 function _addEvent(el, type, handler, capturing) {
+  // @ts-expect-error It's ok
   el.addEventListener(type, handler, Boolean(capturing));
 }
+
 /**
 * Creates a text node of the result of resolving an entity or character reference.
 * @param {'entity'|'decimal'|'hexadecimal'} type Type of reference
@@ -3361,47 +4009,59 @@ function _addEvent(el, type, handler, capturing) {
 * @throws {TypeError}
 * @returns {Text} The text node of the resolved reference
 */
-
 function _createSafeReference(type, prefix, arg) {
+  /* c8 ignore next 3 */
+  if (!doc) {
+    throw new Error('No document defined');
+  }
   // For security reasons related to innerHTML, we ensure this string only
   //  contains potential entity characters
   if (!/^\w+$/u.test(arg)) {
     throw new TypeError(`Bad ${type} reference; with prefix "${prefix}" and arg "${arg}"`);
   }
-  const elContainer = doc.createElement('div'); // Todo: No workaround for XML?
+  const elContainer = doc.createElement('div');
+  // Todo: No workaround for XML?
   // eslint-disable-next-line no-unsanitized/property
-
   elContainer.innerHTML = '&' + prefix + arg + ';';
   return doc.createTextNode(elContainer.innerHTML);
 }
+
 /**
 * @param {string} n0 Whole expression match (including "-")
 * @param {string} n1 Lower-case letter match
 * @returns {string} Uppercased letter
 */
-
 function _upperCase(n0, n1) {
   return n1.toUpperCase();
-} // Todo: Make as public utility
+}
 
+// Todo: Make as public utility
 /**
- * @param {any} o
+ * @param {ArbitraryValue} o
  * @returns {boolean}
  */
-
 function _isNullish(o) {
   return o === null || o === undefined;
-} // Todo: Make as public utility, but also return types for undefined, boolean, number, document, etc.
+}
 
+// Todo: Make as public utility, but also return types for undefined, boolean, number, document, etc.
 /**
 * @private
 * @static
-* @param {string|JamilihAttributes|JamilihArray|Element|DocumentFragment} item
-* @returns {"string"|"null"|"array"|"element"|"fragment"|"object"|"symbol"|"function"|"number"|"boolean"}
+* @param {string|JamilihAttributes|JamilihArray|JamilihChildren|
+*   JamilihDocumentFragment|JamilihAttributeNode|
+*   JamilihOptions|HTMLElement|Document|DocumentFragment|null|undefined} item
+* @returns {"string"|"null"|"array"|"element"|"fragment"|"object"|
+*   "symbol"|"bigint"|"function"|"number"|"boolean"|"undefined"|
+*   "document"|"non-container node"}
 */
-
 function _getType(item) {
   const type = typeof item;
+
+  // Appease TS
+  if (typeof item === 'string' || typeof item === 'undefined') {
+    return 'string';
+  }
   switch (type) {
     case 'object':
       if (item === null) {
@@ -3422,13 +4082,12 @@ function _getType(item) {
             return 'non-container node';
         }
       }
-
     // Fallthrough
-
     default:
       return type;
   }
 }
+
 /**
 * @private
 * @static
@@ -3436,22 +4095,25 @@ function _getType(item) {
 * @param {Node} node
 * @returns {DocumentFragment}
 */
-
 function _fragReducer(frag, node) {
   frag.append(node);
   return frag;
 }
+
 /**
 * @private
 * @static
-* @param {Object<{string:string}>} xmlnsObj
-* @returns {string}
+* @param {Object<string, string>} xmlnsObj
+* @returns {(...n: string[]) => string}
 */
-
 function _replaceDefiner(xmlnsObj) {
-  return function (n0) {
+  /**
+   * @param {string[]} n
+   * @returns {string}
+   */
+  return function (...n) {
+    const n0 = n[0];
     let retStr = xmlnsObj[''] ? ' xmlns="' + xmlnsObj[''] + '"' : n0; // Preserve XHTML
-
     for (const [ns, xmlnsVal] of Object.entries(xmlnsObj)) {
       if (ns !== '') {
         retStr += ' xmlns:' + ns + '="' + xmlnsVal + '"';
@@ -3460,84 +4122,93 @@ function _replaceDefiner(xmlnsObj) {
     return retStr;
   };
 }
-/**
-* @typedef {JamilihAttributes} AttributeArray
-* @property {string} 0 The key
-* @property {string} 1 The value
-*/
 
 /**
-* @callback ChildrenToJMLCallback
-* @param {JamilihArray|Jamilih} childNodeJML
-* @param {Integer} i
-* @returns {void}
-*/
+ * @callback ChildrenToJMLCallback
+ * @param {JamilihArray|JamilihChildType|string} childNodeJML
+ * @param {Integer} i
+ * @returns {void}
+ */
 
 /**
-* @private
-* @static
-* @param {Node} node
-* @returns {ChildrenToJMLCallback}
-*/
-
+ * @private
+ * @static
+ * @param {Node} node
+ * @returns {ChildrenToJMLCallback}
+ */
 function _childrenToJML(node) {
   return function (childNodeJML, i) {
     const cn = node.childNodes[i];
-    const j = Array.isArray(childNodeJML) ? jml(...childNodeJML) : jml(childNodeJML);
+    const j = Array.isArray(childNodeJML) ? jml(... /** @type {JamilihArray} */childNodeJML) : jml(childNodeJML);
     cn.replaceWith(j);
   };
 }
+
+/**
+ * Keep this in sync with `JamilihArray`'s first argument (minus `Document`).
+ * @typedef {JamilihDoc|JamilihDoctype|JamilihTextNode|
+*   JamilihAttributeNode|JamilihOptions|ElementName|HTMLElement|
+*   JamilihDocumentFragment
+* } JamilihFirstArg
+*/
+
 /**
 * @callback JamilihAppender
-* @param {JamilihArray} childJML
+* @param {JamilihArray|JamilihFirstArg|Node|TextNodeString} childJML
 * @returns {void}
 */
 
 /**
 * @private
 * @static
-* @param {Node} node
+* @param {ParentNode} node
 * @returns {JamilihAppender}
 */
-
 function _appendJML(node) {
   return function (childJML) {
+    if (typeof childJML === 'string' || typeof childJML === 'number') {
+      throw new TypeError('Unexpected text string/number in the head');
+    }
     if (Array.isArray(childJML)) {
       node.append(jml(...childJML));
+    } else if (typeof childJML === 'object' && 'nodeType' in childJML) {
+      node.append(childJML);
     } else {
       node.append(jml(childJML));
     }
   };
 }
+
 /**
 * @callback appender
-* @param {string|JamilihArray} childJML
+* @param {JamilihArray|JamilihFirstArg|Node|TextNodeString} childJML
 * @returns {void}
 */
 
 /**
 * @private
 * @static
-* @param {Node} node
+* @param {ParentNode} node
 * @returns {appender}
 */
-
 function _appendJMLOrText(node) {
   return function (childJML) {
-    if (typeof childJML === 'string') {
-      node.append(childJML);
+    if (typeof childJML === 'string' || typeof childJML === 'number') {
+      node.append(String(childJML));
     } else if (Array.isArray(childJML)) {
       node.append(jml(...childJML));
+    } else if (typeof childJML === 'object' && 'nodeType' in childJML) {
+      node.append(childJML);
     } else {
       node.append(jml(childJML));
     }
   };
 }
+
 /**
 * @private
 * @static
 */
-
 /*
 function _DOMfromJMLOrString (childNodeJML) {
   if (typeof childNodeJML === 'string') {
@@ -3548,44 +4219,344 @@ function _DOMfromJMLOrString (childNodeJML) {
 */
 
 /**
-* @typedef {Element|DocumentFragment} JamilihReturn
+* @typedef {HTMLElement|DocumentFragment|Comment|Attr|
+*    Text|Document|DocumentType|ProcessingInstruction|CDATASection} JamilihReturn
 */
+// 'string|JamilihOptions|JamilihDocumentFragment|JamilihAttributes|(string|JamilihArray)[]
 
 /**
-* @typedef {PlainObject<string, string>} JamilihAttributes
-*/
-
-/**
-* @typedef {GenericArray} JamilihArray
-* @property {string} 0 The element to create (by lower-case name)
-* @property {JamilihAttributes} [1] Attributes to add with the key as the
-*   attribute name and value as the attribute value; important for IE where
-*   the input element's type cannot be added later after already added to the page
-* @param {Element[]} [children] The optional children of this element
-*   (but raw DOM elements required to be specified within arrays since
-*   could not otherwise be distinguished from siblings being added)
-* @param {Element} [parent] The optional parent to which to attach the element
-*   (always the last unless followed by null, in which case it is the
-*   second-to-last)
-* @param {null} [returning] Can use null to indicate an array of elements
-*   should be returned
-*/
-
-/**
-* @typedef {PlainObject} JamilihOptions
-* @property {"root"|"attributeValue"|"fragment"|"children"|"fragmentChildren"} $state
-*/
-
-/**
- * @param {Element} elem
- * @param {string} att
- * @param {string} attVal
- * @param {JamilihOptions} opts
- * @returns {void}
+ * Can either be an array of:
+ * 1. JamilihAttributes followed by an array of JamilihArrays or Elements.
+ *     (Cannot be multiple single JamilihArrays despite TS type).
+ * 2. Any number of JamilihArrays.
+ * @typedef {[(JamilihAttributes|JamilihArray|JamilihArray[]|HTMLElement), ...(JamilihArray|JamilihArray[]|HTMLElement)[]]} TemplateJamilihArray
  */
 
-function checkPluginValue(elem, att, attVal, opts) {
-  opts.$state = 'attributeValue';
+/**
+ * @typedef {(JamilihArray|HTMLElement)[]} ShadowRootJamilihArrayContainer
+ */
+
+/**
+ * @typedef {{
+*   open?: boolean|ShadowRootJamilihArrayContainer,
+*   closed?: boolean|ShadowRootJamilihArrayContainer,
+*   template?: string|HTMLTemplateElement|TemplateJamilihArray,
+*   content?: ShadowRootJamilihArrayContainer|DocumentFragment
+* }} JamilihShadowRootObject
+ */
+
+/**
+ * @typedef {{[key: string]: string}} XmlnsAttributeObject
+ */
+
+/**
+ * @typedef {null|XmlnsAttributeObject} XmlnsAttributeValue
+ */
+
+/**
+ * @typedef {{
+ *   [key: string]: string|number|null|undefined|DatasetAttributeObject
+ * }} DatasetAttributeObject
+ */
+
+/**
+ * @typedef {string|undefined|{[key: string]: string|null}} StyleAttributeValue
+ */
+
+/**
+ * @typedef {(this: HTMLElement, event: Event & {target: HTMLElement}) => void} EventHandler
+ */
+
+/**
+ * @typedef {{
+ *   [key: string]: EventHandler|[EventHandler, boolean]
+ * }} OnAttributeObject
+ */
+
+/**
+ * @typedef {{
+ *   $on?: OnAttributeObject|null
+ * }} OnAttribute
+ */
+
+/**
+ * @typedef {boolean} BooleanAttribute
+ */
+
+/**
+ * @typedef {((this: HTMLElement, event?: Event) => void)} HandlerAttributeValue
+ */
+
+/* eslint-disable jsdoc/valid-types -- jsdoc-type-pratt-parser Bug */
+/**
+ * @typedef {{
+ *   [key: string]: HandlerAttributeValue
+ * }} OnHandlerObject
+ */
+
+/**
+ * @typedef {number} StringifiableNumber
+ */
+
+/**
+ * @typedef {{
+ *   name: string,
+ *   systemId?: string,
+ *   publicId?: string
+ * }} JamilihDocumentType
+ */
+
+/**
+ * @typedef {string|{extends?: string}} DefineOptions
+ */
+
+/**
+ * @typedef {{[key: string]: string|number|boolean|((this: DefineMixin, ...args: any[]) => any)}} DefineMixin
+ */
+
+/**
+ * @typedef {{
+ *   new (): HTMLElement;
+ *   prototype: HTMLElement & {[key: string]: any}
+ * }} DefineConstructor
+ */
+/* eslint-enable jsdoc/valid-types -- https://github.com/jsdoc-type-pratt-parser/jsdoc-type-pratt-parser/issues/131 */
+
+/**
+ * @typedef {(this: HTMLElement) => void} DefineUserConstructor
+ */
+
+/**
+ * @typedef {[DefineConstructor|DefineUserConstructor|DefineMixin, DefineOptions?]|[DefineConstructor|DefineUserConstructor, DefineMixin?, DefineOptions?]} DefineObjectArray
+ */
+
+/**
+ * @typedef {DefineObjectArray|DefineConstructor|DefineMixin|DefineUserConstructor} DefineObject
+ */
+
+/**
+ * @typedef {{elem?: HTMLElement, [key: string]: any}} SymbolObject
+ */
+
+/**
+ * @typedef {[symbol|string, ((this: HTMLElement, ...args: any[]) => any)|SymbolObject]} SymbolArray
+ */
+
+/**
+ * @typedef {null|undefined} NullableAttributeValue
+ */
+
+/**
+ * @typedef {[string, object]|string|{[key: string]: any}} PluginValue
+ */
+
+/**
+ * @typedef {(string|NullableAttributeValue|BooleanAttribute|
+ *   JamilihArray|JamilihShadowRootObject|StringifiableNumber|
+ *   JamilihDocumentType|JamilihDocument|XmlnsAttributeValue|
+ *   OnAttributeObject|
+ *   HandlerAttributeValue|DefineObject|SymbolArray|PluginReference|
+ *   PluginValue
+ * )} JamilihAttValue
+ */
+
+/**
+ * @typedef {{
+*   [key: string]: string|number|((this: HTMLElement, ...args: any[]) => any)
+* }} DataAttributeObject
+*/
+
+/**
+ * @typedef {{
+ *   $data?: true|string[]|Map<any, any>|WeakMap<any, any>|DataAttributeObject|
+ *     [undefined, DataAttributeObject]|
+ *     [Map<any, any>|WeakMap<any, any>|undefined, DataAttributeObject]
+ * }} DataAttribute
+ */
+
+/**
+ * @typedef {{
+ *   dataset?: DatasetAttributeObject
+ * }} DatasetAttribute
+ */
+
+/**
+ * @typedef {{
+ *   style?: StyleAttributeValue
+ * }} StyleAttribute
+ */
+
+/**
+ * @typedef {{
+ *   $shadow?: JamilihShadowRootObject
+ * }} JamilihShadowRootAttribute
+ */
+
+/* eslint-disable jsdoc/valid-types -- jsdoc-type-pratt-parser Bug */
+/**
+ * @typedef {{
+ *   is?: string|null,
+ *   $define?: DefineObject
+ * }} DefineAttribute
+ */
+/* eslint-enable jsdoc/valid-types -- jsdoc-type-pratt-parser Bug */
+
+/**
+ * @typedef {{
+ *   $custom?: {[key: string]: any}
+ * }} CustomAttribute
+ */
+
+/**
+ * @typedef {{
+ *   $symbol?: SymbolArray
+ * }} SymbolAttribute
+ */
+
+/**
+ * @typedef {{
+ *   xmlns?: string|null|XmlnsAttributeObject
+ * }} XmlnsAttribute
+ */
+
+/**
+ * `OnHandlerObject &` wasn't working, so added `HandlerAttributeValue`.
+ * @typedef {DataAttribute & StyleAttribute & JamilihShadowRootAttribute &
+ * DefineAttribute & DatasetAttribute & CustomAttribute & SymbolAttribute &
+ * OnAttribute & XmlnsAttribute &
+ * Partial<JamilihAttributeNode> & Partial<JamilihTextNode> &
+ * Partial<JamilihDoc> & Partial<JamilihDoctype> & {
+ *   [key: string]: JamilihAttValue|HandlerAttributeValue,
+ * }} JamilihAttributes
+ */
+
+/**
+ * @typedef {{
+ *   title?: string,
+ *   childNodes?: JamilihChildType[],
+ *   $DOCTYPE?: JamilihDocumentType,
+ *   head?: JamilihChildren
+ *   body?: JamilihChildren
+ * }} JamilihDocument
+ */
+
+/**
+ * @typedef {{
+ *   $document: JamilihDocument
+ * }} JamilihDoc
+ */
+
+/**
+ * @typedef {{$DOCTYPE: JamilihDocumentType}} JamilihDoctype
+ */
+
+/**
+ * @typedef {JamilihArray|TextNodeString|HTMLElement} JamilihDocumentFragmentContent
+ */
+
+/**
+ * @typedef {{'#': JamilihDocumentFragmentContent[]}} JamilihDocumentFragment
+ */
+
+/**
+ * @typedef {string} ElementName
+ */
+
+/**
+ * @typedef {string|number} TextNodeString
+ */
+
+/**
+ * @typedef {{[key: string]: string}} PluginReference
+ */
+
+/**
+ * @typedef {(
+ *   JamilihArray|TextNodeString|HTMLElement|Comment|ProcessingInstruction|
+ *   Text|DocumentFragment|JamilihProcessingInstruction|JamilihDocumentFragment|
+ *   PluginReference
+ * )[]} JamilihChildren
+ */
+
+// Todo: DocumentType, Comment, ProcessingInstruction, Text
+// Todo: JamilihCDATANode, JamilihComment, JamilihProcessingInstruction
+/**
+ * @typedef {Document|ElementName|HTMLElement|DocumentFragment|
+ *   JamilihDocumentFragment|JamilihDoc|JamilihDoctype|JamilihTextNode|
+ *   JamilihAttributeNode} JamilihFirstArgument
+ */
+
+/**
+ * This would be clearer with overrides, but using as typedef.
+ *
+ * The optional 0th argument is an Jamilih options object or fragment.
+ *
+ * The first argument is the element to create (by lower-case name) or DOM element.
+ *
+ * The second optional argument are attributes to add with the key as the
+ *   attribute name and value as the attribute value.
+ * The third optional argument are an array of children for this element
+ *   (but raw DOM elements are required to be specified within arrays since
+ *   could not otherwise be distinguished from siblings being added).
+ * The fourth optional argument are a sequence of sibling Elements, represented
+ *   as DOM elements, or string/attributes/children sequences.
+ * The fifth optional argument is the parent to which to attach the element
+ *   (always the last unless followed by null, in which case it is the
+ *   second-to-last).
+ * The sixth last optional argument is null, used to indicate an array of elements
+ *   should be returned.
+ * @typedef {[
+ *   JamilihOptions|JamilihFirstArgument,
+ *   (JamilihFirstArgument|
+ *     JamilihAttributes|
+ *     JamilihChildren|
+ *     HTMLElement|ShadowRoot|
+ *     null)?,
+ *   (JamilihAttributes|
+ *     JamilihChildren|
+ *     HTMLElement|ShadowRoot|
+ *     ElementName|null)?,
+ *   ...(JamilihAttributes|
+ *     JamilihChildren|
+ *     HTMLElement|ShadowRoot|
+ *     ElementName|null)[]
+ * ]} JamilihArray
+ */
+
+/**
+ * @typedef {[
+ *   (string|HTMLElement|ShadowRoot), (JamilihArray[]|JamilihAttributes|HTMLElement|ShadowRoot|null)?, ...(JamilihArray[]|HTMLElement|JamilihAttributes|ShadowRoot|null)[]
+ * ]} JamilihArrayPostOptions
+ */
+
+/**
+ * @typedef {{
+ *   root: [Map<HTMLElement,any>|WeakMap<HTMLElement,any>, any],
+ *   [key: string]: [Map<HTMLElement,any>|WeakMap<HTMLElement,any>, any]
+ * }} MapWithRoot
+ */
+
+/**
+ * @typedef {"root"|"attributeValue"|"element"|"fragment"|"children"|"fragmentChildren"} TraversalState
+ */
+
+/**
+ * @typedef {object} JamilihOptions
+ * @property {TraversalState} [$state]
+ * @property {JamilihPlugin[]} [$plugins]
+ * @property {MapWithRoot|[Map<HTMLElement,any>|WeakMap<HTMLElement,any>, any]} [$map]
+ */
+
+/**
+ * @param {Document|HTMLElement|DocumentFragment} elem
+ * @param {string|null} att
+ * @param {JamilihAttValue} attVal
+ * @param {JamilihOptions} opts
+ * @param {TraversalState} [state]
+ * @returns {Promise<void>|string|null}
+ */
+function checkPluginValue(elem, att, attVal, opts, state) {
+  opts.$state = state !== null && state !== void 0 ? state : 'attributeValue';
   if (attVal && typeof attVal === 'object') {
     const matchingPlugin = getMatchingPlugin(opts, Object.keys(attVal)[0]);
     if (matchingPlugin) {
@@ -3599,48 +4570,67 @@ function checkPluginValue(elem, att, attVal, opts) {
       });
     }
   }
-  return attVal;
+  return (/** @type {string} */attVal
+  );
 }
+
 /**
  * @param {JamilihOptions} opts
- * @param {string} item
- * @returns {JamilihPlugin}
+ * @param {string} pluginName
+ * @returns {JamilihPlugin|undefined}
  */
-
-function getMatchingPlugin(opts, item) {
+function getMatchingPlugin(opts, pluginName) {
   return opts.$plugins && opts.$plugins.find(p => {
-    return p.name === item;
+    return p.name === pluginName;
   });
 }
+
 /**
  * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers
  * that support); any element after element can be omitted, and any subsequent
  * type or types added afterwards.
- * @param {...JamilihArray} args
+ * @param {JamilihArray} args
  * @returns {JamilihReturn} The newly created (and possibly already appended)
  *   element or array of elements
  */
-
 const jml = function jml(...args) {
+  if (!win) {
+    throw new Error('No window object');
+  }
+  if (!doc) {
+    throw new Error('No document object');
+  }
+
+  /** @type {(Document|DocumentFragment|HTMLElement) & {[key: string]: any}} */
   let elem = doc.createDocumentFragment();
   /**
    *
-   * @param {Object<{string: string}>} atts
+   * @param {JamilihAttributes} atts
    * @throws {TypeError}
    * @returns {void}
    */
-
   function _checkAtts(atts) {
+    /* c8 ignore next 3 */
+    if (!doc) {
+      throw new Error('No document object');
+    }
     for (let [att, attVal] of Object.entries(atts)) {
-      att = att in ATTR_MAP ? ATTR_MAP[att] : att;
+      var _ATTR_MAP$get;
+      att = (_ATTR_MAP$get = ATTR_MAP.get(att)) !== null && _ATTR_MAP$get !== void 0 ? _ATTR_MAP$get : att;
+
+      /**
+       * @typedef {any} ElementExpando
+       */
+
       if (NULLABLES.includes(att)) {
-        attVal = checkPluginValue(elem, att, attVal, opts);
+        attVal = checkPluginValue(elem, att, /** @type {string|JamilihArray} */attVal, opts);
         if (!_isNullish(attVal)) {
-          elem[att] = attVal;
+          /** @type {ElementExpando} */elem[att] = attVal;
         }
         continue;
       } else if (ATTR_DOM.includes(att)) {
-        attVal = checkPluginValue(elem, att, attVal, opts);
+        attVal = checkPluginValue(elem, att, /** @type {string|JamilihArray} */attVal, opts);
+        /** @type {ElementExpando} */
         elem[att] = attVal;
         continue;
       }
@@ -3658,8 +4648,8 @@ const jml = function jml(...args) {
         case '#':
           {
             // Document fragment
-            opts.$state = 'fragmentChilden';
-            nodes[nodes.length] = jml(opts, attVal);
+            opts.$state = 'fragmentChildren';
+            nodes[nodes.length] = jml(opts, /** @type {JamilihArray[]} */attVal);
             break;
           }
         case '$shadow':
@@ -3667,24 +4657,38 @@ const jml = function jml(...args) {
             const {
               open,
               closed
-            } = attVal;
+            } = /** @type {JamilihShadowRootObject} */attVal;
             let {
               content,
               template
-            } = attVal;
-            const shadowRoot = elem.attachShadow({
+            } = /** @type {JamilihShadowRootObject} */attVal;
+            const shadowRoot = /** @type {HTMLElement} */elem.attachShadow({
               mode: closed || open === false ? 'closed' : 'open'
             });
             if (template) {
               if (Array.isArray(template)) {
-                template = _getType(template[0]) === 'object' ? jml('template', ...template, doc.body) : jml('template', template, doc.body);
+                template = /** @type {HTMLTemplateElement} */
+                _getType(template[0]) === 'object' ? jml('template', ...
+                /**
+                 * @type {[
+                 *   JamilihAttributes, ...(JamilihArray[]|HTMLElement)[]
+                 * ]}
+                 */
+                template, doc.body) : jml('template',
+                /**
+                 * @type {JamilihArray[]|HTMLElement}
+                 */
+                template, doc.body);
               } else if (typeof template === 'string') {
-                template = $$1(template);
+                template = /** @type {HTMLTemplateElement} */$$1(template);
               }
-              jml(template.content.cloneNode(true), shadowRoot);
+              jml( /** @type {HTMLTemplateElement} */
+              /** @type {HTMLTemplateElement} */template.content.cloneNode(true), shadowRoot);
             } else {
               if (!content) {
-                content = open || closed;
+                if (open !== true) {
+                  content = open || typeof closed === 'boolean' ? content : closed;
+                }
               }
               if (content && typeof content !== 'boolean') {
                 if (Array.isArray(content)) {
@@ -3714,54 +4718,74 @@ const jml = function jml(...args) {
             Object.assign(elem, attVal);
             break;
           }
-
-        /* istanbul ignore next */
-
         case '$define':
           {
-            const localName = elem.localName.toLowerCase(); // Note: customized built-ins sadly not working yet
+            if (!('localName' in elem)) {
+              throw new Error('Element expected for `$define`');
+            }
+            const localName = elem.localName.toLowerCase();
+            // Note: customized built-ins sadly not working yet
+            const customizedBuiltIn = !localName.includes('-');
 
-            const customizedBuiltIn = !localName.includes('-'); // We check attribute in case this is a preexisting DOM element
+            // We check attribute in case this is a preexisting DOM element
             // const {is} = atts;
-
             let is;
             if (customizedBuiltIn) {
               is = elem.getAttribute('is');
               if (!is) {
-                if (!{}.hasOwnProperty.call(atts, 'is')) {
+                if (!Object.hasOwn(atts, 'is')) {
                   throw new TypeError(`Expected \`is\` with \`$define\` on built-in; args: ${JSON.stringify(args)}`);
                 }
-                atts.is = checkPluginValue(elem, 'is', atts.is, opts);
+                atts.is = /** @type {string} */checkPluginValue(elem, 'is', atts.is, opts);
                 elem.setAttribute('is', atts.is);
                 ({
                   is
                 } = atts);
               }
             }
-            const def = customizedBuiltIn ? is : localName;
+            const def = customizedBuiltIn ? /** @type {string} */is : localName;
             if (window.customElements.get(def)) {
               break;
             }
+
+            /**
+             * @param {DefineUserConstructor} [cnstrct]
+             * @returns {DefineConstructor}
+             */
             const getConstructor = cnstrct => {
-              const baseClass = options && options.extends ? doc.createElement(options.extends).constructor : customizedBuiltIn ? doc.createElement(localName).constructor : window.HTMLElement;
+              /* c8 ignore next 3 */
+              if (!doc) {
+                throw new Error('No document object');
+              }
+              const baseClass = typeof options === 'object' && typeof options.extends === 'string' ? /** @type {typeof HTMLElement} */doc.createElement(options.extends).constructor : customizedBuiltIn ? /** @type {typeof HTMLElement} */doc.createElement(localName).constructor : window.HTMLElement;
+
               /**
                * Class wrapping base class.
                */
-
               return cnstrct ? class extends baseClass {
                 /**
                  * Calls user constructor.
                  */
                 constructor() {
                   super();
+                  /** @type {DefineUserConstructor} */
                   cnstrct.call(this);
                 }
               } : class extends baseClass {};
             };
-            let cnstrctr, options, mixin;
-            if (Array.isArray(attVal)) {
-              if (attVal.length <= 2) {
-                [cnstrctr, options] = attVal;
+
+            /** @type {DefineConstructor|DefineUserConstructor|DefineMixin} */
+            let cnstrctr;
+
+            /**
+             * @type {DefineOptions|undefined}
+             */
+            let options;
+            let mixin;
+            const defineObj = /** @type {DefineObject} */attVal;
+            if (Array.isArray(defineObj)) {
+              if (defineObj.length <= 2) {
+                [cnstrctr, options] = defineObj;
                 if (typeof options === 'string') {
                   // Todo: Allow creating a definition without using it;
                   //  that may be the only reason to have a string here which
@@ -3769,7 +4793,7 @@ const jml = function jml(...args) {
                   options = {
                     extends: options
                   };
-                } else if (options && !{}.hasOwnProperty.call(options, 'extends')) {
+                } else if (options && !Object.hasOwn(options, 'extends')) {
                   mixin = options;
                 }
                 if (typeof cnstrctr === 'object') {
@@ -3777,21 +4801,21 @@ const jml = function jml(...args) {
                   cnstrctr = getConstructor();
                 }
               } else {
-                [cnstrctr, mixin, options] = attVal;
+                [cnstrctr, mixin, options] = defineObj;
                 if (typeof options === 'string') {
                   options = {
                     extends: options
                   };
                 }
               }
-            } else if (typeof attVal === 'function') {
-              cnstrctr = attVal;
+            } else if (typeof defineObj === 'function') {
+              cnstrctr = /** @type {DefineConstructor} */defineObj;
             } else {
-              mixin = attVal;
+              mixin = defineObj;
               cnstrctr = getConstructor();
             }
             if (!cnstrctr.toString().startsWith('class')) {
-              cnstrctr = getConstructor(cnstrctr);
+              cnstrctr = getConstructor( /** @type {DefineUserConstructor} */cnstrctr);
             }
             if (!options && customizedBuiltIn) {
               options = {
@@ -3800,29 +4824,33 @@ const jml = function jml(...args) {
             }
             if (mixin) {
               Object.entries(mixin).forEach(([methodName, method]) => {
-                cnstrctr.prototype[methodName] = method;
+                /** @type {DefineConstructor} */cnstrctr.prototype[methodName] = method;
               });
-            } // console.log('def', def, '::', typeof options === 'object' ? options : undefined);
-
-            window.customElements.define(def, cnstrctr, typeof options === 'object' ? options : undefined);
+            }
+            // console.log('def', def, '::', typeof options === 'object' ? options : undefined);
+            window.customElements.define(def, /** @type {DefineConstructor} */cnstrctr, typeof options === 'object' ? options : undefined);
             break;
           }
         case '$symbol':
           {
-            const [symbol, func] = attVal;
+            const [symbol, func] = /** @type {SymbolArray} */attVal;
             if (typeof func === 'function') {
-              const funcBound = func.bind(elem);
+              const funcBound = func.bind( /** @type {HTMLElement} */elem);
               if (typeof symbol === 'string') {
+                // @ts-expect-error
                 elem[Symbol.for(symbol)] = funcBound;
               } else {
+                // @ts-expect-error
                 elem[symbol] = funcBound;
               }
             } else {
               const obj = func;
-              obj.elem = elem;
+              obj.elem = /** @type {HTMLElement} */elem;
               if (typeof symbol === 'string') {
+                // @ts-expect-error
                 elem[Symbol.for(symbol)] = obj;
               } else {
+                // @ts-expect-error
                 elem[symbol] = obj;
               }
             }
@@ -3830,70 +4858,90 @@ const jml = function jml(...args) {
           }
         case '$data':
           {
-            setMap(attVal);
+            setMap( /** @type {true|string[]|Map<any, any>|WeakMap<any, any>|DataAttributeObject} */
+            attVal);
             break;
           }
         case '$attribute':
           {
             // Attribute node
-            const node = attVal.length === 3 ? doc.createAttributeNS(attVal[0], attVal[1]) : doc.createAttribute(attVal[0]);
-            node.value = attVal[attVal.length - 1];
+            const attr = /** @type {JamilihAttributeNodeValue} */attVal;
+            const node = attr.length === 3 ? doc.createAttributeNS(attr[0], attr[1]) : doc.createAttribute( /** @type {string} */attr[0]);
+            node.value = /** @type {string} */attr[attr.length - 1];
             nodes[nodes.length] = node;
             break;
           }
         case '$text':
           {
             // Todo: Also allow as jml(['a text node']) (or should that become a fragment)?
-            const node = doc.createTextNode(attVal);
+            const node = doc.createTextNode( /** @type {string} */attVal);
             nodes[nodes.length] = node;
             break;
           }
         case '$document':
           {
             // Todo: Conditionally create XML document
-            const node = doc.implementation.createHTMLDocument();
-            if (attVal.childNodes) {
+            const docNode = doc.implementation.createHTMLDocument();
+            if (!attVal) {
+              throw new Error('Bad attribute value');
+            }
+            const jamlihDoc = /** @type {JamilihDocument} */attVal;
+            if (jamlihDoc.childNodes) {
               // Remove any extra nodes created by createHTMLDocument().
-              const j = attVal.childNodes.length;
-              while (node.childNodes[j]) {
-                const cn = node.childNodes[j];
-                cn.remove(); // `j` should stay the same as removing will cause node to be present
+              const j = jamlihDoc.childNodes.length;
+              while (docNode.childNodes[j]) {
+                const cn = docNode.childNodes[j];
+                cn.remove();
+                // `j` should stay the same as removing will cause node to be present
               }
 
-              attVal.childNodes.forEach(_childrenToJML(node));
+              jamlihDoc.childNodes.forEach(_childrenToJML(docNode));
             } else {
-              if (attVal.$DOCTYPE) {
+              if (jamlihDoc.$DOCTYPE) {
+                var _docNode$firstChild;
                 const dt = {
-                  $DOCTYPE: attVal.$DOCTYPE
+                  $DOCTYPE: jamlihDoc.$DOCTYPE
                 };
                 const doctype = jml(dt);
-                node.firstChild.replaceWith(doctype);
+                (_docNode$firstChild = docNode.firstChild) === null || _docNode$firstChild === void 0 ? void 0 : _docNode$firstChild.replaceWith(doctype);
               }
-              const html = node.childNodes[1];
-              const head = html.childNodes[0];
-              const body = html.childNodes[1];
-              if (attVal.title || attVal.head) {
+              const html = docNode.querySelector('html');
+              const head = html === null || html === void 0 ? void 0 : html.querySelector('head');
+              const body = html === null || html === void 0 ? void 0 : html.querySelector('body');
+              if (jamlihDoc.title || jamlihDoc.head) {
                 const meta = doc.createElement('meta');
+                // eslint-disable-next-line unicorn/text-encoding-identifier-case -- HTML
                 meta.setAttribute('charset', 'utf-8');
-                head.append(meta);
-                if (attVal.title) {
-                  node.title = attVal.title; // Appends after meta
+                head === null || head === void 0 ? void 0 : head.append(meta);
+                if (jamlihDoc.title) {
+                  docNode.title = jamlihDoc.title; // Appends after meta
                 }
 
-                if (attVal.head) {
-                  attVal.head.forEach(_appendJML(head));
+                if (jamlihDoc.head && head) {
+                  // each child of `head` is:
+                  //  (JamilihArray|TextNodeString|HTMLElement|Comment|ProcessingInstruction|
+                  //  Text|DocumentFragment|JamilihProcessingInstruction|JamilihDocumentFragment)
+
+                  //   * @typedef {JamilihDoc|JamilihDoctype|JamilihTextNode|
+                  //  *   JamilihAttributeNode|JamilihOptions|ElementName|HTMLElement|
+                  //  *   JamilihDocumentFragment
+                  //  * } JamilihFirstArg
+                  // appender childJML param is: JamilihArray|JamilihFirstArg
+
+                  jamlihDoc.head.forEach(_appendJML(head));
                 }
               }
-              if (attVal.body) {
-                attVal.body.forEach(_appendJMLOrText(body));
+              if (jamlihDoc.body && body) {
+                jamlihDoc.body.forEach(_appendJMLOrText(body));
               }
             }
-            nodes[nodes.length] = node;
+            nodes[nodes.length] = docNode;
             break;
           }
         case '$DOCTYPE':
           {
-            const node = doc.implementation.createDocumentType(attVal.name, attVal.publicId || '', attVal.systemId || '');
+            const doctype = /** @type {JamilihDocumentType} */attVal;
+            const node = doc.implementation.createDocumentType(doctype.name, doctype.publicId || '', doctype.systemId || '');
             nodes[nodes.length] = node;
             break;
           }
@@ -3901,21 +4949,21 @@ const jml = function jml(...args) {
           {
             // Events
             // Allow for no-op by defaulting to `{}`
-            for (let [p2, val] of Object.entries(attVal || {})) {
+            for (let [p2, val] of Object.entries( /** @type {OnAttributeObject} */attVal || {})) {
               if (typeof val === 'function') {
                 val = [val, false];
               }
               if (typeof val[0] !== 'function') {
                 throw new TypeError(`Expect a function for \`$on\`; args: ${JSON.stringify(args)}`);
               }
-              _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
+              _addEvent( /** @type {HTMLElement} */elem, p2, val[0], val[1]); // element, event name, handler, capturing
             }
 
             break;
           }
         case 'className':
         case 'class':
-          attVal = checkPluginValue(elem, att, attVal, opts);
+          attVal = checkPluginValue(elem, att, /** @type {string} */attVal, opts);
           if (!_isNullish(attVal)) {
             elem.className = attVal;
           }
@@ -3923,6 +4971,11 @@ const jml = function jml(...args) {
         case 'dataset':
           {
             // Map can be keyed with hyphenated or camel-cased properties
+            /**
+             * @param {DatasetAttributeObject} atVal
+             * @param {string} startProp
+             * @returns {void}
+             */
             const recurse = (atVal, startProp) => {
               let prop = '';
               const pastInitialProp = startProp !== '';
@@ -3939,12 +4992,12 @@ const jml = function jml(...args) {
                 recurse(value, prop);
               });
             };
-            recurse(attVal, '');
-            break; // Todo: Disable this by default unless configuration explicitly allows (for security)
+            recurse( /** @type {DatasetAttributeObject} */attVal, '');
+            break;
+            // Todo: Disable this by default unless configuration explicitly allows (for security)
           }
         // #if IS_REMOVE
         // Don't remove this `if` block (for sake of no-innerHTML build)
-
         case 'innerHTML':
           if (!_isNullish(attVal)) {
             // eslint-disable-next-line no-unsanitized/property
@@ -3952,17 +5005,16 @@ const jml = function jml(...args) {
           }
           break;
         // #endif
-
         case 'htmlFor':
         case 'for':
           if (elStr === 'label') {
-            attVal = checkPluginValue(elem, att, attVal, opts);
+            attVal = checkPluginValue(elem, att, /** @type {string} */attVal, opts);
             if (!_isNullish(attVal)) {
               elem.htmlFor = attVal;
             }
             break;
           }
-          attVal = checkPluginValue(elem, att, attVal, opts);
+          attVal = checkPluginValue(elem, att, /** @type {string} */attVal, opts);
           elem.setAttribute(att, attVal);
           break;
         case 'xmlns':
@@ -3971,13 +5023,14 @@ const jml = function jml(...args) {
         default:
           {
             if (att.startsWith('on')) {
-              attVal = checkPluginValue(elem, att, attVal, opts);
-              elem[att] = attVal; // _addEvent(elem, att.slice(2), attVal, false); // This worked, but perhaps the user wishes only one event
-
+              attVal = checkPluginValue(elem, att, /** @type {HandlerAttributeValue} */attVal, opts);
+              elem[att] = attVal;
+              // _addEvent(elem, att.slice(2), attVal, false); // This worked, but perhaps the user wishes only one event
               break;
             }
             if (att === 'style') {
-              attVal = checkPluginValue(elem, att, attVal, opts);
+              attVal = /** @type {string} */
+              checkPluginValue(elem, att, /** @type {StyleAttributeValue} */attVal, opts);
               if (_isNullish(attVal)) {
                 break;
               }
@@ -3994,8 +5047,9 @@ const jml = function jml(...args) {
                   }
                 }
                 break;
-              } // setAttribute unfortunately erases any existing styles
+              }
 
+              // setAttribute unfortunately erases any existing styles
               elem.setAttribute(att, attVal);
               /*
               // The following reorders which is troublesome for serialization, e.g., as used in our testing
@@ -4005,39 +5059,48 @@ const jml = function jml(...args) {
                 elem.style += attVal;
               }
               */
-
               break;
             }
-            const matchingPlugin = getMatchingPlugin(opts, att);
+            const pluginName = att;
+            const matchingPlugin = getMatchingPlugin(opts, pluginName);
             if (matchingPlugin) {
               matchingPlugin.set({
                 opts,
-                element: elem,
+                element: /** @type {HTMLElement} */nodes[0],
                 attribute: {
-                  name: att,
-                  value: attVal
+                  name: pluginName,
+                  value: /** @type {PluginReference} */attVal
                 }
               });
               break;
             }
-            attVal = checkPluginValue(elem, att, attVal, opts);
+            attVal = checkPluginValue(elem, att, /** @type {string} */attVal, opts);
             elem.setAttribute(att, attVal);
             break;
           }
       }
     }
   }
+
+  /**
+   * @type {JamilihReturn[]}
+   */
   const nodes = [];
+
+  /** @type {string} */
   let elStr;
+
+  /** @type {JamilihOptions} */
   let opts;
   let isRoot = false;
+  let argStart = 0;
   if (_getType(args[0]) === 'object' && Object.keys(args[0]).some(key => possibleOptions.includes(key))) {
-    opts = args[0];
+    opts = /** @type {JamilihOptions} */args[0];
     if (opts.$state === undefined) {
       isRoot = true;
       opts.$state = 'root';
     }
-    if (opts.$map && !opts.$map.root && opts.$map.root !== false) {
+    if (Array.isArray(opts.$map)) {
       opts.$map = {
         root: opts.$map
       };
@@ -4058,50 +5121,59 @@ const jml = function jml(...args) {
         }
       });
     }
-    args = args.slice(1);
+    argStart = 1;
   } else {
     opts = {
       $state: undefined
     };
   }
   const argc = args.length;
-  const defaultMap = opts.$map && opts.$map.root;
-  const setMap = dataVal => {
-    let map, obj; // Boolean indicating use of default map and object
+  const defaultMap = opts.$map && /** @type {MapWithRoot} */opts.$map.root;
 
+  /**
+   * @param {true|string[]|Map<any, any>|WeakMap<any, any>|DataAttributeObject} dataVal
+   * @returns {void}
+   */
+  const setMap = dataVal => {
+    let map, obj;
+    const defMap = /** @type {[Map<HTMLElement, any> | WeakMap<HTMLElement, any>, any]} */defaultMap;
+    // Boolean indicating use of default map and object
     if (dataVal === true) {
-      [map, obj] = defaultMap;
+      [map, obj] = defMap;
     } else if (Array.isArray(dataVal)) {
       // Array of strings mapping to default
       if (typeof dataVal[0] === 'string') {
         dataVal.forEach(dVal => {
-          setMap(opts.$map[dVal]);
+          setMap( /** @type {MapWithRoot} */opts.$map[dVal]);
         });
-        return; // Array of Map and non-map data object
+        return;
+        // Array of Map and non-map data object
       }
 
-      map = dataVal[0] || defaultMap[0];
-      obj = dataVal[1] || defaultMap[1]; // Map
+      map = dataVal[0] || defMap[0];
+      obj = dataVal[1] || defMap[1];
+      // Map
     } else if (/^\[object (?:Weak)?Map\]$/u.test([].toString.call(dataVal))) {
       map = dataVal;
-      obj = defaultMap[1]; // Non-map data object
+      obj = defMap[1];
+      // Non-map data object
     } else {
-      map = defaultMap[0];
+      map = defMap[0];
       obj = dataVal;
     }
-    map.set(elem, obj);
+    /** @type {Map<HTMLElement, any> | WeakMap<HTMLElement, any>} */
+    map.set( /** @type {HTMLElement} */
+    elem, obj);
   };
-  for (let i = 0; i < argc; i++) {
+  for (let i = argStart; i < argc; i++) {
     let arg = args[i];
     const type = _getType(arg);
     switch (type) {
       case 'null':
         // null always indicates a place-holder (only needed for last argument if want array returned)
         if (i === argc - 1) {
-          _applyAnyStylesheet(nodes[0]); // We have to execute any stylesheets even if not appending or otherwise IE will never apply them
-          // Todo: Fix to allow application of stylesheets of style tags within fragments?
-
-          return nodes.length <= 1 ? nodes[0] // eslint-disable-next-line unicorn/no-array-callback-reference
+          return nodes.length <= 1 ? nodes[0]
+          // eslint-disable-next-line unicorn/no-array-callback-reference
           : nodes.reduce(_fragReducer, doc.createDocumentFragment()); // nodes;
         }
 
@@ -4110,23 +5182,23 @@ const jml = function jml(...args) {
         // Strings normally indicate elements
         switch (arg) {
           case '!':
-            nodes[nodes.length] = doc.createComment(args[++i]);
+            nodes[nodes.length] = doc.createComment( /** @type {string} */args[++i]);
             break;
           case '?':
             {
-              arg = args[++i];
-              let procValue = args[++i];
+              arg = /** @type {string} */args[++i];
+              let procValue = /** @type {string} */args[++i];
               const val = procValue;
               if (val && typeof val === 'object') {
-                procValue = [];
+                const procValues = [];
                 for (const [p, procInstVal] of Object.entries(val)) {
-                  procValue.push(p + '=' + '"' +
+                  procValues.push(p + '=' + '"' +
                   // https://www.w3.org/TR/xml-stylesheet/#NT-PseudoAttValue
                   procInstVal.replace(/"/gu, '&quot;') + '"');
                 }
-                procValue = procValue.join(' ');
-              } // Firefox allows instructions with ">" in this method, but not if placed directly!
-
+                procValue = procValues.join(' ');
+              }
+              // Firefox allows instructions with ">" in this method, but not if placed directly!
               try {
                 nodes[nodes.length] = doc.createProcessingInstruction(arg, procValue);
               } catch (e) {
@@ -4138,11 +5210,13 @@ const jml = function jml(...args) {
                 // Todo: any other way to resolve? Just use XML?
                 nodes[nodes.length] = doc.createComment('?' + arg + ' ' + procValue + '?');
               }
-              break; // Browsers don't support doc.createEntityReference, so we just use this as a convenience
+              break;
+              // Browsers don't support doc.createEntityReference, so we just use this as a convenience
             }
 
           case '&':
-            nodes[nodes.length] = _createSafeReference('entity', '', args[++i]);
+            nodes[nodes.length] = _createSafeReference('entity', '', /** @type {string} */
+            args[++i]);
             break;
           case '#':
             // // Decimal character reference - ['#', '01234'] // &#01234; // probably easier to use JavaScript Unicode escapes
@@ -4150,49 +5224,54 @@ const jml = function jml(...args) {
             break;
           case '#x':
             // Hex character reference - ['#x', '123a'] // &#x123a; // probably easier to use JavaScript Unicode escapes
-            nodes[nodes.length] = _createSafeReference('hexadecimal', arg, args[++i]);
+            nodes[nodes.length] = _createSafeReference('hexadecimal', arg, /** @type {string} */
+            args[++i]);
             break;
           case '![':
             // '![', ['escaped <&> text'] // <![CDATA[escaped <&> text]]>
             // CDATA valid in XML only, so we'll just treat as text for mutual compatibility
             // Todo: config (or detection via some kind of doc.documentType property?) of whether in XML
             try {
-              nodes[nodes.length] = doc.createCDATASection(args[++i]);
+              nodes[nodes.length] = doc.createCDATASection( /** @type {string} */args[++i]);
             } catch (e2) {
-              nodes[nodes.length] = doc.createTextNode(args[i]); // i already incremented
+              nodes[nodes.length] = doc.createTextNode( /** @type {string} */
+              args[i]); // i already incremented
             }
 
             break;
           case '':
-            nodes[nodes.length] = elem = doc.createDocumentFragment(); // Todo: Report to plugins
-
+            nodes[nodes.length] = elem = doc.createDocumentFragment();
+            // Todo: Report to plugins
             opts.$state = 'fragment';
             break;
           default:
             {
               // An element
-              elStr = arg;
+              elStr = /** @type {string} */arg;
               const atts = args[i + 1];
-              if (_getType(atts) === 'object' && atts.is) {
+              if (atts && _getType(atts) === 'object' && /** @type {JamilihAttributes} */atts.is) {
                 const {
                   is
-                } = atts; // istanbul ignore next
-
-                elem = doc.createElementNS ? doc.createElementNS(NS_HTML, elStr, {
-                  is
-                }) : doc.createElement(elStr, {
-                  is
+                } = /** @type {JamilihAttributes} */atts;
+                /* c8 ignore next 4 */
+                elem = doc.createElementNS
+                // Should create separate file for this
+                /* eslint-disable object-shorthand -- Casting */ ? /** @type {HTMLElement} */doc.createElementNS(NS_HTML, elStr, {
+                  is: /** @type {string} */is
+                })
+                /* c8 ignore next 1 */ : doc.createElement(elStr, {
+                  is: /** @type {string} */is
                 });
-              } else /* istanbul ignore else */
-                if (doc.createElementNS) {
+                /* eslint-enable object-shorthand -- Casting */
+              } else /* c8 ignore next */if (doc.createElementNS) {
                   elem = doc.createElementNS(NS_HTML, elStr);
+                  /* c8 ignore next 3 */
                 } else {
                   elem = doc.createElement(elStr);
-                } // Todo: Report to plugins
-
+                }
+              // Todo: Report to plugins
               opts.$state = 'element';
               nodes[nodes.length] = elem; // Add to parent
-
               break;
             }
         }
@@ -4200,22 +5279,34 @@ const jml = function jml(...args) {
       case 'object':
         {
           // Non-DOM-element objects indicate attribute-value pairs
+          /* c8 ignore next 3 */
+          if (!arg || typeof arg !== 'object') {
+            throw new Error('Null should not reach here');
+          }
           const atts = arg;
-          if (atts.xmlns !== undefined) {
+          if ('xmlns' in atts) {
             // We handle this here, as otherwise may lose events, etc.
             // As namespace of element already set as XHTML, we need to change the namespace
             // elem.setAttribute('xmlns', atts.xmlns); // Doesn't work
             // Can't set namespaceURI dynamically, renameNode() is not supported, and setAttribute() doesn't work to change the namespace, so we resort to this hack
-            const replacer = typeof atts.xmlns === 'object' ? _replaceDefiner(atts.xmlns) : ' xmlns="' + atts.xmlns + '"'; // try {
+            const xmlnsObj = /** @type {XmlnsAttributeObject} */atts;
+            const replacer = xmlnsObj.xmlns && typeof xmlnsObj.xmlns === 'object' ? _replaceDefiner(xmlnsObj.xmlns) : ' xmlns="' + xmlnsObj.xmlns + '"';
+            // try {
             // Also fix DOMParser to work with text/html
-
-            elem = nodes[nodes.length - 1] = new win.DOMParser().parseFromString(new win.XMLSerializer().serializeToString(elem) // Mozilla adds XHTML namespace
-            .replace(' xmlns="' + NS_HTML + '"', replacer), 'application/xml').documentElement; // Todo: Report to plugins
-
-            opts.$state = 'element'; // }catch(e) {alert(elem.outerHTML);throw e;}
+            elem = nodes[nodes.length - 1] =
+            // Why doesn't `HTMLWindow` have `DOMParser`?
+            new /** @type {import('jsdom').DOMWindow} */win.DOMParser().parseFromString(new /** @type {import('jsdom').DOMWindow} */win.XMLSerializer().serializeToString(elem)
+            // Mozilla adds XHTML namespace
+            .replace(' xmlns="' + NS_HTML + '"',
+            // Needed to cast here, despite either overload working
+            /** @type {string} */
+            replacer), 'application/xml').documentElement;
+            // Todo: Report to plugins
+            opts.$state = 'element';
+            // }catch(e) {alert(elem.outerHTML);throw e;}
           }
 
-          _checkAtts(atts);
+          _checkAtts( /** @type {JamilihAttributes} */atts);
           break;
         }
       case 'document':
@@ -4227,32 +5318,30 @@ const jml = function jml(...args) {
         */
         if (i === 0) {
           // Allow wrapping of element, fragment, or document
-          elem = arg; // Todo: Report to plugins
-
+          elem = /** @type {Document|DocumentFragment|HTMLElement} */arg;
+          // Todo: Report to plugins and change for document/fragment
           opts.$state = 'element';
         }
         if (i === argc - 1 || i === argc - 2 && args[i + 1] === null) {
           // parent
           const elsl = nodes.length;
           for (let k = 0; k < elsl; k++) {
-            _appendNode(arg, nodes[k]);
-          } // Todo: Apply stylesheets if any style tags were added elsewhere besides the first element?
-
-          _applyAnyStylesheet(nodes[0]); // We have to execute any stylesheets even if not appending or otherwise IE will never apply them
+            _appendNode( /** @type {Document|DocumentFragment|HTMLElement} */arg, nodes[k]);
+          }
         } else {
-          nodes[nodes.length] = arg;
+          nodes[nodes.length] = /** @type {Document|DocumentFragment|HTMLElement} */arg;
         }
         break;
       case 'array':
         {
           // Arrays or arrays of arrays indicate child nodes
-          const child = arg;
+          const child = /** @type {JamilihChildren} */arg;
           const cl = child.length;
           for (let j = 0; j < cl; j++) {
             // Go through children array container to handle elements
             const childContent = child[j];
             const childContentType = typeof childContent;
-            if (_isNullish(childContent)) {
+            if (childContent === null || _isNullish(childContent)) {
               throw new TypeError(`Bad children (parent array: ${JSON.stringify(args)}; index ${j} of child: ${JSON.stringify(child)})`);
             }
             switch (childContentType) {
@@ -4260,21 +5349,30 @@ const jml = function jml(...args) {
               case 'string':
               case 'number':
               case 'boolean':
-                _appendNode(elem, doc.createTextNode(childContent));
+                _appendNode(elem, doc.createTextNode(String(childContent)));
                 break;
               default:
+                // bigint, symbol, function
+                if (typeof childContent !== 'object') {
+                  throw new TypeError(`Bad children (parent array: ${JSON.stringify(args)}; index ${j} of child: ${JSON.stringify(child)})`);
+                }
                 if (Array.isArray(childContent)) {
                   // Arrays representing child elements
                   opts.$state = 'children';
                   _appendNode(elem, jml(opts, ...childContent));
-                } else if (childContent['#']) {
+                } else if ('#' in childContent) {
                   // Fragment
                   opts.$state = 'fragmentChildren';
                   _appendNode(elem, jml(opts, childContent['#']));
                 } else {
-                  // Single DOM element children
-                  const newChildContent = checkPluginValue(elem, null, childContent, opts);
-                  _appendNode(elem, newChildContent);
+                  // Single DOM element children or plugin
+                  let newChildContent;
+                  if (!('nodeType' in childContent)) {
+                    newChildContent = /** @type {string} */
+                    checkPluginValue(elem, null, childContent, opts, 'children');
+                  }
+                  _appendNode(elem, /** @type {string|HTMLElement|DocumentFragment|Comment} */
+                  newChildContent || childContent);
                 }
                 break;
             }
@@ -4286,63 +5384,126 @@ const jml = function jml(...args) {
     }
   }
   const ret = nodes[0] || elem;
-  if (isRoot && opts.$map && opts.$map.root) {
+  if (isRoot && opts.$map && /** @type {MapWithRoot} */opts.$map.root) {
     setMap(true);
   }
   return ret;
 };
+
+/**
+ * Configuration object.
+ * @typedef {object} ToJmlConfig
+ * @property {boolean} [stringOutput=false] Whether to output the Jamilih object as a string.
+ * @property {boolean} [reportInvalidState=true] If true (the default), will report invalid state errors
+ * @property {boolean} [stripWhitespace=false] Strip whitespace for text nodes
+ */
+
+/**
+ * @typedef {[namespace: string|null, name: string, value?: string]} JamilihAttributeNodeValue
+ */
+
+/**
+ * @typedef {{
+ *   $attribute: JamilihAttributeNodeValue
+ * }} JamilihAttributeNode
+ */
+
+/**
+ * @typedef {{
+ *   $text: string
+ * }} JamilihTextNode
+ */
+
+/**
+ * @typedef {['![', string]} JamilihCDATANode
+ */
+
+/**
+ * @typedef {['&', string]} JamilihEntityReference
+ */
+
+/**
+ * @typedef {[code: '?', target: string, value: string]} JamilihProcessingInstruction
+ */
+
+/**
+ * @typedef {[code: '!', value: string]} JamilihComment
+ */
+
+/**
+ * @typedef {{
+ *   nodeType: number,
+ *   nodeName: string
+ * }} Entity
+ */
+
+/* eslint-disable no-shadow, unicorn/custom-error-definition */
+/**
+ * Polyfill for `DOMException`.
+ */
+class DOMException extends Error {
+  /* eslint-enable no-shadow, unicorn/custom-error-definition */
+  /**
+   * @param {string} message
+   * @param {string} name
+   */
+  constructor(message, name) {
+    super(message);
+    this.code = 0;
+    // eslint-disable-next-line unicorn/custom-error-definition
+    this.name = name;
+  }
+}
+
+/**
+ * @typedef {JamilihArray|JamilihDoctype|
+*    JamilihCDATANode|JamilihEntityReference|JamilihProcessingInstruction|
+*    JamilihComment|JamilihDocumentFragment} JamilihChildType
+ */
+
+/**
+ * @typedef {JamilihDoc|JamilihAttributeNode|JamilihChildType} JamilihType
+ */
+
 /**
 * Converts a DOM object or a string of HTML into a Jamilih object (or string).
-* @param {string|HTMLElement} dom If a string, will parse as document
-* @param {PlainObject} [config] Configuration object
-* @param {boolean} [config.stringOutput=false] Whether to output the Jamilih object as a string.
-* @param {boolean} [config.reportInvalidState=true] If true (the default), will report invalid state errors
-* @param {boolean} [config.stripWhitespace=false] Strip whitespace for text nodes
+* @param {string|HTMLElement|Node|Entity} nde If a string, will parse as document
+* @param {ToJmlConfig} [config] Configuration object
 * @throws {TypeError}
-* @returns {JamilihArray|string} Array containing the elements which represent
+* @returns {JamilihType|string} Array containing the elements which represent
 * a Jamilih object, or, if `stringOutput` is true, it will be the stringified
 * version of such an object
 */
-
-jml.toJML = function (dom, {
+jml.toJML = function (nde, {
   stringOutput = false,
   reportInvalidState = true,
   stripWhitespace = false
 } = {}) {
-  if (typeof dom === 'string') {
-    dom = new win.DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
+  if (!win) {
+    throw new Error('No window object set');
+  }
+  if (typeof nde === 'string') {
+    nde = new /** @type {import('jsdom').DOMWindow} */win.DOMParser().parseFromString(nde, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
   }
 
-  const ret = [];
+  const dom = /** @type {HTMLElement|Node|Entity} */nde;
+
+  /**
+   * @todo Find more specific type than `any`
+   * @typedef {{[key: (number|string)]: any}} IndexableObject
+   */
+
+  const ret = /** @type {IndexableObject} */[];
   let parent = ret;
   let parentIdx = 0;
+
   /**
    * @param {string} msg
    * @throws {DOMException}
    * @returns {void}
    */
-
   function invalidStateError(msg) {
     // These are probably only necessary if working with text/html
-
-    /* eslint-disable no-shadow, unicorn/custom-error-definition */
-
-    /**
-     * Polyfill for `DOMException`.
-     */
-    class DOMException extends Error {
-      /* eslint-enable no-shadow, unicorn/custom-error-definition */
-
-      /**
-       * @param {string} message
-       * @param {string} name
-       */
-      constructor(message, name) {
-        super(message); // eslint-disable-next-line unicorn/custom-error-definition
-
-        this.name = name;
-      }
-    }
     if (reportInvalidState) {
       // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
       const e = new DOMException(msg, 'INVALID_STATE_ERR');
@@ -4350,13 +5511,13 @@ jml.toJML = function (dom, {
       throw e;
     }
   }
+
   /**
    *
-   * @param {DocumentType|Entity} obj
-   * @param {Node} node
+   * @param {JamilihDocumentType} obj
+   * @param {DocumentType} node
    * @returns {void}
    */
-
   function addExternalID(obj, node) {
     if (node.systemId.includes('"') && node.systemId.includes("'")) {
       invalidStateError('systemId cannot have both single and double quotes.');
@@ -4372,32 +5533,32 @@ jml.toJML = function (dom, {
       obj.publicId = publicId;
     }
   }
+
   /**
    *
-   * @param {any} val
+   * @param {ArbitraryValue} val
    * @returns {void}
    */
-
   function set(val) {
     parent[parentIdx] = val;
     parentIdx++;
   }
+
   /**
    * @returns {void}
    */
-
   function setChildren() {
     set([]);
     parent = parent[parentIdx - 1];
     parentIdx = 0;
   }
+
   /**
    *
    * @param {string} prop1
-   * @param {string} prop2
+   * @param {string} [prop2]
    * @returns {void}
    */
-
   function setObj(prop1, prop2) {
     parent = parent[parentIdx - 1][prop1];
     parentIdx = 0;
@@ -4405,36 +5566,54 @@ jml.toJML = function (dom, {
       parent = parent[prop2];
     }
   }
+
   /**
    *
-   * @param {Node} node
-   * @param {object<{string: string}>} namespaces
+   * @param {Node|Entity} nodeOrEntity
+   * @param {Object<string, string|null>} namespaces
    * @throws {TypeError}
    * @returns {void}
    */
-
-  function parseDOM(node, namespaces) {
+  function parseDOM(nodeOrEntity, namespaces) {
     // namespaces = clone(namespaces) || {}; // Ensure we're working with a copy, so different levels in the hierarchy can treat it differently
 
     /*
-    if ((node.prefix && node.prefix.includes(':')) || (node.localName && node.localName.includes(':'))) {
+    if ((nodeOrEntity.prefix && nodeOrEntity.prefix.includes(':')) || (nodeOrEntity.localName && nodeOrEntity.localName.includes(':'))) {
       invalidStateError('Prefix cannot have a colon');
     }
     */
-    const type = 'nodeType' in node ? node.nodeType : null;
+
+    const type = 'nodeType' in nodeOrEntity ? nodeOrEntity.nodeType : null;
+    if (!type) {
+      throw new TypeError('Not an XML type');
+    }
+    if (type === 5) {
+      // ENTITY REFERENCE (though not in browsers (was already resolved
+      //  anyways), ok to keep for parity with our "entity" shorthand)
+      set(['&', nodeOrEntity.nodeName]);
+      return;
+    }
     namespaces = {
       ...namespaces
     };
     const xmlChars = /^([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/u; // eslint-disable-line no-control-regex
-
-    if ([2, 3, 4, 7, 8].includes(type) && !xmlChars.test(node.nodeValue)) {
+    if ([2, 3, 4, 7, 8].includes(type) && /** @type {Node} */nodeOrEntity.nodeValue && !xmlChars.test( /** @type {Node} */nodeOrEntity.nodeValue)) {
       invalidStateError('Node has bad XML character value');
     }
-    let tmpParent, tmpParentIdx;
+
+    /**
+     * @type {IndexableObject}
+     */
+    let tmpParent;
+
+    /**
+     * @type {Integer}
+     */
+    let tmpParentIdx;
+
     /**
      * @returns {void}
      */
-
     function setTemp() {
       tmpParent = parent;
       tmpParentIdx = parentIdx;
@@ -4442,7 +5621,6 @@ jml.toJML = function (dom, {
     /**
      * @returns {void}
      */
-
     function resetTemp() {
       parent = tmpParent;
       parentIdx = tmpParentIdx;
@@ -4453,12 +5631,16 @@ jml.toJML = function (dom, {
       case 1:
         {
           // ELEMENT
+          const node = /** @type {HTMLElement} */nodeOrEntity;
           setTemp();
           const nodeName = node.nodeName.toLowerCase(); // Todo: for XML, should not lower-case
 
           setChildren(); // Build child array since elements are, except at the top level, encapsulated in arrays
-
           set(nodeName);
+
+          /**
+           * @type {{[key: string]: string|null} & {xmlns?: string|null}}
+           */
           const start = {};
           let hasNamespaceDeclaration = false;
           if (namespaces[node.prefix || ''] !== node.namespaceURI) {
@@ -4475,7 +5657,6 @@ jml.toJML = function (dom, {
           if (node.attributes.length) {
             set([...node.attributes].reduce(function (obj, att) {
               obj[att.name] = att.value; // Attr.nodeName and Attr.nodeValue are deprecated as of DOM4 as Attr no longer inherits from Node, so we can safely use name and value
-
               return obj;
             }, start));
           } else if (hasNamespaceDeclaration) {
@@ -4486,7 +5667,6 @@ jml.toJML = function (dom, {
           } = node;
           if (childNodes.length) {
             setChildren(); // Element children array container
-
             [...childNodes].forEach(function (childNode) {
               parseDOM(childNode, namespaces);
             });
@@ -4494,61 +5674,80 @@ jml.toJML = function (dom, {
           resetTemp();
           break;
         }
-      case undefined: // Treat as attribute node until this is fixed: https://github.com/jsdom/jsdom/issues/1641 / https://github.com/jsdom/jsdom/pull/1822
-
       case 2:
-        // ATTRIBUTE (should only get here if passing in an attribute node)
-        set({
-          $attribute: [node.namespaceURI, node.name, node.value]
-        });
-        break;
+        {
+          // ATTRIBUTE (should only get here if passing in an attribute node)
+          const node = /** @type {Attr} */nodeOrEntity;
+          set({
+            $attribute: [node.namespaceURI, node.name, node.value]
+          });
+          break;
+        }
       case 3:
-        // TEXT
-        if (stripWhitespace && /^\s+$/u.test(node.nodeValue)) {
-          set('');
-          return;
+        {
+          // TEXT
+          const node = /** @type {Text} */nodeOrEntity;
+          /* c8 ignore next 3 */
+          if (!node.nodeValue) {
+            throw new Error('Unexpected null comment value');
+          }
+          if (stripWhitespace && /^\s+$/u.test(node.nodeValue)) {
+            set('');
+            return;
+          }
+          set(node.nodeValue);
+          break;
         }
-        set(node.nodeValue);
-        break;
       case 4:
-        // CDATA
-        if (node.nodeValue.includes(']]' + '>')) {
-          invalidStateError('CDATA cannot end with closing ]]>');
+        {
+          var _node$nodeValue;
+          // CDATA
+          const node = /** @type {CDATASection} */nodeOrEntity;
+          if ((_node$nodeValue = node.nodeValue) !== null && _node$nodeValue !== void 0 && _node$nodeValue.includes(']]' + '>')) {
+            invalidStateError('CDATA cannot end with closing ]]>');
+          }
+          set(['![', node.nodeValue]);
+          break;
         }
-        set(['![', node.nodeValue]);
-        break;
-      case 5:
-        // ENTITY REFERENCE (though not in browsers (was already resolved
-        //  anyways), ok to keep for parity with our "entity" shorthand)
-        set(['&', node.nodeName]);
-        break;
+      // case 5:
+      // Handled earlier
       case 7:
-        // PROCESSING INSTRUCTION
-        if (/^xml$/iu.test(node.target)) {
-          invalidStateError('Processing instructions cannot be "xml".');
+        {
+          // PROCESSING INSTRUCTION
+          const node = /** @type {ProcessingInstruction} */nodeOrEntity;
+          if (/^xml$/iu.test(node.target)) {
+            invalidStateError('Processing instructions cannot be "xml".');
+          }
+          if (node.target.includes('?>')) {
+            invalidStateError('Processing instruction targets cannot include ?>');
+          }
+          if (node.target.includes(':')) {
+            invalidStateError('The processing instruction target cannot include ":"');
+          }
+          if (node.data.includes('?>')) {
+            invalidStateError('Processing instruction data cannot include ?>');
+          }
+          set(['?', node.target, node.data]); // Todo: Could give option to attempt to convert value back into object if has pseudo-attributes
+          break;
         }
-        if (node.target.includes('?>')) {
-          invalidStateError('Processing instruction targets cannot include ?>');
-        }
-        if (node.target.includes(':')) {
-          invalidStateError('The processing instruction target cannot include ":"');
-        }
-        if (node.data.includes('?>')) {
-          invalidStateError('Processing instruction data cannot include ?>');
-        }
-        set(['?', node.target, node.data]); // Todo: Could give option to attempt to convert value back into object if has pseudo-attributes
-
-        break;
       case 8:
-        // COMMENT
-        if (node.nodeValue.includes('--') || node.nodeValue.length && node.nodeValue.lastIndexOf('-') === node.nodeValue.length - 1) {
-          invalidStateError('Comments cannot include --');
+        {
+          // COMMENT
+          const node = /** @type {Comment} */nodeOrEntity;
+          /* c8 ignore next 3 */
+          if (!node.nodeValue) {
+            throw new Error('Unexpected null comment value');
+          }
+          if (node.nodeValue.includes('--') || node.nodeValue.length && node.nodeValue.lastIndexOf('-') === node.nodeValue.length - 1) {
+            invalidStateError('Comments cannot include --');
+          }
+          set(['!', node.nodeValue]);
+          break;
         }
-        set(['!', node.nodeValue]);
-        break;
       case 9:
         {
           // DOCUMENT
+          const node = /** @type {Document} */nodeOrEntity;
           setTemp();
           const docObj = {
             $document: {
@@ -4556,15 +5755,16 @@ jml.toJML = function (dom, {
             }
           };
           set(docObj); // doc.implementation.createHTMLDocument
-          // Set position to fragment's array children
 
+          // Set position to fragment's array children
           setObj('$document', 'childNodes');
           const {
             childNodes
           } = node;
           if (!childNodes.length) {
             invalidStateError('Documents must have a child node');
-          } // set({$xmlDocument: []}); // doc.implementation.createDocument // Todo: use this conditionally
+          }
+          // set({$xmlDocument: []}); // doc.implementation.createDocument // Todo: use this conditionally
 
           [...childNodes].forEach(function (childNode) {
             // Can't just do documentElement as there may be doctype, comments, etc.
@@ -4577,20 +5777,21 @@ jml.toJML = function (dom, {
       case 10:
         {
           // DOCUMENT TYPE
-          setTemp(); // Can create directly by doc.implementation.createDocumentType
+          const node = /** @type {DocumentType} */nodeOrEntity;
+          setTemp();
 
+          // Can create directly by doc.implementation.createDocumentType
           const start = {
             $DOCTYPE: {
-              name: node.name
+              name: /** @type {DocumentType} */node.name
             }
           };
           const pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/u; // eslint-disable-line no-control-regex
-
-          if (!pubIdChar.test(node.publicId)) {
+          if (!pubIdChar.test( /** @type {DocumentType} */node.publicId)) {
             invalidStateError('A publicId must have valid characters.');
           }
-          addExternalID(start.$DOCTYPE, node); // Fit in internal subset along with entities?: probably don't need as these would only differ if from DTD, and we're not rebuilding the DTD
-
+          addExternalID(start.$DOCTYPE, node);
+          // Fit in internal subset along with entities?: probably don't need as these would only differ if from DTD, and we're not rebuilding the DTD
           set(start); // Auto-generate the internalSubset instead?
 
           resetTemp();
@@ -4599,11 +5800,13 @@ jml.toJML = function (dom, {
       case 11:
         {
           // DOCUMENT FRAGMENT
+          const node = /** @type {DocumentFragment} */nodeOrEntity;
           setTemp();
           set({
             '#': []
-          }); // Set position to fragment's array children
+          });
 
+          // Set position to fragment's array children
           setObj('#');
           const {
             childNodes
@@ -4625,231 +5828,324 @@ jml.toJML = function (dom, {
   }
   return ret[0];
 };
+
+/**
+ * @param {string|HTMLElement} dom
+ * @param {ToJmlConfig} [config]
+ * @returns {string}
+ */
 jml.toJMLString = function (dom, config) {
-  return jml.toJML(dom, Object.assign(config || {}, {
-    stringOutput: true
-  }));
+  return (/** @type {string} */
+    jml.toJML(dom, Object.assign(config || {}, {
+      stringOutput: true
+    }))
+  );
 };
+
 /**
  *
- * @param {...JamilihArray} args
+ * @param {JamilihArray} args
  * @returns {JamilihReturn}
  */
-
 jml.toDOM = function (...args) {
   // Alias for jml()
   return jml(...args);
 };
+
 /**
  *
- * @param {...JamilihArray} args
+ * @param {JamilihArray} args
  * @returns {string}
  */
-
 jml.toHTML = function (...args) {
   // Todo: Replace this with version of jml() that directly builds a string
-  const ret = jml(...args); // Todo: deal with serialization of properties like 'selected',
-  //  'checked', 'value', 'defaultValue', 'for', 'dataset', 'on*',
-  //  'style'! (i.e., need to build a string ourselves)
+  const ret = jml(...args);
+  switch (ret.nodeType) {
+    case 1:
+      {
+        // Element
+        // Todo: deal with serialization of properties like 'selected',
+        //  'checked', 'value', 'defaultValue', 'for', 'dataset', 'on*',
+        //  'style'! (i.e., need to build a string ourselves)
+        return (/** @type {HTMLElement} */ret.outerHTML
+        );
+      }
+    case 2:
+      {
+        // ATTR
+        return `${
+        /** @type {Attr} */ret.name}="${
+        /** @type {Attr} */ret.value.replace(/"/gu, '&quot;')}"`;
+      }
+    case 3:
+      {
+        // TEXT
+        // Fallthrough
+        // } case 4: { // CDATA
+        /* c8 ignore next 3 */
+        if (!ret.nodeValue) {
+          throw new TypeError('Unexpected null Text node');
+        }
+        return (/** @type {Text|CDATASection} */ret.nodeValue
+        );
+        // case 5: // Entity Reference Node
+        //  No 6: Entity Node
+        //  No 12: Notation Node
+        // } case 7: { // PROCESSING INSTRUCTION
+        //   const node = /** @type {ProcessingInstruction} */ (ret);
+        //   return `<?${node.target} ${node.data}?>`;
+        // } case 8: { // Comment
+        //   return `<!--${ret.nodeValue}-->`;
+      }
 
-  return ret.outerHTML;
+    case 9:
+    case 11:
+      {
+        // DOCUMENT FRAGMENT
+        const node = /** @type {DocumentFragment} */ret;
+        return [...node.childNodes].map(childNode => {
+          return jml.toHTML( /** @type {JamilihFirstArgument} */childNode);
+        }).join('');
+      }
+    case 10:
+      {
+        // DOCUMENT TYPE
+        const node = /** @type {DocumentType} */ret;
+        return `<!DOCTYPE ${node.name}${node.publicId ? ` PUBLIC "${node.publicId}" "${node.systemId}"` : node.systemId ? ` SYSTEM "${node.systemId}"` : ``}>`;
+        /* c8 ignore next 3 */
+      }
+
+    default:
+      throw new Error('Unexpected node type');
+  }
 };
+
 /**
  *
- * @param {...JamilihArray} args
+ * @param {JamilihArray} args
  * @returns {string}
  */
-
 jml.toDOMString = function (...args) {
   // Alias for jml.toHTML for parity with jml.toJMLString
   return jml.toHTML(...args);
 };
+
 /**
  *
- * @param {...JamilihArray} args
+ * @param {JamilihArray} args
  * @returns {string}
  */
-
 jml.toXML = function (...args) {
+  if (!win) {
+    throw new Error('No window object set');
+  }
   const ret = jml(...args);
-  return new win.XMLSerializer().serializeToString(ret);
+  return new /** @type {import('jsdom').DOMWindow} */win.XMLSerializer().serializeToString(ret);
 };
+
 /**
  *
- * @param {...JamilihArray} args
+ * @param {JamilihArray} args
  * @returns {string}
  */
-
 jml.toXMLDOMString = function (...args) {
   // Alias for jml.toXML for parity with jml.toJMLString
   return jml.toXML(...args);
 };
+
 /**
  * Element-aware wrapper for `Map`.
  */
-
 class JamilihMap extends Map {
   /**
-   * @param {string|Element} elem
-   * @returns {any}
+   * @param {?(string|HTMLElement)} element
+   * @returns {ArbitraryValue}
    */
-  get(elem) {
-    elem = typeof elem === 'string' ? $$1(elem) : elem;
+  get(element) {
+    const elem = typeof element === 'string' ? $$1(element) : element;
     return super.get.call(this, elem);
   }
   /**
-   * @param {string|Element} elem
-   * @param {any} value
-   * @returns {any}
+   * @param {string|HTMLElement} element
+   * @param {ArbitraryValue} value
+   * @returns {ArbitraryValue}
    */
-
-  set(elem, value) {
-    elem = typeof elem === 'string' ? $$1(elem) : elem;
+  set(element, value) {
+    const elem = typeof element === 'string' ? $$1(element) : element;
     return super.set.call(this, elem, value);
   }
   /**
-   * @param {string|Element} elem
+   * @param {string|HTMLElement} element
    * @param {string} methodName
-   * @param {...any} args
-   * @returns {any}
+   * @param {...ArbitraryValue} args
+   * @returns {ArbitraryValue}
    */
-
-  invoke(elem, methodName, ...args) {
-    elem = typeof elem === 'string' ? $$1(elem) : elem;
+  invoke(element, methodName, ...args) {
+    const elem = typeof element === 'string' ? $$1(element) : element;
     return this.get(elem)[methodName](elem, ...args);
   }
 }
+
 /**
  * Element-aware wrapper for `WeakMap`.
+ * @extends {WeakMap<any>}
  */
-
 class JamilihWeakMap extends WeakMap {
   /**
-   * @param {string|Element} elem
-   * @returns {any}
+   * @param {HTMLElement} element
+   * @returns {ArbitraryValue}
    */
-  get(elem) {
-    elem = typeof elem === 'string' ? $$1(elem) : elem;
+  get(element) {
+    const elem = typeof element === 'string' ? $$1(element) : element;
+    if (!elem) {
+      throw new Error("Can't find the element");
+    }
     return super.get.call(this, elem);
   }
   /**
-   * @param {string|Element} elem
-   * @param {any} value
-   * @returns {any}
+   * @param {HTMLElement} element
+   * @param {ArbitraryValue} value
+   * @returns {ArbitraryValue}
    */
-
-  set(elem, value) {
-    elem = typeof elem === 'string' ? $$1(elem) : elem;
+  set(element, value) {
+    const elem = typeof element === 'string' ? $$1(element) : element;
+    if (!elem) {
+      throw new Error("Can't find the element");
+    }
     return super.set.call(this, elem, value);
   }
   /**
-   * @param {string|Element} elem
+   * @param {string|HTMLElement} element
    * @param {string} methodName
-   * @param {...any} args
-   * @returns {any}
+   * @param {...ArbitraryValue} args
+   * @returns {ArbitraryValue}
    */
-
-  invoke(elem, methodName, ...args) {
-    elem = typeof elem === 'string' ? $$1(elem) : elem;
+  invoke(element, methodName, ...args) {
+    const elem = typeof element === 'string' ? $$1(element) : element;
+    if (!elem) {
+      throw new Error("Can't find the element");
+    }
     return this.get(elem)[methodName](elem, ...args);
   }
 }
 jml.Map = JamilihMap;
 jml.WeakMap = JamilihWeakMap;
-/**
-* @typedef {GenericArray} MapAndElementArray
-* @property {JamilihWeakMap|JamilihMap} 0
-* @property {Element} 1
-*/
 
 /**
- * @param {GenericObject} obj
- * @param {...JamilihArray} args
- * @returns {MapAndElementArray}
+ * @typedef {[JamilihWeakMap|JamilihMap, HTMLElement]} MapAndElementArray
  */
 
+/**
+ * @param {{[key: string]: any}} obj
+ * @param {JamilihArrayPostOptions} args
+ * @returns {MapAndElementArray}
+ */
 jml.weak = function (obj, ...args) {
   const map = new JamilihWeakMap();
   const elem = jml({
     $map: [map, obj]
   }, ...args);
-  return [map, elem];
+  return [map, /** @type {HTMLElement} */elem];
 };
+
 /**
- * @param {any} obj
- * @param {...JamilihArray} args
+ * @param {ArbitraryValue} obj
+ * @param {JamilihArrayPostOptions} args
  * @returns {MapAndElementArray}
  */
-
 jml.strong = function (obj, ...args) {
   const map = new JamilihMap();
   const elem = jml({
     $map: [map, obj]
   }, ...args);
-  return [map, elem];
+  return [map, /** @type {HTMLElement} */elem];
 };
-/**
- * @param {string|Element} elem If a string, will be interpreted as a selector
- * @param {symbol|string} sym If a string, will be used with `Symbol.for`
- * @returns {any} The value associated with the symbol
- */
 
-jml.symbol = jml.sym = jml.for = function (elem, sym) {
-  elem = typeof elem === 'string' ? $$1(elem) : elem;
+/**
+ * @param {string|HTMLElement} element If a string, will be interpreted as a selector
+ * @param {symbol|string} sym If a string, will be used with `Symbol.for`
+ * @returns {ArbitraryValue} The value associated with the symbol
+ */
+jml.symbol = jml.sym = jml.for = function (element, sym) {
+  const elem = typeof element === 'string' ? $$1(element) : element;
+
+  // @ts-expect-error Should be ok
   return elem[typeof sym === 'symbol' ? sym : Symbol.for(sym)];
 };
+
 /**
- * @param {string|Element} elem If a string, will be interpreted as a selector
- * @param {symbol|string|Map|WeakMap} symOrMap If a string, will be used with `Symbol.for`
- * @param {string|any} methodName Can be `any` if the symbol or map directly
- *   points to a function (it is then used as the first argument).
- * @param {any[]} args
- * @returns {any}
+ * @typedef {((elem: HTMLElement, ...args: any[]) => void)|{[key: string]: (elem: HTMLElement, ...args: any[]) => void}} MapCommand
  */
 
+/**
+ * @param {?(string|HTMLElement)} elem If a string, will be interpreted as a selector
+ * @param {symbol|string|Map<HTMLElement, MapCommand>|WeakMap<HTMLElement, MapCommand>} symOrMap If a string, will be used with `Symbol.for`
+ * @param {string|any} methodName Can be `any` if the symbol or map directly
+ *   points to a function (it is then used as the first argument).
+ * @param {ArbitraryValue[]} args
+ * @returns {ArbitraryValue}
+ */
 jml.command = function (elem, symOrMap, methodName, ...args) {
   elem = typeof elem === 'string' ? $$1(elem) : elem;
+  if (!elem) {
+    throw new Error('No element found');
+  }
   let func;
   if (['symbol', 'string'].includes(typeof symOrMap)) {
-    func = jml.sym(elem, symOrMap);
+    func = jml.sym(elem, /** @type {symbol|string} */symOrMap);
     if (typeof func === 'function') {
       return func(methodName, ...args); // Already has `this` bound to `elem`
     }
 
     return func[methodName](...args);
   }
-  func = symOrMap.get(elem);
+  func = /** @type {Map<HTMLElement, MapCommand>|WeakMap<HTMLElement, MapCommand>} */symOrMap.get(elem);
+  if (!func) {
+    throw new Error('No map found');
+  }
   if (typeof func === 'function') {
     return func.call(elem, methodName, ...args);
   }
-  return func[methodName](elem, ...args); // return func[methodName].call(elem, ...args);
+  return func[methodName](elem, ...args);
+  // return func[methodName].call(elem, ...args);
 };
+
 /**
  * Expects properties `document`, `XMLSerializer`, and `DOMParser`.
  * Also updates `body` with `document.body`.
- * @param {Window} wind
+ * @param {import('jsdom').DOMWindow|HTMLWindow|undefined} wind
  * @returns {void}
  */
-
 jml.setWindow = wind => {
+  var _win2;
   win = wind;
-  doc = win.document;
+  doc = (_win2 = win) === null || _win2 === void 0 ? void 0 : _win2.document;
   if (doc && doc.body) {
-    ({
-      body
-    } = doc);
+    // eslint-disable-next-line prefer-destructuring -- Needed for typing
+    body = /** @type {HTMLBodyElement} */doc.body;
   }
 };
-/**
- * @returns {Window}
- */
 
+/**
+ * @returns {import('jsdom').DOMWindow|HTMLWindow}
+ */
 jml.getWindow = () => {
+  if (!win) {
+    throw new Error('No window object set');
+  }
   return win;
 };
 
-let body = doc && doc.body; // eslint-disable-line import/no-mutable-exports
+/**
+ * @type {HTMLBodyElement}
+ */
+let body; // eslint-disable-line import/no-mutable-exports
 
+/* c8 ignore next 4 */
+if (doc && doc.body) {
+  // eslint-disable-next-line prefer-destructuring -- Needed for type
+  body = /** @type {HTMLBodyElement} */doc.body;
+}
 const nbsp = '\u00A0'; // Very commonly needed in templates
 
 const $ = sel => document.querySelector(sel);
@@ -4935,6 +6231,7 @@ class Dialog {
   }
   makeCancelDialog(_ref2) {
     let {
+        // eslint-disable-next-line no-unused-vars -- Discarding
         submit,
         // Don't pass this on to `args` if present
         cancel,
@@ -4973,7 +6270,7 @@ class Dialog {
       message: msg,
       submitClass = 'submit'
     } = message;
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       const dialog = /** @type {HTMLDialogElement} */jml('dialog', [msg, ...(includeOk ? [['br'], ['br'], ['div', {
         class: submitClass
       }, [['button', {
@@ -5097,7 +6394,7 @@ class Languages {
 
   getFieldNameFromPluginNameAndLocales({
     pluginName,
-    locales,
+    // locales,
     workI18n,
     targetLanguage,
     applicableFieldI18N,
@@ -13061,7 +14358,9 @@ var JsonRefs = function (t) {
 
 /* eslint-env browser */
 
-const getCurrDir = () => window.location.href.replace(/(index\.html)?#.*$/, '');
+const getCurrDir = () => {
+  return window.location.href.replace(/(index\.html)?#.*$/, '');
+};
 const getMetaProp = function getMetaProp(lang, metadataObj, properties, allowObjects) {
   let prop;
   properties = typeof properties === 'string' ? [properties] : properties;
@@ -13109,7 +14408,9 @@ const getFieldNameAndValueAliases = function ({
   getFieldAliasOrName,
   lang
 }) {
-  const fieldSchemaIndex = schemaItems.findIndex(item => item.title === field);
+  const fieldSchemaIndex = schemaItems.findIndex(item => {
+    return item.title === field;
+  });
   const fieldSchema = schemaItems[fieldSchemaIndex];
   const fieldInfo = metadataObj.fields[field];
   const ret = {
@@ -13153,7 +14454,11 @@ const getFieldNameAndValueAliases = function ({
           aliases = Object.values(aliases);
         }
         // We'll assume the longest version is best for auto-complete
-        ret.aliases.push(...aliases.filter(v => aliases.every(x => x === v || !x.toLowerCase().startsWith(v.toLowerCase()))).map(v => v + ' (' + key + ')') // Todo: i18nize
+        ret.aliases.push(...aliases.filter(v => {
+          return aliases.every(x => {
+            return x === v || !x.toLowerCase().startsWith(v.toLowerCase());
+          });
+        }).map(v => v + ' (' + key + ')') // Todo: i18nize
         );
       });
     }
@@ -13188,13 +14493,15 @@ const getBrowseFieldData = function ({
     // Todo: Deal with ['td', [['h3', [lDirectional(browseFieldObject.name)]]]]
     //          as kind of fieldset
 
-    const browseFields = fieldSets.map(field => getFieldNameAndValueAliases({
-      lang,
-      field,
-      schemaItems,
-      metadataObj,
-      getFieldAliasOrName
-    }));
+    const browseFields = fieldSets.map(field => {
+      return getFieldNameAndValueAliases({
+        lang,
+        field,
+        schemaItems,
+        metadataObj,
+        getFieldAliasOrName
+      });
+    });
     callback({
       setName,
       browseFields,
@@ -13254,22 +14561,25 @@ class Metadata {
         const fv = localeStrings[lng] && localeStrings[lng].fieldvalue;
         return fv && fv[field];
       });
-      return hasFieldValue || metaLang && preferredLanguages.includes(metaLang) || schemaItems.some(item => item.title === field && item.type !== 'string');
+      return hasFieldValue || metaLang && preferredLanguages.includes(metaLang) || schemaItems.some(item => {
+        return item.title === field && item.type !== 'string';
+      });
     };
   }
 }
 
 const escapePluginComponent = pluginName => {
-  return pluginName.replace(/\^/g, '^^') // Escape our escape
-  .replace(/-/g, '^0');
+  return pluginName.replaceAll('^', '^^').
+  // Escape our escape
+  replaceAll('-', '^0');
 };
 const unescapePluginComponent = pluginName => {
   if (!pluginName) {
     return pluginName;
   }
-  return pluginName.replace(/(\^+)0/g, (n0, esc) => {
+  return pluginName.replaceAll(/(\^+)0/g, (n0, esc) => {
     return esc.length % 2 ? esc.slice(1) + '-' : n0;
-  }).replace(/\^\^/g, '^');
+  }).replaceAll('^^', '^');
 };
 const escapePlugin = ({
   pluginName,
@@ -13424,7 +14734,9 @@ const getWorkData = async function ({
   });
   let fileData;
   const fileGroup = filesObj.groups.find(fg => {
-    fileData = fg.files.find(file => work === workI18n(['workNames', fg.id, file.name]));
+    fileData = fg.files.find(file => {
+      return work === workI18n(['workNames', fg.id, file.name]);
+    });
     return Boolean(fileData);
   });
   // This is not specific to the work, but we export it anyways
@@ -13533,7 +14845,7 @@ const getWorkData = async function ({
       namespace
     } = this; // array with first item as preferred
     pluginsForWork.iterateMappings(({
-      plugin,
+      // plugin,
       pluginName,
       pluginLang,
       onByDefaultDefault,
@@ -13626,7 +14938,7 @@ const getWorkData = async function ({
   };
 };
 
-/* globals console, location, URL */
+// import {escapeHTML} from './sanitize.js';
 
 /**
  * Note that this function be kept as a polyglot client-server file.
@@ -13642,7 +14954,7 @@ const getWorkData = async function ({
  */
 const setServiceWorkerDefaults = (target, source) => {
   target.userJSON = source.userJSON || 'resources/user.json';
-  target.languages = source.languages || new URL(new URL('assets/languages-fcf1c836.json', import.meta.url).href, import.meta.url).href;
+  target.languages = source.languages || new URL(new URL('assets/languages-1sAACTKG.json', import.meta.url).href, import.meta.url).href;
   target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?pathToUserJSON=${encodeURIComponent(target.userJSON)}&stylesheets=${encodeURIComponent(JSON.stringify(target.stylesheets || []))}`;
   target.files = source.files || 'files.json';
   target.namespace = source.namespace || 'textbrowser';
@@ -13654,8 +14966,8 @@ const setServiceWorkerDefaults = (target, source) => {
 //    some tabs open)
 
 const listenForWorkerUpdate = ({
-  r,
-  logger
+  r
+  // logger
 }) => {
   r.addEventListener('updatefound', e => {
     // New service worker has appeared
@@ -13725,7 +15037,7 @@ const respondToState = async ({
   // We use this promise for rejecting (inside a listener)
   //    to a common catch and to prevent continuation by
   //    failing to return
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async () => {
     // eslint-disable-line no-async-promise-executor
     navigator.serviceWorker.addEventListener('message', ({
       data
@@ -13907,7 +15219,7 @@ Please refresh the page if you wish to reattempt.
 };
 
 const escapeHTML = s => {
-  return !s ? '' : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return !s ? '' : s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 };
 
 /* eslint-env browser */
@@ -13944,9 +15256,11 @@ var languageSelect = {
       }
     }, langs.map(({
       code
-    }) => ['option', {
-      value: code
-    }, [languages.getLanguageFromCode(code)]])]], $$1('#main'));
+    }) => {
+      return ['option', {
+        value: code
+      }, [languages.getLanguageFromCode(code)]];
+    })]], $$1('#main'));
     if (history.state && typeof history.state === 'object') {
       deserialize(document.querySelector('#languageSelectionContainer'), history.state);
     }
@@ -14007,9 +15321,11 @@ var workSelect$1 = (({
       value: ''
     }, ['--']], ...group.files.map(({
       name: fileName
-    }) => ['option', {
-      value: workI18n(['workNames', group.id, fileName])
-    }, [getNextAlias()]])]]
+    }) => {
+      return ['option', {
+        value: workI18n(['workNames', group.id, fileName])
+      }, [getNextAlias()]];
+    })]]
     // Todo: Add in Go button (with 'submitgo' localization string) to
     //    avoid need for pull-down if using first selection?
     ]];
@@ -14033,16 +15349,17 @@ const getDataForSerializingParamsAsURL = () => ({
   checkboxes: $$('input[type=checkbox]')
 });
 var workDisplay$1 = {
-  bdo: ({
+  bdo({
     fallbackDirection,
     message
-  }) =>
-  // Displaying as div with inline display instead of span since
-  //    Firefox puts punctuation at left otherwise (bdo dir
-  //    seemed to have issues in Firefox)
-  ['div', {
-    style: 'display: inline; direction: ' + fallbackDirection
-  }, [message]],
+  }) {
+    // Displaying as div with inline display instead of span since
+    //    Firefox puts punctuation at left otherwise (bdo dir
+    //    seemed to have issues in Firefox)
+    return ['div', {
+      style: 'display: inline; direction: ' + fallbackDirection
+    }, [message]];
+  },
   columnsTable: ({
     lDirectional,
     fieldInfo,
@@ -14050,9 +15367,7 @@ var workDisplay$1 = {
     lElement,
     lIndexedParam,
     l,
-    metadataObj,
-    preferredLocale,
-    schemaItems,
+    // metadataObj, preferredLocale, schemaItems,
     fieldMatchesLocale
   }) => ['table', {
     border: '1',
@@ -14140,9 +15455,7 @@ var workDisplay$1 = {
     type: 'button',
     $on: {
       click() {
-        fieldInfo.forEach(({
-          field
-        }, i) => {
+        fieldInfo.forEach(( /* {field} */_, i) => {
           const idx = i + 1;
           // The following is redundant with 'field' but may need to
           //     retrieve later out of order?
@@ -14277,27 +15590,33 @@ var workDisplay$1 = {
     value: $p.has('lineheight') ? $p.get('lineheight') : 'normal',
     size: '7',
     maxlength: '12'
-  }]]], ['br'], ['br'], lElement('tableformatting_tips', 'h3', 'title', {}, [lDirectional('tableformatting')]), ['div', [lDirectional('header_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map(([key, val], i, arr) => ['label', [['input', {
-    name: lParam('header'),
-    type: 'radio',
-    value: val,
-    checked: $p.get('header') === val || !$p.has('header') && i === 1
-  }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]])]], ['div', [lDirectional('footer_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map(([key, val], i, arr) => ['label', [['input', {
-    name: lParam('footer'),
-    type: 'radio',
-    value: val,
-    checked: $p.get('footer') === val || !$p.has('footer') && i === 2
-  }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]])]], ['label', [['input', {
+  }]]], ['br'], ['br'], lElement('tableformatting_tips', 'h3', 'title', {}, [lDirectional('tableformatting')]), ['div', [lDirectional('header_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map(([key, val], i, arr) => {
+    return ['label', [['input', {
+      name: lParam('header'),
+      type: 'radio',
+      value: val,
+      checked: $p.get('header') === val || !$p.has('header') && i === 1
+    }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
+  })]], ['div', [lDirectional('footer_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map(([key, val], i, arr) => {
+    return ['label', [['input', {
+      name: lParam('footer'),
+      type: 'radio',
+      value: val,
+      checked: $p.get('footer') === val || !$p.has('footer') && i === 2
+    }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
+  })]], ['label', [['input', {
     name: lParam('headerfooterfixed'),
     type: 'checkbox',
     value: l('yes'),
     checked: $p.get('headerfooterfixed') === l('yes')
-  }], nbsp2, lDirectional('headerfooterfixed-wishtoscroll')]], ['br'], ['div', [lDirectional('caption_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map(([key, val], i, arr) => ['label', [['input', {
-    name: lParam('caption'),
-    type: 'radio',
-    value: val,
-    checked: $p.get('caption') === val || !$p.has('caption') && i === 2
-  }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]])]], ['br'], ['div', [lDirectional('table_wborder'), nbsp2, ['label', [['input', {
+  }], nbsp2, lDirectional('headerfooterfixed-wishtoscroll')]], ['br'], ['div', [lDirectional('caption_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map(([key, val], i, arr) => {
+    return ['label', [['input', {
+      name: lParam('caption'),
+      type: 'radio',
+      value: val,
+      checked: $p.get('caption') === val || !$p.has('caption') && i === 2
+    }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
+  })]], ['br'], ['div', [lDirectional('table_wborder'), nbsp2, ['label', [['input', {
     name: lParam('border'),
     type: 'radio',
     value: '1',
@@ -14432,8 +15751,7 @@ var workDisplay$1 = {
     }]]]]].forEach(addRowContent);
   },
   getPreferences: ({
-    languageParam,
-    workI18n,
+    // languageParam, workI18n, groups,
     paramsSetter,
     replaceHash,
     getFieldAliasOrNames,
@@ -14444,7 +15762,6 @@ var workDisplay$1 = {
     localizeParamNames,
     namespace,
     hideFormattingSection,
-    groups,
     preferencesPlugin
   }) => ['div', {
     style: {
@@ -14494,7 +15811,9 @@ var workDisplay$1 = {
         }
       }) {
         // Todo: EU disclaimer re: storage?
-        localStorage.setItem(namespace + '-langCodes', JSON.stringify([...selectedOptions].map(opt => opt.value)));
+        localStorage.setItem(namespace + '-langCodes', JSON.stringify([...selectedOptions].map(opt => {
+          return opt.value;
+        })));
       }
     }
   }, langs.map(lan => {
@@ -14540,48 +15859,50 @@ var workDisplay$1 = {
       colspan: 12,
       align: 'center'
     }, [['br'], lDirectional('or'), ['br'], ['br']]]] : '', [...(() => {
-      const addBrowseFieldSet = setType => browseFields.reduce((rowContent, {
-        fieldName,
-        aliases,
-        fieldSchema: {
-          minimum,
-          maximum
-        }
-      }, j) => {
-        // Namespace by work for sake of browser auto-complete caching
-        const name = work + '-' + lIndexedParam(setType) + (i + 1) + '-' + (j + 1);
-        const id = name;
-        rowContent['#'].push(['td', [['label', {
-          for: name
-        }, [fieldName]]]], ['td', [aliases ? ['datalist', {
-          id: 'dl-' + id
-        }, aliases.map(alias => ['option', [alias]])] : '', aliases ? ['input', {
-          name,
-          id,
-          class: 'browseField',
-          list: 'dl-' + id,
-          value: $p.get(name, true),
-          $on: setType === 'start' ? {
-            change(e) {
-              $$('input.browseField').forEach(bf => {
-                if (bf.id.includes(i + 1 + '-' + (j + 1))) {
-                  bf.value = e.target.value;
-                }
-              });
-            }
-          } : undefined
-        }] : ['input', {
-          name,
-          id,
-          type: 'number',
-          min: minimum,
-          max: maximum,
-          value: $p.get(name, true)
-        }], nbsp3]]);
-        return rowContent;
-      }, {
-        '#': []
-      });
+      const addBrowseFieldSet = setType => {
+        return browseFields.reduce((rowContent, {
+          fieldName,
+          aliases,
+          fieldSchema: {
+            minimum,
+            maximum
+          }
+        }, j) => {
+          // Namespace by work for sake of browser auto-complete caching
+          const name = work + '-' + lIndexedParam(setType) + (i + 1) + '-' + (j + 1);
+          const id = name;
+          rowContent['#'].push(['td', [['label', {
+            for: name
+          }, [fieldName]]]], ['td', [aliases ? ['datalist', {
+            id: 'dl-' + id
+          }, aliases.map(alias => ['option', [alias]])] : '', aliases ? ['input', {
+            name,
+            id,
+            class: 'browseField',
+            list: 'dl-' + id,
+            value: $p.get(name, true),
+            $on: setType === 'start' ? {
+              change(e) {
+                $$('input.browseField').forEach(bf => {
+                  if (bf.id.includes(i + 1 + '-' + (j + 1))) {
+                    bf.value = e.target.value;
+                  }
+                });
+              }
+            } : undefined
+          }] : ['input', {
+            name,
+            id,
+            type: 'number',
+            min: minimum,
+            max: maximum,
+            value: $p.get(name, true)
+          }], nbsp3]]);
+          return rowContent;
+        }, {
+          '#': []
+        });
+      };
       return [addBrowseFieldSet('start'), ['td', [['b', [lDirectional('to')]], nbsp3]], addBrowseFieldSet('end')];
     })(), ['td', [browseFields.length > 1 ? lDirectional('versesendingdataoptional') : '']]], [['td', {
       colspan: 4 * browseFields.length + 2 + 1,
@@ -14641,7 +15962,7 @@ var workDisplay$1 = {
     l,
     namespace,
     heading,
-    fallbackDirection,
+    // fallbackDirection,
     languageI18n,
     langs,
     fieldInfo,
@@ -14672,13 +15993,15 @@ var workDisplay$1 = {
         type
       }));
     };
-    const lOption = (key, atts) => ['option', atts, [l(key
-    // Ensure `intl-dom` supports
-    // , fallback ({message}) {
-    //   atts.dir = fallbackDirection;
-    //   return message;
-    // }
-    )]];
+    const lOption = (key, atts) => {
+      return ['option', atts, [l(key
+      // Ensure `intl-dom` supports
+      // , fallback ({message}) {
+      //   atts.dir = fallbackDirection;
+      //   return message;
+      // }
+      )]];
+    };
     // Returns element with localized or fallback attribute value (as Jamilih);
     //   also adds direction
     jml('div', {
@@ -14888,7 +16211,7 @@ var resultsDisplayServerOrClient$1 = {
     $pRaw,
     $pRawEsc,
     $pEscArbitrary,
-    escapeQuotedCSS,
+    // escapeQuotedCSS,
     escapeCSS,
     tableWithFixedHeaderAndFooter,
     checkedFieldIndexes,
@@ -14970,15 +16293,17 @@ div.inner-caption {
     ${bgcolorEsc ? `background-color: ${escapeCSS(bgcolorEsc)};` : ''}
 }
 ${escapeCSS($pEscArbitrary('pagecss') || '')}
-` + checkedFieldIndexes.map((idx, i) => ($pRaw('header') === 'y' ? tableWithFixedHeaderAndFooter ? `.thead .th:nth-child(${i + 1}) div.th-inner, ` : `.thead .th:nth-child(${i + 1}), ` : '') + ($pRaw('footer') === 'y' ? tableWithFixedHeaderAndFooter ? `.tfoot .th:nth-child(${i + 1}) div.th-inner, ` : `.tfoot .th:nth-child(${i + 1}), ` : '') + `.tbody td:nth-child(${i + 1}) ` + `{
+` + checkedFieldIndexes.map((idx, i) => {
+      return ($pRaw('header') === 'y' ? tableWithFixedHeaderAndFooter ? `.thead .th:nth-child(${i + 1}) div.th-inner, ` : `.thead .th:nth-child(${i + 1}), ` : '') + ($pRaw('footer') === 'y' ? tableWithFixedHeaderAndFooter ? `.tfoot .th:nth-child(${i + 1}) div.th-inner, ` : `.tfoot .th:nth-child(${i + 1}), ` : '') + `.tbody td:nth-child(${i + 1}) ` + `{
     ${$pEscArbitrary('css' + (idx + 1))}
 }
-`).join('') + ($pEscArbitrary('interlintitle_css') ? `
-/* http://salzerdesign.com/test/fixedTable.html */
-.interlintitle {
-    ${escapeCSS($pEscArbitrary('interlintitle_css'))}
-}
-` : '') + (bgcolorEsc ? `
+`;
+    }).join('') + ($pEscArbitrary('interlintitle_css') ? `
+  /* http://salzerdesign.com/test/fixedTable.html */
+  .interlintitle {
+      ${escapeCSS($pEscArbitrary('interlintitle_css'))}
+  }
+  ` : '') + (bgcolorEsc ? `
 body {
     background-color: ${bgcolorEsc};
 }
@@ -15214,7 +16539,9 @@ body {
               */
     $pRaw('header') !== '0' ? addChildren(theadElem, [addChildren(trElem, checkedFields.map((cf, i) => {
       const interlinearColIndexes = allInterlinearColIndexes[i];
-      cf = escapeHTML(cf) + (interlinearColIndexes ? l('comma-space') + interlinearColIndexes.map(idx => localizedFieldNames[idx]).join(l('comma-space')) : '');
+      cf = escapeHTML(cf) + (interlinearColIndexes ? l('comma-space') + interlinearColIndexes.map(idx => {
+        return localizedFieldNames[idx];
+      }).join(l('comma-space')) : '');
       return addChildren(thElem, [cf, tableWithFixedHeaderAndFooter ? ['div', {
         class: 'zupa1'
       }, [['div', {
@@ -15222,7 +16549,9 @@ body {
       }, [['span', [cf]]]]]] : '']);
     }))]) : '', $pRaw('footer') && $pRaw('footer') !== '0' ? addChildren(tfootElem, [addChildren(trElem, checkedFields.map((cf, i) => {
       const interlinearColIndexes = allInterlinearColIndexes[i];
-      cf = escapeHTML(cf) + (interlinearColIndexes ? l('comma-space') + interlinearColIndexes.map(idx => localizedFieldNames[idx]).join(l('comma-space')) : '');
+      cf = escapeHTML(cf) + (interlinearColIndexes ? l('comma-space') + interlinearColIndexes.map(idx => {
+        return localizedFieldNames[idx];
+      }).join(l('comma-space')) : '');
       return addChildren(thElem, [cf, tableWithFixedHeaderAndFooter ? ['div', {
         class: 'zupa1'
       }, [['div', {
@@ -15416,7 +16745,7 @@ function _prepareParam(param, skip) {
   }
 
   // start, end, toggle
-  const endNums = /\d+(-\d+)?$/; // eslint-disable-line unicorn/no-unsafe-regex
+  const endNums = /\d+(-\d+)?$/;
   const indexed = param.match(endNums);
   if (indexed) {
     // Todo: We could i18nize numbers as well
@@ -15536,6 +16865,7 @@ async function workSelect({
 }
 
 /* eslint-env browser */
+// Todo: Reimplement this with `formSerialize.deserialize` as possible
 const replaceHash = paramsCopy => {
   return location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
 };
@@ -15687,8 +17017,8 @@ async function workDisplay({
     workI18n,
     metadataObj,
     getFieldAliasOrName,
-    schemaObj,
     schemaItems,
+    // schemaObj,
     fieldInfo,
     metadata,
     pluginsForWork,
@@ -15868,6 +17198,10 @@ async function workDisplay({
   }
 }
 
+function getDefaultExportFromCjs (x) {
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+}
+
 /**
  * Copyright 2015, Yahoo! Inc.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
@@ -16016,6 +17350,7 @@ Object.defineProperty(self$1, '_BIDI_RTL_LANGS', {
   'mzn', /* 'مازِرونی', Mazanderani */
   'nqo', /* N'Ko */
   'pnb', /* 'پنجابی', Western Punjabi */
+  'prs', /* 'دری', Darī */
   'ps', /* 'پښتو', Pashto, */
   'sd', /* 'سنڌي', Sindhi */
   'ug', /* 'Uyghurche / ئۇيغۇرچە', Uyghur */
@@ -16026,22 +17361,24 @@ Object.defineProperty(self$1, '_BIDI_RTL_LANGS', {
   enumerable: true,
   configurable: false
 });
-var rtlDetect$1 = RtlDetectLib;
+var rtlDetect$2 = RtlDetectLib;
 
 /**
  * Copyright 2015, Yahoo! Inc.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
  */
 
-var rtlDetect = rtlDetect$1;
+var rtlDetect = rtlDetect$2;
 var rtlDetect_1 = {
   isRtlLang: rtlDetect.isRtlLang,
   getLangDir: rtlDetect.getLangDir
 };
 
+var rtlDetect$1 = /*@__PURE__*/getDefaultExportFromCjs(rtlDetect_1);
+
 const {
   getLangDir
-} = rtlDetect_1;
+} = rtlDetect$1;
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 const getRawFieldValue = v => {
   return typeof v === 'string' ? v.replace(fieldValueAliasRegex, '$1') : v;
@@ -16093,7 +17430,7 @@ const setAnchor = ({
     }
 
     if (anchors.length) {
-      const escapeSelectorAttValue = str => (str || '').replace(/["\\]/g, '\\$&');
+      const escapeSelectorAttValue = str => (str || '').replaceAll(/["\\]/g, '\\$&');
       const escapedRow = escapeSelectorAttValue(anchors.join('-'));
       const escapedCol = anchorField ? escapeSelectorAttValue(anchorField) : undefined;
       anchor = Templates.resultsDisplayClient.anchors({
@@ -16204,8 +17541,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     localizedFieldNames,
     canonicalBrowseFieldNames
   }) => ({
-    tr,
-    foundState
+    tr // , foundState
   }) => {
     return canonicalBrowseFieldNames.map(fieldName => {
       const idx = localizedFieldNames.indexOf(fieldName);
@@ -16299,12 +17635,13 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     } while (field);
     checkedFields = checkedFields.filter(cf => localizedFieldNames.includes(cf));
     const checkedFieldIndexes = checkedFields.map(cf => localizedFieldNames.indexOf(cf));
-    const allInterlinearColIndexes = checkedFieldIndexes.map((cfi, i) => {
+    const allInterlinearColIndexes = checkedFieldIndexes.map(cfi => {
       const interlin = $p.get('interlin' + (cfi + 1), true);
-      return interlin && interlin.split(/\s*,\s*/).map(col =>
-      // Todo: Avoid this when known to be integer or if string, though allow
-      //    string to be treated as number if config is set.
-      Number.parseInt(col) - 1).filter(n => !Number.isNaN(n));
+      return interlin && interlin.split(/\s*,\s*/).map(col => {
+        // Todo: Avoid this when known to be integer or if string, though allow
+        //    string to be treated as number if config is set.
+        return Number.parseInt(col) - 1;
+      }).filter(n => !Number.isNaN(n));
     });
     return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
   };
@@ -16425,10 +17762,12 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
       if (fieldValueAliasMap) {
         Object.entries(fieldValueAliasMap).forEach(([key, val]) => {
           if (Array.isArray(val)) {
-            fieldValueAliasMap[key] = val.map(value => Templates.resultsDisplayServerOrClient.fieldValueAlias({
-              key,
-              value
-            }));
+            fieldValueAliasMap[key] = val.map(value => {
+              return Templates.resultsDisplayServerOrClient.fieldValueAlias({
+                key,
+                value
+              });
+            });
             return;
           }
           if (val && typeof val === 'object') {
@@ -16494,7 +17833,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   const $pEscArbitrary = param => escapeHTML($p.get(param, true));
 
   // Not currently in use
-  const escapeQuotedCSS = s => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  const escapeQuotedCSS = s => s.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
   const {
     fileData,
     workI18n,
@@ -16552,7 +17891,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
       lang
     } = this; // array with first item as preferred
     pluginsForWork.iterateMappings(({
-      plugin,
+      // plugin,
       pluginName,
       pluginLang,
       onByDefaultDefault,
@@ -16662,7 +18001,9 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   const lIndexedParamRaw = localizeParamNames ? (key, suffix = '') => $p.get($p.get('work') + '-' + lIndexedParam(key) + suffix, true) : (key, suffix = '') => $p.get($p.get('work') + '-' + key + suffix, true);
 
   // Now that we know `browseFieldSets`, we can parse `startEnd`
-  const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) => lIndexedParamRaw('startEnd', i + 1));
+  const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) => {
+    return lIndexedParamRaw('startEnd', i + 1);
+  });
   if (browseFieldSetStartEndIdx !== -1) {
     // Todo: i18nize (by work and/or by whole app?)
     const rangeSep = '-';
@@ -16700,15 +18041,25 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
       });
     }
   }
-  const browseFieldSetIdx = browseFieldSets.findIndex((item, i) => lIndexedParamRaw('start', i + 1 + '-1'));
+  const browseFieldSetIdx = browseFieldSets.findIndex((item, i) => {
+    return lIndexedParamRaw('start', i + 1 + '-1');
+  });
   const applicableBrowseFieldSet = browseFieldSets[browseFieldSetIdx];
   const applicableBrowseFieldSetName = setNames[browseFieldSetIdx];
-  const applicableBrowseFieldNames = applicableBrowseFieldSet.map(abfs => abfs.fieldName);
+  const applicableBrowseFieldNames = applicableBrowseFieldSet.map(abfs => {
+    return abfs.fieldName;
+  });
   const canonicalBrowseFieldSet = browseFieldSets[0];
   const canonicalBrowseFieldSetName = setNames[0];
-  const canonicalBrowseFieldNames = canonicalBrowseFieldSet.map(abfs => abfs.fieldName);
+  const canonicalBrowseFieldNames = canonicalBrowseFieldSet.map(abfs => {
+    return abfs.fieldName;
+  });
   const fieldSchemaTypes = applicableBrowseFieldSet.map(abfs => abfs.fieldSchema.type);
-  const buildRangePoint = startOrEnd => applicableBrowseFieldNames.map((bfn, j) => $p.get($p.get('work') + '-' + startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1), true));
+  const buildRangePoint = startOrEnd => {
+    return applicableBrowseFieldNames.map((bfn, j) => {
+      return $p.get($p.get('work') + '-' + startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1), true);
+    });
+  };
   const starts = buildRangePoint('start');
   const ends = buildRangePoint('end');
   const [hasCaption, caption] = getCaption({
@@ -16767,7 +18118,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   //   be brought to a results page without needing to agree to persist
   //   through notifications (or however)
   !noIndexedDB) {
-    tableData = await new Promise((resolve, reject) => {
+    tableData = await new Promise(resolve => {
       // Todo: Fetch the work in code based on the non-localized `datafileName`
       const dbName = this.namespace + '-textbrowser-cache-data';
       const req = indexedDB.open(dbName);
@@ -16834,11 +18185,11 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     fieldInfo.forEach(({
       plugin,
       placement
-    }, j) => {
+    }) => {
       if (!plugin) {
         return;
       }
-      tableData.forEach((tr, i) => {
+      tableData.forEach(tr => {
         // Todo: We should pass on other arguments (like `meta` but on `applicableFields`)
         tr.splice(placement, 0, null // `${i}-${j}`);
         );
@@ -16948,7 +18299,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   };
 };
 
-/* eslint-enable no-unused-vars */
+/* eslint-enable no-unused-vars, @stylistic/brace-style */
 
 /**
  *
@@ -17004,7 +18355,7 @@ async function prepareForServiceWorker() {
  * @returns {Promise<void>}
  */
 async function requestPermissions(langs, l) {
-  return await new Promise((resolve, reject) => {
+  return await new Promise(resolve => {
     // Todo: We could run the dialog code below for every page if
     //    `Notification.permission === 'default'` (i.e., not choice
     //    yet made by user), but user may avoid denying with intent
@@ -17087,7 +18438,7 @@ class TextBrowser {
     const stylesheets = options.stylesheets || ['@builtin'];
     const builtinIndex = stylesheets.indexOf('@builtin');
     if (builtinIndex !== -1) {
-      stylesheets.splice(builtinIndex, 1, new URL(new URL('assets/index-c987c995.css', import.meta.url).href, import.meta.url).href);
+      stylesheets.splice(builtinIndex, 1, new URL(new URL('assets/index-_11XnUty.css', import.meta.url).href, import.meta.url).href);
     }
     this.stylesheets = stylesheets;
     setServiceWorkerDefaults(this, options);

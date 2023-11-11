@@ -1,20 +1,20 @@
 export const escapePluginComponent = (pluginName) => {
-  return pluginName.replace(/\^/g, '^^') // Escape our escape
-    .replace(/-/g, '^0');
+  return pluginName.replaceAll('^', '^^'). // Escape our escape
+    replaceAll('-', '^0');
 };
 
 export const unescapePluginComponent = (pluginName) => {
   if (!pluginName) {
     return pluginName;
   }
-  return pluginName.replace(
+  return pluginName.replaceAll(
     /(\^+)0/g,
     (n0, esc) => {
       return esc.length % 2
         ? esc.slice(1) + '-'
         : n0;
     }
-  ).replace(/\^\^/g, '^');
+  ).replaceAll('^^', '^');
 };
 
 export const escapePlugin = ({pluginName, applicableField, targetLanguage}) => {

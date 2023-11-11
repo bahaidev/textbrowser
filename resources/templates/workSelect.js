@@ -38,11 +38,11 @@ export default ({groups, workI18n, getNextAlias, $p, followParams}) => {
           }
         }, [
           ['option', {value: ''}, ['--']],
-          ...group.files.map(({name: fileName}) =>
-            ['option', {
+          ...group.files.map(({name: fileName}) => {
+            return ['option', {
               value: workI18n(['workNames', group.id, fileName])
-            }, [getNextAlias()]]
-          )
+            }, [getNextAlias()]];
+          })
         ]]
         // Todo: Add in Go button (with 'submitgo' localization string) to
         //    avoid need for pull-down if using first selection?

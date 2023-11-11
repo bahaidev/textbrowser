@@ -106,7 +106,7 @@ function swHelper (self) {
    * @param {DelayCallback} cb
    * @param {PositiveInteger} timeout
    * @param {string} errMessage
-   * @param {PositiveInteger} [time=0]
+   * @param {PositiveInteger} [time]
    * @returns {Promise<void>}
    */
   async function tryAndRetry (cb, timeout, errMessage, time = 0) {
@@ -117,7 +117,7 @@ function swHelper (self) {
     } catch (err) {
       console.log('errrr', err);
       logError(err, err.message || errMessage);
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         setTimeout(() => {
           resolve(tryAndRetry(cb, timeout, errMessage, time));
         }, timeout);
@@ -129,7 +129,7 @@ function swHelper (self) {
    *
    * @param {PlainObject} args
    * @param {"log"|"error"|"beginInstall"|"finishedInstall"|"beginActivate"|"finishedActivate"} args.type
-   * @param {string} [args.message=type]
+   * @param {string} [args.message]
    * @returns {Promise<void>}
    */
   async function post ({type, message = type}) {

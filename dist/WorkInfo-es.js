@@ -345,6 +345,33 @@ function buildGetJSON({
 
 const getJSON = buildGetJSON();
 
+function _iterableToArrayLimit(arr, i) {
+  var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"];
+  if (null != _i) {
+    var _s,
+      _e,
+      _x,
+      _r,
+      _arr = [],
+      _n = !0,
+      _d = !1;
+    try {
+      if (_x = (_i = _i.call(arr)).next, 0 === i) {
+        if (Object(_i) !== _i) return;
+        _n = !1;
+      } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0);
+    } catch (err) {
+      _d = !0, _e = err;
+    } finally {
+      try {
+        if (!_n && null != _i.return && (_r = _i.return(), Object(_r) !== _r)) return;
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+    return _arr;
+  }
+}
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
   if (Object.getOwnPropertySymbols) {
@@ -433,7 +460,7 @@ function _defineProperties(target, props) {
     descriptor.enumerable = descriptor.enumerable || false;
     descriptor.configurable = true;
     if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
+    Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor);
   }
 }
 function _createClass(Constructor, protoProps, staticProps) {
@@ -445,6 +472,7 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 function _defineProperty(obj, key, value) {
+  key = _toPropertyKey(key);
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -540,30 +568,6 @@ function _arrayWithHoles(arr) {
 function _iterableToArray(iter) {
   if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
 }
-function _iterableToArrayLimit(arr, i) {
-  var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
-  if (_i == null) return;
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _s, _e;
-  try {
-    for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-  return _arr;
-}
 function _unsupportedIterableToArray(o, minLen) {
   if (!o) return;
   if (typeof o === "string") return _arrayLikeToArray(o, minLen);
@@ -583,17 +587,50 @@ function _nonIterableSpread() {
 function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
+function _toPrimitive(input, hint) {
+  if (typeof input !== "object" || input === null) return input;
+  var prim = input[Symbol.toPrimitive];
+  if (prim !== undefined) {
+    var res = prim.call(input, hint || "default");
+    if (typeof res !== "object") return res;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return (hint === "string" ? String : Number)(input);
+}
+function _toPropertyKey(arg) {
+  var key = _toPrimitive(arg, "string");
+  return typeof key === "symbol" ? key : String(key);
+}
 
 // We want it to work in the browser, so commenting out
 // import jsonExtra from 'json5';
 // import jsonExtra from 'json-6';
 
+/**
+ * @typedef {any} JSON6
+ */
+
+// @ts-expect-error Need typing for JSON6
 var _jsonExtra = globalThis.jsonExtra;
+
+/**
+ * @param {string} str
+ * @returns {string}
+ */
 var unescapeBackslashes = function unescapeBackslashes(str) {
   return str.replace(/\\+/g, function (esc) {
     return esc.slice(0, esc.length / 2);
   });
 };
+
+/**
+ * @typedef {any} AnyValue
+ */
+
+/**
+ * @param {string} args
+ * @returns {AnyValue}
+ */
 var parseJSONExtra = function parseJSONExtra(args) {
   return _jsonExtra.parse(
   // Doesn't actually currently allow explicit brackets,
@@ -602,6 +639,36 @@ var parseJSONExtra = function parseJSONExtra(args) {
 };
 
 // Todo: Extract to own library (RegExtras?)
+
+/**
+ * @callback BetweenMatches
+ * @param {string} str
+ * @returns {void}
+ */
+
+/**
+ * @callback AfterMatch
+ * @param {string} str
+ * @returns {void}
+ */
+
+/**
+ * @callback EscapeAtOne
+ * @param {string} str
+ * @returns {void}
+ */
+
+/**
+ * @param {RegExp} regex
+ * @param {string} str
+ * @param {{
+ *   onMatch: (...arg0: string[]) => void,
+ *   extra?: BetweenMatches|AfterMatch|EscapeAtOne
+ *   betweenMatches?: BetweenMatches,
+ *   afterMatch?: AfterMatch,
+ *   escapeAtOne?: EscapeAtOne
+ * }} cfg
+ */
 var processRegex = function processRegex(regex, str, _ref) {
   var onMatch = _ref.onMatch,
     extra = _ref.extra,
@@ -614,6 +681,9 @@ var processRegex = function processRegex(regex, str, _ref) {
     betweenMatches = extra;
     afterMatch = extra;
     escapeAtOne = extra;
+  }
+  if (!betweenMatches || !afterMatch) {
+    throw new Error('You must have `extra` or `betweenMatches` and `afterMatch` arguments.');
   }
   while ((match = regex.exec(str)) !== null) {
     var _match = match,
@@ -640,20 +710,31 @@ var processRegex = function processRegex(regex, str, _ref) {
 };
 
 /* globals fetch, document */
+
+/**
+ * @typedef {(
+ *   input: RequestInfo|URL, init?: RequestInit
+ * ) => Promise<Response>} Fetch
+ */
+/**
+ * @type {null|Fetch}
+ */
 var _fetch = typeof fetch !== 'undefined' ? fetch
 /* c8 ignore next */ : null;
 
 /**
- * @returns {fetch}
+ * @returns {Fetch|null}
  */
 var getFetch = function getFetch() {
   return _fetch;
 };
+
+/** @type {Document|null} */
 var _doc = typeof document !== 'undefined'
 /* c8 ignore next */ ? document : null;
 
 /**
- * @returns {document}
+ * @returns {Document|null}
  */
 var getDocument = function getDocument() {
   return _doc;
@@ -680,28 +761,74 @@ function generateUUID() {
   });
 }
 
+/**
+ *
+ * @param {string} locale
+ * @param {string[]} arrayOfItems
+ * @param {Intl.CollatorOptions|undefined} options
+ * @returns {string[]}
+ */
 var sort = function sort(locale, arrayOfItems, options) {
   return arrayOfItems.sort(new Intl.Collator(locale, options).compare);
 };
+
+/**
+ *
+ * @param {string} locale
+ * @param {string[]} arrayOfItems
+ * @param {Intl.ListFormatOptions|undefined} [options]
+ * @returns {string}
+ */
 var list = function list(locale, arrayOfItems, options) {
   return new Intl.ListFormat(locale, options).format(arrayOfItems);
 };
+
+/**
+ *
+ * @param {string} locale
+ * @param {string[]} arrayOfItems
+ * @param {Intl.ListFormatOptions|undefined} [listOptions]
+ * @param {Intl.CollatorOptions|undefined} [collationOptions]
+ * @returns {string}
+ */
 var sortListSimple = function sortListSimple(locale, arrayOfItems, listOptions, collationOptions) {
   sort(locale, arrayOfItems, collationOptions);
   return list(locale, arrayOfItems, listOptions);
 };
+
+/**
+ * @typedef {number} Integer
+ */
+
+/**
+ *
+ * @param {string} locale
+ * @param {string[]} arrayOfItems
+ * @param {((str: string, idx: Integer) => any)|
+ *   Intl.ListFormatOptions|undefined} map
+ * @param {Intl.ListFormatOptions|undefined} [listOptions]
+ * @param {Intl.CollatorOptions|undefined} [collationOptions]
+ * @returns {DocumentFragment|string}
+ */
 var sortList = function sortList(locale, arrayOfItems, map, listOptions, collationOptions) {
   if (typeof map !== 'function') {
-    return sortListSimple(locale, arrayOfItems, map, listOptions);
+    return sortListSimple(locale, /** @type {string[]} */arrayOfItems, map, listOptions);
   }
   sort(locale, arrayOfItems, collationOptions);
   var randomId = generateUUID();
   var placeholderArray = _toConsumableArray(arrayOfItems).map(function (_, i) {
     return "<<".concat(randomId).concat(i, ">>");
   });
+
+  /** @type {(string|Node)[]} */
   var nodes = [];
-  var push = function push() {
-    nodes.push.apply(nodes, arguments);
+
+  /**
+   * @param {string} arg
+   * @returns {void}
+   */
+  var push = function push(arg) {
+    nodes.push(arg);
   };
   processRegex(
   // // eslint-disable-next-line prefer-named-capture-group
@@ -709,20 +836,45 @@ var sortList = function sortList(locale, arrayOfItems, map, listOptions, collati
     betweenMatches: push,
     afterMatch: push,
     onMatch: function onMatch(_, idx) {
-      push(map(arrayOfItems[idx], idx));
+      push(map(arrayOfItems[Number(idx)], Number(idx)));
     }
   });
-  var _doc = getDocument();
+  var _doc = /** @type {Document} */getDocument();
   var container = _doc.createDocumentFragment();
   container.append.apply(container, nodes);
   return container;
 };
 
+/**
+ * @typedef {number} Integer
+ */
+
+/**
+ * @param {{
+ *   object: import('./defaultLocaleResolver.js').DateRangeValueArray|
+ *     import('./defaultLocaleResolver.js').ListValueArray|
+ *     import('./defaultLocaleResolver.js').RelativeValueArray|
+ *     import('./defaultLocaleResolver.js').ValueArray
+ * }} cfg
+ * @returns {{
+ *   value: number|string|string[]|Date,
+ *   options?: Intl.NumberFormatOptions|Intl.PluralRulesOptions|
+ *     string|Date|number,
+ *   extraOpts?: object,
+ *   callback?: (item: string, i: Integer) => Element
+ * }}
+ */
 var getFormatterInfo = function getFormatterInfo(_ref) {
   var object = _ref.object;
   if (Array.isArray(object)) {
     if (typeof object[1] === 'function') {
-      var _object = _slicedToArray(object, 4),
+      var _object = _slicedToArray(
+        /**
+         * @type {[
+         *   string[], (item: string, i: Integer) => Element, object, object
+         * ]}
+         */
+        object, 4),
         _value = _object[0],
         callback = _object[1],
         _options = _object[2],
@@ -749,25 +901,25 @@ var getFormatterInfo = function getFormatterInfo(_ref) {
   };
 };
 
-/* eslint-disable max-len */
 /**
  * Callback to give replacement text based on a substitution value.
- * @callback AllSubstitutionCallback
- * @param {PlainObject} cfg
- * @param {string|Node|number|Date|RelativeTimeInfo|ListInfo|NumberInfo|DateInfo} cfg.value Contains
- *   the value returned by the individual substitution
- * @param {string} cfg.arg See `cfg.arg` of {@link SubstitutionCallback}.
- * @param {string} cfg.key The substitution key Not currently in use
- * @param {string} cfg.locale The locale
- * @returns {string|Element} The replacement text or element
+ *
+ * `value` - contains the value returned by the individual substitution.
+ * `arg` - See `cfg.arg` of {@link SubstitutionCallback}.
+ * `key` - The substitution key Not currently in use
+ * `locale` - The locale.
+ * @typedef {(info: {
+ *   value: import('./defaultLocaleResolver.js').SubstitutionObjectValue
+ *   arg?: string,
+ *   key?: string,
+ *   locale?: string
+ * }) => string|Node} AllSubstitutionCallback
 */
-/* eslint-enable max-len */
 
 /**
  * @type {AllSubstitutionCallback}
  */
 var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
-  var _Intl$DateTimeFormat;
   var value = _ref2.value,
     arg = _ref2.arg;
     _ref2.key;
@@ -776,11 +928,23 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
   if (typeof value === 'string' || value && _typeof(value) === 'object' && 'nodeType' in value) {
     return value;
   }
+
+  /** @type {object|string|Date|number|undefined} */
   var opts;
+
+  /**
+   * @param {{
+   *   type: string,
+   *   options?: object,
+   *   checkArgOptions?: boolean;
+   * }} cfg
+   * @returns {object|undefined}
+   */
   var applyArgs = function applyArgs(_ref3) {
     var type = _ref3.type,
       _ref3$options = _ref3.options,
-      options = _ref3$options === void 0 ? opts : _ref3$options,
+      options = _ref3$options === void 0 ? /** @type {object|undefined} */
+      opts : _ref3$options,
       _ref3$checkArgOptions = _ref3.checkArgOptions,
       checkArgOptions = _ref3$checkArgOptions === void 0 ? false : _ref3$checkArgOptions;
     if (typeof arg === 'string') {
@@ -809,8 +973,29 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
     var singleKey = Object.keys(value)[0];
     if (['number', 'date', 'datetime', 'dateRange', 'datetimeRange', 'relative', 'region', 'language', 'script', 'currency', 'list', 'plural'].includes(singleKey)) {
       var extraOpts, callback;
+      /**
+       * @typedef {any} AnyValue
+       */
+
+      var obj = /** @type {unknown} */
+      /** @type {AnyValue} */
+      value[
+      /**
+        * @type {"number"|"date"|"datetime"|"dateRange"|
+        *   "datetimeRange"|"relative"|"region"|"language"|
+        *   "script"|"currency"|"list"|"plural"}
+        */
+      singleKey];
       var _getFormatterInfo = getFormatterInfo({
-        object: value[singleKey]
+        object:
+        /**
+         * @type {import('./defaultLocaleResolver.js').DateRangeValueArray|
+         *   import('./defaultLocaleResolver.js').ListValueArray|
+         *   import('./defaultLocaleResolver.js').RelativeValueArray|
+         *   import('./defaultLocaleResolver.js').ValueArray
+         * }
+         */
+        obj
       });
       value = _getFormatterInfo.value;
       opts = _getFormatterInfo.options;
@@ -823,34 +1008,44 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
           break;
         case 'dateRange':
         case 'datetimeRange':
-          return (_Intl$DateTimeFormat = new Intl.DateTimeFormat(locale, applyArgs({
-            type: 'DATERANGE',
-            options: extraOpts
-          }))).formatRange.apply(_Intl$DateTimeFormat, _toConsumableArray([value, opts].map(function (val) {
-            return typeof val === 'number' ? new Date(val) : val;
-          })));
+          {
+            var dtf = new Intl.DateTimeFormat(locale, applyArgs({
+              type: 'DATERANGE',
+              options: extraOpts
+            }));
+            return dtf.formatRange.apply(dtf, _toConsumableArray( /** @type {[Date, Date]} */
+            [/** @type {number|Date} */
+            value, /** @type {Date} */
+            opts].map(function (val) {
+              return typeof val === 'number' ? new Date(val) : val;
+            })));
+          }
         case 'region':
         case 'language':
         case 'script':
         case 'currency':
-          return new Intl.DisplayNames(locale, _objectSpread2(_objectSpread2({}, applyArgs({
-            type: singleKey.toUpperCase()
-          })), {}, {
-            type: singleKey
-          })).of(value);
+          return (/** @type {string} */new Intl.DisplayNames(locale, _objectSpread2(_objectSpread2({}, applyArgs({
+              type: singleKey.toUpperCase()
+            })), {}, {
+              type: singleKey
+            })).of( /** @type {string} */value)
+          );
         case 'relative':
           // The second argument actually contains the primary options, so swap
-          var _ref4 = [opts, extraOpts];
+          // eslint-disable-next-line max-len -- Long
+          var _ref4 = /** @type {[Intl.RelativeTimeFormatUnit, object?]} */
+          [opts, extraOpts];
           extraOpts = _ref4[0];
           opts = _ref4[1];
           return new Intl.RelativeTimeFormat(locale, applyArgs({
             type: 'RELATIVE'
-          })).format(value, extraOpts);
+          })).format( /** @type {number} */value, extraOpts);
 
         // ListFormat (with Collator)
         case 'list':
           if (callback) {
-            return sortList(locale, value, callback, applyArgs({
+            return sortList( /** @type {string} */locale, /** @type {string[]} */
+            value, callback, applyArgs({
               type: 'LIST'
             }), applyArgs({
               type: 'LIST',
@@ -858,7 +1053,8 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
               checkArgOptions: true
             }));
           }
-          return sortList(locale, value, applyArgs({
+          return sortList( /** @type {string} */locale, /** @type {string[]} */
+          value, applyArgs({
             type: 'LIST'
           }), applyArgs({
             type: 'LIST',
@@ -871,10 +1067,10 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
 
   // Dates
   if (value) {
-    if (typeof value === 'number' && (expectsDatetime || /^DATE(?:TIME)(?:\||$)/.test(arg))) {
+    if (typeof value === 'number' && (expectsDatetime || /^DATE(?:TIME)(?:\||$)/.test( /** @type {string} */arg))) {
       value = new Date(value);
     }
-    if (_typeof(value) === 'object' && typeof value.getTime === 'function') {
+    if (_typeof(value) === 'object' && 'getTime' in value && typeof value.getTime === 'function') {
       return new Intl.DateTimeFormat(locale, applyArgs({
         type: 'DATETIME'
       })).format(value);
@@ -883,12 +1079,14 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
 
   // Date range
   if (Array.isArray(value)) {
-    var _Intl$DateTimeFormat2;
-    var _extraOpts2 = value[2];
-    return (_Intl$DateTimeFormat2 = new Intl.DateTimeFormat(locale, applyArgs({
+    var _Intl$DateTimeFormat;
+    var _extraOpts2 = /** @type {Intl.DateTimeFormatOptions|undefined} */
+    value[2];
+    return (_Intl$DateTimeFormat = new Intl.DateTimeFormat(locale, applyArgs({
       type: 'DATERANGE',
       options: _extraOpts2
-    }))).formatRange.apply(_Intl$DateTimeFormat2, _toConsumableArray(value.slice(0, 2).map(function (val) {
+    }))).formatRange.apply(_Intl$DateTimeFormat, _toConsumableArray( /** @type {[Date, Date]} */
+    value.slice(0, 2).map(function (val) {
       return typeof val === 'number' ? new Date(val) : val;
     })));
   }
@@ -912,13 +1110,14 @@ var Formatter = /*#__PURE__*/_createClass(function Formatter() {
 });
 
 /**
- * @param {PlainObject} cfg
+ * @param {object} cfg
  * @param {string} cfg.key
- * @param {LocaleBody} cfg.body
+ * @param {import('./getMessageForKeyByStyle.js').LocaleBody} cfg.body
  * @param {string} cfg.type
  * @param {"richNested"|"rich"|"plain"|
- *   "plainNested"|MessageStyleCallback} cfg.messageStyle
- * @returns {string|Element}
+ *   "plainNested"|import('./getMessageForKeyByStyle.js').
+ *   MessageStyleCallback} [cfg.messageStyle="richNested"]
+ * @returns {string}
  */
 var _getSubstitution = function getSubstitution(_ref) {
   var key = _ref.key,
@@ -947,7 +1146,7 @@ var LocalFormatter = /*#__PURE__*/function (_Formatter) {
   _inherits(LocalFormatter, _Formatter);
   var _super = _createSuper(LocalFormatter);
   /**
-   * @param {LocalObject} locals
+   * @param {import('./getMessageForKeyByStyle.js').LocalObject} locals
    */
   function LocalFormatter(locals) {
     var _this;
@@ -977,12 +1176,30 @@ var LocalFormatter = /*#__PURE__*/function (_Formatter) {
     key: "isMatch",
     value: function isMatch(key) {
       var components = key.slice(1).split('.');
+      /** @type {import('./getMessageForKeyByStyle.js').LocaleBody} */
       var parent = this.locals;
-      return this.constructor.isMatchingKey(key) && components.every(function (cmpt) {
-        var result = (cmpt in parent);
-        parent = parent[cmpt];
-        return result;
-      });
+      return (/** @type {typeof LocalFormatter} */this.constructor.isMatchingKey(key) && components.every(function (cmpt) {
+          var result = (cmpt in parent);
+          parent =
+          /**
+           * @type {import('./defaultLocaleResolver.js').
+           *     RichNestedLocaleStringBodyObject|
+           *   import('./defaultLocaleResolver.js').
+           *     PlainNestedLocaleStringBodyObject|
+           *   import('./defaultLocaleResolver.js').RichLocaleStringSubObject
+           * }
+           */
+          /**
+           * @type {import('./defaultLocaleResolver.js').
+           *     RichNestedLocaleStringBodyObject|
+           *   import('./defaultLocaleResolver.js').
+           *     PlainNestedLocaleStringBodyObject
+           * }
+           */
+          parent[cmpt];
+          return result;
+        })
+      );
     }
     /**
      * @param {string} key
@@ -1004,7 +1221,8 @@ var RegularFormatter = /*#__PURE__*/function (_Formatter2) {
   _inherits(RegularFormatter, _Formatter2);
   var _super2 = _createSuper(RegularFormatter);
   /**
-   * @param {SubstitutionObject} substitutions
+   * @param {import('./defaultLocaleResolver.js').SubstitutionObject
+   * } substitutions
    */
   function RegularFormatter(substitutions) {
     var _this2;
@@ -1020,7 +1238,8 @@ var RegularFormatter = /*#__PURE__*/function (_Formatter2) {
   _createClass(RegularFormatter, [{
     key: "isMatch",
     value: function isMatch(key) {
-      return this.constructor.isMatchingKey(key) && key in this.substitutions;
+      return (/** @type {typeof RegularFormatter} */this.constructor.isMatchingKey(key) && key in this.substitutions
+      );
     }
     /**
      * @param {string} key
@@ -1042,8 +1261,10 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
   _inherits(SwitchFormatter, _Formatter3);
   var _super3 = _createSuper(SwitchFormatter);
   /**
-   * @param {Switches} switches
-   * @param {SubstitutionObject} substitutions
+   * @param {import('./defaultLocaleResolver.js').Switches} switches
+   * @param {object} cfg
+   * @param {import('./defaultLocaleResolver.js').
+   *   SubstitutionObject} cfg.substitutions
    */
   function SwitchFormatter(switches, _ref2) {
     var _this3;
@@ -1057,11 +1278,12 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
 
   /**
    * @param {string} key
-   * @param {PlainObject} cfg
+   * @param {object} cfg
    * @param {string} cfg.locale
-   * @param {string[]} cfg.usedKeys
+   * @param {(string|undefined)[]} cfg.usedKeys
    * @param {string} cfg.arg
-   * @param {MissingSuppliedFormattersCallback} cfg.missingSuppliedFormatters
+   * @param {import('./getDOMForLocaleString.js').
+   *   MissingSuppliedFormattersCallback} cfg.missingSuppliedFormatters
    * @returns {string}
    */
   _createClass(SwitchFormatter, [{
@@ -1071,7 +1293,7 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
         usedKeys = _ref3.usedKeys,
         arg = _ref3.arg,
         missingSuppliedFormatters = _ref3.missingSuppliedFormatters;
-      var ky = this.constructor.getKey(key).slice(1);
+      var ky = /** @type {typeof SwitchFormatter} */this.constructor.getKey(key).slice(1);
       // Expression might not actually use formatter, e.g., for singular,
       //  the conditional might just write out "one"
 
@@ -1081,7 +1303,9 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
         body = _this$getMatch2[1],
         keySegment = _this$getMatch2[2];
       usedKeys.push(keySegment);
-      var type, opts;
+      var type;
+      /** @type {string} */
+      var opts;
       if (objKey && objKey.includes('|')) {
         var _objKey$split = objKey.split('|');
         var _objKey$split2 = _slicedToArray(_objKey$split, 3);
@@ -1102,15 +1326,26 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
       }
       */
 
+      /**
+       * @param {number} value
+       * @param {Intl.NumberFormatOptions|undefined} [defaultOptions]
+       * @returns {string}
+       */
       var getNumberFormat = function getNumberFormat(value, defaultOptions) {
         var numberOpts = parseJSONExtra(opts);
         return new Intl.NumberFormat(locale, _objectSpread2(_objectSpread2({}, defaultOptions), numberOpts)).format(value);
       };
+
+      /**
+       * @param {number} value
+       * @param {Intl.PluralRulesOptions|undefined} [defaultOptions]
+       * @returns {Intl.LDMLPluralRule}
+       */
       var getPluralFormat = function getPluralFormat(value, defaultOptions) {
         var pluralOpts = parseJSONExtra(opts);
         return new Intl.PluralRules(locale, _objectSpread2(_objectSpread2({}, defaultOptions), pluralOpts)).select(value);
       };
-      var formatterValue = this.substitutions[keySegment];
+      var formatterValue = this.substitutions[/** @type {string} */keySegment];
       var match = formatterValue;
       if (typeof formatterValue === 'number') {
         switch (type) {
@@ -1128,7 +1363,13 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
         var singleKey = Object.keys(formatterValue)[0];
         if (['number', 'plural'].includes(singleKey)) {
           var _getFormatterInfo = getFormatterInfo({
-              object: formatterValue[singleKey]
+              object:
+              /**
+               * @type {import('./defaultLocaleResolver.js').NumberInfo|
+               *   import('./defaultLocaleResolver.js').PluralInfo}
+               */
+              // @ts-expect-error Ok
+              formatterValue[/** @type {"number"|"plural"} */singleKey]
             }),
             value = _getFormatterInfo.value,
             options = _getFormatterInfo.options;
@@ -1142,10 +1383,12 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
           // eslint-disable-next-line default-case
           switch (type) {
             case 'NUMBER':
-              match = getNumberFormat(value, options);
+              match = getNumberFormat( /** @type {number} */value, /** @type {Intl.NumberFormatOptions} */
+              options);
               break;
             case 'PLURAL':
-              match = getPluralFormat(value, options);
+              match = getPluralFormat( /** @type {number} */value, /** @type {Intl.PluralRulesOptions} */
+              options);
               break;
           }
         }
@@ -1154,13 +1397,18 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
       // We do not want the default `richNested` here as that will split
       //  up the likes of `0.0`
       var messageStyle = 'richNested';
+
+      /**
+       * @param {string} s
+       * @returns {string}
+       */
       var preventNesting = function preventNesting(s) {
         return s.replace(/\\/g, '\\\\').replace(/\./g, '\\.');
       };
       try {
         return _getSubstitution({
           messageStyle: messageStyle,
-          key: match ? preventNesting(match) : arg,
+          key: match ? preventNesting( /** @type {string} */match) : arg,
           body: body,
           type: 'switch'
         });
@@ -1168,7 +1416,7 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
         try {
           return _getSubstitution({
             messageStyle: messageStyle,
-            key: '*' + preventNesting(match),
+            key: '*' + preventNesting( /** @type {string} */match),
             body: body,
             type: 'switch'
           });
@@ -1196,15 +1444,20 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
   }, {
     key: "isMatch",
     value: function isMatch(key) {
-      return key && this.constructor.isMatchingKey(key) && Boolean(this.getMatch(key.slice(1)).length);
+      return Boolean(key && /** @type {typeof SwitchFormatter} */this.constructor.isMatchingKey(key) && this.getMatch(key.slice(1)).length);
     }
 
     /**
-    * @typedef {GenericArray} SwitchMatch
-    * @property {string} 0 objKey
-    * @property {LocaleBody} 1 body
-    * @property {string} 2 keySegment
+    * @typedef {[
+    *   objKey?: string,
+    *   body?: import('./getMessageForKeyByStyle.js').LocaleBody,
+    *   keySegment?: string
+    * ]} SwitchMatch
     */
+
+    /**
+     * @typedef {number} Integer
+     */
 
     /**
      * @param {string} ky
@@ -1215,7 +1468,19 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
     value: function getMatch(ky) {
       var _this4 = this;
       var ks = ky.split('.');
-      return ks.reduce(function (obj, k, i) {
+      var returnValue = /** @type {unknown} */ks.reduce(
+      /**
+       * @param {import('./defaultLocaleResolver.js').SwitchArrays|
+       *   import('./defaultLocaleResolver.js').SwitchArray} obj
+       * @param {string} k
+       * @param {Integer} i
+       * @throws {Error}
+       * @returns {SwitchMatch|
+       *   import('./defaultLocaleResolver.js').SwitchCaseArray|
+       *   import('./defaultLocaleResolver.js').SwitchArray}
+       */
+      // @ts-expect-error It works
+      function (obj, k, i) {
         if (i < ks.length - 1) {
           if (!(k in obj)) {
             throw new Error("Switch key \"".concat(k, "\" not found (from \"~").concat(ky, "\")"));
@@ -1227,10 +1492,12 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
         var ret = Object.entries(obj).find(function (_ref4) {
           var _ref5 = _slicedToArray(_ref4, 1),
             switchKey = _ref5[0];
-          return k === _this4.constructor.getKey(switchKey);
+          return k === /** @type {typeof SwitchFormatter} */_this4.constructor.getKey(switchKey);
         });
         return ret ? [].concat(_toConsumableArray(ret), [k]) : [];
       }, this.switches);
+      return (/** @type {SwitchMatch} */returnValue
+      );
     }
 
     /**
@@ -1249,18 +1516,17 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
   }, {
     key: "getKey",
     value: function getKey(key) {
-      var match = key.match(/^(?:(?!\|)[\s\S])*/);
-      return match && match[0];
+      var match = key.match(/^(?:[\0-\{\}-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*/);
+      return (/** @type {string} */match && match[0]
+      );
     }
   }]);
   return SwitchFormatter;
 }(Formatter);
 
 /**
-* @callback PromiseChainErrback
-* @param {(value: any) => Promise<any>} errBack
-* @returns {Promise<any>|any}
-*/
+ * @typedef {(value: any) => Promise<any>|any} PromiseChainErrback
+ */
 
 /**
  * The given array will have its items processed in series; if the supplied
@@ -1517,92 +1783,201 @@ var promiseChainForValues = function promiseChainForValues(values, errBack) {
 };
 
 /**
-* @callback SubstitutionCallback
-* @param {PlainObject} cfg
-* @param {string} cfg.arg By default, accepts the third portion of the
+* `arg` - By default, accepts the third portion of the
 *   `formattingRegex` within `insertNodes`, i.e., to allow the locale to
 *   supply arguments back to the calling script.
-* @param {string} cfg.key The substitution key
+* `key` - The substitution key.
+* @callback SubstitutionCallback
+* @param {{
+*   arg: string,
+*   key: string
+* }} cfg
 * @returns {string|Element} The replacement text or element
 */
 
 /**
  * May have additional properties if supplying options to an underlying
  * formatter.
- * @typedef {GenericArray} ValueArray
- * @property {string|Node|number|Date} 0 The main value
- * @property {PlainObject} [1] The options related to the main value
- * @property {PlainObject} [2] Any additional options
-*/
+ * The first value is the main value.
+ * The second are the options related to the main value.
+ * The third are any additional options.
+ * @typedef {[string|number|Date, object?, object?]} ValueArray
+ */
 
 /**
-* @typedef {PlainObject} RelativeTimeInfo
-* @property {ValueArray} relative
-*/
+ * @typedef {number} Integer
+ */
 
 /**
-* @typedef {PlainObject} ListInfo
-* @property {ValueArray} list
-*/
+ * @typedef {[
+ *   string[],
+ *   (((item: string, i: Integer) => Element)|object)?,
+ *   object?,
+ *   object?
+ * ]} ListValueArray
+ */
 
 /**
-* @typedef {PlainObject} NumberInfo
-* @property {ValueArray} number
-*/
+ * @typedef {[
+ *   Date|number, Date|number, Intl.DateTimeFormatOptions|undefined
+ * ]} DateRangeValueArray
+ */
 
 /**
-* @typedef {PlainObject} DateInfo
-* @property {ValueArray} date
-*/
+ * @typedef {[number, Intl.RelativeTimeFormatUnit, object?]} RelativeValueArray
+ */
 
 /**
-* @typedef {Object<string, string>} PlainLocaleStringBodyObject
-*/
+ * @typedef {object} RelativeTimeInfo
+ * @property {RelativeValueArray} relative
+ */
 
 /**
-* @typedef {PlainObject} SwitchCaseInfo
-* @property {boolean} [default=false] Whether this conditional is the default
-*/
+ * @typedef {object} ListInfo
+ * @property {ListValueArray} list
+ */
 
 /**
-* @typedef {GenericArray} SwitchCase
-* @property {string} 0 The type
-* @property {string} 1 The message
-* @property {SwitchCaseInfo} [2] Info about the switch case
-*/
+ * @typedef {object} NumberInfo
+ * @property {ValueArray|number} number
+ */
 
 /**
-* @typedef {PlainObject<string, SwitchCase>} Switch
-*/
+ * @typedef {object} DateInfo
+ * @property {ValueArray} date
+ */
 
 /**
-* @typedef {PlainObject<{string, Switch}>} Switches
-*/
+ * @typedef {object} DateTimeInfo
+ * @property {ValueArray} datetime
+ */
 
 /**
-* @typedef {PlainObject} LocaleStringSubObject
-* @property {string} [message] The locale message with any formatting
-*   place-holders; defaults to use of any single conditional
-* @property {string} [description] A description to add translators
-* @property {Switches} [switches] Conditionals
-*/
+ * @typedef {object} DateRangeInfo
+ * @property {DateRangeValueArray} dateRange
+ */
 
 /**
-* @typedef {PlainObject<string, LocaleStringSubObject>} LocaleStringBodyObject
-*/
+ * @typedef {object} DatetimeRangeInfo
+ * @property {DateRangeValueArray} datetimeRange
+ */
+
+/**
+ * @typedef {object} RegionInfo
+ * @property {ValueArray} region
+ */
+
+/**
+ * @typedef {object} LanguageInfo
+ * @property {ValueArray} language
+ */
+
+/**
+ * @typedef {object} ScriptInfo
+ * @property {ValueArray} script
+ */
+
+/**
+ * @typedef {object} CurrencyInfo
+ * @property {ValueArray} currency
+ */
+
+/**
+ * @typedef {object} PluralInfo
+ * @property {ValueArray} plural
+ */
+
+/**
+ * @typedef {{[key: string]: string}} PlainLocaleStringBodyObject
+ */
+
+/**
+ * @typedef {{
+ *   [key: string]: string|PlainNestedLocaleStringBodyObject
+ * }} PlainNestedLocaleStringBodyObject
+ */
+
+/**
+ * @typedef {object} SwitchCaseInfo
+ * @property {boolean} [default=false] Whether this conditional is the default
+ */
+
+/**
+ * Contains the type, the message, and optional info about the switch case.
+ * @typedef {[string, string, SwitchCaseInfo?]} SwitchCaseArray
+ */
+
+/**
+ * @typedef {Object<string, SwitchCaseArray>} SwitchArray
+ */
+
+/**
+ * @typedef {Object<string, SwitchArray>} SwitchArrays
+ */
+
+/**
+ * @typedef {object} SwitchCase
+ * @property {string} message The locale message with any formatting
+ *   place-holders; defaults to use of any single conditional
+ * @property {string} [description] A description to add for translators
+ */
+
+/**
+ * @typedef {Object<string, SwitchCase>} Switch
+ */
+
+/**
+ * @typedef {Object<string, Switch>} Switches
+ */
+
+/**
+ * @typedef {object} RichLocaleStringSubObject
+ * @property {string} message The locale message with any formatting
+ *   place-holders; defaults to use of any single conditional
+ * @property {string} [description] A description to add for translators
+ * @property {Switches} [switches] Conditionals
+ */
+
+/**
+ * @typedef {{
+ *   [key: string]: RichLocaleStringSubObject
+ * }} RichLocaleStringBodyObject
+ */
+
+/**
+ * @typedef {{
+ *   [key: string]: RichLocaleStringSubObject|RichNestedLocaleStringBodyObject
+ * }} RichNestedLocaleStringBodyObject
+ */
 
 /**
  * Takes a base path and locale and gives a URL.
  * @callback LocaleResolver
  * @param {string} localesBasePath (Trailing slash optional)
  * @param {string} locale BCP-47 language string
- * @returns {string} URL of the locale file to be fetched
-*/
+ * @returns {string|false} URL of the locale file to be fetched
+ */
 
 /**
-* @typedef {PlainObject<string, string|Element|
-* SubstitutionCallback>} SubstitutionObject
-*/
+ * @typedef {[
+ *   Date|number, Date|number, (Intl.DateTimeFormatOptions|undefined)?
+ * ]} DateRange
+ */
+
+/**
+ * @typedef {string|string[]|number|Date|DateRange|
+ *     Element|Node|SubstitutionCallback|
+ *     NumberInfo|PluralInfo|CurrencyInfo|LanguageInfo|ScriptInfo|
+ *     DatetimeRangeInfo|DateRangeInfo|RegionInfo|DateTimeInfo|DateInfo|
+ *     ListInfo|RelativeTimeInfo
+ * } SubstitutionObjectValue
+ */
+
+/**
+ * @typedef {{
+ *   [key: string]: SubstitutionObjectValue
+ * }} SubstitutionObject
+ */
 
 /**
  * @type {LocaleResolver}
@@ -1620,29 +1995,75 @@ var defaultLocaleResolver = function defaultLocaleResolver(localesBasePath, loca
   return "".concat(localesBasePath.replace(/\/$/, ''), "/_locales/").concat(locale, "/messages.json");
 };
 
-/* eslint-disable max-len */
 /**
- * Callback to return a string or array of nodes and strings based on a localized
- * string, substitutions object, and other metadata.
- * @callback InsertNodesCallback
- * @param {PlainObject} cfg
- * @param {string} cfg.string The localized string
- * @param {boolean} [cfg.dom] If substitutions known to contain DOM, can be set
- *   to `true` to optimize
- * @param {string[]} [cfg.usedKeys=[]] Array for tracking which keys have been used
- * @param {SubstitutionObject} cfg.substitutions The formatting substitutions object
- * @param {?(AllSubstitutionCallback|AllSubstitutionCallback[])} [cfg.allSubstitutions] The
+ * @typedef {number} Integer
+ */
+
+/**
+ * @callback Replace
+ * @param {{
+ *   str: string,
+ *   substs?: import('./defaultLocaleResolver.js').SubstitutionObject,
+ *   formatter?: import('./Formatter.js').RegularFormatter|
+ *     import('./Formatter.js').LocalFormatter|
+ *     import('./Formatter.js').SwitchFormatter
+ * }} cfg
+ * @returns {string}
+ */
+
+/**
+ * @callback ProcessSubstitutions
+ * @param {{
+ *   str: string,
+ *   substs?: import('./defaultLocaleResolver.js').SubstitutionObject,
+ *   formatter?: import('./Formatter.js').RegularFormatter|
+ *     import('./Formatter.js').LocalFormatter|
+ *     import('./Formatter.js').SwitchFormatter
+ * }} cfg
+ * @returns {(string|Node)[]}
+ */
+
+/**
+ * Callback to return a string or array of nodes and strings based on
+ *   a localized string, substitutions object, and other metadata.
+ *
+ * `string` - The localized string.
+ * `dom` - If substitutions known to contain DOM, can be set
+ *    to `true` to optimize.
+ * `usedKeys` - Array for tracking which keys have been used. Defaults
+ *   to empty array.
+ * `substitutions` - The formatting substitutions object.
+ * `allSubstitutions` - The
  *   callback or array composed thereof for applying to each substitution.
- * @param {string} locale The successfully resolved locale
- * @param {Integer} [maximumLocalNestingDepth=3] Depth of local variable resolution to
- *   check before reporting a recursion error
- * @param {MissingSuppliedFormattersCallback} [cfg.missingSuppliedFormatters] Callback
+ * `locale` - The successfully resolved locale
+ * `locals` - The local section.
+ * `switches` - The switch section.
+ * `maximumLocalNestingDepth` - Depth of local variable resolution to
+ *   check before reporting a recursion error. Defaults to 3.
+ * `missingSuppliedFormatters` - Callback
  *   supplied key to throw if the supplied key is present (if
  *   `throwOnMissingSuppliedFormatters` is enabled). Defaults to no-op.
- * @param {CheckExtraSuppliedFormattersCallback} [cfg.checkExtraSuppliedFormatters] No
+ * `checkExtraSuppliedFormatters` - No
  *   argument callback to check if any formatters are not present in `string`
  *   (if `throwOnExtraSuppliedFormatters` is enabled). Defaults to no-op.
- * @returns {string|Array<Node|string>}
+ * @typedef {(cfg: {
+ *   string: string,
+ *   dom?: boolean,
+ *   usedKeys: string[],
+ *   substitutions: import('./defaultLocaleResolver.js').SubstitutionObject,
+ *   allSubstitutions?: ?(
+ *     import('./defaultAllSubstitutions.js').AllSubstitutionCallback|
+ *     import('./defaultAllSubstitutions.js').AllSubstitutionCallback[]
+ *   )
+ *   locale: string|undefined,
+ *   locals?: import('./getMessageForKeyByStyle.js').LocalObject|undefined,
+ *   switches: import('./defaultLocaleResolver.js').Switches|undefined,
+ *   maximumLocalNestingDepth?: Integer,
+ *   missingSuppliedFormatters: import('./getDOMForLocaleString.js').
+ *     MissingSuppliedFormattersCallback,
+ *   checkExtraSuppliedFormatters: import('./getDOMForLocaleString.js').
+ *     CheckExtraSuppliedFormattersCallback
+ * }) => string|(Node|string)[]} InsertNodesCallback
  */
 
 /**
@@ -1675,29 +2096,49 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
     });
   };
   addFunctionKeys();
-  var localFormatter = new LocalFormatter(locals);
+  var localFormatter = new LocalFormatter( /** @type {import('./getMessageForKeyByStyle.js').LocalObject} */locals);
   var regularFormatter = new RegularFormatter(substitutions);
-  var switchFormatter = new SwitchFormatter(switches, {
+  var switchFormatter = new SwitchFormatter( /** @type {import('./defaultLocaleResolver.js').Switches} */
+  switches, {
     substitutions: substitutions
   });
 
   // eslint-disable-next-line max-len
   // eslint-disable-next-line prefer-named-capture-group, unicorn/no-unsafe-regex
-  var formattingRegex = /(\\*)\{((?:(?:(?!\})[\s\S])|\\\})*?)(?:(\|)((?:(?!\})[\s\S])*))?\}/g;
+  var formattingRegex = /(\\*)\{((?:(?:[\0-\|~-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])|\\\})*?)(?:(\|)((?:[\0-\|~-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*))?\}/g;
   if (allSubstitutions) {
     allSubstitutions = Array.isArray(allSubstitutions) ? allSubstitutions : [allSubstitutions];
   }
+
+  /**
+   * @param {{
+   *   key: string,
+   *   arg: string,
+   *   substs: import('./defaultLocaleResolver.js').SubstitutionObject
+   * }} cfg
+   * @returns {string|Node}
+   */
   var getSubstitution = function getSubstitution(_ref4) {
     var key = _ref4.key,
       arg = _ref4.arg,
       substs = _ref4.substs;
+    /** @type {import('./defaultLocaleResolver.js').SubstitutionObjectValue} */
     var substitution;
-    var isLocalKey = localFormatter.constructor.isMatchingKey(key);
+    var isLocalKey =
+    /**
+     * @type {typeof import('./Formatter.js').LocalFormatter}
+     */
+    localFormatter.constructor.isMatchingKey(key);
     if (isLocalKey) {
       substitution = localFormatter.getSubstitution(key);
-    } else if (switchFormatter.constructor.isMatchingKey(key)) {
+    } else if (
+    /**
+     * @type {typeof import('./Formatter.js').SwitchFormatter}
+     */
+    switchFormatter.constructor.isMatchingKey(key)) {
       substitution = switchFormatter.getSubstitution(key, {
-        locale: locale,
+        // eslint-disable-next-line object-shorthand -- TS casting
+        locale: /** @type {string} */locale,
         usedKeys: usedKeys,
         arg: arg,
         missingSuppliedFormatters: missingSuppliedFormatters
@@ -1716,7 +2157,20 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
     //  a mode to throw for non-string/non-DOM (non-numbers?),
     //  or whatever is not likely intended as a target for `toString()`.
     if (allSubstitutions) {
-      substitution = allSubstitutions.reduce(function (subst, allSubst) {
+      substitution = /** @type {string|Node} */
+      /**
+       * @type {import('./defaultAllSubstitutions.js').
+       *   AllSubstitutionCallback[]
+       * }
+       */allSubstitutions.reduce(
+      /**
+       * @param {import('./defaultLocaleResolver.js').
+       *   SubstitutionObjectValue} subst
+       * @param {import('./defaultAllSubstitutions.js').
+       *   AllSubstitutionCallback} allSubst
+       * @returns {string|Node}
+       */
+      function (subst, allSubst) {
         return allSubst({
           value: subst,
           arg: arg,
@@ -1732,26 +2186,40 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
         locale: locale
       });
     }
-    return substitution;
+
+    // Change this and return type if other substitutions possible
+    return (/** @type {string|Node} */substitution
+    );
   };
   var recursiveLocalCount = 1;
+  /**
+   * @param {{
+   *   substitution: string|Node,
+   *   ky: string,
+   *   arg: string,
+   *   processSubsts: Replace|ProcessSubstitutions
+   * }} cfg
+   * @returns {number|string|Node|(string|Node)[]}
+   */
   var checkLocalVars = function checkLocalVars(_ref5) {
     var substitution = _ref5.substitution,
       ky = _ref5.ky,
       arg = _ref5.arg,
       processSubsts = _ref5.processSubsts;
+    /** @type {number|string|Node|(string|Node)[]} */
+    var subst = substitution;
     if (typeof substitution === 'string' && substitution.includes('{')) {
       if (recursiveLocalCount++ > maximumLocalNestingDepth) {
         throw new TypeError('Too much recursion in local variables.');
       }
-      if (localFormatter.constructor.isMatchingKey(ky)) {
+      if ( /** @type {typeof import('./Formatter.js').LocalFormatter} */localFormatter.constructor.isMatchingKey(ky)) {
         var extraSubsts = substitutions;
         var localFormatters;
         if (arg) {
           localFormatters = parseJSONExtra(arg);
           extraSubsts = _objectSpread2(_objectSpread2({}, substitutions), localFormatters);
         }
-        substitution = processSubsts({
+        subst = processSubsts({
           str: substitution,
           substs: extraSubsts,
           formatter: localFormatter
@@ -1761,26 +2229,38 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
             substitutions: localFormatters
           });
         }
-      } else if (switchFormatter.constructor.isMatchingKey(ky)) {
-        substitution = processSubsts({
+      } else if ( /** @type {typeof import('./Formatter.js').SwitchFormatter} */
+      switchFormatter.constructor.isMatchingKey(ky)) {
+        subst = processSubsts({
           str: substitution
         });
       }
     }
-    return substitution;
+    return subst;
   };
 
   // Give chance to avoid this block when known to contain DOM
   if (!dom) {
     // Run this block to optimize non-DOM substitutions
     var returnsDOM = false;
+
+    /** @type {Replace} */
     var replace = function replace(_ref6) {
       var str = _ref6.str,
         _ref6$substs = _ref6.substs,
         substs = _ref6$substs === void 0 ? substitutions : _ref6$substs,
         _ref6$formatter = _ref6.formatter,
         formatter = _ref6$formatter === void 0 ? regularFormatter : _ref6$formatter;
-      return str.replace(formattingRegex, function (_, esc, ky, pipe, arg) {
+      return str.replace(formattingRegex,
+      /**
+       * @param {string} _
+       * @param {string} esc
+       * @param {string} ky
+       * @param {string} pipe
+       * @param {string} arg
+       * @returns {string}
+       */
+      function (_, esc, ky, pipe, arg) {
         if (esc.length % 2) {
           return _;
         }
@@ -1790,6 +2270,7 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
         })) {
           return _;
         }
+        /** @type {string|number|Node|(string|Node)[]} */
         var substitution = getSubstitution({
           key: ky,
           arg: arg,
@@ -1801,7 +2282,7 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
           arg: arg,
           processSubsts: replace
         });
-        returnsDOM = returnsDOM || substitution && _typeof(substitution) === 'object' && 'nodeType' in substitution;
+        returnsDOM = returnsDOM || substitution !== null && _typeof(substitution) === 'object' && 'nodeType' in substitution;
         usedKeys.push(ky);
         return esc + substitution;
       });
@@ -1821,18 +2302,25 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
     addFunctionKeys();
   }
   recursiveLocalCount = 1;
+
+  /** @type {ProcessSubstitutions} */
   var processSubstitutions = function processSubstitutions(_ref7) {
     var str = _ref7.str,
       _ref7$substs = _ref7.substs,
       substs = _ref7$substs === void 0 ? substitutions : _ref7$substs,
       _ref7$formatter = _ref7.formatter,
       formatter = _ref7$formatter === void 0 ? regularFormatter : _ref7$formatter;
+    /** @type {(string|Node)[]} */
     var nodes = [];
 
     // Copy to ensure we are resetting index on each instance (manually
     // resetting on `formattingRegex` is problematic with recursion that
     // uses the same regex copy)
     var regex = new RegExp(formattingRegex, 'gu');
+
+    /**
+     * @param {...(string|Node)} args
+     */
     var push = function push() {
       nodes.push.apply(nodes, arguments);
     };
@@ -1848,6 +2336,8 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
           if (esc.length) {
             push(esc);
           }
+
+          /** @type {string|number|Node|(string|Node)[]} */
           var substitution = getSubstitution({
             key: ky,
             arg: arg,
@@ -1867,7 +2357,8 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
           substitution && _typeof(substitution) === 'object' && 'nodeType' in substitution) {
             push(substitution.cloneNode(true));
           } else {
-            push(substitution);
+            // Why no number here?
+            push( /** @type {string} */substitution);
           }
         }
         usedKeys.push(ky);
@@ -1895,7 +2386,9 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
  * @param {string|string[]} key By default may be an array (if the type ends
  *   with "Nested") or a string, but a non-default validator may do otherwise.
  * @param {"plain"|"plainNested"|"rich"|
- *   "richNested"|MessageStyleCallback} messageStyle
+ *   "richNested"|
+ *   import('./getMessageForKeyByStyle.js').MessageStyleCallback
+ * } messageStyle
  * @throws {TypeError}
  * @returns {string} The converted (or unconverted) key
  */
@@ -1926,26 +2419,34 @@ function defaultKeyCheckerConverter(key, messageStyle) {
 /**
  * May also contain language code and direction, translator name and
  * contact, etc., but no defaults currently apply besides reserving `locals`
- * @typedef {PlainObject} LocaleHead
- * @property {LocalObject} locals
+ * @typedef {object} LocaleHead
+ * @property {LocalObject} [locals]
+ * @property {import('./defaultLocaleResolver.js').Switches} [switches]
 */
 
 /**
-* @typedef {LocaleStringBodyObject|
-* PlainLocaleStringBodyObject|PlainObject} LocaleBody
-*/
+ * @typedef {import('./defaultLocaleResolver.js').
+ *   RichNestedLocaleStringBodyObject|
+ *   import('./defaultLocaleResolver.js').RichLocaleStringBodyObject|
+ *   import('./defaultLocaleResolver.js').PlainLocaleStringBodyObject|
+ *   import('./defaultLocaleResolver.js').PlainNestedLocaleStringBodyObject|
+ *   object
+ * } LocaleBody
+ */
 
 /**
-* @typedef {PlainObject} LocaleObject
+* @typedef {object} LocaleObject
 * @property {LocaleHead} [head]
 * @property {LocaleBody} body
 */
 
 /**
-* @typedef {PlainObject} MessageStyleCallbackResult
-* @property {string} value Regardless of message style, will contain the
-*   string result
-* @property {LocaleStringSubObject} [info] Full info on the localized item
+* @typedef {object} MessageStyleCallbackResult
+* @property {string} value Regardless of message style, will contain
+*    the string result
+* @property {import(
+*  './defaultLocaleResolver.js'
+*  ).RichLocaleStringSubObject} [info] Full info on the localized item
 *   (for rich message styles only)
 */
 
@@ -1959,7 +2460,7 @@ function defaultKeyCheckerConverter(key, messageStyle) {
 
 /* eslint-disable max-len */
 /**
- * @param {PlainObject} [cfg]
+ * @param {object} [cfg]
  * @param {"richNested"|"rich"|"plain"|"plainNested"|MessageStyleCallback} [cfg.messageStyle="richNested"]
  * @returns {MessageStyleCallback}
  */
@@ -1968,10 +2469,25 @@ var getMessageForKeyByStyle = function getMessageForKeyByStyle() {
     _ref$messageStyle = _ref.messageStyle,
     messageStyle = _ref$messageStyle === void 0 ? 'richNested' : _ref$messageStyle;
   return typeof messageStyle === 'function' ? messageStyle : messageStyle === 'richNested' ? function (mainObj, key) {
-    var obj = mainObj && _typeof(mainObj) === 'object' && mainObj.body;
+    var obj =
+    /**
+     * @type {import('./defaultLocaleResolver.js').
+     *   RichNestedLocaleStringBodyObject
+     * }
+     */
+    mainObj && _typeof(mainObj) === 'object' && mainObj.body;
+
+    /**
+     * @type {string[]}
+     */
     var keys = [];
     // eslint-disable-next-line prefer-named-capture-group
     var possiblyEscapedCharPattern = /(\\*)\./g;
+
+    /**
+     * @param {string} val
+     * @returns {void}
+     */
     var mergeWithPreviousOrStart = function mergeWithPreviousOrStart(val) {
       if (!keys.length) {
         keys[0] = '';
@@ -1993,6 +2509,14 @@ var getMessageForKeyByStyle = function getMessageForKeyByStyle() {
     var keysUnescaped = keys.map(function (ky) {
       return unescapeBackslashes(ky);
     });
+
+    /**
+     * @type {false|{
+     *   value: string|undefined,
+     *   info: import('./defaultLocaleResolver.js').
+     *     RichLocaleStringSubObject
+     * }}
+     */
     var ret = false;
     var currObj = obj;
     keysUnescaped.some(function (ky, i, kys) {
@@ -2005,16 +2529,33 @@ var getMessageForKeyByStyle = function getMessageForKeyByStyle() {
       // NECESSARY FOR SECURITY ON UNTRUSTED LOCALES
       typeof currObj[ky].message === 'string') {
         ret = {
-          value: currObj[ky].message,
-          info: currObj[ky]
+          value: /** @type {string} */currObj[ky].message,
+          info:
+          /**
+           * @type {import('./defaultLocaleResolver.js').
+           *   RichLocaleStringSubObject}
+           */
+          currObj[ky]
         };
       }
-      currObj = currObj[ky];
+      currObj =
+      /**
+       * @type {import('./defaultLocaleResolver.js').
+       *   RichNestedLocaleStringBodyObject
+       * }
+       */
+      currObj[ky];
       return false;
     });
     return ret;
   } : messageStyle === 'rich' ? function (mainObj, key) {
-    var obj = mainObj && _typeof(mainObj) === 'object' && mainObj.body;
+    var obj =
+    /**
+     * @type {import('./defaultLocaleResolver.js').
+     *   RichLocaleStringBodyObject
+     * }
+     */
+    mainObj && _typeof(mainObj) === 'object' && mainObj.body;
     if (obj && _typeof(obj) === 'object' && key in obj && obj[key] && _typeof(obj[key]) === 'object' && 'message' in obj[key] &&
     // NECESSARY FOR SECURITY ON UNTRUSTED LOCALES
     typeof obj[key].message === 'string') {
@@ -2025,7 +2566,13 @@ var getMessageForKeyByStyle = function getMessageForKeyByStyle() {
     }
     return false;
   } : messageStyle === 'plain' ? function (mainObj, key) {
-    var obj = mainObj && _typeof(mainObj) === 'object' && mainObj.body;
+    var obj =
+    /**
+     * @type {import('./defaultLocaleResolver.js').
+     *   PlainLocaleStringBodyObject
+     * }
+     */
+    mainObj && _typeof(mainObj) === 'object' && mainObj.body;
     if (obj && _typeof(obj) === 'object' && key in obj && obj[key] && typeof obj[key] === 'string') {
       return {
         value: obj[key]
@@ -2033,13 +2580,27 @@ var getMessageForKeyByStyle = function getMessageForKeyByStyle() {
     }
     return false;
   } : messageStyle === 'plainNested' ? function (mainObj, key) {
-    var obj = mainObj && _typeof(mainObj) === 'object' && mainObj.body;
+    var obj =
+    /**
+     * @type {import('./defaultLocaleResolver.js').
+     *   PlainNestedLocaleStringBodyObject
+     * }
+     */
+    mainObj && _typeof(mainObj) === 'object' && mainObj.body;
     if (obj && _typeof(obj) === 'object') {
       // Should really be counting that it is an odd number
       //  of backslashes only
       var keys = key.split(/(?<!\\)\./);
-      var value = keys.reduce(function (o, k) {
-        if (o && o[k]) {
+      var value = keys.reduce(
+      /**
+       * @param {null|string|import('./defaultLocaleResolver.js').
+       *   PlainNestedLocaleStringBodyObject} o
+       * @param {string} k
+       * @returns {null|string|import('./defaultLocaleResolver.js').
+       *   PlainNestedLocaleStringBodyObject}
+       */
+      function (o, k) {
+        if (o && _typeof(o) === 'object' && o[k]) {
           return o[k];
         }
         return null;
@@ -2056,19 +2617,26 @@ var getMessageForKeyByStyle = function getMessageForKeyByStyle() {
   }();
 };
 
-/* eslint-disable max-len */
 /**
- * @param {PlainObject} cfg
- * @param {string} [cfg.message] If present, this string will be the return value.
- * @param {false|null|undefined|LocaleObject} [cfg.defaults]
- * @param {"richNested"|"rich"|"plain"|"plainNested"|MessageStyleCallback} [cfg.messageStyle="richNested"]
- * @param {MessageStyleCallback} [cfg.messageForKey] Defaults to getting `MessageStyleCallback` based on `messageStyle`
- * @param {string} cfg.key Key to check against object of strings; used to find a default if no string `message` is provided.
+ * @param {object} cfg
+ * @param {string|false} [cfg.message] If present, this string will be
+ *   the return value.
+ * @param {false|null|undefined|
+ *   import('./getMessageForKeyByStyle.js').LocaleObject
+ * } [cfg.defaults]
+ * @param {"richNested"|"rich"|"plain"|"plainNested"|
+ *   import('./getMessageForKeyByStyle.js').MessageStyleCallback
+ * } [cfg.messageStyle="richNested"]
+ * @param {import('./getMessageForKeyByStyle.js').
+ *   MessageStyleCallback
+ * } [cfg.messageForKey] Defaults to getting `MessageStyleCallback` based
+ *   on `messageStyle`
+ * @param {string} cfg.key Key to check against object of strings;
+ *   used to find a default if no string `message` is provided.
  * @returns {string}
  */
-var getStringFromMessageAndDefaults = function getStringFromMessageAndDefaults() {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-    message = _ref.message,
+var getStringFromMessageAndDefaults = function getStringFromMessageAndDefaults(_ref) {
+  var message = _ref.message,
     defaults = _ref.defaults,
     messageStyle = _ref.messageStyle,
     _ref$messageForKey = _ref.messageForKey,
@@ -2077,16 +2645,15 @@ var getStringFromMessageAndDefaults = function getStringFromMessageAndDefaults()
     }) : _ref$messageForKey,
     key = _ref.key;
   // NECESSARY CHECK FOR SECURITY ON UNTRUSTED LOCALES
+  /** @type {string|false} */
   var str;
   if (typeof message === 'string') {
     str = message;
   } else if (defaults === false || defaults === undefined || defaults === null) {
     str = false;
   } else if (defaults && _typeof(defaults) === 'object') {
-    str = messageForKey(defaults, key);
-    if (str) {
-      str = str.value;
-    }
+    var msg = messageForKey(defaults, key);
+    str = msg ? msg.value : msg;
   } else {
     throw new TypeError("Default locale strings must resolve to `false`, " + "nullish, or an object!");
   }
@@ -2096,28 +2663,54 @@ var getStringFromMessageAndDefaults = function getStringFromMessageAndDefaults()
   return str;
 };
 
-/* eslint-disable max-len */
+/**
+ * @typedef {number} Integer
+ */
+
+/**
+ * @callback CheckExtraSuppliedFormattersCallback
+ * @param {import('./defaultLocaleResolver.js').SubstitutionObject|{
+ *   substitutions: import('./defaultLocaleResolver.js').SubstitutionObject
+ * }} substs (Why is an arg. of `substitutions` being passed in?)
+ * @throws {Error} Upon an extra formatting key being found
+ * @returns {void}
+ */
+
+/**
+ * @typedef {(
+ *   cfg: {
+ *     key: string,
+ *     formatter: import('./Formatter.js').LocalFormatter|
+ *       import('./Formatter.js').RegularFormatter|
+ *       import('./Formatter.js').SwitchFormatter
+ *   }
+ * ) => boolean} MissingSuppliedFormattersCallback
+ */
+
 /**
  *
- * @param {PlainObject} cfg
+ * @param {object} cfg
  * @param {string} cfg.string
- * @param {string} cfg.locale The (possibly already resolved) locale for use by
- *   configuring formatters
- * @param {LocalObject} [cfg.locals]
- * @param {LocalObject} [cfg.switches]
+ * @param {string} [cfg.locale] The (possibly already resolved) locale
+ *   for use by configuring formatters
+ * @param {import('./getMessageForKeyByStyle.js').LocalObject} [cfg.locals]
+ * @param {import('./defaultLocaleResolver.js').Switches} [cfg.switches]
  * @param {Integer} [cfg.maximumLocalNestingDepth=3]
- * @param {?(AllSubstitutionCallback|AllSubstitutionCallback[])} [cfg.allSubstitutions=[defaultAllSubstitutions]]
- * @param {InsertNodesCallback} [cfg.insertNodes=defaultInsertNodes]
- * @param {false|SubstitutionObject} [cfg.substitutions=false]
+ * @param {?(import('./defaultAllSubstitutions.js').AllSubstitutionCallback|
+ *   import('./defaultAllSubstitutions.js').AllSubstitutionCallback[])
+ * } [cfg.allSubstitutions=[defaultAllSubstitutions]]
+ * @param {import('./defaultInsertNodes.js').InsertNodesCallback
+ * } [cfg.insertNodes=defaultInsertNodes]
+ * @param {false|import('./defaultLocaleResolver.js').SubstitutionObject
+ * } [cfg.substitutions=false]
  * @param {boolean} [cfg.dom=false]
  * @param {boolean} [cfg.forceNodeReturn=false]
  * @param {boolean} [cfg.throwOnMissingSuppliedFormatters=true]
  * @param {boolean} [cfg.throwOnExtraSuppliedFormatters=true]
- * @returns {string|DocumentFragment}
+ * @returns {string|Text|DocumentFragment}
  */
-var getDOMForLocaleString = function getDOMForLocaleString() {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-    string = _ref.string,
+var getDOMForLocaleString = function getDOMForLocaleString(_ref) {
+  var string = _ref.string,
     locale = _ref.locale,
     locals = _ref.locals,
     switches = _ref.switches;
@@ -2139,18 +2732,18 @@ var getDOMForLocaleString = function getDOMForLocaleString() {
   if (typeof string !== 'string') {
     throw new TypeError('An options object with a `string` property set to a string must ' + 'be provided for `getDOMForLocaleString`.');
   }
-  var stringOrTextNode = function stringOrTextNode(str) {
-    var _doc = getDocument();
-    return forceNodeReturn ? _doc.createTextNode(str) : str;
-  };
-  var usedKeys = [];
 
   /**
-  * @callback CheckExtraSuppliedFormattersCallback
-  * @param {SubstitutionObject} substs
-  * @throws {Error} Upon an extra formatting key being found
-  * @returns {void}
-  */
+   * @param {string} str
+   * @returns {Text|string}
+   */
+  var stringOrTextNode = function stringOrTextNode(str) {
+    var _doc = getDocument();
+    return forceNodeReturn ? /** @type {Document} */_doc.createTextNode(str) : str;
+  };
+
+  /** @type {string[]} */
+  var usedKeys = [];
 
   /**
    * @type {CheckExtraSuppliedFormattersCallback}
@@ -2167,20 +2760,19 @@ var getDOMForLocaleString = function getDOMForLocaleString() {
   };
 
   /**
-  * @callback MissingSuppliedFormattersCallback
-  * @param {string} key
-  * @param {SubstitutionObject} substs
-  * @throws {Error} If missing formatting key
-  * @returns {boolean}
-  */
-  /**
    * @type {MissingSuppliedFormattersCallback}
    */
   var missingSuppliedFormatters = function missingSuppliedFormatters(_ref3) {
     var key = _ref3.key,
       formatter = _ref3.formatter;
     var matching = formatter.isMatch(key);
-    if (formatter.constructor.isMatchingKey(key) && !matching) {
+    if (
+    /**
+     * @type {typeof import('./Formatter.js').LocalFormatter|
+     *       typeof import('./Formatter.js').RegularFormatter|
+     *       typeof import('./Formatter.js').SwitchFormatter}
+     */
+    formatter.constructor.isMatchingKey(key) && !matching) {
       if (throwOnMissingSuppliedFormatters) {
         throw new Error("Missing formatting key: ".concat(key));
       }
@@ -2210,7 +2802,7 @@ var getDOMForLocaleString = function getDOMForLocaleString() {
     return stringOrTextNode(nodes);
   }
   var _doc = getDocument();
-  var container = _doc.createDocumentFragment();
+  var container = /** @type {Document} */_doc.createDocumentFragment();
   container.append.apply(container, _toConsumableArray(nodes));
   return container;
 };
@@ -2265,24 +2857,34 @@ var defaultLocaleMatcher = function defaultLocaleMatcher(locale) {
   // Try without hyphen, i.e., the "lookup" algorithm:
   // See https://tools.ietf.org/html/rfc4647#section-3.4 and
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl
-  return locale.replace(/\x2D(?:(?!\x2D)[\s\S])*$/, '');
+  return locale.replace(/\x2D(?:[\0-,\.-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*$/, '');
 };
 
 /**
-* @typedef {PlainObject} LocaleObjectInfo
-* @property {LocaleObject} strings The successfully retrieved locale strings
-* @property {string} locale The successfully resolved locale
-*/
+ * @typedef {object} LocaleObjectInfo
+ * @property {import('./getMessageForKeyByStyle.js').
+ *   LocaleObject} strings The successfully retrieved locale strings
+ * @property {string} locale The successfully resolved locale
+ */
 
 /**
- * @callback LocaleStringFinder
- * @param {PlainObject} [cfg={}]
- * @param {string[]} [cfg.locales=navigator.languages] BCP-47 language strings
- * @param {string[]} [cfg.defaultLocales=["en-US"]]
- * @param {string} [cfg.localesBasePath="."]
- * @param {LocaleResolver} [cfg.localeResolver=defaultLocaleResolver]
- * @param {"lookup"|LocaleMatcher} [cfg.localeMatcher]
- * @returns {Promise<LocaleObjectInfo>}
+ * @typedef {{
+ *   locales?: string[],
+ *   defaultLocales?: string[],
+ *   localesBasePath?: string,
+ *   localeResolver?: import('./defaultLocaleResolver.js').LocaleResolver,
+ *   localeMatcher?: "lookup"|LocaleMatcher
+ * }} LocaleStringArgs
+ */
+
+/**
+ * `locales` - BCP-47 language strings. Defaults to `navigator.languages`.
+ * `defaultLocales` - Defaults to ["en-US"].
+ * `localesBasePath` - Defaults to `.`.
+ * `localeResolver` - Defaults to `defaultLocaleResolver`.
+ * @typedef {(
+ *   cfg?: LocaleStringArgs
+ * ) => Promise<LocaleObjectInfo>} LocaleStringFinder
  */
 
 /**
@@ -2296,17 +2898,22 @@ var findLocaleStrings = function findLocaleStrings() {
     localeResolver = _ref2.localeResolver,
     localesBasePath = _ref2.localesBasePath,
     localeMatcher = _ref2.localeMatcher;
-  return _findLocale({
-    locales: locales,
-    defaultLocales: defaultLocales,
-    localeResolver: localeResolver,
-    localesBasePath: localesBasePath,
-    localeMatcher: localeMatcher
-  });
+  return (/** @type {Promise<LocaleObjectInfo>} */_findLocale({
+      locales: locales,
+      defaultLocales: defaultLocales,
+      localeResolver: localeResolver,
+      localesBasePath: localesBasePath,
+      localeMatcher: localeMatcher
+    })
+  );
 };
 
 /**
- * @type {LocaleStringFinder|LocaleFinder} Also has a `headOnly` boolean
+ * @type {(
+ *   cfg: LocaleStringArgs & {
+ *     headOnly?: boolean
+ *   }
+ * ) => Promise<string|LocaleObjectInfo>} Also has a `headOnly` boolean
  *  property to determine whether to make a simple HEAD and resolve to
  *  the locale rather than locale and contents
  */
@@ -2315,7 +2922,7 @@ var _findLocale = _async(function (_ref4) {
    * @callback getLocale
    * @throws {SyntaxError|TypeError|Error}
    * @param {string} locale
-   * @returns {Promise<LocaleObjectInfo>}
+   * @returns {Promise<LocaleObjectInfo|string>}
    */
   var getLocale = _async(function (locale) {
     if (typeof locale !== 'string') {
@@ -2326,7 +2933,7 @@ var _findLocale = _async(function (_ref4) {
       throw new TypeError('`localeResolver` expected to resolve to (URL) string.');
     }
     return _catch(function () {
-      var _fetch = getFetch();
+      var _fetch = /** @type {import('./shared.js').Fetch} */getFetch();
       return _await$1(headOnly ? _fetch(url, {
         method: 'HEAD'
       }) : _fetch(url), function (resp) {
@@ -2344,10 +2951,10 @@ var _findLocale = _async(function (_ref4) {
         });
       });
     }, function (err) {
-      if (err.name === 'SyntaxError') {
+      if ( /** @type {Error} */err.name === 'SyntaxError') {
         throw err;
       }
-      return _await$1(localeMatcher(locale), getLocale);
+      return _await$1( /** @type {LocaleMatcher} */localeMatcher(locale), getLocale);
     });
   });
   var _ref4$locales = _ref4.locales,
@@ -2371,39 +2978,43 @@ var _findLocale = _async(function (_ref4) {
 });
 
 /**
- * Checks a key (against an object of strings). Optionally
- *  accepts an object of substitutions which are used when finding text
- *  within curly brackets (pipe symbol not allowed in its keys); the
- *  substitutions may be DOM elements as well as strings and may be
- *  functions which return the same (being provided the text after the
- *  pipe within brackets as the single argument).) Optionally accepts a
- *  config object, with the optional key "dom" which if set to `true`
- *  optimizes when DOM elements are (known to be) present.
- * @callback I18NCallback
- * @param {string} key Key to check against object of strings
- * @param {false|SubstitutionObject} [substitutions=false]
- * @param {PlainObject} [cfg={}]
- * @param {boolean} [cfg.dom=false]
- * @returns {string|DocumentFragment}
-*/
-
-/* eslint-disable max-len */
+ * @typedef {import('./index.js').Sort} Sort
+ */
 /**
- * @param {PlainObject} cfg
- * @param {LocaleObject} cfg.strings
+ * @typedef {import('./index.js').SortList} SortList
+ */
+/**
+ * @typedef {import('./index.js').List} List
+ */
+
+/**
+ * @typedef {import('./index.js').I18NCallback} I18NCallback
+ */
+
+/**
+ * @param {object} cfg
+ * @param {import('./getMessageForKeyByStyle.js').LocaleObject} cfg.strings
  * @param {string} cfg.resolvedLocale
- * @param {"richNested"|"rich"|"plain"|"plainNested"|MessageStyleCallback} [cfg.messageStyle="richNested"]
- * @param {?AllSubstitutionCallback|AllSubstitutionCallback[]} [cfg.allSubstitutions]
- * @param {InsertNodesCallback} [cfg.insertNodes=defaultInsertNodes]
- * @param {KeyCheckerConverterCallback} [cfg.keyCheckerConverter]
- * @param {false|null|undefined|LocaleObject} [cfg.defaults]
- * @param {false|SubstitutionObject} [cfg.substitutions={}]
+ * @param {"richNested"|"rich"|"plain"|"plainNested"|
+ *   import('./getMessageForKeyByStyle.js').
+ *     MessageStyleCallback} [cfg.messageStyle="richNested"]
+ * @param {?import('./defaultAllSubstitutions.js').AllSubstitutionCallback|
+ *   import('./defaultAllSubstitutions.js').
+ *     AllSubstitutionCallback[]} [cfg.allSubstitutions]
+ * @param {import('./defaultInsertNodes.js').
+ *   InsertNodesCallback} [cfg.insertNodes=defaultInsertNodes]
+ * @param {import('./defaultKeyCheckerConverter.js').
+ *   KeyCheckerConverterCallback} [cfg.keyCheckerConverter]
+ * @param {false|null|undefined|
+ *   import('./getMessageForKeyByStyle.js').LocaleObject} [cfg.defaults]
+ * @param {false|import('./defaultLocaleResolver.js').
+ *   SubstitutionObject} [cfg.substitutions={}]
  * @param {Integer} [cfg.maximumLocalNestingDepth=3]
  * @param {boolean} [cfg.dom=false]
  * @param {boolean} [cfg.forceNodeReturn=false]
  * @param {boolean} [cfg.throwOnMissingSuppliedFormatters=true]
  * @param {boolean} [cfg.throwOnExtraSuppliedFormatters=true]
- * @returns {Promise<I18NCallback>} Rejects if no suitable locale is found.
+ * @returns {I18NCallback} Rejects if no suitable locale is found.
  */
 
 function _await(value, then, direct) {
@@ -2416,21 +3027,36 @@ function _await(value, then, direct) {
   return then ? value.then(then) : value;
 }
 
-/* eslint-disable max-len */
 /**
- * @param {PlainObject} [cfg={}]
+ * @typedef {number} Integer
+ */
+
+/**
+ * @param {object} [cfg={}]
  * @param {string[]} [cfg.locales=navigator.languages] BCP-47 language strings
  * @param {string[]} [cfg.defaultLocales=["en-US"]]
- * @param {LocaleStringFinder} [cfg.localeStringFinder=findLocaleStrings]
+ * @param {import('./findLocaleStrings.js').
+ *   LocaleStringFinder} [cfg.localeStringFinder=findLocaleStrings]
  * @param {string} [cfg.localesBasePath="."]
- * @param {LocaleResolver} [cfg.localeResolver=defaultLocaleResolver]
- * @param {"lookup"|LocaleMatcher} [cfg.localeMatcher="lookup"]
- * @param {"richNested"|"rich"|"plain"|"plainNested"|MessageStyleCallback} [cfg.messageStyle="richNested"]
- * @param {?AllSubstitutionCallback|AllSubstitutionCallback[]} [cfg.allSubstitutions]
- * @param {InsertNodesCallback} [cfg.insertNodes=defaultInsertNodes]
- * @param {KeyCheckerConverterCallback} [cfg.keyCheckerConverter]
- * @param {false|null|undefined|LocaleObject} [cfg.defaults]
- * @param {false|SubstitutionObject} [cfg.substitutions={}]
+ * @param {import('./defaultLocaleResolver.js').
+ *   LocaleResolver} [cfg.localeResolver=defaultLocaleResolver]
+ * @param {"lookup"|import('./findLocaleStrings.js').
+ *   LocaleMatcher} [cfg.localeMatcher="lookup"]
+ * @param {"richNested"|"rich"|"plain"|"plainNested"|
+ *   import('./getMessageForKeyByStyle.js').
+ *     MessageStyleCallback} [cfg.messageStyle="richNested"]
+ * @param {?(import('./defaultAllSubstitutions.js').AllSubstitutionCallback|
+ *   import('./defaultAllSubstitutions.js').
+ *     AllSubstitutionCallback[])} [cfg.allSubstitutions]
+ * @param {import('./defaultInsertNodes.js').
+ *   InsertNodesCallback} [cfg.insertNodes=defaultInsertNodes]
+ * @param {import('./defaultKeyCheckerConverter.js').
+ *   KeyCheckerConverterCallback} [cfg.keyCheckerConverter]
+ * @param {false|null|undefined|
+ *   import('./getMessageForKeyByStyle.js').LocaleObject} [cfg.defaults]
+ * @param {false|
+ *   import('./defaultLocaleResolver.js').
+ *     SubstitutionObject} [cfg.substitutions={}]
  * @param {Integer} [cfg.maximumLocalNestingDepth=3]
  * @param {boolean} [cfg.dom=false]
  * @param {boolean} [cfg.forceNodeReturn=false]
@@ -2472,6 +3098,10 @@ var i18nServer = function i18nServer(_ref) {
   var messageForKey = getMessageForKeyByStyle({
     messageStyle: messageStyle
   });
+
+  /**
+   * @type {I18NCallback}
+   */
   var formatter = function formatter(key, substitutions) {
     var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
       _ref2$allSubstitution = _ref2.allSubstitutions,
@@ -2486,7 +3116,7 @@ var i18nServer = function i18nServer(_ref) {
       throwOnMissingSuppliedFormatters = _ref2$throwOnMissingS === void 0 ? throwOnMissingSuppliedFormattersDefault : _ref2$throwOnMissingS,
       _ref2$throwOnExtraSup = _ref2.throwOnExtraSuppliedFormatters,
       throwOnExtraSuppliedFormatters = _ref2$throwOnExtraSup === void 0 ? throwOnExtraSuppliedFormattersDefault : _ref2$throwOnExtraSup;
-    key = keyCheckerConverter(key, messageStyle);
+    key = /** @type {string} */keyCheckerConverter(key, messageStyle);
     var message = messageForKey(strings, key);
     var string = getStringFromMessageAndDefaults({
       message: message && typeof message.value === 'string' ? message.value : false,
@@ -2511,23 +3141,20 @@ var i18nServer = function i18nServer(_ref) {
   };
   formatter.resolvedLocale = resolvedLocale;
   formatter.strings = strings;
-  formatter.sort = function () {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-    return sort.apply(void 0, [resolvedLocale].concat(args));
+
+  /** @type {Sort} */
+  formatter.sort = function (arrayOfItems, options) {
+    return sort(resolvedLocale, arrayOfItems, options);
   };
-  formatter.sortList = function () {
-    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
-    }
-    return sortList.apply(void 0, [resolvedLocale].concat(args));
+
+  /** @type {SortList} */
+  formatter.sortList = function (arrayOfItems, map, listOptions, collationOptions) {
+    return sortList(resolvedLocale, arrayOfItems, map, listOptions, collationOptions);
   };
-  formatter.list = function () {
-    for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-      args[_key3] = arguments[_key3];
-    }
-    return list.apply(void 0, [resolvedLocale].concat(args));
+
+  /** @type {List} */
+  formatter.list = function (arrayOfItems, options) {
+    return list(resolvedLocale, arrayOfItems, options);
   };
   return formatter;
 };
@@ -2640,8 +3267,9 @@ var JsonRefs=function(t){var n={};function r(e){if(n[e])return n[e].exports;var 
 
 /* eslint-env browser */
 
-const getCurrDir = () =>
-  window.location.href.replace(/(index\.html)?#.*$/, '');
+const getCurrDir = () => {
+  return window.location.href.replace(/(index\.html)?#.*$/, '');
+};
 
 const getMetaProp = function getMetaProp (lang, metadataObj, properties, allowObjects) {
   let prop;
@@ -2675,8 +3303,8 @@ const getMetadata = async (file, property, basePath) => {
   url.pathname = file;
   url.hash = property ? '#/' + property : '';
 
-  return (await JsonRefs
-    .resolveRefsAt(
+  return (await JsonRefs.
+    resolveRefsAt(
       url.toString(),
       {
         loaderOptions: {
@@ -2729,7 +3357,7 @@ class Metadata {
       // If this is a localized field (e.g., enum), we don't want
       //  to avoid as may be translated (should check though)
       const hasFieldValue = localeStrings &&
-                Object.keys(localeStrings).some(lng => {
+                Object.keys(localeStrings).some((lng) => {
                   const fv = localeStrings[lng] &&
                         localeStrings[lng].fieldvalue;
                   return fv && fv[field];
@@ -2737,30 +3365,30 @@ class Metadata {
 
       return hasFieldValue ||
                 (metaLang && preferredLanguages.includes(metaLang)) ||
-                schemaItems.some(item =>
-                  item.title === field && item.type !== 'string'
-                );
+                schemaItems.some((item) => {
+                  return item.title === field && item.type !== 'string';
+                });
     };
   }
 }
 
 const escapePluginComponent = (pluginName) => {
-  return pluginName.replace(/\^/g, '^^') // Escape our escape
-    .replace(/-/g, '^0');
+  return pluginName.replaceAll('^', '^^'). // Escape our escape
+    replaceAll('-', '^0');
 };
 
 const unescapePluginComponent = (pluginName) => {
   if (!pluginName) {
     return pluginName;
   }
-  return pluginName.replace(
+  return pluginName.replaceAll(
     /(\^+)0/g,
     (n0, esc) => {
       return esc.length % 2
         ? esc.slice(1) + '-'
         : n0;
     }
-  ).replace(/\^\^/g, '^');
+  ).replaceAll('^^', '^');
 };
 
 const escapePlugin = ({pluginName, applicableField, targetLanguage}) => {
@@ -2905,9 +3533,9 @@ const getWorkData = async function ({
 
   let fileData;
   const fileGroup = filesObj.groups.find((fg) => {
-    fileData = fg.files.find((file) =>
-      work === workI18n(['workNames', fg.id, file.name])
-    );
+    fileData = fg.files.find((file) => {
+      return work === workI18n(['workNames', fg.id, file.name]);
+    });
     return Boolean(fileData);
   });
     // This is not specific to the work, but we export it anyways
@@ -3016,7 +3644,7 @@ const getWorkData = async function ({
     console.log('pluginsForWork', pluginsForWork);
     const {lang, namespace} = this; // array with first item as preferred
     pluginsForWork.iterateMappings(({
-      plugin,
+      // plugin,
       pluginName, pluginLang,
       onByDefaultDefault,
       placement, applicableFields, meta

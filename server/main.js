@@ -7,7 +7,7 @@ import statik from '@brettz9/node-static';
 import fetch from 'node-fetch';
 import commandLineArgs from 'command-line-args';
 import DOMParser from 'dom-parser';
-import setGlobalVars from 'indexeddbshim/dist/indexeddbshim-UnicodeIdentifiers-node.js';
+import setGlobalVars from 'indexeddbshim/dist/indexeddbshim-UnicodeIdentifiers-node.cjs';
 import {getJSON} from 'simple-get-json';
 import {setFetch} from 'intl-dom';
 
@@ -138,9 +138,11 @@ const srv = http.createServer(async (req, res) => {
         res,
         // For express, we'll first give a chance to other static servers
         //  they might supply
-        userParams.expressServer ? () => {
-          // Empty
-        } : next
+        userParams.expressServer
+          ? () => {
+            // Empty
+          }
+          : next
       );
     };
     if (userParams.expressServer) {

@@ -14,7 +14,7 @@ function _prepareParam (param, skip) {
   }
 
   // start, end, toggle
-  const endNums = /\d+(-\d+)?$/; // eslint-disable-line unicorn/no-unsafe-regex
+  const endNums = /\d+(-\d+)?$/;
   const indexed = param.match(endNums);
   if (indexed) {
     // Todo: We could i18nize numbers as well

@@ -1,4 +1,3 @@
-/* globals console, location, URL */
 // import {escapeHTML} from './sanitize.js';
 import {dialogs} from './dialogs.js';
 
@@ -36,7 +35,8 @@ export const setServiceWorkerDefaults = (target, source) => {
 //    some tabs open)
 
 export const listenForWorkerUpdate = ({
-  r, logger
+  r
+  // logger
 }) => {
   r.addEventListener('updatefound', (e) => {
     // New service worker has appeared
@@ -64,8 +64,7 @@ this dialog now and continue working with the old version.
 However, when you are finished, you should close this tab
 and any other old tabs for this site in order to be able to
 begin using the new version.
-`
-        );
+`);
         break;
       case 'redundant': // discarded. Either failed install, or it's been
         //                replaced by a newer version
@@ -82,8 +81,7 @@ this dialog now and continue working with the old version.
 However, when you are finished, you may wish to close this tab
 and any other old tabs for this site in order to try again
 for offline installation.
-`
-        );
+`);
         break;
         // These shouldn't occur as we are not skipping waiting (?)
       case 'activating':
@@ -105,7 +103,7 @@ export const respondToState = async ({
   // We use this promise for rejecting (inside a listener)
   //    to a common catch and to prevent continuation by
   //    failing to return
-  return new Promise(async (resolve, reject) => { // eslint-disable-line no-async-promise-executor
+  return new Promise(async () => { // eslint-disable-line no-async-promise-executor
     navigator.serviceWorker.addEventListener('message', ({data}) => {
       const {message, type, name, errorType} = data;
       console.log('msg1', message, r);
@@ -186,8 +184,7 @@ export const respondToState = async ({
       await dialogs.alert(`
 There was likely an error installing. Click "ok" to try again.
 (Error code: Service worker is redundant)
-`
-      );
+`);
       location.reload();
       // listenForWorkerUpdate({r, logger});
     } else if (r.installing) {
@@ -203,8 +200,7 @@ you have in them, please close this and any other existing tabs
 running this web application and then open the site again.
 Please note it may take some time to install and may not show
 any indication it is installing.
-`, {ok: false}
-      );
+`, {ok: false});
       // We might just let the user go on without a reload, but
       //   as fetch operations would apparently wait to execute,
       //   it wouldn't be much use, so just reload (to get same

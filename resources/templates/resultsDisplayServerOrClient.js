@@ -1,4 +1,3 @@
-/* globals console, DOMParser */
 import Templates from './index.js';
 
 export default {
@@ -34,7 +33,8 @@ export default {
     return `<span class="interlintitle">${val}</span>${colonSpace}`;
   },
   styles ({
-    $p, $pRaw, $pRawEsc, $pEscArbitrary, escapeQuotedCSS, escapeCSS,
+    $p, $pRaw, $pRawEsc, $pEscArbitrary, // escapeQuotedCSS,
+    escapeCSS,
     tableWithFixedHeaderAndFooter, checkedFieldIndexes, hasCaption
   }) {
     const colorEsc = !$p.has('color', true) || $p.get('color', true) === '#'
@@ -141,8 +141,8 @@ div.inner-caption {
 }
 ${escapeCSS($pEscArbitrary('pagecss') || '')}
 ` +
-            checkedFieldIndexes.map((idx, i) =>
-              ($pRaw('header') === 'y'
+            checkedFieldIndexes.map((idx, i) => {
+              return ($pRaw('header') === 'y'
                 ? (tableWithFixedHeaderAndFooter
                   ? `.thead .th:nth-child(${i + 1}) div.th-inner, `
                   : `.thead .th:nth-child(${i + 1}), `)
@@ -156,14 +156,17 @@ ${escapeCSS($pEscArbitrary('pagecss') || '')}
 `{
     ${$pEscArbitrary('css' + (idx + 1))}
 }
-`).join('') +
+`;
+            }).join('') +
 
-($pEscArbitrary('interlintitle_css') ? `
-/* http://salzerdesign.com/test/fixedTable.html */
-.interlintitle {
-    ${escapeCSS($pEscArbitrary('interlintitle_css'))}
-}
-` : '') +
+($pEscArbitrary('interlintitle_css')
+  ? `
+  /* http://salzerdesign.com/test/fixedTable.html */
+  .interlintitle {
+      ${escapeCSS($pEscArbitrary('interlintitle_css'))}
+  }
+  `
+  : '') +
             (bgcolorEsc
               ? `
 body {
@@ -357,16 +360,18 @@ body {
       }),
       tableWrap([
         addChildren(tableElem, [
-          (caption ? addChildren(captionElem, [
-            caption,
-            tableWithFixedHeaderAndFooter
-              ? ['div', {class: 'zupa1'}, [
-                ['div', {class: 'inner-caption'}, [
-                  ['span', [caption]]
+          (caption
+            ? addChildren(captionElem, [
+              caption,
+              tableWithFixedHeaderAndFooter
+                ? ['div', {class: 'zupa1'}, [
+                  ['div', {class: 'inner-caption'}, [
+                    ['span', [caption]]
+                  ]]
                 ]]
-              ]]
-              : ''
-          ]) : ''),
+                : ''
+            ])
+            : ''),
           /*
                     // Works but quirky, e.g., `color` doesn't work (as also
                     //  confirmed per https://quirksmode.org/css/css2/columns.html)
@@ -376,54 +381,60 @@ body {
                         )
                     ),
                     */
-          ($pRaw('header') !== '0' ? addChildren(theadElem, [
-            addChildren(trElem,
-              checkedFields.map((cf, i) => {
-                const interlinearColIndexes = allInterlinearColIndexes[i];
-                cf = escapeHTML(cf) + (interlinearColIndexes
-                  ? l('comma-space') + interlinearColIndexes.map((idx) =>
-                    localizedFieldNames[idx]
-                  ).join(l('comma-space'))
-                  : ''
-                );
-                return addChildren(thElem, [
-                  cf,
-                  (tableWithFixedHeaderAndFooter
-                    ? ['div', {class: 'zupa1'}, [
-                      ['div', {class: 'th-inner'}, [
-                        ['span', [cf]]
-                      ]]
-                    ]]
+          ($pRaw('header') !== '0'
+            ? addChildren(theadElem, [
+              addChildren(
+                trElem,
+                checkedFields.map((cf, i) => {
+                  const interlinearColIndexes = allInterlinearColIndexes[i];
+                  cf = escapeHTML(cf) + (interlinearColIndexes
+                    ? l('comma-space') + interlinearColIndexes.map((idx) => {
+                      return localizedFieldNames[idx];
+                    }).join(l('comma-space'))
                     : ''
-                  )
-                ]);
-              })
-            )
-          ]) : ''),
-          ($pRaw('footer') && $pRaw('footer') !== '0' ? addChildren(tfootElem, [
-            addChildren(trElem,
-              checkedFields.map((cf, i) => {
-                const interlinearColIndexes = allInterlinearColIndexes[i];
-                cf = escapeHTML(cf) + (interlinearColIndexes
-                  ? l('comma-space') + interlinearColIndexes.map((idx) =>
-                    localizedFieldNames[idx]
-                  ).join(l('comma-space'))
-                  : ''
-                );
-                return addChildren(thElem, [
-                  cf,
-                  (tableWithFixedHeaderAndFooter
-                    ? ['div', {class: 'zupa1'}, [
-                      ['div', {class: 'th-inner'}, [
-                        ['span', [cf]]
+                  );
+                  return addChildren(thElem, [
+                    cf,
+                    (tableWithFixedHeaderAndFooter
+                      ? ['div', {class: 'zupa1'}, [
+                        ['div', {class: 'th-inner'}, [
+                          ['span', [cf]]
+                        ]]
                       ]]
-                    ]]
+                      : ''
+                    )
+                  ]);
+                })
+              )
+            ])
+            : ''),
+          ($pRaw('footer') && $pRaw('footer') !== '0'
+            ? addChildren(tfootElem, [
+              addChildren(
+                trElem,
+                checkedFields.map((cf, i) => {
+                  const interlinearColIndexes = allInterlinearColIndexes[i];
+                  cf = escapeHTML(cf) + (interlinearColIndexes
+                    ? l('comma-space') + interlinearColIndexes.map((idx) => {
+                      return localizedFieldNames[idx];
+                    }).join(l('comma-space'))
                     : ''
-                  )
-                ]);
-              })
-            )
-          ]) : ''),
+                  );
+                  return addChildren(thElem, [
+                    cf,
+                    (tableWithFixedHeaderAndFooter
+                      ? ['div', {class: 'zupa1'}, [
+                        ['div', {class: 'th-inner'}, [
+                          ['span', [cf]]
+                        ]]
+                      ]]
+                      : ''
+                    )
+                  ]);
+                })
+              )
+            ])
+            : ''),
           addChildren(tbodyElem, outArr)
         ])
       ])
