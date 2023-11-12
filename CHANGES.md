@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.48.2
+
+- fix: offline files issue
+
 ## 0.48.1
 
 - fix: add to offline files
