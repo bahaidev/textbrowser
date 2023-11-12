@@ -1,9 +1,0 @@
-html, body {
-    height: 100%;
-}
-.focus {
-    text-align: center;
-}
-input[type="number"] {
-   width: 70px;
-}

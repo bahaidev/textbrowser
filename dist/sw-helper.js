@@ -41,6 +41,10 @@ function swHelper (self) {
       'node_modules/textbrowser-data-schemas/schemas/table.jsonschema', // Not currently using for validation or meta-data
       */
 
+    'node_modules/intl-locale-textinfo-polyfill/lib/polyfill.js',
+    'node_modules/textbrowser/dist/assets/languages-1sAACTKG.json',
+    'node_modules/textbrowser/dist/assets/index-_11XnUty.css',
+
     'node_modules/textbrowser/dist/index-es.js'
   ];
 
