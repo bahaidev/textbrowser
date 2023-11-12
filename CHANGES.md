@@ -1,9 +1,11 @@
 # CHANGES to `textbrowser`
 
-## ?
+## 0.48.1
 
+- fix: add to offline files
+- refactor: drop unused files
+- refactor: use `intl-locale-textinfo-polyfill` over `rtl-detect`
 - chore: update deps., devDeps. and lint
-- chore: use `intl-locale-textinfo-polyfill` over `rtl-detect`
 
 ## 0.48.0
 
