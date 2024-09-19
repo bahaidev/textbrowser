@@ -282,6 +282,7 @@ function swHelper (self) {
   console.log('sw stylesheets', stylesheets);
 
   self.addEventListener('install', (e) => {
+    self.skipWaiting();
     e.waitUntil(tryAndRetry(install, 5 * minutes, 'Error installing'));
   });
 

@@ -1,5 +1,10 @@
 # CHANGES to `textbrowser`
 
+## 0.49.0
+
+- fix: `exports` path
+- fix: attempt to improve behavior in service-worker (use `skipWaiting()`)
+
 ## 0.48.2
 
 - fix: offline files issue
