@@ -1,0 +1,1 @@
+{"version":3,"file":"workSelect.d.ts","sourceRoot":"","sources":["../../resources/workSelect.js"],"names":[],"mappings":"AAOA;;;;;;;;GAQG;AACH,yFARW;IACN,KAAK,EAAE,MAAM,CAAC;IACd,IAAI,EAAE,MAAM,EAAE,CAAC;IACf,iBAAiB,EAAE,MAAM,EAAE,CAAC;IAC5B,EAAE,EAAE,OAAO,gCAAgC,EAAE,OAAO,CAAC;IACrD,YAAY,EAAE,CAAC,YAAY,EAAE,MAAM,EAAE,EAAE,EAAE,MAAM,IAAI,KAAK,IAAI,CAAA;CAC7D,iBAkFH"}

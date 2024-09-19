@@ -17,6 +17,9 @@
     },
     "type": "object",
     "properties": {
+        "baseDirectory": {
+            "type": "string"
+        },
         "schemaBaseDirectory": {
             "type": "string"
         },
@@ -193,6 +196,9 @@
                     "id": {"type": "string"},
                     "name": {"$ref": "#/definitions/localeKey"},
                     "directions": {"$ref": "#/definitions/localeKey"},
+                    "baseDirectory": {
+                        "type": "string"
+                    },
                     "schemaBaseDirectory": {
                         "type": "string"
                     },

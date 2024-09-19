@@ -1,6 +1,9 @@
 import {getJSON} from 'simple-get-json';
 import {i18n} from 'intl-dom';
 import loadStylesheets from 'load-stylesheets';
+
+// Todo
+// @ts-expect-error -- No types
 import {serialize as formSerialize} from 'form-serialization';
 
 import getLocaleFallbackResults from './utils/getLocaleFallbackResults.js';
@@ -21,7 +24,16 @@ import workDisplay from './workDisplay.js';
 import {resultsDisplayClient} from './resultsDisplay.js';
 
 /**
- *
+ * @typedef {{
+ *     'localization-strings': {
+ *       [locale: string]: {
+ *         [key: string]: string
+ *       }
+ *     }
+ *   }} SiteData
+ */
+/**
+ * @this {TextBrowser}
  * @returns {Promise<void>}
  */
 async function prepareForServiceWorker () {
@@ -48,32 +60,34 @@ async function prepareForServiceWorker () {
   } catch (err) {
     console.log('err', err);
     if (err && typeof err === 'object') {
-      const {errorType} = err;
-      if (errorType === 'versionChange') {
+      if ('errorType' in err && err.errorType === 'versionChange') {
         Templates.permissions.versionChange();
         return;
       }
     }
     Templates.permissions.errorRegistering(
-      escapeHTML(err && err.message)
+      escapeHTML(/** @type {Error} */ (err)?.message)
     );
   }
 }
 
 /**
-* @typedef {PlainObject} Langs
+* @typedef {object} Langs
 * @property {string} code
 * @property {string} direction
-* @property {PlainObject} locale
+* @property {object} locale
 */
 
 /**
- *
- * @param {Langs} langs
- * @param {Logger} l
+ * @this {TextBrowser}
+ * @param {import('../server/main.js').LanguageInfo[]} _langs
+ * @param {import('intl-dom').I18NCallback} siteI18n
  * @returns {Promise<void>}
  */
-async function requestPermissions (langs, l) {
+async function requestPermissions (
+  _langs,
+  siteI18n
+) {
   return await new Promise((resolve) => {
     // Todo: We could run the dialog code below for every page if
     //    `Notification.permission === 'default'` (i.e., not choice
@@ -97,7 +111,7 @@ async function requestPermissions (langs, l) {
        *
        * @returns {void}
        */
-      function rememberRefusal () {
+      const rememberRefusal = () => {
         // Todo: We could go forward with worker, caching files, and
         //    indexedDB regardless of permissions, but this way
         //    we can continue to gauge performance differences for now
@@ -105,13 +119,14 @@ async function requestPermissions (langs, l) {
           this.namespace + '-refused',
           'true'
         );
-      }
+      };
       try {
         if (!requestPermissionsDialog.returnValue) {
           rememberRefusal();
           return;
         }
-      } catch (err) {
+      } catch (error) {
+        const err = /** @type {Error} */ (error);
         console.log('err', err);
         Templates.permissions.errorRegistering(
           escapeHTML(err && err.message)
@@ -144,15 +159,46 @@ async function requestPermissions (langs, l) {
         break;
       }
     };
-    const [, requestPermissionsDialog, browserNotGrantingPersistenceAlert] = // , errorRegisteringNotice
-            Templates.permissions.main({
-              l, ok, refuse, close, closeBrowserNotGranting
-            });
+    const permissionsInfo = // , errorRegisteringNotice
+      Templates.permissions.main({
+        siteI18n,
+        ok, refuse, close, closeBrowserNotGranting
+      });
+
+    const requestPermissionsDialog = /** @type {HTMLDialogElement} */ (permissionsInfo[1]);
+    const browserNotGrantingPersistenceAlert = /** @type {HTMLDialogElement} */ (
+      permissionsInfo[2]
+    );
     requestPermissionsDialog.showModal();
   });
 }
 
+/**
+ * @typedef {import('./utils/ServiceWorker.js').ServiceWorkerConfig} ServiceWorkerConfig
+ */
+
+/**
+ * @implements {ServiceWorkerConfig}
+ */
 class TextBrowser {
+  /**
+   * @param {ServiceWorkerConfig & {
+   *   site?: string,
+   *   stylesheets?: string[],
+   *   allowPlugins?: boolean,
+   *   dynamicBasePath?: string,
+   *   trustFormatHTML?: boolean,
+   *   requestPersistentStorage?: boolean,
+   *   localizeParamNames?: boolean,
+   *   hideFormattingSection?: boolean,
+   *   preferencesPlugin?: import('./templates/workDisplay.js').PreferencesPlugin,
+   *   interlinearSeparator?: string,
+   *   showEmptyInterlinear?: boolean,
+   *   showTitleOnSingleInterlinear?: boolean,
+   *   noDynamic?: boolean,
+   *   skipIndexedDB?: boolean
+   * }} options
+   */
   constructor (options) {
     this.site = options.site || 'site.json';
     const stylesheets = options.stylesheets || ['@builtin'];
@@ -166,6 +212,24 @@ class TextBrowser {
     }
     this.stylesheets = stylesheets;
 
+    // Satisfy TS
+
+    /** @type {SiteData} */
+    this.siteData = {
+      'localization-strings': {}
+    };
+    /** @type {import('../server/main.js').LanguagesData} */
+    this.langData = {
+      languages: [],
+      'localization-strings': {}
+    };
+    /** @type {string[]} */
+    this.lang = [];
+    this.userJSON = '';
+    this.languages = '';
+    this.serviceWorkerPath = '';
+    this.files = '';
+    this.namespace = '';
     setServiceWorkerDefaults(this, options);
 
     this.allowPlugins = options.allowPlugins;
@@ -191,9 +255,17 @@ class TextBrowser {
 
     // We use getJSON instead of JsonRefs as we do not need to resolve the locales here
     try {
-      const [langData, siteData] = await getJSON([this.languages, this.site]);
-      this.langData = langData;
-      this.siteData = siteData;
+      const data =
+        /**
+         * @type {[
+         *   import('../server/main.js').LanguagesData,
+         *   SiteData
+         * ]}
+         */ (
+          await getJSON([this.languages, this.site])
+        );
+      this.langData = data[0];
+      this.siteData = data[1];
 
       const p = this.paramChange();
 
@@ -203,12 +275,25 @@ class TextBrowser {
       window.addEventListener('hashchange', () => this.paramChange());
 
       return p;
-    } catch (err) {
+    } catch (error) {
+      const err = /** @type {Error} */ (error);
       console.log('err', err);
       dialogs.alert(err);
     }
   }
 
+  /**
+   * @template T
+   * @template {keyof T} K
+   * @typedef {Omit<T, K> & Partial<T>} PartialBy
+   */
+
+  /**
+   * @param {PartialBy<
+   *   import('./utils/WorkInfo.js').GetWorkDataOptions,
+   *   "files"|"basePath"|"allowPlugins"
+   * >} opts
+   */
   getWorkData (opts) {
     try {
       return getWorkData.call(this, {
@@ -225,6 +310,10 @@ class TextBrowser {
   // Need for directionality even if language specified (and we don't want
   //   to require it as a param)
   // Todo: Use intl-locale-textinfo-polyfill (already included)
+
+  /**
+   * @param {string} code
+   */
   getDirectionForLanguageCode (code) {
     const langs = this.langData.languages;
     const exactMatch = langs.find((lang) => {
@@ -236,10 +325,17 @@ class TextBrowser {
             });
   }
 
+  /**
+   * @param {import('./utils/Metadata.js').GetFieldNameAndValueAliasesOptions} args
+   */
   getFieldNameAndValueAliases (args) {
     return getFieldNameAndValueAliases({...args, lang: this.lang});
   }
 
+  /**
+   * @param {Omit<import('./utils/Metadata.js').GetBrowseFieldDataOptions, "lang">} args
+   * @returns {void}
+   */
   getBrowseFieldData (args) {
     return getBrowseFieldData({...args, lang: this.lang});
   }
@@ -252,6 +348,10 @@ class TextBrowser {
       ? new IntlURLSearchParams({params: history.state})
       : new IntlURLSearchParams(); // Uses URL hash for params
 
+    /**
+     * @param {string} formSelector
+     * @param {() => void} cb
+     */
     const followParams = (formSelector, cb) => {
       const form = document.querySelector(formSelector);
       // Record current URL along with state
@@ -274,24 +374,28 @@ class TextBrowser {
     const [preferredLocale] = lang;
     const direction = this.getDirectionForLanguageCode(preferredLocale);
     document.documentElement.lang = preferredLocale;
-    document.dir = direction;
+    document.dir = /** @type {string} */ (direction);
 
     const localizationStrings = this.siteData['localization-strings'];
     const siteI18n = await i18n({
       messageStyle: 'plainNested',
       locales: lang,
       defaultLocales: fallbackLanguages,
-      localeStringFinder ({
+      async localeStringFinder ({
         locales, defaultLocales
-      }) {
-        const locale = [...locales, ...defaultLocales].find((language) => {
+      } = {}) {
+        const locale = [
+          ...(/** @type {string[]} */ (locales)),
+          ...(/** @type {string[]} */ (defaultLocales))
+        ].find((language) => {
           return language in localizationStrings;
         });
         return {
-          locale,
+          // eslint-disable-next-line object-shorthand -- TS
+          locale: /** @type {string} */ (locale),
           strings: {
             head: {},
-            body: localizationStrings[locale]
+            body: localizationStrings[/** @type {string} */ (locale)]
           }
         };
       }
@@ -299,14 +403,14 @@ class TextBrowser {
 
     // Even if individual pages may end up changing, we need a
     //   title now for accessibility
-    document.title = siteI18n('browser-title');
+    document.title = /** @type {string} */ (siteI18n('browser-title'));
 
     const refusedIndexedDB =
             // User may have persistence via bookmarks, etc. but just not
             //     want commital on notification
             // Notification.permission === 'default' ||
             // We always expect a controller, so is probably first visit
-            localStorage.getItem(this.namespace + '-refused');
+            localStorage.getItem(this.namespace + '-refused') === 'true';
 
     // This check goes further than `Notification.permission === 'granted'`
     //   to see whether the browser actually considers the notification
@@ -395,8 +499,9 @@ class TextBrowser {
       const respondToStateOfWorker = async () => {
         try {
           return respondToState({
-            r, langs,
-            languages: this.languages,
+            r,
+            // langs,
+            // languages: this.languages,
             logger: Templates.permissions
           });
         } catch (err) {
@@ -426,13 +531,13 @@ class TextBrowser {
         // We don't await the fulfillment of this promise
         respondToStateOfWorker();
         listenForWorkerUpdate({
-          r,
-          logger: {
-            addLogEntry (s) {
-              // We don't put the log in the page as user using
-              console.log(s);
-            }
-          }
+          r
+          // logger: {
+          //   addLogEntry (s) {
+          //     // We don't put the log in the page as user using
+          //     console.log(s);
+          //   }
+          // }
         });
         // Don't return as user may continue working until installed (though
         //    will get message to close tab)
@@ -456,7 +561,13 @@ class TextBrowser {
     Please wait for a short while as we work to update to a new version.
     `);
         respondToStateOfWorker();
-        navigator.serviceWorker.onmessage({data: 'finishActivate'});
+        /**
+         * @type {(
+         *   this: ServiceWorkerContainer,
+         *   ev: {data: string}
+         * ) => any}
+         */
+        (navigator.serviceWorker.onmessage)({data: 'finishActivate'});
         // finishActivate({r, logger, namespace, files});
         return;
       case 'activated':
@@ -468,13 +579,13 @@ class TextBrowser {
         // May need to pass in arguments if new service worker appears and
         //    it needs arguments for update
         listenForWorkerUpdate({
-          r,
-          logger: {
-            addLogEntry (s) {
-              // We don't put the log in the page as user using
-              console.log(s);
-            }
-          }
+          r
+          // logger: {
+          //   addLogEntry (s) {
+          //     // We don't put the log in the page as user using
+          //     console.log(s);
+          //   }
+          // }
         });
         break;
       case 'redundant':
@@ -497,7 +608,7 @@ class TextBrowser {
       // Also could use siteI18n('chooselanguage'), but assumes locale
       //   as with page title
       // $p.l10n = siteI18n; // Is this in use? No `params`, so not currently
-      document.title = siteI18n('languages-title');
+      document.title = /** @type {string} */ (siteI18n('languages-title'));
       Templates.languageSelect.main({
         langs, languages, followParams, $p
       });
@@ -531,8 +642,9 @@ class TextBrowser {
           lang, preferredLocale,
           fallbackLanguages,
           languageParam,
-          $p, languages,
-          preferencesPlugin: this.preferencesPlugin
+          $p,
+          languages
+          // preferencesPlugin: this.preferencesPlugin
         });
         return true;
       }

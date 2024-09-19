@@ -10,6 +10,67 @@ import {
 import {Languages} from './utils/Languages.js';
 import {getWorkData} from './utils/WorkInfo.js';
 
+/**
+ * @callback GetCanonicalID
+ * @param {{
+ *   tr: (string|Integer)[]
+ * }} cfg
+ * @returns {string}
+ */
+/**
+ * @callback DetermineEnd
+ * @param {{
+ *   tr: (string|Integer)[]
+ *   foundState: {
+ *     start: boolean,
+ *     end: boolean
+ *   }
+ * }} cfg
+ * @returns {string|boolean}
+ */
+
+/**
+ * @typedef {import('./utils/Plugin.js').PluginObject} Plugin
+ */
+
+/**
+ * @typedef {{
+ *   field?: string,
+ *   fieldAliasOrName: string|string[]|import('../server/main.js').LocalizationStrings,
+ *   escapeColumn: boolean,
+ *   fieldLang: string,
+ *   plugin?: Plugin,
+ *   applicableField?: string,
+ *   meta?: {[key: string]: string},
+ *   j?: number,
+ *   placement?: number
+ *   metaApplicableField?: {
+ *     [key: string]: string
+ *   },
+ *   onByDefault?: boolean
+ * }[]} FieldInfo
+ */
+
+/**
+ * @typedef {import('./utils/Metadata.js').FieldValueAliases} FieldValueAliases
+ */
+/**
+ * @typedef {any} AnyValue
+ */
+/**
+ * @param {AnyValue} val
+ * @returns {val is null | undefined}
+ */
+const isNullish = (val) => {
+  return val === null || val === undefined;
+};
+
+/**
+ * @typedef {number} Integer
+ */
+/**
+ * @param {string} locale
+ */
 const getLangDir = (locale) => {
   const {direction} = new Locale(locale).textInfo;
   return direction;
@@ -17,12 +78,25 @@ const getLangDir = (locale) => {
 
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 
+/**
+ * @param {string} v
+ */
 const getRawFieldValue = (v) => {
   return typeof v === 'string'
     ? v.replace(fieldValueAliasRegex, '$1')
     : v;
 };
 
+/**
+ * @param {{
+ *   applicableBrowseFieldSet: import('./utils/Metadata.js').BrowseFields,
+ *   fieldValueAliasMapPreferred: (FieldValueAliases|null|undefined)[],
+ *   lParamRaw: (key: string, suffix?: string) => string,
+ *   lIndexedParam: (key: string) => string,
+ *   max: number,
+ *   $p: import('./utils/IntlURLSearchParams.js').default
+ * }} cfg
+ */
 const setAnchor = ({
   applicableBrowseFieldSet,
   fieldValueAliasMapPreferred, lParamRaw, lIndexedParam, max, $p
@@ -40,6 +114,8 @@ const setAnchor = ({
   }
   if (!anchor) {
     const anchors = [];
+
+    /** @type {string|null} */
     let anchorField = '';
     // eslint-disable-next-line sonarjs/misplaced-loop-counter -- Ok
     for (let i = 1, breakout; !breakout && !anchors.length; i++) {
@@ -65,6 +141,9 @@ const setAnchor = ({
       }
     }
     if (anchors.length) {
+      /**
+       * @param {string} str
+       */
       const escapeSelectorAttValue = (str) => (str || '').replaceAll(
         /["\\]/g, String.raw`\$&`
       );
@@ -82,10 +161,17 @@ const setAnchor = ({
   }
 };
 
+/**
+ * @this {import('./index.js').default}
+ * @param {Omit<ResultsDisplayServerOrClientArg, "skipIndexedDB"|"prefI18n">} args
+ */
 export const resultsDisplayClient = async function resultsDisplayClient (args) {
   const persistent = await navigator.storage.persisted();
-  const skipIndexedDB = this.skipIndexedDB || !persistent || !navigator.serviceWorker.controller;
-  const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
+  const skipIndexedDB = this.skipIndexedDB || !persistent ||
+    !navigator.serviceWorker.controller;
+  const prefI18n = /** @type {"true"|"false"|null} */ (
+    localStorage.getItem(this.namespace + '-localizeParamNames')
+  );
 
   const {
     fieldInfo, $p,
@@ -97,14 +183,14 @@ export const resultsDisplayClient = async function resultsDisplayClient (args) {
   } = await resultsDisplayServerOrClient.call(this, {
     ...args, skipIndexedDB, prefI18n
   });
-  document.title = workI18n(
+  document.title = /** @type {string} */ (workI18n(
     'browserfile-resultsdisplay',
     {
       work: fileData
-        ? getMetaProp(lang, metadataObj, 'alias')
+        ? /** @type {string} */ (getMetaProp(lang, metadataObj, 'alias'))
         : ''
     }
-  );
+  ));
   Templates.resultsDisplayClient.main(templateArgs);
   setAnchor({
     applicableBrowseFieldSet,
@@ -123,9 +209,12 @@ export const resultsDisplayClient = async function resultsDisplayClient (args) {
 };
 
 /**
+ * @this {import('../server/main.js').ResultsDisplayServerContext}
  * This is server-only code, but kept here as the function is similar.
- * @param {{serverOutput: "jamilih"|"html"|"json"}} args
- * @returns {Promise<Array|string>}
+ * @param {ResultsDisplayServerOrClientArg & {
+ *   serverOutput?: "jamilih"|"html"|"json"|null
+ * }} args
+ * @returns {Promise<import('jamilih').JamilihArray|string|(string | number)[][]>}
  */
 export const resultsDisplayServer = async function resultsDisplayServer (args) {
   const {
@@ -149,17 +238,61 @@ export const resultsDisplayServer = async function resultsDisplayServer (args) {
   }
 };
 
+/**
+ * @typedef {(info: {
+ *   tr: (string|Integer)[],
+ *   idx: number,
+ * }) => {
+ *   tdVal: string|Integer,
+ *   htmlEscaped: boolean
+ * }|{
+ *   tdVal: string|Integer,
+ *   htmlEscaped?: undefined
+ * }} GetCellValue
+ */
+
+/**
+ * @todo For `locales`, should export `LocaleObject` from intl-dom
+ * @typedef {{
+ *   l: import('intl-dom').I18NCallback,
+ *   lang: string[],
+ *   fallbackLanguages: string[]|undefined,
+ *   locales: {head?: any, body: any},
+ *   $p: import('./utils/IntlURLSearchParams.js').default,
+ *   skipIndexedDB: boolean,
+ *   noIndexedDB?: boolean,
+ *   prefI18n: "true"|"false"|null,
+ *   files?: string,
+ *   allowPlugins?: boolean,
+ *   langData: import('../server/main.js').LanguagesData,
+ *   basePath: string,
+ *   dynamicBasePath?: string
+ * }} ResultsDisplayServerOrClientArg
+ */
+
+/**
+ * @this {import('../server/main.js').ResultsDisplayServerContext|import('./index.js').default}
+ * @param {ResultsDisplayServerOrClientArg} cfg
+ */
 export const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient ({
   l, lang, fallbackLanguages, locales, $p, skipIndexedDB, noIndexedDB, prefI18n,
   files, allowPlugins, langData, basePath = '', dynamicBasePath = ''
 }) {
   const languages = new Languages({langData});
+
+  /**
+   * @param {{
+   *   fieldValueAliasMapPreferred: (FieldValueAliases|null|undefined)[],
+   *   escapeColumnIndexes: boolean[]
+   * }} cfg
+   * @returns {GetCellValue}
+   */
   const getCellValue = ({
     fieldValueAliasMapPreferred, escapeColumnIndexes
   }) => ({
     tr, idx
   }) => {
-    let tdVal = (fieldValueAliasMapPreferred[idx] !== undefined
+    let tdVal = (!isNullish(fieldValueAliasMapPreferred[idx])
       ? fieldValueAliasMapPreferred[idx][tr[idx]]
       : tr[idx]
     );
@@ -167,90 +300,130 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       tdVal = Object.values(tdVal);
     }
     if (Array.isArray(tdVal)) {
-      tdVal = tdVal.join(l('comma-space'));
+      tdVal = tdVal.join(/** @type {string} */ (l('comma-space')));
     }
     return ((escapeColumnIndexes[idx] || !this.trustFormatHTML) &&
             typeof tdVal === 'string')
       ? {tdVal: escapeHTML(tdVal), htmlEscaped: true}
       : {tdVal};
   };
+
+  /**
+   * @param {{
+   *   fieldValueAliasMap: (FieldValueAliases|null|undefined)[],
+   *   fieldValueAliasMapPreferred: (FieldValueAliases|null|undefined)[],
+   *   localizedFieldNames: (string | string[]|import('../server/main.js').LocalizationStrings)[],
+   *   canonicalBrowseFieldNames: string[]
+   * }} cfg
+   */
   const getCanonicalID = ({
     fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,
     canonicalBrowseFieldNames
-  }) => ({
-    tr // , foundState
-  }) => {
-    return canonicalBrowseFieldNames.map((fieldName) => {
-      const idx = localizedFieldNames.indexOf(fieldName);
-      // This works to put alias in anchor but this includes
-      //   our ending parenthetical, the alias may be harder
-      //   to remember and/or automated than original (e.g.,
-      //   for a number representing a book); we may wish to
-      //   switch this (and also for other browse field-based
-      //   items).
-      if (
-        fieldValueAliasMap[idx] !== undefined &&
-        // Added this condition after imf->intl-dom conversion; concealing a
-        //   bug?
-        fieldValueAliasMap[idx] !== null
-      ) {
-        return fieldValueAliasMapPreferred[idx][tr[idx]];
-      }
-      return tr[idx];
-    }).join('-'); // rowID;
-  };
+  }) =>
+    /** @type {GetCanonicalID} */
+    // eslint-disable-next-line @stylistic/implicit-arrow-linebreak -- Ok
+    ({
+      tr // , foundState
+    }) => {
+      return canonicalBrowseFieldNames.map((fieldName) => {
+        const idx = localizedFieldNames.indexOf(fieldName);
+        // This works to put alias in anchor but this includes
+        //   our ending parenthetical, the alias may be harder
+        //   to remember and/or automated than original (e.g.,
+        //   for a number representing a book); we may wish to
+        //   switch this (and also for other browse field-based
+        //   items).
+        if (
+          fieldValueAliasMap[idx] !== undefined &&
+          // Added this condition after imf->intl-dom conversion; concealing a
+          //   bug?
+          fieldValueAliasMap[idx] !== null
+        ) {
+          return /** @type {FieldValueAliases} */ (
+            fieldValueAliasMapPreferred[idx]
+          )[tr[idx]];
+        }
+        return tr[idx];
+      }).join('-'); // rowID;
+    };
+
+  /**
+   * @param {{
+   *   fieldValueAliasMap: (FieldValueAliases|null|undefined)[],
+   *   fieldValueAliasMapPreferred: (FieldValueAliases|null|undefined)[],
+   *   localizedFieldNames: (string|string[]|import('../server/main.js').LocalizationStrings)[],
+   *   applicableBrowseFieldNames: string[],
+   *   startsRaw: (string|Integer)[],
+   *   endsRaw: (string|Integer)[]
+   * }} cfg
+   */
   const determineEnd = ({
     fieldValueAliasMap, fieldValueAliasMapPreferred, localizedFieldNames,
     applicableBrowseFieldNames, startsRaw, endsRaw
-  }) => ({
-    tr, foundState
-  }) => {
-    const rowIDPartsPreferred = [];
-    const rowIDParts = applicableBrowseFieldNames.map((fieldName) => {
-      const idx = localizedFieldNames.indexOf(fieldName);
-      // This works to put alias in anchor but this includes
-      //   our ending parenthetical, the alias may be harder
-      //   to remember and/or automated than original (e.g.,
-      //   for a number representing a book), and there could
-      //   be multiple aliases for a value; we may wish to
-      //   switch this (and also for other browse field-based
-      //   items).
-      if (
-        fieldValueAliasMap[idx] !== undefined &&
-        // Added this condition after imf->intl-dom conversion; concealing a
-        //   bug?
-        fieldValueAliasMap[idx] !== null
-      ) {
-        rowIDPartsPreferred.push(fieldValueAliasMapPreferred[idx][tr[idx]]);
-      } else {
-        rowIDPartsPreferred.push(tr[idx]);
-      }
-      return tr[idx];
-    });
+  }) =>
+    /** @type {DetermineEnd} */
+    // eslint-disable-next-line @stylistic/implicit-arrow-linebreak -- Ok
+    ({
+      tr, foundState
+    }) => {
+      const rowIDPartsPreferred = /** @type {(string|Integer)[]} */ ([]);
+      const rowIDParts = applicableBrowseFieldNames.map((fieldName) => {
+        const idx = localizedFieldNames.indexOf(fieldName);
+        // This works to put alias in anchor but this includes
+        //   our ending parenthetical, the alias may be harder
+        //   to remember and/or automated than original (e.g.,
+        //   for a number representing a book), and there could
+        //   be multiple aliases for a value; we may wish to
+        //   switch this (and also for other browse field-based
+        //   items).
+        if (
+          fieldValueAliasMap[idx] !== undefined &&
+          // Added this condition after imf->intl-dom conversion; concealing a
+          //   bug?
+          fieldValueAliasMap[idx] !== null
+        ) {
+          rowIDPartsPreferred.push(
+            /** @type {string|Integer} */
+            (fieldValueAliasMapPreferred[idx]?.[tr[idx]])
+          );
+        } else {
+          rowIDPartsPreferred.push(tr[idx]);
+        }
+        return tr[idx];
+      });
 
-    // Todo: Use schema to determine field type and use `Number.parseInt`
-    //   on other value instead of `String` conversions
-    if (!foundState.start) {
-      if (startsRaw.some((part, i) => {
-        const rowIDPart = rowIDParts[i];
-        return part !== rowIDPart;
-      })) {
-        // Trigger skip of this row
-        return false;
+      // Todo: Use schema to determine field type and use `Number.parseInt`
+      //   on other value instead of `String` conversions
+      if (!foundState.start) {
+        if (startsRaw.some((part, i) => {
+          const rowIDPart = rowIDParts[i];
+          return part !== rowIDPart;
+        })) {
+          // Trigger skip of this row
+          return false;
+        }
+        foundState.start = true;
       }
-      foundState.start = true;
-    }
-    // This doesn't go in an `else` for the above in case the start is the end
-    if (endsRaw.every((part, i) => {
-      const rowIDPart = rowIDParts[i];
-      return part === rowIDPart;
-    })) {
-      foundState.end = true;
-    } else if (foundState.end) { // If no longer matching, trigger end of the table
-      return true;
-    }
-    return rowIDPartsPreferred.join('-'); // rowID;
-  };
+      // This doesn't go in an `else` for the above in case the start is the end
+      if (endsRaw.every((part, i) => {
+        const rowIDPart = rowIDParts[i];
+        return part === rowIDPart;
+      })) {
+        foundState.end = true;
+      } else if (foundState.end) { // If no longer matching, trigger end of the table
+        return true;
+      }
+      return rowIDPartsPreferred.join('-'); // rowID;
+    };
+
+  /**
+   * @param {{
+   *   localizedFieldNames: (
+   *     string|string[]|import('../server/main.js').LocalizationStrings
+   *   )[],
+   * }} cfg
+   * @returns {[string[], number[], ("" | number[] | null)[]]}
+   */
   const getCheckedAndInterlinearFieldInfo = ({
     localizedFieldNames
   }) => {
@@ -279,35 +452,46 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     });
     return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
   };
+
+  /**
+   * @param {{
+   *   starts: string[],
+   *   ends: string[],
+   *   applicableBrowseFieldNames: string[],
+   *   heading: string
+   * }} cfg
+   * @returns {[boolean, string|undefined]}
+   */
   const getCaption = ({starts, ends, applicableBrowseFieldNames, heading}) => {
     let caption;
     const hasCaption = $pRaw('caption') !== '0';
     if (hasCaption) {
       /*
-            // Works but displays in parentheses browse fields which
-            //  may be non-applicable
-            const buildRangePoint = (startOrEnd) => escapeHTML(
-                browseFieldSets.reduce((txt, bfs, i) =>
-                    (txt ? txt + ' (' : '') + bfs.map((bf, j) =>
-                        (j > 0 ? l('comma-space') : '') + bf + ' ' +
-                            $pRaw(startOrEnd + (i + 1) + '-' + (j + 1))
-                    ).join('') + (txt ? ')' : ''), '')
-            );
-            */
-      /*
-            // Works but overly long
-            const buildRangePoint = (startOrEnd) => escapeHTML(
-                applicableBrowseFieldSet.map((bf, j) =>
+        // Works but displays in parentheses browse fields which
+        //  may be non-applicable
+        const buildRangePoint = (startOrEnd) => escapeHTML(
+            browseFieldSets.reduce((txt, bfs, i) =>
+                (txt ? txt + ' (' : '') + bfs.map((bf, j) =>
                     (j > 0 ? l('comma-space') : '') + bf + ' ' +
-                        $pRaw(startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1))
-                ).join('')
-            );
-            */
+                        $pRaw(startOrEnd + (i + 1) + '-' + (j + 1))
+                ).join('') + (txt ? ')' : ''), '')
+        );
+      */
+      /*
+        // Works but overly long
+        const buildRangePoint = (startOrEnd) => escapeHTML(
+            applicableBrowseFieldSet.map((bf, j) =>
+                (j > 0 ? l('comma-space') : '') + bf + ' ' +
+                    $pRaw(startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1))
+            ).join('')
+        );
+      */
       const startSep = Templates.resultsDisplayServerOrClient.startSeparator({l});
       const innerBrowseFieldSeparator = Templates.resultsDisplayServerOrClient.
         innerBrowseFieldSeparator({l});
 
       const buildRanges = () => {
+        /** @type {string[]} */
         const endVals = [];
         const startRange = starts.reduce((str, startFieldValue, i) => {
           const ret = str + startFieldValue;
@@ -332,11 +516,20 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     }
     return [hasCaption, caption];
   };
+
+  /**
+   * @param {{
+   *   presort: boolean|undefined,
+   *   tableData: (string|Integer)[][],
+   *   applicableBrowseFieldNames: string[],
+   *   localizedFieldNames: (string|string[]|import('../server/main.js').LocalizationStrings)[]
+   * }} cfg
+   */
   const runPresort = ({presort, tableData, applicableBrowseFieldNames, localizedFieldNames}) => {
     // Todo: Ought to be checking against an aliased table
     if (presort) {
       tableData.sort((rowA, rowB) => {
-        let precedence;
+        let precedence = 0;
         applicableBrowseFieldNames.some((fieldName) => {
           const idx = localizedFieldNames.indexOf(fieldName);
           const rowAFirst = rowA[idx] < rowB[idx];
@@ -348,6 +541,18 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       });
     }
   };
+
+  /**
+   * @param {{
+   *   schemaItems: {title: string, type: string}[],
+   *   fieldInfo: FieldInfo,
+   *   metadataObj: import('./utils/Metadata.js').MetadataObj,
+   *   getFieldAliasOrName: (
+   *     field: string
+   *   ) => string|string[]|import('../server/main.js').LocalizationStrings,
+   *   usePreferAlias: boolean
+   * }} cfg
+   */
   const getFieldValueAliasMap = ({
     schemaItems, fieldInfo, metadataObj, getFieldAliasOrName, usePreferAlias
   }) => {
@@ -356,7 +561,9 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         return undefined;
       }
       const {preferAlias, fieldValueAliasMap} = getFieldNameAndValueAliases({
-        field, schemaItems, metadataObj, getFieldAliasOrName, lang
+        // eslint-disable-next-line object-shorthand -- TS
+        field: /** @type {string} */ (field),
+        schemaItems, metadataObj, getFieldAliasOrName, lang
       });
       if (!usePreferAlias) {
         return preferAlias !== false ? fieldValueAliasMap : undefined;
@@ -372,36 +579,49 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
           if (val && typeof val === 'object') {
             if (typeof preferAlias === 'string') {
               fieldValueAliasMap[key] =
-                                Templates.resultsDisplayServerOrClient.fieldValueAlias({
-                                  key, value: val[preferAlias]
-                                });
+                Templates.resultsDisplayServerOrClient.fieldValueAlias({
+                  key, value: val[preferAlias]
+                });
             } else {
               Object.entries(val).forEach(([k, value]) => {
-                fieldValueAliasMap[key][k] =
-                                    Templates.resultsDisplayServerOrClient.fieldValueAlias({
-                                      key, value
-                                    });
+                /** @type {{[key: string]: string|number}} */
+                (fieldValueAliasMap[key])[k] =
+                  Templates.resultsDisplayServerOrClient.fieldValueAlias({
+                    key, value
+                  });
               });
             }
             return;
           }
           fieldValueAliasMap[key] =
-                        Templates.resultsDisplayServerOrClient.fieldValueAlias({key, value: val});
+            Templates.resultsDisplayServerOrClient.fieldValueAlias({key, value: val});
         });
         return preferAlias !== false ? fieldValueAliasMap : undefined;
       }
       return undefined;
     });
   };
+
+  /**
+   * @param {string} param
+   * @param {boolean} [avoidLog]
+   */
   const $pRaw = (param, avoidLog) => {
     // Todo: Should work with i18n=true (if names i18nized, need reverse look-up)
+
+    /** @type {string} */
     let key;
     const p = $p.get(param, true);
     /**
-         *
-         * @param {GenericArray|PlainObject} locale
-         * @returns {boolean}
-         */
+     * @typedef {{
+     *   [key: string]: string|LocaleObj
+     * }} LocaleObj
+     */
+    /**
+     *
+     * @param {LocaleObj[]|LocaleObj} locale
+     * @returns {boolean}
+     */
     function reverseLocaleLookup (locale) {
       if (Array.isArray(locale)) {
         return locale.some(reverseLocaleLookup);
@@ -419,17 +639,33 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       });
     }
     reverseLocaleLookup(locales);
+    // @ts-expect-error TS defect
     if (!key && !avoidLog) {
       console.log('Bad param/value', param, '::', p);
     }
+    // @ts-expect-error TS defect
     return key; // || p; // $p.get(param, true);
   };
 
   const escapeCSS = escapeHTML;
+
+  /**
+   * @param {string} param
+   */
   const $pRawEsc = (param) => escapeHTML($pRaw(param));
-  const $pEscArbitrary = (param) => escapeHTML($p.get(param, true));
+  /**
+   * @param {string} param
+   */
+  const $pEscArbitrary = (param) => escapeHTML(
+    /** @type {string} */
+    ($p.get(param, true))
+  );
 
   // Not currently in use
+
+  /**
+   * @param {string} s
+   */
   const escapeQuotedCSS = (s) => s.replaceAll('\\', '\\\\').replaceAll(
     '"', String.raw`\"`
   );
@@ -437,6 +673,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
   const {
     fileData, workI18n, getFieldAliasOrName, schemaObj, metadataObj,
     pluginsForWork
+    // @ts-expect-error Not using `this` given no `languages` arg is passed
   } = await getWorkData({
     files: files || this.files,
     allowPlugins: typeof allowPlugins === 'boolean' ? allowPlugins : this.allowPlugins,
@@ -446,11 +683,15 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
   });
   console.log('pluginsForWork', pluginsForWork);
 
-  const heading = getMetaProp(lang, metadataObj, 'heading');
+  const heading = /** @type {string} */ (getMetaProp(lang, metadataObj, 'heading'));
   const schemaItems = schemaObj.items.items;
 
+  /** @type {string[]} */
   const setNames = [];
+  /** @type {(boolean|undefined)[]} */
   const presorts = [];
+
+  /** @type {import('./utils/Metadata.js').BrowseFields[]} */
   const browseFieldSets = [];
   getBrowseFieldData({
     metadataObj, schemaItems, getFieldAliasOrName, lang,
@@ -461,6 +702,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     }
   });
 
+  /** @type {FieldInfo} */
   const fieldInfo = schemaItems.map(({title: field, format}) => {
     return {
       field,
@@ -484,12 +726,26 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       placement = placement === 'end'
         ? Number.POSITIVE_INFINITY // push
         : placement;
+
+      /**
+       * @param {{
+       *   applicableField?: string,
+       *   targetLanguage?: string,
+       *   onByDefault?: boolean,
+       *   metaApplicableField?: {
+       *     [key: string]: string
+       *   },
+       * }} [cfg]
+       */
       const processField = ({applicableField, targetLanguage, onByDefault, metaApplicableField} = {}) => {
         const plugin = pluginsForWork.getPluginObject(pluginName) || {};
-        const applicableFieldLang = metadata.getFieldLang(applicableField);
+        const applicableFieldLang = metadata.getFieldLang(
+          /** @type {string} */ (applicableField)
+        );
         if (plugin.getTargetLanguage) {
           targetLanguage = plugin.getTargetLanguage({
-            applicableField,
+            // eslint-disable-next-line object-shorthand -- TS
+            applicableField: /** @type {string} */ (applicableField),
             targetLanguage,
             // Default lang for plug-in (from files.json)
             pluginLang,
@@ -502,27 +758,47 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         if (targetLanguage === '{locale}') {
           targetLanguage = preferredLocale;
         }
-        const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', applicableField]);
+        const applicableFieldI18N = getMetaProp(
+          lang,
+          metadataObj,
+          [
+            'fieldnames',
+            /** @type {string} */
+            (applicableField)
+          ]
+        );
         const fieldAliasOrName = plugin.getFieldAliasOrName
           ? plugin.getFieldAliasOrName({
             locales: lang,
             workI18n,
-            targetLanguage,
-            applicableField,
+            // eslint-disable-next-line object-shorthand -- TS
+            targetLanguage: /** @type {string} */ (targetLanguage),
+            // eslint-disable-next-line object-shorthand -- TS
+            applicableField: /** @type {string} */ (applicableField),
             applicableFieldI18N,
             meta,
-            metaApplicableField,
-            targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
+            // eslint-disable-next-line object-shorthand -- TS
+            metaApplicableField: /** @type {{[key: string]: string }} */ (
+              metaApplicableField
+            ),
+            targetLanguageI18N: languages.getLanguageFromCode(
+              /** @type {string} */ (targetLanguage)
+            )
           })
           : languages.getFieldNameFromPluginNameAndLocales({
             pluginName,
-            locales: lang,
+            // locales: lang,
             workI18n,
-            targetLanguage,
-            applicableFieldI18N,
+            // eslint-disable-next-line object-shorthand -- TS
+            targetLanguage: /** @type {string} */ (targetLanguage),
+            // eslint-disable-next-line object-shorthand -- TS
+            applicableFieldI18N: /** @type {string|string[]} */ (applicableFieldI18N),
             // Todo: Should have formal way to i18nize meta
             meta,
-            metaApplicableField
+            // eslint-disable-next-line object-shorthand -- TS
+            metaApplicableField: /** @type {{[key: string]: string }} */ (
+              metaApplicableField
+            )
           });
         fieldInfo.splice(
           // Todo: Allow default placement overriding for
@@ -546,7 +822,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             //     not need here)
             applicableField,
             metaApplicableField,
-            fieldLang: targetLanguage
+            fieldLang: /** @type {string} */ (targetLanguage)
           }
         );
       };
@@ -576,21 +852,81 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       prefI18n !== 'false' && this.localizeParamNames
     );
   const lParam = localizeParamNames
-    ? (key) => l(['params', key])
-    : (key) => key;
+    // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+    ?
+    /**
+     * @param {string} key
+     * @returns {string}
+     */
+    (key) => /** @type {string} */ (l(['params', key]))
+    // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+    :
+    /**
+     * @param {string} key
+     * @returns {string}
+     */
+    (key) => key;
   const lIndexedParam = localizeParamNames
-    ? (key) => l(['params', 'indexed', key])
-    : (key) => key;
+    // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+    ?
+    /**
+     * @param {string} key
+     * @returns {string}
+     */
+    (key) => /** @type {string} */ (l(['params', 'indexed', key]))
+    // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+    :
+    /**
+     * @param {string} key
+     * @returns {string}
+     */
+    (key) => key;
   const lParamRaw = localizeParamNames
-    ? (key, suffix = '') => $p.get(lParam(key) + suffix, true)
-    : (key, suffix = '') => $p.get(key + suffix, true);
+    // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+    ?
+    /**
+     * @param {string} key
+     * @param {string} [suffix]
+     * @returns {string}
+     */
+    (key, suffix = '') => /** @type {string} */ (
+      $p.get(lParam(key) + suffix, true)
+    )
+    // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+    :
+    /**
+     * @param {string} key
+     * @param {string} [suffix]
+     * @returns {string}
+     */
+    (key, suffix = '') => /** @type {string} */ (
+      $p.get(key + suffix, true)
+    );
   const lIndexedParamRaw = localizeParamNames
-    ? (key, suffix = '') => $p.get($p.get('work') + '-' + lIndexedParam(key) + suffix, true)
-    : (key, suffix = '') => $p.get($p.get('work') + '-' + key + suffix, true);
+    // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+    ?
+    /**
+     * @param {string} key
+     * @param {string} [suffix]
+     * @returns {string}
+     */
+    (key, suffix = '') => /** @type {string} */ (
+      $p.get($p.get('work') + '-' + lIndexedParam(key) + suffix, true)
+    )
+    // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+    :
+    /**
+     * @param {string} key
+     * @param {string} [suffix]
+     * @returns {string}
+     */
+    (key, suffix = '') => /** @type {string} */ (
+      $p.get($p.get('work') + '-' + key + suffix, true)
+    );
 
   // Now that we know `browseFieldSets`, we can parse `startEnd`
   const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) => {
-    return lIndexedParamRaw('startEnd', (i + 1));
+    return lIndexedParamRaw('startEnd', String(i + 1));
   });
   if (browseFieldSetStartEndIdx !== -1) {
     // Todo: i18nize (by work and/or by whole app?)
@@ -603,7 +939,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     // Todo: Change query beginning at 0 to 1 if none present?
     // Todo: Support i18nized or canonical aliases (but don't
     //         over-trim in such cases)
-    const rawSearch = (lIndexedParamRaw('startEnd', browseFieldSetStartEndIdx + 1) || '').trim();
+    const rawSearch = (lIndexedParamRaw('startEnd', String(browseFieldSetStartEndIdx + 1)) || '').trim();
     const [startFull, endFull] = rawSearch.split(rangeSep);
     if (endFull !== undefined) {
       const startPartVals = startFull.split(partSep);
@@ -642,12 +978,16 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
   });
 
   const fieldSchemaTypes = applicableBrowseFieldSet.map((abfs) => abfs.fieldSchema.type);
+
+  /**
+   * @param {"start"|"end"} startOrEnd
+   */
   const buildRangePoint = (startOrEnd) => {
     return applicableBrowseFieldNames.map((bfn, j) => {
-      return $p.get(
+      return /** @type {string} */ ($p.get(
         $p.get('work') + '-' + startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1),
         true
-      );
+      ));
     });
   };
   const starts = buildRangePoint('start');
@@ -660,6 +1000,11 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
 
   console.log('rand', lParamRaw('rand') === 'yes');
 
+  /**
+   * @param {string} v
+   * @param {Integer} i
+   * @returns {Integer|string}
+   */
   const stripToRawFieldValue = (v, i) => {
     let val;
     if ((/^\d+$/).test(v) || fieldValueAliasRegex.test(v)) {
@@ -672,7 +1017,7 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         const fvEntries = Object.entries(rawFieldValueAliasMap);
         if (Array.isArray(fvEntries[0][1])) {
           fvEntries.some(([key, arr]) => {
-            if (arr.includes(v)) {
+            if (/** @type {(string | number)[]} */ (arr).includes(v)) {
               dealiased = key;
               return true;
             }
@@ -699,7 +1044,9 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
   const startsRaw = starts.map(stripToRawFieldValue);
   const endsRaw = ends.map(stripToRawFieldValue);
 
-  let tableData, usingServerData = false;
+  /** @type {(string|Integer)[][]} */
+  let tableData;
+  let usingServerData = false;
   // Site owner may have configured to skip (e.g., testing)
   if (!skipIndexedDB &&
         // User may have refused, not yet agreed, or are visiting the
@@ -713,7 +1060,8 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       // Todo: Fetch the work in code based on the non-localized `datafileName`
       const dbName = this.namespace + '-textbrowser-cache-data';
       const req = indexedDB.open(dbName);
-      req.onsuccess = ({target: {result: db}}) => {
+      req.onsuccess = (e) => {
+        const db = /** @type {EventTarget & {result: IDBDatabase}} */ (e.target).result;
         const storeName = 'files-to-cache-' + unlocalizedWorkName;
         const trans = db.transaction(storeName);
         const store = trans.objectStore(storeName);
@@ -727,10 +1075,22 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
 
         const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
-        r.onsuccess = ({target: {result}}) => {
-          const converted = result.map((r) => r.value);
-          resolve(converted);
-        };
+        r.addEventListener(
+          'success',
+          /**
+           * @param {Event} e
+           * @returns {void}
+           */
+          (e) => {
+            // eslint-disable-next-line prefer-destructuring -- TS
+            const result =
+            /** @type {EventTarget & {result: {value: (string|Integer)[]}[]}} */ (
+                e.target
+              ).result;
+            const converted = result.map((r) => r.value);
+            resolve(converted);
+          }
+        );
       };
     });
   } else {
@@ -742,18 +1102,19 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     //   needed
     // if (presort || this.noDynamic) {
     if (this.noDynamic) {
-      ({
-        resolved: {data: tableData}
-      } = await JsonRefs.resolveRefs(fileData.file));
+      const {
+        resolved
+      } = await JsonRefs.resolveRefs(fileData.file);
+      (tableData = /** @type {{data: (string|Integer)[][]}} */ (resolved).data);
       runPresort({presort, tableData, applicableBrowseFieldNames, localizedFieldNames});
     } else {
       /*
-            const jsonURL = Object.entries({
-                prefI18n, unlocalizedWorkName, startsRaw, endsRaw
-            }).reduce((url, [arg, argVal]) => {
-                return url + '&' + arg + '=' + encodeURIComponent((argVal));
-            }, `${dynamicBasePath}textbrowser?`);
-            */
+        const jsonURL = Object.entries({
+            prefI18n, unlocalizedWorkName, startsRaw, endsRaw
+        }).reduce((url, [arg, argVal]) => {
+            return url + '&' + arg + '=' + encodeURIComponent((argVal));
+        }, `${dynamicBasePath}textbrowser?`);
+      */
       const jsonURL = `${dynamicBasePath}textbrowser?${$p.toString()}`;
       tableData = await (await fetch(jsonURL)).json();
       usingServerData = true;
@@ -767,8 +1128,9 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       tableData.forEach((tr) => {
         // Todo: We should pass on other arguments (like `meta` but on `applicableFields`)
         tr.splice(
-          placement,
+          placement ?? 0,
           0,
+          // @ts-expect-error Only used for `plugin` type?
           null // `${i}-${j}`);
         );
       });
@@ -808,6 +1170,8 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
     escapeQuotedCSS, escapeCSS, escapeHTML,
     l, localizedFieldNames, fieldLangs, fieldDirs,
     caption, hasCaption, showInterlinTitles,
+    showEmptyInterlinear: this.showEmptyInterlinear,
+    showTitleOnSingleInterlinear: this.showTitleOnSingleInterlinear,
     determineEnd: determineEnd({
       applicableBrowseFieldNames,
       fieldValueAliasMap, fieldValueAliasMapPreferred,
@@ -821,7 +1185,8 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
       localizedFieldNames
     }),
     getCellValue: getCellValue({
-      fieldValueAliasMapPreferred, escapeColumnIndexes, escapeHTML
+      fieldValueAliasMapPreferred, escapeColumnIndexes
+      // escapeHTML
     }),
     checkedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
       localizedFieldNames

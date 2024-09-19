@@ -16,7 +16,7 @@ const Templates = {
     // We empty rather than `replaceWith` as our Jamilih `body`
     //   aliases expect the old instance
     while (body.hasChildNodes()) {
-      body.firstChild.remove();
+      body.firstChild?.remove();
     }
     return jml('div', {
       id: 'main', role: 'main'
@@ -24,19 +24,25 @@ const Templates = {
   },
   permissions: {
     versionChange () {
-      $('#versionChange').showModal();
+      /** @type {HTMLDialogElement} */
+      ($('#versionChange'))?.showModal();
     },
+
+    /**
+     * @param {{text: string}} cfg
+     */
     addLogEntry ({text}) {
       const installationDialog = $('#installationLogContainer');
       try {
-        installationDialog.showModal();
-        const container = $('#dialogContainer');
+        /** @type {HTMLDialogElement} */
+        (installationDialog).showModal();
+        const container = /** @type {HTMLElement} */ ($('#dialogContainer'));
         container.hidden = false;
       // eslint-disable-next-line no-unused-vars -- Ok
       } catch (err) {
         // May already be open
       }
-      $('#installationLog').append(text + '\n');
+      /** @type {HTMLElement} */ ($('#installationLog')).append(text + '\n');
     },
     exitDialogs () {
       const container = $('#dialogContainer');
@@ -44,6 +50,12 @@ const Templates = {
         container.hidden = true;
       }
     },
+    /**
+     * @param {{
+     *   type: string,
+     *   escapedErrorMessage: string
+     * }} cfg
+     */
     dbError ({type, escapedErrorMessage}) {
       if (type) {
         jml('span', [
@@ -51,26 +63,33 @@ const Templates = {
           escapedErrorMessage
         ], $('#dbError'));
       }
-      $('#dbError').showModal();
+      /** @type {HTMLDialogElement} */
+      ($('#dbError')).showModal();
     },
+
+    /**
+     * @param {string} escapedErrorMessage
+     */
     errorRegistering (escapedErrorMessage) {
       if (escapedErrorMessage) {
         jml('span', [escapedErrorMessage], $('#errorRegistering'));
       }
-      $('#errorRegistering').showModal();
+      /** @type {HTMLDialogElement} */
+      ($('#errorRegistering')).showModal();
     },
     browserNotGrantingPersistence () {
-      $('#browserNotGrantingPersistence').showModal();
+      /** @type {HTMLDialogElement} */
+      ($('#browserNotGrantingPersistence')).showModal();
     },
     /**
-     * @param {PlainObject} cfg
-     * @param {I18NCallback} cfg.siteI18n
-     * @param {() => Promise<void>} cfg.ok
-     * @param {() => void} cfg.refuse
-     * @param {() => Promise<void>} cfg.close
-     * @param {() => void} cfg.closeBrowserNotGranting
+     * @param {object} cfg
+     * @param {import('intl-dom').I18NCallback} cfg.siteI18n
+     * @param {() => Promise<void>} [cfg.ok]
+     * @param {() => void} [cfg.refuse]
+     * @param {() => Promise<void>} [cfg.close]
+     * @param {() => void} [cfg.closeBrowserNotGranting]
      * @returns {[
-     *   HTMLDialogElement, HTMLDialogElement, HTMLDialogElement,
+     *   HTMLDialogElement, HTMLDialogElement|"", HTMLDialogElement|"",
      *   HTMLDialogElement, HTMLDialogElement, HTMLDialogElement
      * ]}
      */
@@ -89,8 +108,10 @@ const Templates = {
         ]]
         // ['textarea', {readonly: true, style: 'width: 80%; height: 80%;'}]
       ]);
+
+      /** @type {""|HTMLDialogElement} */
       let requestPermissionsDialog = '';
-      if (ok) {
+      if (ok && refuse && close) {
         requestPermissionsDialog = jml(
           'dialog', {
             id: 'willRequestStoragePermissions',
@@ -121,6 +142,8 @@ const Templates = {
           ]]
         ]
       );
+
+      /** @type {""|HTMLDialogElement} */
       let browserNotGrantingPersistenceAlert = '';
       if (closeBrowserNotGranting) {
         browserNotGrantingPersistenceAlert = jml(

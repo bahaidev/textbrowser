@@ -10,11 +10,25 @@ const minutes = 60 * 1000;
 
 // UTILITIES
 
+/**
+ * @typedef {number} PositiveInteger
+ */
+
+/**
+ * @typedef {number} Float
+ */
+
+/**
+ * @param {string} url
+ */
 async function getJSON (url) {
   const resp = await fetch(url);
   return await resp.json();
 }
 
+/**
+ * @param {ServiceWorkerGlobalScope} self
+ */
 function swHelper (self) {
   // These could be made configurable by argument too
   const defaultUserStaticFiles = [
@@ -49,7 +63,7 @@ function swHelper (self) {
   ];
 
   /**
-  * @typedef {PlainObject} ConfigObject
+  * @typedef {object} ConfigObject
   * @property {string} namespace
   * @property {string} basePath
   * @property {string} languages
@@ -59,8 +73,8 @@ function swHelper (self) {
 
   /**
    *
-   * @param {ConfigObject} args
-   * @returns {ConfigObject}
+   * @param {Partial<ConfigObject>} args
+   * @returns {Required<ConfigObject>}
    * @todo Since some of these reused, move to external file (or
    *         use `setServiceWorkerDefaults`?)
    */
@@ -96,7 +110,12 @@ function swHelper (self) {
   function logError (error, ...messages) {
     const message = messages.join(' ');
     console.error(error, message);
-    return post({message, errorType: error.type, name: error.name, type: 'error'});
+    return post({
+      message,
+      // errorType: error.type,
+      // name: error.name,
+      type: 'error'
+    });
   }
 
   /**
@@ -120,7 +139,12 @@ function swHelper (self) {
       return undefined;
     } catch (err) {
       console.log('errrr', err);
-      logError(err, err.message || errMessage);
+      logError(
+        /** @type {Error} */
+        (err),
+        /** @type {Error} */
+        (err).message || errMessage
+      );
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve(tryAndRetry(cb, timeout, errMessage, time));
@@ -131,7 +155,7 @@ function swHelper (self) {
 
   /**
    *
-   * @param {PlainObject} args
+   * @param {object} args
    * @param {"log"|"error"|"beginInstall"|"finishedInstall"|"beginActivate"|"finishedActivate"} args.type
    * @param {string} [args.message]
    * @returns {Promise<void>}
@@ -163,7 +187,7 @@ function swHelper (self) {
     post({type: 'beginInstall'});
     log(`Install: Trying, attempt ${time}`);
     const now = Date.now();
-    const json = await getJSON(pathToUserJSON);
+    const json = await getJSON(/** @type {string} */ (pathToUserJSON));
 
     const {
       namespace, languages, files, userStaticFiles
@@ -190,7 +214,14 @@ function swHelper (self) {
     //      to work selection
     // Todo: We might give option to only download
     //        one locale and avoid language splash page
-    const localeFiles = langs.map(
+    const localeFiles =
+    /**
+     * @type {{
+     *   code: string,
+     *   direction: "rtl"|"ltr",
+     *   locale: {$ref: string}
+     * }[]}
+     */ (langs).map(
       ({locale: {$ref}}) => {
         return (langPathParts.length > 1
           ? langPathParts.slice(0, -1).join('/') + '/'
@@ -222,14 +253,22 @@ function swHelper (self) {
           }
           return cache.put(urlToPrefetch, response);
         } catch (error) {
-          logError(error, 'Not caching ' + urlToPrefetch + ' due to ' + error);
+          logError(
+            /** @type {Error} */
+            (error),
+            `Not caching ${urlToPrefetch} due to ${error}`
+          );
           throw error;
         }
       });
       await Promise.all(cachePromises);
       log('Install: Pre-fetching complete.');
     } catch (error) {
-      logError(error, `Install: Pre-fetching failed: ${error}`);
+      logError(
+        /** @type {Error} */
+        (error),
+        `Install: Pre-fetching failed: ${error}`
+      );
       // Failing gives chance for a new client to re-trigger install?
       throw error;
     }
@@ -252,7 +291,7 @@ function swHelper (self) {
     post({type: 'beginActivate'});
     log(`Activate: Trying, attempt ${time}`);
     const [json, cacheNames] = await Promise.all([
-      getJSON(pathToUserJSON),
+      getJSON(/** @type {string} */ (pathToUserJSON)),
       caches.keys()
     ]);
     const {namespace, files, basePath} = getConfigDefaults(json);
@@ -274,9 +313,10 @@ function swHelper (self) {
     post({type: 'finishedActivate'});
   }
 
+  // @ts-expect-error Ok
   const params = new URL(location).searchParams;
   const pathToUserJSON = params.get('pathToUserJSON');
-  const stylesheets = JSON.parse(params.get('stylesheets') || []);
+  const stylesheets = JSON.parse(params.get('stylesheets') || '[]');
 
   console.log('sw info', pathToUserJSON);
   console.log('sw stylesheets', stylesheets);

@@ -1,3 +1,5 @@
+import {assert} from 'chai';
+
 // /* eslint-disable import/unambiguous -- Imports are boostrapped */
 /* globals path, appBase, JsonRefs, Ajv,
     getJSON, __dirname -- Polyglot */
@@ -17,11 +19,11 @@ const appdataBase = appBase + 'appdata/';
 
 /**
 * @param {string} testName Name of the current test
-* @param {JSONSchema} schema Schema object
-* @param {PlainObject} data Data object
-* @param {string[][]} extraSchemas
-* @param {AJVOptions} additionalOptions
-* @returns {boolean} Whether validation succeeded
+* @param {import('json-schema').JSONSchema4} schema Schema object
+* @param {object} data Data object
+* @param {[string, import('ajv').AnySchema][]} extraSchemas
+* @param {import('ajv').Options} additionalOptions
+* @returns {boolean|undefined} Whether validation succeeded
 */
 function validate (
   testName, schema, data, extraSchemas = [], additionalOptions = {}
@@ -50,7 +52,7 @@ describe('textbrowser tests', function () {
       // jsonSchema,
       schema,
       ...locales
-    ] = await getJSON([
+    ] = /** @type {any[]} */ (await getJSON([
       '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema',
       'en-US.json',
       'ar.json',
@@ -58,7 +60,7 @@ describe('textbrowser tests', function () {
       'ru.json'
     ].map(
       (file, i) => path.join(__dirname, i ? localesBase : schemaBase, file)
-    ));
+    )));
 
     locales.forEach(function (locale) {
       const valid = validate('locales tests', schema, locale);
@@ -97,7 +99,7 @@ describe('textbrowser tests', function () {
             // Need to fix given that we are not in the expected
             //   app project of a web project
             if (
-              obj.$ref ===
+              '$ref' in obj && obj.$ref ===
                 '../../textbrowser-data-schemas/schemas/locale.jsonschema'
             ) {
               obj.$ref = '../node_modules/textbrowser-data-schemas/' +
@@ -115,7 +117,30 @@ describe('textbrowser tests', function () {
     ] = results;
 
     // JsonRefs doesn't handle circular references the way we want here:
-    schema.properties.languages.items.properties.
+    /**
+     * @type {{
+     *   properties: {
+     *     languages: {
+     *       items: {
+     *         properties: {
+     *           locale: {
+     *             patternProperties: {
+     *               '.*': {
+     *                 anyOf: [
+     *                   any,
+     *                   any,
+     *                   {$ref: string}
+     *                 ]
+     *               }
+     *             }
+     *           }
+     *         }
+     *       }
+     *     }
+     *   }
+     * }}
+     */
+    (schema).properties.languages.items.properties.
       locale.patternProperties['.*'].anyOf[2].$ref = JsonRefs.pathToPtr([
         'properties', 'languages', 'items', 'properties', 'locale'
       ]);

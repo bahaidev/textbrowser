@@ -1,7 +1,17 @@
 import {jml, $} from 'jamilih';
+
+// @ts-expect-error Missing TS types
 import {deserialize as formDeserialize} from 'form-serialization';
 
 export default {
+  /**
+   * @param {{
+   *   langs: import('../../server/main.js').LanguageInfo[]
+   *   languages: import('../utils/Languages.js').Languages
+   *   followParams: (formSelector: string, cb: () => void) => void
+   *   $p: import('../utils/IntlURLSearchParams.js').default
+   * }} cfg
+   */
   main ({langs, languages, followParams, $p}) {
     jml('form', {class: 'focus', id: 'languageSelectionContainer', $on: {
       submit (e) {
@@ -12,7 +22,10 @@ export default {
         name: 'lang',
         size: langs.length,
         $on: {
-          click ({target: {parentNode: {selectedOptions}}}) {
+          click ({target: {parentNode: {
+            // @ts-expect-error Ok
+            selectedOptions
+          }}}) {
             followParams('#languageSelectionContainer', () => {
               $p.set('lang', selectedOptions[0].value, true);
             });

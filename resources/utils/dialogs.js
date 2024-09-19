@@ -1,7 +1,21 @@
 import {jml, nbsp, $} from 'jamilih';
 import {$e} from '../templates/utils/dom.js';
 
+/**
+ * @typedef {{
+ *   submit: string,
+ *   cancel: string,
+ *   ok: string
+ * }} LocaleObject
+ */
+
+/**
+ * @typedef {{[locale: string]: LocaleObject}} Locales
+ */
+
 const defaultLocale = 'en';
+
+/** @type {Locales} */
 const localeStrings = {
   en: {
     submit: 'Submit',
@@ -11,16 +25,61 @@ const localeStrings = {
 };
 
 class Dialog {
+  /**
+   * @param {{
+   *  locale?: string,
+   *  localeObject?: LocaleObject
+   * }} [cfg]
+   */
   constructor ({locale, localeObject} = {}) {
+    this.localeStrings = localeStrings.en; // For types
     this.setLocale({locale, localeObject});
   }
-  setLocale ({locale = {}, localeObject = {}}) {
+  /**
+   * @param {{
+   *  locale?: string,
+   *  localeObject?: Partial<LocaleObject>
+   * }} cfg
+   * @returns {void}
+   */
+  setLocale ({locale, localeObject = {}}) {
     this.localeStrings = {
       ...localeStrings[defaultLocale],
-      ...localeStrings[locale],
+      ...(locale ? localeStrings[locale] : {}),
       ...localeObject
     };
   }
+
+  /**
+   * @typedef {{
+   *   atts?: import('jamilih').JamilihAttributes,
+   *   children?: import('jamilih').JamilihChildren,
+   *   close?: () => void,
+   *   remove?: boolean
+   * }} MakeDialogCfg
+   */
+
+  /**
+   * @typedef {MakeDialogCfg & {
+   *   submit?: (
+   *     this: HTMLElement, args: {e: Event, dialog: HTMLDialogElement}
+   *   ) => void,
+   *   cancel: (
+   *     this: HTMLElement,
+   *     args: {
+   *       e: Event,
+   *       dialog: HTMLDialogElement
+   *     }
+   *   ) => boolean|void,
+   *   cancelClass?: string,
+   *   submitClass?: string
+   * }} CancelDialogCfg
+   */
+
+  /**
+   * @param {MakeDialogCfg} cfg
+   * @returns {HTMLDialogElement}
+   */
   makeDialog ({atts = {
     $on: null
   }, children = [], close, remove = true}) {
@@ -32,7 +91,9 @@ class Dialog {
         atts.$on.close = close;
       }
     }
-    const dialog = /** @type {HTMLDialogElement} */ (jml('dialog', atts, children, $('#main')));
+    const dialog = /** @type {HTMLDialogElement} */ (
+      jml('dialog', atts, children, $('#main'))
+    );
     dialog.showModal();
     if (remove) {
       dialog.addEventListener('close', () => {
@@ -41,13 +102,19 @@ class Dialog {
     }
     return dialog;
   }
+  /**
+   * @param {CancelDialogCfg} cfg
+   * @returns {HTMLDialogElement}
+   */
   makeSubmitDialog ({
     submit, // Don't pass this on to `args` if present
     submitClass = 'submit',
     ...args
   }) {
     const dialog = this.makeCancelDialog(args);
-    $e(dialog, `button.${args.cancelClass || 'cancel'}`).before(
+    /** @type {HTMLDialogElement} */ (
+      $e(dialog, `button.${args.cancelClass || 'cancel'}`)
+    ).before(
       jml('button', {
         class: submitClass,
         $on: {
@@ -62,6 +129,11 @@ class Dialog {
     );
     return dialog;
   }
+
+  /**
+   * @param {CancelDialogCfg} cfg
+   * @returns {HTMLDialogElement}
+   */
   makeCancelDialog ({
     // eslint-disable-next-line no-unused-vars -- Discarding
     submit, // Don't pass this on to `args` if present
@@ -86,6 +158,12 @@ class Dialog {
     ], dialog);
     return dialog;
   }
+
+  /**
+   * @param {string|{message: string, ok?: boolean, submitClass?: string}} message
+   * @param {boolean|{ok: boolean}} [ok]
+   * @returns {Promise<void>}
+   */
   alert (message, ok) {
     message = typeof message === 'string' ? {message} : message;
     const {
@@ -99,7 +177,7 @@ class Dialog {
       const dialog = /** @type {HTMLDialogElement} */ (jml('dialog', [
         msg,
         ...(includeOk
-          ? ([
+          ? /** @type {import('jamilih').JamilihChildren} */ ([
             ['br'], ['br'],
             ['div', {class: submitClass}, [
               ['button', {$on: {click () {
@@ -113,16 +191,32 @@ class Dialog {
       dialog.showModal();
     });
   }
+  /**
+   * @param {string|Partial<CancelDialogCfg> & {
+   *   message: string
+   * }} message
+   * @returns {Promise<string>}
+   */
   prompt (message) {
     message = typeof message === 'string' ? {message} : message;
     const {message: msg, submit: userSubmit, ...submitArgs} = message;
     return new Promise((resolve, reject) => {
+      /**
+       * @param {{
+       *   e: Event,
+       *   dialog: HTMLDialogElement
+       * }} args
+       */
       const submit = function ({e, dialog}) {
         if (userSubmit) {
-          userSubmit.call(this, {e, dialog});
+          userSubmit.call(
+            // @ts-expect-error Ok
+            /** @type {HTMLElement} */ (this),
+            {e, dialog}
+          );
         }
         dialog.close();
-        resolve($e(dialog, 'input').value);
+        resolve(/** @type {HTMLInputElement} */ ($e(dialog, 'input')).value);
       };
       /* const dialog = */ this.makeSubmitDialog({
         ...submitArgs,
@@ -140,6 +234,10 @@ class Dialog {
       });
     });
   }
+  /**
+   * @param {string|{message: string, submitClass?: string}} message
+   * @returns {Promise<void>}
+   */
   confirm (message) {
     message = typeof message === 'string' ? {message} : message;
     const {message: msg, submitClass = 'submit'} = message;

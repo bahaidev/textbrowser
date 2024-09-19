@@ -5,13 +5,91 @@ import {getMetaProp, getMetadata, Metadata} from './Metadata.js';
 import {PluginsForWork, escapePlugin} from './Plugin.js';
 
 /**
+ * @typedef {number} Integer
+ */
+
+/**
+ * @typedef {{
+ *   field: string,
+ *   fieldAliasOrName: string | string[] | import('../../server/main.js').LocalizationStrings,
+ *   onByDefault?: boolean,
+ *   applicableField?: string,
+ *   metaApplicableField?: {
+ *     [key: string]: string
+ *   },
+ *   fieldLang?: string
+ * }[]} FieldInfo
+ */
+
+/**
+ * @typedef {{
+ *   schema: {$ref: string},
+ *   metadata: {$ref: string},
+ *   data: (Integer|string)[]
+ * }} WorkTableContainer
+ */
+
+/**
+ * @typedef {{
+ *   file: {
+ *     $ref: string
+ *   },
+ *   schemaFile: string,
+ *   metadataFile: string,
+ *   name: string,
+ *   shortcut: string
+ * }} FileData
+ */
+
+/**
+ * @typedef {{
+ *   id: string,
+ *   name: {
+ *     localeKey: "string"
+ *   },
+ *   files: FileData[],
+ *   baseDirectory?: string,
+ *   schemaBaseDirectory?: string,
+ *   metadataBaseDirectory?: string,
+ *   directions: {
+ *     localeKey: "string"
+ *   }
+ * }} FileGroup
+ */
+
+/**
+ * INCOMPLETE typing.
+ * @typedef {{
+ *   "localization-strings": {
+ *     [key: string]: {}
+ *   }
+ *   groups: FileGroup[],
+ *   plugins: {[key: string]: import('./Plugin.js').PluginInfo},
+ *   baseDirectory?: string,
+ *   schemaBaseDirectory?: string,
+ *   metadataBaseDirectory?: string,
+ *   'plugin-field-mapping': PluginFieldMapping
+ * }} FilesObject
+ */
+
+/**
+ * @typedef {{
+*   [groups: string]: {
+*     [works: string]: {
+*       [fields: string]: import('./Plugin.js').PluginFieldMappingForWork
+*     }
+*   }
+* }} PluginFieldMapping
+*/
+
+/**
  * Imported by the `dist/sw-helper.js`
  * @param {string} files The files.json file path
- * @returns {PlainObject}
+ * @returns {Promise<string[]>}
  */
 export const getWorkFiles = async function getWorkFiles (files) {
-  const filesObj = await getJSON(files);
-  const dataFiles = [];
+  const filesObj = /** @type {FilesObject} */ (await getJSON(files));
+  const dataFiles = /** @type {string[]} */ ([]);
   filesObj.groups.forEach((fileGroup) => {
     fileGroup.files.forEach((fileData) => {
       const {file, schemaFile, metadataFile} =
@@ -25,6 +103,11 @@ export const getWorkFiles = async function getWorkFiles (files) {
   return dataFiles;
 };
 
+/**
+ * @param {FilesObject} filesObj
+ * @param {FileGroup} fileGroup
+ * @param {FileData} fileData
+ */
 export const getFilePaths = function getFilePaths (filesObj, fileGroup, fileData) {
   const baseDir = (filesObj.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
   const schemaBaseDir = (filesObj.schemaBaseDirectory || '') +
@@ -38,41 +121,92 @@ export const getFilePaths = function getFilePaths (filesObj, fileGroup, fileData
   return {file, schemaFile, metadataFile};
 };
 
+/**
+ * @typedef {{
+ *   lang: string[],
+ *   fallbackLanguages: string[]|undefined,
+ *   work: string,
+ *   files: string,
+ *   allowPlugins: boolean|undefined,
+ *   basePath?: string,
+ *   languages: import('./Languages.js').Languages,
+ *   preferredLocale: string
+ * }} GetWorkDataOptions
+ */
+
+/**
+ * @typedef {{
+ *   fileData: FileData,
+ *   workI18n: import('intl-dom').I18NCallback,
+ *   getFieldAliasOrName: (field: string) => string|string[]|import('../../server/main.js').LocalizationStrings,
+ *   metadataObj: import('./Metadata.js').MetadataObj,
+ *   schemaObj: import('./Metadata.js').SchemaObj,
+ *   schemaItems: { title: string, type: string }[],
+ *   fieldInfo: FieldInfo,
+ *   pluginsForWork: PluginsForWork|null,
+ *   groupsToWorks: {
+ *     name: string | Text | DocumentFragment,
+ *     workNames: (string | Text | DocumentFragment)[],
+ *     shortcuts: string[]
+ *   }[],
+ *   metadata: Metadata
+ * }} GetWorkDataReturn
+ */
+
+/**
+ * @this {import('../index.js').default}
+ * @param {GetWorkDataOptions} cfg
+ * @returns {Promise<GetWorkDataReturn>}
+ */
 export const getWorkData = async function ({
   lang, fallbackLanguages, work, files, allowPlugins, basePath,
   languages, preferredLocale
 }) {
-  const filesObj = await getJSON(files);
-  const localizationStrings = filesObj['localization-strings'];
+  const filesObj = /** @type {FilesObject} */ (await getJSON(files));
+  const localizationStrings =
+    /**
+     * @type {{
+     *   "localization-strings": {
+     *     [key: string]: {}
+     *   }
+     * }}
+     */ (
+      filesObj
+    )?.['localization-strings'];
 
   const workI18n = await i18n({
     messageStyle: 'plainNested',
     locales: lang,
     defaultLocales: fallbackLanguages,
     // Todo: Could at least share this with `index.js`
-    localeStringFinder ({
+    async localeStringFinder ({
       locales, defaultLocales
-    }) {
-      const locale = [...locales, ...defaultLocales].find((language) => {
+    } = {}) {
+      const locale = [
+        ...(/** @type {string[]} */ (locales)),
+        ...(/** @type {string[]} */ (defaultLocales))
+      ].find((language) => {
         return language in localizationStrings;
       });
       return {
-        locale,
+        // eslint-disable-next-line object-shorthand -- TS
+        locale: /** @type {string} */ (locale),
         strings: {
           head: {},
-          body: localizationStrings[locale]
+          body: localizationStrings[/** @type {string} */ (locale)]
         }
       };
     }
   });
 
+  /** @type {FileData} */
   let fileData;
-  const fileGroup = filesObj.groups.find((fg) => {
-    fileData = fg.files.find((file) => {
+  const fileGroup = /** @type {FileGroup} */ (filesObj.groups.find((fg) => {
+    fileData = /** @type {FileData} */ (fg.files.find((file) => {
       return work === workI18n(['workNames', fg.id, file.name]);
-    });
+    }));
     return Boolean(fileData);
-  });
+  }));
     // This is not specific to the work, but we export it anyways
   const groupsToWorks = filesObj.groups.map((fg) => {
     return {
@@ -84,6 +218,7 @@ export const getWorkData = async function ({
     };
   });
 
+  // @ts-expect-error Ok
   const fp = getFilePaths(filesObj, fileGroup, fileData);
   const {file} = fp;
   let {schemaFile, metadataFile} = fp;
@@ -99,12 +234,28 @@ export const getWorkData = async function ({
     metadataProperty = 'metadata';
   }
 
-  let getPlugins, pluginsInWork, pluginFieldsForWork,
-    pluginPaths, pluginFieldMappingForWork = [];
+  let getPlugins;
+  /**
+   * @type {[string, import('./Plugin.js').PluginInfo][]}
+   */
+  let pluginsInWork;
+
+  /** @type {string[]} */
+  let pluginPaths = [];
+  /** @type {string[]} */
+  let pluginFieldsForWork;
+
+  /**
+   * @type {import('./Plugin.js').PluginFieldMappingForWork[]}
+   */
+  let pluginFieldMappingForWork = [];
   if (allowPlugins) {
     const pluginFieldMapping = filesObj['plugin-field-mapping'];
     const pluginFieldMappingID = pluginFieldMapping[fileGroup.id];
-    const possiblePluginFieldMappingForWork = pluginFieldMappingID[fileData.name];
+    const possiblePluginFieldMappingForWork = pluginFieldMappingID[
+      // @ts-expect-error Ok
+      (fileData).name
+    ];
     if (possiblePluginFieldMappingForWork) {
       pluginFieldsForWork = Object.keys(possiblePluginFieldMappingForWork);
       pluginsInWork = Object.entries(filesObj.plugins).filter(([p]) => {
@@ -117,7 +268,12 @@ export const getWorkData = async function ({
       getPlugins = pluginsInWork;
     }
   }
-  const metadataObj = await getMetadata(metadataFile, metadataProperty, basePath);
+  const metadataObj = /** @type {import('./Metadata.js').MetadataObj} */ (
+    await getMetadata(metadataFile, metadataProperty, basePath)
+  );
+  /**
+   * @param {string} field
+   */
   const getFieldAliasOrName = function getFieldAliasOrName (field) {
     const fieldObj = metadataObj.fields && metadataObj.fields[field];
     let fieldName;
@@ -148,24 +304,37 @@ export const getWorkData = async function ({
     : process.cwd() + '/'
   );
 
-  const [schemaObj, pluginObjects] = await Promise.all([
+  const schemaAndPluginObjects = await Promise.all([
     getMetadata(schemaFile, schemaProperty, basePath),
     getPlugins
       ? Promise.all(
-        pluginPaths.map((pluginPath) => {
+        pluginPaths.map(async (pluginPath) => {
           // // eslint-disable-next-line no-unsanitized/method
-          return import(
+          return /** @type {import('./Plugin.js').PluginObject} */ await (import(
             cwd +
             pluginPath
-          );
+          ));
         })
       )
       : null
   ]);
-  const pluginsForWork = new PluginsForWork({
-    pluginsInWork, pluginFieldMappings, pluginObjects
-  });
+
+  const schemaObj = /** @type {import('./Metadata.js').SchemaObj} */ (
+    schemaAndPluginObjects[0]
+  );
+  const pluginObjects = schemaAndPluginObjects[1];
+
+  const pluginsForWork = pluginObjects
+    ? new PluginsForWork({
+      // @ts-expect-error Ok
+      pluginsInWork,
+      pluginFieldMappings,
+      pluginObjects
+    })
+    : null;
   const schemaItems = schemaObj.items.items;
+
+  /** @type {FieldInfo} */
   const fieldInfo = schemaItems.map(({title: field}) => {
     return {
       field,
@@ -184,51 +353,91 @@ export const getWorkData = async function ({
       onByDefaultDefault,
       placement, applicableFields, meta
     }) => {
-      const processField = ({applicableField, targetLanguage, onByDefault, metaApplicableField} = {}) => {
+      /**
+       * @param {{
+       *   applicableField?: string,
+       *   targetLanguage?: string,
+       *   onByDefault?: boolean,
+       *   metaApplicableField?: {
+       *     [key: string]: string
+       *   }
+       * }} [cfg]
+       */
+      const processField = ({
+        applicableField, targetLanguage, onByDefault, metaApplicableField
+      } = {}) => {
         const plugin = pluginsForWork.getPluginObject(pluginName) || {};
-        const applicableFieldLang = metadata.getFieldLang(applicableField);
+        const applicableFieldLang = metadata.getFieldLang(
+          /** @type {string} */
+          (applicableField)
+        );
         if (plugin.getTargetLanguage) {
           targetLanguage = plugin.getTargetLanguage({
-            applicableField,
-            targetLanguage,
+            // eslint-disable-next-line object-shorthand -- TS
+            applicableField: /** @type {string} */ (applicableField),
+            // eslint-disable-next-line object-shorthand -- TS
+            targetLanguage: /** @type {string} */ (targetLanguage),
             // Default lang for plug-in (from files.json)
             pluginLang,
             // Default lang when no target language or
             //   plugin lang; using the lang of the applicable
             //   field
-            applicableFieldLang
+            // eslint-disable-next-line object-shorthand -- TS
+            applicableFieldLang: /** @type {string} */ (applicableFieldLang)
           });
         }
         const field = escapePlugin({
           pluginName,
-          applicableField,
-          targetLanguage: targetLanguage || pluginLang ||
-                        applicableFieldLang
+          // eslint-disable-next-line object-shorthand -- TS
+          applicableField: /** @type {string} */ (applicableField),
+          targetLanguage: /** @type {string} */ (targetLanguage || pluginLang ||
+                        applicableFieldLang)
         });
         if (targetLanguage === '{locale}') {
           targetLanguage = preferredLocale;
         }
-        const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', applicableField]);
+        const applicableFieldI18N = getMetaProp(
+          lang, metadataObj, ['fieldnames', /** @type {string} */ (applicableField)]
+        );
         const fieldAliasOrName = plugin.getFieldAliasOrName
           ? plugin.getFieldAliasOrName({
             locales: lang,
             workI18n,
-            targetLanguage,
-            applicableField,
+            // eslint-disable-next-line object-shorthand -- TS
+            targetLanguage: /** @type {string} */ (targetLanguage),
+            // eslint-disable-next-line object-shorthand -- TS
+            applicableField: /** @type {string} */ (applicableField),
             applicableFieldI18N,
             meta,
-            metaApplicableField,
-            targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
+            // eslint-disable-next-line object-shorthand -- TS
+            metaApplicableField:
+            /**
+             * @type {{
+             *   [key: string]: string
+             * }}
+             */ (metaApplicableField),
+            targetLanguageI18N: languages.getLanguageFromCode(
+              /** @type {string} */
+              (targetLanguage)
+            )
           })
           : languages.getFieldNameFromPluginNameAndLocales({
             pluginName,
-            locales: lang,
+            // locales: lang,
             workI18n,
-            targetLanguage,
-            applicableFieldI18N,
+            // eslint-disable-next-line object-shorthand -- TS
+            targetLanguage: /** @type {string} */ (targetLanguage),
+            // eslint-disable-next-line object-shorthand -- TS
+            applicableFieldI18N: /** @type {string|string[]} */ (applicableFieldI18N),
             // Todo: Should have formal way to i18nize meta
             meta,
-            metaApplicableField
+            // eslint-disable-next-line object-shorthand -- TS
+            metaApplicableField:
+            /**
+             * @type {{
+             *   [key: string]: string
+             * }}
+             */ (metaApplicableField)
           });
         fieldInfo.splice(
           // Todo: Allow default placement overriding for
@@ -260,7 +469,10 @@ export const getWorkData = async function ({
     });
   }
   return {
-    fileData, workI18n, getFieldAliasOrName, metadataObj,
+    // @ts-expect-error Ok
+    // eslint-disable-next-line object-shorthand -- TS
+    fileData: /** @type {FileData} */ (fileData),
+    workI18n, getFieldAliasOrName, metadataObj,
     schemaObj, schemaItems, fieldInfo,
     pluginsForWork, groupsToWorks, metadata
   };

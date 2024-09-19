@@ -1,3 +1,7 @@
+/**
+ * Prevent XSS attacks.
+ * @param {string} s - The string to sanitize
+ */
 const escapeHTML = (s) => {
   return !s
     ? ''

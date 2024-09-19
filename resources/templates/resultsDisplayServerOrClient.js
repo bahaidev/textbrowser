@@ -1,26 +1,96 @@
 import Templates from './index.js';
 
+/**
+ * @typedef {number} Integer
+ */
+/**
+ * @typedef {{
+ *   interlinearSeparator?: string,
+ *   showEmptyInterlinear?: boolean,
+ *   showTitleOnSingleInterlinear?: boolean,
+ *   tableData: (string|Integer)[][],
+ *   $p: import('../utils/IntlURLSearchParams.js').default,
+ *   $pRaw: (key: string, avoidLog?: boolean) => string,
+ *   $pRawEsc: (str: string) => string,
+ *   $pEscArbitrary: (str: string) => string,
+ *   escapeQuotedCSS: (str: string) => string,
+ *   escapeCSS: (str: string) => string,
+ *   escapeHTML: (str: string) => string,
+ *   l: import('intl-dom').I18NCallback,
+ *   localizedFieldNames: (string|string[]|import('../../server/main.js').LocalizationStrings)[],
+ *   fieldLangs: (string|null)[],
+ *   fieldDirs: (string | null)[],
+ *   caption?: string,
+ *   hasCaption: boolean,
+ *   showInterlinTitles: boolean,
+ *   determineEnd: import('../resultsDisplay.js').DetermineEnd,
+ *   getCanonicalID: import('../resultsDisplay.js').GetCanonicalID,
+ *   canonicalBrowseFieldSetName: string,
+ *   getCellValue: import('../resultsDisplay.js').GetCellValue,
+ *   checkedAndInterlinearFieldInfo: [string[], number[], ("" | number[] | null)[]]
+ * }} ResultsDisplayServerOrClientArgs
+ */
+
 export default {
+  /**
+   * @param {{
+   *   heading: string,
+   *   ranges: string
+   * }} cfg
+   */
   caption ({heading, ranges}) {
     return heading + ' ' + ranges;
   },
+  /**
+   * @param {{
+   *   l: import('intl-dom').I18NCallback
+   * }} cfg
+   * @returns {string}
+   */
   startSeparator ({l}) {
-    return l('colon');
+    return /** @type {string} */ (l('colon'));
   },
+
+  /**
+   * @param {{
+   *   l: import('intl-dom').I18NCallback
+   * }} cfg
+   */
   innerBrowseFieldSeparator ({l}) {
-    return l('comma-space');
+    return /** @type {string} */ (l('comma-space'));
   },
+  /**
+   * @param {{
+  *   l: import('intl-dom').I18NCallback,
+  *   startRange: string,
+  *   endVals: string[],
+  *   rangeNames: string
+  * }} cfg
+  */
   ranges ({l, startRange, endVals, rangeNames}) {
     return startRange +
-            // l('to').toLowerCase() + ' ' +
-            '-' +
-            endVals.join(
-              Templates.resultsDisplayServerOrClient.startSeparator({l})
-            ) + ' (' + rangeNames + ')';
+      // l('to').toLowerCase() + ' ' +
+      '-' +
+      endVals.join(
+        Templates.resultsDisplayServerOrClient.startSeparator({l})
+      ) + ' (' + rangeNames + ')';
   },
+  /**
+   * @param {{
+   *   key: string,
+   *   value: string|number
+   * }} cfg
+   */
   fieldValueAlias ({key, value}) {
     return value + ' (' + key + ')';
   },
+  /**
+   * @param {{
+   *   lang?: string|null,
+   *   dir?: string|null,
+   *   html: string
+   * }} cfg
+   */
   interlinearSegment ({lang, dir, html}) {
     return `<span${
       lang ? ` lang="${lang}"` : ''
@@ -28,10 +98,30 @@ export default {
       dir ? ` dir="${dir}"` : ''
     }>${html}</span>`;
   },
+
+  /**
+   * @param {{
+  *   l: import('intl-dom').I18NCallback,
+  *   val: string
+  * }} cfg
+  */
   interlinearTitle ({l, val}) {
     const colonSpace = l('colon-space');
     return `<span class="interlintitle">${val}</span>${colonSpace}`;
   },
+  /**
+   * @param {{
+   *   $p: import('../utils/IntlURLSearchParams.js').default,
+   *   $pRaw: (key: string, avoidLog?: boolean) => string,
+   *   $pRawEsc: (str: string) => string,
+   *   $pEscArbitrary: (str: string) => string,
+   *   escapeCSS: (str: string) => string,
+   *   tableWithFixedHeaderAndFooter: boolean,
+   *   checkedFieldIndexes: number[],
+   *   hasCaption: boolean
+   * }} cfg
+   * @returns {import('jamilih').JamilihArray}
+   */
   styles ({
     $p, $pRaw, $pRawEsc, $pEscArbitrary, // escapeQuotedCSS,
     escapeCSS,
@@ -176,16 +266,32 @@ body {
               : '')
     ]];
   },
+
+  /**
+   * @param {ResultsDisplayServerOrClientArgs} args
+   * @returns {import('jamilih').JamilihArray}
+   */
   main ({
     tableData, $p, $pRaw, $pRawEsc, $pEscArbitrary,
     // Todo: escaping should be done in business logic!
-    escapeQuotedCSS, escapeCSS, escapeHTML,
+    // escapeQuotedCSS,
+    escapeCSS, escapeHTML,
     l, localizedFieldNames, fieldLangs, fieldDirs,
     caption, hasCaption, showInterlinTitles,
     determineEnd, getCanonicalID, canonicalBrowseFieldSetName,
     getCellValue, checkedAndInterlinearFieldInfo,
+    showEmptyInterlinear,
+    showTitleOnSingleInterlinear,
     interlinearSeparator = '<br /><br />'
   }) {
+    /**
+     * @type {{
+     *   table: [string, (import('jamilih').JamilihAttributes | undefined)?][],
+     *   div: [string, (import('jamilih').JamilihAttributes | undefined)?][],
+     *   "json-array": "json",
+     *   "json-object": "json"
+     * }}
+     */
     const tableOptions = {
       table: [
         ['table', {class: 'table', border: $pRaw('border') || '0'}],
@@ -214,7 +320,7 @@ body {
       'json-array': 'json',
       'json-object': 'json'
     };
-    const outputmode = $p.get('outputmode', true); // Why not $pRaw?
+    const outputmode = /** @type {"json-object"|"json-array"|"table"|"div"} */ ($p.get('outputmode', true)); // Why not $pRaw?
 
     switch (outputmode) {
     case 'json-object': // Can later fall through if supporting
@@ -227,7 +333,7 @@ body {
     }
 
     const tableElems = tableOptions[
-      Object.prototype.hasOwnProperty.call(tableOptions, outputmode)
+      Object.hasOwn(tableOptions, outputmode) && outputmode
         ? outputmode
         : 'table' // Default
     ];
@@ -236,9 +342,13 @@ body {
     ] = tableElems; // colgroupElem, colElem
 
     const [checkedFields, checkedFieldIndexes, allInterlinearColIndexes] =
-            checkedAndInterlinearFieldInfo;
+      checkedAndInterlinearFieldInfo;
 
     const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
+
+    /**
+     * @param {import('jamilih').JamilihChildren} children
+     */
     const tableWrap = (children) => {
       return tableWithFixedHeaderAndFooter
         ? ['div', {class: 'table-responsive anchor-table-header zupa'}, [
@@ -247,30 +357,44 @@ body {
         : ['div', {class: 'table-responsive'}, children];
     };
 
+    /**
+     * @param {import('jamilih').JamilihArray} el
+     * @param {import('jamilih').JamilihChildren} children
+     */
     const addChildren = (el, children) => {
       // eslint-disable-next-line unicorn/prefer-structured-clone -- Need JSON
       el = JSON.parse(JSON.stringify(el));
       el.push(children);
       return el;
     };
+
+    /**
+     * @param {[string, import('jamilih').JamilihAttributes?]} elAtts
+     * @param {import('jamilih').JamilihAttributes} newAtts
+     * @returns {import('jamilih').JamilihArray}
+     */
     const addAtts = ([el, atts], newAtts) => [el, {...atts, ...newAtts}];
 
     const foundState = {
       start: false,
       end: false
     };
+
+    /** @type {import('jamilih').JamilihArray[]} */
     const outArr = [];
 
-    const {showEmptyInterlinear, showTitleOnSingleInterlinear} = this;
-
+    /**
+     * @param {string} tdVal
+     * @param {boolean} [htmlEscaped]
+     */
     const checkEmpty = (tdVal, htmlEscaped) => {
       if (!showEmptyInterlinear) {
         if (!htmlEscaped) {
-          tdVal = new DOMParser().parseFromString(tdVal, 'text/html').body;
-          [...tdVal.querySelectorAll('br')].forEach((br) => {
+          const tdValElem = new DOMParser().parseFromString(tdVal, 'text/html').body;
+          [...tdValElem.querySelectorAll('br')].forEach((br) => {
             br.remove();
           });
-          tdVal = tdVal.innerHTML;
+          tdVal = tdValElem.innerHTML;
         }
         if (!tdVal.trim()) {
           return true;
@@ -302,7 +426,11 @@ body {
             // Need to get a new one
             const {tdVal, htmlEscaped} = getCellValue({tr, idx});
             console.log('showEmptyInterlinear', showEmptyInterlinear, htmlEscaped);
-            const isEmpty = checkEmpty(tdVal, htmlEscaped);
+            const isEmpty = checkEmpty(
+              /** @type {string} */
+              (tdVal),
+              htmlEscaped
+            );
             if (isEmpty) {
               return '';
             }
@@ -313,7 +441,7 @@ body {
                 dir: fieldDirs[idx],
                 html: (showInterlinTitles
                   ? Templates.resultsDisplayServerOrClient.interlinearTitle({
-                    l, val: localizedFieldNames[idx]
+                    l, val: /** @type {string} */ (localizedFieldNames[idx])
                   })
                   : '') + tdVal
               })
@@ -327,36 +455,41 @@ body {
             lang: fieldLangs[idx],
             dir: fieldDirs[idx],
             dataset: {
-              col: localizedFieldNames[idx]
+              col: /** @type {string} */ (localizedFieldNames[idx])
             },
             innerHTML:
-                            (showInterlins && !checkEmpty(tdVal, htmlEscaped) &&
-                                (showTitleOnSingleInterlinear || interlins.length)
-                              ? Templates.resultsDisplayServerOrClient.interlinearSegment({
-                                lang: fieldLangs[idx],
-                                html: (showInterlinTitles
-                                  ? Templates.resultsDisplayServerOrClient.interlinearTitle({
-                                    l, val: localizedFieldNames[idx]
-                                  })
-                                  : '') + tdVal
-                              })
-                              : tdVal
-                            ) +
-                            (interlinearColIndexes && interlins.length
-                              ? interlinearSeparator +
-                                    interlins.join(interlinearSeparator)
-                              : ''
-                            )
+              (showInterlins && !checkEmpty(
+                /** @type {string} */
+                (tdVal),
+                htmlEscaped
+              ) &&
+                  (showTitleOnSingleInterlinear || interlins?.length)
+                ? Templates.resultsDisplayServerOrClient.interlinearSegment({
+                  lang: fieldLangs[idx],
+                  html: (showInterlinTitles
+                    ? Templates.resultsDisplayServerOrClient.interlinearTitle({
+                      l, val: /** @type {string} */ (localizedFieldNames[idx])
+                    })
+                    : '') + tdVal
+                })
+                : tdVal
+              ) +
+              (interlinearColIndexes && interlins && interlins.length
+                ? interlinearSeparator +
+                      interlins.join(interlinearSeparator)
+                : ''
+              )
           });
         })
       ));
       return false;
     });
 
-    return ['div', [
+    return /** @type {import('jamilih').JamilihArray} */ (['div', [
       Templates.resultsDisplayServerOrClient.styles({
         $p, $pRaw, $pRawEsc, $pEscArbitrary,
-        escapeQuotedCSS, escapeCSS, tableWithFixedHeaderAndFooter,
+        // escapeQuotedCSS,
+        escapeCSS, tableWithFixedHeaderAndFooter,
         checkedFieldIndexes, hasCaption
       }),
       tableWrap([
@@ -374,14 +507,14 @@ body {
             ])
             : ''),
           /*
-                    // Works but quirky, e.g., `color` doesn't work (as also
-                    //  confirmed per https://quirksmode.org/css/css2/columns.html)
-                    addChildren(colgroupElem,
-                        checkedFieldIndexes.map((idx, i) =>
-                            addAtts(colElem, {style: $pRaw('css' + (idx + 1))})
-                        )
-                    ),
-                    */
+            // Works but quirky, e.g., `color` doesn't work (as also
+            //  confirmed per https://quirksmode.org/css/css2/columns.html)
+            addChildren(colgroupElem,
+                checkedFieldIndexes.map((idx, i) =>
+                    addAtts(colElem, {style: $pRaw('css' + (idx + 1))})
+                )
+            ),
+          */
           ($pRaw('header') !== '0'
             ? addChildren(theadElem, [
               addChildren(
@@ -391,7 +524,10 @@ body {
                   cf = escapeHTML(cf) + (interlinearColIndexes
                     ? l('comma-space') + interlinearColIndexes.map((idx) => {
                       return localizedFieldNames[idx];
-                    }).join(l('comma-space'))
+                    }).join(
+                      /** @type {string} */
+                      (l('comma-space'))
+                    )
                     : ''
                   );
                   return addChildren(thElem, [
@@ -418,7 +554,10 @@ body {
                   cf = escapeHTML(cf) + (interlinearColIndexes
                     ? l('comma-space') + interlinearColIndexes.map((idx) => {
                       return localizedFieldNames[idx];
-                    }).join(l('comma-space'))
+                    }).join(
+                      /** @type {string} */
+                      (l('comma-space'))
+                    )
                     : ''
                   );
                   return addChildren(thElem, [
@@ -439,6 +578,6 @@ body {
           addChildren(tbodyElem, outArr)
         ])
       ])
-    ]];
+    ]]);
   }
 };

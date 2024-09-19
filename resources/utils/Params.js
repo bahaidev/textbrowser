@@ -1,19 +1,58 @@
 // Todo: Reimplement this with `formSerialize.deserialize` as possible
+
+// @ts-expect-error Todo: Add types
 import {serialize as formSerialize} from 'form-serialization';
 
+/**
+ * @param {URLSearchParams} paramsCopy
+ */
 export const replaceHash = (paramsCopy) => {
   return location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
 };
 
-export const getSerializeParamsAsURL = function (...args) {
-  const setter = getParamsSetter(...args);
-  return function (...innerArgs) {
-    const paramsCopy = setter(...innerArgs);
+/**
+ * @param {{
+*   l: import('intl-dom').I18NCallback,
+*   lParam: (key: string) => string,
+*   $p: import('./IntlURLSearchParams.js').default
+* }} args
+*/
+export const getSerializeParamsAsURL = function (args) {
+  const setter = getParamsSetter(args);
+  /**
+   * @param {{
+   *   form: HTMLFormElement,
+   *   random: {checked: boolean},
+   *   checkboxes: HTMLInputElement[],
+   *   type: string,
+   *   fieldAliasOrNames?: string[],
+   *   workName?: string
+   * }} innerArg
+   */
+  return function (innerArg) {
+    const paramsCopy = setter(innerArg);
     return replaceHash(paramsCopy);
   };
 };
 
+/**
+ * @param {{
+ *   l: import('intl-dom').I18NCallback,
+ *   lParam: (key: string) => string,
+ *   $p: import('./IntlURLSearchParams.js').default
+ * }} cfg
+ */
 export const getParamsSetter = function ({l, lParam, $p}) {
+  /**
+   * @param {{
+   *   form: HTMLFormElement,
+   *   random: {checked: boolean},
+   *   checkboxes: HTMLInputElement[],
+   *   type: string,
+   *   fieldAliasOrNames?: string[],
+   *   workName?: string
+   * }} cfg
+   */
   return function ({form, random = {
     checked: false
   }, checkboxes, type, fieldAliasOrNames = [], workName}) {
@@ -26,7 +65,11 @@ export const getParamsSetter = function ({l, lParam, $p}) {
 
     // Follow the same style (and order) for checkboxes
     paramsCopy.delete(lParam('rand'));
-    paramsCopy.set(lParam('rand'), random.checked ? l('yes') : l('no'));
+    paramsCopy.set(
+      lParam('rand'), /** @type {string} */ (
+        random.checked ? l('yes') : l('no')
+      )
+    );
 
     // We want checkboxes to typically show by default, so we cannot use the
     //    standard serialization
@@ -34,7 +77,11 @@ export const getParamsSetter = function ({l, lParam, $p}) {
       // Let's ensure the checked items are all together (at the end)
       paramsCopy.delete(checkbox.name);
       if (checkbox.name) { // We don't want, e.g., preference controls added to URL
-        paramsCopy.set(checkbox.name, checkbox.checked ? l('yes') : l('no'));
+        paramsCopy.set(
+          checkbox.name,
+          /** @type {string} */
+          (checkbox.checked ? l('yes') : l('no'))
+        );
       }
     });
 
@@ -45,11 +92,11 @@ export const getParamsSetter = function ({l, lParam, $p}) {
     function removeStartsEndsAndAnchors () {
       let num = 1;
       let num2 = 1;
-      while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
-        while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
-          paramsCopy.delete(`${workName}-start${num}-${num2}`, true);
-          paramsCopy.delete(`${workName}-end${num}-${num2}`, true);
-          paramsCopy.delete(`${workName}-anchor${num}-${num2}`, true);
+      while (paramsCopy.has(`${workName}-start${num}-${num2}`)) {
+        while (paramsCopy.has(`${workName}-start${num}-${num2}`)) {
+          paramsCopy.delete(`${workName}-start${num}-${num2}`);
+          paramsCopy.delete(`${workName}-end${num}-${num2}`);
+          paramsCopy.delete(`${workName}-anchor${num}-${num2}`);
           num2++;
         }
         num2 = 1;
@@ -67,29 +114,29 @@ export const getParamsSetter = function ({l, lParam, $p}) {
     case 'shortcutResult': {
       paramsCopy.delete(lParam('rand'));
       let num = 1;
-      while (paramsCopy.has(`anchorfield${num}`, true)) {
-        paramsCopy.delete(`anchorfield${num}`, true);
+      while (paramsCopy.has(`anchorfield${num}`)) {
+        paramsCopy.delete(`anchorfield${num}`);
         num++;
       }
       removeStartsEndsAndAnchors();
 
       num = 1;
       // Delete field-specific so we can add our own
-      while (paramsCopy.has(`field${num}`, true)) {
-        paramsCopy.delete(`field${num}`, true);
-        paramsCopy.delete(`checked${num}`, true);
-        paramsCopy.delete(`interlin${num}`, true);
-        paramsCopy.delete(`css${num}`, true);
+      while (paramsCopy.has(`field${num}`)) {
+        paramsCopy.delete(`field${num}`);
+        paramsCopy.delete(`checked${num}`);
+        paramsCopy.delete(`interlin${num}`);
+        paramsCopy.delete(`css${num}`);
         num++;
       }
       fieldAliasOrNames.forEach((fieldAliasOrName, i) => {
-        paramsCopy.set(`field${i + 1}`, fieldAliasOrName, true);
+        paramsCopy.set(`field${i + 1}`, fieldAliasOrName);
         // Todo: Restrict by content locale?
-        paramsCopy.set(`checked${i + 1}`, l('yes'), true);
+        paramsCopy.set(`checked${i + 1}`, /** @type {string} */ (l('yes')));
         paramsCopy.set(`interlin${i + 1}`, '');
         paramsCopy.set(`css${i + 1}`, '');
       });
-      paramsCopy.delete('work', true);
+      paramsCopy.delete('work');
     }
     // Fallthrough
     case 'startEndResult':
@@ -102,9 +149,9 @@ export const getParamsSetter = function ({l, lParam, $p}) {
       //    let's put random again toward the end.
       if (type === 'randomResult' || random.checked) {
         paramsCopy.delete(lParam('rand'));
-        paramsCopy.set(lParam('rand'), l('yes'));
+        paramsCopy.set(lParam('rand'), /** @type {string} */ (l('yes')));
       }
-      paramsCopy.set(lParam('result'), l('yes'));
+      paramsCopy.set(lParam('result'), /** @type {string} */ (l('yes')));
       break;
     }
     default: {

@@ -1,68 +1,69 @@
-/* eslint-disable node/no-unsupported-features/es-syntax */
-
 /**
- * @callback getJSONCallback
- * @param {string|string[]} jsonURL
- * @param {SimpleJSONCallback} cb
- * @param {SimpleJSONErrback} errBack
- * @returns {Promise<JSON>}
+ * @typedef {JSONValue[]} JSONArray
+ */
+/**
+ * @typedef {null|boolean|number|string|JSONArray|{[key: string]: JSONValue}} JSONValue
  */
 
 /**
- * @param {PlainObject} cfg
- * @param {fetch} cfg.fetch
+* @callback SimpleJSONCallback
+* @param {...JSONValue} json
+* @returns {void}
+*/
+
+/**
+* @callback SimpleJSONErrback
+* @param {Error} err
+* @param {string|string[]} jsonURL
+* @returns {JSONValue}
+*/
+
+/**
+ * @typedef {((
+ *   jsonURL: string|string[],
+ *   cb?: SimpleJSONCallback,
+ *   errBack?: SimpleJSONErrback
+ * ) => Promise<JSONValue>) & {
+ *   _fetch?: import('./index-polyglot.js').SimpleFetch,
+ *   hasURLBasePath?: boolean,
+ *   basePath?: string|false
+ * }} getJSONCallback
+ */
+
+/**
+ * @param {object} [cfg]
+ * @param {import('./index-polyglot.js').SimpleFetch} [cfg.fetch]
  * @returns {getJSONCallback}
  */
-function _await$2$1(value, then, direct) {
 
+function _await$2$1(value, then, direct) {
   if (!value || !value.then) {
     value = Promise.resolve(value);
   }
-
   return then ? value.then(then) : value;
 }
-
 function _invoke$1(body, then) {
   var result = body();
-
   if (result && result.then) {
     return result.then(then);
   }
-
   return then(result);
 }
-
 function _catch$2(body, recover) {
   try {
     var result = body();
   } catch (e) {
     return recover(e);
   }
-
   if (result && result.then) {
     return result.then(void 0, recover);
   }
-
   return result;
 }
-
 function buildGetJSONWithFetch({
-  // eslint-disable-next-line no-shadow
+  // eslint-disable-next-line no-shadow, no-undef -- This is a polyfill
   fetch = typeof window !== 'undefined' ? window.fetch : self.fetch
 } = {}) {
-  /**
-  * @callback SimpleJSONCallback
-  * @param {JSON} json
-  * @returns {void}
-  */
-
-  /**
-  * @callback SimpleJSONErrback
-  * @param {Error} err
-  * @param {string|string[]} jsonURL
-  * @returns {void}
-  */
-
   /**
   * @type {getJSONCallback}
   */
@@ -73,13 +74,12 @@ function buildGetJSONWithFetch({
         return _invoke$1(function () {
           if (Array.isArray(jsonURL)) {
             return _await$2$1(Promise.all(jsonURL.map(url => {
-              return getJSON(url);
+              return /** @type {getJSONCallback} */getJSON(url);
             })), function (arrResult) {
               if (cb) {
-                // eslint-disable-next-line node/callback-return, node/no-callback-literal, promise/prefer-await-to-callbacks
+                // eslint-disable-next-line promise/prefer-await-to-callbacks -- Old-style API
                 cb(...arrResult);
               }
-
               _exit = true;
               return arrResult;
             });
@@ -87,22 +87,22 @@ function buildGetJSONWithFetch({
         }, function (_result) {
           return _exit ? _result : _await$2$1(fetch(jsonURL), function (resp) {
             return _await$2$1(resp.json(), function (result) {
-              return typeof cb === 'function' // eslint-disable-next-line promise/prefer-await-to-callbacks
-              ? cb(result) : result; // https://github.com/bcoe/c8/issues/135
-
+              return typeof cb === 'function'
+              // eslint-disable-next-line promise/prefer-await-to-callbacks -- Old-style API
+              ? cb(result) : result;
+              // https://github.com/bcoe/c8/issues/135
               /* c8 ignore next */
             });
           });
         });
-      }, function (e) {
+      }, function (err) {
+        const e = /** @type {Error} */err;
         e.message += ` (File: ${jsonURL})`;
-
         if (errBack) {
           return errBack(e, jsonURL);
         }
-
-        throw e; // https://github.com/bcoe/c8/issues/135
-
+        throw e;
+        // https://github.com/bcoe/c8/issues/135
         /* c8 ignore next */
       }));
       /* c8 ignore next */
@@ -113,44 +113,43 @@ function buildGetJSONWithFetch({
 }
 
 function _await$1$1(value, then, direct) {
-
   if (!value || !value.then) {
     value = Promise.resolve(value);
   }
-
   return then ? value.then(then) : value;
 }
+/* globals process -- Node */
 
-/* eslint-disable node/no-unsupported-features/node-builtins,
-  node/no-unsupported-features/es-syntax, compat/compat */
 // Needed for polyglot support (no `path` in browser); even if
 //  polyglot using dynamic `import` not supported by Rollup (complaining
 //  of inability to do tree-shaking in UMD builds), still useful to delay
 //  path import for our testing, so that test can import this file in
 //  the browser without compilation without it choking
-let dirname, isWindows;
+
+/**
+ * @type {(directory: string) => string}
+ */
+let dirname;
+
+/** @type {boolean} */
 
 function _empty() {}
-/**
- * @param {string} path
- * @returns {string}
- */
-
-
+let isWindows;
 function _invokeIgnored(body) {
   var result = body();
-
   if (result && result.then) {
     return result.then(_empty);
   }
-}
+} /**
+   * @param {string} path
+   * @returns {string}
+   */
 
 function _async$1$1(f) {
   return function () {
     for (var args = [], i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
-
     try {
       return Promise.resolve(f.apply(this, args));
     } catch (e) {
@@ -158,11 +157,10 @@ function _async$1$1(f) {
     }
   };
 }
-
 const setDirname = _async$1$1(function () {
   return _invokeIgnored(function () {
     if (!dirname) {
-      return _await$1$1(import('path'), function (_import) {
+      return _await$1$1(import('node:path'), function (_import) {
         ({
           dirname
         } = _import);
@@ -170,23 +168,20 @@ const setDirname = _async$1$1(function () {
     }
   });
 });
-
 function fixWindowsPath(path) {
   if (!isWindows) {
     isWindows = process.platform === 'win32';
   }
-
-  return path.slice( // https://github.com/bcoe/c8/issues/135
-
+  return path.slice(
+  // https://github.com/bcoe/c8/issues/135
   /* c8 ignore next */
   isWindows ? 1 : 0);
 }
+
 /**
  * @param {string} url
  * @returns {string}
  */
-
-
 function getDirectoryForURL(url) {
   // Node should be ok with this, but transpiling
   //  to `require` doesn't work, so detect Windows
@@ -195,37 +190,36 @@ function getDirectoryForURL(url) {
   return fixWindowsPath(dirname(new URL(url).pathname));
 }
 
-/* eslint-disable node/no-unsupported-features/es-syntax */
+/* globals window, self -- Polyglot */
+
+/**
+ * @typedef {(url: string) => Promise<Response>} SimpleFetch
+ */
+
+/** @type {{default: SimpleFetch}} */
 
 function _await$3(value, then, direct) {
-
   if (!value || !value.then) {
     value = Promise.resolve(value);
   }
-
   return then ? value.then(then) : value;
 }
-
 let nodeFetch;
 /**
- * @param {PlainObject} cfg
- * @param {string} cfg.baseURL
- * @param {string} cfg.cwd
- * @returns {getJSONCallback}
+ * @param {object} [cfg]
+ * @param {string} [cfg.baseURL]
+ * @param {string|false} [cfg.cwd]
+ * @returns {import('./buildGetJSONWithFetch.js').getJSONCallback}
  */
 
 function _invoke$2(body, then) {
   var result = body();
-
   if (result && result.then) {
     return result.then(then);
   }
-
   return then(result);
 }
-
 function _call(body, then, direct) {
-
   try {
     var result = Promise.resolve(body());
     return then ? result.then(then) : result;
@@ -233,13 +227,11 @@ function _call(body, then, direct) {
     return Promise.reject(e);
   }
 }
-
 function _async$2(f) {
   return function () {
     for (var args = [], i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
-
     try {
       return Promise.resolve(f.apply(this, args));
     } catch (e) {
@@ -247,24 +239,32 @@ function _async$2(f) {
     }
   };
 }
-
 function buildGetJSON({
   baseURL,
   cwd: basePath
 } = {}) {
-  const _fetch = typeof window !== 'undefined' || typeof self !== 'undefined' ? typeof window !== 'undefined' ? window.fetch : self.fetch : _async$2(function (jsonURL) {
+  const _fetch = typeof window !== 'undefined' || typeof self !== 'undefined' ? typeof window !== 'undefined' ? window.fetch : self.fetch
+  // eslint-disable-next-line @stylistic/operator-linebreak -- TS
+  :
+  /**
+  * @param {string} jsonURL
+  * @returns {Promise<Response>}
+  */
+  _async$2(function (jsonURL) {
     let _exit = false;
     return _invoke$2(function () {
       if (/^https?:/u.test(jsonURL)) {
         return _invoke$2(function () {
           if (!nodeFetch) {
-            return _await$3(import('node-fetch'), function (_import) {
+            return _await$3(import('node-fetch'), function (
+            /** @type {{default: SimpleFetch}} */
+            /** @type {unknown} */
+            _import) {
               nodeFetch = _import;
             });
           }
         }, function () {
-          const _nodeFetch$default = nodeFetch.default(jsonURL);
-
+          const _nodeFetch$default = /** @type {SimpleFetch} */nodeFetch.default(jsonURL);
           _exit = true;
           return _nodeFetch$default;
         });
@@ -280,48 +280,50 @@ function buildGetJSON({
         // Filed https://github.com/bergos/file-fetch/issues/12 to see
         //  about getting relative basePaths in `file-fetch` and using
         //  that better-tested package instead
+        // @ts-expect-error Todo
+        // Don't change to an import as won't resolve for browser testing
+        // eslint-disable-next-line promise/avoid-new -- own API
+        /* c8 ignore next */
         return _await$3(import('local-xmlhttprequest'), function (localXMLHttpRequest) {
-          // eslint-disable-next-line no-shadow
-          const XMLHttpRequest = localXMLHttpRequest.default({
+          const XMLHttpRequest = /* eslint-disable jsdoc/valid-types -- Bug */
+          /**
+           * @type {{
+           *   prototype: XMLHttpRequest;
+           *   new(): XMLHttpRequest
+           * }}
+           */localXMLHttpRequest.default({
+            /* eslint-enable jsdoc/valid-types -- Bug */
             basePath
-          }); // Don't change to an import as won't resolve for browser testing
-          // eslint-disable-next-line promise/avoid-new
-
+          });
           return new Promise((resolve, reject) => {
             const r = new XMLHttpRequest();
-            r.open('GET', jsonURL, true); // r.responseType = 'json';
+            r.open('GET', jsonURL, true);
+            // r.responseType = 'json';
             // eslint-disable-next-line unicorn/prefer-add-event-listener -- May not be available
-
             r.onreadystatechange = function () {
               // Not sure how to simulate `if`
-
-              /* c8 ignore next */
+              /* c8 ignore next 3 */
               if (r.readyState !== 4) {
                 return;
               }
-
               if (r.status === 200) {
                 // var json = r.json;
                 const response = r.responseText;
-                resolve({
+                resolve(/** @type {Response} */{
                   json: () => JSON.parse(response)
                 });
                 return;
               }
-
               reject(new SyntaxError('Failed to fetch URL: ' + jsonURL + 'state: ' + r.readyState + '; status: ' + r.status));
             };
-
-            r.send(); // https://github.com/bcoe/c8/issues/135
-
+            r.send();
+            // https://github.com/bcoe/c8/issues/135
             /* c8 ignore next */
           });
-          /* c8 ignore next */
         });
       });
     });
   });
-
   const ret = buildGetJSONWithFetch({
     fetch: _fetch
   });
@@ -330,7 +332,6 @@ function buildGetJSON({
   ret.basePath = basePath;
   return ret;
 }
-
 const getJSON = buildGetJSON();
 
 function _iterableToArrayLimit(arr, i) {
@@ -3194,12 +3195,23 @@ var i18n = function i18n() {
 };
 
 // Todo: remember this locales choice by cookie?
+
+/**
+ * @param {{
+ *   namespace: string,
+ *   preferredLocale: string
+ * }} cfg
+ */
 const getPreferredLanguages = ({namespace, preferredLocale}) => {
   // Todo: Add to this optionally with one-off tag input box
   // Todo: Switch to fallbackLanguages so can default to
   //    navigator.languages?
   const langCodes = localStorage.getItem(namespace + '-langCodes');
-  const lngs = (langCodes && JSON.parse(langCodes)) || [preferredLocale];
+  const lngs = /** @type {string[]} */ (
+    (langCodes && JSON.parse(langCodes)) || [preferredLocale]
+  );
+
+  /** @type {string[]} */
   const langArr = [];
   lngs.forEach((lng) => {
     // Todo: Check for multiple separate hyphenated
@@ -3233,14 +3245,46 @@ const getCurrDir = () => {
   return window.location.href.replace(/(index\.html)?#.*$/, '');
 };
 
+/**
+ * @typedef {{
+ *   "localization-strings": import('../../server/main.js').LocalizationStrings
+ *   table: {browse_fields: (string|{
+ *     name?: string,
+ *     set: string[],
+ *     presort?: boolean
+ *   })[]}
+ *   fields: {
+ *     [key: string]: {
+ *       prefer_alias: boolean,
+ *       lang: string,
+ *       'fieldvalue-aliases': {
+ *         localeKey: string,
+ *         [key: string]: string|string[]
+ *       }
+ *     }
+ *   }
+* }} MetadataObj
+ */
+
+/**
+ * @param {string[]} lang
+ * @param {MetadataObj} metadataObj
+ * @param {string|string[]} properties
+ * @param {boolean} [allowObjects]
+ * @returns {string|string[]|import('../../server/main.js').LocalizationStrings}
+ */
 const getMetaProp = function getMetaProp (lang, metadataObj, properties, allowObjects) {
   let prop;
   properties = typeof properties === 'string' ? [properties] : properties;
-  lang.some((lan) => {
+  for (const lan of lang) {
     const p = [...properties];
-    let strings = metadataObj['localization-strings'][lan];
+    let strings = /** @type {string | string[]|import('../../server/main.js').LocalizationStrings} */ (
+      metadataObj['localization-strings'][lan]
+    );
     while (strings && p.length) {
-      strings = strings[p.shift()];
+      strings = /** @type {import('../../server/main.js').LocalizationStrings} */ (
+        strings
+      )[/** @type {string} */ (p.shift())];
     }
     // Todo: Fix this allowance for allowObjects (as it does not properly
     //        fallback if an object is returned from a language because
@@ -3249,9 +3293,13 @@ const getMetaProp = function getMetaProp (lang, metadataObj, properties, allowOb
     prop = (typeof strings === 'string')
       ? strings
       : undefined;
-    return prop;
-  });
-  return prop;
+    if (prop) {
+      break;
+    }
+  }
+  return /** @type {string|string[]|import('../../server/main.js').LocalizationStrings} */ (
+    prop
+  );
 };
 
 // Use the following to dynamically add specific file schema in place of
@@ -3259,6 +3307,12 @@ const getMetaProp = function getMetaProp (lang, metadataObj, properties, allowOb
 //  filesSchema.properties.groups.items.properties.files.items.properties.
 //      file.anyOf.splice(1, 1, {$ref: schemaFile});
 // Todo: Allow use of dbs and fileGroup together in base directories?
+
+/**
+ * @param {string} file
+ * @param {string} property
+ * @param {string} basePath
+ */
 const getMetadata = async (file, property, basePath) => {
   const url = new URL(basePath || getCurrDir());
   url.search = ''; // Clear out query string, e.g., `?fbclid` from Facebook
@@ -3270,6 +3324,13 @@ const getMetadata = async (file, property, basePath) => {
       url.toString(),
       {
         loaderOptions: {
+          /**
+           * @param {{
+           *   text: string,
+           *   body: any
+           * }} res
+           * @param {(err?: Error, cbValue: any) => void} callback
+           */
           processContent (res, callback) {
             callback(undefined, JSON.parse(
               res.text ||
@@ -3285,16 +3346,37 @@ const getMetadata = async (file, property, basePath) => {
 
 // Todo: Incorporate other methods into this class
 class Metadata {
+  /**
+   * @param {{
+   *   metadataObj: MetadataObj
+   * }} cfg
+   */
   constructor ({metadataObj}) {
     this.metadataObj = metadataObj;
   }
 
+  /**
+   * @param {string} field
+   * @returns {string|undefined}
+   */
   getFieldLang (field) {
     const {metadataObj} = this;
     const fields = metadataObj && metadataObj.fields;
     return fields && fields[field] && fields[field].lang;
   }
 
+  /**
+   * @param {{
+   *   namespace: string,
+   *   preferredLocale: string,
+   *   schemaItems: {
+   *     title: string,
+   *     type: string
+   *   }[],
+   *   pluginsForWork: import('./Plugin.js').PluginsForWork
+   * }} cfg
+   * @returns {(field: string) => boolean}
+   */
   getFieldMatchesLocale ({
     namespace, preferredLocale, schemaItems,
     pluginsForWork
@@ -3321,7 +3403,9 @@ class Metadata {
       const hasFieldValue = localeStrings &&
                 Object.keys(localeStrings).some((lng) => {
                   const fv = localeStrings[lng] &&
-                        localeStrings[lng].fieldvalue;
+                        /** @type {import('../../server/main.js').LocalizationStrings} */
+                        (/** @type {import('../../server/main.js').LocalizationStrings} */
+                          (localeStrings[lng]).fieldvalue);
                   return fv && fv[field];
                 });
 
@@ -3334,11 +3418,17 @@ class Metadata {
   }
 }
 
+/**
+ * @param {string} pluginName
+ */
 const escapePluginComponent = (pluginName) => {
   return pluginName.replaceAll('^', '^^'). // Escape our escape
     replaceAll('-', '^0');
 };
 
+/**
+ * @param {string|undefined} pluginName
+ */
 const unescapePluginComponent = (pluginName) => {
   if (!pluginName) {
     return pluginName;
@@ -3353,18 +3443,50 @@ const unescapePluginComponent = (pluginName) => {
   ).replaceAll('^^', '^');
 };
 
+/**
+ * @param {{
+ *   pluginName: string,
+ *   applicableField: string,
+ *   targetLanguage: string
+ * }} cfg
+ */
 const escapePlugin = ({pluginName, applicableField, targetLanguage}) => {
   return escapePluginComponent(pluginName) +
         (applicableField ? '-' + escapePluginComponent(applicableField) : '-') +
         (targetLanguage ? '-' + escapePluginComponent(targetLanguage) : '');
 };
 
+/**
+ * @todo Complete
+ * @typedef {{}} PluginObject
+ */
+
 class PluginsForWork {
+  /**
+   * @param {{
+   *   pluginsInWork: [string, {
+   *     lang: string,
+   *     meta: any,
+   *     onByDefault: boolean
+   *   }][],
+   *   pluginFieldMappings: {
+   *     placement: string,
+   *     'applicable-fields': {
+   *     }
+   *   }[],
+   *   pluginObjects: PluginObject[]
+   * }} cfg
+   */
   constructor ({pluginsInWork, pluginFieldMappings, pluginObjects}) {
     this.pluginsInWork = pluginsInWork;
     this.pluginFieldMappings = pluginFieldMappings;
     this.pluginObjects = pluginObjects;
   }
+
+  /**
+   * @param {string} pluginName
+   * @returns {PluginObject}
+   */
   getPluginObject (pluginName) {
     const idx = this.pluginsInWork.findIndex(([name]) => {
       return name === pluginName;
@@ -3372,6 +3494,25 @@ class PluginsForWork {
     const plugin = this.pluginObjects[idx];
     return plugin;
   }
+
+  /**
+   * @param {(cfg: {
+   *   plugin: PluginObject,
+   *   placement: string,
+   *   applicableFields: {
+   *     [applicableField: string]: {
+   *       targetLanguage: string|string[],
+   *       onByDefault: boolean,
+   *       meta: any
+   *     }
+   *   },
+   *   pluginName: string,
+   *   pluginLang: string,
+   *   onByDefaultDefault: boolean,
+   *   meta: {}
+   * }) => void} cb
+   * @returns {void}
+   */
   iterateMappings (cb) {
     this.pluginFieldMappings.forEach(({
       placement,
@@ -3398,6 +3539,25 @@ class PluginsForWork {
       });
     });
   }
+
+  /**
+   * @param {{
+   *   [applicableField: string]: {
+   *     targetLanguage: string|string[],
+   *     onByDefault: boolean,
+   *     meta: any
+   *   }
+   * }} applicableFields
+   * @param {(cfg: {
+   *   applicableField: string,
+   *   targetLanguage: string,
+   *   onByDefault: boolean,
+   *   metaApplicableField: {
+   *     [key: string]: string
+   *   }
+   * }) => void} cb
+   * @returns {boolean}
+   */
   processTargetLanguages (applicableFields, cb) {
     if (!applicableFields) {
       return false;
@@ -3415,9 +3575,25 @@ class PluginsForWork {
     });
     return true;
   }
+
+  /**
+   * @param {{
+   *   namespace: string,
+   *   field: string
+   * }} cfg
+   * @returns {boolean}
+   */
   isPluginField ({namespace, field}) {
     return field.startsWith(`${namespace}-plugin-`);
   }
+
+  /**
+   * @param {{
+   *   namespace: string,
+   *   field: string
+   * }} cfg
+   * @returns {[string, string|undefined, string|undefined]}
+   */
   getPluginFieldParts ({namespace, field}) {
     field = field.replace(`${namespace}-plugin-`, '');
     let pluginName, applicableField, targetLanguage;
@@ -3426,20 +3602,64 @@ class PluginsForWork {
     } else {
       pluginName = field;
     }
-    return [pluginName, applicableField, targetLanguage].map(unescapePluginComponent);
+    return /** @type {[string, string|undefined, string|undefined]} */ (
+      [pluginName, applicableField, targetLanguage].map(unescapePluginComponent)
+    );
   }
 }
 
 /* globals process -- Node polyglot */
 
 /**
+ * @typedef {number} Integer
+ */
+/**
+ * @typedef {{
+ *   schema: {$ref: string},
+ *   metadata: {$ref: string},
+ *   data: (Integer|string)[]
+ * }} WorkTableContainer
+ */
+
+/**
+ * @typedef {{
+ *   file: {
+ *     $ref: string
+ *   },
+ *   schemaFile: string,
+ *   metadataFile: string,
+ *   name: string,
+ * }} FileData
+ */
+
+/**
+ * @typedef {{
+ *   files: FileData[],
+ *   baseDirectory?: string,
+ *   schemaBaseDirectory?: string,
+ *   metadataBaseDirectory?: string,
+ * }} FileGroup
+ */
+
+/**
+ * INCOMPLETE typing.
+ * @typedef {{
+ *   groups: FileGroup[],
+ *   plugins: {[key: string]: {path: string}},
+ *   baseDirectory?: string,
+ *   schemaBaseDirectory?: string,
+ *   metadataBaseDirectory?: string,
+ * }} FilesObject
+ */
+
+/**
  * Imported by the `dist/sw-helper.js`
  * @param {string} files The files.json file path
- * @returns {PlainObject}
+ * @returns {Promise<string[]>}
  */
 const getWorkFiles = async function getWorkFiles (files) {
-  const filesObj = await getJSON(files);
-  const dataFiles = [];
+  const filesObj = /** @type {FilesObject} */ (await getJSON(files));
+  const dataFiles = /** @type {string[]} */ ([]);
   filesObj.groups.forEach((fileGroup) => {
     fileGroup.files.forEach((fileData) => {
       const {file, schemaFile, metadataFile} =
@@ -3453,6 +3673,11 @@ const getWorkFiles = async function getWorkFiles (files) {
   return dataFiles;
 };
 
+/**
+ * @param {FilesObject} filesObj
+ * @param {FileGroup} fileGroup
+ * @param {FileData} fileData
+ */
 const getFilePaths = function getFilePaths (filesObj, fileGroup, fileData) {
   const baseDir = (filesObj.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
   const schemaBaseDir = (filesObj.schemaBaseDirectory || '') +
@@ -3466,12 +3691,37 @@ const getFilePaths = function getFilePaths (filesObj, fileGroup, fileData) {
   return {file, schemaFile, metadataFile};
 };
 
+/**
+ * @typedef {{
+ *   lang: string[],
+ *   fallbackLanguages: string[],
+ *   work: string,
+ *   files: string,
+ *   allowPlugins: boolean|undefined,
+ *   basePath: string,
+ *   languages: import('./Languages.js').Languages,
+ *   preferredLocale: string
+ * }} GetWorkDataOptions
+ */
+
+/**
+ * @param {GetWorkDataOptions} cfg
+ */
 const getWorkData = async function ({
   lang, fallbackLanguages, work, files, allowPlugins, basePath,
   languages, preferredLocale
 }) {
   const filesObj = await getJSON(files);
-  const localizationStrings = filesObj['localization-strings'];
+  const localizationStrings =
+    /**
+     * @type {{
+     *   "localization-strings": {
+     *     [key: string]: {}
+     *   }
+     * }}
+     */ (
+      filesObj
+    )?.['localization-strings'];
 
   const workI18n = await i18n({
     messageStyle: 'plainNested',

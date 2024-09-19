@@ -1,5 +1,5 @@
-import path from 'path';
-import {fileURLToPath} from 'url';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 
 import Ajv from 'ajv';
 import JsonRefs from 'json-refs';

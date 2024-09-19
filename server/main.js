@@ -1,12 +1,17 @@
 #!/usr/bin/env node
 
 /* eslint-env node -- Environment here */
-import http from 'http';
+import http from 'node:http';
 
+// @ts-expect-error Todo: Needs Types
 import statik from '@brettz9/node-static';
 import fetch from 'node-fetch';
+// @ts-expect-error Todo: Needs Types
 import commandLineArgs from 'command-line-args';
 import DOMParser from 'dom-parser';
+
+// Why can't we just import `indexeddbshim` here? Because we need a UMD module?
+// @ts-expect-error Todo: Needs Types
 import setGlobalVars from 'indexeddbshim/dist/indexeddbshim-UnicodeIdentifiers-node.cjs';
 import {getJSON} from 'simple-get-json';
 import {setFetch} from 'intl-dom';
@@ -18,6 +23,8 @@ import {setServiceWorkerDefaults} from '../resources/utils/ServiceWorker.js';
 import {Languages} from '../resources/utils/Languages.js';
 import activateCallback from '../resources/activateCallback.js';
 
+// Todo: Should loosen this to not follow all of `fetch`'s API
+// @ts-expect-error Todo: Needs types
 setFetch(fetch);
 
 // Todo (low): See
@@ -25,6 +32,28 @@ setFetch(fetch);
 //   on idea for adapting node-serviceworker to consume entire service-worker
 //   server-side and apply fetch listener as Node middleware to retrieve a
 //   locally-saved copy of pre-fetched (cached) files during install event
+
+/**
+ * @typedef {{
+ *   nodeActivate: boolean,
+ *   port: number,
+ *   domain: string,
+ *   basePath: string,
+ *   interlinearSeparator: string,
+ *   localizeParamNames: boolean,
+ *   trustFormatHTML: boolean,
+ *   allowPlugins: boolean,
+ *   showEmptyInterlinear: boolean,
+ *   showTitleOnSingleInterlinear: boolean,
+ *   serviceWorkerPath: string,
+ *   userJSON: string,
+ *   languages: string,
+ *   files: string,
+ *   namespace: string,
+ *   httpServer: string,
+ *   expressServer: string
+ * }} UserOptions
+ */
 
 const optionDefinitions = [
   // Node-server-specific
@@ -64,6 +93,21 @@ const port = 'port' in userParams ? userParams.port : 8000;
 const domain = userParams.domain || `localhost`;
 const basePath = userParams.basePath || `http://${domain}${port ? ':' + port : ''}/`;
 
+/**
+ * @typedef {import('../resources/utils/ServiceWorker.js').ServiceWorkerConfig &
+ *   UserOptions & {
+ *     lang: string[],
+ *     langs: LanguageInfo[],
+ *     fallbackLanguages: string[],
+ *     log: (...args: any[]) => void,
+ *     nodeActivate?: boolean,
+ *     port?: number,
+ *     skipIndexedDB: false,
+ *     noDynamic: false,
+ *   }
+ * } ResultsDisplayServerContext
+ */
+
 const userParamsWithDefaults = {
   ...setServiceWorkerDefaults({}, {
     namespace: 'textbrowser',
@@ -72,6 +116,9 @@ const userParamsWithDefaults = {
     serviceWorkerPath: `${basePath}sw.js?pathToUserJSON=${encodeURIComponent(userParams.userJSON || '')}`
   }),
   ...userParams,
+  /**
+   * @param {...any} args
+   */
   log (...args) {
     console.log(...args);
   },
@@ -100,8 +147,9 @@ setGlobalVars(null, {
 }); // Adds `indexedDB` and `IDBKeyRange` to global in Node
 
 if (userParams.nodeActivate) {
+  // @ts-expect-error Ok
   // eslint-disable-next-line n/no-unsupported-features/node-builtins -- node-fetch
-  global.fetch = fetch;
+  globalThis.fetch = /** @type {fetch} */ (fetch);
   setTimeout(async () => {
     await activateCallback({...userParamsWithDefaults, basePath});
   });
@@ -109,15 +157,46 @@ if (userParams.nodeActivate) {
 }
 console.log('past activate check');
 
-global.DOMParser = DOMParser; // potentially used within resultsDisplay.js
+// @ts-expect-error Ok
+globalThis.DOMParser = DOMParser; // potentially used within resultsDisplay.js
 
 const fileServer = new statik.Server(); // Pass path; otherwise uses current directory
 
-let langData, languagesInstance;
+/**
+ * @typedef {{
+ *   code: string,
+ *   direction: "ltr"|"rtl",
+ *   locale: {
+ *     $ref: string
+ *   }
+ * }} LanguageInfo
+ */
+
+/**
+ * @typedef {{
+ *   [key: string]: string|string[]|LocalizationStrings
+ * }} LocalizationStrings
+ */
+
+/**
+ * @typedef {{
+ *   languages: LanguageInfo[],
+ *   localeFileBasePath?: string,
+ *   "localization-strings": LocalizationStrings
+ * }} LanguagesData
+ */
+
+/**
+ * @type {LanguagesData}
+ */
+let langData;
+
+/** @type {Languages} */
+let languagesInstance;
 
 const srv = http.createServer(async (req, res) => {
   // console.log('URL::', new URL(req.url));
-  const {pathname, search} = new URL(req.url, basePath);
+  const {pathname, search} = new URL(/** @type {string} */ (req.url), basePath);
   if (pathname !== '/textbrowser' || !search) {
     const staticServer = () => {
       if (pathname.includes('.git')) {
@@ -148,19 +227,25 @@ const srv = http.createServer(async (req, res) => {
       );
     };
     if (userParams.expressServer) {
+      /** @type {import('express').Application} */
       const app = (await import(userParams.expressServer)).default();
 
-      if (userParams.httpServer && (!app._router || !app._router.stack.some(({regexp}) => {
-        // Hack to ignore middleware like jsonParser (and hopefully
-        //   not get any other)
-        return regexp.source !== String.raw`^\/?(?=\\/|$)` && regexp.test(req.url);
-      }))) {
+      if (userParams.httpServer && (!app._router || !app._router.stack.some(
+        /** @type {(info: {regexp: RegExp}) => boolean} */
+        ({regexp}) => {
+          // Hack to ignore middleware like jsonParser (and hopefully
+          //   not get any other)
+          return regexp.source !== String.raw`^\/?(?=\\/|$)` &&
+            regexp.test(/** @type {string} */ (req.url));
+        }
+      ))) {
         await runHttpServer();
 
         // Ideally we could use `next` here to serve as a back-up static
         //  server (i.e., for the bahaiwritings app proper), but the indexes
         //  app apparently tries to use it (and fails) after a single
         //  successful HTML page load. So we let the Express app handle
+        // @ts-expect-error Ok
         app(req, res, () => {
           // Empty
         });
@@ -168,6 +253,7 @@ const srv = http.createServer(async (req, res) => {
       }
 
       // app.get('*', staticServer);
+      // @ts-expect-error Ok
       app(req, res, next);
 
       return;
@@ -184,6 +270,7 @@ const srv = http.createServer(async (req, res) => {
     return;
   }
   const languages = (req.headers['accept-language']?.replace(/;q=.*$/, '') ?? 'en-US').split(',');
+  // @ts-expect-error Polyglot reasons
   // eslint-disable-next-line n/no-unsupported-features/node-builtins -- Polyglot reasons
   global.navigator = {
     language: languages[0],
@@ -194,7 +281,9 @@ const srv = http.createServer(async (req, res) => {
   });
 
   if (!langData || !languagesInstance) {
-    langData = await getJSON(userParamsWithDefaults.languages);
+    langData = /** @type {LanguagesData} */ (
+      await getJSON(userParamsWithDefaults.languages)
+    );
     languagesInstance = new Languages({langData});
   }
 
@@ -207,22 +296,25 @@ const srv = http.createServer(async (req, res) => {
   });
 
   const resultsDisplay = async function () {
-    const serverOutput = $p.get('serverOutput', true);
-    let allowPlugins = $p.get('allowPlugins', true);
-    if (allowPlugins === '0') {
-      allowPlugins = false;
-    }
+    const serverOutput = /** @type {"html"|"jamilih"|"json"} */ (
+      $p.get('serverOutput', true)
+    );
+    const allowPluginsParam = $p.get('allowPlugins', true);
+    const allowPlugins = Boolean(allowPluginsParam && allowPluginsParam !== '0');
+
     const isHTML = serverOutput === 'html';
     res.writeHead(200, {'Content-Type': isHTML
       ? 'text/html;charset=utf8'
       : 'application/json;charset=utf8'
     });
+
     // Todo: Move sw-sample.js to bahaiwritings and test
     const result = await resultsDisplayServer.call(
       // Context
-      {
+      /** @type {ResultsDisplayServerContext} */
+      ({
         ...userParamsWithDefaults, lang, langs, fallbackLanguages
-      },
+      }),
       // resultsArgs
       {
         l,
@@ -235,7 +327,7 @@ const srv = http.createServer(async (req, res) => {
         allowPlugins,
         serverOutput,
         langData,
-        prefI18n: $p.get('prefI18n', true)
+        prefI18n: /** @type {"true"|"false"|null} */ ($p.get('prefI18n', true))
       }
     );
     res.end(isHTML ? result : JSON.stringify(result));

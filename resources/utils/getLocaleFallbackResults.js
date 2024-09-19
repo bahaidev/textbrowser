@@ -3,6 +3,16 @@
  */
 import {i18n} from 'intl-dom';
 
+/**
+ * @param {{
+ *   $p: import('./IntlURLSearchParams').default,
+ *   lang: string[],
+ *   langs: import('../../server/main.js').LanguageInfo[],
+ *   langData: import('../../server/main.js').LanguagesData,
+ *   fallbackLanguages?: string[],
+ *   basePath?: string
+ * }} options
+ */
 export default async function getLocaleFallbackResults ({
   $p,
   lang, langs, langData, fallbackLanguages,
@@ -17,9 +27,9 @@ export default async function getLocaleFallbackResults ({
       //    `$ref` (as with <https://github.com/whitlockjc/json-refs>) and
       //    replace `loadLocales` behavior with our own now resolved
       //    locales; see https://github.com/jdorn/json-editor/issues/132
-      return basePath + (langData.localeFileBasePath) + langs.find((l) => {
+      return basePath + (langData.localeFileBasePath) + (langs.find((l) => {
         return l.code === code;
-      }).locale.$ref;
+      })?.locale?.$ref ?? '');
     }
   });
   if (!$p.l10n) {

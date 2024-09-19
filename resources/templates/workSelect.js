@@ -1,6 +1,17 @@
 import {jml, $} from 'jamilih';
+
+// @ts-expect-error -- Missing TS
 import {deserialize as formDeserialize} from 'form-serialization';
 
+/**
+ * @param {{
+ *   groups: import('../utils/WorkInfo.js').FileGroup[]
+ *   workI18n: import('intl-dom').I18NCallback
+ *   getNextAlias: () => string|string[]|import('../../server/main.js').LocalizationStrings
+ *   $p: import('../utils/IntlURLSearchParams.js').default
+ *   followParams: (formSelector: string, cb: () => void) => void
+ * }} cfg
+ */
 const workSelect = function ({groups, workI18n, getNextAlias, $p, followParams}) {
   const form = jml(
     'form',
@@ -10,7 +21,7 @@ const workSelect = function ({groups, workI18n, getNextAlias, $p, followParams})
       }
     }},
     groups.map((group, i) => {
-      return ['div', [
+      return /** @type {import('jamilih').JamilihArray} */ (['div', [
         i > 0 ? ['br', 'br', 'br'] : '',
         ['div', [
           workI18n(group.directions.localeKey)
@@ -23,7 +34,9 @@ const workSelect = function ({groups, workI18n, getNextAlias, $p, followParams})
             name: group.name.localeKey
           },
           $on: {
-            change ({target: {value}}) {
+            change (e) {
+              // eslint-disable-next-line prefer-destructuring -- TS
+              const value = /** @type {HTMLSelectElement} */ (e.target).value;
               /*
                             // If using click, but click doesn't always fire
                             if (e.target.nodeName.toLowerCase() === 'select') {
@@ -45,7 +58,7 @@ const workSelect = function ({groups, workI18n, getNextAlias, $p, followParams})
         ]]
         // Todo: Add in Go button (with 'submitgo' localization string) to
         //    avoid need for pull-down if using first selection?
-      ]];
+      ]]);
     }),
     $('#main')
   );

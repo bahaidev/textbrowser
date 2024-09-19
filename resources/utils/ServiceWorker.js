@@ -2,16 +2,21 @@
 import {dialogs} from './dialogs.js';
 
 /**
- * Note that this function be kept as a polyglot client-server file.
- * @param {PlainObject} target
- * @param {PlainObject} source
- * @returns {{
+ * @typedef {{
  *   userJSON: string,
  *   languages: string,
  *   serviceWorkerPath: string,
  *   files: string,
- *   namespace: string
- * }}
+ *   namespace: string,
+ *   stylesheets?: string[]
+ * }} ServiceWorkerConfig
+ */
+
+/**
+ * Note that this function be kept as a polyglot client-server file.
+ * @param {Partial<ServiceWorkerConfig>} target
+ * @param {Partial<ServiceWorkerConfig>} source
+ * @returns {ServiceWorkerConfig}
  */
 export const setServiceWorkerDefaults = (target, source) => {
   target.userJSON = source.userJSON || 'resources/user.json';
@@ -27,13 +32,18 @@ export const setServiceWorkerDefaults = (target, source) => {
         }`;
   target.files = source.files || 'files.json';
   target.namespace = source.namespace || 'textbrowser';
-  return target;
+  return /** @type {ServiceWorkerConfig} */ (target);
 };
 
 // (Unless skipped in code, will wait between install
 //    of new and activation of new or existing if still
 //    some tabs open)
 
+/**
+ * @param {{
+ *   r: ServiceWorkerRegistration
+ * }} cfg
+ */
 export const listenForWorkerUpdate = ({
   r
   // logger
@@ -43,7 +53,7 @@ export const listenForWorkerUpdate = ({
     // r.installing now available (though r.active is also,
     //    apparently due to prior activation; but not r.waiting)
     console.log('update found', e);
-    const newWorker = r.installing;
+    const newWorker = /** @type {ServiceWorker} */ (r.installing);
 
     // statechange won't catch this installing event as already installing
 
@@ -97,6 +107,18 @@ for offline installation.
   });
 };
 
+/**
+ * @typedef {{
+ *   addLogEntry: (entry: {text: string}) => void,
+ * }} Logger
+ */
+
+/**
+ * @param {{
+ *   r: ServiceWorkerRegistration,
+ *   logger: Logger
+ * }} cfg
+ */
 export const respondToState = async ({
   r, logger
 }) => {
@@ -157,20 +179,20 @@ export const respondToState = async ({
           }; trying again...`
         });
         /*
-                if (errorType === 'dbError') {
-                    logger.dbError({
-                        type: name || errorType,
-                        escapedErrorMessage: escapeHTML(message)
-                    });
-                }
-                */
+          if (errorType === 'dbError') {
+              logger.dbError({
+                  type: name || errorType,
+                  escapedErrorMessage: escapeHTML(message)
+              });
+          }
+          */
         // Todo: auto-close any dbError dialog if retrying
         // No longer rejecting as should auto-retry
         /*
-                const err = new Error(message);
-                err.type = type;
-                reject(err);
-                */
+          const err = new Error(message);
+          err.type = type;
+          reject(err);
+          */
         break;
       default:
         console.error('Unexpected type', type);
@@ -219,6 +241,13 @@ any indication it is installing.
 
 // Keep in this file as may wish to avoid using for server (while still
 //   doing other service worker work)
+
+/**
+ * @param {{
+ *   serviceWorkerPath: string,
+ *   logger: Logger
+ * }} cfg
+ */
 export const registerServiceWorker = async ({
   serviceWorkerPath,
   logger

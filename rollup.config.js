@@ -1,13 +1,16 @@
-import {appendFile, copyFile} from 'fs/promises';
+import {appendFile, copyFile} from 'node:fs/promises';
 
 import {babel} from '@rollup/plugin-babel';
 import {nodeResolve} from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 // import nodeGlobals from 'rollup-plugin-node-globals';
 import json from '@rollup/plugin-json';
+// @ts-expect-error Missing types
 import replace from 'rollup-plugin-re';
 import terser from '@rollup/plugin-terser';
+// @ts-expect-error Missing types
 import postProcess from '@stadtlandnetz/rollup-plugin-postprocess';
+// @ts-expect-error Missing types
 import {importMetaAssets} from '@web/rollup-plugin-import-meta-assets';
 
 /*
@@ -38,15 +41,15 @@ const importerRevert = [/window.xyz\(/, 'import('];
 //        to suppress (known) circular dependency warnings
 /**
  * @external RollupConfig
- * @type {PlainObject}
+ * @type {object}
  * @see {@link https://rollupjs.org/guide/en#big-list-of-options}
  */
 
 /**
- * @param {PlainObject} [config]
+ * @param {object} [config]
  * @param {boolean} [config.minifying]
- * @param {string} [config.format]
- * @returns {RollupConfig}
+ * @param {import('rollup').ModuleFormat} [config.format]
+ * @returns {import('rollup').RollupOptions}
  */
 function getRollupObject ({minifying, format = 'umd'} = {}) {
   const nonMinified = {

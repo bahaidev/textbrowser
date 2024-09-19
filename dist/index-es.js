@@ -1,18 +1,41 @@
-/* eslint-disable node/no-unsupported-features/es-syntax */
-
 /**
- * @callback getJSONCallback
- * @param {string|string[]} jsonURL
- * @param {SimpleJSONCallback} cb
- * @param {SimpleJSONErrback} errBack
- * @returns {Promise<JSON>}
+ * @typedef {JSONValue[]} JSONArray
+ */
+/**
+ * @typedef {null|boolean|number|string|JSONArray|{[key: string]: JSONValue}} JSONValue
  */
 
 /**
- * @param {PlainObject} cfg
- * @param {fetch} cfg.fetch
+* @callback SimpleJSONCallback
+* @param {...JSONValue} json
+* @returns {void}
+*/
+
+/**
+* @callback SimpleJSONErrback
+* @param {Error} err
+* @param {string|string[]} jsonURL
+* @returns {JSONValue}
+*/
+
+/**
+ * @typedef {((
+ *   jsonURL: string|string[],
+ *   cb?: SimpleJSONCallback,
+ *   errBack?: SimpleJSONErrback
+ * ) => Promise<JSONValue>) & {
+ *   _fetch?: import('./index-polyglot.js').SimpleFetch,
+ *   hasURLBasePath?: boolean,
+ *   basePath?: string|false
+ * }} getJSONCallback
+ */
+
+/**
+ * @param {object} [cfg]
+ * @param {import('./index-polyglot.js').SimpleFetch} [cfg.fetch]
  * @returns {getJSONCallback}
  */
+
 function _await$2$1(value, then, direct) {
   if (!value || !value.then) {
     value = Promise.resolve(value);
@@ -38,22 +61,9 @@ function _catch$2(body, recover) {
   return result;
 }
 function buildGetJSONWithFetch({
-  // eslint-disable-next-line no-shadow
+  // eslint-disable-next-line no-shadow, no-undef -- This is a polyfill
   fetch = typeof window !== 'undefined' ? window.fetch : self.fetch
 } = {}) {
-  /**
-  * @callback SimpleJSONCallback
-  * @param {JSON} json
-  * @returns {void}
-  */
-
-  /**
-  * @callback SimpleJSONErrback
-  * @param {Error} err
-  * @param {string|string[]} jsonURL
-  * @returns {void}
-  */
-
   /**
   * @type {getJSONCallback}
   */
@@ -64,10 +74,10 @@ function buildGetJSONWithFetch({
         return _invoke$1(function () {
           if (Array.isArray(jsonURL)) {
             return _await$2$1(Promise.all(jsonURL.map(url => {
-              return getJSON(url);
+              return /** @type {getJSONCallback} */getJSON(url);
             })), function (arrResult) {
               if (cb) {
-                // eslint-disable-next-line node/callback-return, node/no-callback-literal, promise/prefer-await-to-callbacks
+                // eslint-disable-next-line promise/prefer-await-to-callbacks -- Old-style API
                 cb(...arrResult);
               }
               _exit = true;
@@ -77,20 +87,22 @@ function buildGetJSONWithFetch({
         }, function (_result) {
           return _exit ? _result : _await$2$1(fetch(jsonURL), function (resp) {
             return _await$2$1(resp.json(), function (result) {
-              return typeof cb === 'function' // eslint-disable-next-line promise/prefer-await-to-callbacks
-              ? cb(result) : result; // https://github.com/bcoe/c8/issues/135
-
+              return typeof cb === 'function'
+              // eslint-disable-next-line promise/prefer-await-to-callbacks -- Old-style API
+              ? cb(result) : result;
+              // https://github.com/bcoe/c8/issues/135
               /* c8 ignore next */
             });
           });
         });
-      }, function (e) {
+      }, function (err) {
+        const e = /** @type {Error} */err;
         e.message += ` (File: ${jsonURL})`;
         if (errBack) {
           return errBack(e, jsonURL);
         }
-        throw e; // https://github.com/bcoe/c8/issues/135
-
+        throw e;
+        // https://github.com/bcoe/c8/issues/135
         /* c8 ignore next */
       }));
       /* c8 ignore next */
@@ -105,27 +117,33 @@ function _await$1$1(value, then, direct) {
   }
   return then ? value.then(then) : value;
 }
+/* globals process -- Node */
 
-/* eslint-disable node/no-unsupported-features/node-builtins,
-  node/no-unsupported-features/es-syntax, compat/compat */
 // Needed for polyglot support (no `path` in browser); even if
 //  polyglot using dynamic `import` not supported by Rollup (complaining
 //  of inability to do tree-shaking in UMD builds), still useful to delay
 //  path import for our testing, so that test can import this file in
 //  the browser without compilation without it choking
-let dirname, isWindows;
-function _empty() {}
-/**
- * @param {string} path
- * @returns {string}
- */
 
+/**
+ * @type {(directory: string) => string}
+ */
+let dirname;
+
+/** @type {boolean} */
+
+function _empty() {}
+let isWindows;
 function _invokeIgnored(body) {
   var result = body();
   if (result && result.then) {
     return result.then(_empty);
   }
-}
+} /**
+   * @param {string} path
+   * @returns {string}
+   */
+
 function _async$1$1(f) {
   return function () {
     for (var args = [], i = 0; i < arguments.length; i++) {
@@ -141,7 +159,7 @@ function _async$1$1(f) {
 const setDirname = _async$1$1(function () {
   return _invokeIgnored(function () {
     if (!dirname) {
-      return _await$1$1(import('path'), function (_import) {
+      return _await$1$1(import('node:path'), function (_import) {
         ({
           dirname
         } = _import);
@@ -155,15 +173,14 @@ function fixWindowsPath(path) {
   }
   return path.slice(
   // https://github.com/bcoe/c8/issues/135
-
   /* c8 ignore next */
   isWindows ? 1 : 0);
 }
+
 /**
  * @param {string} url
  * @returns {string}
  */
-
 function getDirectoryForURL(url) {
   // Node should be ok with this, but transpiling
   //  to `require` doesn't work, so detect Windows
@@ -172,7 +189,13 @@ function getDirectoryForURL(url) {
   return fixWindowsPath(dirname(new URL(url).pathname));
 }
 
-/* eslint-disable node/no-unsupported-features/es-syntax */
+/* globals window, self -- Polyglot */
+
+/**
+ * @typedef {(url: string) => Promise<Response>} SimpleFetch
+ */
+
+/** @type {{default: SimpleFetch}} */
 
 function _await$3(value, then, direct) {
   if (!value || !value.then) {
@@ -182,10 +205,10 @@ function _await$3(value, then, direct) {
 }
 let nodeFetch;
 /**
- * @param {PlainObject} cfg
- * @param {string} cfg.baseURL
- * @param {string} cfg.cwd
- * @returns {getJSONCallback}
+ * @param {object} [cfg]
+ * @param {string} [cfg.baseURL]
+ * @param {string|false} [cfg.cwd]
+ * @returns {import('./buildGetJSONWithFetch.js').getJSONCallback}
  */
 
 function _invoke$2(body, then) {
@@ -219,18 +242,27 @@ function buildGetJSON({
   baseURL,
   cwd: basePath
 } = {}) {
-  const _fetch = typeof window !== 'undefined' || typeof self !== 'undefined' ? typeof window !== 'undefined' ? window.fetch : self.fetch : _async$2(function (jsonURL) {
+  const _fetch = typeof window !== 'undefined' || typeof self !== 'undefined' ? typeof window !== 'undefined' ? window.fetch : self.fetch
+  // eslint-disable-next-line @stylistic/operator-linebreak -- TS
+  :
+  /**
+  * @param {string} jsonURL
+  * @returns {Promise<Response>}
+  */
+  _async$2(function (jsonURL) {
     let _exit = false;
     return _invoke$2(function () {
       if (/^https?:/u.test(jsonURL)) {
         return _invoke$2(function () {
           if (!nodeFetch) {
-            return _await$3(import('node-fetch'), function (_import) {
+            return _await$3(import('node-fetch'), function (/** @type {{default: SimpleFetch}} */
+            /** @type {unknown} */
+            _import) {
               nodeFetch = _import;
             });
           }
         }, function () {
-          const _nodeFetch$default = nodeFetch.default(jsonURL);
+          const _nodeFetch$default = /** @type {SimpleFetch} */nodeFetch.default(jsonURL);
           _exit = true;
           return _nodeFetch$default;
         });
@@ -246,40 +278,46 @@ function buildGetJSON({
         // Filed https://github.com/bergos/file-fetch/issues/12 to see
         //  about getting relative basePaths in `file-fetch` and using
         //  that better-tested package instead
+        // @ts-expect-error Todo
+        // Don't change to an import as won't resolve for browser testing
+        // eslint-disable-next-line promise/avoid-new -- own API
+        /* c8 ignore next */
         return _await$3(import('local-xmlhttprequest'), function (localXMLHttpRequest) {
-          // eslint-disable-next-line no-shadow
-          const XMLHttpRequest = localXMLHttpRequest.default({
+          const XMLHttpRequest = /* eslint-disable jsdoc/valid-types -- Bug */
+          /**
+           * @type {{
+           *   prototype: XMLHttpRequest;
+           *   new(): XMLHttpRequest
+           * }}
+           */localXMLHttpRequest.default({
+            /* eslint-enable jsdoc/valid-types -- Bug */
             basePath
-          }); // Don't change to an import as won't resolve for browser testing
-          // eslint-disable-next-line promise/avoid-new
-
+          });
           return new Promise((resolve, reject) => {
             const r = new XMLHttpRequest();
-            r.open('GET', jsonURL, true); // r.responseType = 'json';
+            r.open('GET', jsonURL, true);
+            // r.responseType = 'json';
             // eslint-disable-next-line unicorn/prefer-add-event-listener -- May not be available
-
             r.onreadystatechange = function () {
               // Not sure how to simulate `if`
-
-              /* c8 ignore next */
+              /* c8 ignore next 3 */
               if (r.readyState !== 4) {
                 return;
               }
               if (r.status === 200) {
                 // var json = r.json;
                 const response = r.responseText;
-                resolve({
+                resolve(/** @type {Response} */{
                   json: () => JSON.parse(response)
                 });
                 return;
               }
               reject(new SyntaxError('Failed to fetch URL: ' + jsonURL + 'state: ' + r.readyState + '; status: ' + r.status));
             };
-            r.send(); // https://github.com/bcoe/c8/issues/135
-
+            r.send();
+            // https://github.com/bcoe/c8/issues/135
             /* c8 ignore next */
           });
-          /* c8 ignore next */
         });
       });
     });
@@ -3710,6 +3748,17 @@ function deserialize(form, hash) {
 /**
  * @file Note that this should be kept as a polyglot client-server file.
  */
+
+/**
+ * @param {{
+ *   $p: import('./IntlURLSearchParams').default,
+ *   lang: string[],
+ *   langs: import('../../server/main.js').LanguageInfo[],
+ *   langData: import('../../server/main.js').LanguagesData,
+ *   fallbackLanguages?: string[],
+ *   basePath?: string
+ * }} options
+ */
 async function getLocaleFallbackResults(_ref) {
   let {
     $p,
@@ -3728,9 +3777,9 @@ async function getLocaleFallbackResults(_ref) {
       //    `$ref` (as with <https://github.com/whitlockjc/json-refs>) and
       //    replace `loadLocales` behavior with our own now resolved
       //    locales; see https://github.com/jdorn/json-editor/issues/132
-      return basePath + langData.localeFileBasePath + langs.find(l => {
+      return basePath + langData.localeFileBasePath + (langs.find(l => {
         return l.code === code;
-      }).locale.$ref;
+      })?.locale?.$ref ?? '');
     }
   });
   if (!$p.l10n) {
@@ -6061,13 +6110,35 @@ if (doc && doc.body) {
 }
 const nbsp = '\u00A0'; // Very commonly needed in templates
 
+/**
+ * @param {string} sel
+ */
 const $ = sel => document.querySelector(sel);
+
+/**
+ * @param {string|HTMLElement} el
+ * @param {string} descendentsSel
+ */
 const $e = (el, descendentsSel) => {
-  el = typeof el === 'string' ? $(el) : el;
-  return el.querySelector(descendentsSel);
+  const elem = typeof el === 'string' ? $(el) : el;
+  return elem?.querySelector(descendentsSel);
 };
 
+/**
+ * @typedef {{
+ *   submit: string,
+ *   cancel: string,
+ *   ok: string
+ * }} LocaleObject
+ */
+
+/**
+ * @typedef {{[locale: string]: LocaleObject}} Locales
+ */
+
 const defaultLocale = 'en';
+
+/** @type {Locales} */
 const localeStrings = {
   en: {
     submit: 'Submit',
@@ -6076,27 +6147,72 @@ const localeStrings = {
   }
 };
 class Dialog {
+  /**
+   * @param {{
+   *  locale?: string,
+   *  localeObject?: LocaleObject
+   * }} [cfg]
+   */
   constructor() {
     let {
       locale,
       localeObject
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    this.localeStrings = localeStrings.en; // For types
     this.setLocale({
       locale,
       localeObject
     });
   }
+  /**
+   * @param {{
+   *  locale?: string,
+   *  localeObject?: Partial<LocaleObject>
+   * }} cfg
+   * @returns {void}
+   */
   setLocale(_ref) {
     let {
-      locale = {},
+      locale,
       localeObject = {}
     } = _ref;
     this.localeStrings = {
       ...localeStrings[defaultLocale],
-      ...localeStrings[locale],
+      ...(locale ? localeStrings[locale] : {}),
       ...localeObject
     };
   }
+
+  /**
+   * @typedef {{
+   *   atts?: import('jamilih').JamilihAttributes,
+   *   children?: import('jamilih').JamilihChildren,
+   *   close?: () => void,
+   *   remove?: boolean
+   * }} MakeDialogCfg
+   */
+
+  /**
+   * @typedef {MakeDialogCfg & {
+   *   submit?: (
+   *     this: HTMLElement, args: {e: Event, dialog: HTMLDialogElement}
+   *   ) => void,
+   *   cancel: (
+   *     this: HTMLElement,
+   *     args: {
+   *       e: Event,
+   *       dialog: HTMLDialogElement
+   *     }
+   *   ) => boolean|void,
+   *   cancelClass?: string,
+   *   submitClass?: string
+   * }} CancelDialogCfg
+   */
+
+  /**
+   * @param {MakeDialogCfg} cfg
+   * @returns {HTMLDialogElement}
+   */
   makeDialog(_ref2) {
     let {
       atts = {
@@ -6114,7 +6230,8 @@ class Dialog {
         atts.$on.close = close;
       }
     }
-    const dialog = /** @type {HTMLDialogElement} */jml('dialog', atts, children, $$1('#main'));
+    const dialog = /** @type {HTMLDialogElement} */
+    jml('dialog', atts, children, $$1('#main'));
     dialog.showModal();
     if (remove) {
       dialog.addEventListener('close', () => {
@@ -6123,6 +6240,10 @@ class Dialog {
     }
     return dialog;
   }
+  /**
+   * @param {CancelDialogCfg} cfg
+   * @returns {HTMLDialogElement}
+   */
   makeSubmitDialog(_ref3) {
     let {
       submit,
@@ -6131,6 +6252,7 @@ class Dialog {
       ...args
     } = _ref3;
     const dialog = this.makeCancelDialog(args);
+    /** @type {HTMLDialogElement} */
     $e(dialog, `button.${args.cancelClass || 'cancel'}`).before(jml('button', {
       class: submitClass,
       $on: {
@@ -6146,6 +6268,11 @@ class Dialog {
     }, [this.localeStrings.submit]), nbsp.repeat(2));
     return dialog;
   }
+
+  /**
+   * @param {CancelDialogCfg} cfg
+   * @returns {HTMLDialogElement}
+   */
   makeCancelDialog(_ref4) {
     let {
       // eslint-disable-next-line no-unused-vars -- Discarding
@@ -6178,6 +6305,12 @@ class Dialog {
     }, [this.localeStrings.cancel]]], dialog);
     return dialog;
   }
+
+  /**
+   * @param {string|{message: string, ok?: boolean, submitClass?: string}} message
+   * @param {boolean|{ok: boolean}} [ok]
+   * @returns {Promise<void>}
+   */
   alert(message, ok) {
     message = typeof message === 'string' ? {
       message
@@ -6188,7 +6321,7 @@ class Dialog {
       submitClass = 'submit'
     } = message;
     return new Promise(resolve => {
-      const dialog = /** @type {HTMLDialogElement} */jml('dialog', [msg, ...(includeOk ? [['br'], ['br'], ['div', {
+      const dialog = /** @type {HTMLDialogElement} */jml('dialog', [msg, ...(includeOk ? (/** @type {import('jamilih').JamilihChildren} */[['br'], ['br'], ['div', {
         class: submitClass
       }, [['button', {
         $on: {
@@ -6197,10 +6330,16 @@ class Dialog {
             resolve();
           }
         }
-      }, [this.localeStrings.ok]]]]] : [])], $$1('#main'));
+      }, [this.localeStrings.ok]]]]]) : [])], $$1('#main'));
       dialog.showModal();
     });
   }
+  /**
+   * @param {string|Partial<CancelDialogCfg> & {
+   *   message: string
+   * }} message
+   * @returns {Promise<string>}
+   */
   prompt(message) {
     message = typeof message === 'string' ? {
       message
@@ -6211,19 +6350,28 @@ class Dialog {
       ...submitArgs
     } = message;
     return new Promise((resolve, reject) => {
+      /**
+       * @param {{
+       *   e: Event,
+       *   dialog: HTMLDialogElement
+       * }} args
+       */
       const submit = function (_ref5) {
         let {
           e,
           dialog
         } = _ref5;
         if (userSubmit) {
-          userSubmit.call(this, {
+          userSubmit.call(
+          // @ts-expect-error Ok
+          /** @type {HTMLElement} */
+          this, {
             e,
             dialog
           });
         }
         dialog.close();
-        resolve($e(dialog, 'input').value);
+        resolve(/** @type {HTMLInputElement} */$e(dialog, 'input').value);
       };
       /* const dialog = */
       this.makeSubmitDialog({
@@ -6236,6 +6384,10 @@ class Dialog {
       });
     });
   }
+  /**
+   * @param {string|{message: string, submitClass?: string}} message
+   * @returns {Promise<void>}
+   */
   confirm(message) {
     message = typeof message === 'string' ? {
       message
@@ -6269,6 +6421,13 @@ class Dialog {
 const dialogs = new Dialog();
 
 // Todo: remember this locales choice by cookie?
+
+/**
+ * @param {{
+ *   namespace: string,
+ *   preferredLocale: string
+ * }} cfg
+ */
 const getPreferredLanguages = _ref => {
   let {
     namespace,
@@ -6278,7 +6437,10 @@ const getPreferredLanguages = _ref => {
   // Todo: Switch to fallbackLanguages so can default to
   //    navigator.languages?
   const langCodes = localStorage.getItem(namespace + '-langCodes');
-  const lngs = langCodes && JSON.parse(langCodes) || [preferredLocale];
+  const lngs = /** @type {string[]} */
+  langCodes && JSON.parse(langCodes) || [preferredLocale];
+
+  /** @type {string[]} */
   const langArr = [];
   lngs.forEach(lng => {
     // Todo: Check for multiple separate hyphenated
@@ -6297,20 +6459,62 @@ const getPreferredLanguages = _ref => {
  * @classdesc Note that this should be kept as a polyglot client-server class.
  */
 class Languages {
+  /**
+   * @param {{
+   *   langData: import('../../server/main.js').LanguagesData
+   * }} cfg
+   */
   constructor(_ref2) {
     let {
       langData
     } = _ref2;
     this.langData = langData;
   }
+  /**
+   * @param {string} langCode
+   * @returns {{
+   *   languages: {
+   *     [key: string]: string
+   *   }
+   * }}
+   */
   localeFromLangData(langCode) {
-    return this.langData['localization-strings'][langCode];
+    return (
+      /**
+       * @type {{
+       *   languages: {
+       *     [key: string]: string
+       *   }
+       * }}
+       */
+      this.langData['localization-strings'][langCode]
+    );
   }
+  /**
+   * @param {string} code
+   * @returns {string}
+   */
   getLanguageFromCode(code) {
     return this.localeFromLangData(code).languages[code];
     // Could add something like this in place or as fallback, though need to pass in locale
     // || new Intl.DisplayNames([locale], {type: 'language'}).of(code);
   }
+
+  /**
+   * @param {{
+   *   pluginName: string,
+   *   workI18n: import('intl-dom').I18NCallback,
+   *   targetLanguage: string,
+   *   applicableFieldI18N: string,
+   *   meta: {
+   *     [key: string]: string
+   *   },
+   *   metaApplicableField: {
+   *     [key: string]: string
+   *   },
+   * }} cfg
+   * @returns {string}
+   */
   getFieldNameFromPluginNameAndLocales(_ref3) {
     let {
       pluginName,
@@ -6321,7 +6525,7 @@ class Languages {
       meta,
       metaApplicableField
     } = _ref3;
-    return workI18n(['plugins', pluginName, 'fieldname'], {
+    return /** @type {string} */workI18n(['plugins', pluginName, 'fieldname'], {
       ...meta,
       ...metaApplicableField,
       applicableField: applicableFieldI18N,
@@ -6331,11 +6535,24 @@ class Languages {
       throwOnExtraSuppliedFormatters: false
     });
   }
+
+  /**
+   * @param {{$p: import('./IntlURLSearchParams.js').default}} cfg
+   * @returns {{
+   *   lang: string[],
+   *   langs: import('../../server/main.js').LanguageInfo[],
+   *   languageParam: string|null,
+   *   fallbackLanguages: string[]
+   * }}
+   */
   getLanguageInfo(_ref4) {
     let {
       $p
     } = _ref4;
     const langs = this.langData.languages;
+    /**
+     * @param {string} lcl
+     */
     const localePass = lcl => {
       return langs.some(_ref5 => {
         let {
@@ -14285,23 +14502,57 @@ var JsonRefs = function (t) {
 const getCurrDir = () => {
   return window.location.href.replace(/(index\.html)?#.*$/, '');
 };
+
+/**
+ * @typedef {{
+ *   "localization-strings": import('../../server/main.js').LocalizationStrings
+ *   table: {browse_fields: (string|{
+ *     name?: string,
+ *     set: string[],
+ *     presort?: boolean
+ *   })[]}
+ *   fields: {
+ *     [key: string]: {
+ *       prefer_alias: boolean,
+ *       lang: string,
+ *       'fieldvalue-aliases': {
+ *         localeKey: string,
+ *         [key: string]: string|string[]
+ *       }
+ *     }
+ *   }
+* }} MetadataObj
+ */
+
+/**
+ * @param {string[]} lang
+ * @param {MetadataObj} metadataObj
+ * @param {string|string[]} properties
+ * @param {boolean} [allowObjects]
+ * @returns {string|string[]|import('../../server/main.js').LocalizationStrings}
+ */
 const getMetaProp = function getMetaProp(lang, metadataObj, properties, allowObjects) {
   let prop;
   properties = typeof properties === 'string' ? [properties] : properties;
-  lang.some(lan => {
+  for (const lan of lang) {
     const p = [...properties];
-    let strings = metadataObj['localization-strings'][lan];
+    let strings = /** @type {string | string[]|import('../../server/main.js').LocalizationStrings} */
+    metadataObj['localization-strings'][lan];
     while (strings && p.length) {
-      strings = strings[p.shift()];
+      strings = /** @type {import('../../server/main.js').LocalizationStrings} */strings[(/** @type {string} */p.shift())];
     }
     // Todo: Fix this allowance for allowObjects (as it does not properly
     //        fallback if an object is returned from a language because
     //        that language is missing content and is only thus returning
     //        an object)
     prop = allowObjects || typeof strings === 'string' ? strings : undefined;
-    return prop;
-  });
-  return prop;
+    if (prop) {
+      break;
+    }
+  }
+  return /** @type {string|string[]|import('../../server/main.js').LocalizationStrings} */(
+    prop
+  );
 };
 
 // Use the following to dynamically add specific file schema in place of
@@ -14309,6 +14560,12 @@ const getMetaProp = function getMetaProp(lang, metadataObj, properties, allowObj
 //  filesSchema.properties.groups.items.properties.files.items.properties.
 //      file.anyOf.splice(1, 1, {$ref: schemaFile});
 // Todo: Allow use of dbs and fileGroup together in base directories?
+
+/**
+ * @param {string} file
+ * @param {string} property
+ * @param {string} basePath
+ */
 const getMetadata = async (file, property, basePath) => {
   const url = new URL(basePath || getCurrDir());
   url.search = ''; // Clear out query string, e.g., `?fbclid` from Facebook
@@ -14316,6 +14573,13 @@ const getMetadata = async (file, property, basePath) => {
   url.hash = property ? '#/' + property : '';
   return (await JsonRefs.resolveRefsAt(url.toString(), {
     loaderOptions: {
+      /**
+       * @param {{
+       *   text: string,
+       *   body: any
+       * }} res
+       * @param {(err?: Error, cbValue: any) => void} callback
+       */
       processContent(res, callback) {
         callback(undefined, JSON.parse(res.text ||
         // `.metadata` not a recognized extension, so
@@ -14325,6 +14589,37 @@ const getMetadata = async (file, property, basePath) => {
     }
   })).resolved;
 };
+
+/**
+ * @typedef {{
+ *   field: string,
+*   schemaItems: {
+*     title: string,
+*     type: string,
+*     enum?: string[]
+*   }[],
+*   metadataObj: MetadataObj,
+*   getFieldAliasOrName: (field: string) => string,
+*   lang: string[]
+* }} GetFieldNameAndValueAliasesOptions
+ */
+
+/**
+ * @param {GetFieldNameAndValueAliasesOptions} cfg
+ * @returns {{
+ *   aliases: string[]|null,
+ *   fieldValueAliasMap: Record<string, string[]>|null,
+ *   rawFieldValueAliasMap: Record<string, string[]>|null,
+ *   fieldName: string,
+ *   fieldSchema: {
+ *     title: string,
+ *     type: string
+ *   },
+ *   fieldSchemaIndex: number,
+ *   preferAlias: boolean,
+ *   lang: string
+ * }}
+ */
 const getFieldNameAndValueAliases = function (_ref) {
   let {
     field,
@@ -14338,6 +14633,22 @@ const getFieldNameAndValueAliases = function (_ref) {
   });
   const fieldSchema = schemaItems[fieldSchemaIndex];
   const fieldInfo = metadataObj.fields[field];
+
+  /**
+   * @type {{
+   *   aliases: string[]|null,
+   *   fieldValueAliasMap: Record<string, string[]>|null,
+   *   rawFieldValueAliasMap: Record<string, string[]>|null,
+   *   fieldName: string,
+   *   fieldSchema: {
+   *     title: string,
+   *     type: string
+   *   },
+   *   fieldSchemaIndex: number,
+   *   preferAlias: boolean,
+   *   lang: string
+   * }}
+   */
   const ret = {
     // field,
     aliases: null,
@@ -14349,10 +14660,14 @@ const getFieldNameAndValueAliases = function (_ref) {
     preferAlias: fieldInfo.prefer_alias,
     lang: fieldInfo.lang
   };
+
+  /** @type {import('../../server/main.js').LocalizationStrings} */
   let fieldValueAliasMap = fieldInfo && fieldInfo['fieldvalue-aliases'];
   if (fieldValueAliasMap) {
     if (fieldValueAliasMap.localeKey) {
-      fieldValueAliasMap = getMetaProp(lang, metadataObj, fieldValueAliasMap.localeKey.split('/'), true);
+      fieldValueAliasMap = /** @type {import('../../server/main.js').LocalizationStrings} */
+      getMetaProp(lang, metadataObj, /** @type {string} */
+      fieldValueAliasMap.localeKey.split('/'), true);
     }
     // eslint-disable-next-line unicorn/prefer-structured-clone -- Expecting JSON
     ret.rawFieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap));
@@ -14361,11 +14676,14 @@ const getFieldNameAndValueAliases = function (_ref) {
     //    needed cases
     if (fieldSchema.enum && fieldSchema.enum.length) {
       fieldSchema.enum.forEach(enm => {
-        ret.aliases.push(getMetaProp(lang, metadataObj, ['fieldvalue', field, enm], true));
+        /** @type {string[]} */
+        ret.aliases.push(/** @type {string} */
+        getMetaProp(lang, metadataObj, ['fieldvalue', field, enm], true));
         if (enm in fieldValueAliasMap &&
         // Todo: We could allow numbers here too, but crowds
         //         pull-down
         typeof fieldValueAliasMap[enm] === 'string') {
+          /** @type {string[]} */
           ret.aliases.push(...fieldValueAliasMap[enm]);
         }
       });
@@ -14378,9 +14696,12 @@ const getFieldNameAndValueAliases = function (_ref) {
         // We'll preserve the numbers since probably more useful if
         //   stored with data (as opposed to enums)
         if (!Array.isArray(aliases)) {
-          aliases = Object.values(aliases);
+          aliases = /** @type {string[]} */
+          Object.values(/** @type {import('../../server/main.js').LocalizationStrings} */
+          aliases);
         }
         // We'll assume the longest version is best for auto-complete
+        /** @type {string[]} */
         ret.aliases.push(...aliases.filter(v => {
           return aliases.every(x => {
             return x === v || !x.toLowerCase().startsWith(v.toLowerCase());
@@ -14395,6 +14716,40 @@ const getFieldNameAndValueAliases = function (_ref) {
   }
   return ret;
 };
+
+/**
+ * @typedef {{
+ *   metadataObj: MetadataObj,
+ *   schemaItems: {
+ *     title: string,
+ *     type: string
+ *   }[],
+ *   getFieldAliasOrName: (field: string) => string,
+ *   lang: string[],
+ *   callback: (cfg: {
+ *     setName: string,
+ *     browseFields: {
+ *       aliases: string[]|null,
+ *       fieldValueAliasMap: Record<string, string[]>|null,
+ *       rawFieldValueAliasMap: Record<string, string[]>|null,
+ *       fieldName: string,
+ *       fieldSchema: {
+ *         title: string,
+ *         type: string
+ *       },
+ *       fieldSchemaIndex: number,
+ *       preferAlias: boolean,
+ *       lang: string
+ *     }[],
+ *     i: number,
+ *     presort: boolean|undefined
+ *   }) => void
+ * }} GetBrowseFieldDataOptions
+ */
+
+/**
+ * @param {GetBrowseFieldDataOptions} cfg
+ */
 const getBrowseFieldData = function (_ref3) {
   let {
     metadataObj,
@@ -14440,12 +14795,22 @@ const getBrowseFieldData = function (_ref3) {
 
 // Todo: Incorporate other methods into this class
 class Metadata {
+  /**
+   * @param {{
+   *   metadataObj: MetadataObj
+   * }} cfg
+   */
   constructor(_ref4) {
     let {
       metadataObj
     } = _ref4;
     this.metadataObj = metadataObj;
   }
+
+  /**
+   * @param {string} field
+   * @returns {string|undefined}
+   */
   getFieldLang(field) {
     const {
       metadataObj
@@ -14453,6 +14818,19 @@ class Metadata {
     const fields = metadataObj && metadataObj.fields;
     return fields && fields[field] && fields[field].lang;
   }
+
+  /**
+   * @param {{
+   *   namespace: string,
+   *   preferredLocale: string,
+   *   schemaItems: {
+   *     title: string,
+   *     type: string
+   *   }[],
+   *   pluginsForWork: import('./Plugin.js').PluginsForWork
+   * }} cfg
+   * @returns {(field: string) => boolean}
+   */
   getFieldMatchesLocale(_ref5) {
     let {
       namespace,
@@ -14487,7 +14865,9 @@ class Metadata {
       // If this is a localized field (e.g., enum), we don't want
       //  to avoid as may be translated (should check though)
       const hasFieldValue = localeStrings && Object.keys(localeStrings).some(lng => {
-        const fv = localeStrings[lng] && localeStrings[lng].fieldvalue;
+        const fv = localeStrings[lng] && (/** @type {import('../../server/main.js').LocalizationStrings} */
+        /** @type {import('../../server/main.js').LocalizationStrings} */
+        localeStrings[lng].fieldvalue);
         return fv && fv[field];
       });
       return hasFieldValue || metaLang && preferredLanguages.includes(metaLang) || schemaItems.some(item => {
@@ -14497,11 +14877,18 @@ class Metadata {
   }
 }
 
+/**
+ * @param {string} pluginName
+ */
 const escapePluginComponent = pluginName => {
   return pluginName.replaceAll('^', '^^').
   // Escape our escape
   replaceAll('-', '^0');
 };
+
+/**
+ * @param {string|undefined} pluginName
+ */
 const unescapePluginComponent = pluginName => {
   if (!pluginName) {
     return pluginName;
@@ -14510,6 +14897,14 @@ const unescapePluginComponent = pluginName => {
     return esc.length % 2 ? esc.slice(1) + '-' : n0;
   }).replaceAll('^^', '^');
 };
+
+/**
+ * @param {{
+ *   pluginName: string,
+ *   applicableField: string,
+ *   targetLanguage: string
+ * }} cfg
+ */
 const escapePlugin = _ref => {
   let {
     pluginName,
@@ -14518,7 +14913,28 @@ const escapePlugin = _ref => {
   } = _ref;
   return escapePluginComponent(pluginName) + (applicableField ? '-' + escapePluginComponent(applicableField) : '-') + (targetLanguage ? '-' + escapePluginComponent(targetLanguage) : '');
 };
+
+/**
+ * @todo Complete
+ * @typedef {{}} PluginObject
+ */
+
 class PluginsForWork {
+  /**
+   * @param {{
+   *   pluginsInWork: [string, {
+   *     lang: string,
+   *     meta: any,
+   *     onByDefault: boolean
+   *   }][],
+   *   pluginFieldMappings: {
+   *     placement: string,
+   *     'applicable-fields': {
+   *     }
+   *   }[],
+   *   pluginObjects: PluginObject[]
+   * }} cfg
+   */
   constructor(_ref2) {
     let {
       pluginsInWork,
@@ -14529,6 +14945,11 @@ class PluginsForWork {
     this.pluginFieldMappings = pluginFieldMappings;
     this.pluginObjects = pluginObjects;
   }
+
+  /**
+   * @param {string} pluginName
+   * @returns {PluginObject}
+   */
   getPluginObject(pluginName) {
     const idx = this.pluginsInWork.findIndex(_ref3 => {
       let [name] = _ref3;
@@ -14537,6 +14958,25 @@ class PluginsForWork {
     const plugin = this.pluginObjects[idx];
     return plugin;
   }
+
+  /**
+   * @param {(cfg: {
+   *   plugin: PluginObject,
+   *   placement: string,
+   *   applicableFields: {
+   *     [applicableField: string]: {
+   *       targetLanguage: string|string[],
+   *       onByDefault: boolean,
+   *       meta: any
+   *     }
+   *   },
+   *   pluginName: string,
+   *   pluginLang: string,
+   *   onByDefaultDefault: boolean,
+   *   meta: {}
+   * }) => void} cb
+   * @returns {void}
+   */
   iterateMappings(cb) {
     this.pluginFieldMappings.forEach((_ref4, i) => {
       let {
@@ -14566,6 +15006,25 @@ class PluginsForWork {
       });
     });
   }
+
+  /**
+   * @param {{
+   *   [applicableField: string]: {
+   *     targetLanguage: string|string[],
+   *     onByDefault: boolean,
+   *     meta: any
+   *   }
+   * }} applicableFields
+   * @param {(cfg: {
+   *   applicableField: string,
+   *   targetLanguage: string,
+   *   onByDefault: boolean,
+   *   metaApplicableField: {
+   *     [key: string]: string
+   *   }
+   * }) => void} cb
+   * @returns {boolean}
+   */
   processTargetLanguages(applicableFields, cb) {
     if (!applicableFields) {
       return false;
@@ -14596,6 +15055,14 @@ class PluginsForWork {
     });
     return true;
   }
+
+  /**
+   * @param {{
+   *   namespace: string,
+   *   field: string
+   * }} cfg
+   * @returns {boolean}
+   */
   isPluginField(_ref6) {
     let {
       namespace,
@@ -14603,6 +15070,14 @@ class PluginsForWork {
     } = _ref6;
     return field.startsWith(`${namespace}-plugin-`);
   }
+
+  /**
+   * @param {{
+   *   namespace: string,
+   *   field: string
+   * }} cfg
+   * @returns {[string, string|undefined, string|undefined]}
+   */
   getPluginFieldParts(_ref7) {
     let {
       namespace,
@@ -14615,11 +15090,19 @@ class PluginsForWork {
     } else {
       pluginName = field;
     }
-    return [pluginName, applicableField, targetLanguage].map(unescapePluginComponent);
+    return /** @type {[string, string|undefined, string|undefined]} */(
+      [pluginName, applicableField, targetLanguage].map(unescapePluginComponent)
+    );
   }
 }
 
 /* globals process -- Node polyglot */
+
+/**
+ * @param {FilesObject} filesObj
+ * @param {FileGroup} fileGroup
+ * @param {FileData} fileData
+ */
 const getFilePaths = function getFilePaths(filesObj, fileGroup, fileData) {
   const baseDir = (filesObj.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
   const schemaBaseDir = (filesObj.schemaBaseDirectory || '') + (fileGroup.schemaBaseDirectory || '') + '/';
@@ -14633,6 +15116,23 @@ const getFilePaths = function getFilePaths(filesObj, fileGroup, fileData) {
     metadataFile
   };
 };
+
+/**
+ * @typedef {{
+ *   lang: string[],
+ *   fallbackLanguages: string[],
+ *   work: string,
+ *   files: string,
+ *   allowPlugins: boolean|undefined,
+ *   basePath: string,
+ *   languages: import('./Languages.js').Languages,
+ *   preferredLocale: string
+ * }} GetWorkDataOptions
+ */
+
+/**
+ * @param {GetWorkDataOptions} cfg
+ */
 const getWorkData = async function (_ref) {
   let {
     lang,
@@ -14645,7 +15145,15 @@ const getWorkData = async function (_ref) {
     preferredLocale
   } = _ref;
   const filesObj = await getJSON(files);
-  const localizationStrings = filesObj['localization-strings'];
+  const localizationStrings =
+  /**
+   * @type {{
+   *   "localization-strings": {
+   *     [key: string]: {}
+   *   }
+   * }}
+   */
+  filesObj?.['localization-strings'];
   const workI18n = await i18n({
     messageStyle: 'plainNested',
     locales: lang,
@@ -14885,16 +15393,21 @@ const getWorkData = async function (_ref) {
 // import {escapeHTML} from './sanitize.js';
 
 /**
- * Note that this function be kept as a polyglot client-server file.
- * @param {PlainObject} target
- * @param {PlainObject} source
- * @returns {{
+ * @typedef {{
  *   userJSON: string,
  *   languages: string,
  *   serviceWorkerPath: string,
  *   files: string,
- *   namespace: string
- * }}
+ *   namespace: string,
+ *   stylesheets?: string[]
+ * }} ServiceWorkerConfig
+ */
+
+/**
+ * Note that this function be kept as a polyglot client-server file.
+ * @param {Partial<ServiceWorkerConfig>} target
+ * @param {Partial<ServiceWorkerConfig>} source
+ * @returns {ServiceWorkerConfig}
  */
 const setServiceWorkerDefaults = (target, source) => {
   target.userJSON = source.userJSON || 'resources/user.json';
@@ -14902,13 +15415,18 @@ const setServiceWorkerDefaults = (target, source) => {
   target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?pathToUserJSON=${encodeURIComponent(target.userJSON)}&stylesheets=${encodeURIComponent(JSON.stringify(target.stylesheets || []))}`;
   target.files = source.files || 'files.json';
   target.namespace = source.namespace || 'textbrowser';
-  return target;
+  return /** @type {ServiceWorkerConfig} */target;
 };
 
 // (Unless skipped in code, will wait between install
 //    of new and activation of new or existing if still
 //    some tabs open)
 
+/**
+ * @param {{
+ *   r: ServiceWorkerRegistration
+ * }} cfg
+ */
 const listenForWorkerUpdate = _ref => {
   let {
     r
@@ -14919,7 +15437,7 @@ const listenForWorkerUpdate = _ref => {
     // r.installing now available (though r.active is also,
     //    apparently due to prior activation; but not r.waiting)
     console.log('update found', e);
-    const newWorker = r.installing;
+    const newWorker = /** @type {ServiceWorker} */r.installing;
 
     // statechange won't catch this installing event as already installing
 
@@ -14975,6 +15493,19 @@ for offline installation.
     });
   });
 };
+
+/**
+ * @typedef {{
+ *   addLogEntry: (entry: {text: string}) => void,
+ * }} Logger
+ */
+
+/**
+ * @param {{
+ *   r: ServiceWorkerRegistration,
+ *   logger: Logger
+ * }} cfg
+ */
 const respondToState = async _ref2 => {
   let {
     r,
@@ -15045,20 +15576,20 @@ const respondToState = async _ref2 => {
             text: message + `${errorType === 'dbError' ? `Database error ${name}` : ''}; trying again...`
           });
           /*
-                  if (errorType === 'dbError') {
-                      logger.dbError({
-                          type: name || errorType,
-                          escapedErrorMessage: escapeHTML(message)
-                      });
-                  }
-                  */
+            if (errorType === 'dbError') {
+                logger.dbError({
+                    type: name || errorType,
+                    escapedErrorMessage: escapeHTML(message)
+                });
+            }
+            */
           // Todo: auto-close any dbError dialog if retrying
           // No longer rejecting as should auto-retry
           /*
-                  const err = new Error(message);
-                  err.type = type;
-                  reject(err);
-                  */
+            const err = new Error(message);
+            err.type = type;
+            reject(err);
+            */
           break;
         default:
           console.error('Unexpected type', type);
@@ -15109,6 +15640,13 @@ any indication it is installing.
 
 // Keep in this file as may wish to avoid using for server (while still
 //   doing other service worker work)
+
+/**
+ * @param {{
+ *   serviceWorkerPath: string,
+ *   logger: Logger
+ * }} cfg
+ */
 const registerServiceWorker = async _ref4 => {
   let {
     serviceWorkerPath,
@@ -15167,6 +15705,10 @@ Please refresh the page if you wish to reattempt.
   });
 };
 
+/**
+ * Prevent XSS attacks.
+ * @param {string} s - The string to sanitize
+ */
 const escapeHTML = s => {
   return !s ? '' : s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 };
@@ -16596,7 +17138,7 @@ const Templates = {
     // We empty rather than `replaceWith` as our Jamilih `body`
     //   aliases expect the old instance
     while (body.hasChildNodes()) {
-      body.firstChild.remove();
+      body.firstChild?.remove();
     }
     return jml('div', {
       id: 'main',
@@ -16605,21 +17147,27 @@ const Templates = {
   },
   permissions: {
     versionChange() {
-      $$1('#versionChange').showModal();
+      /** @type {HTMLDialogElement} */
+      $$1('#versionChange')?.showModal();
     },
+    /**
+     * @param {{text: string}} cfg
+     */
     addLogEntry(_ref) {
       let {
         text
       } = _ref;
       const installationDialog = $$1('#installationLogContainer');
       try {
+        /** @type {HTMLDialogElement} */
         installationDialog.showModal();
-        const container = $$1('#dialogContainer');
+        const container = /** @type {HTMLElement} */$$1('#dialogContainer');
         container.hidden = false;
         // eslint-disable-next-line no-unused-vars -- Ok
       } catch (err) {
         // May already be open
       }
+      /** @type {HTMLElement} */
       $$1('#installationLog').append(text + '\n');
     },
     exitDialogs() {
@@ -16628,6 +17176,12 @@ const Templates = {
         container.hidden = true;
       }
     },
+    /**
+     * @param {{
+     *   type: string,
+     *   escapedErrorMessage: string
+     * }} cfg
+     */
     dbError(_ref2) {
       let {
         type,
@@ -16636,26 +17190,32 @@ const Templates = {
       if (type) {
         jml('span', [type, ' ', escapedErrorMessage], $$1('#dbError'));
       }
+      /** @type {HTMLDialogElement} */
       $$1('#dbError').showModal();
     },
+    /**
+     * @param {string} escapedErrorMessage
+     */
     errorRegistering(escapedErrorMessage) {
       if (escapedErrorMessage) {
         jml('span', [escapedErrorMessage], $$1('#errorRegistering'));
       }
+      /** @type {HTMLDialogElement} */
       $$1('#errorRegistering').showModal();
     },
     browserNotGrantingPersistence() {
+      /** @type {HTMLDialogElement} */
       $$1('#browserNotGrantingPersistence').showModal();
     },
     /**
-     * @param {PlainObject} cfg
-     * @param {I18NCallback} cfg.siteI18n
-     * @param {() => Promise<void>} cfg.ok
-     * @param {() => void} cfg.refuse
-     * @param {() => Promise<void>} cfg.close
-     * @param {() => void} cfg.closeBrowserNotGranting
+     * @param {object} cfg
+     * @param {import('intl-dom').I18NCallback} cfg.siteI18n
+     * @param {() => Promise<void>} [cfg.ok]
+     * @param {() => void} [cfg.refuse]
+     * @param {() => Promise<void>} [cfg.close]
+     * @param {() => void} [cfg.closeBrowserNotGranting]
      * @returns {[
-     *   HTMLDialogElement, HTMLDialogElement, HTMLDialogElement,
+     *   HTMLDialogElement, HTMLDialogElement|"", HTMLDialogElement|"",
      *   HTMLDialogElement, HTMLDialogElement, HTMLDialogElement
      * ]}
      */
@@ -16678,8 +17238,10 @@ const Templates = {
       }, []]]]
       // ['textarea', {readonly: true, style: 'width: 80%; height: 80%;'}]
       ]);
+
+      /** @type {""|HTMLDialogElement} */
       let requestPermissionsDialog = '';
-      if (ok) {
+      if (ok && refuse && close) {
         requestPermissionsDialog = jml('dialog', {
           id: 'willRequestStoragePermissions',
           $on: {
@@ -16700,6 +17262,8 @@ const Templates = {
       const errorRegisteringNotice = jml('dialog', {
         id: 'errorRegistering'
       }, [['section', [siteI18n('errorRegistering')]]]);
+
+      /** @type {""|HTMLDialogElement} */
       let browserNotGrantingPersistenceAlert = '';
       if (closeBrowserNotGranting) {
         browserNotGrantingPersistenceAlert = jml('dialog', {
@@ -16731,10 +17295,10 @@ const Templates = {
  * @file Note that this should be kept as a polyglot client-server file.
  */
 /**
- *
- * @param {string} param
- * @param {boolean} skip
  * @this {IntlURLSearchParams}
+ * @param {string} param
+ * @param {boolean} [skip]
+ * @throws {Error}
  * @returns {string}
  */
 function _prepareParam(param, skip) {
@@ -16746,42 +17310,84 @@ function _prepareParam(param, skip) {
   // start, end, toggle
   const endNums = /\d+(-\d+)?$/;
   const indexed = param.match(endNums);
+  if (!this.l10n) {
+    throw new Error('l10n is not defined');
+  }
   if (indexed) {
     // Todo: We could i18nize numbers as well
     return this.l10n(['params', 'indexed', param.replace(endNums, '')]) + indexed[0];
   }
-  return this.l10n(['params', param]);
+  return /** @type {string} */this.l10n(['params', param]);
 }
 class IntlURLSearchParams {
+  /**
+   * @param {object} [options]
+   * @param {import('intl-dom').I18NCallback} [options.l10n]
+   * @param {URLSearchParams|string} [options.params]
+   */
   constructor() {
     let {
       l10n,
       params
     } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     this.l10n = l10n;
+    this.localizeParamNames = false;
     if (!params) {
       params = location.hash.slice(1);
     }
     if (typeof params === 'string') {
       params = new URLSearchParams(params);
     }
+    /** @type {URLSearchParams} */
     this.params = params;
   }
+  /**
+   * @param {string} param
+   * @param {boolean} [skip]
+   * @returns {string|null}
+   */
   get(param, skip) {
     return this.params.get(_prepareParam.call(this, param, skip));
   }
+  /**
+   * @param {string} param
+   * @param {boolean} skip
+   * @returns {string[]}
+   */
   getAll(param, skip) {
     return this.params.getAll(_prepareParam.call(this, param, skip));
   }
+  /**
+   * @param {string} param
+   * @param {boolean} skip
+   * @returns {boolean}
+   */
   has(param, skip) {
     return this.params.has(_prepareParam.call(this, param, skip));
   }
+  /**
+   * @param {string} param
+   * @param {boolean} skip
+   * @returns {void}
+   */
   delete(param, skip) {
     return this.params.delete(_prepareParam.call(this, param, skip));
   }
+  /**
+   * @param {string} param
+   * @param {string} value
+   * @param {boolean} skip
+   * @returns {void}
+   */
   set(param, value, skip) {
     return this.params.set(_prepareParam.call(this, param, skip), value);
   }
+  /**
+   * @param {string} param
+   * @param {string} value
+   * @param {boolean} skip
+   * @returns {void}
+   */
   append(param, value, skip) {
     return this.params.append(_prepareParam.call(this, param, skip), value);
   }
@@ -16790,6 +17396,15 @@ class IntlURLSearchParams {
   }
 }
 
+/**
+ * @param {{
+ *   files: string,
+ *   lang: string[],
+ *   fallbackLanguages: string[],
+ *   $p: import('./utils/IntlURLSearchParams.js').default,
+ *   followParams: (formSelector: string, cb: () => void) => void
+ * }} cfg
+ */
 async function workSelect(_ref) {
   let {
     files,
@@ -16830,7 +17445,7 @@ async function workSelect(_ref) {
         };
       }
     });
-    document.title = workI18n('browserfile-workselect');
+    document.title = /** @type {string} */workI18n('browserfile-workselect');
     /*
     // Would need adapting now that not using IMF
     function lDirectional (key, substitutions, formats) {
@@ -16866,22 +17481,63 @@ async function workSelect(_ref) {
 }
 
 // Todo: Reimplement this with `formSerialize.deserialize` as possible
+
+
+/**
+ * @param {URLSearchParams} paramsCopy
+ */
 const replaceHash = paramsCopy => {
   return location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
 };
-const getSerializeParamsAsURL = function () {
-  const setter = getParamsSetter(...arguments);
-  return function () {
-    const paramsCopy = setter(...arguments);
+
+/**
+ * @param {{
+*   l: import('intl-dom').I18NCallback,
+*   lParam: (key: string) => string,
+*   $p: import('./IntlURLSearchParams.js').default
+* }} args
+*/
+const getSerializeParamsAsURL = function (args) {
+  const setter = getParamsSetter(args);
+  /**
+   * @param {{
+   *   form: HTMLFormElement,
+   *   random: {checked: boolean},
+   *   checkboxes: HTMLInputElement[],
+   *   type: string,
+   *   fieldAliasOrNames: string[],
+   *   workName: string
+   * }} innerArg
+   */
+  return function (innerArg) {
+    const paramsCopy = setter(innerArg);
     return replaceHash(paramsCopy);
   };
 };
+
+/**
+ * @param {{
+ *   l: import('intl-dom').I18NCallback,
+ *   lParam: (key: string) => string,
+ *   $p: import('./IntlURLSearchParams.js').default
+ * }} cfg
+ */
 const getParamsSetter = function (_ref) {
   let {
     l,
     lParam,
     $p
   } = _ref;
+  /**
+   * @param {{
+   *   form: HTMLFormElement,
+   *   random: {checked: boolean},
+   *   checkboxes: HTMLInputElement[],
+   *   type: string,
+   *   fieldAliasOrNames: string[],
+   *   workName: string
+   * }} cfg
+   */
   return function (_ref2) {
     let {
       form,
@@ -16904,7 +17560,8 @@ const getParamsSetter = function (_ref) {
 
     // Follow the same style (and order) for checkboxes
     paramsCopy.delete(lParam('rand'));
-    paramsCopy.set(lParam('rand'), random.checked ? l('yes') : l('no'));
+    paramsCopy.set(lParam('rand'), /** @type {string} */
+    random.checked ? l('yes') : l('no'));
 
     // We want checkboxes to typically show by default, so we cannot use the
     //    standard serialization
@@ -16913,7 +17570,8 @@ const getParamsSetter = function (_ref) {
       paramsCopy.delete(checkbox.name);
       if (checkbox.name) {
         // We don't want, e.g., preference controls added to URL
-        paramsCopy.set(checkbox.name, checkbox.checked ? l('yes') : l('no'));
+        paramsCopy.set(checkbox.name, /** @type {string} */
+        checkbox.checked ? l('yes') : l('no'));
       }
     });
 
@@ -16924,11 +17582,11 @@ const getParamsSetter = function (_ref) {
     function removeStartsEndsAndAnchors() {
       let num = 1;
       let num2 = 1;
-      while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
-        while (paramsCopy.has(`${workName}-start${num}-${num2}`, true)) {
-          paramsCopy.delete(`${workName}-start${num}-${num2}`, true);
-          paramsCopy.delete(`${workName}-end${num}-${num2}`, true);
-          paramsCopy.delete(`${workName}-anchor${num}-${num2}`, true);
+      while (paramsCopy.has(`${workName}-start${num}-${num2}`)) {
+        while (paramsCopy.has(`${workName}-start${num}-${num2}`)) {
+          paramsCopy.delete(`${workName}-start${num}-${num2}`);
+          paramsCopy.delete(`${workName}-end${num}-${num2}`);
+          paramsCopy.delete(`${workName}-anchor${num}-${num2}`);
           num2++;
         }
         num2 = 1;
@@ -16947,28 +17605,28 @@ const getParamsSetter = function (_ref) {
         {
           paramsCopy.delete(lParam('rand'));
           let num = 1;
-          while (paramsCopy.has(`anchorfield${num}`, true)) {
-            paramsCopy.delete(`anchorfield${num}`, true);
+          while (paramsCopy.has(`anchorfield${num}`)) {
+            paramsCopy.delete(`anchorfield${num}`);
             num++;
           }
           removeStartsEndsAndAnchors();
           num = 1;
           // Delete field-specific so we can add our own
-          while (paramsCopy.has(`field${num}`, true)) {
-            paramsCopy.delete(`field${num}`, true);
-            paramsCopy.delete(`checked${num}`, true);
-            paramsCopy.delete(`interlin${num}`, true);
-            paramsCopy.delete(`css${num}`, true);
+          while (paramsCopy.has(`field${num}`)) {
+            paramsCopy.delete(`field${num}`);
+            paramsCopy.delete(`checked${num}`);
+            paramsCopy.delete(`interlin${num}`);
+            paramsCopy.delete(`css${num}`);
             num++;
           }
           fieldAliasOrNames.forEach((fieldAliasOrName, i) => {
-            paramsCopy.set(`field${i + 1}`, fieldAliasOrName, true);
+            paramsCopy.set(`field${i + 1}`, fieldAliasOrName);
             // Todo: Restrict by content locale?
-            paramsCopy.set(`checked${i + 1}`, l('yes'), true);
+            paramsCopy.set(`checked${i + 1}`, /** @type {string} */l('yes'));
             paramsCopy.set(`interlin${i + 1}`, '');
             paramsCopy.set(`css${i + 1}`, '');
           });
-          paramsCopy.delete('work', true);
+          paramsCopy.delete('work');
         }
       // Fallthrough
       case 'startEndResult':
@@ -16982,9 +17640,9 @@ const getParamsSetter = function (_ref) {
           //    let's put random again toward the end.
           if (type === 'randomResult' || random.checked) {
             paramsCopy.delete(lParam('rand'));
-            paramsCopy.set(lParam('rand'), l('yes'));
+            paramsCopy.set(lParam('rand'), /** @type {string} */l('yes'));
           }
-          paramsCopy.set(lParam('result'), l('yes'));
+          paramsCopy.set(lParam('result'), /** @type {string} */l('yes'));
           break;
         }
       default:
@@ -16996,6 +17654,18 @@ const getParamsSetter = function (_ref) {
   };
 };
 
+/**
+ * @this {import('./index.js').default}
+ * @param {{
+ *   l: import('intl-dom').I18NCallback,
+ *   languageParam: string,
+ *   lang: string[],
+ *   preferredLocale: string,
+ *   languages: import('./utils/Languages.js').Languages,
+ *   fallbackLanguages: string[],
+ *   $p: import('./utils/IntlURLSearchParams.js').default
+ * }} cfg
+ */
 async function workDisplay(_ref) {
   let {
     l,
@@ -17187,7 +17857,7 @@ async function workDisplay(_ref) {
       fallbackLanguages,
       preferredLocale,
       languages,
-      work: $p.get('work')
+      work: (/** @type {string} */$p.get('work'))
     });
     document.title = workI18n('browserfile-workdisplay', {
       work: fileData ? getMetaProp(lang, metadataObj, 'alias') : ''
@@ -17634,6 +18304,9 @@ Locale._BIDI_RTL_LANGS = [
 'zdj' // Comorian, Ngazidja
 ];
 
+/**
+ * @param {string} locale
+ */
 const getLangDir = locale => {
   const {
     direction
@@ -17847,7 +18520,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
         tr,
         foundState
       } = _ref9;
-      const rowIDPartsPreferred = [];
+      const rowIDPartsPreferred = /** @type {string[]} */[];
       const rowIDParts = applicableBrowseFieldNames.map(fieldName => {
         const idx = localizedFieldNames.indexOf(fieldName);
         // This works to put alias in anchor but this includes
@@ -18082,7 +18755,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     const p = $p.get(param, true);
     /**
          *
-         * @param {GenericArray|PlainObject} locale
+         * @param {GenericArray|object} locale
          * @returns {boolean}
          */
     function reverseLocaleLookup(locale) {
@@ -18602,7 +19275,16 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
 };
 
 /**
- *
+ * @typedef {{
+ *     'localization-strings': {
+ *       [locale: string]: {
+ *         [key: string]: string
+ *       }
+ *     }
+ *   }} SiteData
+ */
+/**
+ * @this {TextBrowser}
  * @returns {Promise<void>}
  */
 async function prepareForServiceWorker() {
@@ -18629,32 +19311,29 @@ async function prepareForServiceWorker() {
   } catch (err) {
     console.log('err', err);
     if (err && typeof err === 'object') {
-      const {
-        errorType
-      } = err;
-      if (errorType === 'versionChange') {
+      if ('errorType' in err && err.errorType === 'versionChange') {
         Templates.permissions.versionChange();
         return;
       }
     }
-    Templates.permissions.errorRegistering(escapeHTML(err && err.message));
+    Templates.permissions.errorRegistering(escapeHTML(/** @type {Error} */err?.message));
   }
 }
 
 /**
-* @typedef {PlainObject} Langs
+* @typedef {object} Langs
 * @property {string} code
 * @property {string} direction
-* @property {PlainObject} locale
+* @property {object} locale
 */
 
 /**
- *
- * @param {Langs} langs
- * @param {Logger} l
+ * @this {TextBrowser}
+ * @param {import('../server/main.js').LanguageInfo[]} _langs
+ * @param {import('intl-dom').I18NCallback} siteI18n
  * @returns {Promise<void>}
  */
-async function requestPermissions(langs, l) {
+async function requestPermissions(_langs, siteI18n) {
   return await new Promise(resolve => {
     // Todo: We could run the dialog code below for every page if
     //    `Notification.permission === 'default'` (i.e., not choice
@@ -18678,18 +19357,19 @@ async function requestPermissions(langs, l) {
        *
        * @returns {void}
        */
-      function rememberRefusal() {
+      const rememberRefusal = () => {
         // Todo: We could go forward with worker, caching files, and
         //    indexedDB regardless of permissions, but this way
         //    we can continue to gauge performance differences for now
         localStorage.setItem(this.namespace + '-refused', 'true');
-      }
+      };
       try {
         if (!requestPermissionsDialog.returnValue) {
           rememberRefusal();
           return;
         }
-      } catch (err) {
+      } catch (error) {
+        const err = /** @type {Error} */error;
         console.log('err', err);
         Templates.permissions.errorRegistering(escapeHTML(err && err.message));
       }
@@ -18720,19 +19400,48 @@ async function requestPermissions(langs, l) {
           break;
       }
     };
-    const [, requestPermissionsDialog, browserNotGrantingPersistenceAlert] =
+    const permissionsInfo =
     // , errorRegisteringNotice
     Templates.permissions.main({
-      l,
+      siteI18n,
       ok,
       refuse,
       close,
       closeBrowserNotGranting
     });
+    const requestPermissionsDialog = /** @type {HTMLDialogElement} */permissionsInfo[1];
+    const browserNotGrantingPersistenceAlert = /** @type {HTMLDialogElement} */
+    permissionsInfo[2];
     requestPermissionsDialog.showModal();
   });
 }
+
+/**
+ * @typedef {import('./utils/ServiceWorker.js').ServiceWorkerConfig} ServiceWorkerConfig
+ */
+
+/**
+ * @implements {ServiceWorkerConfig}
+ */
 class TextBrowser {
+  /**
+   * @param {ServiceWorkerConfig & {
+   *   site?: string,
+   *   stylesheets?: string[],
+   *   allowPlugins?: boolean,
+   *   dynamicBasePath?: string,
+   *   trustFormatHTML?: boolean,
+   *   requestPersistentStorage?: boolean,
+   *   localizeParamNames?: boolean,
+   *   hideFormattingSection?: boolean,
+   *   preferencesPlugin?: string,
+   *   interlinearSeparator?: string,
+   *   showEmptyInterlinear?: boolean,
+   *   showTitleOnSingleInterlinear?: boolean,
+   *   noDynamic?: boolean,
+   *   skipIndexedDB?: boolean
+   * }} options
+   */
   constructor(options) {
     this.site = options.site || 'site.json';
     const stylesheets = options.stylesheets || ['@builtin'];
@@ -18741,6 +19450,25 @@ class TextBrowser {
       stylesheets.splice(builtinIndex, 1, new URL(new URL('assets/index-D_XVedS3.css', import.meta.url).href, import.meta.url).href);
     }
     this.stylesheets = stylesheets;
+
+    // Satisfy TS
+
+    /** @type {SiteData} */
+    this.siteData = {
+      'localization-strings': {}
+    };
+    /** @type {import('../server/main.js').LanguagesData} */
+    this.langData = {
+      languages: [],
+      'localization-strings': {}
+    };
+    /** @type {string[]} */
+    this.lang = [];
+    this.userJSON = '';
+    this.languages = '';
+    this.serviceWorkerPath = '';
+    this.files = '';
+    this.namespace = '';
     setServiceWorkerDefaults(this, options);
     this.allowPlugins = options.allowPlugins;
     this.dynamicBasePath = options.dynamicBasePath;
@@ -18761,9 +19489,16 @@ class TextBrowser {
 
     // We use getJSON instead of JsonRefs as we do not need to resolve the locales here
     try {
-      const [langData, siteData] = await getJSON([this.languages, this.site]);
-      this.langData = langData;
-      this.siteData = siteData;
+      const data =
+      /**
+       * @type {[
+       *   import('../server/main.js').LanguagesData,
+       *   SiteData
+       * ]}
+       */
+      await getJSON([this.languages, this.site]);
+      this.langData = data[0];
+      this.siteData = data[1];
       const p = this.paramChange();
 
       // INIT/ADD EVENTS
@@ -18771,11 +19506,16 @@ class TextBrowser {
       //  and just check `history.state`
       window.addEventListener('hashchange', () => this.paramChange());
       return p;
-    } catch (err) {
+    } catch (error) {
+      const err = /** @type {Error} */error;
       console.log('err', err);
       dialogs.alert(err);
     }
   }
+
+  /**
+   * @param {import('./utils/WorkInfo.js').GetWorkDataOptions} opts
+   */
   getWorkData(opts) {
     try {
       return getWorkData.call(this, {
@@ -18792,6 +19532,10 @@ class TextBrowser {
   // Need for directionality even if language specified (and we don't want
   //   to require it as a param)
   // Todo: Use intl-locale-textinfo-polyfill (already included)
+
+  /**
+   * @param {string} code
+   */
   getDirectionForLanguageCode(code) {
     const langs = this.langData.languages;
     const exactMatch = langs.find(lang => {
@@ -18801,12 +19545,21 @@ class TextBrowser {
       return lang.code.startsWith(code + '-');
     });
   }
+
+  /**
+   * @param {import('./utils/Metadata.js').GetFieldNameAndValueAliasesOptions} args
+   */
   getFieldNameAndValueAliases(args) {
     return getFieldNameAndValueAliases({
       ...args,
       lang: this.lang
     });
   }
+
+  /**
+   * @param {import('./utils/Metadata.js').GetBrowseFieldDataOptions} args
+   * @returns {void}
+   */
   getBrowseFieldData(args) {
     return getBrowseFieldData({
       ...args,
@@ -18821,6 +19574,10 @@ class TextBrowser {
       params: history.state
     }) : new IntlURLSearchParams(); // Uses URL hash for params
 
+    /**
+     * @param {string} formSelector
+     * @param {() => void} cb
+     */
     const followParams = (formSelector, cb) => {
       const form = document.querySelector(formSelector);
       // Record current URL along with state
@@ -18848,25 +19605,26 @@ class TextBrowser {
     const [preferredLocale] = lang;
     const direction = this.getDirectionForLanguageCode(preferredLocale);
     document.documentElement.lang = preferredLocale;
-    document.dir = direction;
+    document.dir = /** @type {string} */direction;
     const localizationStrings = this.siteData['localization-strings'];
     const siteI18n = await i18n({
       messageStyle: 'plainNested',
       locales: lang,
       defaultLocales: fallbackLanguages,
-      localeStringFinder(_ref) {
+      async localeStringFinder() {
         let {
           locales,
           defaultLocales
-        } = _ref;
-        const locale = [...locales, ...defaultLocales].find(language => {
+        } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        const locale = [...(/** @type {string[]} */locales), ...(/** @type {string[]} */defaultLocales)].find(language => {
           return language in localizationStrings;
         });
         return {
-          locale,
+          // eslint-disable-next-line object-shorthand -- TS
+          locale: (/** @type {string} */locale),
           strings: {
             head: {},
-            body: localizationStrings[locale]
+            body: localizationStrings[(/** @type {string} */locale)]
           }
         };
       }
@@ -18874,7 +19632,7 @@ class TextBrowser {
 
     // Even if individual pages may end up changing, we need a
     //   title now for accessibility
-    document.title = siteI18n('browser-title');
+    document.title = /** @type {string} */siteI18n('browser-title');
     const refusedIndexedDB =
     // User may have persistence via bookmarks, etc. but just not
     //     want commital on notification
@@ -18971,8 +19729,8 @@ class TextBrowser {
         try {
           return respondToState({
             r,
-            langs,
-            languages: this.languages,
+            // langs,
+            // languages: this.languages,
             logger: Templates.permissions
           });
         } catch (err) {
@@ -19001,13 +19759,13 @@ class TextBrowser {
           // We don't await the fulfillment of this promise
           respondToStateOfWorker();
           listenForWorkerUpdate({
-            r,
-            logger: {
-              addLogEntry(s) {
-                // We don't put the log in the page as user using
-                console.log(s);
-              }
-            }
+            r
+            // logger: {
+            //   addLogEntry (s) {
+            //     // We don't put the log in the page as user using
+            //     console.log(s);
+            //   }
+            // }
           });
           // Don't return as user may continue working until installed (though
           //    will get message to close tab)
@@ -19032,6 +19790,12 @@ class TextBrowser {
     Please wait for a short while as we work to update to a new version.
     `);
           respondToStateOfWorker();
+          /**
+           * @type {(
+           *   this: ServiceWorkerContainer,
+           *   ev: {data: string}
+           * ) => any}
+           */
           navigator.serviceWorker.onmessage({
             data: 'finishActivate'
           });
@@ -19046,13 +19810,13 @@ class TextBrowser {
           // May need to pass in arguments if new service worker appears and
           //    it needs arguments for update
           listenForWorkerUpdate({
-            r,
-            logger: {
-              addLogEntry(s) {
-                // We don't put the log in the page as user using
-                console.log(s);
-              }
-            }
+            r
+            // logger: {
+            //   addLogEntry (s) {
+            //     // We don't put the log in the page as user using
+            //     console.log(s);
+            //   }
+            // }
           });
           break;
         case 'redundant':
@@ -19074,7 +19838,7 @@ class TextBrowser {
       // Also could use siteI18n('chooselanguage'), but assumes locale
       //   as with page title
       // $p.l10n = siteI18n; // Is this in use? No `params`, so not currently
-      document.title = siteI18n('languages-title');
+      document.title = /** @type {string} */siteI18n('languages-title');
       Templates.languageSelect.main({
         langs,
         languages,
@@ -19113,8 +19877,8 @@ class TextBrowser {
           fallbackLanguages,
           languageParam,
           $p,
-          languages,
-          preferencesPlugin: this.preferencesPlugin
+          languages
+          // preferencesPlugin: this.preferencesPlugin
         });
         return true;
       }

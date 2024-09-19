@@ -2,24 +2,81 @@ import {jml, $, $$, nbsp} from 'jamilih';
 import Templates from './index.js';
 import {colors, fonts} from './utils/html.js';
 
+/**
+ * @callback LOption
+ * @param {string[]} key
+ * @param {import('jamilih').JamilihAttributes} atts
+ * @returns {import('jamilih').JamilihArray}
+ */
+
+/**
+ * @typedef {(info: {
+ *   form: HTMLFormElement,
+ *   random: {
+ *     checked: boolean,
+ *   },
+ *   checkboxes: HTMLInputElement[],
+ *   type: string,
+ *   fieldAliasOrNames?: string[],
+ *   workName: string
+ * }) => URLSearchParams} ParamsSetter
+ */
+
+/**
+ * @typedef {(cfg: {
+ *   $: typeof $,
+ *   l: import('intl-dom').I18NCallback,
+ *   jml: typeof jml,
+ *   paramsSetter: ParamsSetter,
+ *   getDataForSerializingParamsAsURL: () => {
+ *     form: HTMLFormElement,
+ *     random: HTMLInputElement,
+ *     checkboxes: HTMLInputElement[]
+ *   },
+ *   work: string,
+ *   replaceHash: (paramsCopy: URLSearchParams) => string,
+ *   getFieldAliasOrNames: import('../workDisplay.js').GetFieldAliasOrNames
+ * }) => import('jamilih').JamilihArray} PreferencesPlugin
+ */
+
 const nbsp2 = nbsp.repeat(2);
 const nbsp3 = nbsp.repeat(3);
 
 const getDataForSerializingParamsAsURL = () => ({
-  form: $('form#browse'),
+  form: /** @type {HTMLFormElement} */ ($('form#browse')),
   // Todo: We don't need any default once random
   //    functionality is completed
-  random: $('#rand') || {},
-  checkboxes: $$('input[type=checkbox]')
+  random: /** @type {HTMLInputElement} */ ($('#rand')) || {checked: false},
+  checkboxes: /** @type {HTMLInputElement[]} */ ($$('input[type=checkbox]'))
 });
 
 export default {
+  /**
+   * @param {{
+   *   fallbackDirection: "ltr"|"rtl",
+   *   message: string
+   * }} cfg
+   * @returns {import('jamilih').JamilihArray}
+   */
   bdo ({fallbackDirection, message}) {
     // Displaying as div with inline display instead of span since
     //    Firefox puts punctuation at left otherwise (bdo dir
     //    seemed to have issues in Firefox)
     return ['div', {style: 'display: inline; direction: ' + fallbackDirection}, [message]];
   },
+
+  /**
+   * @param {{
+   *   lDirectional: import('../workDisplay.js').LDirectional,
+   *   fieldInfo: import('../utils/WorkInfo.js').FieldInfo,
+   *   $p: import('../utils/IntlURLSearchParams.js').default,
+   *   lElement: import('../workDisplay.js').LElement,
+   *   lIndexedParam: (key: string) => string,
+   *   l: import('intl-dom').I18NCallback,
+   *   fieldMatchesLocale: (field: string) => boolean
+   * }} cfg
+   * @returns {import('jamilih').JamilihArray}
+   */
   columnsTable: ({
     lDirectional, fieldInfo, $p, lElement, lIndexedParam, l,
     // metadataObj, preferredLocale, schemaItems,
@@ -51,12 +108,12 @@ export default {
             ]]
             */
     ]],
-    ...fieldInfo.map((fieldInfoItem, i) => {
+    ...((fieldInfo.map((fieldInfoItem, i) => {
       const idx = i + 1;
       const checkedIndex = 'checked' + idx;
       const fieldIndex = 'field' + idx;
       const fieldParam = $p.get(fieldIndex);
-      return ['tr', [
+      return /** @type {import('jamilih').JamilihArray} */ (['tr', [
         // Todo: Get Jamilih to accept numbers and
         //    booleans (`toString` is too dangerous)
         ['td', [String(idx)]],
@@ -77,14 +134,14 @@ export default {
             size: '1'
           }, fieldInfo.map(({field, fieldAliasOrName}, j) => {
             const matchedFieldParam = fieldParam && fieldParam === fieldAliasOrName;
-            return ['option', {
+            return /** @type {import('jamilih').JamilihArray} */ (['option', {
               dataset: {name: field},
               value: fieldAliasOrName,
               selected: (
                 matchedFieldParam ||
                                   (j === i && !$p.has(fieldIndex))
               )
-            }, [fieldAliasOrName]];
+            }, [fieldAliasOrName]]);
           })]
         ]),
         ['td', [ // Todo: Make as tag selector with fields as options
@@ -102,15 +159,16 @@ export default {
                     ['input', {name: lIndexedParam('search') + idx, value: $p.get('search' + idx)}]
                 ]]
                 */
-      ]];
-    }),
+      ]]);
+    }))),
     ['tr', [
       ['td', {colspan: 3}, [
         lElement('check_all', 'input', 'value', {
           type: 'button',
           $on: {
             click () {
-              $$('.fieldSelector').forEach((checkbox) => {
+              /** @type {HTMLInputElement[]} */
+              ($$('.fieldSelector')).forEach((checkbox) => {
                 checkbox.checked = true;
               });
             }
@@ -120,7 +178,8 @@ export default {
           type: 'button',
           $on: {
             click () {
-              $$('.fieldSelector').forEach((checkbox) => {
+              /** @type {HTMLInputElement[]} */
+              ($$('.fieldSelector')).forEach((checkbox) => {
                 checkbox.checked = false;
               });
             }
@@ -134,8 +193,13 @@ export default {
                 const idx = i + 1;
                 // The following is redundant with 'field' but may need to
                 //     retrieve later out of order?
-                const fld = $('#field' + idx).selectedOptions[0].dataset.name;
-                $('#checked' + idx).checked = fieldMatchesLocale(fld);
+                const fld = /** @type {string} */ (
+                  /** @type {HTMLSelectElement} */ (
+                    $('#field' + idx)
+                  ).selectedOptions[0].dataset.name
+                );
+                /** @type {HTMLInputElement} */
+                ($('#checked' + idx)).checked = fieldMatchesLocale(fld);
               });
             }
           }
@@ -143,17 +207,30 @@ export default {
       ]]
     ]]
   ]],
+
+  /**
+   * @param {{
+   *   lDirectional: import('../workDisplay.js').LDirectional,
+   *   lParam: (key: string) => string,
+   *   l: import('intl-dom').I18NCallback,
+   *   lOption: LOption,
+   *   lElement: import('../workDisplay.js').LElement,
+   *   $p: import('../utils/IntlURLSearchParams.js').default,
+   *   hideFormattingSection: boolean
+   * }} cfg
+   * @returns {import('jamilih').JamilihArray}
+   */
   advancedFormatting: ({lDirectional, lParam, l, lOption, lElement, $p, hideFormattingSection}) => ['td', {
     id: 'advancedformatting', style: {display: (hideFormattingSection ? 'none' : 'block')}
-  }, [
+  }, /** @type {import('jamilih').JamilihChildren} */ ([
     ['h3', [lDirectional('advancedformatting')]],
     ['label', [
       lDirectional('textcolor'), nbsp2,
       ['select', {name: lParam('colorName')}, colors.map((color, i) => {
-        const atts = {
+        const atts = /** @type {import('jamilih').JamilihAttributes} */ ({
           value: l(['param_values', 'colors', color]),
           selected: null
-        };
+        });
         if ($p.get('colorName') === l(['param_values', 'colors', color]) ||
                     (i === 1 && !$p.has('colorName'))) {
           atts.selected = 'selected';
@@ -174,10 +251,10 @@ export default {
     ['label', [
       lDirectional('backgroundcolor'), nbsp2,
       ['select', {name: lParam('bgcolorName')}, colors.map((color, i) => {
-        const atts = {
+        const atts = /** @type {import('jamilih').JamilihAttributes} */ ({
           value: l(['param_values', 'colors', color]),
           selected: null
-        };
+        });
         if ($p.get('bgcolorName') === l(['param_values', 'colors', color]) ||
                     (i === 14 && !$p.has('bgcolorName'))) {
           atts.selected = 'selected';
@@ -199,10 +276,10 @@ export default {
       lDirectional('text_font'), nbsp2,
       // Todo: remove hard-coded direction if i81nizing; also i18nize fontSeq param
       ['select', {name: lParam('fontSeq'), dir: 'ltr'}, fonts.map((fontSeq, i) => {
-        const atts = {
+        const atts = /** @type {import('jamilih').JamilihAttributes} */ ({
           value: fontSeq,
           selected: null
-        };
+        });
         if ($p.get('fontSeq') === fontSeq || (i === 7 && !$p.has('fontSeq'))) {
           atts.selected = 'selected';
         }
@@ -217,10 +294,10 @@ export default {
         'normal',
         'oblique'
       ].map((fontstyle, i) => {
-        const atts = {
+        const atts = /** @type {import('jamilih').JamilihAttributes} */ ({
           value: l(['param_values', 'fontstyle', fontstyle]),
           selected: null
-        };
+        });
         if ($p.get('fontstyle') === l(['param_values', 'fontstyle', fontstyle]) ||
                     (i === 1 && !$p.has('fontstyle'))) {
           atts.selected = 'selected';
@@ -284,10 +361,10 @@ export default {
         'ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed',
         'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'
       ].map((stretch) => {
-        const atts = {
+        const atts = /** @type {import('jamilih').JamilihAttributes} */ ({
           value: lDirectional(['param_values', 'font-stretch', stretch]),
           selected: null
-        };
+        });
         if ($p.get('fontstretch') === stretch ||
                       (!$p.has('fontstretch') && stretch === 'normal')) {
           atts.selected = 'selected';
@@ -323,9 +400,9 @@ export default {
     ['div', [
       lDirectional('header_wstyles'), nbsp2,
       ...([
-        ['yes', lDirectional(['param_values', 'y'])],
-        ['no', lDirectional(['param_values', 'n'])],
-        ['none', lDirectional(['param_values', '0'])]
+        ['yes', /** @type {string} */ (lDirectional(['param_values', 'y']))],
+        ['no', /** @type {string} */ (lDirectional(['param_values', 'n']))],
+        ['none', /** @type {string} */ (lDirectional(['param_values', '0']))]
       ].map(([key, val], i, arr) => {
         return ['label', [
           ['input', {
@@ -342,9 +419,9 @@ export default {
     ['div', [
       lDirectional('footer_wstyles'), nbsp2,
       ...([
-        ['yes', lDirectional(['param_values', 'y'])],
-        ['no', lDirectional(['param_values', 'n'])],
-        ['none', lDirectional(['param_values', '0'])]
+        ['yes', /** @type {string} */ (lDirectional(['param_values', 'y']))],
+        ['no', /** @type {string} */ (lDirectional(['param_values', 'n']))],
+        ['none', /** @type {string} */ (lDirectional(['param_values', '0']))]
       ].map(([key, val], i, arr) => {
         return ['label', [
           ['input', {
@@ -371,9 +448,9 @@ export default {
     ['div', [
       lDirectional('caption_wstyles'), nbsp2,
       ...([
-        ['yes', lDirectional(['param_values', 'y'])],
-        ['no', lDirectional(['param_values', 'n'])],
-        ['none', lDirectional(['param_values', '0'])]
+        ['yes', /** @type {string} */ (lDirectional(['param_values', 'y']))],
+        ['no', /** @type {string} */ (lDirectional(['param_values', 'n']))],
+        ['none', /** @type {string} */ (lDirectional(['param_values', '0']))]
       ].map(([key, val], i, arr) => {
         return ['label', [
           ['input', {
@@ -497,27 +574,43 @@ export default {
         // , 'json-array',
         // 'json-object'
       ].map((mode) => {
-        const atts = {
+        const atts = /** @type {import('jamilih').JamilihAttributes} */ ({
           value: mode,
           selected: null
-        };
+        });
         if ($p.get('outputmode') === mode) {
           atts.selected = 'selected';
         }
         return lOption(['param_values', 'outputmode', mode], atts);
       })]
     ])
-  ]],
+  ])],
+
+  /**
+   * @param {{
+   *   lParam: (key: string) => string,
+   *   lDirectional: import('../workDisplay.js').LDirectional,
+   *   l: import('intl-dom').I18NCallback,
+   *   lElement: import('../workDisplay.js').LElement,
+   *   $p: import('../utils/IntlURLSearchParams.js').default,
+   *   serializeParamsAsURL: import('../workDisplay.js').SerializeParamsAsURL,
+   *   content: import('jamilih').JamilihArray[]
+   * }} cfg
+   * @returns {void}
+   */
   addRandomFormFields ({
     lParam, lDirectional, l, lElement, $p, serializeParamsAsURL, content
   }) {
+    /**
+     * @param {import('jamilih').JamilihChildren} rowContent
+     */
     const addRowContent = (rowContent) => {
       if (!rowContent || !rowContent.length) {
         return;
       }
       content.push(['tr', rowContent]);
     };
-    [
+    /** @type {import('jamilih').JamilihChildren[]} */ ([
       [
         ['td', {colspan: 12, align: 'center'}, [['br'], lDirectional('or'), ['br'], ['br']]]
       ],
@@ -554,15 +647,33 @@ export default {
                   ...getDataForSerializingParamsAsURL(),
                   type: 'randomResult'
                 });
-                $('#randomURL').value = url;
+                /** @type {HTMLInputElement} */
+                ($('#randomURL')).value = url;
               }
             }
           }),
           ['input', {id: 'randomURL', type: 'text'}]
         ]]
       ]
-    ].forEach(addRowContent);
+    ]).forEach(addRowContent);
   },
+
+  /**
+   * @param {{
+   *   paramsSetter: ParamsSetter,
+   *   replaceHash: (paramsCopy: URLSearchParams) => string,
+   *   getFieldAliasOrNames: import('../workDisplay.js').GetFieldAliasOrNames,
+   *   work: string,
+   *   langs: import('../../server/main.js').LanguageInfo[],
+   *   languageI18n: (code: string) => string,
+   *   l: import('intl-dom').I18NCallback,
+   *   localizeParamNames: boolean,
+   *   namespace: string,
+   *   hideFormattingSection: boolean,
+   *   preferencesPlugin?: PreferencesPlugin
+   * }} cfg
+   * @returns {import('jamilih').JamilihArray}
+   */
   getPreferences: ({
     // languageParam, workI18n, groups,
     paramsSetter, replaceHash,
@@ -579,9 +690,11 @@ export default {
           id: 'localizeParamNames',
           type: 'checkbox',
           checked: localizeParamNames,
-          $on: {change ({target: {checked}}) {
+          $on: {change (e) {
+            // eslint-disable-next-line prefer-destructuring -- TS
+            const checked = /** @type {HTMLInputElement} */ (e.target).checked;
             localStorage.setItem(
-              namespace + '-localizeParamNames', checked
+              namespace + '-localizeParamNames', String(checked)
             );
           }}
         }]
@@ -594,11 +707,14 @@ export default {
           id: 'hideFormattingSection',
           type: 'checkbox',
           checked: hideFormattingSection,
-          $on: {change ({target: {checked}}) {
-            $('#advancedformatting').style.display = checked
+          $on: {change (e) {
+            // eslint-disable-next-line prefer-destructuring -- TS
+            const checked = /** @type {HTMLInputElement} */ (e.target).checked;
+            /** @type {HTMLElement} */
+            ($('#advancedformatting')).style.display = checked
               ? 'none'
               : 'block';
-            localStorage.setItem(namespace + '-hideFormattingSection', checked);
+            localStorage.setItem(namespace + '-hideFormattingSection', String(checked));
           }}
         }]
       ]]
@@ -611,7 +727,11 @@ export default {
         multiple: 'multiple',
         size: langs.length,
         $on: {
-          change ({target: {selectedOptions}}) {
+          change (e) {
+            // eslint-disable-next-line prefer-destructuring -- TS
+            const selectedOptions = /** @type {HTMLSelectElement} */ (
+              e.target
+            ).selectedOptions;
             // Todo: EU disclaimer re: storage?
             localStorage.setItem(namespace + '-langCodes', JSON.stringify(
               [...selectedOptions].map((opt) => {
@@ -623,10 +743,10 @@ export default {
       }, langs.map((lan) => {
         let langCodes = localStorage.getItem(namespace + '-langCodes');
         langCodes = langCodes && JSON.parse(langCodes);
-        const atts = {
+        const atts = /** @type {import('jamilih').JamilihAttributes} */ ({
           value: lan.code,
           selected: null
-        };
+        });
         if (langCodes && langCodes.includes(lan.code)) {
           atts.selected = 'selected';
         }
@@ -643,15 +763,33 @@ export default {
       : ''
     )
   ]],
+  /**
+   * @param {{
+   *   browseFields: import('../utils/Metadata.js').BrowseFields,
+   *   fieldInfo: import('../utils/WorkInfo.js').FieldInfo,
+   *   i: number,
+   *   lDirectional: (
+   *     key: string|string[],
+   *     substitutions?: Record<string, string>
+   *   ) => string|Text|DocumentFragment,
+   *   lIndexedParam: (key: string) => string,
+   *   $p: import('../utils/IntlURLSearchParams.js').default,
+   *   content: import('jamilih').JamilihArray[]
+   * }} cfg
+   * @returns {void}
+   */
   addBrowseFields ({browseFields, fieldInfo, lDirectional, i, lIndexedParam, $p, content}) {
     const work = $p.get('work');
+    /**
+     * @param {import('jamilih').JamilihChildren} rowContent
+     */
     const addRowContent = (rowContent) => {
       if (!rowContent || !rowContent.length) {
         return;
       }
       content.push(['tr', rowContent]);
     };
-    [
+    /** @type {import('jamilih').JamilihChildren[]} */ ([
       // Todo: Separate formatting to CSS
       i > 0
         ? [
@@ -660,6 +798,9 @@ export default {
         : '',
       [
         ...(() => {
+          /**
+           * @param {"start"|"end"} setType
+           */
           const addBrowseFieldSet = (setType) => {
             return browseFields.reduce((rowContent, {
               fieldName, aliases, fieldSchema: {minimum, maximum}
@@ -683,15 +824,23 @@ export default {
                       list: 'dl-' + id,
                       value: $p.get(name, true),
                       $on: setType === 'start'
-                        ? {change (e) {
-                          $$('input.browseField').forEach((bf) => {
-                            if (bf.id.includes((i + 1) + '-' +
-                                                          (j + 1))
-                            ) {
-                              bf.value = e.target.value;
-                            }
-                          });
-                        }}
+                        ? {
+                          /**
+                           * @param {Event} e
+                           */
+                          change (e) {
+                            /** @type {HTMLInputElement[]} */
+                            ($$('input.browseField')).forEach((bf) => {
+                              if (bf.id.includes((i + 1) + '-' +
+                                                            (j + 1))
+                              ) {
+                                bf.value = /** @type {HTMLInputElement} */ (
+                                  e.target
+                                ).value;
+                              }
+                            });
+                          }
+                        }
                         : undefined
                     }]
                     : ['input', {
@@ -705,7 +854,7 @@ export default {
                 ]]
               );
               return rowContent;
-            }, {'#': []});
+            }, {'#': /** @type {import('jamilih').JamilihChildren} */ ([])});
           };
           return [
             addBrowseFieldSet('start'),
@@ -759,11 +908,11 @@ export default {
                   ]]
                 );
                 return rowContent;
-              }, {'#': [
+              }, {'#': /** @type {import('jamilih').JamilihChildren} */ ([
                 ['td', {style: 'font-weight: bold; vertical-align: bottom;'}, [
                   lDirectional('anchored-at') + nbsp3
                 ]]
-              ]}),
+              ])}),
               ['td', [
                 ['label', [
                   lDirectional('field') + nbsp2,
@@ -783,24 +932,73 @@ export default {
           ]]
         ]]
       ]
-    ].forEach(addRowContent);
+    ]).forEach(addRowContent);
   },
+  /**
+   * @param {{
+   *   workI18n: import('intl-dom').I18NCallback,
+   *   languageParam: string,
+   *   l: import('intl-dom').I18NCallback,
+   *   namespace: string,
+   *   heading: string,
+   *   languageI18n: (code: string) => string,
+   *   langs: import('../../server/main.js').LanguageInfo[],
+   *   fieldInfo: import('../utils/WorkInfo.js').FieldInfo,
+   *   localizeParamNames: boolean,
+   *   serializeParamsAsURL: import('../workDisplay.js').SerializeParamsAsURL,
+   *   paramsSetter: ParamsSetter,
+   *   replaceHash: (paramsCopy: URLSearchParams) => string,
+   *   getFieldAliasOrNames: import('../workDisplay.js').GetFieldAliasOrNames,
+   *   hideFormattingSection: boolean,
+   *   $p: import('../utils/IntlURLSearchParams.js').default,
+   *   metadataObj: import('../utils/Metadata.js').MetadataObj,
+   *   lParam: (key: string) => string,
+   *   lElement: import('../workDisplay.js').LElement,
+   *   lDirectional: import('../workDisplay.js').LDirectional,
+   *   lIndexedParam: (key: string) => string,
+   *   fieldMatchesLocale: (field: string) => boolean,
+   *   preferredLocale: string,
+   *   schemaItems: {
+   *     title: string,
+   *     type: string
+   *   }[],
+   *   content: import('jamilih').JamilihArray[],
+   *   groups: import('../utils/WorkInfo.js').FileGroup[],
+   *   preferencesPlugin?: PreferencesPlugin
+   * }} cfg
+   * @returns {void}
+  */
   main ({
-    workI18n, languageParam,
+    // workI18n,
+    // languageParam,
     l, namespace, heading, // fallbackDirection,
     languageI18n, langs, fieldInfo, localizeParamNames,
     serializeParamsAsURL, paramsSetter, replaceHash,
     getFieldAliasOrNames,
     hideFormattingSection, $p,
-    metadataObj, lParam, lElement, lDirectional, lIndexedParam, fieldMatchesLocale,
-    preferredLocale, schemaItems, content, groups, preferencesPlugin
+    // metadataObj,
+    lParam, lElement, lDirectional, lIndexedParam, fieldMatchesLocale,
+    // preferredLocale,
+    // schemaItems,
+    content,
+    // groups,
+    preferencesPlugin
   }) {
     const work = $p.get('work');
+
+    /**
+     * @param {{
+     *   type: string
+     * }} cfg
+     * @returns {string}
+     */
     const serializeParamsAsURLWithData = ({type}) => {
       return serializeParamsAsURL(
         {...getDataForSerializingParamsAsURL(), type}
       );
     };
+
+    /** @type {LOption} */
     const lOption = (key, atts) => {
       return ['option', atts, [
         l(
@@ -821,14 +1019,22 @@ export default {
       [
         ['div', {style: 'float: left;'}, [
           ['button', {$on: {click () {
-            const prefs = $('#preferences');
+            const prefs = /** @type {HTMLElement} */ ($('#preferences'));
             prefs.hidden = !prefs.hidden;
           }}}, [l('Preferences')]],
           Templates.workDisplay.getPreferences({
-            languageParam, workI18n, paramsSetter, replaceHash,
-            getFieldAliasOrNames, work,
-            langs, languageI18n, l, localizeParamNames, namespace,
-            groups, hideFormattingSection, preferencesPlugin
+            // languageParam,
+            // workI18n,
+            paramsSetter, replaceHash,
+            getFieldAliasOrNames,
+            // eslint-disable-next-line object-shorthand -- TS
+            work: /** @type {string} */ (work),
+            langs,
+            languageI18n,
+            l, localizeParamNames, namespace,
+            // groups,
+            hideFormattingSection,
+            preferencesPlugin
           })
         ]],
         ['h2', [heading]],
@@ -847,17 +1053,32 @@ export default {
             location.href = newURL;
           }
         }, $on: {
-          keydown ({key, target}) {
+          keydown (e) {
+            const {target} = e;
+            // eslint-disable-next-line prefer-destructuring -- TS
+            const key = /** @type {KeyboardEvent & {target: HTMLElement}} */ (
+              e
+            ).key;
             // Chrome is not having submit event triggered now with enter key
             //   presses on inputs, despite having a `type=submit` input in the
             //   form, and despite not using `preventDefault`
             if (key === 'Enter' && target.localName.toLowerCase() !== 'textarea') {
-              this.$submit();
+              /**
+               * @type {HTMLFormElement & {
+               *   $submit: () => void
+               * }}
+               */
+              (this).$submit();
             }
           },
           submit (e) {
             e.preventDefault();
-            this.$submit();
+            /**
+               * @type {HTMLFormElement & {
+            *   $submit: () => void
+            * }}
+            */
+            (this).$submit();
           }
         }, name: lParam('browse')}, [
           ['table', {align: 'center'}, content],
@@ -869,7 +1090,9 @@ export default {
                 ['td', [
                   Templates.workDisplay.columnsTable({
                     lDirectional, fieldInfo, $p, lElement, lIndexedParam, l,
-                    metadataObj, preferredLocale, schemaItems,
+                    // metadataObj,
+                    // preferredLocale,
+                    // schemaItems,
                     fieldMatchesLocale
                   }),
                   lElement('save-settings-URL', 'input', 'value', {
@@ -879,7 +1102,8 @@ export default {
                         const url = serializeParamsAsURLWithData({
                           type: 'saveSettings'
                         });
-                        $('#settings-URL').value = url;
+                        /** @type {HTMLInputElement} */
+                        ($('#settings-URL')).value = url;
                       }
                     }
                   }),
@@ -891,7 +1115,7 @@ export default {
                         e.preventDefault();
                         const paramsCopy = paramsSetter({
                           ...getDataForSerializingParamsAsURL(),
-                          workName: work, // Delete work of current page
+                          workName: /** @type {string} */ (work), // Delete work of current page
                           type: 'startEndResult'
                         });
                         const url = replaceHash(paramsCopy) + `&work=${work}&${work}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here

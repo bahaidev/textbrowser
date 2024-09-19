@@ -4,7 +4,19 @@
  */
 /* eslint-env worker -- Worker environment */
 
+/**
+ * @typedef {import('./utils/Metadata.js')} MetadataFile
+ */
+
+/**
+ * @typedef {number} Integer
+ */
 const {ceil} = Math;
+
+/**
+ * @param {any[]} arr
+ * @param {number} size
+ */
 const arrayChunk = (arr, size) => {
   return Array.from({length: ceil(arr.length / size)}, (_, i) => {
     const offset = i * size;
@@ -25,9 +37,9 @@ const arrayChunk = (arr, size) => {
 */
 
 /**
- * @param {PlainObject} cfg
+ * @param {object} cfg
  * @param {string} cfg.namespace
- * @param {string[]} cfg.files
+ * @param {string} cfg.files The files.json path
  * @param {Logger} cfg.log
  * @param {string} [cfg.basePath]
  * @returns {Promise<void>}
@@ -41,17 +53,34 @@ export default async function activateCallback ({
   //  already-running versions upon future sw updates
   log('Activate: Callback called');
   const r = await fetch(files);
-  const {groups} = await r.json();
+  const {groups} = /** @type {import('./utils/WorkInfo.js').FilesObject} */ (
+    await r.json()
+  );
 
+  /**
+   * @param {any[]} arr
+   * @param {string} path
+   */
   const addJSONFetch = (arr, path) => {
     arr.push(
       (async () => (await fetch(basePath + path)).json())()
     );
   };
 
+  /** @type {string[]} */
   const dataFileNames = [];
+
+  /** @type {import('./utils/WorkInfo.js').WorkTableContainer[]} */
   const dataFiles = [];
+
+  /**
+   * @typedef {import('json-schema').JSONSchema4} SchemaFile
+   */
+
+  /** @type {SchemaFile[]} */
   const schemaFiles = [];
+
+  /** @type {MetadataFile[]} */
   const metadataFiles = [];
   groups.forEach(
     ({files: fileObjs, metadataBaseDirectory, schemaBaseDirectory}) => {
@@ -59,8 +88,8 @@ export default async function activateCallback ({
         // We don't i18nize the name here
         dataFileNames.push(name);
         addJSONFetch(dataFiles, filePath);
-        addJSONFetch(metadataFiles, metadataBaseDirectory + '/' + metadataFile);
         addJSONFetch(schemaFiles, schemaBaseDirectory + '/' + schemaFile);
+        addJSONFetch(metadataFiles, metadataBaseDirectory + '/' + metadataFile);
       });
     }
   );
@@ -69,18 +98,20 @@ export default async function activateCallback ({
   ]);
   const chunked = arrayChunk(promises, dataFiles.length);
   const [
-    dataFileResponses, schemaFileResponses, metadataFileResponses
+    , schemaFileResponses, metadataFileResponses
   ] = chunked;
+  const dataFileResponses = /** @type {{data: (Integer|string)[][]}[]} */ (chunked[0]);
 
   log('Activate: Files fetched');
   const dbName = namespace + '-textbrowser-cache-data';
   indexedDB.deleteDatabase(dbName);
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(dbName);
+    // @ts-expect-error Ok
     req.addEventListener('upgradeneeded', ({target: {result: db}}) => {
       db.onversionchange = () => {
         db.close();
-        const err = new Error('versionchange');
+        const err = /** @type {Error & {type: string}} */ (new Error('versionchange'));
         err.type = 'versionchange';
         reject(err);
       };
@@ -90,11 +121,27 @@ export default async function activateCallback ({
 
         const schemaFileResponse = schemaFileResponses[i];
         const metadataFileResponse = metadataFileResponses[i];
-        const fieldItems = schemaFileResponse.items.items;
+        const fieldItems = /** @type {{title: string}[]} */ (
+          schemaFileResponse.items.items
+        );
 
-        let browseFields = metadataFileResponse.table.browse_fields;
+        /**
+         * @typedef {{
+         *   name?: string,
+         *   presort?: boolean,
+         *   set: string[]
+         * }} NameSet
+         */
+
+        let browseFields =
+          /**
+           * @type {(string|NameSet)[]|NameSet}
+           */ (
+            metadataFileResponse.table.browse_fields
+          );
         browseFields = Array.isArray(browseFields) ? browseFields : [browseFields];
 
+        /** @type {string[]} */
         const columnIndexes = [];
         browseFields.forEach((browseFieldSetObj) => {
           if (typeof browseFieldSetObj === 'string') {
@@ -133,24 +180,42 @@ export default async function activateCallback ({
           // Todo: Optionally send notice when complete
           // To take advantage of indexes on our arrays, we
           //   need to transform them to objects! See https://github.com/w3c/IndexedDB/issues/209
+
+          /**
+           * The `value` property alone contains the latter
+           *   `(Integer|string)[]` value.
+           * @type {{
+           *   [key: string]: string|Integer|(Integer|string)[]
+           * }}
+           */
           const objRow = {
             value: tableRow
           };
           uniqueColumnIndexes.forEach((colIdx) => {
-            objRow[colIdx] = tableRow[colIdx.slice(1)];
+            // Indexed like c0, c1, c2, etc.
+            objRow[colIdx] = tableRow[Number.parseInt(colIdx.slice(1))];
           });
           // log('objRow', objRow);
           store.put(objRow, j);
         });
       });
     });
+
+    // @ts-expect-error Ok
     req.addEventListener('success', ({target: {result: db}}) => {
       log('Activate: Database set-up complete', db);
       // Todo: Replace this with `ready()` check
       //   in calling code?
       resolve();
     });
-    const onerr = ({error = new Error('dbError')}) => {
+
+    /**
+     * @param {Event & {error?: Error}} ev
+     */
+    const onerr = (ev) => {
+      const error = /** @type {Error & {type: string}} */ (
+        ev.error ?? new Error('dbError')
+      );
       error.type = 'dbError';
       reject(error);
     };
