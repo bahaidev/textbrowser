@@ -1,5 +1,3 @@
-/* eslint-env browser */
-
 import {getJSON} from 'simple-get-json';
 import {i18n} from 'intl-dom';
 import loadStylesheets from 'load-stylesheets';
@@ -21,15 +19,6 @@ import IntlURLSearchParams from './utils/IntlURLSearchParams.js';
 import workSelect from './workSelect.js';
 import workDisplay from './workDisplay.js';
 import {resultsDisplayClient} from './resultsDisplay.js';
-
-/* eslint-disable no-unused-vars, @stylistic/brace-style */
-/**
- *
- * @param {null|number|string|PlainObject|GenericArray} obj
- * @returns {void}
- */
-function s (obj) { dialogs.alert(JSON.stringify(obj)); } // lgtm [js/unused-local-variable]
-/* eslint-enable no-unused-vars, @stylistic/brace-style */
 
 /**
  *
@@ -138,7 +127,7 @@ async function requestPermissions (langs, l) {
         // rememberRefusal();
         resolve();
         return;
-        // eslint-disable-next-line sonarjs/no-duplicated-branches
+        // eslint-disable-next-line sonarjs/no-duplicated-branches -- Ease of maintenance
       case 'default':
         resolve();
         return;
@@ -269,7 +258,6 @@ class TextBrowser {
       const url = location.href.replace(/#.*$/, '') + '#' + $p.toString();
       history.replaceState(formSerialize(form, {hash: true, empty: true}), document.title, url);
       // Get and set new state within URL
-      // eslint-disable-next-line n/callback-return
       cb();
       location.hash = '#' + $p.toString();
     };

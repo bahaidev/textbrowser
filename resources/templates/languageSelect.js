@@ -1,4 +1,3 @@
-/* eslint-env browser */
 import {jml, $} from 'jamilih';
 import {deserialize as formDeserialize} from 'form-serialization';
 

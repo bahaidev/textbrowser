@@ -1,4 +1,3 @@
-/* eslint-env browser */
 // Todo: remember this locales choice by cookie?
 export const getPreferredLanguages = ({namespace, preferredLocale}) => {
   // Todo: Add to this optionally with one-off tag input box

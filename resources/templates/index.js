@@ -1,4 +1,3 @@
-/* eslint-env browser */
 import {jml, $, body} from 'jamilih';
 
 import languageSelect from './languageSelect.js';
@@ -33,6 +32,7 @@ const Templates = {
         installationDialog.showModal();
         const container = $('#dialogContainer');
         container.hidden = false;
+      // eslint-disable-next-line no-unused-vars -- Ok
       } catch (err) {
         // May already be open
       }

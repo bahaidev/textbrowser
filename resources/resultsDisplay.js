@@ -1,4 +1,3 @@
-/* eslint-env browser */
 import Locale from 'intl-locale-textinfo-polyfill';
 import JsonRefs from 'json-refs';
 import {jml} from 'jamilih';
@@ -42,6 +41,7 @@ const setAnchor = ({
   if (!anchor) {
     const anchors = [];
     let anchorField = '';
+    // eslint-disable-next-line sonarjs/misplaced-loop-counter -- Ok
     for (let i = 1, breakout; !breakout && !anchors.length; i++) {
       for (let j = 1; ; j++) {
         const anchorText = work + '-' + 'anchor' + i + '-' + j;
@@ -65,7 +65,9 @@ const setAnchor = ({
       }
     }
     if (anchors.length) {
-      const escapeSelectorAttValue = (str) => (str || '').replaceAll(/["\\]/g, '\\$&');
+      const escapeSelectorAttValue = (str) => (str || '').replaceAll(
+        /["\\]/g, String.raw`\$&`
+      );
       const escapedRow = escapeSelectorAttValue(anchors.join('-'));
       const escapedCol = anchorField
         ? escapeSelectorAttValue(anchorField)
@@ -428,7 +430,9 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
   const $pEscArbitrary = (param) => escapeHTML($p.get(param, true));
 
   // Not currently in use
-  const escapeQuotedCSS = (s) => s.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
+  const escapeQuotedCSS = (s) => s.replaceAll('\\', '\\\\').replaceAll(
+    '"', String.raw`\"`
+  );
 
   const {
     fileData, workI18n, getFieldAliasOrName, schemaObj, metadataObj,

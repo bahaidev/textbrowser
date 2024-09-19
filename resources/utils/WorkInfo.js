@@ -1,3 +1,4 @@
+/* globals process -- Node polyglot */
 import {getJSON} from 'simple-get-json';
 import {i18n} from 'intl-dom';
 import {getMetaProp, getMetadata, Metadata} from './Metadata.js';
@@ -152,7 +153,7 @@ export const getWorkData = async function ({
     getPlugins
       ? Promise.all(
         pluginPaths.map((pluginPath) => {
-          // eslint-disable-next-line no-unsanitized/method
+          // // eslint-disable-next-line no-unsanitized/method
           return import(
             cwd +
             pluginPath

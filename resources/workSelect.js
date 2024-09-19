@@ -1,4 +1,3 @@
-/* eslint-env browser */
 import {getJSON} from 'simple-get-json';
 import {i18n} from 'intl-dom';
 

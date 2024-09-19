@@ -135,9 +135,9 @@ div.inner-caption {
     letter-spacing: ${$pEscArbitrary('letterspacing')};
     line-height: ${$pEscArbitrary('lineheight')};
     ${colorEsc ? `color: ${escapeCSS(colorEsc)};` : ''
-}
+    }
     ${bgcolorEsc ? `background-color: ${escapeCSS(bgcolorEsc)};` : ''
-}
+    }
 }
 ${escapeCSS($pEscArbitrary('pagecss') || '')}
 ` +
@@ -248,6 +248,7 @@ body {
     };
 
     const addChildren = (el, children) => {
+      // eslint-disable-next-line unicorn/prefer-structured-clone -- Need JSON
       el = JSON.parse(JSON.stringify(el));
       el.push(children);
       return el;

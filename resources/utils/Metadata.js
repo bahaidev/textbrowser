@@ -1,7 +1,6 @@
-/* eslint-env browser */
 import {getPreferredLanguages} from './Languages.js';
 // Keep this as the last import for Rollup
-import JsonRefs from 'json-refs'; // eslint-disable-line import/order
+import JsonRefs from 'json-refs'; // // eslint-disable-line import/order
 
 const getCurrDir = () => {
   return window.location.href.replace(/(index\.html)?#.*$/, '');
@@ -90,6 +89,7 @@ export const getFieldNameAndValueAliases = function ({
         true
       );
     }
+    // eslint-disable-next-line unicorn/prefer-structured-clone -- Expecting JSON
     ret.rawFieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap));
     ret.aliases = [];
     // Todo: We could use `prefer_alias` but algorithm below may cover
@@ -130,6 +130,7 @@ export const getFieldNameAndValueAliases = function ({
         );
       });
     }
+    // eslint-disable-next-line unicorn/prefer-structured-clone -- Expecting JSON
     ret.fieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap));
     // ret.aliases.sort();
   }
@@ -160,7 +161,7 @@ export const getBrowseFieldData = function ({
         getFieldAliasOrName
       });
     });
-    callback({setName, browseFields, i, presort}); // eslint-disable-line n/no-callback-literal
+    callback({setName, browseFields, i, presort});
   });
 };
 

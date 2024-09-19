@@ -1,80 +1,3 @@
-function ownKeys$1(e, r) {
-  var t = Object.keys(e);
-  if (Object.getOwnPropertySymbols) {
-    var o = Object.getOwnPropertySymbols(e);
-    r && (o = o.filter(function (r) {
-      return Object.getOwnPropertyDescriptor(e, r).enumerable;
-    })), t.push.apply(t, o);
-  }
-  return t;
-}
-function _objectSpread2$1(e) {
-  for (var r = 1; r < arguments.length; r++) {
-    var t = null != arguments[r] ? arguments[r] : {};
-    r % 2 ? ownKeys$1(Object(t), !0).forEach(function (r) {
-      _defineProperty$1(e, r, t[r]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys$1(Object(t)).forEach(function (r) {
-      Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
-    });
-  }
-  return e;
-}
-function _defineProperty$1(obj, key, value) {
-  key = _toPropertyKey$1(key);
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
-}
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-  return target;
-}
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-  var key, i;
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-  return target;
-}
-function _toPrimitive$1(input, hint) {
-  if (typeof input !== "object" || input === null) return input;
-  var prim = input[Symbol.toPrimitive];
-  if (prim !== undefined) {
-    var res = prim.call(input, hint || "default");
-    if (typeof res !== "object") return res;
-    throw new TypeError("@@toPrimitive must return a primitive value.");
-  }
-  return (hint === "string" ? String : Number)(input);
-}
-function _toPropertyKey$1(arg) {
-  var key = _toPrimitive$1(arg, "string");
-  return typeof key === "symbol" ? key : String(key);
-}
-
 /* eslint-disable node/no-unsupported-features/es-syntax */
 
 /**
@@ -91,9 +14,6 @@ function _toPropertyKey$1(arg) {
  * @returns {getJSONCallback}
  */
 function _await$2$1(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
   if (!value || !value.then) {
     value = Promise.resolve(value);
   }
@@ -180,9 +100,6 @@ function buildGetJSONWithFetch({
   };
 }
 function _await$1$1(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
   if (!value || !value.then) {
     value = Promise.resolve(value);
   }
@@ -258,9 +175,6 @@ function getDirectoryForURL(url) {
 /* eslint-disable node/no-unsupported-features/es-syntax */
 
 function _await$3(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
   if (!value || !value.then) {
     value = Promise.resolve(value);
   }
@@ -282,9 +196,6 @@ function _invoke$2(body, then) {
   return then(result);
 }
 function _call(body, then, direct) {
-  if (direct) {
-    return then ? then(body()) : body();
-  }
   try {
     var result = Promise.resolve(body());
     return then ? result.then(then) : result;
@@ -373,7 +284,6 @@ function buildGetJSON({
       });
     });
   });
-
   const ret = buildGetJSONWithFetch({
     fetch: _fetch
   });
@@ -790,7 +700,6 @@ function generateUUID() {
   if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
     d += performance.now(); // use high-precision timer if available
   }
-
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     /* eslint-disable no-bitwise */
     var r = Math.trunc((d + Math.random() * 16) % 16);
@@ -1052,7 +961,7 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
               type: 'DATERANGE',
               options: extraOpts
             }));
-            return dtf.formatRange.apply(dtf, _toConsumableArray$1( /** @type {[Date, Date]} */
+            return dtf.formatRange.apply(dtf, _toConsumableArray$1(/** @type {[Date, Date]} */
             [/** @type {number|Date} */
             value, /** @type {Date} */
             opts].map(function (val) {
@@ -1063,12 +972,11 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
         case 'language':
         case 'script':
         case 'currency':
-          return (/** @type {string} */new Intl.DisplayNames(locale, _objectSpread2(_objectSpread2({}, applyArgs({
-              type: singleKey.toUpperCase()
-            })), {}, {
-              type: singleKey
-            })).of( /** @type {string} */value)
-          );
+          return /** @type {string} */new Intl.DisplayNames(locale, _objectSpread2(_objectSpread2({}, applyArgs({
+            type: singleKey.toUpperCase()
+          })), {}, {
+            type: singleKey
+          })).of(/** @type {string} */value);
         case 'relative':
           // The second argument actually contains the primary options, so swap
           // eslint-disable-next-line max-len -- Long
@@ -1078,12 +986,12 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
           opts = _ref4[1];
           return new Intl.RelativeTimeFormat(locale, applyArgs({
             type: 'RELATIVE'
-          })).format( /** @type {number} */value, extraOpts);
+          })).format(/** @type {number} */value, extraOpts);
 
         // ListFormat (with Collator)
         case 'list':
           if (callback) {
-            return sortList( /** @type {string} */locale, /** @type {string[]} */
+            return sortList(/** @type {string} */locale, /** @type {string[]} */
             value, callback, applyArgs({
               type: 'LIST'
             }), applyArgs({
@@ -1092,7 +1000,7 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
               checkArgOptions: true
             }));
           }
-          return sortList( /** @type {string} */locale, /** @type {string[]} */
+          return sortList(/** @type {string} */locale, /** @type {string[]} */
           value, applyArgs({
             type: 'LIST'
           }), applyArgs({
@@ -1106,7 +1014,7 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
 
   // Dates
   if (value) {
-    if (typeof value === 'number' && (expectsDatetime || /^DATE(?:TIME)(?:\||$)/.test( /** @type {string} */arg))) {
+    if (typeof value === 'number' && (expectsDatetime || /^DATE(?:TIME)(?:\||$)/.test(/** @type {string} */arg))) {
       value = new Date(value);
     }
     if (_typeof$1(value) === 'object' && 'getTime' in value && typeof value.getTime === 'function') {
@@ -1124,7 +1032,7 @@ var defaultAllSubstitutions = function defaultAllSubstitutions(_ref2) {
     return (_Intl$DateTimeFormat = new Intl.DateTimeFormat(locale, applyArgs({
       type: 'DATERANGE',
       options: _extraOpts2
-    }))).formatRange.apply(_Intl$DateTimeFormat, _toConsumableArray$1( /** @type {[Date, Date]} */
+    }))).formatRange.apply(_Intl$DateTimeFormat, _toConsumableArray$1(/** @type {[Date, Date]} */
     value.slice(0, 2).map(function (val) {
       return typeof val === 'number' ? new Date(val) : val;
     })));
@@ -1217,28 +1125,27 @@ var LocalFormatter = /*#__PURE__*/function (_Formatter) {
       var components = key.slice(1).split('.');
       /** @type {import('./getMessageForKeyByStyle.js').LocaleBody} */
       var parent = this.locals;
-      return (/** @type {typeof LocalFormatter} */this.constructor.isMatchingKey(key) && components.every(function (cmpt) {
-          var result = (cmpt in parent);
-          parent =
-          /**
-           * @type {import('./defaultLocaleResolver.js').
-           *     RichNestedLocaleStringBodyObject|
-           *   import('./defaultLocaleResolver.js').
-           *     PlainNestedLocaleStringBodyObject|
-           *   import('./defaultLocaleResolver.js').RichLocaleStringSubObject
-           * }
-           */
-          /**
-           * @type {import('./defaultLocaleResolver.js').
-           *     RichNestedLocaleStringBodyObject|
-           *   import('./defaultLocaleResolver.js').
-           *     PlainNestedLocaleStringBodyObject
-           * }
-           */
-          parent[cmpt];
-          return result;
-        })
-      );
+      return /** @type {typeof LocalFormatter} */this.constructor.isMatchingKey(key) && components.every(function (cmpt) {
+        var result = cmpt in parent;
+        parent =
+        /**
+         * @type {import('./defaultLocaleResolver.js').
+         *     RichNestedLocaleStringBodyObject|
+         *   import('./defaultLocaleResolver.js').
+         *     PlainNestedLocaleStringBodyObject|
+         *   import('./defaultLocaleResolver.js').RichLocaleStringSubObject
+         * }
+         */
+        /**
+         * @type {import('./defaultLocaleResolver.js').
+         *     RichNestedLocaleStringBodyObject|
+         *   import('./defaultLocaleResolver.js').
+         *     PlainNestedLocaleStringBodyObject
+         * }
+         */
+        parent[cmpt];
+        return result;
+      });
     }
     /**
      * @param {string} key
@@ -1277,8 +1184,7 @@ var RegularFormatter = /*#__PURE__*/function (_Formatter2) {
   _createClass(RegularFormatter, [{
     key: "isMatch",
     value: function isMatch(key) {
-      return (/** @type {typeof RegularFormatter} */this.constructor.isMatchingKey(key) && key in this.substitutions
-      );
+      return /** @type {typeof RegularFormatter} */this.constructor.isMatchingKey(key) && key in this.substitutions;
     }
     /**
      * @param {string} key
@@ -1422,11 +1328,11 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
           // eslint-disable-next-line default-case
           switch (type) {
             case 'NUMBER':
-              match = getNumberFormat( /** @type {number} */value, /** @type {Intl.NumberFormatOptions} */
+              match = getNumberFormat(/** @type {number} */value, /** @type {Intl.NumberFormatOptions} */
               options);
               break;
             case 'PLURAL':
-              match = getPluralFormat( /** @type {number} */value, /** @type {Intl.PluralRulesOptions} */
+              match = getPluralFormat(/** @type {number} */value, /** @type {Intl.PluralRulesOptions} */
               options);
               break;
           }
@@ -1447,7 +1353,7 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
       try {
         return _getSubstitution({
           messageStyle: messageStyle,
-          key: match ? preventNesting( /** @type {string} */match) : arg,
+          key: match ? preventNesting(/** @type {string} */match) : arg,
           body: body,
           type: 'switch'
         });
@@ -1455,7 +1361,7 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
         try {
           return _getSubstitution({
             messageStyle: messageStyle,
-            key: '*' + preventNesting( /** @type {string} */match),
+            key: '*' + preventNesting(/** @type {string} */match),
             body: body,
             type: 'switch'
           });
@@ -1535,8 +1441,7 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
         });
         return ret ? [].concat(_toConsumableArray$1(ret), [k]) : [];
       }, this.switches);
-      return (/** @type {SwitchMatch} */returnValue
-      );
+      return /** @type {SwitchMatch} */returnValue;
     }
 
     /**
@@ -1556,8 +1461,7 @@ var SwitchFormatter = /*#__PURE__*/function (_Formatter3) {
     key: "getKey",
     value: function getKey(key) {
       var match = key.match(/^(?:[\0-\{\}-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*/);
-      return (/** @type {string} */match && match[0]
-      );
+      return /** @type {string} */match && match[0];
     }
   }]);
   return SwitchFormatter;
@@ -1597,9 +1501,6 @@ promiseChainForValues(['a', 'b', 'c'], (val) => {
  */
 
 function _await$2(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
   if (!value || !value.then) {
     value = Promise.resolve(value);
   }
@@ -1703,13 +1604,7 @@ function _for(test, update, body) {
         break;
       }
     }
-    if (update) {
-      var updateValue = update();
-      if (updateValue && updateValue.then && !_isSettledPact(updateValue)) {
-        stage = 2;
-        break;
-      }
-    }
+    var updateValue; 
   }
   var pact = new _Pact();
   var reject = _settle.bind(null, pact, 2);
@@ -1718,13 +1613,6 @@ function _for(test, update, body) {
   function _resumeAfterBody(value) {
     result = value;
     do {
-      if (update) {
-        updateValue = update();
-        if (updateValue && updateValue.then && !_isSettledPact(updateValue)) {
-          updateValue.then(_resumeAfterUpdate).then(void 0, reject);
-          return;
-        }
-      }
       shouldContinue = test();
       if (!shouldContinue || _isSettledPact(shouldContinue) && !shouldContinue.v) {
         _settle(pact, 1, result);
@@ -2135,9 +2023,9 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
     });
   };
   addFunctionKeys();
-  var localFormatter = new LocalFormatter( /** @type {import('./getMessageForKeyByStyle.js').LocalObject} */locals);
+  var localFormatter = new LocalFormatter(/** @type {import('./getMessageForKeyByStyle.js').LocalObject} */locals);
   var regularFormatter = new RegularFormatter(substitutions);
-  var switchFormatter = new SwitchFormatter( /** @type {import('./defaultLocaleResolver.js').Switches} */
+  var switchFormatter = new SwitchFormatter(/** @type {import('./defaultLocaleResolver.js').Switches} */
   switches, {
     substitutions: substitutions
   });
@@ -2227,8 +2115,7 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
     }
 
     // Change this and return type if other substitutions possible
-    return (/** @type {string|Node} */substitution
-    );
+    return /** @type {string|Node} */substitution;
   };
   var recursiveLocalCount = 1;
   /**
@@ -2251,7 +2138,7 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
       if (recursiveLocalCount++ > maximumLocalNestingDepth) {
         throw new TypeError('Too much recursion in local variables.');
       }
-      if ( /** @type {typeof import('./Formatter.js').LocalFormatter} */localFormatter.constructor.isMatchingKey(ky)) {
+      if (/** @type {typeof import('./Formatter.js').LocalFormatter} */localFormatter.constructor.isMatchingKey(ky)) {
         var extraSubsts = substitutions;
         var localFormatters;
         if (arg) {
@@ -2268,7 +2155,7 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
             substitutions: localFormatters
           });
         }
-      } else if ( /** @type {typeof import('./Formatter.js').SwitchFormatter} */
+      } else if (/** @type {typeof import('./Formatter.js').SwitchFormatter} */
       switchFormatter.constructor.isMatchingKey(ky)) {
         subst = processSubsts({
           str: substitution
@@ -2397,7 +2284,7 @@ var defaultInsertNodes = function defaultInsertNodes(_ref) {
             push(substitution.cloneNode(true));
           } else {
             // Why no number here?
-            push( /** @type {string} */substitution);
+            push(/** @type {string} */substitution);
           }
         }
         usedKeys.push(ky);
@@ -2440,7 +2327,7 @@ function defaultKeyCheckerConverter(key, messageStyle) {
     return typeof k === 'string';
   }) && typeof messageStyle === 'string' && messageStyle.endsWith('Nested')) {
     return key.map(function (k) {
-      return k.replace( /*#__PURE__*/_wrapRegExp(/(\\+)/g, {
+      return k.replace(/*#__PURE__*/_wrapRegExp(/(\\+)/g, {
         backslashes: 1
       }), '\\$<backslashes>').replace(/\./g, '\\.');
     }).join('.');
@@ -2753,7 +2640,6 @@ var getDOMForLocaleString = function getDOMForLocaleString(_ref) {
     locale = _ref.locale,
     locals = _ref.locals,
     switches = _ref.switches;
-  _ref.maximumLocalNestingDepth;
   var _ref$allSubstitutions = _ref.allSubstitutions,
     allSubstitutions = _ref$allSubstitutions === void 0 ? [defaultAllSubstitutions] : _ref$allSubstitutions,
     _ref$insertNodes = _ref.insertNodes,
@@ -2846,9 +2732,6 @@ var getDOMForLocaleString = function getDOMForLocaleString(_ref) {
   return container;
 };
 function _await$1(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
   if (!value || !value.then) {
     value = Promise.resolve(value);
   }
@@ -2936,14 +2819,13 @@ var findLocaleStrings = function findLocaleStrings() {
     localeResolver = _ref2.localeResolver,
     localesBasePath = _ref2.localesBasePath,
     localeMatcher = _ref2.localeMatcher;
-  return (/** @type {Promise<LocaleObjectInfo>} */_findLocale({
-      locales: locales,
-      defaultLocales: defaultLocales,
-      localeResolver: localeResolver,
-      localesBasePath: localesBasePath,
-      localeMatcher: localeMatcher
-    })
-  );
+  return /** @type {Promise<LocaleObjectInfo>} */_findLocale({
+    locales: locales,
+    defaultLocales: defaultLocales,
+    localeResolver: localeResolver,
+    localesBasePath: localesBasePath,
+    localeMatcher: localeMatcher
+  });
 };
 
 /**
@@ -2989,10 +2871,10 @@ var _findLocale = _async(function (_ref4) {
         });
       });
     }, function (err) {
-      if ( /** @type {Error} */err.name === 'SyntaxError') {
+      if (/** @type {Error} */err.name === 'SyntaxError') {
         throw err;
       }
-      return _await$1( /** @type {LocaleMatcher} */localeMatcher(locale), getLocale);
+      return _await$1(/** @type {LocaleMatcher} */localeMatcher(locale), getLocale);
     });
   });
   var _ref4$locales = _ref4.locales,
@@ -3056,9 +2938,6 @@ var _findLocale = _async(function (_ref4) {
  */
 
 function _await(value, then, direct) {
-  if (direct) {
-    return then ? then(value) : value;
-  }
   if (!value || !value.then) {
     value = Promise.resolve(value);
   }
@@ -3266,6 +3145,24 @@ var i18n = function i18n() {
   }
 };
 
+/**
+ * @param {string|string[]} stylesheets
+ * @param {{
+ *   before?: HTMLElement,
+ *   after?: HTMLElement,
+ *   favicon?: boolean,
+ *   image?: boolean,
+ *   canvas?: boolean,
+ *   acceptErrors?: boolean|((info: {
+ *     error: ErrorEvent,
+ *     stylesheetURL: string,
+ *     options: {},
+ *     resolve: (value: any) => void,
+ *     reject: (reason?: any) => void
+ *   }) => (reason?: any) => void)
+ * }} cfg
+ * @returns {Promise<HTMLLinkElement[]>}
+ */
 function loadStylesheets(stylesheets, {
   before: beforeDefault,
   after: afterDefault,
@@ -3275,10 +3172,31 @@ function loadStylesheets(stylesheets, {
   acceptErrors
 } = {}) {
   stylesheets = Array.isArray(stylesheets) ? stylesheets : [stylesheets];
-  function setupLink(stylesheetURL) {
+
+  /**
+   * @typedef {{
+   *   before?: HTMLElement,
+   *   after?: HTMLElement,
+   *   favicon?: boolean,
+   *   image?: boolean,
+   *   canvas?: boolean,
+   * }} Options
+   */
+
+  /**
+   * @param {string|[stylesheetURL: string, options: Options]} stylesheetURLInfo
+   * @returns {Promise<HTMLLinkElement>}
+   */
+  function setupLink(stylesheetURLInfo) {
+    /** @type {Options} */
     let options = {};
-    if (Array.isArray(stylesheetURL)) {
-      [stylesheetURL, options = {}] = stylesheetURL;
+
+    /** @type {string} */
+    let stylesheetURL;
+    if (Array.isArray(stylesheetURLInfo)) {
+      [stylesheetURL, options = {}] = stylesheetURLInfo;
+    } else {
+      stylesheetURL = stylesheetURLInfo;
     }
     let {
       favicon = faviconDefault
@@ -3295,7 +3213,7 @@ function loadStylesheets(stylesheets, {
       } else if (after) {
         after.after(link);
       } else {
-        document.head.appendChild(link);
+        document.head.append(link);
       }
     }
     const link = document.createElement('link');
@@ -3338,6 +3256,9 @@ function loadStylesheets(stylesheets, {
           reject(error);
         });
         img.addEventListener('load', () => {
+          if (!context) {
+            throw new Error('Canvas context could not be found');
+          }
           context.drawImage(img, 0, 0);
           link.href = canvas ? cnv.toDataURL('image/x-icon') : stylesheetURL;
           addLink();
@@ -3789,14 +3710,15 @@ function deserialize(form, hash) {
 /**
  * @file Note that this should be kept as a polyglot client-server file.
  */
-async function getLocaleFallbackResults({
-  $p,
-  lang,
-  langs,
-  langData,
-  fallbackLanguages,
-  basePath = ''
-}) {
+async function getLocaleFallbackResults(_ref) {
+  let {
+    $p,
+    lang,
+    langs,
+    langData,
+    fallbackLanguages,
+    basePath = ''
+  } = _ref;
   const l = await i18n({
     messageStyle: 'plainNested',
     locales: lang,
@@ -3817,7 +3739,6 @@ async function getLocaleFallbackResults({
   return l;
 }
 
-var _win;
 /*
 Possible todos:
 0. Add XSLT to JML-string stylesheet (or even vice versa)
@@ -3885,7 +3806,7 @@ if (typeof window !== 'undefined' && window) {
 }
 
 /* c8 ignore next */
-let doc = typeof document !== 'undefined' && document || ((_win = win) === null || _win === void 0 ? void 0 : _win.document);
+let doc = typeof document !== 'undefined' && document || win?.document;
 
 // STATIC PROPERTIES
 
@@ -3894,7 +3815,6 @@ const possibleOptions = ['$plugins',
 // '$state', // Used internally
 '$map' // Add any other options here
 ];
-
 const NS_HTML = 'http://www.w3.org/1999/xhtml',
   hyphenForCamelCase = /-([a-z])/gu;
 const ATTR_MAP = new Map([['maxlength', 'maxLength'], ['minlength', 'minLength'], ['readonly', 'readOnly']]);
@@ -4556,7 +4476,7 @@ function _DOMfromJMLOrString (childNodeJML) {
  * @returns {Promise<void>|string|null}
  */
 function checkPluginValue(elem, att, attVal, opts, state) {
-  opts.$state = state !== null && state !== void 0 ? state : 'attributeValue';
+  opts.$state = state ?? 'attributeValue';
   if (attVal && typeof attVal === 'object') {
     const matchingPlugin = getMatchingPlugin(opts, Object.keys(attVal)[0]);
     if (matchingPlugin) {
@@ -4570,8 +4490,7 @@ function checkPluginValue(elem, att, attVal, opts, state) {
       });
     }
   }
-  return (/** @type {string} */attVal
-  );
+  return /** @type {string} */attVal;
 }
 
 /**
@@ -4585,15 +4504,27 @@ function getMatchingPlugin(opts, pluginName) {
   });
 }
 
+/* eslint-disable jsdoc/valid-types -- pratt parser bug  */
+/**
+ * @template T
+ * @typedef {T[keyof T]} ValueOf
+ */
+/* eslint-enable jsdoc/valid-types -- pratt parser bug  */
+
+/* eslint-disable jsdoc/valid-types -- pratt parser bug  */
 /**
  * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers
  * that support); any element after element can be omitted, and any subsequent
  * type or types added afterwards.
- * @param {JamilihArray} args
- * @returns {JamilihReturn} The newly created (and possibly already appended)
+ * @template {JamilihArray} T
+ * @param {T} args
+ * @returns {T extends [keyof HTMLElementTagNameMap, any?, any?, any?]
+ *   ? HTMLElementTagNameMap[T[0]] : JamilihReturn}
+ * The newly created (and possibly already appended)
  *   element or array of elements
  */
 const jml = function jml(...args) {
+  /* eslint-enable jsdoc/valid-types -- pratt parser bug  */
   if (!win) {
     throw new Error('No window object');
   }
@@ -4615,8 +4546,7 @@ const jml = function jml(...args) {
       throw new Error('No document object');
     }
     for (let [att, attVal] of Object.entries(atts)) {
-      var _ATTR_MAP$get;
-      att = (_ATTR_MAP$get = ATTR_MAP.get(att)) !== null && _ATTR_MAP$get !== void 0 ? _ATTR_MAP$get : att;
+      att = ATTR_MAP.get(att) ?? att;
 
       /**
        * @typedef {any} ElementExpando
@@ -4682,7 +4612,7 @@ const jml = function jml(...args) {
               } else if (typeof template === 'string') {
                 template = /** @type {HTMLTemplateElement} */$$1(template);
               }
-              jml( /** @type {HTMLTemplateElement} */
+              jml(/** @type {HTMLTemplateElement} */
               /** @type {HTMLTemplateElement} */template.content.cloneNode(true), shadowRoot);
             } else {
               if (!content) {
@@ -4815,7 +4745,7 @@ const jml = function jml(...args) {
               cnstrctr = getConstructor();
             }
             if (!cnstrctr.toString().startsWith('class')) {
-              cnstrctr = getConstructor( /** @type {DefineUserConstructor} */cnstrctr);
+              cnstrctr = getConstructor(/** @type {DefineUserConstructor} */cnstrctr);
             }
             if (!options && customizedBuiltIn) {
               options = {
@@ -4835,7 +4765,7 @@ const jml = function jml(...args) {
           {
             const [symbol, func] = /** @type {SymbolArray} */attVal;
             if (typeof func === 'function') {
-              const funcBound = func.bind( /** @type {HTMLElement} */elem);
+              const funcBound = func.bind(/** @type {HTMLElement} */elem);
               if (typeof symbol === 'string') {
                 // @ts-expect-error
                 elem[Symbol.for(symbol)] = funcBound;
@@ -4858,7 +4788,7 @@ const jml = function jml(...args) {
           }
         case '$data':
           {
-            setMap( /** @type {true|string[]|Map<any, any>|WeakMap<any, any>|DataAttributeObject} */
+            setMap(/** @type {true|string[]|Map<any, any>|WeakMap<any, any>|DataAttributeObject} */
             attVal);
             break;
           }
@@ -4866,7 +4796,7 @@ const jml = function jml(...args) {
           {
             // Attribute node
             const attr = /** @type {JamilihAttributeNodeValue} */attVal;
-            const node = attr.length === 3 ? doc.createAttributeNS(attr[0], attr[1]) : doc.createAttribute( /** @type {string} */attr[0]);
+            const node = attr.length === 3 ? doc.createAttributeNS(attr[0], attr[1]) : doc.createAttribute(/** @type {string} */attr[0]);
             node.value = /** @type {string} */attr[attr.length - 1];
             nodes[nodes.length] = node;
             break;
@@ -4874,7 +4804,7 @@ const jml = function jml(...args) {
         case '$text':
           {
             // Todo: Also allow as jml(['a text node']) (or should that become a fragment)?
-            const node = doc.createTextNode( /** @type {string} */attVal);
+            const node = doc.createTextNode(/** @type {string} */attVal);
             nodes[nodes.length] = node;
             break;
           }
@@ -4894,29 +4824,26 @@ const jml = function jml(...args) {
                 cn.remove();
                 // `j` should stay the same as removing will cause node to be present
               }
-
               jamlihDoc.childNodes.forEach(_childrenToJML(docNode));
             } else {
               if (jamlihDoc.$DOCTYPE) {
-                var _docNode$firstChild;
                 const dt = {
                   $DOCTYPE: jamlihDoc.$DOCTYPE
                 };
                 const doctype = jml(dt);
-                (_docNode$firstChild = docNode.firstChild) === null || _docNode$firstChild === void 0 ? void 0 : _docNode$firstChild.replaceWith(doctype);
+                docNode.firstChild?.replaceWith(doctype);
               }
               const html = docNode.querySelector('html');
-              const head = html === null || html === void 0 ? void 0 : html.querySelector('head');
-              const body = html === null || html === void 0 ? void 0 : html.querySelector('body');
+              const head = html?.querySelector('head');
+              const body = html?.querySelector('body');
               if (jamlihDoc.title || jamlihDoc.head) {
                 const meta = doc.createElement('meta');
                 // eslint-disable-next-line unicorn/text-encoding-identifier-case -- HTML
                 meta.setAttribute('charset', 'utf-8');
-                head === null || head === void 0 ? void 0 : head.append(meta);
+                head?.append(meta);
                 if (jamlihDoc.title) {
                   docNode.title = jamlihDoc.title; // Appends after meta
                 }
-
                 if (jamlihDoc.head && head) {
                   // each child of `head` is:
                   //  (JamilihArray|TextNodeString|HTMLElement|Comment|ProcessingInstruction|
@@ -4949,16 +4876,15 @@ const jml = function jml(...args) {
           {
             // Events
             // Allow for no-op by defaulting to `{}`
-            for (let [p2, val] of Object.entries( /** @type {OnAttributeObject} */attVal || {})) {
+            for (let [p2, val] of Object.entries(/** @type {OnAttributeObject} */attVal || {})) {
               if (typeof val === 'function') {
                 val = [val, false];
               }
               if (typeof val[0] !== 'function') {
                 throw new TypeError(`Expect a function for \`$on\`; args: ${JSON.stringify(args)}`);
               }
-              _addEvent( /** @type {HTMLElement} */elem, p2, val[0], val[1]); // element, event name, handler, capturing
+              _addEvent(/** @type {HTMLElement} */elem, p2, val[0], val[1]); // element, event name, handler, capturing
             }
-
             break;
           }
         case 'className':
@@ -4992,7 +4918,7 @@ const jml = function jml(...args) {
                 recurse(value, prop);
               });
             };
-            recurse( /** @type {DatasetAttributeObject} */attVal, '');
+            recurse(/** @type {DatasetAttributeObject} */attVal, '');
             break;
             // Todo: Disable this by default unless configuration explicitly allows (for security)
           }
@@ -5144,12 +5070,11 @@ const jml = function jml(...args) {
       // Array of strings mapping to default
       if (typeof dataVal[0] === 'string') {
         dataVal.forEach(dVal => {
-          setMap( /** @type {MapWithRoot} */opts.$map[dVal]);
+          setMap(/** @type {MapWithRoot} */opts.$map[dVal]);
         });
         return;
         // Array of Map and non-map data object
       }
-
       map = dataVal[0] || defMap[0];
       obj = dataVal[1] || defMap[1];
       // Map
@@ -5162,7 +5087,7 @@ const jml = function jml(...args) {
       obj = dataVal;
     }
     /** @type {Map<HTMLElement, any> | WeakMap<HTMLElement, any>} */
-    map.set( /** @type {HTMLElement} */
+    map.set(/** @type {HTMLElement} */
     elem, obj);
   };
   for (let i = argStart; i < argc; i++) {
@@ -5172,17 +5097,17 @@ const jml = function jml(...args) {
       case 'null':
         // null always indicates a place-holder (only needed for last argument if want array returned)
         if (i === argc - 1) {
-          return nodes.length <= 1 ? nodes[0]
+          // Casting needing unless changing `jml()` signature with overloads
+          return /** @type {ArbitraryValue} */nodes.length <= 1 ? nodes[0]
           // eslint-disable-next-line unicorn/no-array-callback-reference
           : nodes.reduce(_fragReducer, doc.createDocumentFragment()); // nodes;
         }
-
         throw new TypeError(`\`null\` values not allowed except as final Jamilih argument; index ${i} on args: ${JSON.stringify(args)}`);
       case 'string':
         // Strings normally indicate elements
         switch (arg) {
           case '!':
-            nodes[nodes.length] = doc.createComment( /** @type {string} */args[++i]);
+            nodes[nodes.length] = doc.createComment(/** @type {string} */args[++i]);
             break;
           case '?':
             {
@@ -5213,7 +5138,6 @@ const jml = function jml(...args) {
               break;
               // Browsers don't support doc.createEntityReference, so we just use this as a convenience
             }
-
           case '&':
             nodes[nodes.length] = _createSafeReference('entity', '', /** @type {string} */
             args[++i]);
@@ -5232,12 +5156,11 @@ const jml = function jml(...args) {
             // CDATA valid in XML only, so we'll just treat as text for mutual compatibility
             // Todo: config (or detection via some kind of doc.documentType property?) of whether in XML
             try {
-              nodes[nodes.length] = doc.createCDATASection( /** @type {string} */args[++i]);
+              nodes[nodes.length] = doc.createCDATASection(/** @type {string} */args[++i]);
             } catch (e2) {
-              nodes[nodes.length] = doc.createTextNode( /** @type {string} */
+              nodes[nodes.length] = doc.createTextNode(/** @type {string} */
               args[i]); // i already incremented
             }
-
             break;
           case '':
             nodes[nodes.length] = elem = doc.createDocumentFragment();
@@ -5305,8 +5228,7 @@ const jml = function jml(...args) {
             opts.$state = 'element';
             // }catch(e) {alert(elem.outerHTML);throw e;}
           }
-
-          _checkAtts( /** @type {JamilihAttributes} */atts);
+          _checkAtts(/** @type {JamilihAttributes} */atts);
           break;
         }
       case 'document':
@@ -5326,7 +5248,7 @@ const jml = function jml(...args) {
           // parent
           const elsl = nodes.length;
           for (let k = 0; k < elsl; k++) {
-            _appendNode( /** @type {Document|DocumentFragment|HTMLElement} */arg, nodes[k]);
+            _appendNode(/** @type {Document|DocumentFragment|HTMLElement} */arg, nodes[k]);
           }
         } else {
           nodes[nodes.length] = /** @type {Document|DocumentFragment|HTMLElement} */arg;
@@ -5387,7 +5309,9 @@ const jml = function jml(...args) {
   if (isRoot && opts.$map && /** @type {MapWithRoot} */opts.$map.root) {
     setMap(true);
   }
-  return ret;
+
+  // Casting needing unless changing `jml()` signature with overloads
+  return /** @type {ArbitraryValue} */ret;
 };
 
 /**
@@ -5485,7 +5409,6 @@ jml.toJML = function (nde, {
   if (typeof nde === 'string') {
     nde = new /** @type {import('jsdom').DOMWindow} */win.DOMParser().parseFromString(nde, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
   }
-
   const dom = /** @type {HTMLElement|Node|Entity} */nde;
 
   /**
@@ -5597,7 +5520,7 @@ jml.toJML = function (nde, {
       ...namespaces
     };
     const xmlChars = /^([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/u; // eslint-disable-line no-control-regex
-    if ([2, 3, 4, 7, 8].includes(type) && /** @type {Node} */nodeOrEntity.nodeValue && !xmlChars.test( /** @type {Node} */nodeOrEntity.nodeValue)) {
+    if ([2, 3, 4, 7, 8].includes(type) && /** @type {Node} */nodeOrEntity.nodeValue && !xmlChars.test(/** @type {Node} */nodeOrEntity.nodeValue)) {
       invalidStateError('Node has bad XML character value');
     }
 
@@ -5626,7 +5549,6 @@ jml.toJML = function (nde, {
       parentIdx = tmpParentIdx;
       parentIdx++; // Increment index in parent container of this element
     }
-
     switch (type) {
       case 1:
         {
@@ -5700,10 +5622,9 @@ jml.toJML = function (nde, {
         }
       case 4:
         {
-          var _node$nodeValue;
           // CDATA
           const node = /** @type {CDATASection} */nodeOrEntity;
-          if ((_node$nodeValue = node.nodeValue) !== null && _node$nodeValue !== void 0 && _node$nodeValue.includes(']]' + '>')) {
+          if (node.nodeValue?.includes(']]' + '>')) {
             invalidStateError('CDATA cannot end with closing ]]>');
           }
           set(['![', node.nodeValue]);
@@ -5787,7 +5708,7 @@ jml.toJML = function (nde, {
             }
           };
           const pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/u; // eslint-disable-line no-control-regex
-          if (!pubIdChar.test( /** @type {DocumentType} */node.publicId)) {
+          if (!pubIdChar.test(/** @type {DocumentType} */node.publicId)) {
             invalidStateError('A publicId must have valid characters.');
           }
           addExternalID(start.$DOCTYPE, node);
@@ -5835,7 +5756,7 @@ jml.toJML = function (nde, {
  * @returns {string}
  */
 jml.toJMLString = function (dom, config) {
-  return (/** @type {string} */
+  return /** @type {string} */(
     jml.toJML(dom, Object.assign(config || {}, {
       stringOutput: true
     }))
@@ -5867,15 +5788,12 @@ jml.toHTML = function (...args) {
         // Todo: deal with serialization of properties like 'selected',
         //  'checked', 'value', 'defaultValue', 'for', 'dataset', 'on*',
         //  'style'! (i.e., need to build a string ourselves)
-        return (/** @type {HTMLElement} */ret.outerHTML
-        );
+        return /** @type {HTMLElement} */ret.outerHTML;
       }
     case 2:
       {
         // ATTR
-        return `${
-        /** @type {Attr} */ret.name}="${
-        /** @type {Attr} */ret.value.replace(/"/gu, '&quot;')}"`;
+        return `${/** @type {Attr} */ret.name}="${/** @type {Attr} */ret.value.replace(/"/gu, '&quot;')}"`;
       }
     case 3:
       {
@@ -5886,8 +5804,7 @@ jml.toHTML = function (...args) {
         if (!ret.nodeValue) {
           throw new TypeError('Unexpected null Text node');
         }
-        return (/** @type {Text|CDATASection} */ret.nodeValue
-        );
+        return /** @type {Text|CDATASection} */ret.nodeValue;
         // case 5: // Entity Reference Node
         //  No 6: Entity Node
         //  No 12: Notation Node
@@ -5897,14 +5814,13 @@ jml.toHTML = function (...args) {
         // } case 8: { // Comment
         //   return `<!--${ret.nodeValue}-->`;
       }
-
     case 9:
     case 11:
       {
         // DOCUMENT FRAGMENT
         const node = /** @type {DocumentFragment} */ret;
         return [...node.childNodes].map(childNode => {
-          return jml.toHTML( /** @type {JamilihFirstArgument} */childNode);
+          return jml.toHTML(/** @type {JamilihFirstArgument} */childNode);
         }).join('');
       }
     case 10:
@@ -5914,7 +5830,6 @@ jml.toHTML = function (...args) {
         return `<!DOCTYPE ${node.name}${node.publicId ? ` PUBLIC "${node.publicId}" "${node.systemId}"` : node.systemId ? ` SYSTEM "${node.systemId}"` : ``}>`;
         /* c8 ignore next 3 */
       }
-
     default:
       throw new Error('Unexpected node type');
   }
@@ -6096,7 +6011,6 @@ jml.command = function (elem, symOrMap, methodName, ...args) {
     if (typeof func === 'function') {
       return func(methodName, ...args); // Already has `this` bound to `elem`
     }
-
     return func[methodName](...args);
   }
   func = /** @type {Map<HTMLElement, MapCommand>|WeakMap<HTMLElement, MapCommand>} */symOrMap.get(elem);
@@ -6117,9 +6031,8 @@ jml.command = function (elem, symOrMap, methodName, ...args) {
  * @returns {void}
  */
 jml.setWindow = wind => {
-  var _win2;
   win = wind;
-  doc = (_win2 = win) === null || _win2 === void 0 ? void 0 : _win2.document;
+  doc = win?.document;
   if (doc && doc.body) {
     // eslint-disable-next-line prefer-destructuring -- Needed for typing
     body = /** @type {HTMLBodyElement} */doc.body;
@@ -6154,9 +6067,6 @@ const $e = (el, descendentsSel) => {
   return el.querySelector(descendentsSel);
 };
 
-const _excluded$1 = ["submit", "submitClass"],
-  _excluded2 = ["submit", "cancel", "cancelClass", "submitClass"],
-  _excluded3 = ["message", "submit"];
 const defaultLocale = 'en';
 const localeStrings = {
   en: {
@@ -6166,29 +6076,36 @@ const localeStrings = {
   }
 };
 class Dialog {
-  constructor({
-    locale,
-    localeObject
-  } = {}) {
+  constructor() {
+    let {
+      locale,
+      localeObject
+    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     this.setLocale({
       locale,
       localeObject
     });
   }
-  setLocale({
-    locale = {},
-    localeObject = {}
-  }) {
-    this.localeStrings = _objectSpread2$1(_objectSpread2$1(_objectSpread2$1({}, localeStrings[defaultLocale]), localeStrings[locale]), localeObject);
+  setLocale(_ref) {
+    let {
+      locale = {},
+      localeObject = {}
+    } = _ref;
+    this.localeStrings = {
+      ...localeStrings[defaultLocale],
+      ...localeStrings[locale],
+      ...localeObject
+    };
   }
-  makeDialog({
-    atts = {
-      $on: null
-    },
-    children = [],
-    close,
-    remove = true
-  }) {
+  makeDialog(_ref2) {
+    let {
+      atts = {
+        $on: null
+      },
+      children = [],
+      close,
+      remove = true
+    } = _ref2;
     if (close) {
       if (!atts.$on) {
         atts.$on = {};
@@ -6206,13 +6123,13 @@ class Dialog {
     }
     return dialog;
   }
-  makeSubmitDialog(_ref) {
+  makeSubmitDialog(_ref3) {
     let {
-        submit,
-        // Don't pass this on to `args` if present
-        submitClass = 'submit'
-      } = _ref,
-      args = _objectWithoutProperties(_ref, _excluded$1);
+      submit,
+      // Don't pass this on to `args` if present
+      submitClass = 'submit',
+      ...args
+    } = _ref3;
     const dialog = this.makeCancelDialog(args);
     $e(dialog, `button.${args.cancelClass || 'cancel'}`).before(jml('button', {
       class: submitClass,
@@ -6229,16 +6146,16 @@ class Dialog {
     }, [this.localeStrings.submit]), nbsp.repeat(2));
     return dialog;
   }
-  makeCancelDialog(_ref2) {
+  makeCancelDialog(_ref4) {
     let {
-        // eslint-disable-next-line no-unused-vars -- Discarding
-        submit,
-        // Don't pass this on to `args` if present
-        cancel,
-        cancelClass = 'cancel',
-        submitClass = 'submit'
-      } = _ref2,
-      args = _objectWithoutProperties(_ref2, _excluded2);
+      // eslint-disable-next-line no-unused-vars -- Discarding
+      submit,
+      // Don't pass this on to `args` if present
+      cancel,
+      cancelClass = 'cancel',
+      submitClass = 'submit',
+      ...args
+    } = _ref4;
     const dialog = this.makeDialog(args);
     jml('div', {
       class: submitClass
@@ -6289,15 +6206,16 @@ class Dialog {
       message
     } : message;
     const {
-        message: msg,
-        submit: userSubmit
-      } = message,
-      submitArgs = _objectWithoutProperties(message, _excluded3);
+      message: msg,
+      submit: userSubmit,
+      ...submitArgs
+    } = message;
     return new Promise((resolve, reject) => {
-      const submit = function ({
-        e,
-        dialog
-      }) {
+      const submit = function (_ref5) {
+        let {
+          e,
+          dialog
+        } = _ref5;
         if (userSubmit) {
           userSubmit.call(this, {
             e,
@@ -6308,13 +6226,14 @@ class Dialog {
         resolve($e(dialog, 'input').value);
       };
       /* const dialog = */
-      this.makeSubmitDialog(_objectSpread2$1(_objectSpread2$1({}, submitArgs), {}, {
+      this.makeSubmitDialog({
+        ...submitArgs,
         submit,
         cancel() {
           reject(new Error('cancelled'));
         },
         children: [['label', [msg, nbsp.repeat(3), ['input']]]]
-      }));
+      });
     });
   }
   confirm(message) {
@@ -6349,12 +6268,12 @@ class Dialog {
 }
 const dialogs = new Dialog();
 
-/* eslint-env browser */
 // Todo: remember this locales choice by cookie?
-const getPreferredLanguages = ({
-  namespace,
-  preferredLocale
-}) => {
+const getPreferredLanguages = _ref => {
+  let {
+    namespace,
+    preferredLocale
+  } = _ref;
   // Todo: Add to this optionally with one-off tag input box
   // Todo: Switch to fallbackLanguages so can default to
   //    navigator.languages?
@@ -6378,9 +6297,10 @@ const getPreferredLanguages = ({
  * @classdesc Note that this should be kept as a polyglot client-server class.
  */
 class Languages {
-  constructor({
-    langData
-  }) {
+  constructor(_ref2) {
+    let {
+      langData
+    } = _ref2;
     this.langData = langData;
   }
   localeFromLangData(langCode) {
@@ -6391,32 +6311,38 @@ class Languages {
     // Could add something like this in place or as fallback, though need to pass in locale
     // || new Intl.DisplayNames([locale], {type: 'language'}).of(code);
   }
-
-  getFieldNameFromPluginNameAndLocales({
-    pluginName,
-    // locales,
-    workI18n,
-    targetLanguage,
-    applicableFieldI18N,
-    meta,
-    metaApplicableField
-  }) {
-    return workI18n(['plugins', pluginName, 'fieldname'], _objectSpread2$1(_objectSpread2$1(_objectSpread2$1({}, meta), metaApplicableField), {}, {
+  getFieldNameFromPluginNameAndLocales(_ref3) {
+    let {
+      pluginName,
+      // locales,
+      workI18n,
+      targetLanguage,
+      applicableFieldI18N,
+      meta,
+      metaApplicableField
+    } = _ref3;
+    return workI18n(['plugins', pluginName, 'fieldname'], {
+      ...meta,
+      ...metaApplicableField,
       applicableField: applicableFieldI18N,
       targetLanguage: targetLanguage ? this.getLanguageFromCode(targetLanguage) : ''
-    }), {
+    }, {
       // We provide more than may be desired by the plugin
       throwOnExtraSuppliedFormatters: false
     });
   }
-  getLanguageInfo({
-    $p
-  }) {
+  getLanguageInfo(_ref4) {
+    let {
+      $p
+    } = _ref4;
     const langs = this.langData.languages;
     const localePass = lcl => {
-      return langs.some(({
-        code
-      }) => code === lcl) ? lcl : false;
+      return langs.some(_ref5 => {
+        let {
+          code
+        } = _ref5;
+        return code === lcl;
+      }) ? lcl : false;
     };
     const languageParam = $p.get('lang', true);
     // Todo: We could (unless overridden by another button) assume the
@@ -14356,8 +14282,6 @@ var JsonRefs = function (t) {
   }, "object" === c(n) && void 0 !== t ? u(n) : (o = [n], void 0 === (i = "function" == typeof (e = u) ? e.apply(n, o) : e) || (t.exports = i));
 }]);
 
-/* eslint-env browser */
-
 const getCurrDir = () => {
   return window.location.href.replace(/(index\.html)?#.*$/, '');
 };
@@ -14401,13 +14325,14 @@ const getMetadata = async (file, property, basePath) => {
     }
   })).resolved;
 };
-const getFieldNameAndValueAliases = function ({
-  field,
-  schemaItems,
-  metadataObj,
-  getFieldAliasOrName,
-  lang
-}) {
+const getFieldNameAndValueAliases = function (_ref) {
+  let {
+    field,
+    schemaItems,
+    metadataObj,
+    getFieldAliasOrName,
+    lang
+  } = _ref;
   const fieldSchemaIndex = schemaItems.findIndex(item => {
     return item.title === field;
   });
@@ -14429,6 +14354,7 @@ const getFieldNameAndValueAliases = function ({
     if (fieldValueAliasMap.localeKey) {
       fieldValueAliasMap = getMetaProp(lang, metadataObj, fieldValueAliasMap.localeKey.split('/'), true);
     }
+    // eslint-disable-next-line unicorn/prefer-structured-clone -- Expecting JSON
     ret.rawFieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap));
     ret.aliases = [];
     // Todo: We could use `prefer_alias` but algorithm below may cover
@@ -14447,7 +14373,8 @@ const getFieldNameAndValueAliases = function ({
       // Todo: We might iterate over all values (in case some not
       //         included in fv map)
       // Todo: Check `fieldSchema` for integer or string type
-      Object.entries(fieldValueAliasMap).forEach(([key, aliases]) => {
+      Object.entries(fieldValueAliasMap).forEach(_ref2 => {
+        let [key, aliases] = _ref2;
         // We'll preserve the numbers since probably more useful if
         //   stored with data (as opposed to enums)
         if (!Array.isArray(aliases)) {
@@ -14462,20 +14389,20 @@ const getFieldNameAndValueAliases = function ({
         );
       });
     }
-
+    // eslint-disable-next-line unicorn/prefer-structured-clone -- Expecting JSON
     ret.fieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap));
     // ret.aliases.sort();
   }
-
   return ret;
 };
-const getBrowseFieldData = function ({
-  metadataObj,
-  schemaItems,
-  getFieldAliasOrName,
-  lang,
-  callback
-}) {
+const getBrowseFieldData = function (_ref3) {
+  let {
+    metadataObj,
+    schemaItems,
+    getFieldAliasOrName,
+    lang,
+    callback
+  } = _ref3;
   metadataObj.table.browse_fields.forEach((browseFieldSetObject, i) => {
     if (typeof browseFieldSetObject === 'string') {
       browseFieldSetObject = {
@@ -14507,15 +14434,16 @@ const getBrowseFieldData = function ({
       browseFields,
       i,
       presort
-    }); // eslint-disable-line n/no-callback-literal
+    });
   });
 };
 
 // Todo: Incorporate other methods into this class
 class Metadata {
-  constructor({
-    metadataObj
-  }) {
+  constructor(_ref4) {
+    let {
+      metadataObj
+    } = _ref4;
     this.metadataObj = metadataObj;
   }
   getFieldLang(field) {
@@ -14525,12 +14453,13 @@ class Metadata {
     const fields = metadataObj && metadataObj.fields;
     return fields && fields[field] && fields[field].lang;
   }
-  getFieldMatchesLocale({
-    namespace,
-    preferredLocale,
-    schemaItems,
-    pluginsForWork
-  }) {
+  getFieldMatchesLocale(_ref5) {
+    let {
+      namespace,
+      preferredLocale,
+      schemaItems,
+      pluginsForWork
+    } = _ref5;
     const {
       metadataObj
     } = this;
@@ -14581,41 +14510,45 @@ const unescapePluginComponent = pluginName => {
     return esc.length % 2 ? esc.slice(1) + '-' : n0;
   }).replaceAll('^^', '^');
 };
-const escapePlugin = ({
-  pluginName,
-  applicableField,
-  targetLanguage
-}) => {
+const escapePlugin = _ref => {
+  let {
+    pluginName,
+    applicableField,
+    targetLanguage
+  } = _ref;
   return escapePluginComponent(pluginName) + (applicableField ? '-' + escapePluginComponent(applicableField) : '-') + (targetLanguage ? '-' + escapePluginComponent(targetLanguage) : '');
 };
 class PluginsForWork {
-  constructor({
-    pluginsInWork,
-    pluginFieldMappings,
-    pluginObjects
-  }) {
+  constructor(_ref2) {
+    let {
+      pluginsInWork,
+      pluginFieldMappings,
+      pluginObjects
+    } = _ref2;
     this.pluginsInWork = pluginsInWork;
     this.pluginFieldMappings = pluginFieldMappings;
     this.pluginObjects = pluginObjects;
   }
   getPluginObject(pluginName) {
-    const idx = this.pluginsInWork.findIndex(([name]) => {
+    const idx = this.pluginsInWork.findIndex(_ref3 => {
+      let [name] = _ref3;
       return name === pluginName;
     });
     const plugin = this.pluginObjects[idx];
     return plugin;
   }
   iterateMappings(cb) {
-    this.pluginFieldMappings.forEach(({
-      placement,
-      /*
-            {fieldXYZ: {
-                targetLanguage: "en"|["en"], // E.g., translating from Persian to English
-                onByDefault: true // Overrides plugin default
-            }}
-            */
-      'applicable-fields': applicableFields
-    }, i) => {
+    this.pluginFieldMappings.forEach((_ref4, i) => {
+      let {
+        placement,
+        /*
+              {fieldXYZ: {
+                  targetLanguage: "en"|["en"], // E.g., translating from Persian to English
+                  onByDefault: true // Overrides plugin default
+              }}
+              */
+        'applicable-fields': applicableFields
+      } = _ref4;
       const [pluginName, {
         onByDefault: onByDefaultDefault,
         lang: pluginLang,
@@ -14623,7 +14556,6 @@ class PluginsForWork {
       }] = this.pluginsInWork[i];
       const plugin = this.getPluginObject(pluginName);
       cb({
-        // eslint-disable-line n/no-callback-literal
         plugin,
         placement,
         applicableFields,
@@ -14638,11 +14570,12 @@ class PluginsForWork {
     if (!applicableFields) {
       return false;
     }
-    Object.entries(applicableFields).forEach(([applicableField, {
-      targetLanguage,
-      onByDefault,
-      meta: metaApplicableField
-    }]) => {
+    Object.entries(applicableFields).forEach(_ref5 => {
+      let [applicableField, {
+        targetLanguage,
+        onByDefault,
+        meta: metaApplicableField
+      }] = _ref5;
       if (Array.isArray(targetLanguage)) {
         targetLanguage.forEach(targetLanguage => {
           cb({
@@ -14650,31 +14583,31 @@ class PluginsForWork {
             targetLanguage,
             onByDefault,
             metaApplicableField
-          }); // eslint-disable-line n/no-callback-literal
+          });
         });
       } else {
-        // eslint-disable-next-line n/callback-return
         cb({
           applicableField,
           targetLanguage,
           onByDefault,
           metaApplicableField
-        }); // eslint-disable-line n/no-callback-literal
+        });
       }
     });
-
     return true;
   }
-  isPluginField({
-    namespace,
-    field
-  }) {
+  isPluginField(_ref6) {
+    let {
+      namespace,
+      field
+    } = _ref6;
     return field.startsWith(`${namespace}-plugin-`);
   }
-  getPluginFieldParts({
-    namespace,
-    field
-  }) {
+  getPluginFieldParts(_ref7) {
+    let {
+      namespace,
+      field
+    } = _ref7;
     field = field.replace(`${namespace}-plugin-`, '');
     let pluginName, applicableField, targetLanguage;
     if (field.includes('-')) {
@@ -14686,6 +14619,7 @@ class PluginsForWork {
   }
 }
 
+/* globals process -- Node polyglot */
 const getFilePaths = function getFilePaths(filesObj, fileGroup, fileData) {
   const baseDir = (filesObj.baseDirectory || '') + (fileGroup.baseDirectory || '') + '/';
   const schemaBaseDir = (filesObj.schemaBaseDirectory || '') + (fileGroup.schemaBaseDirectory || '') + '/';
@@ -14699,16 +14633,17 @@ const getFilePaths = function getFilePaths(filesObj, fileGroup, fileData) {
     metadataFile
   };
 };
-const getWorkData = async function ({
-  lang,
-  fallbackLanguages,
-  work,
-  files,
-  allowPlugins,
-  basePath,
-  languages,
-  preferredLocale
-}) {
+const getWorkData = async function (_ref) {
+  let {
+    lang,
+    fallbackLanguages,
+    work,
+    files,
+    allowPlugins,
+    basePath,
+    languages,
+    preferredLocale
+  } = _ref;
   const filesObj = await getJSON(files);
   const localizationStrings = filesObj['localization-strings'];
   const workI18n = await i18n({
@@ -14716,10 +14651,11 @@ const getWorkData = async function ({
     locales: lang,
     defaultLocales: fallbackLanguages,
     // Todo: Could at least share this with `index.js`
-    localeStringFinder({
-      locales,
-      defaultLocales
-    }) {
+    localeStringFinder(_ref2) {
+      let {
+        locales,
+        defaultLocales
+      } = _ref2;
       const locale = [...locales, ...defaultLocales].find(language => {
         return language in localizationStrings;
       });
@@ -14778,13 +14714,18 @@ const getWorkData = async function ({
     const possiblePluginFieldMappingForWork = pluginFieldMappingID[fileData.name];
     if (possiblePluginFieldMappingForWork) {
       pluginFieldsForWork = Object.keys(possiblePluginFieldMappingForWork);
-      pluginsInWork = Object.entries(filesObj.plugins).filter(([p]) => {
+      pluginsInWork = Object.entries(filesObj.plugins).filter(_ref3 => {
+        let [p] = _ref3;
         return pluginFieldsForWork.includes(p);
       });
-      pluginFieldMappingForWork = pluginsInWork.map(([p]) => {
+      pluginFieldMappingForWork = pluginsInWork.map(_ref4 => {
+        let [p] = _ref4;
         return possiblePluginFieldMappingForWork[p];
       });
-      pluginPaths = pluginsInWork.map(([, pluginObj]) => pluginObj.path);
+      pluginPaths = pluginsInWork.map(_ref5 => {
+        let [, pluginObj] = _ref5;
+        return pluginObj.path;
+      });
       getPlugins = pluginsInWork;
     }
   }
@@ -14816,7 +14757,7 @@ const getWorkData = async function ({
   const pluginFieldMappings = pluginFieldMappingForWork;
   const cwd = typeof process === 'undefined' ? location.href.slice(0, location.href.lastIndexOf('/') + 1) : process.cwd() + '/';
   const [schemaObj, pluginObjects] = await Promise.all([getMetadata(schemaFile, schemaProperty, basePath), getPlugins ? Promise.all(pluginPaths.map(pluginPath => {
-    // eslint-disable-next-line no-unsanitized/method
+    // // eslint-disable-next-line no-unsanitized/method
     return import(cwd + pluginPath);
   })) : null]);
   const pluginsForWork = new PluginsForWork({
@@ -14825,9 +14766,10 @@ const getWorkData = async function ({
     pluginObjects
   });
   const schemaItems = schemaObj.items.items;
-  const fieldInfo = schemaItems.map(({
-    title: field
-  }) => {
+  const fieldInfo = schemaItems.map(_ref6 => {
+    let {
+      title: field
+    } = _ref6;
     return {
       field,
       fieldAliasOrName: getFieldAliasOrName(field) || field
@@ -14844,21 +14786,23 @@ const getWorkData = async function ({
       lang,
       namespace
     } = this; // array with first item as preferred
-    pluginsForWork.iterateMappings(({
-      // plugin,
-      pluginName,
-      pluginLang,
-      onByDefaultDefault,
-      placement,
-      applicableFields,
-      meta
-    }) => {
-      const processField = ({
-        applicableField,
-        targetLanguage,
-        onByDefault,
-        metaApplicableField
-      } = {}) => {
+    pluginsForWork.iterateMappings(_ref7 => {
+      let {
+        // plugin,
+        pluginName,
+        pluginLang,
+        onByDefaultDefault,
+        placement,
+        applicableFields,
+        meta
+      } = _ref7;
+      const processField = function () {
+        let {
+          applicableField,
+          targetLanguage,
+          onByDefault,
+          metaApplicableField
+        } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
         const plugin = pluginsForWork.getPluginObject(pluginName) || {};
         const applicableFieldLang = metadata.getFieldLang(applicableField);
         if (plugin.getTargetLanguage) {
@@ -14954,7 +14898,7 @@ const getWorkData = async function ({
  */
 const setServiceWorkerDefaults = (target, source) => {
   target.userJSON = source.userJSON || 'resources/user.json';
-  target.languages = source.languages || new URL(new URL('assets/languages-1sAACTKG.json', import.meta.url).href, import.meta.url).href;
+  target.languages = source.languages || new URL(new URL('assets/languages-DWwAAJMo.json', import.meta.url).href, import.meta.url).href;
   target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?pathToUserJSON=${encodeURIComponent(target.userJSON)}&stylesheets=${encodeURIComponent(JSON.stringify(target.stylesheets || []))}`;
   target.files = source.files || 'files.json';
   target.namespace = source.namespace || 'textbrowser';
@@ -14965,10 +14909,11 @@ const setServiceWorkerDefaults = (target, source) => {
 //    of new and activation of new or existing if still
 //    some tabs open)
 
-const listenForWorkerUpdate = ({
-  r
-  // logger
-}) => {
+const listenForWorkerUpdate = _ref => {
+  let {
+    r
+    // logger
+  } = _ref;
   r.addEventListener('updatefound', e => {
     // New service worker has appeared
     // r.installing now available (though r.active is also,
@@ -15030,18 +14975,20 @@ for offline installation.
     });
   });
 };
-const respondToState = async ({
-  r,
-  logger
-}) => {
+const respondToState = async _ref2 => {
+  let {
+    r,
+    logger
+  } = _ref2;
   // We use this promise for rejecting (inside a listener)
   //    to a common catch and to prevent continuation by
   //    failing to return
   return new Promise(async () => {
-    // eslint-disable-line no-async-promise-executor
-    navigator.serviceWorker.addEventListener('message', ({
-      data
-    }) => {
+    // eslint-disable-line no-async-promise-executor, sonarjs/no-misused-promises -- See above
+    navigator.serviceWorker.addEventListener('message', _ref3 => {
+      let {
+        data
+      } = _ref3;
       const {
         message,
         type,
@@ -15162,10 +15109,11 @@ any indication it is installing.
 
 // Keep in this file as may wish to avoid using for server (while still
 //   doing other service worker work)
-const registerServiceWorker = async ({
-  serviceWorkerPath,
-  logger
-}) => {
+const registerServiceWorker = async _ref4 => {
+  let {
+    serviceWorkerPath,
+    logger
+  } = _ref4;
   // Todo: We might wish to allow avoiding the other locale files
   //   and if only one chosen, switch to the work selection page
   //   in that language
@@ -15199,6 +15147,7 @@ const registerServiceWorker = async ({
     r = await navigator.serviceWorker.register(serviceWorkerPath, {
       type: 'module'
     });
+    // eslint-disable-next-line no-unused-vars -- Ok
   } catch (err) {
     console.log('serviceWorkerPath', serviceWorkerPath);
     await dialogs.alert(`
@@ -15222,14 +15171,14 @@ const escapeHTML = s => {
   return !s ? '' : s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 };
 
-/* eslint-env browser */
 var languageSelect = {
-  main({
-    langs,
-    languages,
-    followParams,
-    $p
-  }) {
+  main(_ref) {
+    let {
+      langs,
+      languages,
+      followParams,
+      $p
+    } = _ref;
     jml('form', {
       class: 'focus',
       id: 'languageSelectionContainer',
@@ -15242,21 +15191,23 @@ var languageSelect = {
       name: 'lang',
       size: langs.length,
       $on: {
-        click({
-          target: {
-            parentNode: {
-              selectedOptions
+        click(_ref2) {
+          let {
+            target: {
+              parentNode: {
+                selectedOptions
+              }
             }
-          }
-        }) {
+          } = _ref2;
           followParams('#languageSelectionContainer', () => {
             $p.set('lang', selectedOptions[0].value, true);
           });
         }
       }
-    }, langs.map(({
-      code
-    }) => {
+    }, langs.map(_ref3 => {
+      let {
+        code
+      } = _ref3;
       return ['option', {
         value: code
       }, [languages.getLanguageFromCode(code)]];
@@ -15277,14 +15228,14 @@ var languageSelect = {
     */
 };
 
-/* eslint-env browser */
-var workSelect$1 = (({
-  groups,
-  workI18n,
-  getNextAlias,
-  $p,
-  followParams
-}) => {
+const workSelect$1 = function (_ref) {
+  let {
+    groups,
+    workI18n,
+    getNextAlias,
+    $p,
+    followParams
+  } = _ref;
   const form = jml('form', {
     id: 'workSelect',
     class: 'focus',
@@ -15301,11 +15252,12 @@ var workSelect$1 = (({
         name: group.name.localeKey
       },
       $on: {
-        change({
-          target: {
-            value
-          }
-        }) {
+        change(_ref2) {
+          let {
+            target: {
+              value
+            }
+          } = _ref2;
           /*
                         // If using click, but click doesn't always fire
                         if (e.target.nodeName.toLowerCase() === 'select') {
@@ -15319,9 +15271,10 @@ var workSelect$1 = (({
       }
     }, [['option', {
       value: ''
-    }, ['--']], ...group.files.map(({
-      name: fileName
-    }) => {
+    }, ['--']], ...group.files.map(_ref3 => {
+      let {
+        name: fileName
+      } = _ref3;
       return ['option', {
         value: workI18n(['workNames', group.id, fileName])
       }, [getNextAlias()]];
@@ -15334,7 +15287,7 @@ var workSelect$1 = (({
     deserialize(document.querySelector('#workSelect'), history.state);
   }
   return form;
-});
+};
 
 const colors = ['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'];
 const fonts = ['Helvetica, sans-serif', 'Verdana, sans-serif', 'Gill Sans, sans-serif', 'Avantgarde, sans-serif', 'Helvetica Narrow, sans-serif', 'sans-serif', 'Times, serif', 'Times New Roman, serif', 'Palatino, serif', 'Bookman, serif', 'New Century Schoolbook, serif', 'serif', 'Andale Mono, monospace', 'Courier New, monospace', 'Courier, monospace', 'Lucidatypewriter, monospace', 'Fixed, monospace', 'monospace', 'Comic Sans, Comic Sans MS, cursive', 'Zapf Chancery, cursive', 'Coronetscript, cursive', 'Florence, cursive', 'Parkavenue, cursive', 'cursive', 'Impact, fantasy', 'Arnoldboecklin, fantasy', 'Oldtown, fantasy', 'Blippo, fantasy', 'Brushstroke, fantasy', 'fantasy'];
@@ -15349,10 +15302,11 @@ const getDataForSerializingParamsAsURL = () => ({
   checkboxes: $$('input[type=checkbox]')
 });
 var workDisplay$1 = {
-  bdo({
-    fallbackDirection,
-    message
-  }) {
+  bdo(_ref) {
+    let {
+      fallbackDirection,
+      message
+    } = _ref;
     // Displaying as div with inline display instead of span since
     //    Firefox puts punctuation at left otherwise (bdo dir
     //    seemed to have issues in Firefox)
@@ -15360,355 +15314,366 @@ var workDisplay$1 = {
       style: 'display: inline; direction: ' + fallbackDirection
     }, [message]];
   },
-  columnsTable: ({
-    lDirectional,
-    fieldInfo,
-    $p,
-    lElement,
-    lIndexedParam,
-    l,
-    // metadataObj, preferredLocale, schemaItems,
-    fieldMatchesLocale
-  }) => ['table', {
-    border: '1',
-    cellpadding: '5',
-    align: 'center'
-  }, [['tr', [['th', [lDirectional('fieldno')]], ['th', {
-    align: 'left',
-    width: '20'
-  }, [lDirectional('field_enabled')]], ['th', [lDirectional('field_title')]], ['th', [lDirectional('fieldinterlin')]], ['th', [lDirectional('fieldcss')]]
-  /*
-        Todo: Support search?
-        ,
-        ['th', [
-            lDirectional('fieldsearch')
-        ]]
-        */]], ...fieldInfo.map((fieldInfoItem, i) => {
-    const idx = i + 1;
-    const checkedIndex = 'checked' + idx;
-    const fieldIndex = 'field' + idx;
-    const fieldParam = $p.get(fieldIndex);
-    return ['tr', [
-    // Todo: Get Jamilih to accept numbers and
-    //    booleans (`toString` is too dangerous)
-    ['td', [String(idx)]], lElement('check-columns-to-browse', 'td', 'title', {}, [lElement('yes', 'input', 'value', {
-      class: 'fieldSelector',
-      id: checkedIndex,
-      name: lIndexedParam('checked') + idx,
-      checked: $p.get(checkedIndex) !== l('no') && ($p.has(checkedIndex) || fieldInfoItem.onByDefault !== false),
-      type: 'checkbox'
-    })]), lElement('check-sequence', 'td', 'title', {}, [['select', {
-      name: lIndexedParam('field') + idx,
-      id: fieldIndex,
-      size: '1'
-    }, fieldInfo.map(({
-      field,
-      fieldAliasOrName
-    }, j) => {
-      const matchedFieldParam = fieldParam && fieldParam === fieldAliasOrName;
-      return ['option', {
-        dataset: {
-          name: field
-        },
-        value: fieldAliasOrName,
-        selected: matchedFieldParam || j === i && !$p.has(fieldIndex)
-      }, [fieldAliasOrName]];
-    })]]), ['td', [
-    // Todo: Make as tag selector with fields as options
-    lElement('interlinear-tips', 'input', 'title', {
-      name: lIndexedParam('interlin') + idx,
-      value: $p.get('interlin' + idx)
-    }) // Todo: Could allow i18n of numbers here
-    ]], ['td', [
-    // Todo: Make as CodeMirror-highlighted CSS
-    ['input', {
-      name: lIndexedParam('css') + idx,
-      value: $p.get('css' + idx)
-    }]]]
+  columnsTable: _ref2 => {
+    let {
+      lDirectional,
+      fieldInfo,
+      $p,
+      lElement,
+      lIndexedParam,
+      l,
+      // metadataObj, preferredLocale, schemaItems,
+      fieldMatchesLocale
+    } = _ref2;
+    return ['table', {
+      border: '1',
+      cellpadding: '5',
+      align: 'center'
+    }, [['tr', [['th', [lDirectional('fieldno')]], ['th', {
+      align: 'left',
+      width: '20'
+    }, [lDirectional('field_enabled')]], ['th', [lDirectional('field_title')]], ['th', [lDirectional('fieldinterlin')]], ['th', [lDirectional('fieldcss')]]
     /*
-            ,
-            ['td', [ // Todo: Allow plain or regexp searching
-                ['input', {name: lIndexedParam('search') + idx, value: $p.get('search' + idx)}]
-            ]]
-            */]];
-  }), ['tr', [['td', {
-    colspan: 3
-  }, [lElement('check_all', 'input', 'value', {
-    type: 'button',
-    $on: {
-      click() {
-        $$('.fieldSelector').forEach(checkbox => {
-          checkbox.checked = true;
-        });
-      }
-    }
-  }), lElement('uncheck_all', 'input', 'value', {
-    type: 'button',
-    $on: {
-      click() {
-        $$('.fieldSelector').forEach(checkbox => {
-          checkbox.checked = false;
-        });
-      }
-    }
-  }), lElement('checkmark_locale_fields_only', 'input', 'value', {
-    type: 'button',
-    $on: {
-      click() {
-        fieldInfo.forEach(( /* {field} */_, i) => {
-          const idx = i + 1;
-          // The following is redundant with 'field' but may need to
-          //     retrieve later out of order?
-          const fld = $$1('#field' + idx).selectedOptions[0].dataset.name;
-          $$1('#checked' + idx).checked = fieldMatchesLocale(fld);
-        });
-      }
-    }
-  })]]]]]],
-  advancedFormatting: ({
-    lDirectional,
-    lParam,
-    l,
-    lOption,
-    lElement,
-    $p,
-    hideFormattingSection
-  }) => ['td', {
-    id: 'advancedformatting',
-    style: {
-      display: hideFormattingSection ? 'none' : 'block'
-    }
-  }, [['h3', [lDirectional('advancedformatting')]], ['label', [lDirectional('textcolor'), nbsp2, ['select', {
-    name: lParam('colorName')
-  }, colors.map((color, i) => {
-    const atts = {
-      value: l(['param_values', 'colors', color]),
-      selected: null
-    };
-    if ($p.get('colorName') === l(['param_values', 'colors', color]) || i === 1 && !$p.has('colorName')) {
-      atts.selected = 'selected';
-    }
-    return lOption(['param_values', 'colors', color], atts);
-  })]]], ['label', [nbsp, lDirectional('or_entercolor'), nbsp2, ['input', {
-    name: lParam('color'),
-    type: 'text',
-    value: $p.get('color') || '#',
-    size: '7',
-    maxlength: '7'
-  }]]], ['br'], ['br'], ['label', [lDirectional('backgroundcolor'), nbsp2, ['select', {
-    name: lParam('bgcolorName')
-  }, colors.map((color, i) => {
-    const atts = {
-      value: l(['param_values', 'colors', color]),
-      selected: null
-    };
-    if ($p.get('bgcolorName') === l(['param_values', 'colors', color]) || i === 14 && !$p.has('bgcolorName')) {
-      atts.selected = 'selected';
-    }
-    return lOption(['param_values', 'colors', color], atts);
-  })]]], ['label', [nbsp, lDirectional('or_entercolor'), nbsp2, ['input', {
-    name: lParam('bgcolor'),
-    type: 'text',
-    value: $p.get('bgcolor') || '#',
-    size: '7',
-    maxlength: '7'
-  }]]], ['br'], ['br'], ['label', [lDirectional('text_font'), nbsp2,
-  // Todo: remove hard-coded direction if i81nizing; also i18nize fontSeq param
-  ['select', {
-    name: lParam('fontSeq'),
-    dir: 'ltr'
-  }, fonts.map((fontSeq, i) => {
-    const atts = {
-      value: fontSeq,
-      selected: null
-    };
-    if ($p.get('fontSeq') === fontSeq || i === 7 && !$p.has('fontSeq')) {
-      atts.selected = 'selected';
-    }
-    return ['option', atts, [fontSeq]];
-  })]]], ['br'], ['br'], ['label', [lDirectional('font_style'), nbsp2, ['select', {
-    name: lParam('fontstyle')
-  }, ['italic', 'normal', 'oblique'].map((fontstyle, i) => {
-    const atts = {
-      value: l(['param_values', 'fontstyle', fontstyle]),
-      selected: null
-    };
-    if ($p.get('fontstyle') === l(['param_values', 'fontstyle', fontstyle]) || i === 1 && !$p.has('fontstyle')) {
-      atts.selected = 'selected';
-    }
-    return lOption(['param_values', 'fontstyle', fontstyle], atts);
-  })]]], ['br'], ['div', [lDirectional('font_variant'), nbsp3, ['label', [['input', {
-    name: lParam('fontvariant'),
-    type: 'radio',
-    value: l(['param_values', 'fontvariant', 'normal']),
-    checked: $p.get('fontvariant') !== lDirectional(['param_values', 'fontvariant', 'small-caps'])
-  }], lDirectional(['param_values', 'fontvariant', 'normal']), nbsp]], ['label', [['input', {
-    name: lParam('fontvariant'),
-    type: 'radio',
-    value: l(['param_values', 'fontvariant', 'small-caps']),
-    checked: $p.get('fontvariant') === lDirectional(['param_values', 'fontvariant', 'small-caps'])
-  }], lDirectional(['param_values', 'fontvariant', 'small-caps']), nbsp]]]], ['br'], ['label', [
-  // Todo: i18n and allow for normal/bold pulldown and float input?
-  lDirectional('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp2, ['input', {
-    name: lParam('fontweight'),
-    type: 'text',
-    value: $p.has('fontweight') ? $p.get('fontweight') : 'normal',
-    size: '7',
-    maxlength: '12'
-  }]]], ['br'], ['label', [lDirectional('font_size'), ' (14pt, 14px, small, 75%, etc.):', nbsp2, ['input', {
-    name: lParam('fontsize'),
-    type: 'text',
-    value: $p.get('fontsize'),
-    size: '7',
-    maxlength: '12'
-  }]]], ['br'],
-  // Todo: i18nize title and values?
-  // Todo: remove hard-coded direction if i18nizing
-  ['label', {
-    dir: 'ltr'
-  }, [lDirectional('font_stretch'), nbsp, ['select', {
-    name: lParam('fontstretch')
-  }, ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(stretch => {
-    const atts = {
-      value: lDirectional(['param_values', 'font-stretch', stretch]),
-      selected: null
-    };
-    if ($p.get('fontstretch') === stretch || !$p.has('fontstretch') && stretch === 'normal') {
-      atts.selected = 'selected';
-    }
-    return ['option', atts, [lDirectional(['param_values', 'font-stretch', stretch])]];
-  })]]], /**/
-  ['br'], ['br'], ['label', [lDirectional('letter_spacing'), ' (normal, .9em, -.05cm): ', ['input', {
-    name: lParam('letterspacing'),
-    type: 'text',
-    value: $p.has('letterspacing') ? $p.get('letterspacing') : 'normal',
-    size: '7',
-    maxlength: '12'
-  }]]], ['br'], ['label', [lDirectional('line_height'), ' (normal, 1.5, 22px, 150%): ', ['input', {
-    name: lParam('lineheight'),
-    type: 'text',
-    value: $p.has('lineheight') ? $p.get('lineheight') : 'normal',
-    size: '7',
-    maxlength: '12'
-  }]]], ['br'], ['br'], lElement('tableformatting_tips', 'h3', 'title', {}, [lDirectional('tableformatting')]), ['div', [lDirectional('header_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map(([key, val], i, arr) => {
-    return ['label', [['input', {
-      name: lParam('header'),
-      type: 'radio',
-      value: val,
-      checked: $p.get('header') === val || !$p.has('header') && i === 1
-    }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
-  })]], ['div', [lDirectional('footer_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map(([key, val], i, arr) => {
-    return ['label', [['input', {
-      name: lParam('footer'),
-      type: 'radio',
-      value: val,
-      checked: $p.get('footer') === val || !$p.has('footer') && i === 2
-    }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
-  })]], ['label', [['input', {
-    name: lParam('headerfooterfixed'),
-    type: 'checkbox',
-    value: l('yes'),
-    checked: $p.get('headerfooterfixed') === l('yes')
-  }], nbsp2, lDirectional('headerfooterfixed-wishtoscroll')]], ['br'], ['div', [lDirectional('caption_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map(([key, val], i, arr) => {
-    return ['label', [['input', {
-      name: lParam('caption'),
-      type: 'radio',
-      value: val,
-      checked: $p.get('caption') === val || !$p.has('caption') && i === 2
-    }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
-  })]], ['br'], ['div', [lDirectional('table_wborder'), nbsp2, ['label', [['input', {
-    name: lParam('border'),
-    type: 'radio',
-    value: '1',
-    checked: $p.get('border') !== '0'
-  }], lDirectional('yes'), nbsp3]], ['label', [['input', {
-    name: lParam('border'),
-    type: 'radio',
-    value: '0',
-    checked: $p.get('border') === '0'
-  }], lDirectional('no')]]]], ['div', [lDirectional('interlin_repeat_field_names'), nbsp2, ['label', [['input', {
-    name: lParam('interlintitle'),
-    type: 'radio',
-    value: '1',
-    checked: $p.get('interlintitle') !== '0'
-  }], lDirectional('yes'), nbsp3]], ['label', [['input', {
-    name: lParam('interlintitle'),
-    type: 'radio',
-    value: '0',
-    checked: $p.get('interlintitle') === '0'
-  }], lDirectional('no')]]]], ['label', [lDirectional('interlintitle_css'), nbsp2, ['input', {
-    name: lParam('interlintitle_css'),
-    type: 'text',
-    value: $p.get('interlintitle_css') || '',
-    size: '12'
-  }]]], ['br'],
-  /*
-      ['br'],
-      ['label', [
-          ['input', {
-              name: lParam('transpose'),
-              type: 'checkbox',
-              value: l('yes'),
-              checked: $p.get('transpose') === l('yes')
-          }],
-          nbsp2, lDirectional('transpose')
-      ]],
-      */
-  ['br'], lElement('pageformatting_tips', 'h3', 'title', {}, [lDirectional('pageformatting')]),
-  /*
-      ['label', [
-          lDirectional('speech_controls'), nbsp2,
-          ['label', [
-              ['input', {
-                  name: lParam('speech'),
-                  type: 'radio',
-                  value: '1',
-                  checked: $p.get('speech') === '1'
-              }],
-              lDirectional('yes'), nbsp3
-          ]],
-          ['label', [
-              ['input', {
-                  name: lParam('speech'),
-                  type: 'radio',
-                  value: '0',
-                  checked: $p.get('speech') !== '1'
-              }],
-              lDirectional('no')
+          Todo: Support search?
+          ,
+          ['th', [
+              lDirectional('fieldsearch')
           ]]
-      ]],
-      ['br'],
-      */
-  ['label', [lDirectional('page_css'), nbsp2, ['textarea', {
-    name: lParam('pagecss'),
-    title: l('page_css_tips'),
-    value: $p.get('pagecss')
-  }]]], ['br'], lElement('outputmode_tips', 'label', 'title', {}, [lDirectional('outputmode'), nbsp2,
-  // Todo: Could i18nize, but would need smaller values
-  ['select', {
-    name: lParam('outputmode')
-  }, ['table', 'div'
-  // , 'json-array',
-  // 'json-object'
-  ].map(mode => {
-    const atts = {
-      value: mode,
-      selected: null
-    };
-    if ($p.get('outputmode') === mode) {
-      atts.selected = 'selected';
-    }
-    return lOption(['param_values', 'outputmode', mode], atts);
-  })]])]],
-  addRandomFormFields({
-    lParam,
-    lDirectional,
-    l,
-    lElement,
-    $p,
-    serializeParamsAsURL,
-    content
-  }) {
+          */]], ...fieldInfo.map((fieldInfoItem, i) => {
+      const idx = i + 1;
+      const checkedIndex = 'checked' + idx;
+      const fieldIndex = 'field' + idx;
+      const fieldParam = $p.get(fieldIndex);
+      return ['tr', [
+      // Todo: Get Jamilih to accept numbers and
+      //    booleans (`toString` is too dangerous)
+      ['td', [String(idx)]], lElement('check-columns-to-browse', 'td', 'title', {}, [lElement('yes', 'input', 'value', {
+        class: 'fieldSelector',
+        id: checkedIndex,
+        name: lIndexedParam('checked') + idx,
+        checked: $p.get(checkedIndex) !== l('no') && ($p.has(checkedIndex) || fieldInfoItem.onByDefault !== false),
+        type: 'checkbox'
+      })]), lElement('check-sequence', 'td', 'title', {}, [['select', {
+        name: lIndexedParam('field') + idx,
+        id: fieldIndex,
+        size: '1'
+      }, fieldInfo.map((_ref3, j) => {
+        let {
+          field,
+          fieldAliasOrName
+        } = _ref3;
+        const matchedFieldParam = fieldParam && fieldParam === fieldAliasOrName;
+        return ['option', {
+          dataset: {
+            name: field
+          },
+          value: fieldAliasOrName,
+          selected: matchedFieldParam || j === i && !$p.has(fieldIndex)
+        }, [fieldAliasOrName]];
+      })]]), ['td', [
+      // Todo: Make as tag selector with fields as options
+      lElement('interlinear-tips', 'input', 'title', {
+        name: lIndexedParam('interlin') + idx,
+        value: $p.get('interlin' + idx)
+      }) // Todo: Could allow i18n of numbers here
+      ]], ['td', [
+      // Todo: Make as CodeMirror-highlighted CSS
+      ['input', {
+        name: lIndexedParam('css') + idx,
+        value: $p.get('css' + idx)
+      }]]]
+      /*
+              ,
+              ['td', [ // Todo: Allow plain or regexp searching
+                  ['input', {name: lIndexedParam('search') + idx, value: $p.get('search' + idx)}]
+              ]]
+              */]];
+    }), ['tr', [['td', {
+      colspan: 3
+    }, [lElement('check_all', 'input', 'value', {
+      type: 'button',
+      $on: {
+        click() {
+          $$('.fieldSelector').forEach(checkbox => {
+            checkbox.checked = true;
+          });
+        }
+      }
+    }), lElement('uncheck_all', 'input', 'value', {
+      type: 'button',
+      $on: {
+        click() {
+          $$('.fieldSelector').forEach(checkbox => {
+            checkbox.checked = false;
+          });
+        }
+      }
+    }), lElement('checkmark_locale_fields_only', 'input', 'value', {
+      type: 'button',
+      $on: {
+        click() {
+          fieldInfo.forEach((/* {field} */_, i) => {
+            const idx = i + 1;
+            // The following is redundant with 'field' but may need to
+            //     retrieve later out of order?
+            const fld = $$1('#field' + idx).selectedOptions[0].dataset.name;
+            $$1('#checked' + idx).checked = fieldMatchesLocale(fld);
+          });
+        }
+      }
+    })]]]]]];
+  },
+  advancedFormatting: _ref4 => {
+    let {
+      lDirectional,
+      lParam,
+      l,
+      lOption,
+      lElement,
+      $p,
+      hideFormattingSection
+    } = _ref4;
+    return ['td', {
+      id: 'advancedformatting',
+      style: {
+        display: hideFormattingSection ? 'none' : 'block'
+      }
+    }, [['h3', [lDirectional('advancedformatting')]], ['label', [lDirectional('textcolor'), nbsp2, ['select', {
+      name: lParam('colorName')
+    }, colors.map((color, i) => {
+      const atts = {
+        value: l(['param_values', 'colors', color]),
+        selected: null
+      };
+      if ($p.get('colorName') === l(['param_values', 'colors', color]) || i === 1 && !$p.has('colorName')) {
+        atts.selected = 'selected';
+      }
+      return lOption(['param_values', 'colors', color], atts);
+    })]]], ['label', [nbsp, lDirectional('or_entercolor'), nbsp2, ['input', {
+      name: lParam('color'),
+      type: 'text',
+      value: $p.get('color') || '#',
+      size: '7',
+      maxlength: '7'
+    }]]], ['br'], ['br'], ['label', [lDirectional('backgroundcolor'), nbsp2, ['select', {
+      name: lParam('bgcolorName')
+    }, colors.map((color, i) => {
+      const atts = {
+        value: l(['param_values', 'colors', color]),
+        selected: null
+      };
+      if ($p.get('bgcolorName') === l(['param_values', 'colors', color]) || i === 14 && !$p.has('bgcolorName')) {
+        atts.selected = 'selected';
+      }
+      return lOption(['param_values', 'colors', color], atts);
+    })]]], ['label', [nbsp, lDirectional('or_entercolor'), nbsp2, ['input', {
+      name: lParam('bgcolor'),
+      type: 'text',
+      value: $p.get('bgcolor') || '#',
+      size: '7',
+      maxlength: '7'
+    }]]], ['br'], ['br'], ['label', [lDirectional('text_font'), nbsp2,
+    // Todo: remove hard-coded direction if i81nizing; also i18nize fontSeq param
+    ['select', {
+      name: lParam('fontSeq'),
+      dir: 'ltr'
+    }, fonts.map((fontSeq, i) => {
+      const atts = {
+        value: fontSeq,
+        selected: null
+      };
+      if ($p.get('fontSeq') === fontSeq || i === 7 && !$p.has('fontSeq')) {
+        atts.selected = 'selected';
+      }
+      return ['option', atts, [fontSeq]];
+    })]]], ['br'], ['br'], ['label', [lDirectional('font_style'), nbsp2, ['select', {
+      name: lParam('fontstyle')
+    }, ['italic', 'normal', 'oblique'].map((fontstyle, i) => {
+      const atts = {
+        value: l(['param_values', 'fontstyle', fontstyle]),
+        selected: null
+      };
+      if ($p.get('fontstyle') === l(['param_values', 'fontstyle', fontstyle]) || i === 1 && !$p.has('fontstyle')) {
+        atts.selected = 'selected';
+      }
+      return lOption(['param_values', 'fontstyle', fontstyle], atts);
+    })]]], ['br'], ['div', [lDirectional('font_variant'), nbsp3, ['label', [['input', {
+      name: lParam('fontvariant'),
+      type: 'radio',
+      value: l(['param_values', 'fontvariant', 'normal']),
+      checked: $p.get('fontvariant') !== lDirectional(['param_values', 'fontvariant', 'small-caps'])
+    }], lDirectional(['param_values', 'fontvariant', 'normal']), nbsp]], ['label', [['input', {
+      name: lParam('fontvariant'),
+      type: 'radio',
+      value: l(['param_values', 'fontvariant', 'small-caps']),
+      checked: $p.get('fontvariant') === lDirectional(['param_values', 'fontvariant', 'small-caps'])
+    }], lDirectional(['param_values', 'fontvariant', 'small-caps']), nbsp]]]], ['br'], ['label', [
+    // Todo: i18n and allow for normal/bold pulldown and float input?
+    lDirectional('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp2, ['input', {
+      name: lParam('fontweight'),
+      type: 'text',
+      value: $p.has('fontweight') ? $p.get('fontweight') : 'normal',
+      size: '7',
+      maxlength: '12'
+    }]]], ['br'], ['label', [lDirectional('font_size'), ' (14pt, 14px, small, 75%, etc.):', nbsp2, ['input', {
+      name: lParam('fontsize'),
+      type: 'text',
+      value: $p.get('fontsize'),
+      size: '7',
+      maxlength: '12'
+    }]]], ['br'],
+    // Todo: i18nize title and values?
+    // Todo: remove hard-coded direction if i18nizing
+    ['label', {
+      dir: 'ltr'
+    }, [lDirectional('font_stretch'), nbsp, ['select', {
+      name: lParam('fontstretch')
+    }, ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(stretch => {
+      const atts = {
+        value: lDirectional(['param_values', 'font-stretch', stretch]),
+        selected: null
+      };
+      if ($p.get('fontstretch') === stretch || !$p.has('fontstretch') && stretch === 'normal') {
+        atts.selected = 'selected';
+      }
+      return ['option', atts, [lDirectional(['param_values', 'font-stretch', stretch])]];
+    })]]], /**/
+    ['br'], ['br'], ['label', [lDirectional('letter_spacing'), ' (normal, .9em, -.05cm): ', ['input', {
+      name: lParam('letterspacing'),
+      type: 'text',
+      value: $p.has('letterspacing') ? $p.get('letterspacing') : 'normal',
+      size: '7',
+      maxlength: '12'
+    }]]], ['br'], ['label', [lDirectional('line_height'), ' (normal, 1.5, 22px, 150%): ', ['input', {
+      name: lParam('lineheight'),
+      type: 'text',
+      value: $p.has('lineheight') ? $p.get('lineheight') : 'normal',
+      size: '7',
+      maxlength: '12'
+    }]]], ['br'], ['br'], lElement('tableformatting_tips', 'h3', 'title', {}, [lDirectional('tableformatting')]), ['div', [lDirectional('header_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map((_ref5, i, arr) => {
+      let [key, val] = _ref5;
+      return ['label', [['input', {
+        name: lParam('header'),
+        type: 'radio',
+        value: val,
+        checked: $p.get('header') === val || !$p.has('header') && i === 1
+      }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
+    })]], ['div', [lDirectional('footer_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map((_ref6, i, arr) => {
+      let [key, val] = _ref6;
+      return ['label', [['input', {
+        name: lParam('footer'),
+        type: 'radio',
+        value: val,
+        checked: $p.get('footer') === val || !$p.has('footer') && i === 2
+      }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
+    })]], ['label', [['input', {
+      name: lParam('headerfooterfixed'),
+      type: 'checkbox',
+      value: l('yes'),
+      checked: $p.get('headerfooterfixed') === l('yes')
+    }], nbsp2, lDirectional('headerfooterfixed-wishtoscroll')]], ['br'], ['div', [lDirectional('caption_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map((_ref7, i, arr) => {
+      let [key, val] = _ref7;
+      return ['label', [['input', {
+        name: lParam('caption'),
+        type: 'radio',
+        value: val,
+        checked: $p.get('caption') === val || !$p.has('caption') && i === 2
+      }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
+    })]], ['br'], ['div', [lDirectional('table_wborder'), nbsp2, ['label', [['input', {
+      name: lParam('border'),
+      type: 'radio',
+      value: '1',
+      checked: $p.get('border') !== '0'
+    }], lDirectional('yes'), nbsp3]], ['label', [['input', {
+      name: lParam('border'),
+      type: 'radio',
+      value: '0',
+      checked: $p.get('border') === '0'
+    }], lDirectional('no')]]]], ['div', [lDirectional('interlin_repeat_field_names'), nbsp2, ['label', [['input', {
+      name: lParam('interlintitle'),
+      type: 'radio',
+      value: '1',
+      checked: $p.get('interlintitle') !== '0'
+    }], lDirectional('yes'), nbsp3]], ['label', [['input', {
+      name: lParam('interlintitle'),
+      type: 'radio',
+      value: '0',
+      checked: $p.get('interlintitle') === '0'
+    }], lDirectional('no')]]]], ['label', [lDirectional('interlintitle_css'), nbsp2, ['input', {
+      name: lParam('interlintitle_css'),
+      type: 'text',
+      value: $p.get('interlintitle_css') || '',
+      size: '12'
+    }]]], ['br'],
+    /*
+        ['br'],
+        ['label', [
+            ['input', {
+                name: lParam('transpose'),
+                type: 'checkbox',
+                value: l('yes'),
+                checked: $p.get('transpose') === l('yes')
+            }],
+            nbsp2, lDirectional('transpose')
+        ]],
+        */
+    ['br'], lElement('pageformatting_tips', 'h3', 'title', {}, [lDirectional('pageformatting')]),
+    /*
+        ['label', [
+            lDirectional('speech_controls'), nbsp2,
+            ['label', [
+                ['input', {
+                    name: lParam('speech'),
+                    type: 'radio',
+                    value: '1',
+                    checked: $p.get('speech') === '1'
+                }],
+                lDirectional('yes'), nbsp3
+            ]],
+            ['label', [
+                ['input', {
+                    name: lParam('speech'),
+                    type: 'radio',
+                    value: '0',
+                    checked: $p.get('speech') !== '1'
+                }],
+                lDirectional('no')
+            ]]
+        ]],
+        ['br'],
+        */
+    ['label', [lDirectional('page_css'), nbsp2, ['textarea', {
+      name: lParam('pagecss'),
+      title: l('page_css_tips'),
+      value: $p.get('pagecss')
+    }]]], ['br'], lElement('outputmode_tips', 'label', 'title', {}, [lDirectional('outputmode'), nbsp2,
+    // Todo: Could i18nize, but would need smaller values
+    ['select', {
+      name: lParam('outputmode')
+    }, ['table', 'div'
+    // , 'json-array',
+    // 'json-object'
+    ].map(mode => {
+      const atts = {
+        value: mode,
+        selected: null
+      };
+      if ($p.get('outputmode') === mode) {
+        atts.selected = 'selected';
+      }
+      return lOption(['param_values', 'outputmode', mode], atts);
+    })]])]];
+  },
+  addRandomFormFields(_ref8) {
+    let {
+      lParam,
+      lDirectional,
+      l,
+      lElement,
+      $p,
+      serializeParamsAsURL,
+      content
+    } = _ref8;
     const addRowContent = rowContent => {
       if (!rowContent || !rowContent.length) {
         return;
@@ -15739,9 +15704,10 @@ var workDisplay$1 = {
       type: 'button',
       $on: {
         click() {
-          const url = serializeParamsAsURL(_objectSpread2$1(_objectSpread2$1({}, getDataForSerializingParamsAsURL()), {}, {
+          const url = serializeParamsAsURL({
+            ...getDataForSerializingParamsAsURL(),
             type: 'randomResult'
-          }));
+          });
           $$1('#randomURL').value = url;
         }
       }
@@ -15750,102 +15716,109 @@ var workDisplay$1 = {
       type: 'text'
     }]]]]].forEach(addRowContent);
   },
-  getPreferences: ({
-    // languageParam, workI18n, groups,
-    paramsSetter,
-    replaceHash,
-    getFieldAliasOrNames,
-    work,
-    langs,
-    languageI18n,
-    l,
-    localizeParamNames,
-    namespace,
-    hideFormattingSection,
-    preferencesPlugin
-  }) => ['div', {
-    style: {
-      textAlign: 'left'
-    },
-    id: 'preferences',
-    hidden: 'true'
-  }, [['div', {
-    style: 'margin-top: 10px;'
-  }, [['label', [l('localizeParamNames'), ['input', {
-    id: 'localizeParamNames',
-    type: 'checkbox',
-    checked: localizeParamNames,
-    $on: {
-      change({
-        target: {
-          checked
+  getPreferences: _ref9 => {
+    let {
+      // languageParam, workI18n, groups,
+      paramsSetter,
+      replaceHash,
+      getFieldAliasOrNames,
+      work,
+      langs,
+      languageI18n,
+      l,
+      localizeParamNames,
+      namespace,
+      hideFormattingSection,
+      preferencesPlugin
+    } = _ref9;
+    return ['div', {
+      style: {
+        textAlign: 'left'
+      },
+      id: 'preferences',
+      hidden: 'true'
+    }, [['div', {
+      style: 'margin-top: 10px;'
+    }, [['label', [l('localizeParamNames'), ['input', {
+      id: 'localizeParamNames',
+      type: 'checkbox',
+      checked: localizeParamNames,
+      $on: {
+        change(_ref10) {
+          let {
+            target: {
+              checked
+            }
+          } = _ref10;
+          localStorage.setItem(namespace + '-localizeParamNames', checked);
         }
-      }) {
-        localStorage.setItem(namespace + '-localizeParamNames', checked);
       }
-    }
-  }]]]]], ['div', [['label', [l('Hide formatting section'), ['input', {
-    id: 'hideFormattingSection',
-    type: 'checkbox',
-    checked: hideFormattingSection,
-    $on: {
-      change({
-        target: {
-          checked
+    }]]]]], ['div', [['label', [l('Hide formatting section'), ['input', {
+      id: 'hideFormattingSection',
+      type: 'checkbox',
+      checked: hideFormattingSection,
+      $on: {
+        change(_ref11) {
+          let {
+            target: {
+              checked
+            }
+          } = _ref11;
+          $$1('#advancedformatting').style.display = checked ? 'none' : 'block';
+          localStorage.setItem(namespace + '-hideFormattingSection', checked);
         }
-      }) {
-        $$1('#advancedformatting').style.display = checked ? 'none' : 'block';
-        localStorage.setItem(namespace + '-hideFormattingSection', checked);
       }
-    }
-  }]]]]], ['div', [['label', {
-    for: 'prefLangs'
-  }, [l('Preferred language(s)')]], ['br'], ['select', {
-    id: 'prefLangs',
-    multiple: 'multiple',
-    size: langs.length,
-    $on: {
-      change({
-        target: {
-          selectedOptions
+    }]]]]], ['div', [['label', {
+      for: 'prefLangs'
+    }, [l('Preferred language(s)')]], ['br'], ['select', {
+      id: 'prefLangs',
+      multiple: 'multiple',
+      size: langs.length,
+      $on: {
+        change(_ref12) {
+          let {
+            target: {
+              selectedOptions
+            }
+          } = _ref12;
+          // Todo: EU disclaimer re: storage?
+          localStorage.setItem(namespace + '-langCodes', JSON.stringify([...selectedOptions].map(opt => {
+            return opt.value;
+          })));
         }
-      }) {
-        // Todo: EU disclaimer re: storage?
-        localStorage.setItem(namespace + '-langCodes', JSON.stringify([...selectedOptions].map(opt => {
-          return opt.value;
-        })));
       }
-    }
-  }, langs.map(lan => {
-    let langCodes = localStorage.getItem(namespace + '-langCodes');
-    langCodes = langCodes && JSON.parse(langCodes);
-    const atts = {
-      value: lan.code,
-      selected: null
-    };
-    if (langCodes && langCodes.includes(lan.code)) {
-      atts.selected = 'selected';
-    }
-    return ['option', atts, [languageI18n(lan.code)]];
-  })]]], preferencesPlugin ? preferencesPlugin({
-    $: $$1,
-    l,
-    jml,
-    paramsSetter,
-    getDataForSerializingParamsAsURL,
-    work,
-    replaceHash,
-    getFieldAliasOrNames
-  }) : '']],
-  addBrowseFields({
-    browseFields,
-    fieldInfo,
-    lDirectional,
-    i,
-    lIndexedParam,
-    $p,
-    content
-  }) {
+    }, langs.map(lan => {
+      let langCodes = localStorage.getItem(namespace + '-langCodes');
+      langCodes = langCodes && JSON.parse(langCodes);
+      const atts = {
+        value: lan.code,
+        selected: null
+      };
+      if (langCodes && langCodes.includes(lan.code)) {
+        atts.selected = 'selected';
+      }
+      return ['option', atts, [languageI18n(lan.code)]];
+    })]]], preferencesPlugin ? preferencesPlugin({
+      $: $$1,
+      l,
+      jml,
+      paramsSetter,
+      getDataForSerializingParamsAsURL,
+      work,
+      replaceHash,
+      getFieldAliasOrNames
+    }) : '']];
+  },
+  addBrowseFields(_ref13) {
+    let {
+      browseFields,
+      fieldInfo,
+      lDirectional,
+      i,
+      lIndexedParam,
+      $p,
+      content
+    } = _ref13;
     const work = $p.get('work');
     const addRowContent = rowContent => {
       if (!rowContent || !rowContent.length) {
@@ -15860,14 +15833,15 @@ var workDisplay$1 = {
       align: 'center'
     }, [['br'], lDirectional('or'), ['br'], ['br']]]] : '', [...(() => {
       const addBrowseFieldSet = setType => {
-        return browseFields.reduce((rowContent, {
-          fieldName,
-          aliases,
-          fieldSchema: {
-            minimum,
-            maximum
-          }
-        }, j) => {
+        return browseFields.reduce((rowContent, _ref14, j) => {
+          let {
+            fieldName,
+            aliases,
+            fieldSchema: {
+              minimum,
+              maximum
+            }
+          } = _ref14;
           // Namespace by work for sake of browser auto-complete caching
           const name = work + '-' + lIndexedParam(setType) + (i + 1) + '-' + (j + 1);
           const id = name;
@@ -15907,14 +15881,15 @@ var workDisplay$1 = {
     })(), ['td', [browseFields.length > 1 ? lDirectional('versesendingdataoptional') : '']]], [['td', {
       colspan: 4 * browseFields.length + 2 + 1,
       align: 'center'
-    }, [['table', [['tr', [browseFields.reduce((rowContent, {
-      fieldName,
-      aliases,
-      fieldSchema: {
-        minimum,
-        maximum
-      }
-    }, j) => {
+    }, [['table', [['tr', [browseFields.reduce((rowContent, _ref15, j) => {
+      let {
+        fieldName,
+        aliases,
+        fieldSchema: {
+          minimum,
+          maximum
+        }
+      } = _ref15;
       // Namespace by work for sake of browser auto-complete caching
       const name = work + '-' + lIndexedParam('anchor') + (i + 1) + '-' + (j + 1);
       const id = name;
@@ -15944,9 +15919,10 @@ var workDisplay$1 = {
     }), ['td', [['label', [lDirectional('field') + nbsp2, ['select', {
       name: lIndexedParam('anchorfield') + (i + 1),
       size: '1'
-    }, fieldInfo.map(({
-      fieldAliasOrName
-    }) => {
+    }, fieldInfo.map(_ref16 => {
+      let {
+        fieldAliasOrName
+      } = _ref16;
       const val = $p.get(lIndexedParam('anchorfield') + (i + 1), true);
       if (val === fieldAliasOrName) {
         return ['option', {
@@ -15956,42 +15932,45 @@ var workDisplay$1 = {
       return ['option', [fieldAliasOrName]];
     })]]]]]]]]]]]]].forEach(addRowContent);
   },
-  main({
-    workI18n,
-    languageParam,
-    l,
-    namespace,
-    heading,
-    // fallbackDirection,
-    languageI18n,
-    langs,
-    fieldInfo,
-    localizeParamNames,
-    serializeParamsAsURL,
-    paramsSetter,
-    replaceHash,
-    getFieldAliasOrNames,
-    hideFormattingSection,
-    $p,
-    metadataObj,
-    lParam,
-    lElement,
-    lDirectional,
-    lIndexedParam,
-    fieldMatchesLocale,
-    preferredLocale,
-    schemaItems,
-    content,
-    groups,
-    preferencesPlugin
-  }) {
+  main(_ref17) {
+    let {
+      workI18n,
+      languageParam,
+      l,
+      namespace,
+      heading,
+      // fallbackDirection,
+      languageI18n,
+      langs,
+      fieldInfo,
+      localizeParamNames,
+      serializeParamsAsURL,
+      paramsSetter,
+      replaceHash,
+      getFieldAliasOrNames,
+      hideFormattingSection,
+      $p,
+      metadataObj,
+      lParam,
+      lElement,
+      lDirectional,
+      lIndexedParam,
+      fieldMatchesLocale,
+      preferredLocale,
+      schemaItems,
+      content,
+      groups,
+      preferencesPlugin
+    } = _ref17;
     const work = $p.get('work');
-    const serializeParamsAsURLWithData = ({
-      type
-    }) => {
-      return serializeParamsAsURL(_objectSpread2$1(_objectSpread2$1({}, getDataForSerializingParamsAsURL()), {}, {
+    const serializeParamsAsURLWithData = _ref18 => {
+      let {
         type
-      }));
+      } = _ref18;
+      return serializeParamsAsURL({
+        ...getDataForSerializingParamsAsURL(),
+        type
+      });
     };
     const lOption = (key, atts) => {
       return ['option', atts, [l(key
@@ -16047,10 +16026,11 @@ var workDisplay$1 = {
         }
       },
       $on: {
-        keydown({
-          key,
-          target
-        }) {
+        keydown(_ref19) {
+          let {
+            key,
+            target
+          } = _ref19;
           // Chrome is not having submit event triggered now with enter key
           //   presses on inputs, despite having a `type=submit` input in the
           //   form, and despite not using `preventDefault`
@@ -16101,14 +16081,16 @@ var workDisplay$1 = {
       $on: {
         async click(e) {
           e.preventDefault();
-          const paramsCopy = paramsSetter(_objectSpread2$1(_objectSpread2$1({}, getDataForSerializingParamsAsURL()), {}, {
+          const paramsCopy = paramsSetter({
+            ...getDataForSerializingParamsAsURL(),
             workName: work,
             // Delete work of current page
             type: 'startEndResult'
-          }));
+          });
           const url = replaceHash(paramsCopy) + `&work=${work}&${work}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here
           try {
             await navigator.clipboard.writeText(url);
+            // eslint-disable-next-line no-unused-vars -- Okay to ignore
           } catch (err) {
             // User rejected
           }
@@ -16158,65 +16140,73 @@ var workDisplay$1 = {
 };
 
 var resultsDisplayServerOrClient$1 = {
-  caption({
-    heading,
-    ranges
-  }) {
+  caption(_ref) {
+    let {
+      heading,
+      ranges
+    } = _ref;
     return heading + ' ' + ranges;
   },
-  startSeparator({
-    l
-  }) {
+  startSeparator(_ref2) {
+    let {
+      l
+    } = _ref2;
     return l('colon');
   },
-  innerBrowseFieldSeparator({
-    l
-  }) {
+  innerBrowseFieldSeparator(_ref3) {
+    let {
+      l
+    } = _ref3;
     return l('comma-space');
   },
-  ranges({
-    l,
-    startRange,
-    endVals,
-    rangeNames
-  }) {
+  ranges(_ref4) {
+    let {
+      l,
+      startRange,
+      endVals,
+      rangeNames
+    } = _ref4;
     return startRange +
     // l('to').toLowerCase() + ' ' +
     '-' + endVals.join(Templates.resultsDisplayServerOrClient.startSeparator({
       l
     })) + ' (' + rangeNames + ')';
   },
-  fieldValueAlias({
-    key,
-    value
-  }) {
+  fieldValueAlias(_ref5) {
+    let {
+      key,
+      value
+    } = _ref5;
     return value + ' (' + key + ')';
   },
-  interlinearSegment({
-    lang,
-    dir,
-    html
-  }) {
+  interlinearSegment(_ref6) {
+    let {
+      lang,
+      dir,
+      html
+    } = _ref6;
     return `<span${lang ? ` lang="${lang}"` : ''}${dir ? ` dir="${dir}"` : ''}>${html}</span>`;
   },
-  interlinearTitle({
-    l,
-    val
-  }) {
+  interlinearTitle(_ref7) {
+    let {
+      l,
+      val
+    } = _ref7;
     const colonSpace = l('colon-space');
     return `<span class="interlintitle">${val}</span>${colonSpace}`;
   },
-  styles({
-    $p,
-    $pRaw,
-    $pRawEsc,
-    $pEscArbitrary,
-    // escapeQuotedCSS,
-    escapeCSS,
-    tableWithFixedHeaderAndFooter,
-    checkedFieldIndexes,
-    hasCaption
-  }) {
+  styles(_ref8) {
+    let {
+      $p,
+      $pRaw,
+      $pRawEsc,
+      $pEscArbitrary,
+      // escapeQuotedCSS,
+      escapeCSS,
+      tableWithFixedHeaderAndFooter,
+      checkedFieldIndexes,
+      hasCaption
+    } = _ref8;
     const colorEsc = !$p.has('color', true) || $p.get('color', true) === '#' ? $pRawEsc('colorName') : $pEscArbitrary('color');
     const bgcolorEsc = !$p.has('bgcolor', true) || $p.get('bgcolor', true) === '#' ? $pRawEsc('bgcolorName') : $pEscArbitrary('bgcolor');
     const tableHeight = '100%';
@@ -16309,30 +16299,31 @@ body {
 }
 ` : '')]];
   },
-  main({
-    tableData,
-    $p,
-    $pRaw,
-    $pRawEsc,
-    $pEscArbitrary,
-    // Todo: escaping should be done in business logic!
-    escapeQuotedCSS,
-    escapeCSS,
-    escapeHTML,
-    l,
-    localizedFieldNames,
-    fieldLangs,
-    fieldDirs,
-    caption,
-    hasCaption,
-    showInterlinTitles,
-    determineEnd,
-    getCanonicalID,
-    canonicalBrowseFieldSetName,
-    getCellValue,
-    checkedAndInterlinearFieldInfo,
-    interlinearSeparator = '<br /><br />'
-  }) {
+  main(_ref9) {
+    let {
+      tableData,
+      $p,
+      $pRaw,
+      $pRawEsc,
+      $pEscArbitrary,
+      // Todo: escaping should be done in business logic!
+      escapeQuotedCSS,
+      escapeCSS,
+      escapeHTML,
+      l,
+      localizedFieldNames,
+      fieldLangs,
+      fieldDirs,
+      caption,
+      hasCaption,
+      showInterlinTitles,
+      determineEnd,
+      getCanonicalID,
+      canonicalBrowseFieldSetName,
+      getCellValue,
+      checkedAndInterlinearFieldInfo,
+      interlinearSeparator = '<br /><br />'
+    } = _ref9;
     const tableOptions = {
       table: [['table', {
         class: 'table',
@@ -16355,7 +16346,6 @@ body {
       // ['colgroup', {class: 'colgroup'}],
       // ['col', {class: 'col'}]
       ],
-
       div: [['div', {
         class: 'table',
         style: 'display: table;'
@@ -16384,7 +16374,6 @@ body {
       // ['div', {class: 'colgroup', style: 'display: table-column-group;'}],
       // ['div', {class: 'col', style: 'display: table-column;'}]
       ],
-
       'json-array': 'json',
       'json-object': 'json'
     };
@@ -16399,7 +16388,6 @@ body {
     }
     const tableElems = tableOptions[Object.prototype.hasOwnProperty.call(tableOptions, outputmode) ? outputmode : 'table' // Default
     ];
-
     const [tableElem, trElem, tdElem, thElem, captionElem, theadElem, tbodyElem, tfootElem] = tableElems; // colgroupElem, colElem
 
     const [checkedFields, checkedFieldIndexes, allInterlinearColIndexes] = checkedAndInterlinearFieldInfo;
@@ -16414,11 +16402,18 @@ body {
       }, children];
     };
     const addChildren = (el, children) => {
+      // eslint-disable-next-line unicorn/prefer-structured-clone -- Need JSON
       el = JSON.parse(JSON.stringify(el));
       el.push(children);
       return el;
     };
-    const addAtts = ([el, atts], newAtts) => [el, _objectSpread2$1(_objectSpread2$1({}, atts), newAtts)];
+    const addAtts = (_ref10, newAtts) => {
+      let [el, atts] = _ref10;
+      return [el, {
+        ...atts,
+        ...newAtts
+      }];
+    };
     const foundState = {
       start: false,
       end: false
@@ -16527,7 +16522,7 @@ body {
       class: 'zupa1'
     }, [['div', {
       class: 'inner-caption'
-    }, [['span', [caption]]]]]] : '']) : '',
+    }, [['span', [caption]]]]]] : '']) : '', (
     /*
               // Works but quirky, e.g., `color` doesn't work (as also
               //  confirmed per https://quirksmode.org/css/css2/columns.html)
@@ -16547,7 +16542,7 @@ body {
       }, [['div', {
         class: 'th-inner'
       }, [['span', [cf]]]]]] : '']);
-    }))]) : '', $pRaw('footer') && $pRaw('footer') !== '0' ? addChildren(tfootElem, [addChildren(trElem, checkedFields.map((cf, i) => {
+    }))]) : ''), $pRaw('footer') && $pRaw('footer') !== '0' ? addChildren(tfootElem, [addChildren(trElem, checkedFields.map((cf, i) => {
       const interlinearColIndexes = allInterlinearColIndexes[i];
       cf = escapeHTML(cf) + (interlinearColIndexes ? l('comma-space') + interlinearColIndexes.map(idx => {
         return localizedFieldNames[idx];
@@ -16562,22 +16557,24 @@ body {
 };
 
 var resultsDisplayClient$1 = {
-  anchorRowCol({
-    anchorRowCol
-  }) {
+  anchorRowCol(_ref) {
+    let {
+      anchorRowCol
+    } = _ref;
     return $$1('#' + anchorRowCol);
   },
-  anchors({
-    escapedRow,
-    escapedCol
-  }) {
+  anchors(_ref2) {
+    let {
+      escapedRow,
+      escapedCol
+    } = _ref2;
     const sel = 'tr[data-row="' + escapedRow + '"]' + (escapedCol ? '> td[data-col="' + escapedCol + '"]' : '');
     return $$1(sel);
   },
-  main(...args) {
+  main() {
     let html;
     try {
-      html = Templates.resultsDisplayServerOrClient.main(...args);
+      html = Templates.resultsDisplayServerOrClient.main(...arguments);
     } catch (err) {
       if (err.message === 'JSON support is currently not available') {
         dialogs.alert(err.message);
@@ -16589,7 +16586,6 @@ var resultsDisplayClient$1 = {
   }
 };
 
-/* eslint-env browser */
 const Templates = {
   languageSelect,
   workSelect: workSelect$1,
@@ -16611,14 +16607,16 @@ const Templates = {
     versionChange() {
       $$1('#versionChange').showModal();
     },
-    addLogEntry({
-      text
-    }) {
+    addLogEntry(_ref) {
+      let {
+        text
+      } = _ref;
       const installationDialog = $$1('#installationLogContainer');
       try {
         installationDialog.showModal();
         const container = $$1('#dialogContainer');
         container.hidden = false;
+        // eslint-disable-next-line no-unused-vars -- Ok
       } catch (err) {
         // May already be open
       }
@@ -16630,10 +16628,11 @@ const Templates = {
         container.hidden = true;
       }
     },
-    dbError({
-      type,
-      escapedErrorMessage
-    }) {
+    dbError(_ref2) {
+      let {
+        type,
+        escapedErrorMessage
+      } = _ref2;
       if (type) {
         jml('span', [type, ' ', escapedErrorMessage], $$1('#dbError'));
       }
@@ -16660,13 +16659,14 @@ const Templates = {
      *   HTMLDialogElement, HTMLDialogElement, HTMLDialogElement
      * ]}
      */
-    main({
-      siteI18n,
-      ok,
-      refuse,
-      close,
-      closeBrowserNotGranting
-    }) {
+    main(_ref3) {
+      let {
+        siteI18n,
+        ok,
+        refuse,
+        close,
+        closeBrowserNotGranting
+      } = _ref3;
       const installationDialog = jml('dialog', {
         style: 'text-align: center; height: 100%',
         id: 'installationLogContainer',
@@ -16678,7 +16678,6 @@ const Templates = {
       }, []]]]
       // ['textarea', {readonly: true, style: 'width: 80%; height: 80%;'}]
       ]);
-
       let requestPermissionsDialog = '';
       if (ok) {
         requestPermissionsDialog = jml('dialog', {
@@ -16754,10 +16753,11 @@ function _prepareParam(param, skip) {
   return this.l10n(['params', param]);
 }
 class IntlURLSearchParams {
-  constructor({
-    l10n,
-    params
-  } = {}) {
+  constructor() {
+    let {
+      l10n,
+      params
+    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     this.l10n = l10n;
     if (!params) {
       params = location.hash.slice(1);
@@ -16790,15 +16790,15 @@ class IntlURLSearchParams {
   }
 }
 
-/* eslint-env browser */
-async function workSelect({
-  files,
-  lang,
-  fallbackLanguages,
-  $p,
-  followParams
-  /* , l, defineFormatter */
-}) {
+async function workSelect(_ref) {
+  let {
+    files,
+    lang,
+    fallbackLanguages,
+    $p,
+    followParams
+    /* , l, defineFormatter */
+  } = _ref;
   // We use getJSON instead of JsonRefs as we do not necessarily need to
   //    resolve the file contents here
   try {
@@ -16813,10 +16813,11 @@ async function workSelect({
       locales: lang,
       defaultLocales: fallbackLanguages,
       // Todo: Could at least share this with `index.js`
-      localeStringFinder({
-        locales,
-        defaultLocales
-      }) {
+      localeStringFinder(_ref2) {
+        let {
+          locales,
+          defaultLocales
+        } = _ref2;
         const locale = [...locales, ...defaultLocales].find(language => {
           return language in localizationStrings;
         });
@@ -16864,33 +16865,34 @@ async function workSelect({
   }
 }
 
-/* eslint-env browser */
 // Todo: Reimplement this with `formSerialize.deserialize` as possible
 const replaceHash = paramsCopy => {
   return location.href.replace(/#.*$/, '') + '#' + paramsCopy.toString();
 };
-const getSerializeParamsAsURL = function (...args) {
-  const setter = getParamsSetter(...args);
-  return function (...innerArgs) {
-    const paramsCopy = setter(...innerArgs);
+const getSerializeParamsAsURL = function () {
+  const setter = getParamsSetter(...arguments);
+  return function () {
+    const paramsCopy = setter(...arguments);
     return replaceHash(paramsCopy);
   };
 };
-const getParamsSetter = function ({
-  l,
-  lParam,
-  $p
-}) {
-  return function ({
-    form,
-    random = {
-      checked: false
-    },
-    checkboxes,
-    type,
-    fieldAliasOrNames = [],
-    workName
-  }) {
+const getParamsSetter = function (_ref) {
+  let {
+    l,
+    lParam,
+    $p
+  } = _ref;
+  return function (_ref2) {
+    let {
+      form,
+      random = {
+        checked: false
+      },
+      checkboxes,
+      type,
+      fieldAliasOrNames = [],
+      workName
+    } = _ref2;
     const paramsCopy = new URLSearchParams($p.params);
     const formParamsHash = serialize(form, {
       hash: true,
@@ -16994,16 +16996,16 @@ const getParamsSetter = function ({
   };
 };
 
-const _excluded = ["workI18n", "fileData", "metadataObj"];
-async function workDisplay({
-  l,
-  languageParam,
-  lang,
-  preferredLocale,
-  languages,
-  fallbackLanguages,
-  $p
-}) {
+async function workDisplay(_ref) {
+  let {
+    l,
+    languageParam,
+    lang,
+    preferredLocale,
+    languages,
+    fallbackLanguages,
+    $p
+  } = _ref;
   const {
     preferencesPlugin
   } = this;
@@ -17013,23 +17015,25 @@ async function workDisplay({
   const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
   const prefFormatting = localStorage.getItem(this.namespace + '-hideFormattingSection');
   const hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : prefFormatting === 'true' || prefFormatting !== 'false' && this.hideFormattingSection;
-  async function _displayWork({
-    workI18n,
-    metadataObj,
-    getFieldAliasOrName,
-    schemaItems,
-    // schemaObj,
-    fieldInfo,
-    metadata,
-    pluginsForWork,
-    groupsToWorks
-  }) {
+  async function _displayWork(_ref2) {
+    let {
+      workI18n,
+      metadataObj,
+      getFieldAliasOrName,
+      schemaItems,
+      // schemaObj,
+      fieldInfo,
+      metadata,
+      pluginsForWork,
+      groupsToWorks
+    } = _ref2;
     const lParam = localizeParamNames ? key => l(['params', key]) : key => key;
     const lIndexedParam = localizeParamNames ? key => l(['params', 'indexed', key]) : key => key;
 
     // Returns element with localized option text (as Jamilih), with
     //   optional fallback direction
-    const lElement = (key, el, attToLocalize, atts, children = []) => {
+    const lElement = function (key, el, attToLocalize, atts) {
+      let children = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
       atts[attToLocalize] = l(key
       // Restore this if `intl-dom` supports
       // fallback ({message}) {
@@ -17037,7 +17041,6 @@ async function workDisplay({
       //   return message;
       // }
       );
-
       return [el, atts, children];
     };
 
@@ -17048,7 +17051,6 @@ async function workDisplay({
     // fallback: ({message}) =>
     //   Templates.workDisplay.bdo({fallbackDirection, message})
     );
-
     const fieldMatchesLocale = metadata.getFieldMatchesLocale({
       namespace: this.namespace,
       preferredLocale,
@@ -17060,10 +17062,11 @@ async function workDisplay({
       metadataObj,
       schemaItems,
       getFieldAliasOrName,
-      callback({
-        browseFields,
-        i
-      }) {
+      callback(_ref3) {
+        let {
+          browseFields,
+          i
+        } = _ref3;
         Templates.workDisplay.addBrowseFields({
           browseFields,
           fieldInfo,
@@ -17100,11 +17103,12 @@ async function workDisplay({
     const getFieldAliasOrNames = (() => {
       // Avoid blocking but start now
       // Let this run in the background to avoid blocking
-      const all = Promise.all(groupsToWorks.map(async ({
-        name,
-        workNames,
-        shortcuts
-      }) => {
+      const all = Promise.all(groupsToWorks.map(async _ref4 => {
+        let {
+          name,
+          workNames,
+          shortcuts
+        } = _ref4;
         const worksToFields = await Promise.all(workNames.map(async (workName, i) => {
           return {
             workName,
@@ -17115,9 +17119,12 @@ async function workDisplay({
               preferredLocale,
               languages,
               work: workName
-            })).fieldInfo.map(({
-              fieldAliasOrName
-            }) => fieldAliasOrName)
+            })).fieldInfo.map(_ref5 => {
+              let {
+                fieldAliasOrName
+              } = _ref5;
+              return fieldAliasOrName;
+            })
           };
         }));
         return {
@@ -17129,14 +17136,12 @@ async function workDisplay({
         return all; // May not be finished by now
       };
     })();
-
     const displayNames = new Intl.DisplayNames([...lang, ...fallbackLanguages], {
       type: 'language',
       // Dialect: "American English"
       // Standard: "English (United States)"
       languageDisplay: 'standard' // 'dialect'
     });
-
     const languageI18n = code => {
       return displayNames.of(code);
     };
@@ -17172,26 +17177,26 @@ async function workDisplay({
     });
   }
   try {
-    const _await$this$getWorkDa = await this.getWorkData({
-        lang,
-        fallbackLanguages,
-        preferredLocale,
-        languages,
-        work: $p.get('work')
-      }),
-      {
-        workI18n,
-        fileData,
-        metadataObj
-      } = _await$this$getWorkDa,
-      args = _objectWithoutProperties(_await$this$getWorkDa, _excluded);
+    const {
+      workI18n,
+      fileData,
+      metadataObj,
+      ...args
+    } = await this.getWorkData({
+      lang,
+      fallbackLanguages,
+      preferredLocale,
+      languages,
+      work: $p.get('work')
+    });
     document.title = workI18n('browserfile-workdisplay', {
       work: fileData ? getMetaProp(lang, metadataObj, 'alias') : ''
     });
-    await _displayWork.call(this, _objectSpread2$1({
+    await _displayWork.call(this, {
       workI18n,
-      metadataObj
-    }, args));
+      metadataObj,
+      ...args
+    });
   } catch (err) {
     console.log('err', err);
     dialogs.alert(err);
@@ -17395,7 +17400,6 @@ class Locale {
 
   // Public functions - End
 }
-
 Locale._RTL_SCRIPTS = ['adlm', 'arab', 'armi', 'avst', 'chrs', 'cprt', 'elym', 'hatr', 'hebr', 'hung', 'khar', 'lydi', 'mand', 'mani', 'mend', 'merc', 'mero', 'narb', 'nbat', 'nkoo', 'orkh', 'ougr', 'palm', 'phli', 'phlp', 'phnx', 'prti', 'rohg', 'samr', 'sarb', 'sogd', 'sogo', 'syrc', 'thaa', 'yezi'];
 
 // Why not working as static property
@@ -17640,14 +17644,15 @@ const fieldValueAliasRegex = /^.* \((.*?)\)$/;
 const getRawFieldValue = v => {
   return typeof v === 'string' ? v.replace(fieldValueAliasRegex, '$1') : v;
 };
-const setAnchor = ({
-  applicableBrowseFieldSet,
-  fieldValueAliasMapPreferred,
-  lParamRaw,
-  lIndexedParam,
-  max,
-  $p
-}) => {
+const setAnchor = _ref => {
+  let {
+    applicableBrowseFieldSet,
+    fieldValueAliasMapPreferred,
+    lParamRaw,
+    lIndexedParam,
+    max,
+    $p
+  } = _ref;
   const applicableBrowseFieldSchemaIndexes = applicableBrowseFieldSet.map(abfs => {
     return abfs.fieldSchemaIndex;
   });
@@ -17664,6 +17669,7 @@ const setAnchor = ({
   if (!anchor) {
     const anchors = [];
     let anchorField = '';
+    // eslint-disable-next-line sonarjs/misplaced-loop-counter -- Ok
     for (let i = 1, breakout; !breakout && !anchors.length; i++) {
       for (let j = 1;; j++) {
         const anchorText = work + '-' + 'anchor' + i + '-' + j;
@@ -17685,9 +17691,8 @@ const setAnchor = ({
         // anchors.push({anchorText, anchor});
       }
     }
-
     if (anchors.length) {
-      const escapeSelectorAttValue = str => (str || '').replaceAll(/["\\]/g, '\\$&');
+      const escapeSelectorAttValue = str => (str || '').replaceAll(/["\\]/g, String.raw`\$&`);
       const escapedRow = escapeSelectorAttValue(anchors.join('-'));
       const escapedCol = anchorField ? escapeSelectorAttValue(anchorField) : undefined;
       anchor = Templates.resultsDisplayClient.anchors({
@@ -17717,10 +17722,11 @@ const resultsDisplayClient = async function resultsDisplayClient(args) {
     lIndexedParam,
     lParamRaw,
     templateArgs
-  } = await resultsDisplayServerOrClient.call(this, _objectSpread2$1(_objectSpread2$1({}, args), {}, {
+  } = await resultsDisplayServerOrClient.call(this, {
+    ...args,
     skipIndexedDB,
     prefI18n
-  }));
+  });
   document.title = workI18n('browserfile-resultsdisplay', {
     work: fileData ? getMetaProp(lang, metadataObj, 'alias') : ''
   });
@@ -17733,12 +17739,13 @@ const resultsDisplayClient = async function resultsDisplayClient(args) {
     $p: args.$p,
     max: browseFieldSets.length
   });
-  fieldInfo.forEach(({
-    plugin,
-    applicableField,
-    meta,
-    j
-  }) => {
+  fieldInfo.forEach(_ref2 => {
+    let {
+      plugin,
+      applicableField,
+      meta,
+      j
+    } = _ref2;
     if (!plugin) {
       return;
     }
@@ -17753,131 +17760,143 @@ const resultsDisplayClient = async function resultsDisplayClient(args) {
     }
   });
 };
-const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient({
-  l,
-  lang,
-  fallbackLanguages,
-  locales,
-  $p,
-  skipIndexedDB,
-  noIndexedDB,
-  prefI18n,
-  files,
-  allowPlugins,
-  langData,
-  basePath = '',
-  dynamicBasePath = ''
-}) {
+const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient(_ref3) {
+  let {
+    l,
+    lang,
+    fallbackLanguages,
+    locales,
+    $p,
+    skipIndexedDB,
+    noIndexedDB,
+    prefI18n,
+    files,
+    allowPlugins,
+    langData,
+    basePath = '',
+    dynamicBasePath = ''
+  } = _ref3;
   const languages = new Languages({
     langData
   });
-  const getCellValue = ({
-    fieldValueAliasMapPreferred,
-    escapeColumnIndexes
-  }) => ({
-    tr,
-    idx
-  }) => {
-    let tdVal = fieldValueAliasMapPreferred[idx] !== undefined ? fieldValueAliasMapPreferred[idx][tr[idx]] : tr[idx];
-    if (tdVal && typeof tdVal === 'object') {
-      tdVal = Object.values(tdVal);
-    }
-    if (Array.isArray(tdVal)) {
-      tdVal = tdVal.join(l('comma-space'));
-    }
-    return (escapeColumnIndexes[idx] || !this.trustFormatHTML) && typeof tdVal === 'string' ? {
-      tdVal: escapeHTML(tdVal),
-      htmlEscaped: true
-    } : {
-      tdVal
+  const getCellValue = _ref4 => {
+    let {
+      fieldValueAliasMapPreferred,
+      escapeColumnIndexes
+    } = _ref4;
+    return _ref5 => {
+      let {
+        tr,
+        idx
+      } = _ref5;
+      let tdVal = fieldValueAliasMapPreferred[idx] !== undefined ? fieldValueAliasMapPreferred[idx][tr[idx]] : tr[idx];
+      if (tdVal && typeof tdVal === 'object') {
+        tdVal = Object.values(tdVal);
+      }
+      if (Array.isArray(tdVal)) {
+        tdVal = tdVal.join(l('comma-space'));
+      }
+      return (escapeColumnIndexes[idx] || !this.trustFormatHTML) && typeof tdVal === 'string' ? {
+        tdVal: escapeHTML(tdVal),
+        htmlEscaped: true
+      } : {
+        tdVal
+      };
     };
   };
-  const getCanonicalID = ({
-    fieldValueAliasMap,
-    fieldValueAliasMapPreferred,
-    localizedFieldNames,
-    canonicalBrowseFieldNames
-  }) => ({
-    tr // , foundState
-  }) => {
-    return canonicalBrowseFieldNames.map(fieldName => {
-      const idx = localizedFieldNames.indexOf(fieldName);
-      // This works to put alias in anchor but this includes
-      //   our ending parenthetical, the alias may be harder
-      //   to remember and/or automated than original (e.g.,
-      //   for a number representing a book); we may wish to
-      //   switch this (and also for other browse field-based
-      //   items).
-      if (fieldValueAliasMap[idx] !== undefined &&
-      // Added this condition after imf->intl-dom conversion; concealing a
-      //   bug?
-      fieldValueAliasMap[idx] !== null) {
-        return fieldValueAliasMapPreferred[idx][tr[idx]];
-      }
-      return tr[idx];
-    }).join('-'); // rowID;
+  const getCanonicalID = _ref6 => {
+    let {
+      fieldValueAliasMap,
+      fieldValueAliasMapPreferred,
+      localizedFieldNames,
+      canonicalBrowseFieldNames
+    } = _ref6;
+    return _ref7 => {
+      let {
+        tr // , foundState
+      } = _ref7;
+      return canonicalBrowseFieldNames.map(fieldName => {
+        const idx = localizedFieldNames.indexOf(fieldName);
+        // This works to put alias in anchor but this includes
+        //   our ending parenthetical, the alias may be harder
+        //   to remember and/or automated than original (e.g.,
+        //   for a number representing a book); we may wish to
+        //   switch this (and also for other browse field-based
+        //   items).
+        if (fieldValueAliasMap[idx] !== undefined &&
+        // Added this condition after imf->intl-dom conversion; concealing a
+        //   bug?
+        fieldValueAliasMap[idx] !== null) {
+          return fieldValueAliasMapPreferred[idx][tr[idx]];
+        }
+        return tr[idx];
+      }).join('-'); // rowID;
+    };
   };
+  const determineEnd = _ref8 => {
+    let {
+      fieldValueAliasMap,
+      fieldValueAliasMapPreferred,
+      localizedFieldNames,
+      applicableBrowseFieldNames,
+      startsRaw,
+      endsRaw
+    } = _ref8;
+    return _ref9 => {
+      let {
+        tr,
+        foundState
+      } = _ref9;
+      const rowIDPartsPreferred = [];
+      const rowIDParts = applicableBrowseFieldNames.map(fieldName => {
+        const idx = localizedFieldNames.indexOf(fieldName);
+        // This works to put alias in anchor but this includes
+        //   our ending parenthetical, the alias may be harder
+        //   to remember and/or automated than original (e.g.,
+        //   for a number representing a book), and there could
+        //   be multiple aliases for a value; we may wish to
+        //   switch this (and also for other browse field-based
+        //   items).
+        if (fieldValueAliasMap[idx] !== undefined &&
+        // Added this condition after imf->intl-dom conversion; concealing a
+        //   bug?
+        fieldValueAliasMap[idx] !== null) {
+          rowIDPartsPreferred.push(fieldValueAliasMapPreferred[idx][tr[idx]]);
+        } else {
+          rowIDPartsPreferred.push(tr[idx]);
+        }
+        return tr[idx];
+      });
 
-  const determineEnd = ({
-    fieldValueAliasMap,
-    fieldValueAliasMapPreferred,
-    localizedFieldNames,
-    applicableBrowseFieldNames,
-    startsRaw,
-    endsRaw
-  }) => ({
-    tr,
-    foundState
-  }) => {
-    const rowIDPartsPreferred = [];
-    const rowIDParts = applicableBrowseFieldNames.map(fieldName => {
-      const idx = localizedFieldNames.indexOf(fieldName);
-      // This works to put alias in anchor but this includes
-      //   our ending parenthetical, the alias may be harder
-      //   to remember and/or automated than original (e.g.,
-      //   for a number representing a book), and there could
-      //   be multiple aliases for a value; we may wish to
-      //   switch this (and also for other browse field-based
-      //   items).
-      if (fieldValueAliasMap[idx] !== undefined &&
-      // Added this condition after imf->intl-dom conversion; concealing a
-      //   bug?
-      fieldValueAliasMap[idx] !== null) {
-        rowIDPartsPreferred.push(fieldValueAliasMapPreferred[idx][tr[idx]]);
-      } else {
-        rowIDPartsPreferred.push(tr[idx]);
+      // Todo: Use schema to determine field type and use `Number.parseInt`
+      //   on other value instead of `String` conversions
+      if (!foundState.start) {
+        if (startsRaw.some((part, i) => {
+          const rowIDPart = rowIDParts[i];
+          return part !== rowIDPart;
+        })) {
+          // Trigger skip of this row
+          return false;
+        }
+        foundState.start = true;
       }
-      return tr[idx];
-    });
-
-    // Todo: Use schema to determine field type and use `Number.parseInt`
-    //   on other value instead of `String` conversions
-    if (!foundState.start) {
-      if (startsRaw.some((part, i) => {
+      // This doesn't go in an `else` for the above in case the start is the end
+      if (endsRaw.every((part, i) => {
         const rowIDPart = rowIDParts[i];
-        return part !== rowIDPart;
+        return part === rowIDPart;
       })) {
-        // Trigger skip of this row
-        return false;
+        foundState.end = true;
+      } else if (foundState.end) {
+        // If no longer matching, trigger end of the table
+        return true;
       }
-      foundState.start = true;
-    }
-    // This doesn't go in an `else` for the above in case the start is the end
-    if (endsRaw.every((part, i) => {
-      const rowIDPart = rowIDParts[i];
-      return part === rowIDPart;
-    })) {
-      foundState.end = true;
-    } else if (foundState.end) {
-      // If no longer matching, trigger end of the table
-      return true;
-    }
-    return rowIDPartsPreferred.join('-'); // rowID;
+      return rowIDPartsPreferred.join('-'); // rowID;
+    };
   };
-
-  const getCheckedAndInterlinearFieldInfo = ({
-    localizedFieldNames
-  }) => {
+  const getCheckedAndInterlinearFieldInfo = _ref10 => {
+    let {
+      localizedFieldNames
+    } = _ref10;
     let i = 1;
     let field, checked;
     let checkedFields = [];
@@ -17902,12 +17921,13 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     });
     return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
   };
-  const getCaption = ({
-    starts,
-    ends,
-    applicableBrowseFieldNames,
-    heading
-  }) => {
+  const getCaption = _ref11 => {
+    let {
+      starts,
+      ends,
+      applicableBrowseFieldNames,
+      heading
+    } = _ref11;
     let caption;
     const hasCaption = $pRaw('caption') !== '0';
     if (hasCaption) {
@@ -17947,7 +17967,6 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
             : ' ' // e.g., for 2nd space in "Surah 2 5-8"
             );
           }
-
           endVals.push(ends[i]);
           return ret + startSep;
         }, '').slice(0, -startSep.length);
@@ -17967,12 +17986,13 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     }
     return [hasCaption, caption];
   };
-  const runPresort = ({
-    presort,
-    tableData,
-    applicableBrowseFieldNames,
-    localizedFieldNames
-  }) => {
+  const runPresort = _ref12 => {
+    let {
+      presort,
+      tableData,
+      applicableBrowseFieldNames,
+      localizedFieldNames
+    } = _ref12;
     // Todo: Ought to be checking against an aliased table
     if (presort) {
       tableData.sort((rowA, rowB) => {
@@ -17984,22 +18004,23 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
           precedence = rowBFirst ? 1 : -1;
           return rowAFirst || rowBFirst; // Keep going if 0
         });
-
         return precedence;
       });
     }
   };
-  const getFieldValueAliasMap = ({
-    schemaItems,
-    fieldInfo,
-    metadataObj,
-    getFieldAliasOrName,
-    usePreferAlias
-  }) => {
-    return fieldInfo.map(({
-      field,
-      plugin
-    }) => {
+  const getFieldValueAliasMap = _ref13 => {
+    let {
+      schemaItems,
+      fieldInfo,
+      metadataObj,
+      getFieldAliasOrName,
+      usePreferAlias
+    } = _ref13;
+    return fieldInfo.map(_ref14 => {
+      let {
+        field,
+        plugin
+      } = _ref14;
       if (plugin) {
         return undefined;
       }
@@ -18017,7 +18038,8 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
         return preferAlias !== false ? fieldValueAliasMap : undefined;
       }
       if (fieldValueAliasMap) {
-        Object.entries(fieldValueAliasMap).forEach(([key, val]) => {
+        Object.entries(fieldValueAliasMap).forEach(_ref15 => {
+          let [key, val] = _ref15;
           if (Array.isArray(val)) {
             fieldValueAliasMap[key] = val.map(value => {
               return Templates.resultsDisplayServerOrClient.fieldValueAlias({
@@ -18034,7 +18056,8 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
                 value: val[preferAlias]
               });
             } else {
-              Object.entries(val).forEach(([k, value]) => {
+              Object.entries(val).forEach(_ref16 => {
+                let [k, value] = _ref16;
                 fieldValueAliasMap[key][k] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
                   key,
                   value
@@ -18084,13 +18107,12 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     }
     return key; // || p; // $p.get(param, true);
   };
-
   const escapeCSS = escapeHTML;
   const $pRawEsc = param => escapeHTML($pRaw(param));
   const $pEscArbitrary = param => escapeHTML($p.get(param, true));
 
   // Not currently in use
-  const escapeQuotedCSS = s => s.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
+  const escapeQuotedCSS = s => s.replaceAll('\\', '\\\\').replaceAll('"', String.raw`\"`);
   const {
     fileData,
     workI18n,
@@ -18117,20 +18139,22 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     schemaItems,
     getFieldAliasOrName,
     lang,
-    callback({
-      setName,
-      browseFields,
-      presort
-    }) {
+    callback(_ref17) {
+      let {
+        setName,
+        browseFields,
+        presort
+      } = _ref17;
       setNames.push(setName);
       presorts.push(presort);
       browseFieldSets.push(browseFields);
     }
   });
-  const fieldInfo = schemaItems.map(({
-    title: field,
-    format
-  }) => {
+  const fieldInfo = schemaItems.map(_ref18 => {
+    let {
+      title: field,
+      format
+    } = _ref18;
     return {
       field,
       fieldAliasOrName: getFieldAliasOrName(field) || field,
@@ -18147,23 +18171,25 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     const {
       lang
     } = this; // array with first item as preferred
-    pluginsForWork.iterateMappings(({
-      // plugin,
-      pluginName,
-      pluginLang,
-      onByDefaultDefault,
-      placement,
-      applicableFields,
-      meta
-    }) => {
+    pluginsForWork.iterateMappings(_ref19 => {
+      let {
+        // plugin,
+        pluginName,
+        pluginLang,
+        onByDefaultDefault,
+        placement,
+        applicableFields,
+        meta
+      } = _ref19;
       placement = placement === 'end' ? Number.POSITIVE_INFINITY // push
       : placement;
-      const processField = ({
-        applicableField,
-        targetLanguage,
-        onByDefault,
-        metaApplicableField
-      } = {}) => {
+      const processField = function () {
+        let {
+          applicableField,
+          targetLanguage,
+          onByDefault,
+          metaApplicableField
+        } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
         const plugin = pluginsForWork.getPluginObject(pluginName) || {};
         const applicableFieldLang = metadata.getFieldLang(applicableField);
         if (plugin.getTargetLanguage) {
@@ -18229,9 +18255,10 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   }
   const localizedFieldNames = fieldInfo.map(fi => fi.fieldAliasOrName);
   const escapeColumnIndexes = fieldInfo.map(fi => fi.escapeColumn);
-  const fieldLangs = fieldInfo.map(({
-    fieldLang
-  }) => {
+  const fieldLangs = fieldInfo.map(_ref20 => {
+    let {
+      fieldLang
+    } = _ref20;
     return fieldLang !== preferredLocale ? fieldLang : null;
   });
   const fieldValueAliasMap = getFieldValueAliasMap({
@@ -18254,8 +18281,20 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
   const lParam = localizeParamNames ? key => l(['params', key]) : key => key;
   const lIndexedParam = localizeParamNames ? key => l(['params', 'indexed', key]) : key => key;
-  const lParamRaw = localizeParamNames ? (key, suffix = '') => $p.get(lParam(key) + suffix, true) : (key, suffix = '') => $p.get(key + suffix, true);
-  const lIndexedParamRaw = localizeParamNames ? (key, suffix = '') => $p.get($p.get('work') + '-' + lIndexedParam(key) + suffix, true) : (key, suffix = '') => $p.get($p.get('work') + '-' + key + suffix, true);
+  const lParamRaw = localizeParamNames ? function (key) {
+    let suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    return $p.get(lParam(key) + suffix, true);
+  } : function (key) {
+    let suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    return $p.get(key + suffix, true);
+  };
+  const lIndexedParamRaw = localizeParamNames ? function (key) {
+    let suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    return $p.get($p.get('work') + '-' + lIndexedParam(key) + suffix, true);
+  } : function (key) {
+    let suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    return $p.get($p.get('work') + '-' + key + suffix, true);
+  };
 
   // Now that we know `browseFieldSets`, we can parse `startEnd`
   const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) => {
@@ -18340,7 +18379,8 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
         // Look to dealias
         const fvEntries = Object.entries(rawFieldValueAliasMap);
         if (Array.isArray(fvEntries[0][1])) {
-          fvEntries.some(([key, arr]) => {
+          fvEntries.some(_ref21 => {
+            let [key, arr] = _ref21;
             if (arr.includes(v)) {
               dealiased = key;
               return true;
@@ -18348,7 +18388,8 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
             return false;
           });
         } else {
-          fvEntries.some(([key, obj]) => {
+          fvEntries.some(_ref22 => {
+            let [key, obj] = _ref22;
             const arr = Object.values(obj);
             if (arr.includes(v)) {
               dealiased = key;
@@ -18379,11 +18420,12 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
       // Todo: Fetch the work in code based on the non-localized `datafileName`
       const dbName = this.namespace + '-textbrowser-cache-data';
       const req = indexedDB.open(dbName);
-      req.onsuccess = ({
-        target: {
-          result: db
-        }
-      }) => {
+      req.onsuccess = _ref23 => {
+        let {
+          target: {
+            result: db
+          }
+        } = _ref23;
         const storeName = 'files-to-cache-' + unlocalizedWorkName;
         const trans = db.transaction(storeName);
         const store = trans.objectStore(storeName);
@@ -18395,11 +18437,12 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
         // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
 
         const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
-        r.onsuccess = ({
-          target: {
-            result
-          }
-        }) => {
+        r.onsuccess = _ref24 => {
+          let {
+            target: {
+              result
+            }
+          } = _ref24;
           const converted = result.map(r => r.value);
           resolve(converted);
         };
@@ -18439,10 +18482,11 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     }
   }
   if (!usingServerData && pluginsForWork) {
-    fieldInfo.forEach(({
-      plugin,
-      placement
-    }) => {
+    fieldInfo.forEach(_ref25 => {
+      let {
+        plugin,
+        placement
+      } = _ref25;
       if (!plugin) {
         return;
       }
@@ -18452,20 +18496,21 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
         );
       });
     });
-
-    fieldInfo.forEach(({
-      plugin,
-      applicableField,
-      fieldLang,
-      meta,
-      metaApplicableField
-    }, j) => {
+    fieldInfo.forEach((_ref26, j) => {
+      let {
+        plugin,
+        applicableField,
+        fieldLang,
+        meta,
+        metaApplicableField
+      } = _ref26;
       if (!plugin) {
         return;
       }
-      const applicableFieldIdx = fieldInfo.findIndex(({
-        field
-      }) => {
+      const applicableFieldIdx = fieldInfo.findIndex(_ref27 => {
+        let {
+          field
+        } = _ref27;
         return field === applicableField;
       });
       // Now safe to pass (and set) `j` value as tr array expanded
@@ -18555,8 +18600,6 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     templateArgs
   };
 };
-
-/* eslint-enable no-unused-vars, @stylistic/brace-style */
 
 /**
  *
@@ -18660,7 +18703,7 @@ async function requestPermissions(langs, l) {
           // rememberRefusal();
           resolve();
           return;
-        // eslint-disable-next-line sonarjs/no-duplicated-branches
+        // eslint-disable-next-line sonarjs/no-duplicated-branches -- Ease of maintenance
         case 'default':
           resolve();
           return;
@@ -18695,7 +18738,7 @@ class TextBrowser {
     const stylesheets = options.stylesheets || ['@builtin'];
     const builtinIndex = stylesheets.indexOf('@builtin');
     if (builtinIndex !== -1) {
-      stylesheets.splice(builtinIndex, 1, new URL(new URL('assets/index-_11XnUty.css', import.meta.url).href, import.meta.url).href);
+      stylesheets.splice(builtinIndex, 1, new URL(new URL('assets/index-D_XVedS3.css', import.meta.url).href, import.meta.url).href);
     }
     this.stylesheets = stylesheets;
     setServiceWorkerDefaults(this, options);
@@ -18735,10 +18778,11 @@ class TextBrowser {
   }
   getWorkData(opts) {
     try {
-      return getWorkData.call(this, _objectSpread2$1(_objectSpread2$1({}, opts), {}, {
+      return getWorkData.call(this, {
+        ...opts,
         files: this.files,
         allowPlugins: this.allowPlugins
-      }));
+      });
     } catch (err) {
       console.log('err', err);
       dialogs.alert('catch:' + err);
@@ -18758,14 +18802,16 @@ class TextBrowser {
     });
   }
   getFieldNameAndValueAliases(args) {
-    return getFieldNameAndValueAliases(_objectSpread2$1(_objectSpread2$1({}, args), {}, {
+    return getFieldNameAndValueAliases({
+      ...args,
       lang: this.lang
-    }));
+    });
   }
   getBrowseFieldData(args) {
-    return getBrowseFieldData(_objectSpread2$1(_objectSpread2$1({}, args), {}, {
+    return getBrowseFieldData({
+      ...args,
       lang: this.lang
-    }));
+    });
   }
   async paramChange() {
     Templates.defaultBody();
@@ -18784,7 +18830,6 @@ class TextBrowser {
         empty: true
       }), document.title, url);
       // Get and set new state within URL
-      // eslint-disable-next-line n/callback-return
       cb();
       location.hash = '#' + $p.toString();
     };
@@ -18809,10 +18854,11 @@ class TextBrowser {
       messageStyle: 'plainNested',
       locales: lang,
       defaultLocales: fallbackLanguages,
-      localeStringFinder({
-        locales,
-        defaultLocales
-      }) {
+      localeStringFinder(_ref) {
+        let {
+          locales,
+          defaultLocales
+        } = _ref;
         const locale = [...locales, ...defaultLocales].find(language => {
           return language in localizationStrings;
         });

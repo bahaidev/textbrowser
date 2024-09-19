@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-/* eslint-env node */
+/* eslint-env node -- Environment here */
 import http from 'http';
 
 import statik from '@brettz9/node-static';
@@ -100,6 +100,7 @@ setGlobalVars(null, {
 }); // Adds `indexedDB` and `IDBKeyRange` to global in Node
 
 if (userParams.nodeActivate) {
+  // eslint-disable-next-line n/no-unsupported-features/node-builtins -- node-fetch
   global.fetch = fetch;
   await activateCallback({...userParamsWithDefaults, basePath});
   console.log('Activated');
@@ -131,7 +132,6 @@ const srv = http.createServer(async (req, res) => {
      * @returns {Promise<void>}
      */
     const runHttpServer = async function () {
-      // eslint-disable-next-line no-unsanitized/method -- Site-specified plugin
       const server = (await import(userParams.httpServer)).default();
       return await server(
         req,
@@ -146,13 +146,12 @@ const srv = http.createServer(async (req, res) => {
       );
     };
     if (userParams.expressServer) {
-      // eslint-disable-next-line no-unsanitized/method -- Site-specified plugin
       const app = (await import(userParams.expressServer)).default();
 
       if (userParams.httpServer && (!app._router || !app._router.stack.some(({regexp}) => {
         // Hack to ignore middleware like jsonParser (and hopefully
         //   not get any other)
-        return regexp.source !== '^\\/?(?=\\/|$)' && regexp.test(req.url);
+        return regexp.source !== String.raw`^\/?(?=\\/|$)` && regexp.test(req.url);
       }))) {
         await runHttpServer();
 
@@ -182,7 +181,8 @@ const srv = http.createServer(async (req, res) => {
     */
     return;
   }
-  const languages = (req.headers['accept-language']?.replace(/;q=.*?$/, '') ?? 'en-US').split(',');
+  const languages = (req.headers['accept-language']?.replace(/;q=.*$/, '') ?? 'en-US').split(',');
+  // eslint-disable-next-line n/no-unsupported-features/node-builtins -- Polyglot reasons
   global.navigator = {
     language: languages[0],
     languages

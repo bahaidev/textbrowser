@@ -1,13 +1,8 @@
 {
     "presets": [
-        ["@babel/preset-env", {
-          "targets": {
-            "node": "10.11.0"
-          }
-        }]
+        ["@babel/preset-env"]
     ],
     "plugins": [
-      "@babel/syntax-dynamic-import",
-      "@babel/proposal-object-rest-spread"
+      "@babel/syntax-dynamic-import"
     ]
 }

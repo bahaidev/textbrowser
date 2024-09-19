@@ -1,8 +1,7 @@
-/* eslint-env browser */
 import {jml, $} from 'jamilih';
 import {deserialize as formDeserialize} from 'form-serialization';
 
-export default ({groups, workI18n, getNextAlias, $p, followParams}) => {
+const workSelect = function ({groups, workI18n, getNextAlias, $p, followParams}) {
   const form = jml(
     'form',
     {id: 'workSelect', class: 'focus', $on: {
@@ -55,3 +54,5 @@ export default ({groups, workI18n, getNextAlias, $p, followParams}) => {
   }
   return form;
 };
+
+export default workSelect;

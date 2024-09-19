@@ -1,8 +1,6 @@
-/* eslint-disable import/unambiguous -- Imports are boostrapped */
+// /* eslint-disable import/unambiguous -- Imports are boostrapped */
 /* globals path, appBase, JsonRefs, Ajv,
     getJSON, __dirname -- Polyglot */
-
-/* eslint-disable no-console -- Test file */
 
 const schemaBase = appBase + 'general-schemas/';
 const localesBase = appBase + 'locales/';
