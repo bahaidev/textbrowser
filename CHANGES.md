@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.49.1
+
+- fix: apparent regression with `nodeActivate`
+
 ## 0.49.0
 
 - fix: `exports` path

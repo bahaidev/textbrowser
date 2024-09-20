@@ -102,7 +102,9 @@ setGlobalVars(null, {
 if (userParams.nodeActivate) {
   // eslint-disable-next-line n/no-unsupported-features/node-builtins -- node-fetch
   global.fetch = fetch;
-  await activateCallback({...userParamsWithDefaults, basePath});
+  setTimeout(async () => {
+    await activateCallback({...userParamsWithDefaults, basePath});
+  });
   console.log('Activated');
 }
 console.log('past activate check');

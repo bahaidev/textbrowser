@@ -1,68 +1,69 @@
-/* eslint-disable node/no-unsupported-features/es-syntax */
-
 /**
- * @callback getJSONCallback
- * @param {string|string[]} jsonURL
- * @param {SimpleJSONCallback} cb
- * @param {SimpleJSONErrback} errBack
- * @returns {Promise<JSON>}
+ * @typedef {JSONValue[]} JSONArray
+ */
+/**
+ * @typedef {null|boolean|number|string|JSONArray|{[key: string]: JSONValue}} JSONValue
  */
 
 /**
- * @param {PlainObject} cfg
- * @param {fetch} cfg.fetch
+* @callback SimpleJSONCallback
+* @param {...JSONValue} json
+* @returns {void}
+*/
+
+/**
+* @callback SimpleJSONErrback
+* @param {Error} err
+* @param {string|string[]} jsonURL
+* @returns {JSONValue}
+*/
+
+/**
+ * @typedef {((
+ *   jsonURL: string|string[],
+ *   cb?: SimpleJSONCallback,
+ *   errBack?: SimpleJSONErrback
+ * ) => Promise<JSONValue>) & {
+ *   _fetch?: import('./index-polyglot.js').SimpleFetch,
+ *   hasURLBasePath?: boolean,
+ *   basePath?: string|false
+ * }} getJSONCallback
+ */
+
+/**
+ * @param {object} [cfg]
+ * @param {import('./index-polyglot.js').SimpleFetch} [cfg.fetch]
  * @returns {getJSONCallback}
  */
-function _await$2$1(value, then, direct) {
 
+function _await$2$1(value, then, direct) {
   if (!value || !value.then) {
     value = Promise.resolve(value);
   }
-
   return then ? value.then(then) : value;
 }
-
 function _invoke$1(body, then) {
   var result = body();
-
   if (result && result.then) {
     return result.then(then);
   }
-
   return then(result);
 }
-
 function _catch$2(body, recover) {
   try {
     var result = body();
   } catch (e) {
     return recover(e);
   }
-
   if (result && result.then) {
     return result.then(void 0, recover);
   }
-
   return result;
 }
-
 function buildGetJSONWithFetch({
-  // eslint-disable-next-line no-shadow
+  // eslint-disable-next-line no-shadow, no-undef -- This is a polyfill
   fetch = typeof window !== 'undefined' ? window.fetch : self.fetch
 } = {}) {
-  /**
-  * @callback SimpleJSONCallback
-  * @param {JSON} json
-  * @returns {void}
-  */
-
-  /**
-  * @callback SimpleJSONErrback
-  * @param {Error} err
-  * @param {string|string[]} jsonURL
-  * @returns {void}
-  */
-
   /**
   * @type {getJSONCallback}
   */
@@ -73,13 +74,12 @@ function buildGetJSONWithFetch({
         return _invoke$1(function () {
           if (Array.isArray(jsonURL)) {
             return _await$2$1(Promise.all(jsonURL.map(url => {
-              return getJSON(url);
+              return /** @type {getJSONCallback} */getJSON(url);
             })), function (arrResult) {
               if (cb) {
-                // eslint-disable-next-line node/callback-return, node/no-callback-literal, promise/prefer-await-to-callbacks
+                // eslint-disable-next-line promise/prefer-await-to-callbacks -- Old-style API
                 cb(...arrResult);
               }
-
               _exit = true;
               return arrResult;
             });
@@ -87,22 +87,22 @@ function buildGetJSONWithFetch({
         }, function (_result) {
           return _exit ? _result : _await$2$1(fetch(jsonURL), function (resp) {
             return _await$2$1(resp.json(), function (result) {
-              return typeof cb === 'function' // eslint-disable-next-line promise/prefer-await-to-callbacks
-              ? cb(result) : result; // https://github.com/bcoe/c8/issues/135
-
+              return typeof cb === 'function'
+              // eslint-disable-next-line promise/prefer-await-to-callbacks -- Old-style API
+              ? cb(result) : result;
+              // https://github.com/bcoe/c8/issues/135
               /* c8 ignore next */
             });
           });
         });
-      }, function (e) {
+      }, function (err) {
+        const e = /** @type {Error} */err;
         e.message += ` (File: ${jsonURL})`;
-
         if (errBack) {
           return errBack(e, jsonURL);
         }
-
-        throw e; // https://github.com/bcoe/c8/issues/135
-
+        throw e;
+        // https://github.com/bcoe/c8/issues/135
         /* c8 ignore next */
       }));
       /* c8 ignore next */
@@ -113,44 +113,43 @@ function buildGetJSONWithFetch({
 }
 
 function _await$1$1(value, then, direct) {
-
   if (!value || !value.then) {
     value = Promise.resolve(value);
   }
-
   return then ? value.then(then) : value;
 }
+/* globals process -- Node */
 
-/* eslint-disable node/no-unsupported-features/node-builtins,
-  node/no-unsupported-features/es-syntax, compat/compat */
 // Needed for polyglot support (no `path` in browser); even if
 //  polyglot using dynamic `import` not supported by Rollup (complaining
 //  of inability to do tree-shaking in UMD builds), still useful to delay
 //  path import for our testing, so that test can import this file in
 //  the browser without compilation without it choking
-let dirname, isWindows;
+
+/**
+ * @type {(directory: string) => string}
+ */
+let dirname;
+
+/** @type {boolean} */
 
 function _empty() {}
-/**
- * @param {string} path
- * @returns {string}
- */
-
-
+let isWindows;
 function _invokeIgnored(body) {
   var result = body();
-
   if (result && result.then) {
     return result.then(_empty);
   }
-}
+} /**
+   * @param {string} path
+   * @returns {string}
+   */
 
 function _async$1$1(f) {
   return function () {
     for (var args = [], i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
-
     try {
       return Promise.resolve(f.apply(this, args));
     } catch (e) {
@@ -158,11 +157,10 @@ function _async$1$1(f) {
     }
   };
 }
-
 const setDirname = _async$1$1(function () {
   return _invokeIgnored(function () {
     if (!dirname) {
-      return _await$1$1(import('path'), function (_import) {
+      return _await$1$1(import('node:path'), function (_import) {
         ({
           dirname
         } = _import);
@@ -170,23 +168,20 @@ const setDirname = _async$1$1(function () {
     }
   });
 });
-
 function fixWindowsPath(path) {
   if (!isWindows) {
     isWindows = process.platform === 'win32';
   }
-
-  return path.slice( // https://github.com/bcoe/c8/issues/135
-
+  return path.slice(
+  // https://github.com/bcoe/c8/issues/135
   /* c8 ignore next */
   isWindows ? 1 : 0);
 }
+
 /**
  * @param {string} url
  * @returns {string}
  */
-
-
 function getDirectoryForURL(url) {
   // Node should be ok with this, but transpiling
   //  to `require` doesn't work, so detect Windows
@@ -195,37 +190,36 @@ function getDirectoryForURL(url) {
   return fixWindowsPath(dirname(new URL(url).pathname));
 }
 
-/* eslint-disable node/no-unsupported-features/es-syntax */
+/* globals window, self -- Polyglot */
+
+/**
+ * @typedef {(url: string) => Promise<Response>} SimpleFetch
+ */
+
+/** @type {{default: SimpleFetch}} */
 
 function _await$3(value, then, direct) {
-
   if (!value || !value.then) {
     value = Promise.resolve(value);
   }
-
   return then ? value.then(then) : value;
 }
-
 let nodeFetch;
 /**
- * @param {PlainObject} cfg
- * @param {string} cfg.baseURL
- * @param {string} cfg.cwd
- * @returns {getJSONCallback}
+ * @param {object} [cfg]
+ * @param {string} [cfg.baseURL]
+ * @param {string|false} [cfg.cwd]
+ * @returns {import('./buildGetJSONWithFetch.js').getJSONCallback}
  */
 
 function _invoke$2(body, then) {
   var result = body();
-
   if (result && result.then) {
     return result.then(then);
   }
-
   return then(result);
 }
-
 function _call(body, then, direct) {
-
   try {
     var result = Promise.resolve(body());
     return then ? result.then(then) : result;
@@ -233,13 +227,11 @@ function _call(body, then, direct) {
     return Promise.reject(e);
   }
 }
-
 function _async$2(f) {
   return function () {
     for (var args = [], i = 0; i < arguments.length; i++) {
       args[i] = arguments[i];
     }
-
     try {
       return Promise.resolve(f.apply(this, args));
     } catch (e) {
@@ -247,24 +239,32 @@ function _async$2(f) {
     }
   };
 }
-
 function buildGetJSON({
   baseURL,
   cwd: basePath
 } = {}) {
-  const _fetch = typeof window !== 'undefined' || typeof self !== 'undefined' ? typeof window !== 'undefined' ? window.fetch : self.fetch : _async$2(function (jsonURL) {
+  const _fetch = typeof window !== 'undefined' || typeof self !== 'undefined' ? typeof window !== 'undefined' ? window.fetch : self.fetch
+  // eslint-disable-next-line @stylistic/operator-linebreak -- TS
+  :
+  /**
+  * @param {string} jsonURL
+  * @returns {Promise<Response>}
+  */
+  _async$2(function (jsonURL) {
     let _exit = false;
     return _invoke$2(function () {
       if (/^https?:/u.test(jsonURL)) {
         return _invoke$2(function () {
           if (!nodeFetch) {
-            return _await$3(import('node-fetch'), function (_import) {
+            return _await$3(import('node-fetch'), function (
+            /** @type {{default: SimpleFetch}} */
+            /** @type {unknown} */
+            _import) {
               nodeFetch = _import;
             });
           }
         }, function () {
-          const _nodeFetch$default = nodeFetch.default(jsonURL);
-
+          const _nodeFetch$default = /** @type {SimpleFetch} */nodeFetch.default(jsonURL);
           _exit = true;
           return _nodeFetch$default;
         });
@@ -280,48 +280,50 @@ function buildGetJSON({
         // Filed https://github.com/bergos/file-fetch/issues/12 to see
         //  about getting relative basePaths in `file-fetch` and using
         //  that better-tested package instead
+        // @ts-expect-error Todo
+        // Don't change to an import as won't resolve for browser testing
+        // eslint-disable-next-line promise/avoid-new -- own API
+        /* c8 ignore next */
         return _await$3(import('local-xmlhttprequest'), function (localXMLHttpRequest) {
-          // eslint-disable-next-line no-shadow
-          const XMLHttpRequest = localXMLHttpRequest.default({
+          const XMLHttpRequest = /* eslint-disable jsdoc/valid-types -- Bug */
+          /**
+           * @type {{
+           *   prototype: XMLHttpRequest;
+           *   new(): XMLHttpRequest
+           * }}
+           */localXMLHttpRequest.default({
+            /* eslint-enable jsdoc/valid-types -- Bug */
             basePath
-          }); // Don't change to an import as won't resolve for browser testing
-          // eslint-disable-next-line promise/avoid-new
-
+          });
           return new Promise((resolve, reject) => {
             const r = new XMLHttpRequest();
-            r.open('GET', jsonURL, true); // r.responseType = 'json';
+            r.open('GET', jsonURL, true);
+            // r.responseType = 'json';
             // eslint-disable-next-line unicorn/prefer-add-event-listener -- May not be available
-
             r.onreadystatechange = function () {
               // Not sure how to simulate `if`
-
-              /* c8 ignore next */
+              /* c8 ignore next 3 */
               if (r.readyState !== 4) {
                 return;
               }
-
               if (r.status === 200) {
                 // var json = r.json;
                 const response = r.responseText;
-                resolve({
+                resolve(/** @type {Response} */{
                   json: () => JSON.parse(response)
                 });
                 return;
               }
-
               reject(new SyntaxError('Failed to fetch URL: ' + jsonURL + 'state: ' + r.readyState + '; status: ' + r.status));
             };
-
-            r.send(); // https://github.com/bcoe/c8/issues/135
-
+            r.send();
+            // https://github.com/bcoe/c8/issues/135
             /* c8 ignore next */
           });
-          /* c8 ignore next */
         });
       });
     });
   });
-
   const ret = buildGetJSONWithFetch({
     fetch: _fetch
   });
@@ -330,7 +332,6 @@ function buildGetJSON({
   ret.basePath = basePath;
   return ret;
 }
-
 const getJSON = buildGetJSON();
 
 function _iterableToArrayLimit(arr, i) {
