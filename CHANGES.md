@@ -1,5 +1,11 @@
 # CHANGES to `textbrowser`
 
+## 0.50.0
+
+- fix: revert apparent indexeddbshim regression
+
+Versions past 12 have some apparent node-sqlite3 issues (after rollup, can't run server script)
+
 ## 0.49.1
 
 - fix: apparent regression with `nodeActivate`
