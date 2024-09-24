@@ -1,5 +1,13 @@
 # CHANGES to `textbrowser`
 
+## 0.51.0
+
+- feat: TS support
+- fix: `rememberRefusal` was not checking properly
+- fix: request permissions would have been erring out
+- fix: ensure `showEmptyInterlinear` and `showTitleOnSingleInterlinear` are
+    being passed on
+
 ## 0.50.0
 
 - fix: revert apparent indexeddbshim regression
