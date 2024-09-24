@@ -31,7 +31,7 @@ export function escapePlugin({ pluginName, applicableField, targetLanguage }: {
  *     },
  *     $p: import('./IntlURLSearchParams.js').default,
  *     thisObj: import('../index.js').default|import('../../server/main.js').ResultsDisplayServerContext
- *   }) => void,
+ *   }) => string|Integer,
  *   done: (info: {
  *     $p: import('./IntlURLSearchParams.js').default,
  *     applicableField: string|undefined,
@@ -221,7 +221,7 @@ export type PluginObject = {
         };
         $p: import("./IntlURLSearchParams.js").default;
         thisObj: import("../index.js").default | import("../../server/main.js").ResultsDisplayServerContext;
-    }) => void;
+    }) => string | Integer;
     done: (info: {
         $p: import("./IntlURLSearchParams.js").default;
         applicableField: string | undefined;
