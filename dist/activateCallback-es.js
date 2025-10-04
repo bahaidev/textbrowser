@@ -13,11 +13,13 @@
  */
 const {ceil} = Math;
 
+/* eslint-disable jsdoc/reject-any-type -- Generic */
 /**
  * @param {any[]} arr
  * @param {number} size
  */
 const arrayChunk = (arr, size) => {
+  /* eslint-enable jsdoc/reject-any-type -- Generic */
   return Array.from({length: ceil(arr.length / size)}, (_, i) => {
     const offset = i * size;
     return arr.slice(offset, offset + size);
@@ -30,11 +32,13 @@ const arrayChunk = (arr, size) => {
 //          files in cache?
 // Todo: Check `oldVersion` and run this first if still too old
 
+/* eslint-disable jsdoc/reject-any-type -- Generic */
 /**
 * @callback Logger
 * @param {...any} args
 * @returns {void}
 */
+/* eslint-enable jsdoc/reject-any-type -- Generic */
 
 /**
  * @param {object} cfg
@@ -57,11 +61,13 @@ async function activateCallback ({
     await r.json()
   );
 
+  /* eslint-disable jsdoc/reject-any-type -- Generic */
   /**
    * @param {any[]} arr
    * @param {string} path
    */
   const addJSONFetch = (arr, path) => {
+    /* eslint-enable jsdoc/reject-any-type -- Generic */
     arr.push(
       (async () => (await fetch(basePath + path)).json())()
     );
@@ -182,6 +188,8 @@ async function activateCallback ({
           //   need to transform them to objects! See https://github.com/w3c/IndexedDB/issues/209
 
           /**
+           * The `value` property alone contains the latter
+           *   `(Integer|string)[]` value.
            * @type {{
            *   [key: string]: string|Integer|(Integer|string)[]
            * }}
@@ -190,6 +198,7 @@ async function activateCallback ({
             value: tableRow
           };
           uniqueColumnIndexes.forEach((colIdx) => {
+            // Indexed like c0, c1, c2, etc.
             objRow[colIdx] = tableRow[Number.parseInt(colIdx.slice(1))];
           });
           // log('objRow', objRow);

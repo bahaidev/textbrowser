@@ -340,15 +340,15 @@ function _iterableToArrayLimit$1(arr, i) {
       _x,
       _r,
       _arr = [],
-      _n = !0,
-      _d = !1;
+      _n = true,
+      _d = false;
     try {
       if (_x = (_i = _i.call(arr)).next, 0 === i) {
         if (Object(_i) !== _i) return;
         _n = !1;
       } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0);
     } catch (err) {
-      _d = !0, _e = err;
+      _d = true, _e = err;
     } finally {
       try {
         if (!_n && null != _i.return && (_r = _i.return(), Object(_r) !== _r)) return;
@@ -372,7 +372,7 @@ function ownKeys(object, enumerableOnly) {
 function _objectSpread2(target) {
   for (var i = 1; i < arguments.length; i++) {
     var source = null != arguments[i] ? arguments[i] : {};
-    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+    i % 2 ? ownKeys(Object(source), true).forEach(function (key) {
       _defineProperty(target, key, source[key]);
     }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
       Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
@@ -578,7 +578,7 @@ function _toPrimitive(input, hint) {
   if (typeof input !== "object" || input === null) return input;
   var prim = input[Symbol.toPrimitive];
   if (prim !== undefined) {
-    var res = prim.call(input, hint || "default");
+    var res = prim.call(input, hint);
     if (typeof res !== "object") return res;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
@@ -3038,7 +3038,6 @@ var i18nServer = function i18nServer(_ref) {
     keyCheckerConverter = _ref$keyCheckerConver === void 0 ? defaultKeyCheckerConverter : _ref$keyCheckerConver,
     defaultDefaults = _ref.defaults,
     defaultSubstitutions = _ref.substitutions,
-    maximumLocalNestingDepth = _ref.maximumLocalNestingDepth,
     _ref$dom = _ref.dom,
     domDefaults = _ref$dom === void 0 ? false : _ref$dom,
     _ref$forceNodeReturn = _ref.forceNodeReturn,
@@ -3084,7 +3083,6 @@ var i18nServer = function i18nServer(_ref) {
       locals: strings.head && strings.head.locals,
       switches: strings.head && strings.head.switches,
       locale: resolvedLocale,
-      maximumLocalNestingDepth: maximumLocalNestingDepth,
       allSubstitutions: allSubstitutions,
       insertNodes: insertNodes,
       substitutions: _objectSpread2(_objectSpread2({}, defaultSubstitutions), substitutions),
@@ -3759,15 +3757,14 @@ function deserialize(form, hash) {
  *   basePath?: string
  * }} options
  */
-async function getLocaleFallbackResults(_ref) {
-  let {
-    $p,
-    lang,
-    langs,
-    langData,
-    fallbackLanguages,
-    basePath = ''
-  } = _ref;
+async function getLocaleFallbackResults({
+  $p,
+  lang,
+  langs,
+  langData,
+  fallbackLanguages,
+  basePath = ''
+}) {
   const l = await i18n({
     messageStyle: 'plainNested',
     locales: lang,
@@ -3785,7 +3782,9 @@ async function getLocaleFallbackResults(_ref) {
   if (!$p.l10n) {
     $p.l10n = l;
   }
-  return l;
+
+  // Not sure why cast needed here, but works...
+  return /** @type {import('intl-dom').I18NCallback} */l;
 }
 
 /*
@@ -5805,11 +5804,9 @@ jml.toJML = function (nde, {
  * @returns {string}
  */
 jml.toJMLString = function (dom, config) {
-  return /** @type {string} */(
-    jml.toJML(dom, Object.assign(config || {}, {
-      stringOutput: true
-    }))
-  );
+  return /** @type {string} */jml.toJML(dom, Object.assign(config || {}, {
+    stringOutput: true
+  }));
 };
 
 /**
@@ -6153,11 +6150,10 @@ class Dialog {
    *  localeObject?: LocaleObject
    * }} [cfg]
    */
-  constructor() {
-    let {
-      locale,
-      localeObject
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  constructor({
+    locale,
+    localeObject
+  } = {}) {
     this.localeStrings = localeStrings.en; // For types
     this.setLocale({
       locale,
@@ -6171,11 +6167,10 @@ class Dialog {
    * }} cfg
    * @returns {void}
    */
-  setLocale(_ref) {
-    let {
-      locale,
-      localeObject = {}
-    } = _ref;
+  setLocale({
+    locale,
+    localeObject = {}
+  }) {
     this.localeStrings = {
       ...localeStrings[defaultLocale],
       ...(locale ? localeStrings[locale] : {}),
@@ -6213,15 +6208,14 @@ class Dialog {
    * @param {MakeDialogCfg} cfg
    * @returns {HTMLDialogElement}
    */
-  makeDialog(_ref2) {
-    let {
-      atts = {
-        $on: null
-      },
-      children = [],
-      close,
-      remove = true
-    } = _ref2;
+  makeDialog({
+    atts = {
+      $on: null
+    },
+    children = [],
+    close,
+    remove = true
+  }) {
     if (close) {
       if (!atts.$on) {
         atts.$on = {};
@@ -6244,13 +6238,12 @@ class Dialog {
    * @param {CancelDialogCfg} cfg
    * @returns {HTMLDialogElement}
    */
-  makeSubmitDialog(_ref3) {
-    let {
-      submit,
-      // Don't pass this on to `args` if present
-      submitClass = 'submit',
-      ...args
-    } = _ref3;
+  makeSubmitDialog({
+    submit,
+    // Don't pass this on to `args` if present
+    submitClass = 'submit',
+    ...args
+  }) {
     const dialog = this.makeCancelDialog(args);
     /** @type {HTMLDialogElement} */
     $e(dialog, `button.${args.cancelClass || 'cancel'}`).before(jml('button', {
@@ -6273,16 +6266,15 @@ class Dialog {
    * @param {CancelDialogCfg} cfg
    * @returns {HTMLDialogElement}
    */
-  makeCancelDialog(_ref4) {
-    let {
-      // eslint-disable-next-line no-unused-vars -- Discarding
-      submit,
-      // Don't pass this on to `args` if present
-      cancel,
-      cancelClass = 'cancel',
-      submitClass = 'submit',
-      ...args
-    } = _ref4;
+  makeCancelDialog({
+    // eslint-disable-next-line no-unused-vars -- Discarding
+    submit,
+    // Don't pass this on to `args` if present
+    cancel,
+    cancelClass = 'cancel',
+    submitClass = 'submit',
+    ...args
+  }) {
     const dialog = this.makeDialog(args);
     jml('div', {
       class: submitClass
@@ -6356,11 +6348,10 @@ class Dialog {
        *   dialog: HTMLDialogElement
        * }} args
        */
-      const submit = function (_ref5) {
-        let {
-          e,
-          dialog
-        } = _ref5;
+      const submit = function ({
+        e,
+        dialog
+      }) {
         if (userSubmit) {
           userSubmit.call(
           // @ts-expect-error Ok
@@ -6428,11 +6419,10 @@ const dialogs = new Dialog();
  *   preferredLocale: string
  * }} cfg
  */
-const getPreferredLanguages = _ref => {
-  let {
-    namespace,
-    preferredLocale
-  } = _ref;
+const getPreferredLanguages = ({
+  namespace,
+  preferredLocale
+}) => {
   // Todo: Add to this optionally with one-off tag input box
   // Todo: Switch to fallbackLanguages so can default to
   //    navigator.languages?
@@ -6464,10 +6454,9 @@ class Languages {
    *   langData: import('../../server/main.js').LanguagesData
    * }} cfg
    */
-  constructor(_ref2) {
-    let {
-      langData
-    } = _ref2;
+  constructor({
+    langData
+  }) {
     this.langData = langData;
   }
   /**
@@ -6505,7 +6494,7 @@ class Languages {
    *   pluginName: string,
    *   workI18n: import('intl-dom').I18NCallback,
    *   targetLanguage: string,
-   *   applicableFieldI18N: string,
+   *   applicableFieldI18N: string|string[],
    *   meta: {
    *     [key: string]: string
    *   },
@@ -6515,16 +6504,15 @@ class Languages {
    * }} cfg
    * @returns {string}
    */
-  getFieldNameFromPluginNameAndLocales(_ref3) {
-    let {
-      pluginName,
-      // locales,
-      workI18n,
-      targetLanguage,
-      applicableFieldI18N,
-      meta,
-      metaApplicableField
-    } = _ref3;
+  getFieldNameFromPluginNameAndLocales({
+    pluginName,
+    // locales,
+    workI18n,
+    targetLanguage,
+    applicableFieldI18N,
+    meta,
+    metaApplicableField
+  }) {
     return /** @type {string} */workI18n(['plugins', pluginName, 'fieldname'], {
       ...meta,
       ...metaApplicableField,
@@ -6545,21 +6533,17 @@ class Languages {
    *   fallbackLanguages: string[]
    * }}
    */
-  getLanguageInfo(_ref4) {
-    let {
-      $p
-    } = _ref4;
+  getLanguageInfo({
+    $p
+  }) {
     const langs = this.langData.languages;
     /**
      * @param {string} lcl
      */
     const localePass = lcl => {
-      return langs.some(_ref5 => {
-        let {
-          code
-        } = _ref5;
-        return code === lcl;
-      }) ? lcl : false;
+      return langs.some(({
+        code
+      }) => code === lcl) ? lcl : false;
     };
     const languageParam = $p.get('lang', true);
     // Todo: We could (unless overridden by another button) assume the
@@ -6586,28 +6570,28 @@ var JsonRefs = function (t) {
     if (n[e]) return n[e].exports;
     var o = n[e] = {
       i: e,
-      l: !1,
+      l: false,
       exports: {}
     };
-    return t[e].call(o.exports, o, o.exports, r), o.l = !0, o.exports;
+    return t[e].call(o.exports, o, o.exports, r), o.l = true, o.exports;
   }
   return r.m = t, r.c = n, r.d = function (t, n, e) {
     r.o(t, n) || Object.defineProperty(t, n, {
-      enumerable: !0,
+      enumerable: true,
       get: e
     });
   }, r.r = function (t) {
     "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(t, Symbol.toStringTag, {
       value: "Module"
     }), Object.defineProperty(t, "__esModule", {
-      value: !0
+      value: true
     });
   }, r.t = function (t, n) {
     if (1 & n && (t = r(t)), 8 & n) return t;
     if (4 & n && "object" == typeof t && t && t.__esModule) return t;
     var e = Object.create(null);
     if (r.r(e), Object.defineProperty(e, "default", {
-      enumerable: !0,
+      enumerable: true,
       value: t
     }), 2 & n && "string" != typeof t) for (var o in t) r.d(e, o, function (n) {
       return t[n];
@@ -6819,20 +6803,20 @@ var JsonRefs = function (t) {
   }();
   var a,
     s = [],
-    f = !1,
+    f = false,
     l = -1;
   function p() {
-    f && a && (f = !1, a.length ? s = a.concat(s) : l = -1, s.length && h());
+    f && a && (f = false, a.length ? s = a.concat(s) : l = -1, s.length && h());
   }
   function h() {
     if (!f) {
       var t = c(p);
-      f = !0;
+      f = true;
       for (var n = s.length; n;) {
         for (a = s, s = []; ++l < n;) a && a[l].run();
         l = -1, n = s.length;
       }
-      a = null, f = !1, function (t) {
+      a = null, f = false, function (t) {
         if (e === clearTimeout) return clearTimeout(t);
         if ((e === u || !e) && clearTimeout) return e = clearTimeout, clearTimeout(t);
         try {
@@ -6857,7 +6841,7 @@ var JsonRefs = function (t) {
     s.push(new v(t, n)), 1 !== s.length || f || c(h);
   }, v.prototype.run = function () {
     this.fun.apply(null, this.array);
-  }, o.title = "browser", o.browser = !0, o.env = {}, o.argv = [], o.version = "", o.versions = {}, o.on = d, o.addListener = d, o.once = d, o.off = d, o.removeListener = d, o.removeAllListeners = d, o.emit = d, o.prependListener = d, o.prependOnceListener = d, o.listeners = function (t) {
+  }, o.title = "browser", o.browser = true, o.env = {}, o.argv = [], o.version = "", o.versions = {}, o.on = d, o.addListener = d, o.once = d, o.off = d, o.removeListener = d, o.removeAllListeners = d, o.emit = d, o.prependListener = d, o.prependOnceListener = d, o.listeners = function (t) {
     return [];
   }, o.binding = function (t) {
     throw new Error("process.binding is not supported");
@@ -6871,12 +6855,12 @@ var JsonRefs = function (t) {
 }, function (t, n) {
   t.exports = function (t) {
     return t.webpackPolyfill || (t.deprecate = function () {}, t.paths = [], t.children || (t.children = []), Object.defineProperty(t, "loaded", {
-      enumerable: !0,
+      enumerable: true,
       get: function () {
         return t.l;
       }
     }), Object.defineProperty(t, "id", {
-      enumerable: !0,
+      enumerable: true,
       get: function () {
         return t.i;
       }
@@ -6907,7 +6891,7 @@ var JsonRefs = function (t) {
   var e = r(8),
     o = r(5);
   t.exports = function (t) {
-    if (!o(t)) return !1;
+    if (!o(t)) return false;
     var n = e(t);
     return "[object Function]" == n || "[object GeneratorFunction]" == n || "[object AsyncFunction]" == n || "[object Proxy]" == n;
   };
@@ -7067,7 +7051,7 @@ var JsonRefs = function (t) {
       r.length > 1 ? e.setNode(t, n) : e.setNode(t);
     }), this;
   }, i.prototype.setNode = function (t, n) {
-    return o.has(this._nodes, t) ? (arguments.length > 1 && (this._nodes[t] = n), this) : (this._nodes[t] = arguments.length > 1 ? n : this._defaultNodeLabelFn(t), this._isCompound && (this._parent[t] = "\0", this._children[t] = {}, this._children["\0"][t] = !0), this._in[t] = {}, this._preds[t] = {}, this._out[t] = {}, this._sucs[t] = {}, ++this._nodeCount, this);
+    return o.has(this._nodes, t) ? (arguments.length > 1 && (this._nodes[t] = n), this) : (this._nodes[t] = arguments.length > 1 ? n : this._defaultNodeLabelFn(t), this._isCompound && (this._parent[t] = "\0", this._children[t] = {}, this._children["\0"][t] = true), this._in[t] = {}, this._preds[t] = {}, this._out[t] = {}, this._sucs[t] = {}, ++this._nodeCount, this);
   }, i.prototype.node = function (t) {
     return this._nodes[t];
   }, i.prototype.hasNode = function (t) {
@@ -7089,7 +7073,7 @@ var JsonRefs = function (t) {
       for (var r = n += ""; !o.isUndefined(r); r = this.parent(r)) if (r === t) throw new Error("Setting " + n + " as parent of " + t + " would create a cycle");
       this.setNode(n);
     }
-    return this.setNode(t), this._removeFromParentsChildList(t), this._parent[t] = n, this._children[n][t] = !0, this;
+    return this.setNode(t), this._removeFromParentsChildList(t), this._parent[t] = n, this._children[n][t] = true, this;
   }, i.prototype._removeFromParentsChildList = function (t) {
     delete this._children[this._parent[t]][t];
   }, i.prototype.parent = function (t) {
@@ -7153,9 +7137,9 @@ var JsonRefs = function (t) {
       n,
       r,
       i,
-      c = !1,
+      c = false,
       f = arguments[0];
-    "object" === e(f) && null !== f && "v" in f ? (t = f.v, n = f.w, r = f.name, 2 === arguments.length && (i = arguments[1], c = !0)) : (t = f, n = arguments[1], r = arguments[3], arguments.length > 2 && (i = arguments[2], c = !0)), t = "" + t, n = "" + n, o.isUndefined(r) || (r = "" + r);
+    "object" === e(f) && null !== f && "v" in f ? (t = f.v, n = f.w, r = f.name, 2 === arguments.length && (i = arguments[1], c = true)) : (t = f, n = arguments[1], r = arguments[3], arguments.length > 2 && (i = arguments[2], c = true)), t = "" + t, n = "" + n, o.isUndefined(r) || (r = "" + r);
     var l = a(this._isDirected, t, n, r);
     if (o.has(this._edgeLabels, l)) return c && (this._edgeLabels[l] = i), this;
     if (!o.isUndefined(r) && !this._isMultigraph) throw new Error("Cannot set a named edge when isMultigraph = false");
@@ -7228,7 +7212,7 @@ var JsonRefs = function (t) {
   a.prototype.clear = e, a.prototype.delete = o, a.prototype.get = i, a.prototype.has = u, a.prototype.set = c, t.exports = a;
 }, function (t, n) {
   t.exports = function (t, n) {
-    for (var r = -1, e = null == t ? 0 : t.length; ++r < e && !1 !== n(t[r], r, t););
+    for (var r = -1, e = null == t ? 0 : t.length; ++r < e && false !== n(t[r], r, t););
     return t;
   };
 }, function (t, n) {
@@ -7318,7 +7302,7 @@ var JsonRefs = function (t) {
     u = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
     c = /^\w*$/;
   t.exports = function (t, n) {
-    if (o(t)) return !1;
+    if (o(t)) return false;
     var r = e(t);
     return !("number" != r && "symbol" != r && "boolean" != r && null != t && !i(t)) || c.test(t) || !u.test(t) || null != n && t in Object(n);
   };
@@ -7381,10 +7365,10 @@ var JsonRefs = function (t) {
   var e = r(51);
   t.exports = function (t, n, r) {
     "__proto__" == n && e ? e(t, n, {
-      configurable: !0,
-      enumerable: !0,
+      configurable: true,
+      enumerable: true,
       value: r,
-      writable: !0
+      writable: true
     }) : t[n] = r;
   };
 }, function (t, n, r) {
@@ -7439,7 +7423,7 @@ var JsonRefs = function (t) {
     o = r(125),
     i = r(7);
   t.exports = function (t) {
-    return i(t) ? e(t, !0) : o(t);
+    return i(t) ? e(t, true) : o(t);
   };
 }, function (t, n) {
   t.exports = function (t, n) {
@@ -7523,11 +7507,11 @@ var JsonRefs = function (t) {
     var s = 1 & r,
       f = t.length,
       l = n.length;
-    if (f != l && !(s && l > f)) return !1;
+    if (f != l && !(s && l > f)) return false;
     var p = a.get(t);
     if (p && a.get(n)) return p == n;
     var h = -1,
-      v = !0,
+      v = true,
       d = 2 & r ? new e() : void 0;
     for (a.set(t, n), a.set(n, t); ++h < f;) {
       var y = t[h],
@@ -7535,18 +7519,18 @@ var JsonRefs = function (t) {
       if (u) var g = s ? u(_, y, h, n, t, a) : u(y, _, h, t, n, a);
       if (void 0 !== g) {
         if (g) continue;
-        v = !1;
+        v = false;
         break;
       }
       if (d) {
         if (!o(n, function (t, n) {
           if (!i(d, n) && (y === t || c(y, t, r, u, a))) return d.push(n);
         })) {
-          v = !1;
+          v = false;
           break;
         }
       } else if (y !== _ && !c(y, _, r, u, a)) {
-        v = !1;
+        v = false;
         break;
       }
     }
@@ -7600,7 +7584,7 @@ var JsonRefs = function (t) {
     c = r(34),
     a = r(27);
   t.exports = function (t, n, r) {
-    for (var s = -1, f = (n = e(n, t)).length, l = !1; ++s < f;) {
+    for (var s = -1, f = (n = e(n, t)).length, l = false; ++s < f;) {
       var p = a(n[s]);
       if (!(l = null != t && r(t, p))) break;
       t = t[p];
@@ -7670,9 +7654,9 @@ var JsonRefs = function (t) {
       return r[t] = i, o.push({
         key: t,
         priority: n
-      }), this._decrease(i), !0;
+      }), this._decrease(i), true;
     }
-    return !1;
+    return false;
   }, o.prototype.removeMin = function () {
     this._swap(0, this._arr.length - 1);
     var t = this._arr.pop();
@@ -7706,7 +7690,7 @@ var JsonRefs = function (t) {
     return t.nodes().forEach(function (u) {
       e.has(o, u) || function u(c) {
         var a = o[c] = {
-          onStack: !0,
+          onStack: true,
           lowlink: n,
           index: n++
         };
@@ -7716,7 +7700,7 @@ var JsonRefs = function (t) {
           var s,
             f = [];
           do {
-            s = r.pop(), o[s].onStack = !1, f.push(s);
+            s = r.pop(), o[s].onStack = false, f.push(s);
           } while (c !== s);
           i.push(f);
         }
@@ -7731,7 +7715,7 @@ var JsonRefs = function (t) {
       o = [];
     if (e.each(t.sinks(), function u(c) {
       if (e.has(r, c)) throw new i();
-      e.has(n, c) || (r[c] = !0, n[c] = !0, e.each(t.predecessors(c), u), delete r[c], o.push(c));
+      e.has(n, c) || (r[c] = true, n[c] = true, e.each(t.predecessors(c), u), delete r[c], o.push(c));
     }), e.size(n) !== t.nodeCount()) throw new i();
     return o;
   }
@@ -7747,7 +7731,7 @@ var JsonRefs = function (t) {
     return e.each(n, function (n) {
       if (!t.hasNode(n)) throw new Error("Graph does not have node: " + n);
       !function t(n, r, o, i, u, c) {
-        e.has(i, r) || (i[r] = !0, o || c.push(r), e.each(u(r), function (r) {
+        e.has(i, r) || (i[r] = true, o || c.push(r), e.each(u(r), function (r) {
           t(n, r, o, i, u, c);
         }), o && c.push(r));
       }(t, n, "post" === r, u, o, i);
@@ -7763,7 +7747,7 @@ var JsonRefs = function (t) {
         c,
         a = r.method ? r.method.toLowerCase() : "get";
       function s(t, r) {
-        t ? i(t) : ("[object process]" === Object.prototype.toString.call(void 0 !== n ? n : 0) && "function" == typeof r.buffer && r.buffer(!0), r.end(function (t, n) {
+        t ? i(t) : ("[object process]" === Object.prototype.toString.call(void 0 !== n ? n : 0) && "function" == typeof r.buffer && r.buffer(true), r.end(function (t, n) {
           t ? i(t) : i(void 0, n);
         }));
       }
@@ -7846,7 +7830,7 @@ var JsonRefs = function (t) {
         var n,
           r = this;
         if (!r.triggered) {
-          r.triggered = !0, r.def && (r = r.def);
+          r.triggered = true, r.def && (r = r.def);
           try {
             (n = c(t)) ? u(function () {
               var e = new v(r);
@@ -7867,7 +7851,7 @@ var JsonRefs = function (t) {
       }
       function p(t) {
         var n = this;
-        n.triggered || (n.triggered = !0, n.def && (n = n.def), n.msg = t, n.state = 2, n.chain.length > 0 && u(a, n));
+        n.triggered || (n.triggered = true, n.def && (n = n.def), n.msg = t, n.state = 2, n.chain.length > 0 && u(a, n));
       }
       function h(t, n, r, e) {
         for (var o = 0; o < n.length; o++) !function (o) {
@@ -7877,10 +7861,10 @@ var JsonRefs = function (t) {
         }(o);
       }
       function v(t) {
-        this.def = t, this.triggered = !1;
+        this.def = t, this.triggered = false;
       }
       function d(t) {
-        this.promise = t, this.state = 0, this.triggered = !1, this.chain = [], this.msg = void 0;
+        this.promise = t, this.state = 0, this.triggered = false, this.chain = [], this.msg = void 0;
       }
       function y(t) {
         if ("function" != typeof t) throw TypeError("Not a function");
@@ -7924,8 +7908,8 @@ var JsonRefs = function (t) {
           }
         };
       }();
-      var _ = t({}, "constructor", y, !1);
-      return y.prototype = _, t(_, "__NPO__", 0, !1), t(y, "resolve", function (t) {
+      var _ = t({}, "constructor", y, false);
+      return y.prototype = _, t(_, "__NPO__", 0, false), t(y, "resolve", function (t) {
         return t && "object" == s(t) && 1 === t.__NPO__ ? t : new this(function (n, r) {
           if ("function" != typeof n || "function" != typeof r) throw TypeError("Not a function");
           n(t);
@@ -8044,13 +8028,13 @@ var JsonRefs = function (t) {
       });
     }
     function x(t, n) {
-      var r = !0;
+      var r = true;
       try {
         if (!e.isPlainObject(t)) throw new Error("obj is not an Object");
         if (!e.isString(t.$ref)) throw new Error("obj.$ref is not a String");
       } catch (t) {
         if (n) throw t;
-        r = !1;
+        r = false;
       }
       return r;
     }
@@ -8058,7 +8042,7 @@ var JsonRefs = function (t) {
       return -1 !== t.indexOf("://") || i.isAbsolute(t) ? t : i.resolve(n.cwd(), t);
     }
     function E(t, n) {
-      t.error = n.message, t.missing = !0;
+      t.error = n.message, t.missing = true;
     }
     function S(t) {
       return s.parse(t);
@@ -8076,14 +8060,14 @@ var JsonRefs = function (t) {
       if (!e.isUndefined(t.refPreProcessor) && !e.isFunction(t.refPreProcessor)) throw new TypeError("options.refPreProcessor must be a Function");
       if (!e.isUndefined(t.refPostProcessor) && !e.isFunction(t.refPostProcessor)) throw new TypeError("options.refPostProcessor must be a Function");
       if (!e.isUndefined(t.subDocPath) && !e.isArray(t.subDocPath) && !k(t.subDocPath)) throw new TypeError("options.subDocPath must be an Array of path segments or a valid JSON Pointer");
-      if (e.isUndefined(t.resolveCirculars) && (t.resolveCirculars = !1), t.filter = function (t) {
+      if (e.isUndefined(t.resolveCirculars) && (t.resolveCirculars = false), t.filter = function (t) {
         var n, r;
         return e.isArray(t.filter) || e.isString(t.filter) ? (r = e.isString(t.filter) ? [t.filter] : t.filter, n = function (t) {
           return r.indexOf(t.type) > -1 || r.indexOf(m(t)) > -1;
         }) : e.isFunction(t.filter) ? n = t.filter : e.isUndefined(t.filter) && (n = function () {
-          return !0;
+          return true;
         }), function (r, e) {
-          return ("invalid" !== r.type || !0 === t.includeInvalid) && n(r, e);
+          return ("invalid" !== r.type || true === t.includeInvalid) && n(r, e);
         };
       }(t), e.isUndefined(t.location) && (t.location = j("./root.json")), (r = t.location.split("#")).length > 1 && (t.subDocPath = "#" + r[1]), o = decodeURI(t.location) === t.location, t.location = d(t.location, void 0), o && (t.location = decodeURI(t.location)), t.subDocPath = function (t) {
         var n;
@@ -8111,11 +8095,11 @@ var JsonRefs = function (t) {
       var r = {};
       if (!e.isArray(t) && !e.isObject(t)) throw new TypeError("obj must be an Array or an Object");
       return function t(n, r, o, i) {
-        var u = !0;
+        var u = true;
         function c(r, e) {
           o.push(e), t(n, r, o, i), o.pop();
         }
-        e.isFunction(i) && (u = i(n, r, o)), -1 === n.indexOf(r) && (n.push(r), !1 !== u && (e.isArray(r) ? r.forEach(function (t, n) {
+        e.isFunction(i) && (u = i(n, r, o)), -1 === n.indexOf(r) && (n.push(r), false !== u && (e.isArray(r) ? r.forEach(function (t, n) {
           c(t, n.toString());
         }) : e.isObject(r) && e.forOwn(r, function (t, n) {
           c(t, n);
@@ -8129,8 +8113,8 @@ var JsonRefs = function (t) {
       }(t, (n = A(n, t)).subDocPath), g(t, n.subDocPath), e.cloneDeep(n.subDocPath), function (t, o, i) {
         var u,
           c,
-          a = !0;
-        return x(o) && (e.isUndefined(n.refPreProcessor) || (o = n.refPreProcessor(e.cloneDeep(o), i)), u = P(o), e.isUndefined(n.refPostProcessor) || (u = n.refPostProcessor(u, i)), n.filter(u, i) && (c = D(i), r[c] = u), b(o).length > 0 && (a = !1)), a;
+          a = true;
+        return x(o) && (e.isUndefined(n.refPreProcessor) || (o = n.refPreProcessor(e.cloneDeep(o), i)), u = P(o), e.isUndefined(n.refPostProcessor) || (u = n.refPostProcessor(u, i)), n.filter(u, i) && (c = D(i), r[c] = u), b(o).length > 0 && (a = false)), a;
       }), r;
     }
     function P(t) {
@@ -8157,7 +8141,7 @@ var JsonRefs = function (t) {
     }
     function k(t, n) {
       var r,
-        o = !0;
+        o = true;
       try {
         if (!e.isString(t)) throw new Error("ptr is not a String");
         if ("" !== t) {
@@ -8166,8 +8150,8 @@ var JsonRefs = function (t) {
           if (t.match(f)) throw new Error("ptr has invalid token(s)");
         }
       } catch (t) {
-        if (!0 === n) throw t;
-        o = !1;
+        if (true === n) throw t;
+        o = false;
       }
       return o;
     }
@@ -8182,7 +8166,7 @@ var JsonRefs = function (t) {
     }
     function D(t, n) {
       if (!e.isArray(t)) throw new Error("path must be an Array");
-      return (!1 !== n ? "#" : "") + (t.length > 0 ? "/" : "") + C(t).join("/");
+      return (false !== n ? "#" : "") + (t.length > 0 ? "/" : "") + C(t).join("/");
     }
     function U(t, n) {
       var r = Promise.resolve();
@@ -8228,7 +8212,7 @@ var JsonRefs = function (t) {
                   E(o, t);
                 }
               };
-            }(o, c, i))) : i.circular = !0);
+            }(o, c, i))) : i.circular = true);
           })), a;
         }(t, n, r).then(function () {
           return r;
@@ -8254,15 +8238,15 @@ var JsonRefs = function (t) {
         }), e.forOwn(t.deps, function (n, r) {
           e.forOwn(n, function (n, e) {
             var o,
-              i = !1,
+              i = false,
               a = r + e.slice(1),
               s = t.refs[r + e.slice(1)],
               f = y(s);
             c.indexOf(n) > -1 && u.forEach(function (t) {
               i || (o = t.indexOf(n)) > -1 && t.forEach(function (r) {
-                i || 0 === a.indexOf(r + "/") && (f && o !== t.length - 1 && "#" === n[n.length - 1] || (i = !0));
+                i || 0 === a.indexOf(r + "/") && (f && o !== t.length - 1 && "#" === n[n.length - 1] || (i = true));
               });
-            }), i && (s.circular = !0);
+            }), i && (s.circular = true);
           });
         }), e.forOwn(Object.keys(t.deps).reverse(), function (r) {
           var o = t.deps[r],
@@ -8325,7 +8309,7 @@ var JsonRefs = function (t) {
         }).then(function (t) {
           var r = e.cloneDeep(l[n.location]),
             o = e.cloneDeep(n);
-          return e.isUndefined(r.refs) && (delete o.filter, delete o.subDocPath, o.includeInvalid = !0, l[n.location].refs = I(t, o)), e.isUndefined(n.filter) || (o.filter = n.filter), {
+          return e.isUndefined(r.refs) && (delete o.filter, delete o.subDocPath, o.includeInvalid = true, l[n.location].refs = I(t, o)), e.isUndefined(n.filter) || (o.filter = n.filter), {
             refs: I(t, o),
             value: t
           };
@@ -8472,9 +8456,9 @@ var JsonRefs = function (t) {
         Lt = ["Array", "Buffer", "DataView", "Date", "Error", "Float32Array", "Float64Array", "Function", "Int8Array", "Int16Array", "Int32Array", "Map", "Math", "Object", "Promise", "RegExp", "Set", "String", "Symbol", "TypeError", "Uint8Array", "Uint8ClampedArray", "Uint16Array", "Uint32Array", "WeakMap", "_", "clearTimeout", "isFinite", "parseInt", "setTimeout"],
         qt = -1,
         Mt = {};
-      Mt[O] = Mt[A] = Mt[T] = Mt[C] = Mt[I] = Mt[P] = Mt["[object Uint8ClampedArray]"] = Mt[k] = Mt[R] = !0, Mt[s] = Mt[f] = Mt[E] = Mt[l] = Mt[S] = Mt[p] = Mt[h] = Mt[v] = Mt[y] = Mt[_] = Mt[g] = Mt[b] = Mt[m] = Mt[w] = Mt[j] = !1;
+      Mt[O] = Mt[A] = Mt[T] = Mt[C] = Mt[I] = Mt[P] = Mt["[object Uint8ClampedArray]"] = Mt[k] = Mt[R] = true, Mt[s] = Mt[f] = Mt[E] = Mt[l] = Mt[S] = Mt[p] = Mt[h] = Mt[v] = Mt[y] = Mt[_] = Mt[g] = Mt[b] = Mt[m] = Mt[w] = Mt[j] = false;
       var $t = {};
-      $t[s] = $t[f] = $t[E] = $t[S] = $t[l] = $t[p] = $t[O] = $t[A] = $t[T] = $t[C] = $t[I] = $t[y] = $t[_] = $t[g] = $t[b] = $t[m] = $t[w] = $t[x] = $t[P] = $t["[object Uint8ClampedArray]"] = $t[k] = $t[R] = !0, $t[h] = $t[v] = $t[j] = !1;
+      $t[s] = $t[f] = $t[E] = $t[S] = $t[l] = $t[p] = $t[O] = $t[A] = $t[T] = $t[C] = $t[I] = $t[y] = $t[_] = $t[g] = $t[b] = $t[m] = $t[w] = $t[x] = $t[P] = $t["[object Uint8ClampedArray]"] = $t[k] = $t[R] = true, $t[h] = $t[v] = $t[j] = false;
       var Bt = {
           "\\": "\\",
           "'": "'",
@@ -8525,16 +8509,16 @@ var JsonRefs = function (t) {
         return e;
       }
       function sn(t, n) {
-        for (var r = -1, e = null == t ? 0 : t.length; ++r < e && !1 !== n(t[r], r, t););
+        for (var r = -1, e = null == t ? 0 : t.length; ++r < e && false !== n(t[r], r, t););
         return t;
       }
       function fn(t, n) {
-        for (var r = null == t ? 0 : t.length; r-- && !1 !== n(t[r], r, t););
+        for (var r = null == t ? 0 : t.length; r-- && false !== n(t[r], r, t););
         return t;
       }
       function ln(t, n) {
-        for (var r = -1, e = null == t ? 0 : t.length; ++r < e;) if (!n(t[r], r, t)) return !1;
-        return !0;
+        for (var r = -1, e = null == t ? 0 : t.length; ++r < e;) if (!n(t[r], r, t)) return false;
+        return true;
       }
       function pn(t, n) {
         for (var r = -1, e = null == t ? 0 : t.length, o = 0, i = []; ++r < e;) {
@@ -8547,8 +8531,8 @@ var JsonRefs = function (t) {
         return !!(null == t ? 0 : t.length) && jn(t, n, 0) > -1;
       }
       function vn(t, n, r) {
-        for (var e = -1, o = null == t ? 0 : t.length; ++e < o;) if (r(n, t[e])) return !0;
-        return !1;
+        for (var e = -1, o = null == t ? 0 : t.length; ++e < o;) if (r(n, t[e])) return true;
+        return false;
       }
       function dn(t, n) {
         for (var r = -1, e = null == t ? 0 : t.length, o = Array(e); ++r < e;) o[r] = n(t[r], r, t);
@@ -8570,14 +8554,14 @@ var JsonRefs = function (t) {
         return r;
       }
       function bn(t, n) {
-        for (var r = -1, e = null == t ? 0 : t.length; ++r < e;) if (n(t[r], r, t)) return !0;
-        return !1;
+        for (var r = -1, e = null == t ? 0 : t.length; ++r < e;) if (n(t[r], r, t)) return true;
+        return false;
       }
       var mn = An("length");
       function wn(t, n, r) {
         var e;
         return r(t, function (t, r, o) {
-          if (n(t, r, o)) return e = r, !1;
+          if (n(t, r, o)) return e = r, false;
         }), e;
       }
       function xn(t, n, r, e) {
@@ -8615,7 +8599,7 @@ var JsonRefs = function (t) {
       }
       function Cn(t, n, r, e, o) {
         return o(t, function (t, o, i) {
-          r = e ? (e = !1, t) : n(r, t, o, i);
+          r = e ? (e = false, t) : n(r, t, o, i);
         }), r;
       }
       function In(t, n) {
@@ -9007,7 +8991,7 @@ var JsonRefs = function (t) {
           this.__wrapped__ = t, this.__actions__ = [], this.__chain__ = !!n, this.__index__ = 0, this.__values__ = void 0;
         }
         function Rr(t) {
-          this.__wrapped__ = t, this.__actions__ = [], this.__dir__ = 1, this.__filtered__ = !1, this.__iteratees__ = [], this.__takeCount__ = 4294967295, this.__views__ = [];
+          this.__wrapped__ = t, this.__actions__ = [], this.__dir__ = 1, this.__filtered__ = false, this.__iteratees__ = [], this.__takeCount__ = 4294967295, this.__views__ = [];
         }
         function Dr(t) {
           var n = -1,
@@ -9084,10 +9068,10 @@ var JsonRefs = function (t) {
         }
         function Zr(t, n, r) {
           "__proto__" == n && Tn ? Tn(t, n, {
-            configurable: !0,
-            enumerable: !0,
+            configurable: true,
+            enumerable: true,
             value: r,
-            writable: !0
+            writable: true
           }) : t[n] = r;
         }
         function Jr(t, n) {
@@ -9188,9 +9172,9 @@ var JsonRefs = function (t) {
             var o = r[e],
               i = n[o],
               u = t[o];
-            if (void 0 === u && !(o in t) || !i(u)) return !1;
+            if (void 0 === u && !(o in t) || !i(u)) return false;
           }
-          return !0;
+          return true;
         }
         function Qr(t, n, r) {
           if ("function" != typeof t) throw new bt(u);
@@ -9201,12 +9185,12 @@ var JsonRefs = function (t) {
         function te(t, n, r, e) {
           var o = -1,
             i = hn,
-            u = !0,
+            u = true,
             c = t.length,
             a = [],
             s = n.length;
           if (!c) return a;
-          r && (n = dn(n, kn(r))), e ? (i = vn, u = !1) : n.length >= 200 && (i = Dn, u = !1, n = new zr(n));
+          r && (n = dn(n, kn(r))), e ? (i = vn, u = false) : n.length >= 200 && (i = Dn, u = false, n = new zr(n));
           t: for (; ++o < c;) {
             var f = t[o],
               l = null == r ? f : r(f);
@@ -9248,7 +9232,7 @@ var JsonRefs = function (t) {
         }, Ur.prototype.delete = function (t) {
           var n = this.__data__,
             r = Wr(n, t);
-          return !(r < 0) && (r == n.length - 1 ? n.pop() : Xt.call(n, r, 1), --this.size, !0);
+          return !(r < 0) && (r == n.length - 1 ? n.pop() : Xt.call(n, r, 1), --this.size, true);
         }, Ur.prototype.get = function (t) {
           var n = this.__data__,
             r = Wr(n, t);
@@ -9300,9 +9284,9 @@ var JsonRefs = function (t) {
           return r.set(t, n), this.size = r.size, this;
         };
         var ne = jo(se),
-          re = jo(fe, !0);
+          re = jo(fe, true);
         function ee(t, n) {
-          var r = !0;
+          var r = true;
           return ne(t, function (t, e, o) {
             return r = !!n(t, e, o);
           }), r;
@@ -9332,7 +9316,7 @@ var JsonRefs = function (t) {
           return o;
         }
         var ce = Eo(),
-          ae = Eo(!0);
+          ae = Eo(true);
         function se(t, n) {
           return t && ce(t, n, wc);
         }
@@ -9414,13 +9398,13 @@ var JsonRefs = function (t) {
               j = (v = v == s ? g : v) == g,
               O = a == v;
             if (O && Fu(t)) {
-              if (!Fu(n)) return !1;
-              u = !0, d = !1;
+              if (!Fu(n)) return false;
+              u = true, d = false;
             }
             if (O && !d) return i || (i = new Fr()), u || Qu(t) ? Wo(t, n, r, e, o, i) : function (t, n, r, e, o, i, u) {
               switch (r) {
                 case S:
-                  if (t.byteLength != n.byteLength || t.byteOffset != n.byteOffset) return !1;
+                  if (t.byteLength != n.byteLength || t.byteOffset != n.byteOffset) return false;
                   t = t.buffer, n = n.buffer;
                 case E:
                   return !(t.byteLength != n.byteLength || !i(new zt(t), new zt(n)));
@@ -9437,7 +9421,7 @@ var JsonRefs = function (t) {
                   var c = $n;
                 case m:
                   var a = 1 & e;
-                  if (c || (c = Wn), t.size != n.size && !a) return !1;
+                  if (c || (c = Wn), t.size != n.size && !a) return false;
                   var s = u.get(t);
                   if (s) return s == n;
                   e |= 2, u.set(t, n);
@@ -9446,7 +9430,7 @@ var JsonRefs = function (t) {
                 case x:
                   if (Ar) return Ar.call(t) == Ar.call(n);
               }
-              return !1;
+              return false;
             }(t, n, a, r, e, o, i);
             if (!(1 & r)) {
               var A = d && St.call(t, "__wrapped__"),
@@ -9457,21 +9441,21 @@ var JsonRefs = function (t) {
                 return i || (i = new Fr()), o(C, I, r, e, i);
               }
             }
-            if (!O) return !1;
+            if (!O) return false;
             return i || (i = new Fr()), function (t, n, r, e, o, i) {
               var u = 1 & r,
                 c = Go(t),
                 a = c.length,
                 s = Go(n).length;
-              if (a != s && !u) return !1;
+              if (a != s && !u) return false;
               var f = a;
               for (; f--;) {
                 var l = c[f];
-                if (!(u ? l in n : St.call(n, l))) return !1;
+                if (!(u ? l in n : St.call(n, l))) return false;
               }
               var p = i.get(t);
               if (p && i.get(n)) return p == n;
-              var h = !0;
+              var h = true;
               i.set(t, n), i.set(n, t);
               var v = u;
               for (; ++f < a;) {
@@ -9480,7 +9464,7 @@ var JsonRefs = function (t) {
                   y = n[l];
                 if (e) var _ = u ? e(y, d, l, n, t, i) : e(d, y, l, t, n, i);
                 if (!(void 0 === _ ? d === y || o(d, y, r, e, i) : _)) {
-                  h = !1;
+                  h = false;
                   break;
                 }
                 v || (v = "constructor" == l);
@@ -9488,7 +9472,7 @@ var JsonRefs = function (t) {
               if (h && !v) {
                 var g = t.constructor,
                   b = n.constructor;
-                g != b && "constructor" in t && "constructor" in n && !("function" == typeof g && g instanceof g && "function" == typeof b && b instanceof b) && (h = !1);
+                g != b && "constructor" in t && "constructor" in n && !("function" == typeof g && g instanceof g && "function" == typeof b && b instanceof b) && (h = false);
               }
               return i.delete(t), i.delete(n), h;
             }(t, n, r, e, o, i);
@@ -9501,21 +9485,21 @@ var JsonRefs = function (t) {
           if (null == t) return !i;
           for (t = yt(t); o--;) {
             var c = r[o];
-            if (u && c[2] ? c[1] !== t[c[0]] : !(c[0] in t)) return !1;
+            if (u && c[2] ? c[1] !== t[c[0]] : !(c[0] in t)) return false;
           }
           for (; ++o < i;) {
             var a = (c = r[o])[0],
               s = t[a],
               f = c[1];
             if (u && c[2]) {
-              if (void 0 === s && !(a in t)) return !1;
+              if (void 0 === s && !(a in t)) return false;
             } else {
               var l = new Fr();
               if (e) var p = e(s, f, a, t, n, l);
-              if (!(void 0 === p ? we(f, s, 3, e, l) : p)) return !1;
+              if (!(void 0 === p ? we(f, s, 3, e, l) : p)) return false;
             }
           }
-          return !0;
+          return true;
         }
         function je(t) {
           return !(!Hu(t) || (n = t, At && At in n)) && (Mu(t) ? Pt : ct).test(Ti(t));
@@ -9576,7 +9560,7 @@ var JsonRefs = function (t) {
                 var p = Du(a),
                   h = !p && Fu(a),
                   v = !p && !h && Qu(a);
-                f = a, p || h || v ? Du(c) ? f = c : zu(c) ? f = bo(c) : h ? (l = !1, f = po(a, !0)) : v ? (l = !1, f = vo(a, !0)) : f = [] : Zu(a) || Ru(a) ? (f = c, Ru(c) ? f = cc(c) : Hu(c) && !Mu(c) || (f = ui(a))) : l = !1;
+                f = a, p || h || v ? Du(c) ? f = c : zu(c) ? f = bo(c) : h ? (l = false, f = po(a, true)) : v ? (l = false, f = vo(a, true)) : f = [] : Zu(a) || Ru(a) ? (f = c, Ru(c) ? f = cc(c) : Hu(c) && !Mu(c) || (f = ui(a))) : l = false;
               }
               l && (u.set(a, f), o(f, a, e, i, u), u.delete(a));
               Br(t, r, f);
@@ -9688,10 +9672,10 @@ var JsonRefs = function (t) {
           } : Gc,
           He = Tn ? function (t, n) {
             return Tn(t, "toString", {
-              configurable: !0,
-              enumerable: !1,
+              configurable: true,
+              enumerable: false,
               value: Hc(n),
-              writable: !0
+              writable: true
             });
           } : Gc;
         function We(t) {
@@ -9762,13 +9746,13 @@ var JsonRefs = function (t) {
           var e = -1,
             o = hn,
             i = t.length,
-            u = !0,
+            u = true,
             c = [],
             a = c;
-          if (r) u = !1, o = vn;else if (i >= 200) {
+          if (r) u = false, o = vn;else if (i >= 200) {
             var s = n ? null : Lo(t);
             if (s) return Wn(s);
-            u = !1, o = Dn, a = new zr();
+            u = false, o = Dn, a = new zr();
           } else a = n ? [] : c;
           t: for (; ++e < i;) {
             var f = t[e],
@@ -9907,7 +9891,7 @@ var JsonRefs = function (t) {
           return function (r, e) {
             if (null == r) return r;
             if (!Nu(r)) return t(r, e);
-            for (var o = r.length, i = n ? o : -1, u = yt(r); (n ? i-- : ++i < o) && !1 !== e(u[i], i, u););
+            for (var o = r.length, i = n ? o : -1, u = yt(r); (n ? i-- : ++i < o) && false !== e(u[i], i, u););
             return r;
           };
         }
@@ -9915,7 +9899,7 @@ var JsonRefs = function (t) {
           return function (n, r, e) {
             for (var o = -1, i = yt(n), u = e(n), c = u.length; c--;) {
               var a = u[t ? c : ++o];
-              if (!1 === r(i[a], a, i)) break;
+              if (false === r(i[a], a, i)) break;
             }
             return n;
           };
@@ -9980,7 +9964,7 @@ var JsonRefs = function (t) {
             for (t && n.reverse(); e--;) {
               var i = n[e];
               if ("function" != typeof i) throw new bt(u);
-              if (o && !c && "wrapper" == Xo(i)) var c = new kr([], !0);
+              if (o && !c && "wrapper" == Xo(i)) var c = new kr([], true);
             }
             for (e = c ? e : r; ++e < r;) {
               var a = Xo(i = n[e]),
@@ -10164,11 +10148,11 @@ var JsonRefs = function (t) {
           var u = 1 & r,
             c = t.length,
             a = n.length;
-          if (c != a && !(u && a > c)) return !1;
+          if (c != a && !(u && a > c)) return false;
           var s = i.get(t);
           if (s && i.get(n)) return s == n;
           var f = -1,
-            l = !0,
+            l = true,
             p = 2 & r ? new zr() : void 0;
           for (i.set(t, n), i.set(n, t); ++f < c;) {
             var h = t[f],
@@ -10176,18 +10160,18 @@ var JsonRefs = function (t) {
             if (e) var d = u ? e(v, h, f, n, t, i) : e(h, v, f, t, n, i);
             if (void 0 !== d) {
               if (d) continue;
-              l = !1;
+              l = false;
               break;
             }
             if (p) {
               if (!bn(n, function (t, n) {
                 if (!Dn(p, n) && (h === t || o(h, t, r, e, i))) return p.push(n);
               })) {
-                l = !1;
+                l = false;
                 break;
               }
             } else if (h !== v && !o(h, v, r, e, i)) {
-              l = !1;
+              l = false;
               break;
             }
           }
@@ -10251,7 +10235,7 @@ var JsonRefs = function (t) {
           } : ia,
           oi = ve;
         function ii(t, n, r) {
-          for (var e = -1, o = (n = ao(n, t)).length, i = !1; ++e < o;) {
+          for (var e = -1, o = (n = ao(n, t)).length, i = false; ++e < o;) {
             var u = Ai(n[e]);
             if (!(i = null != t && r(t, u))) break;
             t = t[u];
@@ -10269,20 +10253,20 @@ var JsonRefs = function (t) {
           return !!(n = null == n ? 9007199254740991 : n) && ("number" == r || "symbol" != r && st.test(t)) && t > -1 && t % 1 == 0 && t < n;
         }
         function si(t, n, r) {
-          if (!Hu(r)) return !1;
+          if (!Hu(r)) return false;
           var e = i(n);
           return !!("number" == e ? Nu(r) && ai(n, r.length) : "string" == e && n in r) && Iu(r[n], t);
         }
         function fi(t, n) {
-          if (Du(t)) return !1;
+          if (Du(t)) return false;
           var r = i(t);
           return !("number" != r && "symbol" != r && "boolean" != r && null != t && !Yu(t)) || W.test(t) || !H.test(t) || null != n && t in yt(n);
         }
         function li(t) {
           var n = Xo(t),
             r = Cr[n];
-          if ("function" != typeof r || !(n in Rr.prototype)) return !1;
-          if (t === r) return !0;
+          if ("function" != typeof r || !(n in Rr.prototype)) return false;
+          if (t === r) return true;
           var e = Jo(r);
           return !!e && t === e[0];
         }
@@ -10417,15 +10401,15 @@ var JsonRefs = function (t) {
           return n.__actions__ = bo(t.__actions__), n.__index__ = t.__index__, n.__values__ = t.__values__, n;
         }
         var Ii = Le(function (t, n) {
-            return zu(t) ? te(t, ue(n, 1, zu, !0)) : [];
+            return zu(t) ? te(t, ue(n, 1, zu, true)) : [];
           }),
           Pi = Le(function (t, n) {
             var r = qi(n);
-            return zu(r) && (r = void 0), zu(t) ? te(t, ue(n, 1, zu, !0), Yo(r, 2)) : [];
+            return zu(r) && (r = void 0), zu(t) ? te(t, ue(n, 1, zu, true), Yo(r, 2)) : [];
           }),
           ki = Le(function (t, n) {
             var r = qi(n);
-            return zu(r) && (r = void 0), zu(t) ? te(t, ue(n, 1, zu, !0), void 0, r) : [];
+            return zu(r) && (r = void 0), zu(t) ? te(t, ue(n, 1, zu, true), void 0, r) : [];
           });
         function Ri(t, n, r) {
           var e = null == t ? 0 : t.length;
@@ -10437,7 +10421,7 @@ var JsonRefs = function (t) {
           var e = null == t ? 0 : t.length;
           if (!e) return -1;
           var o = e - 1;
-          return void 0 !== r && (o = oc(r), o = r < 0 ? cr(e + o, 0) : ar(o, e - 1)), xn(t, Yo(n, 3), o, !0);
+          return void 0 !== r && (o = oc(r), o = r < 0 ? cr(e + o, 0) : ar(o, e - 1)), xn(t, Yo(n, 3), o, true);
         }
         function Ui(t) {
           return (null == t ? 0 : t.length) ? ue(t, 1) : [];
@@ -10478,21 +10462,21 @@ var JsonRefs = function (t) {
           return null == t ? t : pr.call(t);
         }
         var Wi = Le(function (t) {
-            return Qe(ue(t, 1, zu, !0));
+            return Qe(ue(t, 1, zu, true));
           }),
           Vi = Le(function (t) {
             var n = qi(t);
-            return zu(n) && (n = void 0), Qe(ue(t, 1, zu, !0), Yo(n, 2));
+            return zu(n) && (n = void 0), Qe(ue(t, 1, zu, true), Yo(n, 2));
           }),
           Gi = Le(function (t) {
             var n = qi(t);
-            return n = "function" == typeof n ? n : void 0, Qe(ue(t, 1, zu, !0), void 0, n);
+            return n = "function" == typeof n ? n : void 0, Qe(ue(t, 1, zu, true), void 0, n);
           });
         function Zi(t) {
           if (!t || !t.length) return [];
           var n = 0;
           return t = pn(t, function (t) {
-            if (zu(t)) return n = cr(t.length, n), !0;
+            if (zu(t)) return n = cr(t.length, n), true;
           }), Pn(n, function (n) {
             return dn(t, An(n));
           });
@@ -10526,7 +10510,7 @@ var JsonRefs = function (t) {
         });
         function ru(t) {
           var n = Cr(t);
-          return n.__chain__ = !0, n;
+          return n.__chain__ = true, n;
         }
         function eu(t, n) {
           return n(t);
@@ -10621,9 +10605,9 @@ var JsonRefs = function (t) {
             a,
             s,
             f = 0,
-            l = !1,
-            p = !1,
-            h = !0;
+            l = false,
+            p = false,
+            h = true;
           if ("function" != typeof t) throw new bt(u);
           function v(n) {
             var r = e,
@@ -10742,12 +10726,12 @@ var JsonRefs = function (t) {
             return Wu(t) && ve(t) == p;
           };
         function qu(t) {
-          if (!Wu(t)) return !1;
+          if (!Wu(t)) return false;
           var n = ve(t);
           return n == h || "[object DOMException]" == n || "string" == typeof t.message && "string" == typeof t.name && !Zu(t);
         }
         function Mu(t) {
-          if (!Hu(t)) return !1;
+          if (!Hu(t)) return false;
           var n = ve(t);
           return n == v || n == d || "[object AsyncFunction]" == n || "[object Proxy]" == n;
         }
@@ -10771,9 +10755,9 @@ var JsonRefs = function (t) {
           return "number" == typeof t || Wu(t) && ve(t) == _;
         }
         function Zu(t) {
-          if (!Wu(t) || ve(t) != g) return !1;
+          if (!Wu(t) || ve(t) != g) return false;
           var n = Vt(t);
-          if (null === n) return !0;
+          if (null === n) return true;
           var r = St.call(n, "constructor") && n.constructor;
           return "function" == typeof r && r instanceof r && Et.call(r) == Ct;
         }
@@ -10881,7 +10865,7 @@ var JsonRefs = function (t) {
           return Nu(t) ? Lr(t) : Se(t);
         }
         function xc(t) {
-          return Nu(t) ? Lr(t, !0) : Oe(t);
+          return Nu(t) ? Lr(t, true) : Oe(t);
         }
         var jc = xo(function (t, n, r) {
             Pe(t, n, r);
@@ -10892,7 +10876,7 @@ var JsonRefs = function (t) {
           Sc = Vo(function (t, n) {
             var r = {};
             if (null == t) return r;
-            var e = !1;
+            var e = false;
             n = dn(n, function (n) {
               return n = ao(n, t), e || (e = n.length > 1), n;
             }), mo(t, Zo(t), r), e && (r = Kr(r, 7, Ho));
@@ -10973,7 +10957,7 @@ var JsonRefs = function (t) {
           };
         }
         var Wc = Co(),
-          Vc = Co(!0);
+          Vc = Co(true);
         function Gc(t) {
           return t;
         }
@@ -11025,12 +11009,12 @@ var JsonRefs = function (t) {
           }(t);
         }
         var ea = Uo(),
-          oa = Uo(!0);
+          oa = Uo(true);
         function ia() {
           return [];
         }
         function ua() {
-          return !1;
+          return false;
         }
         var ca = ko(function (t, n) {
             return t + n;
@@ -11109,9 +11093,9 @@ var JsonRefs = function (t) {
           var e = null == t ? 0 : t.length;
           return e ? Ve(t, 0, (n = e - (n = r || void 0 === n ? 1 : oc(n))) < 0 ? 0 : n) : [];
         }, Cr.dropRightWhile = function (t, n) {
-          return t && t.length ? ro(t, Yo(n, 3), !0, !0) : [];
+          return t && t.length ? ro(t, Yo(n, 3), true, true) : [];
         }, Cr.dropWhile = function (t, n) {
-          return t && t.length ? ro(t, Yo(n, 3), !0) : [];
+          return t && t.length ? ro(t, Yo(n, 3), true) : [];
         }, Cr.fill = function (t, n, r, e) {
           var o = null == t ? 0 : t.length;
           return o ? (r && "number" != typeof r && si(t, n, r) && (r = 0, e = o), function (t, n, r, e) {
@@ -11226,14 +11210,14 @@ var JsonRefs = function (t) {
           var e = null == t ? 0 : t.length;
           return e ? Ve(t, (n = e - (n = r || void 0 === n ? 1 : oc(n))) < 0 ? 0 : n, e) : [];
         }, Cr.takeRightWhile = function (t, n) {
-          return t && t.length ? ro(t, Yo(n, 3), !1, !0) : [];
+          return t && t.length ? ro(t, Yo(n, 3), false, true) : [];
         }, Cr.takeWhile = function (t, n) {
           return t && t.length ? ro(t, Yo(n, 3)) : [];
         }, Cr.tap = function (t, n) {
           return n(t), t;
         }, Cr.throttle = function (t, n, r) {
-          var e = !0,
-            o = !0;
+          var e = true,
+            o = true;
           if ("function" != typeof t) throw new bt(u);
           return Hu(r) && (e = "leading" in r ? !!r.leading : e, o = "trailing" in r ? !!r.trailing : o), wu(t, n, {
             leading: e,
@@ -11328,17 +11312,17 @@ var JsonRefs = function (t) {
             return t >= ar(n, r) && t < cr(n, r);
           }(t = uc(t), n, r);
         }, Cr.invoke = mc, Cr.isArguments = Ru, Cr.isArray = Du, Cr.isArrayBuffer = Uu, Cr.isArrayLike = Nu, Cr.isArrayLikeObject = zu, Cr.isBoolean = function (t) {
-          return !0 === t || !1 === t || Wu(t) && ve(t) == l;
+          return true === t || false === t || Wu(t) && ve(t) == l;
         }, Cr.isBuffer = Fu, Cr.isDate = Lu, Cr.isElement = function (t) {
           return Wu(t) && 1 === t.nodeType && !Zu(t);
         }, Cr.isEmpty = function (t) {
-          if (null == t) return !0;
+          if (null == t) return true;
           if (Nu(t) && (Du(t) || "string" == typeof t || "function" == typeof t.splice || Fu(t) || Qu(t) || Ru(t))) return !t.length;
           var n = oi(t);
           if (n == y || n == m) return !t.size;
           if (hi(t)) return !Se(t).length;
-          for (var r in t) if (St.call(t, r)) return !1;
-          return !0;
+          for (var r in t) if (St.call(t, r)) return false;
+          return true;
         }, Cr.isEqual = function (t, n) {
           return we(t, n);
         }, Cr.isEqualWith = function (t, n, r) {
@@ -11376,7 +11360,7 @@ var JsonRefs = function (t) {
           return void 0 !== r && (o = (o = oc(r)) < 0 ? cr(e + o, 0) : ar(o, e - 1)), n == n ? function (t, n, r) {
             for (var e = r + 1; e--;) if (t[e] === n) return e;
             return e;
-          }(t, n, o) : xn(t, Sn, o, !0);
+          }(t, n, o) : xn(t, Sn, o, true);
         }, Cr.lowerCase = Uc, Cr.lowerFirst = Nc, Cr.lt = tc, Cr.lte = nc, Cr.max = function (t) {
           return t && t.length ? oe(t, Gc, de) : void 0;
         }, Cr.maxBy = function (t, n) {
@@ -11394,7 +11378,7 @@ var JsonRefs = function (t) {
         }, Cr.stubString = function () {
           return "";
         }, Cr.stubTrue = function () {
-          return !0;
+          return true;
         }, Cr.multiply = pa, Cr.nth = function (t, n) {
           return t && t.length ? ke(t, oc(n)) : void 0;
         }, Cr.noConflict = function () {
@@ -11469,12 +11453,12 @@ var JsonRefs = function (t) {
           }
           return -1;
         }, Cr.sortedLastIndex = function (t, n) {
-          return Ze(t, n, !0);
+          return Ze(t, n, true);
         }, Cr.sortedLastIndexBy = function (t, n, r) {
-          return Je(t, n, Yo(r, 2), !0);
+          return Je(t, n, Yo(r, 2), true);
         }, Cr.sortedLastIndexOf = function (t, n) {
           if (null == t ? 0 : t.length) {
-            var r = Ze(t, n, !0) - 1;
+            var r = Ze(t, n, true) - 1;
             if (Iu(t[r], n)) return r;
           }
           return -1;
@@ -11498,7 +11482,7 @@ var JsonRefs = function (t) {
             p = _t((n.escape || lt).source + "|" + f.source + "|" + (f === B ? et : lt).source + "|" + (n.evaluate || lt).source + "|$", "g"),
             h = "//# sourceURL=" + (St.call(n, "sourceURL") ? (n.sourceURL + "").replace(/[\r\n]/g, " ") : "lodash.templateSources[" + ++qt + "]") + "\n";
           t.replace(p, function (n, r, e, u, c, a) {
-            return e || (e = u), l += t.slice(s, a).replace(pt, qn), r && (o = !0, l += "' +\n__e(" + r + ") +\n'"), c && (i = !0, l += "';\n" + c + ";\n__p += '"), e && (l += "' +\n((__t = (" + e + ")) == null ? '' : __t) +\n'"), s = a + n.length, n;
+            return e || (e = u), l += t.slice(s, a).replace(pt, qn), r && (o = true, l += "' +\n__e(" + r + ") +\n'"), c && (i = true, l += "';\n" + c + ";\n__p += '"), e && (l += "' +\n((__t = (" + e + ")) == null ? '' : __t) +\n'"), s = a + n.length, n;
           }), l += "';\n";
           var v = St.call(n, "variable") && n.variable;
           v || (l = "with (obj) {\n" + l + "\n}\n"), l = (i ? l.replace(D, "") : l).replace(U, "$1").replace(N, "$1;"), l = "function(" + (v || "obj") + ") {\n" + (v ? "" : "obj || (obj = {});\n") + "var __t, __p = ''" + (o ? ", __e = _.escape" : "") + (i ? ", __j = Array.prototype.join;\nfunction print() { __p += __j.call(arguments, '') }\n" : ";\n") + l + "return __p\n}";
@@ -11573,7 +11557,7 @@ var JsonRefs = function (t) {
         }, Cr.upperCase = Lc, Cr.upperFirst = qc, Cr.each = au, Cr.eachRight = su, Cr.first = Ni, Kc(Cr, (la = {}, se(Cr, function (t, n) {
           St.call(Cr.prototype, n) || (la[n] = t);
         }), la), {
-          chain: !1
+          chain: false
         }), Cr.VERSION = "4.17.15", sn(["bind", "bindKey", "curry", "curryRight", "partial", "partialRight"], function (t) {
           Cr[t].placeholder = Cr;
         }), sn(["drop", "take"], function (t, n) {
@@ -11642,7 +11626,7 @@ var JsonRefs = function (t) {
                 var n = o.apply(Cr, yn([t], u));
                 return e && l ? n[0] : n;
               };
-            s && r && "function" == typeof a && 1 != a.length && (c = s = !1);
+            s && r && "function" == typeof a && 1 != a.length && (c = s = false);
             var l = this.__chain__,
               p = !!this.__actions__.length,
               h = i && !l,
@@ -11690,7 +11674,7 @@ var JsonRefs = function (t) {
         }, Rr.prototype.reverse = function () {
           if (this.__filtered__) {
             var t = new Rr(this);
-            t.__dir__ = -1, t.__filtered__ = !0;
+            t.__dir__ = -1, t.__filtered__ = true;
           } else (t = this.clone()).__dir__ *= -1;
           return t;
         }, Rr.prototype.value = function () {
@@ -11830,7 +11814,7 @@ var JsonRefs = function (t) {
     x = r(144),
     j = r(6),
     E = {};
-  E["[object Arguments]"] = E["[object Array]"] = E["[object ArrayBuffer]"] = E["[object DataView]"] = E["[object Boolean]"] = E["[object Date]"] = E["[object Float32Array]"] = E["[object Float64Array]"] = E["[object Int8Array]"] = E["[object Int16Array]"] = E["[object Int32Array]"] = E["[object Map]"] = E["[object Number]"] = E["[object Object]"] = E["[object RegExp]"] = E["[object Set]"] = E["[object String]"] = E["[object Symbol]"] = E["[object Uint8Array]"] = E["[object Uint8ClampedArray]"] = E["[object Uint16Array]"] = E["[object Uint32Array]"] = !0, E["[object Error]"] = E["[object Function]"] = E["[object WeakMap]"] = !1, t.exports = function t(n, r, S, O, A, T) {
+  E["[object Arguments]"] = E["[object Array]"] = E["[object ArrayBuffer]"] = E["[object DataView]"] = E["[object Boolean]"] = E["[object Date]"] = E["[object Float32Array]"] = E["[object Float64Array]"] = E["[object Int8Array]"] = E["[object Int16Array]"] = E["[object Int32Array]"] = E["[object Map]"] = E["[object Number]"] = E["[object Object]"] = E["[object RegExp]"] = E["[object Set]"] = E["[object String]"] = E["[object Symbol]"] = E["[object Uint8Array]"] = E["[object Uint8ClampedArray]"] = E["[object Uint16Array]"] = E["[object Uint32Array]"] = true, E["[object Error]"] = E["[object Function]"] = E["[object WeakMap]"] = false, t.exports = function t(n, r, S, O, A, T) {
     var C,
       I = 1 & r,
       P = 2 & r,
@@ -11875,7 +11859,7 @@ var JsonRefs = function (t) {
   t.exports = function (t) {
     var n = this.__data__,
       r = e(n, t);
-    return !(r < 0) && (r == n.length - 1 ? n.pop() : o.call(n, r, 1), --this.size, !0);
+    return !(r < 0) && (r == n.length - 1 ? n.pop() : o.call(n, r, 1), --this.size, true);
   };
 }, function (t, n, r) {
   var e = r(16);
@@ -12091,14 +12075,14 @@ var JsonRefs = function (t) {
   };
 }, function (t, n) {
   t.exports = function () {
-    return !1;
+    return false;
   };
 }, function (t, n, r) {
   var e = r(8),
     o = r(34),
     i = r(3),
     u = {};
-  u["[object Float32Array]"] = u["[object Float64Array]"] = u["[object Int8Array]"] = u["[object Int16Array]"] = u["[object Int32Array]"] = u["[object Uint8Array]"] = u["[object Uint8ClampedArray]"] = u["[object Uint16Array]"] = u["[object Uint32Array]"] = !0, u["[object Arguments]"] = u["[object Array]"] = u["[object ArrayBuffer]"] = u["[object Boolean]"] = u["[object DataView]"] = u["[object Date]"] = u["[object Error]"] = u["[object Function]"] = u["[object Map]"] = u["[object Number]"] = u["[object Object]"] = u["[object RegExp]"] = u["[object Set]"] = u["[object String]"] = u["[object WeakMap]"] = !1, t.exports = function (t) {
+  u["[object Float32Array]"] = u["[object Float64Array]"] = u["[object Int8Array]"] = u["[object Int16Array]"] = u["[object Int32Array]"] = u["[object Uint8Array]"] = u["[object Uint8ClampedArray]"] = u["[object Uint16Array]"] = u["[object Uint32Array]"] = true, u["[object Arguments]"] = u["[object Array]"] = u["[object ArrayBuffer]"] = u["[object Boolean]"] = u["[object DataView]"] = u["[object Date]"] = u["[object Error]"] = u["[object Function]"] = u["[object Map]"] = u["[object Number]"] = u["[object Object]"] = u["[object RegExp]"] = u["[object Set]"] = u["[object String]"] = u["[object WeakMap]"] = false, t.exports = function (t) {
     return i(t) && o(t.length) && !!u[e(t)];
   };
 }, function (t, n, r) {
@@ -12306,7 +12290,7 @@ var JsonRefs = function (t) {
     return function (n, r, e) {
       for (var o = -1, i = Object(n), u = e(n), c = u.length; c--;) {
         var a = u[t ? c : ++o];
-        if (!1 === r(i[a], a, i)) break;
+        if (false === r(i[a], a, i)) break;
       }
       return n;
     };
@@ -12317,7 +12301,7 @@ var JsonRefs = function (t) {
     return function (r, o) {
       if (null == r) return r;
       if (!e(r)) return t(r, o);
-      for (var i = r.length, u = n ? i : -1, c = Object(r); (n ? u-- : ++u < i) && !1 !== o(c[u], u, c););
+      for (var i = r.length, u = n ? i : -1, c = Object(r); (n ? u-- : ++u < i) && false !== o(c[u], u, c););
       return r;
     };
   };
@@ -12362,21 +12346,21 @@ var JsonRefs = function (t) {
     if (null == t) return !c;
     for (t = Object(t); u--;) {
       var s = r[u];
-      if (a && s[2] ? s[1] !== t[s[0]] : !(s[0] in t)) return !1;
+      if (a && s[2] ? s[1] !== t[s[0]] : !(s[0] in t)) return false;
     }
     for (; ++u < c;) {
       var f = (s = r[u])[0],
         l = t[f],
         p = s[1];
       if (a && s[2]) {
-        if (void 0 === l && !(f in t)) return !1;
+        if (void 0 === l && !(f in t)) return false;
       } else {
         var h = new e();
         if (i) var v = i(l, p, f, t, n, h);
-        if (!(void 0 === v ? o(p, l, 3, i, h) : v)) return !1;
+        if (!(void 0 === v ? o(p, l, 3, i, h) : v)) return false;
       }
     }
-    return !0;
+    return true;
   };
 }, function (t, n, r) {
   var e = r(29),
@@ -12398,8 +12382,8 @@ var JsonRefs = function (t) {
       w = (b = "[object Arguments]" == b ? l : b) == l,
       x = g == b;
     if (x && s(t)) {
-      if (!s(n)) return !1;
-      y = !0, m = !1;
+      if (!s(n)) return false;
+      y = true, m = false;
     }
     if (x && !m) return d || (d = new e()), y || f(t) ? o(t, n, r, h, v, d) : i(t, n, g, r, h, v, d);
     if (!(1 & r)) {
@@ -12423,8 +12407,8 @@ var JsonRefs = function (t) {
   };
 }, function (t, n) {
   t.exports = function (t, n) {
-    for (var r = -1, e = null == t ? 0 : t.length; ++r < e;) if (n(t[r], r, t)) return !0;
-    return !1;
+    for (var r = -1, e = null == t ? 0 : t.length; ++r < e;) if (n(t[r], r, t)) return true;
+    return false;
   };
 }, function (t, n, r) {
   var e = r(9),
@@ -12438,7 +12422,7 @@ var JsonRefs = function (t) {
   t.exports = function (t, n, r, e, s, l, p) {
     switch (r) {
       case "[object DataView]":
-        if (t.byteLength != n.byteLength || t.byteOffset != n.byteOffset) return !1;
+        if (t.byteLength != n.byteLength || t.byteOffset != n.byteOffset) return false;
         t = t.buffer, n = n.buffer;
       case "[object ArrayBuffer]":
         return !(t.byteLength != n.byteLength || !l(new o(t), new o(n)));
@@ -12455,7 +12439,7 @@ var JsonRefs = function (t) {
         var h = c;
       case "[object Set]":
         var v = 1 & e;
-        if (h || (h = a), t.size != n.size && !v) return !1;
+        if (h || (h = a), t.size != n.size && !v) return false;
         var d = p.get(t);
         if (d) return d == n;
         e |= 2, p.set(t, n);
@@ -12464,7 +12448,7 @@ var JsonRefs = function (t) {
       case "[object Symbol]":
         if (f) return f.call(t) == f.call(n);
     }
-    return !1;
+    return false;
   };
 }, function (t, n) {
   t.exports = function (t) {
@@ -12481,21 +12465,21 @@ var JsonRefs = function (t) {
     var a = 1 & r,
       s = e(t),
       f = s.length;
-    if (f != e(n).length && !a) return !1;
+    if (f != e(n).length && !a) return false;
     for (var l = f; l--;) {
       var p = s[l];
-      if (!(a ? p in n : o.call(n, p))) return !1;
+      if (!(a ? p in n : o.call(n, p))) return false;
     }
     var h = c.get(t);
     if (h && c.get(n)) return h == n;
-    var v = !0;
+    var v = true;
     c.set(t, n), c.set(n, t);
     for (var d = a; ++l < f;) {
       var y = t[p = s[l]],
         _ = n[p];
       if (i) var g = a ? i(_, y, p, n, t, c) : i(y, _, p, t, n, c);
       if (!(void 0 === g ? y === _ || u(y, _, r, i, c) : g)) {
-        v = !1;
+        v = false;
         break;
       }
       d || (d = "constructor" == p);
@@ -12503,7 +12487,7 @@ var JsonRefs = function (t) {
     if (v && !d) {
       var b = t.constructor,
         m = n.constructor;
-      b != m && "constructor" in t && "constructor" in n && !("function" == typeof b && b instanceof b && "function" == typeof m && m instanceof m) && (v = !1);
+      b != m && "constructor" in t && "constructor" in n && !("function" == typeof b && b instanceof b && "function" == typeof m && m instanceof m) && (v = false);
     }
     return c.delete(t), c.delete(n), v;
   };
@@ -12639,13 +12623,13 @@ var JsonRefs = function (t) {
     f = r(22),
     l = Object.prototype.hasOwnProperty;
   t.exports = function (t) {
-    if (null == t) return !0;
+    if (null == t) return true;
     if (c(t) && (u(t) || "string" == typeof t || "function" == typeof t.splice || a(t) || f(t) || i(t))) return !t.length;
     var n = o(t);
     if ("[object Map]" == n || "[object Set]" == n) return !t.size;
     if (s(t)) return !e(t).length;
-    for (var r in t) if (l.call(t, r)) return !1;
-    return !0;
+    for (var r in t) if (l.call(t, r)) return false;
+    return true;
   };
 }, function (t, n) {
   t.exports = function (t) {
@@ -12690,7 +12674,7 @@ var JsonRefs = function (t) {
 }, function (t, n) {
   t.exports = function (t, n, r, e, o) {
     return o(t, function (t, o, i) {
-      r = e ? (e = !1, t) : n(r, t, o, i);
+      r = e ? (e = false, t) : n(r, t, o, i);
     }), r;
   };
 }, function (t, n, r) {
@@ -12770,7 +12754,7 @@ var JsonRefs = function (t) {
     i = r(200),
     u = r(209),
     c = o(function (t) {
-      return i(e(t, 1, u, !0));
+      return i(e(t, 1, u, true));
     });
   t.exports = c;
 }, function (t, n, r) {
@@ -12835,10 +12819,10 @@ var JsonRefs = function (t) {
     i = r(25),
     u = o ? function (t, n) {
       return o(t, "toString", {
-        configurable: !0,
-        enumerable: !1,
+        configurable: true,
+        enumerable: false,
         value: e(n),
-        writable: !0
+        writable: true
       });
     } : i;
   t.exports = u;
@@ -12867,13 +12851,13 @@ var JsonRefs = function (t) {
     var s = -1,
       f = o,
       l = t.length,
-      p = !0,
+      p = true,
       h = [],
       v = h;
-    if (r) p = !1, f = i;else if (l >= 200) {
+    if (r) p = false, f = i;else if (l >= 200) {
       var d = n ? null : c(t);
       if (d) return a(d);
-      p = !1, f = u, v = new e();
+      p = false, f = u, v = new e();
     } else v = n ? [] : h;
     t: for (; ++s < l;) {
       var y = t[s],
@@ -12913,8 +12897,8 @@ var JsonRefs = function (t) {
   };
 }, function (t, n) {
   t.exports = function (t, n, r) {
-    for (var e = -1, o = null == t ? 0 : t.length; ++e < o;) if (r(n, t[e])) return !0;
-    return !1;
+    for (var e = -1, o = null == t ? 0 : t.length; ++e < o;) if (r(n, t[e])) return true;
+    return false;
   };
 }, function (t, n, r) {
   var e = r(61),
@@ -13018,7 +13002,7 @@ var JsonRefs = function (t) {
       r = {},
       o = [];
     function i(o) {
-      e.has(r, o) || (r[o] = !0, n.push(o), e.each(t.successors(o), i), e.each(t.predecessors(o), i));
+      e.has(r, o) || (r[o] = true, n.push(o), e.each(t.successors(o), i), e.each(t.predecessors(o), i));
     }
     return e.each(t.nodes(), function (t) {
       n = [], i(t), n.length && o.push(n);
@@ -13085,10 +13069,10 @@ var JsonRefs = function (t) {
     try {
       e(t);
     } catch (t) {
-      if (t instanceof e.CycleException) return !1;
+      if (t instanceof e.CycleException) return false;
       throw t;
     }
-    return !0;
+    return true;
   };
 }, function (t, n, r) {
   var e = r(80);
@@ -13121,11 +13105,11 @@ var JsonRefs = function (t) {
     e.each(t.nodes(), function (t) {
       a.add(t, Number.POSITIVE_INFINITY), u.setNode(t);
     }), a.decrease(t.nodes()[0], 0);
-    var f = !1;
+    var f = false;
     for (; a.size() > 0;) {
       if (r = a.removeMin(), e.has(c, r)) u.setEdge(r, c[r]);else {
         if (f) throw new Error("Input graph is not connected: " + t);
-        f = !0;
+        f = true;
       }
       t.nodeEdges(r).forEach(s);
     }
@@ -13147,7 +13131,7 @@ var JsonRefs = function (t) {
       return r;
     }
     n.resolve = function () {
-      for (var n = "", o = !1, i = arguments.length - 1; i >= -1 && !o; i--) {
+      for (var n = "", o = false, i = arguments.length - 1; i >= -1 && !o; i--) {
         var u = i >= 0 ? arguments[i] : t.cwd();
         if ("string" != typeof u) throw new TypeError("Arguments to path.resolve must be strings");
         u && (n = u + "/" + n, o = "/" === u.charAt(0));
@@ -13185,12 +13169,12 @@ var JsonRefs = function (t) {
       return (s = s.concat(i.slice(c))).join("/");
     }, n.sep = "/", n.delimiter = ":", n.dirname = function (t) {
       if ("string" != typeof t && (t += ""), 0 === t.length) return ".";
-      for (var n = t.charCodeAt(0), r = 47 === n, e = -1, o = !0, i = t.length - 1; i >= 1; --i) if (47 === (n = t.charCodeAt(i))) {
+      for (var n = t.charCodeAt(0), r = 47 === n, e = -1, o = true, i = t.length - 1; i >= 1; --i) if (47 === (n = t.charCodeAt(i))) {
         if (!o) {
           e = i;
           break;
         }
-      } else o = !1;
+      } else o = false;
       return -1 === e ? r ? "/" : "." : r && 1 === e ? "/" : t.slice(0, e);
     }, n.basename = function (t, n) {
       var r = function (t) {
@@ -13198,21 +13182,21 @@ var JsonRefs = function (t) {
         var n,
           r = 0,
           e = -1,
-          o = !0;
+          o = true;
         for (n = t.length - 1; n >= 0; --n) if (47 === t.charCodeAt(n)) {
           if (!o) {
             r = n + 1;
             break;
           }
-        } else -1 === e && (o = !1, e = n + 1);
+        } else -1 === e && (o = false, e = n + 1);
         return -1 === e ? "" : t.slice(r, e);
       }(t);
       return n && r.substr(-1 * n.length) === n && (r = r.substr(0, r.length - n.length)), r;
     }, n.extname = function (t) {
       "string" != typeof t && (t += "");
-      for (var n = -1, r = 0, e = -1, o = !0, i = 0, u = t.length - 1; u >= 0; --u) {
+      for (var n = -1, r = 0, e = -1, o = true, i = 0, u = t.length - 1; u >= 0; --u) {
         var c = t.charCodeAt(u);
-        if (47 !== c) -1 === e && (o = !1, e = u + 1), 46 === c ? -1 === n ? n = u : 1 !== i && (i = 1) : -1 !== n && (i = -1);else if (!o) {
+        if (47 !== c) -1 === e && (o = false, e = u + 1), 46 === c ? -1 === n ? n = u : 1 !== i && (i = 1) : -1 !== n && (i = -1);else if (!o) {
           r = u + 1;
           break;
         }
@@ -13362,7 +13346,7 @@ var JsonRefs = function (t) {
       try {
         e = new _(r);
       } catch (t) {
-        return (n = new Error("Parser is unable to parse the response")).parse = !0, n.original = t, r.xhr ? (n.rawResponse = void 0 === r.xhr.responseType ? r.xhr.responseText : r.xhr.response, n.status = r.xhr.status ? r.xhr.status : null, n.statusCode = n.status) : (n.rawResponse = null, n.status = null), r.callback(n);
+        return (n = new Error("Parser is unable to parse the response")).parse = true, n.original = t, r.xhr ? (n.rawResponse = void 0 === r.xhr.responseType ? r.xhr.responseText : r.xhr.response, n.status = r.xhr.status ? r.xhr.status : null, n.statusCode = n.status) : (n.rawResponse = null, n.status = null), r.callback(n);
       }
       r.emit("response", e);
       try {
@@ -13429,7 +13413,7 @@ var JsonRefs = function (t) {
     this.clearTimeout(), t && (this._maxRetries && (t.retries = this._retries - 1), this.emit("error", t)), r(t, n);
   }, g.prototype.crossDomainError = function () {
     var t = new Error("Request has been terminated\nPossible causes: the network is offline, Origin is not allowed by Access-Control-Allow-Origin, the page is being unloaded, etc.");
-    t.crossDomain = !0, t.status = this.status, t.method = this.method, t.url = this.url, this.callback(t);
+    t.crossDomain = true, t.status = this.status, t.method = this.method, t.url = this.url, this.callback(t);
   }, g.prototype.buffer = g.prototype.ca = g.prototype.agent = function () {
     return console.warn("This is not supported in browser version of superagent"), this;
   }, g.prototype.pipe = g.prototype.write = function () {
@@ -13437,7 +13421,7 @@ var JsonRefs = function (t) {
   }, g.prototype._isHost = function (t) {
     return t && "object" === e(t) && !Array.isArray(t) && "[object Object]" !== Object.prototype.toString.call(t);
   }, g.prototype.end = function (t) {
-    return this._endCalled && console.warn("Warning: .end() was called twice. This is not supported in superagent"), this._endCalled = !0, this._callback = t || f, this._finalizeQueryString(), this._end();
+    return this._endCalled && console.warn("Warning: .end() was called twice. This is not supported in superagent"), this._endCalled = true, this._callback = t || f, this._finalizeQueryString(), this._end();
   }, g.prototype._end = function () {
     var t = this,
       n = this.xhr = l.getXHR(),
@@ -13469,7 +13453,7 @@ var JsonRefs = function (t) {
     } catch (t) {
       return this.callback(t);
     }
-    if (this._withCredentials && (n.withCredentials = !0), !this._formData && "GET" != this.method && "HEAD" != this.method && "string" != typeof r && !this._isHost(r)) {
+    if (this._withCredentials && (n.withCredentials = true), !this._formData && "GET" != this.method && "HEAD" != this.method && "string" != typeof r && !this._isHost(r)) {
       var o = this._header["content-type"],
         i = this._serializer || l.serialize[o ? o.split(";")[0] : ""];
       !i && y(o) && (i = l.serialize["application/json"]), i && (r = i(r));
@@ -13576,11 +13560,11 @@ var JsonRefs = function (t) {
     }
     return this;
   }, i.prototype.retry = function (t, n) {
-    return 0 !== arguments.length && !0 !== t || (t = 1), t <= 0 && (t = 0), this._maxRetries = t, this._retries = 0, this._retryCallback = n, this;
+    return 0 !== arguments.length && true !== t || (t = 1), t <= 0 && (t = 0), this._maxRetries = t, this._retries = 0, this._retryCallback = n, this;
   };
   var u = ["ECONNRESET", "ETIMEDOUT", "EADDRINFO", "ESOCKETTIMEDOUT"];
   i.prototype._shouldRetry = function (t, n) {
-    if (!this._maxRetries || this._retries++ >= this._maxRetries) return !1;
+    if (!this._maxRetries || this._retries++ >= this._maxRetries) return false;
     if (this._retryCallback) try {
       var r = this._retryCallback(t, n);
       if (!0 === r) return !0;
@@ -13588,15 +13572,15 @@ var JsonRefs = function (t) {
     } catch (t) {
       console.error(t);
     }
-    if (n && n.status && n.status >= 500 && 501 != n.status) return !0;
+    if (n && n.status && n.status >= 500 && 501 != n.status) return true;
     if (t) {
-      if (t.code && ~u.indexOf(t.code)) return !0;
-      if (t.timeout && "ECONNABORTED" == t.code) return !0;
-      if (t.crossDomain) return !0;
+      if (t.code && ~u.indexOf(t.code)) return true;
+      if (t.timeout && "ECONNABORTED" == t.code) return true;
+      if (t.crossDomain) return true;
     }
-    return !1;
+    return false;
   }, i.prototype._retry = function () {
-    return this.clearTimeout(), this.req && (this.req = null, this.req = this.request()), this._aborted = !1, this.timedout = !1, this._end();
+    return this.clearTimeout(), this.req && (this.req = null, this.req = this.request()), this._aborted = false, this.timedout = false, this._end();
   }, i.prototype.then = function (t, n) {
     if (!this._fullfilledPromise) {
       var r = this;
@@ -13639,7 +13623,7 @@ var JsonRefs = function (t) {
     if (null == n) throw new Error(".field(name, val) val can not be empty");
     return "boolean" == typeof n && (n = "" + n), this._getFormData().append(t, n), this;
   }, i.prototype.abort = function () {
-    return this._aborted || (this._aborted = !0, this.xhr && this.xhr.abort(), this.req && this.req.abort(), this.clearTimeout(), this.emit("abort")), this;
+    return this._aborted || (this._aborted = true, this.xhr && this.xhr.abort(), this.req && this.req.abort(), this.clearTimeout(), this.emit("abort")), this;
   }, i.prototype._auth = function (t, n, r, e) {
     switch (r.type) {
       case "basic":
@@ -13653,7 +13637,7 @@ var JsonRefs = function (t) {
     }
     return this;
   }, i.prototype.withCredentials = function (t) {
-    return null == t && (t = !0), this._withCredentials = t, this;
+    return null == t && (t = true), this._withCredentials = t, this;
   }, i.prototype.redirects = function (t) {
     return this._maxRedirects = t, this;
   }, i.prototype.maxResponseSize = function (t) {
@@ -13688,7 +13672,7 @@ var JsonRefs = function (t) {
   }, i.prototype._timeoutError = function (t, n, r) {
     if (!this._aborted) {
       var e = new Error(t + n + "ms exceeded");
-      e.timeout = n, e.code = "ECONNABORTED", e.errno = r, this.timedout = !0, this.abort(), this.callback(e);
+      e.timeout = n, e.code = "ECONNABORTED", e.errno = r, this.timedout = true, this.abort(), this.callback(e);
     }
   }, i.prototype._setTimeouts = function () {
     var t = this;
@@ -13797,7 +13781,7 @@ var JsonRefs = function (t) {
           c,
           a = 1,
           s = {},
-          f = !1,
+          f = false,
           l = t.document,
           p = Object.getPrototypeOf && Object.getPrototypeOf(t);
         p = p && p.setTimeout ? p : t, "[object process]" === {}.toString.call(t.process) ? e = function (t) {
@@ -13806,10 +13790,10 @@ var JsonRefs = function (t) {
           });
         } : !function () {
           if (t.postMessage && !t.importScripts) {
-            var n = !0,
+            var n = true,
               r = t.onmessage;
             return t.onmessage = function () {
-              n = !1;
+              n = false;
             }, t.postMessage("", "*"), t.onmessage = r, n;
           }
         }() ? t.MessageChannel ? ((i = new MessageChannel()).port1.onmessage = function (t) {
@@ -13825,7 +13809,7 @@ var JsonRefs = function (t) {
           setTimeout(v, 0, t);
         } : (u = "setImmediate$" + Math.random() + "$", c = function (n) {
           n.source === t && "string" == typeof n.data && 0 === n.data.indexOf(u) && v(+n.data.slice(u.length));
-        }, t.addEventListener ? t.addEventListener("message", c, !1) : t.attachEvent("onmessage", c), e = function (n) {
+        }, t.addEventListener ? t.addEventListener("message", c, false) : t.attachEvent("onmessage", c), e = function (n) {
           t.postMessage(u + n, "*");
         }), p.setImmediate = function (t) {
           "function" != typeof t && (t = new Function("" + t));
@@ -13844,7 +13828,7 @@ var JsonRefs = function (t) {
         if (f) setTimeout(v, 0, t);else {
           var n = s[t];
           if (n) {
-            f = !0;
+            f = true;
             try {
               !function (t) {
                 var n = t.callback,
@@ -13867,7 +13851,7 @@ var JsonRefs = function (t) {
                 }
               }(n);
             } finally {
-              h(t), f = !1;
+              h(t), f = false;
             }
           }
         }
@@ -14030,19 +14014,19 @@ var JsonRefs = function (t) {
         IPV6ADDRESS: new RegExp("^\\[?(" + E + ")" + r(r("\\%25|\\%(?!" + e + "{2})") + "(" + S + ")") + "?\\]?$")
       };
     }
-    var u = i(!1),
-      c = i(!0),
+    var u = i(false),
+      c = i(true),
       a = function (t, n) {
         if (Array.isArray(t)) return t;
         if (Symbol.iterator in Object(t)) return function (t, n) {
           var r = [],
-            e = !0,
-            o = !1,
+            e = true,
+            o = false,
             i = void 0;
           try {
             for (var u, c = t[Symbol.iterator](); !(e = (u = c.next()).done) && (r.push(u.value), !n || r.length !== n); e = !0);
           } catch (t) {
-            o = !0, i = t;
+            o = true, i = t;
           } finally {
             try {
               !e && c.return && c.return();
@@ -14127,8 +14111,8 @@ var JsonRefs = function (t) {
           e = 128,
           o = 0,
           i = 72,
-          u = !0,
-          c = !1,
+          u = true,
+          c = false,
           a = void 0;
         try {
           for (var f, l = t[Symbol.iterator](); !(u = (f = l.next()).done); u = !0) {
@@ -14136,7 +14120,7 @@ var JsonRefs = function (t) {
             p < 128 && n.push(d(p));
           }
         } catch (t) {
-          c = !0, a = t;
+          c = true, a = t;
         } finally {
           try {
             !u && l.return && l.return();
@@ -14148,8 +14132,8 @@ var JsonRefs = function (t) {
           _ = h;
         for (h && n.push("-"); _ < r;) {
           var w = s,
-            x = !0,
-            j = !1,
+            x = true,
+            j = false,
             E = void 0;
           try {
             for (var S, O = t[Symbol.iterator](); !(x = (S = O.next()).done); x = !0) {
@@ -14157,7 +14141,7 @@ var JsonRefs = function (t) {
               A >= e && A < w && (w = A);
             }
           } catch (t) {
-            j = !0, E = t;
+            j = true, E = t;
           } finally {
             try {
               !x && O.return && O.return();
@@ -14167,8 +14151,8 @@ var JsonRefs = function (t) {
           }
           var T = _ + 1;
           w - e > v((s - o) / T) && y("overflow"), o += (w - e) * T, e = w;
-          var C = !0,
-            I = !1,
+          var C = true,
+            I = false,
             P = void 0;
           try {
             for (var k, R = t[Symbol.iterator](); !(C = (k = R.next()).done); C = !0) {
@@ -14185,7 +14169,7 @@ var JsonRefs = function (t) {
               }
             }
           } catch (t) {
-            I = !0, P = t;
+            I = true, P = t;
           } finally {
             try {
               !C && R.return && R.return();
@@ -14282,7 +14266,7 @@ var JsonRefs = function (t) {
     function D(t) {
       var n = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
         r = {},
-        e = !1 !== n.iri ? c : u;
+        e = false !== n.iri ? c : u;
       "suffix" === n.reference && (t = (n.scheme ? n.scheme + ":" : "") + "//" + t);
       var o = t.match(k);
       if (o) {
@@ -14301,7 +14285,7 @@ var JsonRefs = function (t) {
       return r;
     }
     function U(t, n) {
-      var r = !1 !== n.iri ? c : u,
+      var r = false !== n.iri ? c : u,
         e = [];
       return void 0 !== t.userinfo && (e.push(t.userinfo), e.push("@")), void 0 !== t.host && e.push(P(I(String(t.host), r), r).replace(r.IPV6ADDRESS, function (t, n, r) {
         return "[" + n + (r ? "%25" + r : "") + "]";
@@ -14349,7 +14333,7 @@ var JsonRefs = function (t) {
     }
     var H = {
         scheme: "http",
-        domainHost: !0,
+        domainHost: true,
         parse: function (t, n) {
           return t.host || (t.error = t.error || "HTTP URIs must have a host."), t;
         },
@@ -14383,7 +14367,7 @@ var JsonRefs = function (t) {
           var r = t,
             e = r.to = r.path ? r.path.split(",") : [];
           if (r.path = void 0, r.query) {
-            for (var o = !1, i = {}, u = r.query.split("&"), c = 0, a = u.length; c < a; ++c) {
+            for (var o = false, i = {}, u = r.query.split("&"), c = 0, a = u.length; c < a; ++c) {
               var s = u[c].split("=");
               switch (s[0]) {
                 case "to":
@@ -14396,7 +14380,7 @@ var JsonRefs = function (t) {
                   r.body = B(s[1], n);
                   break;
                 default:
-                  o = !0, i[B(s[0], n)] = B(s[1], n);
+                  o = true, i[B(s[0], n)] = B(s[1], n);
               }
             }
             o && (r.headers = i);
@@ -14486,7 +14470,7 @@ var JsonRefs = function (t) {
       }({
         scheme: "null"
       }, r);
-      return M($(D(t, e), D(n, e), e, !0), e);
+      return M($(D(t, e), D(n, e), e, true), e);
     }, t.normalize = function (t, n) {
       return "string" == typeof t ? t = M(D(t, n), n) : "object" === e(t) && (t = D(M(t, n), n)), t;
     }, t.equal = function (t, n, r) {
@@ -14494,14 +14478,22 @@ var JsonRefs = function (t) {
     }, t.escapeComponent = function (t, n) {
       return t && t.toString().replace(n && n.iri ? c.ESCAPE : u.ESCAPE, O);
     }, t.unescapeComponent = B, Object.defineProperty(t, "__esModule", {
-      value: !0
+      value: true
     });
   }, "object" === c(n) && void 0 !== t ? u(n) : (o = [n], void 0 === (i = "function" == typeof (e = u) ? e.apply(n, o) : e) || (t.exports = i));
 }]);
 
 const getCurrDir = () => {
-  return window.location.href.replace(/(index\.html)?#.*$/, '');
+  return globalThis.location.href.replace(/(index\.html)?#.*$/, '');
 };
+
+/**
+ * @typedef {{
+ *   [key: string]: string|Integer|(string|Integer)[]|{
+ *     [key: string]: string|Integer
+ *   }
+ * }} FieldValueAliases
+ */
 
 /**
  * @typedef {{
@@ -14513,12 +14505,11 @@ const getCurrDir = () => {
  *   })[]}
  *   fields: {
  *     [key: string]: {
- *       prefer_alias: boolean,
+ *       prefer_alias: boolean|string,
+ *       name: string|{localeKey: string},
+ *       alias: string|{localeKey: string},
  *       lang: string,
- *       'fieldvalue-aliases': {
- *         localeKey: string,
- *         [key: string]: string|string[]
- *       }
+ *       'fieldvalue-aliases': FieldValueAliases
  *     }
  *   }
 * }} MetadataObj
@@ -14536,7 +14527,7 @@ const getMetaProp = function getMetaProp(lang, metadataObj, properties, allowObj
   properties = typeof properties === 'string' ? [properties] : properties;
   for (const lan of lang) {
     const p = [...properties];
-    let strings = /** @type {string | string[]|import('../../server/main.js').LocalizationStrings} */
+    let strings = /** @type {string|string[]|import('../../server/main.js').LocalizationStrings} */
     metadataObj['localization-strings'][lan];
     while (strings && p.length) {
       strings = /** @type {import('../../server/main.js').LocalizationStrings} */strings[(/** @type {string} */p.shift())];
@@ -14550,9 +14541,7 @@ const getMetaProp = function getMetaProp(lang, metadataObj, properties, allowObj
       break;
     }
   }
-  return /** @type {string|string[]|import('../../server/main.js').LocalizationStrings} */(
-    prop
-  );
+  return /** @type {string|string[]|import('../../server/main.js').LocalizationStrings} */prop;
 };
 
 // Use the following to dynamically add specific file schema in place of
@@ -14562,17 +14551,31 @@ const getMetaProp = function getMetaProp(lang, metadataObj, properties, allowObj
 // Todo: Allow use of dbs and fileGroup together in base directories?
 
 /**
+ * @typedef {{
+ *   items: {
+ *     items: {
+ *       title: string,
+ *       type: string
+ *       format?: string
+ *     }[]
+ *   }
+ * }} SchemaObj
+ */
+
+/**
  * @param {string} file
  * @param {string} property
- * @param {string} basePath
+ * @param {string} [basePath]
+ * @returns {Promise<MetadataObj|SchemaObj>}
  */
 const getMetadata = async (file, property, basePath) => {
   const url = new URL(basePath || getCurrDir());
   url.search = ''; // Clear out query string, e.g., `?fbclid` from Facebook
   url.pathname = file;
   url.hash = property ? '#/' + property : '';
-  return (await JsonRefs.resolveRefsAt(url.toString(), {
+  return /** @type {MetadataObj} */(await JsonRefs.resolveRefsAt(url.toString(), {
     loaderOptions: {
+      /* eslint-disable jsdoc/reject-any-type -- How to resolve? */
       /**
        * @param {{
        *   text: string,
@@ -14581,6 +14584,7 @@ const getMetadata = async (file, property, basePath) => {
        * @param {(err?: Error, cbValue: any) => void} callback
        */
       processContent(res, callback) {
+        /* eslint-enable jsdoc/reject-any-type -- How to resolve? */
         callback(undefined, JSON.parse(res.text ||
         // `.metadata` not a recognized extension, so
         //    convert to string for JSON in Node
@@ -14593,41 +14597,40 @@ const getMetadata = async (file, property, basePath) => {
 /**
  * @typedef {{
  *   field: string,
-*   schemaItems: {
-*     title: string,
-*     type: string,
-*     enum?: string[]
-*   }[],
-*   metadataObj: MetadataObj,
-*   getFieldAliasOrName: (field: string) => string,
-*   lang: string[]
-* }} GetFieldNameAndValueAliasesOptions
+ *   schemaItems: {
+ *     title: string,
+ *     type: string,
+ *     enum?: string[]
+ *   }[],
+ *   metadataObj: MetadataObj,
+ *   getFieldAliasOrName: (field: string) => string|string[]|import('../../server/main.js').LocalizationStrings,
+ *   lang: string[]
+ * }} GetFieldNameAndValueAliasesOptions
  */
 
 /**
  * @param {GetFieldNameAndValueAliasesOptions} cfg
  * @returns {{
  *   aliases: string[]|null,
- *   fieldValueAliasMap: Record<string, string[]>|null,
- *   rawFieldValueAliasMap: Record<string, string[]>|null,
+ *   fieldValueAliasMap: FieldValueAliases|null,
+ *   rawFieldValueAliasMap: FieldValueAliases|null,
  *   fieldName: string,
  *   fieldSchema: {
  *     title: string,
  *     type: string
  *   },
  *   fieldSchemaIndex: number,
- *   preferAlias: boolean,
+ *   preferAlias: boolean|string,
  *   lang: string
  * }}
  */
-const getFieldNameAndValueAliases = function (_ref) {
-  let {
-    field,
-    schemaItems,
-    metadataObj,
-    getFieldAliasOrName,
-    lang
-  } = _ref;
+const getFieldNameAndValueAliases = function ({
+  field,
+  schemaItems,
+  metadataObj,
+  getFieldAliasOrName,
+  lang
+}) {
   const fieldSchemaIndex = schemaItems.findIndex(item => {
     return item.title === field;
   });
@@ -14637,15 +14640,15 @@ const getFieldNameAndValueAliases = function (_ref) {
   /**
    * @type {{
    *   aliases: string[]|null,
-   *   fieldValueAliasMap: Record<string, string[]>|null,
-   *   rawFieldValueAliasMap: Record<string, string[]>|null,
+   *   fieldValueAliasMap: FieldValueAliases|null,
+   *   rawFieldValueAliasMap: FieldValueAliases|null,
    *   fieldName: string,
    *   fieldSchema: {
    *     title: string,
    *     type: string
    *   },
    *   fieldSchemaIndex: number,
-   *   preferAlias: boolean,
+   *   preferAlias: boolean|string,
    *   lang: string
    * }}
    */
@@ -14654,18 +14657,18 @@ const getFieldNameAndValueAliases = function (_ref) {
     aliases: null,
     fieldValueAliasMap: null,
     rawFieldValueAliasMap: null,
-    fieldName: getFieldAliasOrName(field),
+    fieldName: (/** @type {string} */getFieldAliasOrName(field)),
     fieldSchema,
     fieldSchemaIndex,
     preferAlias: fieldInfo.prefer_alias,
     lang: fieldInfo.lang
   };
 
-  /** @type {import('../../server/main.js').LocalizationStrings} */
+  /** @type {FieldValueAliases} */
   let fieldValueAliasMap = fieldInfo && fieldInfo['fieldvalue-aliases'];
   if (fieldValueAliasMap) {
     if (fieldValueAliasMap.localeKey) {
-      fieldValueAliasMap = /** @type {import('../../server/main.js').LocalizationStrings} */
+      fieldValueAliasMap = /** @type {FieldValueAliases} */
       getMetaProp(lang, metadataObj, /** @type {string} */
       fieldValueAliasMap.localeKey.split('/'), true);
     }
@@ -14691,8 +14694,7 @@ const getFieldNameAndValueAliases = function (_ref) {
       // Todo: We might iterate over all values (in case some not
       //         included in fv map)
       // Todo: Check `fieldSchema` for integer or string type
-      Object.entries(fieldValueAliasMap).forEach(_ref2 => {
-        let [key, aliases] = _ref2;
+      Object.entries(fieldValueAliasMap).forEach(([key, aliases]) => {
         // We'll preserve the numbers since probably more useful if
         //   stored with data (as opposed to enums)
         if (!Array.isArray(aliases)) {
@@ -14704,18 +14706,42 @@ const getFieldNameAndValueAliases = function (_ref) {
         /** @type {string[]} */
         ret.aliases.push(...aliases.filter(v => {
           return aliases.every(x => {
-            return x === v || !x.toLowerCase().startsWith(v.toLowerCase());
+            return x === v || !(/** @type {string} */
+            x.toLowerCase().startsWith(/** @type {string} */
+            v.toLowerCase()));
           });
         }).map(v => v + ' (' + key + ')') // Todo: i18nize
         );
       });
     }
     // eslint-disable-next-line unicorn/prefer-structured-clone -- Expecting JSON
-    ret.fieldValueAliasMap = JSON.parse(JSON.stringify(fieldValueAliasMap));
+    ret.fieldValueAliasMap = /** @type {FieldValueAliases} */JSON.parse(JSON.stringify(fieldValueAliasMap));
     // ret.aliases.sort();
   }
   return ret;
 };
+
+/**
+ * @typedef {number} Integer
+ */
+
+/**
+ * @typedef {{
+ *   aliases: string[]|null,
+ *   fieldValueAliasMap: FieldValueAliases|null,
+ *   rawFieldValueAliasMap: FieldValueAliases|null,
+ *   fieldName: string,
+ *   fieldSchema: {
+ *     title: string,
+ *     type: string,
+ *     minimum?: Integer,
+ *     maximum?: Integer
+ *   },
+ *   fieldSchemaIndex: number,
+ *   preferAlias: boolean|string,
+ *   lang: string
+ * }[]} BrowseFields
+ */
 
 /**
  * @typedef {{
@@ -14724,23 +14750,11 @@ const getFieldNameAndValueAliases = function (_ref) {
  *     title: string,
  *     type: string
  *   }[],
- *   getFieldAliasOrName: (field: string) => string,
+ *   getFieldAliasOrName: (field: string) => string|string[]|import('../../server/main.js').LocalizationStrings,
  *   lang: string[],
  *   callback: (cfg: {
  *     setName: string,
- *     browseFields: {
- *       aliases: string[]|null,
- *       fieldValueAliasMap: Record<string, string[]>|null,
- *       rawFieldValueAliasMap: Record<string, string[]>|null,
- *       fieldName: string,
- *       fieldSchema: {
- *         title: string,
- *         type: string
- *       },
- *       fieldSchemaIndex: number,
- *       preferAlias: boolean,
- *       lang: string
- *     }[],
+ *     browseFields: BrowseFields,
  *     i: number,
  *     presort: boolean|undefined
  *   }) => void
@@ -14750,14 +14764,13 @@ const getFieldNameAndValueAliases = function (_ref) {
 /**
  * @param {GetBrowseFieldDataOptions} cfg
  */
-const getBrowseFieldData = function (_ref3) {
-  let {
-    metadataObj,
-    schemaItems,
-    getFieldAliasOrName,
-    lang,
-    callback
-  } = _ref3;
+const getBrowseFieldData = function ({
+  metadataObj,
+  schemaItems,
+  getFieldAliasOrName,
+  lang,
+  callback
+}) {
   metadataObj.table.browse_fields.forEach((browseFieldSetObject, i) => {
     if (typeof browseFieldSetObject === 'string') {
       browseFieldSetObject = {
@@ -14800,10 +14813,9 @@ class Metadata {
    *   metadataObj: MetadataObj
    * }} cfg
    */
-  constructor(_ref4) {
-    let {
-      metadataObj
-    } = _ref4;
+  constructor({
+    metadataObj
+  }) {
     this.metadataObj = metadataObj;
   }
 
@@ -14831,13 +14843,12 @@ class Metadata {
    * }} cfg
    * @returns {(field: string) => boolean}
    */
-  getFieldMatchesLocale(_ref5) {
-    let {
-      namespace,
-      preferredLocale,
-      schemaItems,
-      pluginsForWork
-    } = _ref5;
+  getFieldMatchesLocale({
+    namespace,
+    preferredLocale,
+    schemaItems,
+    pluginsForWork
+  }) {
     const {
       metadataObj
     } = this;
@@ -14878,6 +14889,10 @@ class Metadata {
 }
 
 /**
+ * @typedef {number} Integer
+ */
+
+/**
  * @param {string} pluginName
  */
 const escapePluginComponent = pluginName => {
@@ -14905,42 +14920,116 @@ const unescapePluginComponent = pluginName => {
  *   targetLanguage: string
  * }} cfg
  */
-const escapePlugin = _ref => {
-  let {
-    pluginName,
-    applicableField,
-    targetLanguage
-  } = _ref;
+const escapePlugin = ({
+  pluginName,
+  applicableField,
+  targetLanguage
+}) => {
   return escapePluginComponent(pluginName) + (applicableField ? '-' + escapePluginComponent(applicableField) : '-') + (targetLanguage ? '-' + escapePluginComponent(targetLanguage) : '');
 };
 
+/* eslint-disable jsdoc/reject-any-type -- How to resolve? */
+/**
+ * @typedef {any} MetaValue
+ */
+/* eslint-enable jsdoc/reject-any-type -- Arbitrary */
+
 /**
  * @todo Complete
- * @typedef {{}} PluginObject
+ * @typedef {{
+ *   path: string,
+ *   onByDefault?: boolean,
+ *   lang?: string,
+ *   meta?: {[key: string]: string}
+ *   getCellData?: (info: {
+ *     tr: (string|Integer)[],
+ *     tableData: (string|Integer)[][],
+ *     i: number,
+ *     j: number,
+ *     applicableField?: string,
+ *     fieldInfo: import('../resultsDisplay.js').FieldInfo,
+ *     applicableFieldIdx: number,
+ *     applicableFieldText: string|Integer,
+ *     fieldLang: string,
+ *     getLangDir: (locale: string) => string,
+ *     meta: {
+ *       [key: string]: string
+ *     }|undefined,
+ *     metaApplicableField?: {
+ *       [key: string]: string
+ *     },
+ *     $p: import('./IntlURLSearchParams.js').default,
+ *     thisObj: import('../index.js').default|import('../../server/main.js').ResultsDisplayServerContext
+ *   }) => string|Integer,
+ *   done: (info: {
+ *     $p: import('./IntlURLSearchParams.js').default,
+ *     applicableField: string|undefined,
+ *     meta?: {[key: string]: string}
+ *     thisObj: import('../index.js').default
+ *     j?: number
+ *   }) => void,
+ *   getTargetLanguage: (info: {
+ *     applicableField: string,
+ *     targetLanguage?: string,
+ *     pluginLang: string,
+ *     applicableFieldLang?: string
+ *   }) => string,
+ *   escapeColumn?: boolean,
+ *   getFieldAliasOrName: (info: {
+ *     locales: string[],
+ *     workI18n: import('intl-dom').I18NCallback,
+ *     targetLanguage: string,
+ *     applicableField: string,
+ *     applicableFieldI18N: string|string[]|import("../../server/main.js").LocalizationStrings,
+ *     meta: MetaValue,
+ *     metaApplicableField: {
+ *       [key: string]: string
+ *     },
+ *     targetLanguageI18N: string
+ *   }) => string
+ * }} PluginObject
+ */
+
+/**
+ * @typedef {{
+ *   path: string,
+ *   lang: string,
+ *   meta: MetaValue,
+ *   onByDefault: boolean
+ * }} PluginInfo
+ */
+
+/**
+ * @typedef {{
+ *   placement: "end"|number,
+ *   'applicable-fields': {
+ *     [field: string]: {
+ *       targetLanguage: string|string[],
+ *       onByDefault: boolean,
+ *       meta: {
+ *         [key: string]: string
+ *       },
+ *       [args: string]: {}
+ *     }
+ *   },
+ *   [fieldArgs: string]: {
+ *   }
+ * }} PluginFieldMappingForWork
  */
 
 class PluginsForWork {
   /**
    * @param {{
-   *   pluginsInWork: [string, {
-   *     lang: string,
-   *     meta: any,
-   *     onByDefault: boolean
-   *   }][],
-   *   pluginFieldMappings: {
-   *     placement: string,
-   *     'applicable-fields': {
-   *     }
-   *   }[],
+   *   pluginsInWork: [string, PluginInfo][],
+   *   pluginFieldMappings: PluginFieldMappingForWork[],
    *   pluginObjects: PluginObject[]
    * }} cfg
    */
-  constructor(_ref2) {
-    let {
-      pluginsInWork,
-      pluginFieldMappings,
-      pluginObjects
-    } = _ref2;
+  constructor({
+    pluginsInWork,
+    pluginFieldMappings,
+    pluginObjects
+  }) {
     this.pluginsInWork = pluginsInWork;
     this.pluginFieldMappings = pluginFieldMappings;
     this.pluginObjects = pluginObjects;
@@ -14951,8 +15040,7 @@ class PluginsForWork {
    * @returns {PluginObject}
    */
   getPluginObject(pluginName) {
-    const idx = this.pluginsInWork.findIndex(_ref3 => {
-      let [name] = _ref3;
+    const idx = this.pluginsInWork.findIndex(([name]) => {
       return name === pluginName;
     });
     const plugin = this.pluginObjects[idx];
@@ -14962,12 +15050,12 @@ class PluginsForWork {
   /**
    * @param {(cfg: {
    *   plugin: PluginObject,
-   *   placement: string,
+   *   placement: "end"|number,
    *   applicableFields: {
    *     [applicableField: string]: {
    *       targetLanguage: string|string[],
    *       onByDefault: boolean,
-   *       meta: any
+   *       meta: MetaValue
    *     }
    *   },
    *   pluginName: string,
@@ -14978,17 +15066,16 @@ class PluginsForWork {
    * @returns {void}
    */
   iterateMappings(cb) {
-    this.pluginFieldMappings.forEach((_ref4, i) => {
-      let {
-        placement,
-        /*
-              {fieldXYZ: {
-                  targetLanguage: "en"|["en"], // E.g., translating from Persian to English
-                  onByDefault: true // Overrides plugin default
-              }}
-              */
-        'applicable-fields': applicableFields
-      } = _ref4;
+    this.pluginFieldMappings.forEach(({
+      placement,
+      /*
+            {fieldXYZ: {
+                targetLanguage: "en"|["en"], // E.g., translating from Persian to English
+                onByDefault: true // Overrides plugin default
+            }}
+            */
+      'applicable-fields': applicableFields
+    }, i) => {
       const [pluginName, {
         onByDefault: onByDefaultDefault,
         lang: pluginLang,
@@ -15012,7 +15099,7 @@ class PluginsForWork {
    *   [applicableField: string]: {
    *     targetLanguage: string|string[],
    *     onByDefault: boolean,
-   *     meta: any
+   *     meta: MetaValue
    *   }
    * }} applicableFields
    * @param {(cfg: {
@@ -15029,12 +15116,11 @@ class PluginsForWork {
     if (!applicableFields) {
       return false;
     }
-    Object.entries(applicableFields).forEach(_ref5 => {
-      let [applicableField, {
-        targetLanguage,
-        onByDefault,
-        meta: metaApplicableField
-      }] = _ref5;
+    Object.entries(applicableFields).forEach(([applicableField, {
+      targetLanguage,
+      onByDefault,
+      meta: metaApplicableField
+    }]) => {
       if (Array.isArray(targetLanguage)) {
         targetLanguage.forEach(targetLanguage => {
           cb({
@@ -15063,11 +15149,10 @@ class PluginsForWork {
    * }} cfg
    * @returns {boolean}
    */
-  isPluginField(_ref6) {
-    let {
-      namespace,
-      field
-    } = _ref6;
+  isPluginField({
+    namespace,
+    field
+  }) {
     return field.startsWith(`${namespace}-plugin-`);
   }
 
@@ -15078,11 +15163,10 @@ class PluginsForWork {
    * }} cfg
    * @returns {[string, string|undefined, string|undefined]}
    */
-  getPluginFieldParts(_ref7) {
-    let {
-      namespace,
-      field
-    } = _ref7;
+  getPluginFieldParts({
+    namespace,
+    field
+  }) {
     field = field.replace(`${namespace}-plugin-`, '');
     let pluginName, applicableField, targetLanguage;
     if (field.includes('-')) {
@@ -15090,9 +15174,7 @@ class PluginsForWork {
     } else {
       pluginName = field;
     }
-    return /** @type {[string, string|undefined, string|undefined]} */(
-      [pluginName, applicableField, targetLanguage].map(unescapePluginComponent)
-    );
+    return /** @type {[string, string|undefined, string|undefined]} */[pluginName, applicableField, targetLanguage].map(unescapePluginComponent);
   }
 }
 
@@ -15120,31 +15202,51 @@ const getFilePaths = function getFilePaths(filesObj, fileGroup, fileData) {
 /**
  * @typedef {{
  *   lang: string[],
- *   fallbackLanguages: string[],
+ *   fallbackLanguages: string[]|undefined,
  *   work: string,
  *   files: string,
  *   allowPlugins: boolean|undefined,
- *   basePath: string,
+ *   basePath?: string,
  *   languages: import('./Languages.js').Languages,
  *   preferredLocale: string
  * }} GetWorkDataOptions
  */
 
 /**
- * @param {GetWorkDataOptions} cfg
+ * @typedef {{
+ *   fileData: FileData,
+ *   workI18n: import('intl-dom').I18NCallback,
+ *   getFieldAliasOrName: (field: string) => string|string[]|import('../../server/main.js').LocalizationStrings,
+ *   metadataObj: import('./Metadata.js').MetadataObj,
+ *   schemaObj: import('./Metadata.js').SchemaObj,
+ *   schemaItems: { title: string, type: string }[],
+ *   fieldInfo: FieldInfo,
+ *   pluginsForWork: PluginsForWork|null,
+ *   groupsToWorks: {
+ *     name: string | Text | DocumentFragment,
+ *     workNames: (string | Text | DocumentFragment)[],
+ *     shortcuts: string[]
+ *   }[],
+ *   metadata: Metadata
+ * }} GetWorkDataReturn
  */
-const getWorkData = async function (_ref) {
-  let {
-    lang,
-    fallbackLanguages,
-    work,
-    files,
-    allowPlugins,
-    basePath,
-    languages,
-    preferredLocale
-  } = _ref;
-  const filesObj = await getJSON(files);
+
+/**
+ * @this {import('../index.js').default}
+ * @param {GetWorkDataOptions} cfg
+ * @returns {Promise<GetWorkDataReturn>}
+ */
+const getWorkData = async function ({
+  lang,
+  fallbackLanguages,
+  work,
+  files,
+  allowPlugins,
+  basePath,
+  languages,
+  preferredLocale
+}) {
+  const filesObj = /** @type {FilesObject} */await getJSON(files);
   const localizationStrings =
   /**
    * @type {{
@@ -15159,26 +15261,28 @@ const getWorkData = async function (_ref) {
     locales: lang,
     defaultLocales: fallbackLanguages,
     // Todo: Could at least share this with `index.js`
-    localeStringFinder(_ref2) {
-      let {
-        locales,
-        defaultLocales
-      } = _ref2;
-      const locale = [...locales, ...defaultLocales].find(language => {
+    async localeStringFinder({
+      locales,
+      defaultLocales
+    } = {}) {
+      const locale = [...(/** @type {string[]} */locales), ...(/** @type {string[]} */defaultLocales)].find(language => {
         return language in localizationStrings;
       });
       return {
-        locale,
+        // eslint-disable-next-line object-shorthand -- TS
+        locale: (/** @type {string} */locale),
         strings: {
           head: {},
-          body: localizationStrings[locale]
+          body: localizationStrings[(/** @type {string} */locale)]
         }
       };
     }
   });
+
+  /** @type {FileData} */
   let fileData;
-  const fileGroup = filesObj.groups.find(fg => {
-    fileData = fg.files.find(file => {
+  const fileGroup = /** @type {FileGroup} */filesObj.groups.find(fg => {
+    fileData = /** @type {FileData} */fg.files.find(file => {
       return work === workI18n(['workNames', fg.id, file.name]);
     });
     return Boolean(fileData);
@@ -15193,6 +15297,8 @@ const getWorkData = async function (_ref) {
       shortcuts: fg.files.map(file => file.shortcut)
     };
   });
+
+  // @ts-expect-error Ok
   const fp = getFilePaths(filesObj, fileGroup, fileData);
   const {
     file
@@ -15211,33 +15317,44 @@ const getWorkData = async function (_ref) {
     metadataFile = file;
     metadataProperty = 'metadata';
   }
-  let getPlugins,
-    pluginsInWork,
-    pluginFieldsForWork,
-    pluginPaths,
-    pluginFieldMappingForWork = [];
+  let getPlugins;
+  /**
+   * @type {[string, import('./Plugin.js').PluginInfo][]}
+   */
+  let pluginsInWork;
+
+  /** @type {string[]} */
+  let pluginPaths = [];
+  /** @type {string[]} */
+  let pluginFieldsForWork;
+
+  /**
+   * @type {import('./Plugin.js').PluginFieldMappingForWork[]}
+   */
+  let pluginFieldMappingForWork = [];
   if (allowPlugins) {
     const pluginFieldMapping = filesObj['plugin-field-mapping'];
     const pluginFieldMappingID = pluginFieldMapping[fileGroup.id];
-    const possiblePluginFieldMappingForWork = pluginFieldMappingID[fileData.name];
+    const possiblePluginFieldMappingForWork = pluginFieldMappingID[
+    // @ts-expect-error Ok
+    fileData.name];
     if (possiblePluginFieldMappingForWork) {
       pluginFieldsForWork = Object.keys(possiblePluginFieldMappingForWork);
-      pluginsInWork = Object.entries(filesObj.plugins).filter(_ref3 => {
-        let [p] = _ref3;
+      pluginsInWork = Object.entries(filesObj.plugins).filter(([p]) => {
         return pluginFieldsForWork.includes(p);
       });
-      pluginFieldMappingForWork = pluginsInWork.map(_ref4 => {
-        let [p] = _ref4;
+      pluginFieldMappingForWork = pluginsInWork.map(([p]) => {
         return possiblePluginFieldMappingForWork[p];
       });
-      pluginPaths = pluginsInWork.map(_ref5 => {
-        let [, pluginObj] = _ref5;
-        return pluginObj.path;
-      });
+      pluginPaths = pluginsInWork.map(([, pluginObj]) => pluginObj.path);
       getPlugins = pluginsInWork;
     }
   }
-  const metadataObj = await getMetadata(metadataFile, metadataProperty, basePath);
+  const metadataObj = /** @type {import('./Metadata.js').MetadataObj} */
+  await getMetadata(metadataFile, metadataProperty, basePath);
+  /**
+   * @param {string} field
+   */
   const getFieldAliasOrName = function getFieldAliasOrName(field) {
     const fieldObj = metadataObj.fields && metadataObj.fields[field];
     let fieldName;
@@ -15264,20 +15381,25 @@ const getWorkData = async function (_ref) {
   };
   const pluginFieldMappings = pluginFieldMappingForWork;
   const cwd = typeof process === 'undefined' ? location.href.slice(0, location.href.lastIndexOf('/') + 1) : process.cwd() + '/';
-  const [schemaObj, pluginObjects] = await Promise.all([getMetadata(schemaFile, schemaProperty, basePath), getPlugins ? Promise.all(pluginPaths.map(pluginPath => {
+  const schemaAndPluginObjects = await Promise.all([getMetadata(schemaFile, schemaProperty, basePath), getPlugins ? Promise.all(pluginPaths.map(async pluginPath => {
     // // eslint-disable-next-line no-unsanitized/method
-    return import(cwd + pluginPath);
+    return /** @type {import('./Plugin.js').PluginObject} */await import(cwd + pluginPath);
   })) : null]);
-  const pluginsForWork = new PluginsForWork({
+  const schemaObj = /** @type {import('./Metadata.js').SchemaObj} */
+  schemaAndPluginObjects[0];
+  const pluginObjects = schemaAndPluginObjects[1];
+  const pluginsForWork = pluginObjects ? new PluginsForWork({
+    // @ts-expect-error Ok
     pluginsInWork,
     pluginFieldMappings,
     pluginObjects
-  });
+  }) : null;
   const schemaItems = schemaObj.items.items;
-  const fieldInfo = schemaItems.map(_ref6 => {
-    let {
-      title: field
-    } = _ref6;
+
+  /** @type {FieldInfo} */
+  const fieldInfo = schemaItems.map(({
+    title: field
+  }) => {
     return {
       field,
       fieldAliasOrName: getFieldAliasOrName(field) || field
@@ -15294,64 +15416,96 @@ const getWorkData = async function (_ref) {
       lang,
       namespace
     } = this; // array with first item as preferred
-    pluginsForWork.iterateMappings(_ref7 => {
-      let {
-        // plugin,
-        pluginName,
-        pluginLang,
-        onByDefaultDefault,
-        placement,
-        applicableFields,
-        meta
-      } = _ref7;
-      const processField = function () {
-        let {
-          applicableField,
-          targetLanguage,
-          onByDefault,
-          metaApplicableField
-        } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    pluginsForWork.iterateMappings(({
+      // plugin,
+      pluginName,
+      pluginLang,
+      onByDefaultDefault,
+      placement,
+      applicableFields,
+      meta
+    }) => {
+      /**
+       * @param {{
+       *   applicableField?: string,
+       *   targetLanguage?: string,
+       *   onByDefault?: boolean,
+       *   metaApplicableField?: {
+       *     [key: string]: string
+       *   }
+       * }} [cfg]
+       */
+      const processField = ({
+        applicableField,
+        targetLanguage,
+        onByDefault,
+        metaApplicableField
+      } = {}) => {
         const plugin = pluginsForWork.getPluginObject(pluginName) || {};
-        const applicableFieldLang = metadata.getFieldLang(applicableField);
+        const applicableFieldLang = metadata.getFieldLang(/** @type {string} */
+        applicableField);
         if (plugin.getTargetLanguage) {
           targetLanguage = plugin.getTargetLanguage({
-            applicableField,
-            targetLanguage,
+            // eslint-disable-next-line object-shorthand -- TS
+            applicableField: (/** @type {string} */applicableField),
+            // eslint-disable-next-line object-shorthand -- TS
+            targetLanguage: (/** @type {string} */targetLanguage),
             // Default lang for plug-in (from files.json)
             pluginLang,
             // Default lang when no target language or
             //   plugin lang; using the lang of the applicable
             //   field
-            applicableFieldLang
+            // eslint-disable-next-line object-shorthand -- TS
+            applicableFieldLang: (/** @type {string} */applicableFieldLang)
           });
         }
         const field = escapePlugin({
           pluginName,
-          applicableField,
-          targetLanguage: targetLanguage || pluginLang || applicableFieldLang
+          // eslint-disable-next-line object-shorthand -- TS
+          applicableField: (/** @type {string} */applicableField),
+          targetLanguage: (/** @type {string} */targetLanguage || pluginLang || applicableFieldLang)
         });
         if (targetLanguage === '{locale}') {
           targetLanguage = preferredLocale;
         }
-        const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', applicableField]);
+        const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', (/** @type {string} */applicableField)]);
         const fieldAliasOrName = plugin.getFieldAliasOrName ? plugin.getFieldAliasOrName({
           locales: lang,
           workI18n,
-          targetLanguage,
-          applicableField,
+          // eslint-disable-next-line object-shorthand -- TS
+          targetLanguage: (/** @type {string} */targetLanguage),
+          // eslint-disable-next-line object-shorthand -- TS
+          applicableField: (/** @type {string} */applicableField),
           applicableFieldI18N,
           meta,
-          metaApplicableField,
-          targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
+          // eslint-disable-next-line object-shorthand -- TS
+          metaApplicableField: (
+          /**
+           * @type {{
+           *   [key: string]: string
+           * }}
+           */
+          metaApplicableField),
+          targetLanguageI18N: languages.getLanguageFromCode(/** @type {string} */
+          targetLanguage)
         }) : languages.getFieldNameFromPluginNameAndLocales({
           pluginName,
-          locales: lang,
+          // locales: lang,
           workI18n,
-          targetLanguage,
-          applicableFieldI18N,
+          // eslint-disable-next-line object-shorthand -- TS
+          targetLanguage: (/** @type {string} */targetLanguage),
+          // eslint-disable-next-line object-shorthand -- TS
+          applicableFieldI18N: (/** @type {string|string[]} */applicableFieldI18N),
           // Todo: Should have formal way to i18nize meta
           meta,
-          metaApplicableField
+          // eslint-disable-next-line object-shorthand -- TS
+          metaApplicableField: (
+          /**
+           * @type {{
+           *   [key: string]: string
+           * }}
+           */
+          metaApplicableField)
         });
         fieldInfo.splice(
         // Todo: Allow default placement overriding for
@@ -15377,7 +15531,9 @@ const getWorkData = async function (_ref) {
     });
   }
   return {
-    fileData,
+    // @ts-expect-error Ok
+    // eslint-disable-next-line object-shorthand -- TS
+    fileData: (/** @type {FileData} */fileData),
     workI18n,
     getFieldAliasOrName,
     metadataObj,
@@ -15411,7 +15567,7 @@ const getWorkData = async function (_ref) {
  */
 const setServiceWorkerDefaults = (target, source) => {
   target.userJSON = source.userJSON || 'resources/user.json';
-  target.languages = source.languages || new URL(new URL('assets/languages-DWwAAJMo.json', import.meta.url).href, import.meta.url).href;
+  target.languages = source.languages || new URL(new URL('assets/languages-DWwAAJMo.json', import.meta.url).href).href;
   target.serviceWorkerPath = source.serviceWorkerPath || `sw.js?pathToUserJSON=${encodeURIComponent(target.userJSON)}&stylesheets=${encodeURIComponent(JSON.stringify(target.stylesheets || []))}`;
   target.files = source.files || 'files.json';
   target.namespace = source.namespace || 'textbrowser';
@@ -15427,11 +15583,10 @@ const setServiceWorkerDefaults = (target, source) => {
  *   r: ServiceWorkerRegistration
  * }} cfg
  */
-const listenForWorkerUpdate = _ref => {
-  let {
-    r
-    // logger
-  } = _ref;
+const listenForWorkerUpdate = ({
+  r
+  // logger
+}) => {
   r.addEventListener('updatefound', e => {
     // New service worker has appeared
     // r.installing now available (though r.active is also,
@@ -15506,20 +15661,18 @@ for offline installation.
  *   logger: Logger
  * }} cfg
  */
-const respondToState = async _ref2 => {
-  let {
-    r,
-    logger
-  } = _ref2;
+const respondToState = async ({
+  r,
+  logger
+}) => {
   // We use this promise for rejecting (inside a listener)
   //    to a common catch and to prevent continuation by
   //    failing to return
   return new Promise(async () => {
-    // eslint-disable-line no-async-promise-executor, sonarjs/no-misused-promises -- See above
-    navigator.serviceWorker.addEventListener('message', _ref3 => {
-      let {
-        data
-      } = _ref3;
+    // eslint-disable-line no-async-promise-executor -- See above
+    navigator.serviceWorker.addEventListener('message', ({
+      data
+    }) => {
       const {
         message,
         type,
@@ -15647,11 +15800,10 @@ any indication it is installing.
  *   logger: Logger
  * }} cfg
  */
-const registerServiceWorker = async _ref4 => {
-  let {
-    serviceWorkerPath,
-    logger
-  } = _ref4;
+const registerServiceWorker = async ({
+  serviceWorkerPath,
+  logger
+}) => {
   // Todo: We might wish to allow avoiding the other locale files
   //   and if only one chosen, switch to the work selection page
   //   in that language
@@ -15685,7 +15837,6 @@ const registerServiceWorker = async _ref4 => {
     r = await navigator.serviceWorker.register(serviceWorkerPath, {
       type: 'module'
     });
-    // eslint-disable-next-line no-unused-vars -- Ok
   } catch (err) {
     console.log('serviceWorkerPath', serviceWorkerPath);
     await dialogs.alert(`
@@ -15714,13 +15865,20 @@ const escapeHTML = s => {
 };
 
 var languageSelect = {
-  main(_ref) {
-    let {
-      langs,
-      languages,
-      followParams,
-      $p
-    } = _ref;
+  /**
+   * @param {{
+   *   langs: import('../../server/main.js').LanguageInfo[]
+   *   languages: import('../utils/Languages.js').Languages
+   *   followParams: (formSelector: string, cb: () => void) => void
+   *   $p: import('../utils/IntlURLSearchParams.js').default
+   * }} cfg
+   */
+  main({
+    langs,
+    languages,
+    followParams,
+    $p
+  }) {
     jml('form', {
       class: 'focus',
       id: 'languageSelectionContainer',
@@ -15733,23 +15891,22 @@ var languageSelect = {
       name: 'lang',
       size: langs.length,
       $on: {
-        click(_ref2) {
-          let {
-            target: {
-              parentNode: {
-                selectedOptions
-              }
+        click({
+          target: {
+            parentNode: {
+              // @ts-expect-error Ok
+              selectedOptions
             }
-          } = _ref2;
+          }
+        }) {
           followParams('#languageSelectionContainer', () => {
             $p.set('lang', selectedOptions[0].value, true);
           });
         }
       }
-    }, langs.map(_ref3 => {
-      let {
-        code
-      } = _ref3;
+    }, langs.map(({
+      code
+    }) => {
       return ['option', {
         value: code
       }, [languages.getLanguageFromCode(code)]];
@@ -15770,14 +15927,22 @@ var languageSelect = {
     */
 };
 
-const workSelect$1 = function (_ref) {
-  let {
-    groups,
-    workI18n,
-    getNextAlias,
-    $p,
-    followParams
-  } = _ref;
+/**
+ * @param {{
+ *   groups: import('../utils/WorkInfo.js').FileGroup[]
+ *   workI18n: import('intl-dom').I18NCallback
+ *   getNextAlias: () => string|string[]|import('../../server/main.js').LocalizationStrings
+ *   $p: import('../utils/IntlURLSearchParams.js').default
+ *   followParams: (formSelector: string, cb: () => void) => void
+ * }} cfg
+ */
+const workSelect$1 = function ({
+  groups,
+  workI18n,
+  getNextAlias,
+  $p,
+  followParams
+}) {
   const form = jml('form', {
     id: 'workSelect',
     class: 'focus',
@@ -15787,19 +15952,16 @@ const workSelect$1 = function (_ref) {
       }
     }
   }, groups.map((group, i) => {
-    return ['div', [i > 0 ? ['br', 'br', 'br'] : '', ['div', [workI18n(group.directions.localeKey)]], ['br'], ['select', {
+    return /** @type {import('jamilih').JamilihArray} */['div', [i > 0 ? ['br', 'br', 'br'] : '', ['div', [workI18n(group.directions.localeKey)]], ['br'], ['select', {
       class: 'file',
       name: 'work' + i,
       dataset: {
         name: group.name.localeKey
       },
       $on: {
-        change(_ref2) {
-          let {
-            target: {
-              value
-            }
-          } = _ref2;
+        change(e) {
+          // eslint-disable-next-line prefer-destructuring -- TS
+          const value = /** @type {HTMLSelectElement} */e.target.value;
           /*
                         // If using click, but click doesn't always fire
                         if (e.target.nodeName.toLowerCase() === 'select') {
@@ -15813,10 +15975,9 @@ const workSelect$1 = function (_ref) {
       }
     }, [['option', {
       value: ''
-    }, ['--']], ...group.files.map(_ref3 => {
-      let {
-        name: fileName
-      } = _ref3;
+    }, ['--']], ...group.files.map(({
+      name: fileName
+    }) => {
       return ['option', {
         value: workI18n(['workNames', group.id, fileName])
       }, [getNextAlias()]];
@@ -15834,21 +15995,66 @@ const workSelect$1 = function (_ref) {
 const colors = ['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green', 'lime', 'maroon', 'navy', 'olive', 'purple', 'red', 'silver', 'teal', 'white', 'yellow'];
 const fonts = ['Helvetica, sans-serif', 'Verdana, sans-serif', 'Gill Sans, sans-serif', 'Avantgarde, sans-serif', 'Helvetica Narrow, sans-serif', 'sans-serif', 'Times, serif', 'Times New Roman, serif', 'Palatino, serif', 'Bookman, serif', 'New Century Schoolbook, serif', 'serif', 'Andale Mono, monospace', 'Courier New, monospace', 'Courier, monospace', 'Lucidatypewriter, monospace', 'Fixed, monospace', 'monospace', 'Comic Sans, Comic Sans MS, cursive', 'Zapf Chancery, cursive', 'Coronetscript, cursive', 'Florence, cursive', 'Parkavenue, cursive', 'cursive', 'Impact, fantasy', 'Arnoldboecklin, fantasy', 'Oldtown, fantasy', 'Blippo, fantasy', 'Brushstroke, fantasy', 'fantasy'];
 
+/**
+ * @callback LOption
+ * @param {string[]} key
+ * @param {import('jamilih').JamilihAttributes} atts
+ * @returns {import('jamilih').JamilihArray}
+ */
+
+/**
+ * @typedef {(info: {
+ *   form: HTMLFormElement,
+ *   random: {
+ *     checked: boolean,
+ *   },
+ *   checkboxes: HTMLInputElement[],
+ *   type: string,
+ *   fieldAliasOrNames?: string[],
+ *   workName: string
+ * }) => URLSearchParams} ParamsSetter
+ */
+
+/**
+ * @typedef {(cfg: {
+ *   $: typeof $,
+ *   l: import('intl-dom').I18NCallback,
+ *   jml: typeof jml,
+ *   paramsSetter: ParamsSetter,
+ *   getDataForSerializingParamsAsURL: () => {
+ *     form: HTMLFormElement,
+ *     random: HTMLInputElement,
+ *     checkboxes: HTMLInputElement[]
+ *   },
+ *   work: string,
+ *   replaceHash: (paramsCopy: URLSearchParams) => string,
+ *   getFieldAliasOrNames: import('../workDisplay.js').GetFieldAliasOrNames
+ * }) => import('jamilih').JamilihArray} PreferencesPlugin
+ */
+
 const nbsp2 = nbsp.repeat(2);
 const nbsp3 = nbsp.repeat(3);
 const getDataForSerializingParamsAsURL = () => ({
-  form: $$1('form#browse'),
+  form: (/** @type {HTMLFormElement} */$$1('form#browse')),
   // Todo: We don't need any default once random
   //    functionality is completed
-  random: $$1('#rand') || {},
-  checkboxes: $$('input[type=checkbox]')
+  random: /** @type {HTMLInputElement} */$$1('#rand') || {
+    checked: false
+  },
+  checkboxes: (/** @type {HTMLInputElement[]} */$$('input[type=checkbox]'))
 });
 var workDisplay$1 = {
-  bdo(_ref) {
-    let {
-      fallbackDirection,
-      message
-    } = _ref;
+  /**
+   * @param {{
+   *   fallbackDirection: "ltr"|"rtl",
+   *   message: string
+   * }} cfg
+   * @returns {import('jamilih').JamilihArray}
+   */
+  bdo({
+    fallbackDirection,
+    message
+  }) {
     // Displaying as div with inline display instead of span since
     //    Firefox puts punctuation at left otherwise (bdo dir
     //    seemed to have issues in Firefox)
@@ -15856,372 +16062,405 @@ var workDisplay$1 = {
       style: 'display: inline; direction: ' + fallbackDirection
     }, [message]];
   },
-  columnsTable: _ref2 => {
-    let {
-      lDirectional,
-      fieldInfo,
-      $p,
-      lElement,
-      lIndexedParam,
-      l,
-      // metadataObj, preferredLocale, schemaItems,
-      fieldMatchesLocale
-    } = _ref2;
-    return ['table', {
-      border: '1',
-      cellpadding: '5',
-      align: 'center'
-    }, [['tr', [['th', [lDirectional('fieldno')]], ['th', {
-      align: 'left',
-      width: '20'
-    }, [lDirectional('field_enabled')]], ['th', [lDirectional('field_title')]], ['th', [lDirectional('fieldinterlin')]], ['th', [lDirectional('fieldcss')]]
+  /**
+   * @param {{
+   *   lDirectional: import('../workDisplay.js').LDirectional,
+   *   fieldInfo: import('../utils/WorkInfo.js').FieldInfo,
+   *   $p: import('../utils/IntlURLSearchParams.js').default,
+   *   lElement: import('../workDisplay.js').LElement,
+   *   lIndexedParam: (key: string) => string,
+   *   l: import('intl-dom').I18NCallback,
+   *   fieldMatchesLocale: (field: string) => boolean
+   * }} cfg
+   * @returns {import('jamilih').JamilihArray}
+   */
+  columnsTable: ({
+    lDirectional,
+    fieldInfo,
+    $p,
+    lElement,
+    lIndexedParam,
+    l,
+    // metadataObj, preferredLocale, schemaItems,
+    fieldMatchesLocale
+  }) => ['table', {
+    border: '1',
+    cellpadding: '5',
+    align: 'center'
+  }, [['tr', [['th', [lDirectional('fieldno')]], ['th', {
+    align: 'left',
+    width: '20'
+  }, [lDirectional('field_enabled')]], ['th', [lDirectional('field_title')]], ['th', [lDirectional('fieldinterlin')]], ['th', [lDirectional('fieldcss')]]
+  /*
+        Todo: Support search?
+        ,
+        ['th', [
+            lDirectional('fieldsearch')
+        ]]
+        */]], ...fieldInfo.map((fieldInfoItem, i) => {
+    const idx = i + 1;
+    const checkedIndex = 'checked' + idx;
+    const fieldIndex = 'field' + idx;
+    const fieldParam = $p.get(fieldIndex);
+    return /** @type {import('jamilih').JamilihArray} */['tr', [
+    // Todo: Get Jamilih to accept numbers and
+    //    booleans (`toString` is too dangerous)
+    ['td', [String(idx)]], lElement('check-columns-to-browse', 'td', 'title', {}, [lElement('yes', 'input', 'value', {
+      class: 'fieldSelector',
+      id: checkedIndex,
+      name: lIndexedParam('checked') + idx,
+      checked: $p.get(checkedIndex) !== l('no') && ($p.has(checkedIndex) || fieldInfoItem.onByDefault !== false),
+      type: 'checkbox'
+    })]), lElement('check-sequence', 'td', 'title', {}, [['select', {
+      name: lIndexedParam('field') + idx,
+      id: fieldIndex,
+      size: '1'
+    }, fieldInfo.map(({
+      field,
+      fieldAliasOrName
+    }, j) => {
+      const matchedFieldParam = fieldParam && fieldParam === fieldAliasOrName;
+      return /** @type {import('jamilih').JamilihArray} */['option', {
+        dataset: {
+          name: field
+        },
+        value: fieldAliasOrName,
+        selected: matchedFieldParam || j === i && !$p.has(fieldIndex)
+      }, [fieldAliasOrName]];
+    })]]), ['td', [
+    // Todo: Make as tag selector with fields as options
+    lElement('interlinear-tips', 'input', 'title', {
+      name: lIndexedParam('interlin') + idx,
+      value: $p.get('interlin' + idx)
+    }) // Todo: Could allow i18n of numbers here
+    ]], ['td', [
+    // Todo: Make as CodeMirror-highlighted CSS
+    ['input', {
+      name: lIndexedParam('css') + idx,
+      value: $p.get('css' + idx)
+    }]]]
     /*
-          Todo: Support search?
-          ,
-          ['th', [
-              lDirectional('fieldsearch')
-          ]]
-          */]], ...fieldInfo.map((fieldInfoItem, i) => {
-      const idx = i + 1;
-      const checkedIndex = 'checked' + idx;
-      const fieldIndex = 'field' + idx;
-      const fieldParam = $p.get(fieldIndex);
-      return ['tr', [
-      // Todo: Get Jamilih to accept numbers and
-      //    booleans (`toString` is too dangerous)
-      ['td', [String(idx)]], lElement('check-columns-to-browse', 'td', 'title', {}, [lElement('yes', 'input', 'value', {
-        class: 'fieldSelector',
-        id: checkedIndex,
-        name: lIndexedParam('checked') + idx,
-        checked: $p.get(checkedIndex) !== l('no') && ($p.has(checkedIndex) || fieldInfoItem.onByDefault !== false),
-        type: 'checkbox'
-      })]), lElement('check-sequence', 'td', 'title', {}, [['select', {
-        name: lIndexedParam('field') + idx,
-        id: fieldIndex,
-        size: '1'
-      }, fieldInfo.map((_ref3, j) => {
-        let {
-          field,
-          fieldAliasOrName
-        } = _ref3;
-        const matchedFieldParam = fieldParam && fieldParam === fieldAliasOrName;
-        return ['option', {
-          dataset: {
-            name: field
-          },
-          value: fieldAliasOrName,
-          selected: matchedFieldParam || j === i && !$p.has(fieldIndex)
-        }, [fieldAliasOrName]];
-      })]]), ['td', [
-      // Todo: Make as tag selector with fields as options
-      lElement('interlinear-tips', 'input', 'title', {
-        name: lIndexedParam('interlin') + idx,
-        value: $p.get('interlin' + idx)
-      }) // Todo: Could allow i18n of numbers here
-      ]], ['td', [
-      // Todo: Make as CodeMirror-highlighted CSS
-      ['input', {
-        name: lIndexedParam('css') + idx,
-        value: $p.get('css' + idx)
-      }]]]
-      /*
-              ,
-              ['td', [ // Todo: Allow plain or regexp searching
-                  ['input', {name: lIndexedParam('search') + idx, value: $p.get('search' + idx)}]
-              ]]
-              */]];
-    }), ['tr', [['td', {
-      colspan: 3
-    }, [lElement('check_all', 'input', 'value', {
-      type: 'button',
-      $on: {
-        click() {
-          $$('.fieldSelector').forEach(checkbox => {
-            checkbox.checked = true;
-          });
-        }
-      }
-    }), lElement('uncheck_all', 'input', 'value', {
-      type: 'button',
-      $on: {
-        click() {
-          $$('.fieldSelector').forEach(checkbox => {
-            checkbox.checked = false;
-          });
-        }
-      }
-    }), lElement('checkmark_locale_fields_only', 'input', 'value', {
-      type: 'button',
-      $on: {
-        click() {
-          fieldInfo.forEach((/* {field} */_, i) => {
-            const idx = i + 1;
-            // The following is redundant with 'field' but may need to
-            //     retrieve later out of order?
-            const fld = $$1('#field' + idx).selectedOptions[0].dataset.name;
-            $$1('#checked' + idx).checked = fieldMatchesLocale(fld);
-          });
-        }
-      }
-    })]]]]]];
-  },
-  advancedFormatting: _ref4 => {
-    let {
-      lDirectional,
-      lParam,
-      l,
-      lOption,
-      lElement,
-      $p,
-      hideFormattingSection
-    } = _ref4;
-    return ['td', {
-      id: 'advancedformatting',
-      style: {
-        display: hideFormattingSection ? 'none' : 'block'
-      }
-    }, [['h3', [lDirectional('advancedformatting')]], ['label', [lDirectional('textcolor'), nbsp2, ['select', {
-      name: lParam('colorName')
-    }, colors.map((color, i) => {
-      const atts = {
-        value: l(['param_values', 'colors', color]),
-        selected: null
-      };
-      if ($p.get('colorName') === l(['param_values', 'colors', color]) || i === 1 && !$p.has('colorName')) {
-        atts.selected = 'selected';
-      }
-      return lOption(['param_values', 'colors', color], atts);
-    })]]], ['label', [nbsp, lDirectional('or_entercolor'), nbsp2, ['input', {
-      name: lParam('color'),
-      type: 'text',
-      value: $p.get('color') || '#',
-      size: '7',
-      maxlength: '7'
-    }]]], ['br'], ['br'], ['label', [lDirectional('backgroundcolor'), nbsp2, ['select', {
-      name: lParam('bgcolorName')
-    }, colors.map((color, i) => {
-      const atts = {
-        value: l(['param_values', 'colors', color]),
-        selected: null
-      };
-      if ($p.get('bgcolorName') === l(['param_values', 'colors', color]) || i === 14 && !$p.has('bgcolorName')) {
-        atts.selected = 'selected';
-      }
-      return lOption(['param_values', 'colors', color], atts);
-    })]]], ['label', [nbsp, lDirectional('or_entercolor'), nbsp2, ['input', {
-      name: lParam('bgcolor'),
-      type: 'text',
-      value: $p.get('bgcolor') || '#',
-      size: '7',
-      maxlength: '7'
-    }]]], ['br'], ['br'], ['label', [lDirectional('text_font'), nbsp2,
-    // Todo: remove hard-coded direction if i81nizing; also i18nize fontSeq param
-    ['select', {
-      name: lParam('fontSeq'),
-      dir: 'ltr'
-    }, fonts.map((fontSeq, i) => {
-      const atts = {
-        value: fontSeq,
-        selected: null
-      };
-      if ($p.get('fontSeq') === fontSeq || i === 7 && !$p.has('fontSeq')) {
-        atts.selected = 'selected';
-      }
-      return ['option', atts, [fontSeq]];
-    })]]], ['br'], ['br'], ['label', [lDirectional('font_style'), nbsp2, ['select', {
-      name: lParam('fontstyle')
-    }, ['italic', 'normal', 'oblique'].map((fontstyle, i) => {
-      const atts = {
-        value: l(['param_values', 'fontstyle', fontstyle]),
-        selected: null
-      };
-      if ($p.get('fontstyle') === l(['param_values', 'fontstyle', fontstyle]) || i === 1 && !$p.has('fontstyle')) {
-        atts.selected = 'selected';
-      }
-      return lOption(['param_values', 'fontstyle', fontstyle], atts);
-    })]]], ['br'], ['div', [lDirectional('font_variant'), nbsp3, ['label', [['input', {
-      name: lParam('fontvariant'),
-      type: 'radio',
-      value: l(['param_values', 'fontvariant', 'normal']),
-      checked: $p.get('fontvariant') !== lDirectional(['param_values', 'fontvariant', 'small-caps'])
-    }], lDirectional(['param_values', 'fontvariant', 'normal']), nbsp]], ['label', [['input', {
-      name: lParam('fontvariant'),
-      type: 'radio',
-      value: l(['param_values', 'fontvariant', 'small-caps']),
-      checked: $p.get('fontvariant') === lDirectional(['param_values', 'fontvariant', 'small-caps'])
-    }], lDirectional(['param_values', 'fontvariant', 'small-caps']), nbsp]]]], ['br'], ['label', [
-    // Todo: i18n and allow for normal/bold pulldown and float input?
-    lDirectional('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp2, ['input', {
-      name: lParam('fontweight'),
-      type: 'text',
-      value: $p.has('fontweight') ? $p.get('fontweight') : 'normal',
-      size: '7',
-      maxlength: '12'
-    }]]], ['br'], ['label', [lDirectional('font_size'), ' (14pt, 14px, small, 75%, etc.):', nbsp2, ['input', {
-      name: lParam('fontsize'),
-      type: 'text',
-      value: $p.get('fontsize'),
-      size: '7',
-      maxlength: '12'
-    }]]], ['br'],
-    // Todo: i18nize title and values?
-    // Todo: remove hard-coded direction if i18nizing
-    ['label', {
-      dir: 'ltr'
-    }, [lDirectional('font_stretch'), nbsp, ['select', {
-      name: lParam('fontstretch')
-    }, ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(stretch => {
-      const atts = {
-        value: lDirectional(['param_values', 'font-stretch', stretch]),
-        selected: null
-      };
-      if ($p.get('fontstretch') === stretch || !$p.has('fontstretch') && stretch === 'normal') {
-        atts.selected = 'selected';
-      }
-      return ['option', atts, [lDirectional(['param_values', 'font-stretch', stretch])]];
-    })]]], /**/
-    ['br'], ['br'], ['label', [lDirectional('letter_spacing'), ' (normal, .9em, -.05cm): ', ['input', {
-      name: lParam('letterspacing'),
-      type: 'text',
-      value: $p.has('letterspacing') ? $p.get('letterspacing') : 'normal',
-      size: '7',
-      maxlength: '12'
-    }]]], ['br'], ['label', [lDirectional('line_height'), ' (normal, 1.5, 22px, 150%): ', ['input', {
-      name: lParam('lineheight'),
-      type: 'text',
-      value: $p.has('lineheight') ? $p.get('lineheight') : 'normal',
-      size: '7',
-      maxlength: '12'
-    }]]], ['br'], ['br'], lElement('tableformatting_tips', 'h3', 'title', {}, [lDirectional('tableformatting')]), ['div', [lDirectional('header_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map((_ref5, i, arr) => {
-      let [key, val] = _ref5;
-      return ['label', [['input', {
-        name: lParam('header'),
-        type: 'radio',
-        value: val,
-        checked: $p.get('header') === val || !$p.has('header') && i === 1
-      }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
-    })]], ['div', [lDirectional('footer_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map((_ref6, i, arr) => {
-      let [key, val] = _ref6;
-      return ['label', [['input', {
-        name: lParam('footer'),
-        type: 'radio',
-        value: val,
-        checked: $p.get('footer') === val || !$p.has('footer') && i === 2
-      }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
-    })]], ['label', [['input', {
-      name: lParam('headerfooterfixed'),
-      type: 'checkbox',
-      value: l('yes'),
-      checked: $p.get('headerfooterfixed') === l('yes')
-    }], nbsp2, lDirectional('headerfooterfixed-wishtoscroll')]], ['br'], ['div', [lDirectional('caption_wstyles'), nbsp2, ...[['yes', lDirectional(['param_values', 'y'])], ['no', lDirectional(['param_values', 'n'])], ['none', lDirectional(['param_values', '0'])]].map((_ref7, i, arr) => {
-      let [key, val] = _ref7;
-      return ['label', [['input', {
-        name: lParam('caption'),
-        type: 'radio',
-        value: val,
-        checked: $p.get('caption') === val || !$p.has('caption') && i === 2
-      }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
-    })]], ['br'], ['div', [lDirectional('table_wborder'), nbsp2, ['label', [['input', {
-      name: lParam('border'),
-      type: 'radio',
-      value: '1',
-      checked: $p.get('border') !== '0'
-    }], lDirectional('yes'), nbsp3]], ['label', [['input', {
-      name: lParam('border'),
-      type: 'radio',
-      value: '0',
-      checked: $p.get('border') === '0'
-    }], lDirectional('no')]]]], ['div', [lDirectional('interlin_repeat_field_names'), nbsp2, ['label', [['input', {
-      name: lParam('interlintitle'),
-      type: 'radio',
-      value: '1',
-      checked: $p.get('interlintitle') !== '0'
-    }], lDirectional('yes'), nbsp3]], ['label', [['input', {
-      name: lParam('interlintitle'),
-      type: 'radio',
-      value: '0',
-      checked: $p.get('interlintitle') === '0'
-    }], lDirectional('no')]]]], ['label', [lDirectional('interlintitle_css'), nbsp2, ['input', {
-      name: lParam('interlintitle_css'),
-      type: 'text',
-      value: $p.get('interlintitle_css') || '',
-      size: '12'
-    }]]], ['br'],
-    /*
-        ['br'],
-        ['label', [
-            ['input', {
-                name: lParam('transpose'),
-                type: 'checkbox',
-                value: l('yes'),
-                checked: $p.get('transpose') === l('yes')
-            }],
-            nbsp2, lDirectional('transpose')
-        ]],
-        */
-    ['br'], lElement('pageformatting_tips', 'h3', 'title', {}, [lDirectional('pageformatting')]),
-    /*
-        ['label', [
-            lDirectional('speech_controls'), nbsp2,
-            ['label', [
-                ['input', {
-                    name: lParam('speech'),
-                    type: 'radio',
-                    value: '1',
-                    checked: $p.get('speech') === '1'
-                }],
-                lDirectional('yes'), nbsp3
-            ]],
-            ['label', [
-                ['input', {
-                    name: lParam('speech'),
-                    type: 'radio',
-                    value: '0',
-                    checked: $p.get('speech') !== '1'
-                }],
-                lDirectional('no')
+            ,
+            ['td', [ // Todo: Allow plain or regexp searching
+                ['input', {name: lIndexedParam('search') + idx, value: $p.get('search' + idx)}]
             ]]
-        ]],
-        ['br'],
-        */
-    ['label', [lDirectional('page_css'), nbsp2, ['textarea', {
-      name: lParam('pagecss'),
-      title: l('page_css_tips'),
-      value: $p.get('pagecss')
-    }]]], ['br'], lElement('outputmode_tips', 'label', 'title', {}, [lDirectional('outputmode'), nbsp2,
-    // Todo: Could i18nize, but would need smaller values
-    ['select', {
-      name: lParam('outputmode')
-    }, ['table', 'div'
-    // , 'json-array',
-    // 'json-object'
-    ].map(mode => {
-      const atts = {
-        value: mode,
-        selected: null
-      };
-      if ($p.get('outputmode') === mode) {
-        atts.selected = 'selected';
+            */]];
+  }), ['tr', [['td', {
+    colspan: 3
+  }, [lElement('check_all', 'input', 'value', {
+    type: 'button',
+    $on: {
+      click() {
+        /** @type {HTMLInputElement[]} */
+        $$('.fieldSelector').forEach(checkbox => {
+          checkbox.checked = true;
+        });
       }
-      return lOption(['param_values', 'outputmode', mode], atts);
-    })]])]];
-  },
-  addRandomFormFields(_ref8) {
-    let {
-      lParam,
-      lDirectional,
-      l,
-      lElement,
-      $p,
-      serializeParamsAsURL,
-      content
-    } = _ref8;
+    }
+  }), lElement('uncheck_all', 'input', 'value', {
+    type: 'button',
+    $on: {
+      click() {
+        /** @type {HTMLInputElement[]} */
+        $$('.fieldSelector').forEach(checkbox => {
+          checkbox.checked = false;
+        });
+      }
+    }
+  }), lElement('checkmark_locale_fields_only', 'input', 'value', {
+    type: 'button',
+    $on: {
+      click() {
+        fieldInfo.forEach((/* {field} */_, i) => {
+          const idx = i + 1;
+          // The following is redundant with 'field' but may need to
+          //     retrieve later out of order?
+          const fld = /** @type {string} */
+          /** @type {HTMLSelectElement} */$$1('#field' + idx).selectedOptions[0].dataset.name;
+          /** @type {HTMLInputElement} */
+          $$1('#checked' + idx).checked = fieldMatchesLocale(fld);
+        });
+      }
+    }
+  })]]]]]],
+  /**
+   * @param {{
+   *   lDirectional: import('../workDisplay.js').LDirectional,
+   *   lParam: (key: string) => string,
+   *   l: import('intl-dom').I18NCallback,
+   *   lOption: LOption,
+   *   lElement: import('../workDisplay.js').LElement,
+   *   $p: import('../utils/IntlURLSearchParams.js').default,
+   *   hideFormattingSection: boolean
+   * }} cfg
+   * @returns {import('jamilih').JamilihArray}
+   */
+  advancedFormatting: ({
+    lDirectional,
+    lParam,
+    l,
+    lOption,
+    lElement,
+    $p,
+    hideFormattingSection
+  }) => ['td', {
+    id: 'advancedformatting',
+    style: {
+      display: hideFormattingSection ? 'none' : 'block'
+    }
+  }, (/** @type {import('jamilih').JamilihChildren} */[['h3', [lDirectional('advancedformatting')]], ['label', [lDirectional('textcolor'), nbsp2, ['select', {
+    name: lParam('colorName')
+  }, colors.map((color, i) => {
+    const atts = /** @type {import('jamilih').JamilihAttributes} */{
+      value: l(['param_values', 'colors', color]),
+      selected: null
+    };
+    if ($p.get('colorName') === l(['param_values', 'colors', color]) || i === 1 && !$p.has('colorName')) {
+      atts.selected = 'selected';
+    }
+    return lOption(['param_values', 'colors', color], atts);
+  })]]], ['label', [nbsp, lDirectional('or_entercolor'), nbsp2, ['input', {
+    name: lParam('color'),
+    type: 'text',
+    value: $p.get('color') || '#',
+    size: '7',
+    maxlength: '7'
+  }]]], ['br'], ['br'], ['label', [lDirectional('backgroundcolor'), nbsp2, ['select', {
+    name: lParam('bgcolorName')
+  }, colors.map((color, i) => {
+    const atts = /** @type {import('jamilih').JamilihAttributes} */{
+      value: l(['param_values', 'colors', color]),
+      selected: null
+    };
+    if ($p.get('bgcolorName') === l(['param_values', 'colors', color]) || i === 14 && !$p.has('bgcolorName')) {
+      atts.selected = 'selected';
+    }
+    return lOption(['param_values', 'colors', color], atts);
+  })]]], ['label', [nbsp, lDirectional('or_entercolor'), nbsp2, ['input', {
+    name: lParam('bgcolor'),
+    type: 'text',
+    value: $p.get('bgcolor') || '#',
+    size: '7',
+    maxlength: '7'
+  }]]], ['br'], ['br'], ['label', [lDirectional('text_font'), nbsp2,
+  // Todo: remove hard-coded direction if i81nizing; also i18nize fontSeq param
+  ['select', {
+    name: lParam('fontSeq'),
+    dir: 'ltr'
+  }, fonts.map((fontSeq, i) => {
+    const atts = /** @type {import('jamilih').JamilihAttributes} */{
+      value: fontSeq,
+      selected: null
+    };
+    if ($p.get('fontSeq') === fontSeq || i === 7 && !$p.has('fontSeq')) {
+      atts.selected = 'selected';
+    }
+    return ['option', atts, [fontSeq]];
+  })]]], ['br'], ['br'], ['label', [lDirectional('font_style'), nbsp2, ['select', {
+    name: lParam('fontstyle')
+  }, ['italic', 'normal', 'oblique'].map((fontstyle, i) => {
+    const atts = /** @type {import('jamilih').JamilihAttributes} */{
+      value: l(['param_values', 'fontstyle', fontstyle]),
+      selected: null
+    };
+    if ($p.get('fontstyle') === l(['param_values', 'fontstyle', fontstyle]) || i === 1 && !$p.has('fontstyle')) {
+      atts.selected = 'selected';
+    }
+    return lOption(['param_values', 'fontstyle', fontstyle], atts);
+  })]]], ['br'], ['div', [lDirectional('font_variant'), nbsp3, ['label', [['input', {
+    name: lParam('fontvariant'),
+    type: 'radio',
+    value: l(['param_values', 'fontvariant', 'normal']),
+    checked: $p.get('fontvariant') !== lDirectional(['param_values', 'fontvariant', 'small-caps'])
+  }], lDirectional(['param_values', 'fontvariant', 'normal']), nbsp]], ['label', [['input', {
+    name: lParam('fontvariant'),
+    type: 'radio',
+    value: l(['param_values', 'fontvariant', 'small-caps']),
+    checked: $p.get('fontvariant') === lDirectional(['param_values', 'fontvariant', 'small-caps'])
+  }], lDirectional(['param_values', 'fontvariant', 'small-caps']), nbsp]]]], ['br'], ['label', [
+  // Todo: i18n and allow for normal/bold pulldown and float input?
+  lDirectional('font_weight'), ' (normal, bold, 100-900, etc.):', nbsp2, ['input', {
+    name: lParam('fontweight'),
+    type: 'text',
+    value: $p.has('fontweight') ? $p.get('fontweight') : 'normal',
+    size: '7',
+    maxlength: '12'
+  }]]], ['br'], ['label', [lDirectional('font_size'), ' (14pt, 14px, small, 75%, etc.):', nbsp2, ['input', {
+    name: lParam('fontsize'),
+    type: 'text',
+    value: $p.get('fontsize'),
+    size: '7',
+    maxlength: '12'
+  }]]], ['br'],
+  // Todo: i18nize title and values?
+  // Todo: remove hard-coded direction if i18nizing
+  ['label', {
+    dir: 'ltr'
+  }, [lDirectional('font_stretch'), nbsp, ['select', {
+    name: lParam('fontstretch')
+  }, ['ultra-condensed', 'extra-condensed', 'condensed', 'semi-condensed', 'normal', 'semi-expanded', 'expanded', 'extra-expanded', 'ultra-expanded'].map(stretch => {
+    const atts = /** @type {import('jamilih').JamilihAttributes} */{
+      value: lDirectional(['param_values', 'font-stretch', stretch]),
+      selected: null
+    };
+    if ($p.get('fontstretch') === stretch || !$p.has('fontstretch') && stretch === 'normal') {
+      atts.selected = 'selected';
+    }
+    return ['option', atts, [lDirectional(['param_values', 'font-stretch', stretch])]];
+  })]]], /**/
+  ['br'], ['br'], ['label', [lDirectional('letter_spacing'), ' (normal, .9em, -.05cm): ', ['input', {
+    name: lParam('letterspacing'),
+    type: 'text',
+    value: $p.has('letterspacing') ? $p.get('letterspacing') : 'normal',
+    size: '7',
+    maxlength: '12'
+  }]]], ['br'], ['label', [lDirectional('line_height'), ' (normal, 1.5, 22px, 150%): ', ['input', {
+    name: lParam('lineheight'),
+    type: 'text',
+    value: $p.has('lineheight') ? $p.get('lineheight') : 'normal',
+    size: '7',
+    maxlength: '12'
+  }]]], ['br'], ['br'], lElement('tableformatting_tips', 'h3', 'title', {}, [lDirectional('tableformatting')]), ['div', [lDirectional('header_wstyles'), nbsp2, ...[['yes', (/** @type {string} */lDirectional(['param_values', 'y']))], ['no', (/** @type {string} */lDirectional(['param_values', 'n']))], ['none', (/** @type {string} */lDirectional(['param_values', '0']))]].map(([key, val], i, arr) => {
+    return ['label', [['input', {
+      name: lParam('header'),
+      type: 'radio',
+      value: val,
+      checked: $p.get('header') === val || !$p.has('header') && i === 1
+    }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
+  })]], ['div', [lDirectional('footer_wstyles'), nbsp2, ...[['yes', (/** @type {string} */lDirectional(['param_values', 'y']))], ['no', (/** @type {string} */lDirectional(['param_values', 'n']))], ['none', (/** @type {string} */lDirectional(['param_values', '0']))]].map(([key, val], i, arr) => {
+    return ['label', [['input', {
+      name: lParam('footer'),
+      type: 'radio',
+      value: val,
+      checked: $p.get('footer') === val || !$p.has('footer') && i === 2
+    }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
+  })]], ['label', [['input', {
+    name: lParam('headerfooterfixed'),
+    type: 'checkbox',
+    value: l('yes'),
+    checked: $p.get('headerfooterfixed') === l('yes')
+  }], nbsp2, lDirectional('headerfooterfixed-wishtoscroll')]], ['br'], ['div', [lDirectional('caption_wstyles'), nbsp2, ...[['yes', (/** @type {string} */lDirectional(['param_values', 'y']))], ['no', (/** @type {string} */lDirectional(['param_values', 'n']))], ['none', (/** @type {string} */lDirectional(['param_values', '0']))]].map(([key, val], i, arr) => {
+    return ['label', [['input', {
+      name: lParam('caption'),
+      type: 'radio',
+      value: val,
+      checked: $p.get('caption') === val || !$p.has('caption') && i === 2
+    }], lDirectional(key), i === arr.length - 1 ? '' : nbsp3]];
+  })]], ['br'], ['div', [lDirectional('table_wborder'), nbsp2, ['label', [['input', {
+    name: lParam('border'),
+    type: 'radio',
+    value: '1',
+    checked: $p.get('border') !== '0'
+  }], lDirectional('yes'), nbsp3]], ['label', [['input', {
+    name: lParam('border'),
+    type: 'radio',
+    value: '0',
+    checked: $p.get('border') === '0'
+  }], lDirectional('no')]]]], ['div', [lDirectional('interlin_repeat_field_names'), nbsp2, ['label', [['input', {
+    name: lParam('interlintitle'),
+    type: 'radio',
+    value: '1',
+    checked: $p.get('interlintitle') !== '0'
+  }], lDirectional('yes'), nbsp3]], ['label', [['input', {
+    name: lParam('interlintitle'),
+    type: 'radio',
+    value: '0',
+    checked: $p.get('interlintitle') === '0'
+  }], lDirectional('no')]]]], ['label', [lDirectional('interlintitle_css'), nbsp2, ['input', {
+    name: lParam('interlintitle_css'),
+    type: 'text',
+    value: $p.get('interlintitle_css') || '',
+    size: '12'
+  }]]], ['br'],
+  /*
+      ['br'],
+      ['label', [
+          ['input', {
+              name: lParam('transpose'),
+              type: 'checkbox',
+              value: l('yes'),
+              checked: $p.get('transpose') === l('yes')
+          }],
+          nbsp2, lDirectional('transpose')
+      ]],
+      */
+  ['br'], lElement('pageformatting_tips', 'h3', 'title', {}, [lDirectional('pageformatting')]),
+  /*
+      ['label', [
+          lDirectional('speech_controls'), nbsp2,
+          ['label', [
+              ['input', {
+                  name: lParam('speech'),
+                  type: 'radio',
+                  value: '1',
+                  checked: $p.get('speech') === '1'
+              }],
+              lDirectional('yes'), nbsp3
+          ]],
+          ['label', [
+              ['input', {
+                  name: lParam('speech'),
+                  type: 'radio',
+                  value: '0',
+                  checked: $p.get('speech') !== '1'
+              }],
+              lDirectional('no')
+          ]]
+      ]],
+      ['br'],
+      */
+  ['label', [lDirectional('page_css'), nbsp2, ['textarea', {
+    name: lParam('pagecss'),
+    title: l('page_css_tips'),
+    value: $p.get('pagecss')
+  }]]], ['br'], lElement('outputmode_tips', 'label', 'title', {}, [lDirectional('outputmode'), nbsp2,
+  // Todo: Could i18nize, but would need smaller values
+  ['select', {
+    name: lParam('outputmode')
+  }, ['table', 'div'
+  // , 'json-array',
+  // 'json-object'
+  ].map(mode => {
+    const atts = /** @type {import('jamilih').JamilihAttributes} */{
+      value: mode,
+      selected: null
+    };
+    if ($p.get('outputmode') === mode) {
+      atts.selected = 'selected';
+    }
+    return lOption(['param_values', 'outputmode', mode], atts);
+  })]])])],
+  /**
+   * @param {{
+   *   lParam: (key: string) => string,
+   *   lDirectional: import('../workDisplay.js').LDirectional,
+   *   l: import('intl-dom').I18NCallback,
+   *   lElement: import('../workDisplay.js').LElement,
+   *   $p: import('../utils/IntlURLSearchParams.js').default,
+   *   serializeParamsAsURL: import('../workDisplay.js').SerializeParamsAsURL,
+   *   content: import('jamilih').JamilihArray[]
+   * }} cfg
+   * @returns {void}
+   */
+  addRandomFormFields({
+    lParam,
+    lDirectional,
+    l,
+    lElement,
+    $p,
+    serializeParamsAsURL,
+    content
+  }) {
+    /**
+     * @param {import('jamilih').JamilihChildren} rowContent
+     */
     const addRowContent = rowContent => {
       if (!rowContent || !rowContent.length) {
         return;
       }
       content.push(['tr', rowContent]);
     };
+    /** @type {import('jamilih').JamilihChildren[]} */
     [[['td', {
       colspan: 12,
       align: 'center'
@@ -16250,6 +16489,7 @@ var workDisplay$1 = {
             ...getDataForSerializingParamsAsURL(),
             type: 'randomResult'
           });
+          /** @type {HTMLInputElement} */
           $$1('#randomURL').value = url;
         }
       }
@@ -16258,132 +16498,157 @@ var workDisplay$1 = {
       type: 'text'
     }]]]]].forEach(addRowContent);
   },
-  getPreferences: _ref9 => {
-    let {
-      // languageParam, workI18n, groups,
-      paramsSetter,
-      replaceHash,
-      getFieldAliasOrNames,
-      work,
-      langs,
-      languageI18n,
-      l,
-      localizeParamNames,
-      namespace,
-      hideFormattingSection,
-      preferencesPlugin
-    } = _ref9;
-    return ['div', {
-      style: {
-        textAlign: 'left'
-      },
-      id: 'preferences',
-      hidden: 'true'
-    }, [['div', {
-      style: 'margin-top: 10px;'
-    }, [['label', [l('localizeParamNames'), ['input', {
-      id: 'localizeParamNames',
-      type: 'checkbox',
-      checked: localizeParamNames,
-      $on: {
-        change(_ref10) {
-          let {
-            target: {
-              checked
-            }
-          } = _ref10;
-          localStorage.setItem(namespace + '-localizeParamNames', checked);
-        }
+  /**
+   * @param {{
+   *   paramsSetter: ParamsSetter,
+   *   replaceHash: (paramsCopy: URLSearchParams) => string,
+   *   getFieldAliasOrNames: import('../workDisplay.js').GetFieldAliasOrNames,
+   *   work: string,
+   *   langs: import('../../server/main.js').LanguageInfo[],
+   *   languageI18n: (code: string) => string,
+   *   l: import('intl-dom').I18NCallback,
+   *   localizeParamNames: boolean,
+   *   namespace: string,
+   *   hideFormattingSection: boolean,
+   *   preferencesPlugin?: PreferencesPlugin
+   * }} cfg
+   * @returns {import('jamilih').JamilihArray}
+   */
+  getPreferences: ({
+    // languageParam, workI18n, groups,
+    paramsSetter,
+    replaceHash,
+    getFieldAliasOrNames,
+    work,
+    langs,
+    languageI18n,
+    l,
+    localizeParamNames,
+    namespace,
+    hideFormattingSection,
+    preferencesPlugin
+  }) => ['div', {
+    style: {
+      textAlign: 'left'
+    },
+    id: 'preferences',
+    hidden: 'true'
+  }, [['div', {
+    style: 'margin-top: 10px;'
+  }, [['label', [l('localizeParamNames'), ['input', {
+    id: 'localizeParamNames',
+    type: 'checkbox',
+    checked: localizeParamNames,
+    $on: {
+      change(e) {
+        // eslint-disable-next-line prefer-destructuring -- TS
+        const checked = /** @type {HTMLInputElement} */e.target.checked;
+        localStorage.setItem(namespace + '-localizeParamNames', String(checked));
       }
-    }]]]]], ['div', [['label', [l('Hide formatting section'), ['input', {
-      id: 'hideFormattingSection',
-      type: 'checkbox',
-      checked: hideFormattingSection,
-      $on: {
-        change(_ref11) {
-          let {
-            target: {
-              checked
-            }
-          } = _ref11;
-          $$1('#advancedformatting').style.display = checked ? 'none' : 'block';
-          localStorage.setItem(namespace + '-hideFormattingSection', checked);
-        }
+    }
+  }]]]]], ['div', [['label', [l('Hide formatting section'), ['input', {
+    id: 'hideFormattingSection',
+    type: 'checkbox',
+    checked: hideFormattingSection,
+    $on: {
+      change(e) {
+        // eslint-disable-next-line prefer-destructuring -- TS
+        const checked = /** @type {HTMLInputElement} */e.target.checked;
+        /** @type {HTMLElement} */
+        $$1('#advancedformatting').style.display = checked ? 'none' : 'block';
+        localStorage.setItem(namespace + '-hideFormattingSection', String(checked));
       }
-    }]]]]], ['div', [['label', {
-      for: 'prefLangs'
-    }, [l('Preferred language(s)')]], ['br'], ['select', {
-      id: 'prefLangs',
-      multiple: 'multiple',
-      size: langs.length,
-      $on: {
-        change(_ref12) {
-          let {
-            target: {
-              selectedOptions
-            }
-          } = _ref12;
-          // Todo: EU disclaimer re: storage?
-          localStorage.setItem(namespace + '-langCodes', JSON.stringify([...selectedOptions].map(opt => {
-            return opt.value;
-          })));
-        }
+    }
+  }]]]]], ['div', [['label', {
+    for: 'prefLangs'
+  }, [l('Preferred language(s)')]], ['br'], ['select', {
+    id: 'prefLangs',
+    multiple: 'multiple',
+    size: langs.length,
+    $on: {
+      change(e) {
+        // eslint-disable-next-line prefer-destructuring -- TS
+        const selectedOptions = /** @type {HTMLSelectElement} */e.target.selectedOptions;
+        // Todo: EU disclaimer re: storage?
+        localStorage.setItem(namespace + '-langCodes', JSON.stringify([...selectedOptions].map(opt => {
+          return opt.value;
+        })));
       }
-    }, langs.map(lan => {
-      let langCodes = localStorage.getItem(namespace + '-langCodes');
-      langCodes = langCodes && JSON.parse(langCodes);
-      const atts = {
-        value: lan.code,
-        selected: null
-      };
-      if (langCodes && langCodes.includes(lan.code)) {
-        atts.selected = 'selected';
-      }
-      return ['option', atts, [languageI18n(lan.code)]];
-    })]]], preferencesPlugin ? preferencesPlugin({
-      $: $$1,
-      l,
-      jml,
-      paramsSetter,
-      getDataForSerializingParamsAsURL,
-      work,
-      replaceHash,
-      getFieldAliasOrNames
-    }) : '']];
-  },
-  addBrowseFields(_ref13) {
-    let {
-      browseFields,
-      fieldInfo,
-      lDirectional,
-      i,
-      lIndexedParam,
-      $p,
-      content
-    } = _ref13;
+    }
+  }, langs.map(lan => {
+    let langCodes = localStorage.getItem(namespace + '-langCodes');
+    langCodes = langCodes && JSON.parse(langCodes);
+    const atts = /** @type {import('jamilih').JamilihAttributes} */{
+      value: lan.code,
+      selected: null
+    };
+    if (langCodes && langCodes.includes(lan.code)) {
+      atts.selected = 'selected';
+    }
+    return ['option', atts, [languageI18n(lan.code)]];
+  })]]], preferencesPlugin ? preferencesPlugin({
+    $: $$1,
+    l,
+    jml,
+    paramsSetter,
+    getDataForSerializingParamsAsURL,
+    work,
+    replaceHash,
+    getFieldAliasOrNames
+  }) : '']],
+  /**
+   * @param {{
+   *   browseFields: import('../utils/Metadata.js').BrowseFields,
+   *   fieldInfo: import('../utils/WorkInfo.js').FieldInfo,
+   *   i: number,
+   *   lDirectional: (
+   *     key: string|string[],
+   *     substitutions?: Record<string, string>
+   *   ) => string|Text|DocumentFragment,
+   *   lIndexedParam: (key: string) => string,
+   *   $p: import('../utils/IntlURLSearchParams.js').default,
+   *   content: import('jamilih').JamilihArray[]
+   * }} cfg
+   * @returns {void}
+   */
+  addBrowseFields({
+    browseFields,
+    fieldInfo,
+    lDirectional,
+    i,
+    lIndexedParam,
+    $p,
+    content
+  }) {
     const work = $p.get('work');
+    /**
+     * @param {import('jamilih').JamilihChildren} rowContent
+     */
     const addRowContent = rowContent => {
       if (!rowContent || !rowContent.length) {
         return;
       }
       content.push(['tr', rowContent]);
     };
+    /** @type {import('jamilih').JamilihChildren[]} */
     [
     // Todo: Separate formatting to CSS
     i > 0 ? [['td', {
       colspan: 12,
       align: 'center'
     }, [['br'], lDirectional('or'), ['br'], ['br']]]] : '', [...(() => {
+      /**
+       * @param {"start"|"end"} setType
+       */
       const addBrowseFieldSet = setType => {
-        return browseFields.reduce((rowContent, _ref14, j) => {
-          let {
-            fieldName,
-            aliases,
-            fieldSchema: {
-              minimum,
-              maximum
-            }
-          } = _ref14;
+        return browseFields.reduce((rowContent, {
+          fieldName,
+          aliases,
+          fieldSchema: {
+            minimum,
+            maximum
+          }
+        }, j) => {
           // Namespace by work for sake of browser auto-complete caching
           const name = work + '-' + lIndexedParam(setType) + (i + 1) + '-' + (j + 1);
           const id = name;
@@ -16398,10 +16663,14 @@ var workDisplay$1 = {
             list: 'dl-' + id,
             value: $p.get(name, true),
             $on: setType === 'start' ? {
+              /**
+               * @param {Event} e
+               */
               change(e) {
+                /** @type {HTMLInputElement[]} */
                 $$('input.browseField').forEach(bf => {
                   if (bf.id.includes(i + 1 + '-' + (j + 1))) {
-                    bf.value = e.target.value;
+                    bf.value = /** @type {HTMLInputElement} */e.target.value;
                   }
                 });
               }
@@ -16416,22 +16685,21 @@ var workDisplay$1 = {
           }], nbsp3]]);
           return rowContent;
         }, {
-          '#': []
+          '#': (/** @type {import('jamilih').JamilihChildren} */[])
         });
       };
       return [addBrowseFieldSet('start'), ['td', [['b', [lDirectional('to')]], nbsp3]], addBrowseFieldSet('end')];
     })(), ['td', [browseFields.length > 1 ? lDirectional('versesendingdataoptional') : '']]], [['td', {
       colspan: 4 * browseFields.length + 2 + 1,
       align: 'center'
-    }, [['table', [['tr', [browseFields.reduce((rowContent, _ref15, j) => {
-      let {
-        fieldName,
-        aliases,
-        fieldSchema: {
-          minimum,
-          maximum
-        }
-      } = _ref15;
+    }, [['table', [['tr', [browseFields.reduce((rowContent, {
+      fieldName,
+      aliases,
+      fieldSchema: {
+        minimum,
+        maximum
+      }
+    }, j) => {
       // Namespace by work for sake of browser auto-complete caching
       const name = work + '-' + lIndexedParam('anchor') + (i + 1) + '-' + (j + 1);
       const id = name;
@@ -16455,16 +16723,15 @@ var workDisplay$1 = {
       }], nbsp2]]);
       return rowContent;
     }, {
-      '#': [['td', {
+      '#': (/** @type {import('jamilih').JamilihChildren} */[['td', {
         style: 'font-weight: bold; vertical-align: bottom;'
-      }, [lDirectional('anchored-at') + nbsp3]]]
+      }, [lDirectional('anchored-at') + nbsp3]]])
     }), ['td', [['label', [lDirectional('field') + nbsp2, ['select', {
       name: lIndexedParam('anchorfield') + (i + 1),
       size: '1'
-    }, fieldInfo.map(_ref16 => {
-      let {
-        fieldAliasOrName
-      } = _ref16;
+    }, fieldInfo.map(({
+      fieldAliasOrName
+    }) => {
       const val = $p.get(lIndexedParam('anchorfield') + (i + 1), true);
       if (val === fieldAliasOrName) {
         return ['option', {
@@ -16474,46 +16741,87 @@ var workDisplay$1 = {
       return ['option', [fieldAliasOrName]];
     })]]]]]]]]]]]]].forEach(addRowContent);
   },
-  main(_ref17) {
-    let {
-      workI18n,
-      languageParam,
-      l,
-      namespace,
-      heading,
-      // fallbackDirection,
-      languageI18n,
-      langs,
-      fieldInfo,
-      localizeParamNames,
-      serializeParamsAsURL,
-      paramsSetter,
-      replaceHash,
-      getFieldAliasOrNames,
-      hideFormattingSection,
-      $p,
-      metadataObj,
-      lParam,
-      lElement,
-      lDirectional,
-      lIndexedParam,
-      fieldMatchesLocale,
-      preferredLocale,
-      schemaItems,
-      content,
-      groups,
-      preferencesPlugin
-    } = _ref17;
+  /**
+   * @param {{
+   *   workI18n: import('intl-dom').I18NCallback,
+   *   languageParam: string,
+   *   l: import('intl-dom').I18NCallback,
+   *   namespace: string,
+   *   heading: string,
+   *   languageI18n: (code: string) => string,
+   *   langs: import('../../server/main.js').LanguageInfo[],
+   *   fieldInfo: import('../utils/WorkInfo.js').FieldInfo,
+   *   localizeParamNames: boolean,
+   *   serializeParamsAsURL: import('../workDisplay.js').SerializeParamsAsURL,
+   *   paramsSetter: ParamsSetter,
+   *   replaceHash: (paramsCopy: URLSearchParams) => string,
+   *   getFieldAliasOrNames: import('../workDisplay.js').GetFieldAliasOrNames,
+   *   hideFormattingSection: boolean,
+   *   $p: import('../utils/IntlURLSearchParams.js').default,
+   *   metadataObj: import('../utils/Metadata.js').MetadataObj,
+   *   lParam: (key: string) => string,
+   *   lElement: import('../workDisplay.js').LElement,
+   *   lDirectional: import('../workDisplay.js').LDirectional,
+   *   lIndexedParam: (key: string) => string,
+   *   fieldMatchesLocale: (field: string) => boolean,
+   *   preferredLocale: string,
+   *   schemaItems: {
+   *     title: string,
+   *     type: string
+   *   }[],
+   *   content: import('jamilih').JamilihArray[],
+   *   groups: import('../utils/WorkInfo.js').FileGroup[],
+   *   preferencesPlugin?: PreferencesPlugin
+   * }} cfg
+   * @returns {void}
+  */
+  main({
+    // workI18n,
+    // languageParam,
+    l,
+    namespace,
+    heading,
+    // fallbackDirection,
+    languageI18n,
+    langs,
+    fieldInfo,
+    localizeParamNames,
+    serializeParamsAsURL,
+    paramsSetter,
+    replaceHash,
+    getFieldAliasOrNames,
+    hideFormattingSection,
+    $p,
+    // metadataObj,
+    lParam,
+    lElement,
+    lDirectional,
+    lIndexedParam,
+    fieldMatchesLocale,
+    // preferredLocale,
+    // schemaItems,
+    content,
+    // groups,
+    preferencesPlugin
+  }) {
     const work = $p.get('work');
-    const serializeParamsAsURLWithData = _ref18 => {
-      let {
-        type
-      } = _ref18;
+
+    /**
+     * @param {{
+     *   type: string
+     * }} cfg
+     * @returns {string}
+     */
+    const serializeParamsAsURLWithData = ({
+      type
+    }) => {
       return serializeParamsAsURL({
         ...getDataForSerializingParamsAsURL(),
         type
       });
     };
+
+    /** @type {LOption} */
     const lOption = (key, atts) => {
       return ['option', atts, [l(key
       // Ensure `intl-dom` supports
@@ -16532,23 +16840,24 @@ var workDisplay$1 = {
     }, [['button', {
       $on: {
         click() {
-          const prefs = $$1('#preferences');
+          const prefs = /** @type {HTMLElement} */$$1('#preferences');
           prefs.hidden = !prefs.hidden;
         }
       }
     }, [l('Preferences')]], Templates.workDisplay.getPreferences({
-      languageParam,
-      workI18n,
+      // languageParam,
+      // workI18n,
       paramsSetter,
       replaceHash,
       getFieldAliasOrNames,
-      work,
+      // eslint-disable-next-line object-shorthand -- TS
+      work: (/** @type {string} */work),
       langs,
       languageI18n,
       l,
       localizeParamNames,
       namespace,
-      groups,
+      // groups,
       hideFormattingSection,
       preferencesPlugin
     })]], ['h2', [heading]], ['br'], ['form', {
@@ -16568,20 +16877,31 @@ var workDisplay$1 = {
         }
       },
       $on: {
-        keydown(_ref19) {
-          let {
-            key,
+        keydown(e) {
+          const {
             target
-          } = _ref19;
+          } = e;
+          // eslint-disable-next-line prefer-destructuring -- TS
+          const key = /** @type {KeyboardEvent & {target: HTMLElement}} */e.key;
           // Chrome is not having submit event triggered now with enter key
           //   presses on inputs, despite having a `type=submit` input in the
           //   form, and despite not using `preventDefault`
           if (key === 'Enter' && target.localName.toLowerCase() !== 'textarea') {
+            /**
+             * @type {HTMLFormElement & {
+             *   $submit: () => void
+             * }}
+             */
             this.$submit();
           }
         },
         submit(e) {
           e.preventDefault();
+          /**
+             * @type {HTMLFormElement & {
+          *   $submit: () => void
+          * }}
+          */
           this.$submit();
         }
       },
@@ -16603,9 +16923,9 @@ var workDisplay$1 = {
       lElement,
       lIndexedParam,
       l,
-      metadataObj,
-      preferredLocale,
-      schemaItems,
+      // metadataObj,
+      // preferredLocale,
+      // schemaItems,
       fieldMatchesLocale
     }), lElement('save-settings-URL', 'input', 'value', {
       type: 'button',
@@ -16614,6 +16934,7 @@ var workDisplay$1 = {
           const url = serializeParamsAsURLWithData({
             type: 'saveSettings'
           });
+          /** @type {HTMLInputElement} */
           $$1('#settings-URL').value = url;
         }
       }
@@ -16625,14 +16946,13 @@ var workDisplay$1 = {
           e.preventDefault();
           const paramsCopy = paramsSetter({
             ...getDataForSerializingParamsAsURL(),
-            workName: work,
+            workName: (/** @type {string} */work),
             // Delete work of current page
             type: 'startEndResult'
           });
           const url = replaceHash(paramsCopy) + `&work=${work}&${work}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here
           try {
             await navigator.clipboard.writeText(url);
-            // eslint-disable-next-line no-unused-vars -- Okay to ignore
           } catch (err) {
             // User rejected
           }
@@ -16681,74 +17001,154 @@ var workDisplay$1 = {
   }
 };
 
+/**
+ * @typedef {number} Integer
+ */
+/**
+ * @typedef {{
+ *   interlinearSeparator?: string,
+ *   showEmptyInterlinear?: boolean,
+ *   showTitleOnSingleInterlinear?: boolean,
+ *   tableData: (string|Integer)[][],
+ *   $p: import('../utils/IntlURLSearchParams.js').default,
+ *   $pRaw: (key: string, avoidLog?: boolean) => string,
+ *   $pRawEsc: (str: string) => string,
+ *   $pEscArbitrary: (str: string) => string,
+ *   escapeQuotedCSS: (str: string) => string,
+ *   escapeCSS: (str: string) => string,
+ *   escapeHTML: (str: string) => string,
+ *   l: import('intl-dom').I18NCallback,
+ *   localizedFieldNames: (string|string[]|import('../../server/main.js').LocalizationStrings)[],
+ *   fieldLangs: (string|null)[],
+ *   fieldDirs: (string | null)[],
+ *   caption?: string,
+ *   hasCaption: boolean,
+ *   showInterlinTitles: boolean,
+ *   determineEnd: import('../resultsDisplay.js').DetermineEnd,
+ *   getCanonicalID: import('../resultsDisplay.js').GetCanonicalID,
+ *   canonicalBrowseFieldSetName: string,
+ *   getCellValue: import('../resultsDisplay.js').GetCellValue,
+ *   checkedAndInterlinearFieldInfo: [string[], number[], ("" | number[] | null)[]]
+ * }} ResultsDisplayServerOrClientArgs
+ */
+
 var resultsDisplayServerOrClient$1 = {
-  caption(_ref) {
-    let {
-      heading,
-      ranges
-    } = _ref;
+  /**
+   * @param {{
+   *   heading: string,
+   *   ranges: string
+   * }} cfg
+   */
+  caption({
+    heading,
+    ranges
+  }) {
     return heading + ' ' + ranges;
   },
-  startSeparator(_ref2) {
-    let {
-      l
-    } = _ref2;
-    return l('colon');
+  /**
+   * @param {{
+   *   l: import('intl-dom').I18NCallback
+   * }} cfg
+   * @returns {string}
+   */
+  startSeparator({
+    l
+  }) {
+    return /** @type {string} */l('colon');
   },
-  innerBrowseFieldSeparator(_ref3) {
-    let {
-      l
-    } = _ref3;
-    return l('comma-space');
+  /**
+   * @param {{
+   *   l: import('intl-dom').I18NCallback
+   * }} cfg
+   */
+  innerBrowseFieldSeparator({
+    l
+  }) {
+    return /** @type {string} */l('comma-space');
   },
-  ranges(_ref4) {
-    let {
-      l,
-      startRange,
-      endVals,
-      rangeNames
-    } = _ref4;
+  /**
+   * @param {{
+  *   l: import('intl-dom').I18NCallback,
+  *   startRange: string,
+  *   endVals: string[],
+  *   rangeNames: string
+  * }} cfg
+  */
+  ranges({
+    l,
+    startRange,
+    endVals,
+    rangeNames
+  }) {
     return startRange +
     // l('to').toLowerCase() + ' ' +
     '-' + endVals.join(Templates.resultsDisplayServerOrClient.startSeparator({
       l
     })) + ' (' + rangeNames + ')';
   },
-  fieldValueAlias(_ref5) {
-    let {
-      key,
-      value
-    } = _ref5;
+  /**
+   * @param {{
+   *   key: string,
+   *   value: string|number
+   * }} cfg
+   */
+  fieldValueAlias({
+    key,
+    value
+  }) {
     return value + ' (' + key + ')';
   },
-  interlinearSegment(_ref6) {
-    let {
-      lang,
-      dir,
-      html
-    } = _ref6;
+  /**
+   * @param {{
+   *   lang?: string|null,
+   *   dir?: string|null,
+   *   html: string
+   * }} cfg
+   */
+  interlinearSegment({
+    lang,
+    dir,
+    html
+  }) {
     return `<span${lang ? ` lang="${lang}"` : ''}${dir ? ` dir="${dir}"` : ''}>${html}</span>`;
   },
-  interlinearTitle(_ref7) {
-    let {
-      l,
-      val
-    } = _ref7;
+  /**
+   * @param {{
+  *   l: import('intl-dom').I18NCallback,
+  *   val: string
+  * }} cfg
+  */
+  interlinearTitle({
+    l,
+    val
+  }) {
     const colonSpace = l('colon-space');
     return `<span class="interlintitle">${val}</span>${colonSpace}`;
   },
-  styles(_ref8) {
-    let {
-      $p,
-      $pRaw,
-      $pRawEsc,
-      $pEscArbitrary,
-      // escapeQuotedCSS,
-      escapeCSS,
-      tableWithFixedHeaderAndFooter,
-      checkedFieldIndexes,
-      hasCaption
-    } = _ref8;
+  /**
+   * @param {{
+   *   $p: import('../utils/IntlURLSearchParams.js').default,
+   *   $pRaw: (key: string, avoidLog?: boolean) => string,
+   *   $pRawEsc: (str: string) => string,
+   *   $pEscArbitrary: (str: string) => string,
+   *   escapeCSS: (str: string) => string,
+   *   tableWithFixedHeaderAndFooter: boolean,
+   *   checkedFieldIndexes: number[],
+   *   hasCaption: boolean
+   * }} cfg
+   * @returns {import('jamilih').JamilihArray}
+   */
+  styles({
+    $p,
+    $pRaw,
+    $pRawEsc,
+    $pEscArbitrary,
+    // escapeQuotedCSS,
+    escapeCSS,
+    tableWithFixedHeaderAndFooter,
+    checkedFieldIndexes,
+    hasCaption
+  }) {
     const colorEsc = !$p.has('color', true) || $p.get('color', true) === '#' ? $pRawEsc('colorName') : $pEscArbitrary('color');
     const bgcolorEsc = !$p.has('bgcolor', true) || $p.get('bgcolor', true) === '#' ? $pRawEsc('bgcolorName') : $pEscArbitrary('bgcolor');
     const tableHeight = '100%';
@@ -16841,31 +17241,44 @@ body {
 }
 ` : '')]];
   },
-  main(_ref9) {
-    let {
-      tableData,
-      $p,
-      $pRaw,
-      $pRawEsc,
-      $pEscArbitrary,
-      // Todo: escaping should be done in business logic!
-      escapeQuotedCSS,
-      escapeCSS,
-      escapeHTML,
-      l,
-      localizedFieldNames,
-      fieldLangs,
-      fieldDirs,
-      caption,
-      hasCaption,
-      showInterlinTitles,
-      determineEnd,
-      getCanonicalID,
-      canonicalBrowseFieldSetName,
-      getCellValue,
-      checkedAndInterlinearFieldInfo,
-      interlinearSeparator = '<br /><br />'
-    } = _ref9;
+  /**
+   * @param {ResultsDisplayServerOrClientArgs} args
+   * @returns {import('jamilih').JamilihArray}
+   */
+  main({
+    tableData,
+    $p,
+    $pRaw,
+    $pRawEsc,
+    $pEscArbitrary,
+    // Todo: escaping should be done in business logic!
+    // escapeQuotedCSS,
+    escapeCSS,
+    escapeHTML,
+    l,
+    localizedFieldNames,
+    fieldLangs,
+    fieldDirs,
+    caption,
+    hasCaption,
+    showInterlinTitles,
+    determineEnd,
+    getCanonicalID,
+    canonicalBrowseFieldSetName,
+    getCellValue,
+    checkedAndInterlinearFieldInfo,
+    showEmptyInterlinear,
+    showTitleOnSingleInterlinear,
+    interlinearSeparator = '<br /><br />'
+  }) {
+    /**
+     * @type {{
+     *   table: [string, (import('jamilih').JamilihAttributes | undefined)?][],
+     *   div: [string, (import('jamilih').JamilihAttributes | undefined)?][],
+     *   "json-array": "json",
+     *   "json-object": "json"
+     * }}
+     */
     const tableOptions = {
       table: [['table', {
         class: 'table',
@@ -16919,7 +17332,7 @@ body {
       'json-array': 'json',
       'json-object': 'json'
     };
-    const outputmode = $p.get('outputmode', true); // Why not $pRaw?
+    const outputmode = /** @type {"json-object"|"json-array"|"table"|"div"} */$p.get('outputmode', true); // Why not $pRaw?
 
     switch (outputmode) {
       case 'json-object': // Can later fall through if supporting
@@ -16928,12 +17341,16 @@ body {
         // break;
         throw new Error('JSON object support is currently not available');
     }
-    const tableElems = tableOptions[Object.prototype.hasOwnProperty.call(tableOptions, outputmode) ? outputmode : 'table' // Default
+    const tableElems = tableOptions[Object.hasOwn(tableOptions, outputmode) && outputmode ? outputmode : 'table' // Default
     ];
     const [tableElem, trElem, tdElem, thElem, captionElem, theadElem, tbodyElem, tfootElem] = tableElems; // colgroupElem, colElem
 
     const [checkedFields, checkedFieldIndexes, allInterlinearColIndexes] = checkedAndInterlinearFieldInfo;
     const tableWithFixedHeaderAndFooter = $pRaw('headerfooterfixed') === 'yes';
+
+    /**
+     * @param {import('jamilih').JamilihChildren} children
+     */
     const tableWrap = children => {
       return tableWithFixedHeaderAndFooter ? ['div', {
         class: 'table-responsive anchor-table-header zupa'
@@ -16943,36 +17360,47 @@ body {
         class: 'table-responsive'
       }, children];
     };
+
+    /**
+     * @param {import('jamilih').JamilihArray} el
+     * @param {import('jamilih').JamilihChildren} children
+     */
     const addChildren = (el, children) => {
       // eslint-disable-next-line unicorn/prefer-structured-clone -- Need JSON
       el = JSON.parse(JSON.stringify(el));
       el.push(children);
       return el;
     };
-    const addAtts = (_ref10, newAtts) => {
-      let [el, atts] = _ref10;
-      return [el, {
-        ...atts,
-        ...newAtts
-      }];
-    };
+
+    /**
+     * @param {[string, import('jamilih').JamilihAttributes?]} elAtts
+     * @param {import('jamilih').JamilihAttributes} newAtts
+     * @returns {import('jamilih').JamilihArray}
+     */
+    const addAtts = ([el, atts], newAtts) => [el, {
+      ...atts,
+      ...newAtts
+    }];
     const foundState = {
       start: false,
       end: false
     };
+
+    /** @type {import('jamilih').JamilihArray[]} */
     const outArr = [];
-    const {
-      showEmptyInterlinear,
-      showTitleOnSingleInterlinear
-    } = this;
+
+    /**
+     * @param {string} tdVal
+     * @param {boolean} [htmlEscaped]
+     */
     const checkEmpty = (tdVal, htmlEscaped) => {
       if (!showEmptyInterlinear) {
         if (!htmlEscaped) {
-          tdVal = new DOMParser().parseFromString(tdVal, 'text/html').body;
-          [...tdVal.querySelectorAll('br')].forEach(br => {
+          const tdValElem = new DOMParser().parseFromString(tdVal, 'text/html').body;
+          [...tdValElem.querySelectorAll('br')].forEach(br => {
             br.remove();
           });
-          tdVal = tdVal.innerHTML;
+          tdVal = tdValElem.innerHTML;
         }
         if (!tdVal.trim()) {
           return true;
@@ -17016,7 +17444,8 @@ body {
             idx
           });
           console.log('showEmptyInterlinear', showEmptyInterlinear, htmlEscaped);
-          const isEmpty = checkEmpty(tdVal, htmlEscaped);
+          const isEmpty = checkEmpty(/** @type {string} */
+          tdVal, htmlEscaped);
           if (isEmpty) {
             return '';
           }
@@ -17025,7 +17454,7 @@ body {
             dir: fieldDirs[idx],
             html: (showInterlinTitles ? Templates.resultsDisplayServerOrClient.interlinearTitle({
               l,
-              val: localizedFieldNames[idx]
+              val: (/** @type {string} */localizedFieldNames[idx])
             }) : '') + tdVal
           }) : tdVal;
         }).filter(cell => cell !== '');
@@ -17037,25 +17466,26 @@ body {
           lang: fieldLangs[idx],
           dir: fieldDirs[idx],
           dataset: {
-            col: localizedFieldNames[idx]
+            col: (/** @type {string} */localizedFieldNames[idx])
           },
-          innerHTML: (showInterlins && !checkEmpty(tdVal, htmlEscaped) && (showTitleOnSingleInterlinear || interlins.length) ? Templates.resultsDisplayServerOrClient.interlinearSegment({
+          innerHTML: (showInterlins && !checkEmpty(/** @type {string} */
+          tdVal, htmlEscaped) && (showTitleOnSingleInterlinear || interlins?.length) ? Templates.resultsDisplayServerOrClient.interlinearSegment({
             lang: fieldLangs[idx],
             html: (showInterlinTitles ? Templates.resultsDisplayServerOrClient.interlinearTitle({
               l,
-              val: localizedFieldNames[idx]
+              val: (/** @type {string} */localizedFieldNames[idx])
             }) : '') + tdVal
-          }) : tdVal) + (interlinearColIndexes && interlins.length ? interlinearSeparator + interlins.join(interlinearSeparator) : '')
+          }) : tdVal) + (interlinearColIndexes && interlins && interlins.length ? interlinearSeparator + interlins.join(interlinearSeparator) : '')
         });
       })));
       return false;
     });
-    return ['div', [Templates.resultsDisplayServerOrClient.styles({
+    return /** @type {import('jamilih').JamilihArray} */['div', [Templates.resultsDisplayServerOrClient.styles({
       $p,
       $pRaw,
       $pRawEsc,
       $pEscArbitrary,
-      escapeQuotedCSS,
+      // escapeQuotedCSS,
       escapeCSS,
       tableWithFixedHeaderAndFooter,
       checkedFieldIndexes,
@@ -17066,19 +17496,20 @@ body {
       class: 'inner-caption'
     }, [['span', [caption]]]]]] : '']) : '', (
     /*
-              // Works but quirky, e.g., `color` doesn't work (as also
-              //  confirmed per https://quirksmode.org/css/css2/columns.html)
-              addChildren(colgroupElem,
-                  checkedFieldIndexes.map((idx, i) =>
-                      addAtts(colElem, {style: $pRaw('css' + (idx + 1))})
-                  )
-              ),
-              */
+      // Works but quirky, e.g., `color` doesn't work (as also
+      //  confirmed per https://quirksmode.org/css/css2/columns.html)
+      addChildren(colgroupElem,
+          checkedFieldIndexes.map((idx, i) =>
+              addAtts(colElem, {style: $pRaw('css' + (idx + 1))})
+          )
+      ),
+    */
     $pRaw('header') !== '0' ? addChildren(theadElem, [addChildren(trElem, checkedFields.map((cf, i) => {
       const interlinearColIndexes = allInterlinearColIndexes[i];
       cf = escapeHTML(cf) + (interlinearColIndexes ? l('comma-space') + interlinearColIndexes.map(idx => {
         return localizedFieldNames[idx];
-      }).join(l('comma-space')) : '');
+      }).join(/** @type {string} */
+      l('comma-space')) : '');
       return addChildren(thElem, [cf, tableWithFixedHeaderAndFooter ? ['div', {
         class: 'zupa1'
       }, [['div', {
@@ -17088,7 +17519,8 @@ body {
       const interlinearColIndexes = allInterlinearColIndexes[i];
       cf = escapeHTML(cf) + (interlinearColIndexes ? l('comma-space') + interlinearColIndexes.map(idx => {
         return localizedFieldNames[idx];
-      }).join(l('comma-space')) : '');
+      }).join(/** @type {string} */
+      l('comma-space')) : '');
       return addChildren(thElem, [cf, tableWithFixedHeaderAndFooter ? ['div', {
         class: 'zupa1'
       }, [['div', {
@@ -17099,30 +17531,45 @@ body {
 };
 
 var resultsDisplayClient$1 = {
-  anchorRowCol(_ref) {
-    let {
-      anchorRowCol
-    } = _ref;
+  /**
+   * @param {{
+   *   anchorRowCol: string
+   * }} cfg
+   */
+  anchorRowCol({
+    anchorRowCol
+  }) {
     return $$1('#' + anchorRowCol);
   },
-  anchors(_ref2) {
-    let {
-      escapedRow,
-      escapedCol
-    } = _ref2;
+  /**
+   * @param {{
+   *   escapedRow: string
+   *   escapedCol: string|undefined
+   * }} cfg
+   */
+  anchors({
+    escapedRow,
+    escapedCol
+  }) {
     const sel = 'tr[data-row="' + escapedRow + '"]' + (escapedCol ? '> td[data-col="' + escapedCol + '"]' : '');
     return $$1(sel);
   },
-  main() {
+  /**
+   * @param {import('./resultsDisplayServerOrClient.js').ResultsDisplayServerOrClientArgs} args
+   */
+  main(args) {
     let html;
     try {
-      html = Templates.resultsDisplayServerOrClient.main(...arguments);
-    } catch (err) {
+      html = /** @type {import('jamilih').JamilihArray} */
+      Templates.resultsDisplayServerOrClient.main(args);
+    } catch (error) {
+      const err = /** @type {Error} */error;
       if (err.message === 'JSON support is currently not available') {
         dialogs.alert(err.message);
       } else {
         console.error(err);
       }
+      return;
     }
     jml(...html, $$1('#main'));
   }
@@ -17153,17 +17600,15 @@ const Templates = {
     /**
      * @param {{text: string}} cfg
      */
-    addLogEntry(_ref) {
-      let {
-        text
-      } = _ref;
+    addLogEntry({
+      text
+    }) {
       const installationDialog = $$1('#installationLogContainer');
       try {
         /** @type {HTMLDialogElement} */
         installationDialog.showModal();
         const container = /** @type {HTMLElement} */$$1('#dialogContainer');
         container.hidden = false;
-        // eslint-disable-next-line no-unused-vars -- Ok
       } catch (err) {
         // May already be open
       }
@@ -17182,11 +17627,10 @@ const Templates = {
      *   escapedErrorMessage: string
      * }} cfg
      */
-    dbError(_ref2) {
-      let {
-        type,
-        escapedErrorMessage
-      } = _ref2;
+    dbError({
+      type,
+      escapedErrorMessage
+    }) {
       if (type) {
         jml('span', [type, ' ', escapedErrorMessage], $$1('#dbError'));
       }
@@ -17219,14 +17663,13 @@ const Templates = {
      *   HTMLDialogElement, HTMLDialogElement, HTMLDialogElement
      * ]}
      */
-    main(_ref3) {
-      let {
-        siteI18n,
-        ok,
-        refuse,
-        close,
-        closeBrowserNotGranting
-      } = _ref3;
+    main({
+      siteI18n,
+      ok,
+      refuse,
+      close,
+      closeBrowserNotGranting
+    }) {
       const installationDialog = jml('dialog', {
         style: 'text-align: center; height: 100%',
         id: 'installationLogContainer',
@@ -17325,11 +17768,10 @@ class IntlURLSearchParams {
    * @param {import('intl-dom').I18NCallback} [options.l10n]
    * @param {URLSearchParams|string} [options.params]
    */
-  constructor() {
-    let {
-      l10n,
-      params
-    } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  constructor({
+    l10n,
+    params
+  } = {}) {
     this.l10n = l10n;
     this.localizeParamNames = false;
     if (!params) {
@@ -17359,7 +17801,7 @@ class IntlURLSearchParams {
   }
   /**
    * @param {string} param
-   * @param {boolean} skip
+   * @param {boolean} [skip]
    * @returns {boolean}
    */
   has(param, skip) {
@@ -17376,7 +17818,7 @@ class IntlURLSearchParams {
   /**
    * @param {string} param
    * @param {string} value
-   * @param {boolean} skip
+   * @param {boolean} [skip]
    * @returns {void}
    */
   set(param, value, skip) {
@@ -17405,42 +17847,43 @@ class IntlURLSearchParams {
  *   followParams: (formSelector: string, cb: () => void) => void
  * }} cfg
  */
-async function workSelect(_ref) {
-  let {
-    files,
-    lang,
-    fallbackLanguages,
-    $p,
-    followParams
-    /* , l, defineFormatter */
-  } = _ref;
+async function workSelect({
+  files,
+  lang,
+  fallbackLanguages,
+  $p,
+  followParams
+  /* , l, defineFormatter */
+}) {
   // We use getJSON instead of JsonRefs as we do not necessarily need to
   //    resolve the file contents here
   try {
-    const works = await getJSON(files);
+    const works = /** @type {import('./utils/WorkInfo.js').FilesObject} */
+    await getJSON(files);
     const localizationStrings = works['localization-strings'];
-    const metadataObjs = await getJSON(works.groups.reduce((arr, fileGroup) => {
+    const metadataObjs = /** @type {import('./utils/Metadata.js').MetadataObj[]} */
+    await getJSON(works.groups.reduce((arr, fileGroup) => {
       const metadataBaseDir = (works.metadataBaseDirectory || '') + (fileGroup.metadataBaseDirectory || '') + '/';
       return fileGroup.files.reduce((ar, fileData) => [...ar, metadataBaseDir + fileData.metadataFile], arr);
-    }, []));
+    }, /** @type {string[]} */[]));
     const workI18n = await i18n({
       messageStyle: 'plainNested',
       locales: lang,
       defaultLocales: fallbackLanguages,
       // Todo: Could at least share this with `index.js`
-      localeStringFinder(_ref2) {
-        let {
-          locales,
-          defaultLocales
-        } = _ref2;
-        const locale = [...locales, ...defaultLocales].find(language => {
+      async localeStringFinder({
+        locales,
+        defaultLocales
+      } = {}) {
+        const locale = [...(/** @type {string[]} */locales), ...(/** @type {string[]} */defaultLocales)].find(language => {
           return language in localizationStrings;
         });
         return {
-          locale,
+          // eslint-disable-next-line object-shorthand -- TS
+          locale: (/** @type {string} */locale),
           strings: {
             head: {},
-            body: localizationStrings[locale]
+            body: localizationStrings[(/** @type {string} */locale)]
           }
         };
       }
@@ -17464,7 +17907,8 @@ async function workSelect(_ref) {
 
     const metadataObjsIter = metadataObjs[Symbol.iterator]();
     const getNextAlias = () => {
-      const metadataObj = metadataObjsIter.next().value;
+      const metadataObj = /** @type {import('./utils/Metadata.js').MetadataObj} */
+      metadataObjsIter.next().value;
       return getMetaProp(lang, metadataObj, 'alias');
     };
     Templates.workSelect({
@@ -17474,7 +17918,8 @@ async function workSelect(_ref) {
       $p,
       followParams
     });
-  } catch (err) {
+  } catch (error) {
+    const err = /** @type {Error} */error;
     console.log('Error', err);
     dialogs.alert(err);
   }
@@ -17505,8 +17950,8 @@ const getSerializeParamsAsURL = function (args) {
    *   random: {checked: boolean},
    *   checkboxes: HTMLInputElement[],
    *   type: string,
-   *   fieldAliasOrNames: string[],
-   *   workName: string
+   *   fieldAliasOrNames?: string[],
+   *   workName?: string
    * }} innerArg
    */
   return function (innerArg) {
@@ -17522,33 +17967,31 @@ const getSerializeParamsAsURL = function (args) {
  *   $p: import('./IntlURLSearchParams.js').default
  * }} cfg
  */
-const getParamsSetter = function (_ref) {
-  let {
-    l,
-    lParam,
-    $p
-  } = _ref;
+const getParamsSetter = function ({
+  l,
+  lParam,
+  $p
+}) {
   /**
    * @param {{
    *   form: HTMLFormElement,
    *   random: {checked: boolean},
    *   checkboxes: HTMLInputElement[],
    *   type: string,
-   *   fieldAliasOrNames: string[],
-   *   workName: string
+   *   fieldAliasOrNames?: string[],
+   *   workName?: string
    * }} cfg
    */
-  return function (_ref2) {
-    let {
-      form,
-      random = {
-        checked: false
-      },
-      checkboxes,
-      type,
-      fieldAliasOrNames = [],
-      workName
-    } = _ref2;
+  return function ({
+    form,
+    random = {
+      checked: false
+    },
+    checkboxes,
+    type,
+    fieldAliasOrNames = [],
+    workName
+  }) {
     const paramsCopy = new URLSearchParams($p.params);
     const formParamsHash = serialize(form, {
       hash: true,
@@ -17655,6 +18098,49 @@ const getParamsSetter = function (_ref) {
 };
 
 /**
+ * @typedef {() => Promise<{
+ *   groupName: string | Text | DocumentFragment,
+ *   worksToFields: {
+ *     workName: string | Text | DocumentFragment,
+ *     shortcut: string,
+ *     fieldAliasOrNames: (
+ *       string|string[]|import('../server/main.js').LocalizationStrings
+ *     )[]|undefined
+ *   }[]
+ * }[]>} GetFieldAliasOrNames
+ */
+
+/**
+ * @typedef {(innerArg: {
+ *   form: HTMLFormElement,
+ *   random: {
+ *     checked: boolean
+ *   },
+ *   checkboxes: HTMLInputElement[],
+ *   type: string,
+ *   fieldAliasOrNames?: string[],
+ *   workName?: string,
+ * }) => string} SerializeParamsAsURL
+ */
+
+/**
+ * @typedef {(
+ *   key: string|string[],
+ *   substitutions?: Record<string, string>
+ * ) => string|Text|DocumentFragment} LDirectional
+ */
+
+/**
+ * @typedef {(
+ *   key: string,
+ *   tag: string,
+ *   attr: string,
+ *   atts: import('jamilih').JamilihAttributes,
+ *   children?: import('jamilih').JamilihChildren
+ * ) => import('jamilih').JamilihArray} LElement
+ */
+
+/**
  * @this {import('./index.js').default}
  * @param {{
  *   l: import('intl-dom').I18NCallback,
@@ -17666,44 +18152,93 @@ const getParamsSetter = function (_ref) {
  *   $p: import('./utils/IntlURLSearchParams.js').default
  * }} cfg
  */
-async function workDisplay(_ref) {
-  let {
-    l,
-    languageParam,
-    lang,
-    preferredLocale,
-    languages,
-    fallbackLanguages,
-    $p
-  } = _ref;
+async function workDisplay({
+  l,
+  languageParam,
+  lang,
+  preferredLocale,
+  languages,
+  fallbackLanguages,
+  $p
+}) {
   const {
     preferencesPlugin
   } = this;
   const langs = this.langData.languages;
-  const fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
+
+  // const fallbackDirection = this.getDirectionForLanguageCode(fallbackLanguages[0]);
+
   const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
   const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
   const prefFormatting = localStorage.getItem(this.namespace + '-hideFormattingSection');
   const hideFormattingSection = $p.has('formatting', true) ? $p.get('formatting', true) === '0' : prefFormatting === 'true' || prefFormatting !== 'false' && this.hideFormattingSection;
-  async function _displayWork(_ref2) {
-    let {
-      workI18n,
-      metadataObj,
-      getFieldAliasOrName,
-      schemaItems,
-      // schemaObj,
-      fieldInfo,
-      metadata,
-      pluginsForWork,
-      groupsToWorks
-    } = _ref2;
-    const lParam = localizeParamNames ? key => l(['params', key]) : key => key;
-    const lIndexedParam = localizeParamNames ? key => l(['params', 'indexed', key]) : key => key;
+
+  /**
+   * @this {import('./index.js').default}
+   * @param {{
+   *   workI18n: import('intl-dom').I18NCallback,
+   *   metadataObj: import('./utils/Metadata.js').MetadataObj,
+   *   getFieldAliasOrName: (field: string) => string|string[]|import('../server/main.js').LocalizationStrings,
+   *   schemaItems: {title: string, type: string}[],
+   *   fieldInfo: import('./utils/WorkInfo.js').FieldInfo,
+   *   metadata: import('./utils/Metadata.js').Metadata,
+   *   pluginsForWork: import('./utils/Plugin.js').PluginsForWork|null,
+   *   groupsToWorks: {
+   *     name: string | Text | DocumentFragment,
+   *     workNames: (string | Text | DocumentFragment)[],
+   *     shortcuts: string[]
+   *   }[]
+   * }} cfg
+   * @returns {Promise<void>}
+   */
+  async function _displayWork({
+    workI18n,
+    metadataObj,
+    getFieldAliasOrName,
+    schemaItems,
+    // schemaObj,
+    fieldInfo,
+    metadata,
+    pluginsForWork,
+    groupsToWorks
+  }) {
+    const lParam = localizeParamNames
+    // eslint-disable-next-line @stylistic/operator-linebreak -- TS
+    ?
+    /**
+    * @param {string} key
+    * @returns {string}
+    */
+    key => (/** @type {string} */l(['params', key]))
+    // eslint-disable-next-line @stylistic/operator-linebreak -- TS
+    :
+    /**
+     * @param {string} key
+     * @returns {string}
+     */
+    key => key;
+    const lIndexedParam = localizeParamNames
+    // eslint-disable-next-line @stylistic/operator-linebreak -- TS
+    ?
+    /**
+     * @param {string} key
+     * @returns {string}
+     */
+    key => (/** @type {string} */l(['params', 'indexed', key]))
+    // eslint-disable-next-line @stylistic/operator-linebreak -- TS
+    :
+    /**
+     * @param {string} key
+     * @returns {string}
+     */
+    key => key;
 
     // Returns element with localized option text (as Jamilih), with
     //   optional fallback direction
-    const lElement = function (key, el, attToLocalize, atts) {
-      let children = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
+    /**
+     * @type {LElement}
+     */
+    const lElement = (key, el, attToLocalize, atts, children = []) => {
       atts[attToLocalize] = l(key
       // Restore this if `intl-dom` supports
       // fallback ({message}) {
@@ -17715,6 +18250,10 @@ async function workDisplay(_ref) {
     };
 
     // Returns plain text node or element (as Jamilih) with fallback direction
+
+    /**
+     * @type {LDirectional}
+     */
     const lDirectional = (key, substitutions) => l(key, substitutions
     // formats
     // Restore if `intl-dom` supports
@@ -17725,18 +18264,21 @@ async function workDisplay(_ref) {
       namespace: this.namespace,
       preferredLocale,
       schemaItems,
-      pluginsForWork
+      // eslint-disable-next-line object-shorthand -- TS
+      pluginsForWork: (/** @type {import('./utils/Plugin.js').PluginsForWork} */
+      pluginsForWork)
     });
+
+    /** @type {import('jamilih').JamilihArray[]} */
     const content = [];
     this.getBrowseFieldData({
       metadataObj,
       schemaItems,
       getFieldAliasOrName,
-      callback(_ref3) {
-        let {
-          browseFields,
-          i
-        } = _ref3;
+      callback({
+        browseFields,
+        i
+      }) {
         Templates.workDisplay.addBrowseFields({
           browseFields,
           fieldInfo,
@@ -17766,19 +18308,20 @@ async function workDisplay(_ref) {
     });
     const {
       groups
-    } = await getJSON(this.files);
+    } = /** @type {import('./utils/WorkInfo.js').FilesObject} */
+    await getJSON(this.files);
 
     // const arabicContent = ['test1', 'test2']; // Todo: Fetch dynamically
-    const heading = getMetaProp(lang, metadataObj, 'heading');
+    const heading = /** @type {string} */
+    getMetaProp(lang, metadataObj, 'heading');
     const getFieldAliasOrNames = (() => {
       // Avoid blocking but start now
       // Let this run in the background to avoid blocking
-      const all = Promise.all(groupsToWorks.map(async _ref4 => {
-        let {
-          name,
-          workNames,
-          shortcuts
-        } = _ref4;
+      const all = Promise.all(groupsToWorks.map(async ({
+        name,
+        workNames,
+        shortcuts
+      }) => {
         const worksToFields = await Promise.all(workNames.map(async (workName, i) => {
           return {
             workName,
@@ -17788,13 +18331,10 @@ async function workDisplay(_ref) {
               fallbackLanguages,
               preferredLocale,
               languages,
-              work: workName
-            })).fieldInfo.map(_ref5 => {
-              let {
-                fieldAliasOrName
-              } = _ref5;
-              return fieldAliasOrName;
-            })
+              work: (/** @type {string} */workName)
+            }))?.fieldInfo?.map(({
+              fieldAliasOrName
+            }) => fieldAliasOrName)
           };
         }));
         return {
@@ -17812,19 +18352,23 @@ async function workDisplay(_ref) {
       // Standard: "English (United States)"
       languageDisplay: 'standard' // 'dialect'
     });
+
+    /**
+     * @param {string} code
+     */
     const languageI18n = code => {
-      return displayNames.of(code);
+      return /** @type {string} */displayNames.of(code);
     };
     Templates.workDisplay.main({
       languageParam,
-      lang,
+      // lang,
       workI18n,
       l,
       namespace: this.namespace,
       groups,
       heading,
       languageI18n,
-      fallbackDirection,
+      // fallbackDirection,
       langs,
       fieldInfo,
       localizeParamNames,
@@ -17852,22 +18396,24 @@ async function workDisplay(_ref) {
       fileData,
       metadataObj,
       ...args
-    } = await this.getWorkData({
+    } = /** @type {import('./utils/WorkInfo.js').GetWorkDataReturn} */
+    await this.getWorkData({
       lang,
       fallbackLanguages,
       preferredLocale,
       languages,
       work: (/** @type {string} */$p.get('work'))
     });
-    document.title = workI18n('browserfile-workdisplay', {
-      work: fileData ? getMetaProp(lang, metadataObj, 'alias') : ''
+    document.title = /** @type {string} */workI18n('browserfile-workdisplay', {
+      work: fileData ? (/** @type {string} */getMetaProp(lang, metadataObj, 'alias')) : ''
     });
     await _displayWork.call(this, {
       workI18n,
       metadataObj,
       ...args
     });
-  } catch (err) {
+  } catch (error) {
+    const err = /** @type {Error} */error;
     console.log('err', err);
     dialogs.alert(err);
   }
@@ -17884,8 +18430,6 @@ const _regexParseLocale = /^([a-zA-Z]{2,3}|[a-zA-Z]{5,8})(-[a-zA-Z]{4})?(-(?:[a-
 // Private vars - end
 
 class Locale {
-  // eslint-disable-line consistent-this
-
   /**
    * @param {string} locale
    */
@@ -18060,7 +18604,7 @@ class Locale {
   }
 
   // Public functions - star
-  get textInfo() {
+  getTextInfo() {
     // return 'rtl' if the intel string lang exists in the BID RTL LANGS array else return 'ltr'
     const direction = this._isRtlLang() ? 'rtl' : 'ltr';
     return {
@@ -18305,27 +18849,101 @@ Locale._BIDI_RTL_LANGS = [
 ];
 
 /**
+ * @callback GetCanonicalID
+ * @param {{
+ *   tr: (string|Integer)[]
+ * }} cfg
+ * @returns {string}
+ */
+/**
+ * @callback DetermineEnd
+ * @param {{
+ *   tr: (string|Integer)[]
+ *   foundState: {
+ *     start: boolean,
+ *     end: boolean
+ *   }
+ * }} cfg
+ * @returns {string|boolean}
+ */
+
+/**
+ * @typedef {import('./utils/Plugin.js').PluginObject} Plugin
+ */
+
+/**
+ * @typedef {{
+ *   field?: string,
+ *   fieldAliasOrName: string|string[]|import('../server/main.js').LocalizationStrings,
+ *   escapeColumn: boolean,
+ *   fieldLang: string,
+ *   plugin?: Plugin,
+ *   applicableField?: string,
+ *   meta?: {[key: string]: string},
+ *   j?: number,
+ *   placement?: number
+ *   metaApplicableField?: {
+ *     [key: string]: string
+ *   },
+ *   onByDefault?: boolean
+ * }[]} FieldInfo
+ */
+
+/**
+ * @typedef {import('./utils/Metadata.js').FieldValueAliases} FieldValueAliases
+ */
+/* eslint-disable jsdoc/reject-any-type -- Arbitrary */
+/**
+ * @typedef {any} AnyValue
+ */
+/* eslint-enable jsdoc/reject-any-type -- Arbitrary */
+/**
+ * @param {AnyValue} val
+ * @returns {val is null | undefined}
+ */
+const isNullish = val => {
+  return val === null || val === undefined;
+};
+
+/**
+ * @typedef {number} Integer
+ */
+/**
  * @param {string} locale
  */
 const getLangDir = locale => {
   const {
     direction
-  } = new Locale(locale).textInfo;
+  } = new Locale(locale).getTextInfo();
   return direction;
 };
 const fieldValueAliasRegex = /^.* \((.*?)\)$/;
+
+/**
+ * @param {string} v
+ */
 const getRawFieldValue = v => {
   return typeof v === 'string' ? v.replace(fieldValueAliasRegex, '$1') : v;
 };
-const setAnchor = _ref => {
-  let {
-    applicableBrowseFieldSet,
-    fieldValueAliasMapPreferred,
-    lParamRaw,
-    lIndexedParam,
-    max,
-    $p
-  } = _ref;
+
+/**
+ * @param {{
+ *   applicableBrowseFieldSet: import('./utils/Metadata.js').BrowseFields,
+ *   fieldValueAliasMapPreferred: (FieldValueAliases|null|undefined)[],
+ *   lParamRaw: (key: string, suffix?: string) => string,
+ *   lIndexedParam: (key: string) => string,
+ *   max: number,
+ *   $p: import('./utils/IntlURLSearchParams.js').default
+ * }} cfg
+ */
+const setAnchor = ({
+  applicableBrowseFieldSet,
+  fieldValueAliasMapPreferred,
+  lParamRaw,
+  lIndexedParam,
+  max,
+  $p
+}) => {
   const applicableBrowseFieldSchemaIndexes = applicableBrowseFieldSet.map(abfs => {
     return abfs.fieldSchemaIndex;
   });
@@ -18341,6 +18959,8 @@ const setAnchor = _ref => {
   }
   if (!anchor) {
     const anchors = [];
+
+    /** @type {string|null} */
     let anchorField = '';
     // eslint-disable-next-line sonarjs/misplaced-loop-counter -- Ok
     for (let i = 1, breakout; !breakout && !anchors.length; i++) {
@@ -18365,6 +18985,9 @@ const setAnchor = _ref => {
       }
     }
     if (anchors.length) {
+      /**
+       * @param {string} str
+       */
       const escapeSelectorAttValue = str => (str || '').replaceAll(/["\\]/g, String.raw`\$&`);
       const escapedRow = escapeSelectorAttValue(anchors.join('-'));
       const escapedCol = anchorField ? escapeSelectorAttValue(anchorField) : undefined;
@@ -18378,10 +19001,16 @@ const setAnchor = _ref => {
     anchor.scrollIntoView();
   }
 };
+
+/**
+ * @this {import('./index.js').default}
+ * @param {Omit<ResultsDisplayServerOrClientArg, "skipIndexedDB"|"prefI18n">} args
+ */
 const resultsDisplayClient = async function resultsDisplayClient(args) {
   const persistent = await navigator.storage.persisted();
   const skipIndexedDB = this.skipIndexedDB || !persistent || !navigator.serviceWorker.controller;
-  const prefI18n = localStorage.getItem(this.namespace + '-localizeParamNames');
+  const prefI18n = /** @type {"true"|"false"|null} */
+  localStorage.getItem(this.namespace + '-localizeParamNames');
   const {
     fieldInfo,
     $p,
@@ -18400,8 +19029,8 @@ const resultsDisplayClient = async function resultsDisplayClient(args) {
     skipIndexedDB,
     prefI18n
   });
-  document.title = workI18n('browserfile-resultsdisplay', {
-    work: fileData ? getMetaProp(lang, metadataObj, 'alias') : ''
+  document.title = /** @type {string} */workI18n('browserfile-resultsdisplay', {
+    work: fileData ? (/** @type {string} */getMetaProp(lang, metadataObj, 'alias')) : ''
   });
   Templates.resultsDisplayClient.main(templateArgs);
   setAnchor({
@@ -18412,13 +19041,12 @@ const resultsDisplayClient = async function resultsDisplayClient(args) {
     $p: args.$p,
     max: browseFieldSets.length
   });
-  fieldInfo.forEach(_ref2 => {
-    let {
-      plugin,
-      applicableField,
-      meta,
-      j
-    } = _ref2;
+  fieldInfo.forEach(({
+    plugin,
+    applicableField,
+    meta,
+    j
+  }) => {
     if (!plugin) {
       return;
     }
@@ -18433,143 +19061,208 @@ const resultsDisplayClient = async function resultsDisplayClient(args) {
     }
   });
 };
-const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient(_ref3) {
-  let {
-    l,
-    lang,
-    fallbackLanguages,
-    locales,
-    $p,
-    skipIndexedDB,
-    noIndexedDB,
-    prefI18n,
-    files,
-    allowPlugins,
-    langData,
-    basePath = '',
-    dynamicBasePath = ''
-  } = _ref3;
+
+/**
+ * @typedef {(info: {
+ *   tr: (string|Integer)[],
+ *   idx: number,
+ * }) => {
+ *   tdVal: string|Integer,
+ *   htmlEscaped: boolean
+ * }|{
+ *   tdVal: string|Integer,
+ *   htmlEscaped?: undefined
+ * }} GetCellValue
+ */
+
+/**
+ * @todo For `locales`, should export `LocaleObject` from intl-dom
+ * @typedef {{
+ *   l: import('intl-dom').I18NCallback,
+ *   lang: string[],
+ *   fallbackLanguages: string[]|undefined,
+ *   locales: {head?: AnyValue, body: AnyValue},
+ *   $p: import('./utils/IntlURLSearchParams.js').default,
+ *   skipIndexedDB: boolean,
+ *   noIndexedDB?: boolean,
+ *   prefI18n: "true"|"false"|null,
+ *   files?: string,
+ *   allowPlugins?: boolean,
+ *   langData: import('../server/main.js').LanguagesData,
+ *   basePath: string,
+ *   dynamicBasePath?: string
+ * }} ResultsDisplayServerOrClientArg
+ */
+
+/**
+ * @this {import('../server/main.js').ResultsDisplayServerContext|import('./index.js').default}
+ * @param {ResultsDisplayServerOrClientArg} cfg
+ */
+const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient({
+  l,
+  lang,
+  fallbackLanguages,
+  locales,
+  $p,
+  skipIndexedDB,
+  noIndexedDB,
+  prefI18n,
+  files,
+  allowPlugins,
+  langData,
+  basePath = '',
+  dynamicBasePath = ''
+}) {
   const languages = new Languages({
     langData
   });
-  const getCellValue = _ref4 => {
-    let {
-      fieldValueAliasMapPreferred,
-      escapeColumnIndexes
-    } = _ref4;
-    return _ref5 => {
-      let {
-        tr,
-        idx
-      } = _ref5;
-      let tdVal = fieldValueAliasMapPreferred[idx] !== undefined ? fieldValueAliasMapPreferred[idx][tr[idx]] : tr[idx];
-      if (tdVal && typeof tdVal === 'object') {
-        tdVal = Object.values(tdVal);
-      }
-      if (Array.isArray(tdVal)) {
-        tdVal = tdVal.join(l('comma-space'));
-      }
-      return (escapeColumnIndexes[idx] || !this.trustFormatHTML) && typeof tdVal === 'string' ? {
-        tdVal: escapeHTML(tdVal),
-        htmlEscaped: true
-      } : {
-        tdVal
-      };
-    };
-  };
-  const getCanonicalID = _ref6 => {
-    let {
-      fieldValueAliasMap,
-      fieldValueAliasMapPreferred,
-      localizedFieldNames,
-      canonicalBrowseFieldNames
-    } = _ref6;
-    return _ref7 => {
-      let {
-        tr // , foundState
-      } = _ref7;
-      return canonicalBrowseFieldNames.map(fieldName => {
-        const idx = localizedFieldNames.indexOf(fieldName);
-        // This works to put alias in anchor but this includes
-        //   our ending parenthetical, the alias may be harder
-        //   to remember and/or automated than original (e.g.,
-        //   for a number representing a book); we may wish to
-        //   switch this (and also for other browse field-based
-        //   items).
-        if (fieldValueAliasMap[idx] !== undefined &&
-        // Added this condition after imf->intl-dom conversion; concealing a
-        //   bug?
-        fieldValueAliasMap[idx] !== null) {
-          return fieldValueAliasMapPreferred[idx][tr[idx]];
-        }
-        return tr[idx];
-      }).join('-'); // rowID;
-    };
-  };
-  const determineEnd = _ref8 => {
-    let {
-      fieldValueAliasMap,
-      fieldValueAliasMapPreferred,
-      localizedFieldNames,
-      applicableBrowseFieldNames,
-      startsRaw,
-      endsRaw
-    } = _ref8;
-    return _ref9 => {
-      let {
-        tr,
-        foundState
-      } = _ref9;
-      const rowIDPartsPreferred = /** @type {string[]} */[];
-      const rowIDParts = applicableBrowseFieldNames.map(fieldName => {
-        const idx = localizedFieldNames.indexOf(fieldName);
-        // This works to put alias in anchor but this includes
-        //   our ending parenthetical, the alias may be harder
-        //   to remember and/or automated than original (e.g.,
-        //   for a number representing a book), and there could
-        //   be multiple aliases for a value; we may wish to
-        //   switch this (and also for other browse field-based
-        //   items).
-        if (fieldValueAliasMap[idx] !== undefined &&
-        // Added this condition after imf->intl-dom conversion; concealing a
-        //   bug?
-        fieldValueAliasMap[idx] !== null) {
-          rowIDPartsPreferred.push(fieldValueAliasMapPreferred[idx][tr[idx]]);
-        } else {
-          rowIDPartsPreferred.push(tr[idx]);
-        }
-        return tr[idx];
-      });
 
-      // Todo: Use schema to determine field type and use `Number.parseInt`
-      //   on other value instead of `String` conversions
-      if (!foundState.start) {
-        if (startsRaw.some((part, i) => {
-          const rowIDPart = rowIDParts[i];
-          return part !== rowIDPart;
-        })) {
-          // Trigger skip of this row
-          return false;
-        }
-        foundState.start = true;
-      }
-      // This doesn't go in an `else` for the above in case the start is the end
-      if (endsRaw.every((part, i) => {
-        const rowIDPart = rowIDParts[i];
-        return part === rowIDPart;
-      })) {
-        foundState.end = true;
-      } else if (foundState.end) {
-        // If no longer matching, trigger end of the table
-        return true;
-      }
-      return rowIDPartsPreferred.join('-'); // rowID;
+  /**
+   * @param {{
+   *   fieldValueAliasMapPreferred: (FieldValueAliases|null|undefined)[],
+   *   escapeColumnIndexes: boolean[]
+   * }} cfg
+   * @returns {GetCellValue}
+   */
+  const getCellValue = ({
+    fieldValueAliasMapPreferred,
+    escapeColumnIndexes
+  }) => ({
+    tr,
+    idx
+  }) => {
+    let tdVal = !isNullish(fieldValueAliasMapPreferred[idx]) ? fieldValueAliasMapPreferred[idx][tr[idx]] : tr[idx];
+    if (tdVal && typeof tdVal === 'object') {
+      tdVal = Object.values(tdVal);
+    }
+    if (Array.isArray(tdVal)) {
+      tdVal = tdVal.join(/** @type {string} */l('comma-space'));
+    }
+    return (escapeColumnIndexes[idx] || !this.trustFormatHTML) && typeof tdVal === 'string' ? {
+      tdVal: escapeHTML(tdVal),
+      htmlEscaped: true
+    } : {
+      tdVal
     };
   };
-  const getCheckedAndInterlinearFieldInfo = _ref10 => {
-    let {
-      localizedFieldNames
-    } = _ref10;
+
+  /**
+   * @param {{
+   *   fieldValueAliasMap: (FieldValueAliases|null|undefined)[],
+   *   fieldValueAliasMapPreferred: (FieldValueAliases|null|undefined)[],
+   *   localizedFieldNames: (string | string[]|import('../server/main.js').LocalizationStrings)[],
+   *   canonicalBrowseFieldNames: string[]
+   * }} cfg
+   */
+  const getCanonicalID = ({
+    fieldValueAliasMap,
+    fieldValueAliasMapPreferred,
+    localizedFieldNames,
+    canonicalBrowseFieldNames
+  }) => /** @type {GetCanonicalID} */
+  // eslint-disable-next-line @stylistic/implicit-arrow-linebreak -- Ok
+  ({
+    tr // , foundState
+  }) => {
+    return canonicalBrowseFieldNames.map(fieldName => {
+      const idx = localizedFieldNames.indexOf(fieldName);
+      // This works to put alias in anchor but this includes
+      //   our ending parenthetical, the alias may be harder
+      //   to remember and/or automated than original (e.g.,
+      //   for a number representing a book); we may wish to
+      //   switch this (and also for other browse field-based
+      //   items).
+      if (fieldValueAliasMap[idx] !== undefined &&
+      // Added this condition after imf->intl-dom conversion; concealing a
+      //   bug?
+      fieldValueAliasMap[idx] !== null) {
+        return /** @type {FieldValueAliases} */fieldValueAliasMapPreferred[idx][tr[idx]];
+      }
+      return tr[idx];
+    }).join('-'); // rowID;
+  };
+
+  /**
+   * @param {{
+   *   fieldValueAliasMap: (FieldValueAliases|null|undefined)[],
+   *   fieldValueAliasMapPreferred: (FieldValueAliases|null|undefined)[],
+   *   localizedFieldNames: (string|string[]|import('../server/main.js').LocalizationStrings)[],
+   *   applicableBrowseFieldNames: string[],
+   *   startsRaw: (string|Integer)[],
+   *   endsRaw: (string|Integer)[]
+   * }} cfg
+   */
+  const determineEnd = ({
+    fieldValueAliasMap,
+    fieldValueAliasMapPreferred,
+    localizedFieldNames,
+    applicableBrowseFieldNames,
+    startsRaw,
+    endsRaw
+  }) => /** @type {DetermineEnd} */
+  // eslint-disable-next-line @stylistic/implicit-arrow-linebreak -- Ok
+  ({
+    tr,
+    foundState
+  }) => {
+    const rowIDPartsPreferred = /** @type {(string|Integer)[]} */[];
+    const rowIDParts = applicableBrowseFieldNames.map(fieldName => {
+      const idx = localizedFieldNames.indexOf(fieldName);
+      // This works to put alias in anchor but this includes
+      //   our ending parenthetical, the alias may be harder
+      //   to remember and/or automated than original (e.g.,
+      //   for a number representing a book), and there could
+      //   be multiple aliases for a value; we may wish to
+      //   switch this (and also for other browse field-based
+      //   items).
+      if (fieldValueAliasMap[idx] !== undefined &&
+      // Added this condition after imf->intl-dom conversion; concealing a
+      //   bug?
+      fieldValueAliasMap[idx] !== null) {
+        rowIDPartsPreferred.push(/** @type {string|Integer} */
+        fieldValueAliasMapPreferred[idx]?.[tr[idx]]);
+      } else {
+        rowIDPartsPreferred.push(tr[idx]);
+      }
+      return tr[idx];
+    });
+
+    // Todo: Use schema to determine field type and use `Number.parseInt`
+    //   on other value instead of `String` conversions
+    if (!foundState.start) {
+      if (startsRaw.some((part, i) => {
+        const rowIDPart = rowIDParts[i];
+        return part !== rowIDPart;
+      })) {
+        // Trigger skip of this row
+        return false;
+      }
+      foundState.start = true;
+    }
+    // This doesn't go in an `else` for the above in case the start is the end
+    if (endsRaw.every((part, i) => {
+      const rowIDPart = rowIDParts[i];
+      return part === rowIDPart;
+    })) {
+      foundState.end = true;
+    } else if (foundState.end) {
+      // If no longer matching, trigger end of the table
+      return true;
+    }
+    return rowIDPartsPreferred.join('-'); // rowID;
+  };
+
+  /**
+   * @param {{
+   *   localizedFieldNames: (
+   *     string|string[]|import('../server/main.js').LocalizationStrings
+   *   )[],
+   * }} cfg
+   * @returns {[string[], number[], ("" | number[] | null)[]]}
+   */
+  const getCheckedAndInterlinearFieldInfo = ({
+    localizedFieldNames
+  }) => {
     let i = 1;
     let field, checked;
     let checkedFields = [];
@@ -18594,36 +19287,45 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     });
     return [checkedFields, checkedFieldIndexes, allInterlinearColIndexes];
   };
-  const getCaption = _ref11 => {
-    let {
-      starts,
-      ends,
-      applicableBrowseFieldNames,
-      heading
-    } = _ref11;
+
+  /**
+   * @param {{
+   *   starts: string[],
+   *   ends: string[],
+   *   applicableBrowseFieldNames: string[],
+   *   heading: string
+   * }} cfg
+   * @returns {[boolean, string|undefined]}
+   */
+  const getCaption = ({
+    starts,
+    ends,
+    applicableBrowseFieldNames,
+    heading
+  }) => {
     let caption;
     const hasCaption = $pRaw('caption') !== '0';
     if (hasCaption) {
       /*
-            // Works but displays in parentheses browse fields which
-            //  may be non-applicable
-            const buildRangePoint = (startOrEnd) => escapeHTML(
-                browseFieldSets.reduce((txt, bfs, i) =>
-                    (txt ? txt + ' (' : '') + bfs.map((bf, j) =>
-                        (j > 0 ? l('comma-space') : '') + bf + ' ' +
-                            $pRaw(startOrEnd + (i + 1) + '-' + (j + 1))
-                    ).join('') + (txt ? ')' : ''), '')
-            );
-            */
-      /*
-            // Works but overly long
-            const buildRangePoint = (startOrEnd) => escapeHTML(
-                applicableBrowseFieldSet.map((bf, j) =>
+        // Works but displays in parentheses browse fields which
+        //  may be non-applicable
+        const buildRangePoint = (startOrEnd) => escapeHTML(
+            browseFieldSets.reduce((txt, bfs, i) =>
+                (txt ? txt + ' (' : '') + bfs.map((bf, j) =>
                     (j > 0 ? l('comma-space') : '') + bf + ' ' +
-                        $pRaw(startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1))
-                ).join('')
-            );
-            */
+                        $pRaw(startOrEnd + (i + 1) + '-' + (j + 1))
+                ).join('') + (txt ? ')' : ''), '')
+        );
+      */
+      /*
+        // Works but overly long
+        const buildRangePoint = (startOrEnd) => escapeHTML(
+            applicableBrowseFieldSet.map((bf, j) =>
+                (j > 0 ? l('comma-space') : '') + bf + ' ' +
+                    $pRaw(startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1))
+            ).join('')
+        );
+      */
       const startSep = Templates.resultsDisplayServerOrClient.startSeparator({
         l
       });
@@ -18631,6 +19333,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
         l
       });
       const buildRanges = () => {
+        /** @type {string[]} */
         const endVals = [];
         const startRange = starts.reduce((str, startFieldValue, i) => {
           const ret = str + startFieldValue;
@@ -18659,17 +19362,25 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     }
     return [hasCaption, caption];
   };
-  const runPresort = _ref12 => {
-    let {
-      presort,
-      tableData,
-      applicableBrowseFieldNames,
-      localizedFieldNames
-    } = _ref12;
+
+  /**
+   * @param {{
+   *   presort: boolean|undefined,
+   *   tableData: (string|Integer)[][],
+   *   applicableBrowseFieldNames: string[],
+   *   localizedFieldNames: (string|string[]|import('../server/main.js').LocalizationStrings)[]
+   * }} cfg
+   */
+  const runPresort = ({
+    presort,
+    tableData,
+    applicableBrowseFieldNames,
+    localizedFieldNames
+  }) => {
     // Todo: Ought to be checking against an aliased table
     if (presort) {
       tableData.sort((rowA, rowB) => {
-        let precedence;
+        let precedence = 0;
         applicableBrowseFieldNames.some(fieldName => {
           const idx = localizedFieldNames.indexOf(fieldName);
           const rowAFirst = rowA[idx] < rowB[idx];
@@ -18681,19 +19392,29 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
       });
     }
   };
-  const getFieldValueAliasMap = _ref13 => {
-    let {
-      schemaItems,
-      fieldInfo,
-      metadataObj,
-      getFieldAliasOrName,
-      usePreferAlias
-    } = _ref13;
-    return fieldInfo.map(_ref14 => {
-      let {
-        field,
-        plugin
-      } = _ref14;
+
+  /**
+   * @param {{
+   *   schemaItems: {title: string, type: string}[],
+   *   fieldInfo: FieldInfo,
+   *   metadataObj: import('./utils/Metadata.js').MetadataObj,
+   *   getFieldAliasOrName: (
+   *     field: string
+   *   ) => string|string[]|import('../server/main.js').LocalizationStrings,
+   *   usePreferAlias: boolean
+   * }} cfg
+   */
+  const getFieldValueAliasMap = ({
+    schemaItems,
+    fieldInfo,
+    metadataObj,
+    getFieldAliasOrName,
+    usePreferAlias
+  }) => {
+    return fieldInfo.map(({
+      field,
+      plugin
+    }) => {
       if (plugin) {
         return undefined;
       }
@@ -18701,7 +19422,8 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
         preferAlias,
         fieldValueAliasMap
       } = getFieldNameAndValueAliases({
-        field,
+        // eslint-disable-next-line object-shorthand -- TS
+        field: (/** @type {string} */field),
         schemaItems,
         metadataObj,
         getFieldAliasOrName,
@@ -18711,8 +19433,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
         return preferAlias !== false ? fieldValueAliasMap : undefined;
       }
       if (fieldValueAliasMap) {
-        Object.entries(fieldValueAliasMap).forEach(_ref15 => {
-          let [key, val] = _ref15;
+        Object.entries(fieldValueAliasMap).forEach(([key, val]) => {
           if (Array.isArray(val)) {
             fieldValueAliasMap[key] = val.map(value => {
               return Templates.resultsDisplayServerOrClient.fieldValueAlias({
@@ -18729,8 +19450,8 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
                 value: val[preferAlias]
               });
             } else {
-              Object.entries(val).forEach(_ref16 => {
-                let [k, value] = _ref16;
+              Object.entries(val).forEach(([k, value]) => {
+                /** @type {{[key: string]: string|number}} */
                 fieldValueAliasMap[key][k] = Templates.resultsDisplayServerOrClient.fieldValueAlias({
                   key,
                   value
@@ -18749,15 +19470,27 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
       return undefined;
     });
   };
+
+  /**
+   * @param {string} param
+   * @param {boolean} [avoidLog]
+   */
   const $pRaw = (param, avoidLog) => {
     // Todo: Should work with i18n=true (if names i18nized, need reverse look-up)
+
+    /** @type {string} */
     let key;
     const p = $p.get(param, true);
     /**
-         *
-         * @param {GenericArray|object} locale
-         * @returns {boolean}
-         */
+     * @typedef {{
+     *   [key: string]: string|LocaleObj
+     * }} LocaleObj
+     */
+    /**
+     *
+     * @param {LocaleObj[]|LocaleObj} locale
+     * @returns {boolean}
+     */
     function reverseLocaleLookup(locale) {
       if (Array.isArray(locale)) {
         return locale.some(reverseLocaleLookup);
@@ -18775,16 +19508,30 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
       });
     }
     reverseLocaleLookup(locales);
+    // @ts-expect-error TS defect
     if (!key && !avoidLog) {
       console.log('Bad param/value', param, '::', p);
     }
+    // @ts-expect-error TS defect
     return key; // || p; // $p.get(param, true);
   };
   const escapeCSS = escapeHTML;
+
+  /**
+   * @param {string} param
+   */
   const $pRawEsc = param => escapeHTML($pRaw(param));
-  const $pEscArbitrary = param => escapeHTML($p.get(param, true));
+  /**
+   * @param {string} param
+   */
+  const $pEscArbitrary = param => escapeHTML(/** @type {string} */
+  $p.get(param, true));
 
   // Not currently in use
+
+  /**
+   * @param {string} s
+   */
   const escapeQuotedCSS = s => s.replaceAll('\\', '\\\\').replaceAll('"', String.raw`\"`);
   const {
     fileData,
@@ -18793,6 +19540,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     schemaObj,
     metadataObj,
     pluginsForWork
+    // @ts-expect-error Not using `this` given no `languages` arg is passed
   } = await getWorkData({
     files: files || this.files,
     allowPlugins: typeof allowPlugins === 'boolean' ? allowPlugins : this.allowPlugins,
@@ -18802,32 +19550,37 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     basePath
   });
   console.log('pluginsForWork', pluginsForWork);
-  const heading = getMetaProp(lang, metadataObj, 'heading');
+  const heading = /** @type {string} */getMetaProp(lang, metadataObj, 'heading');
   const schemaItems = schemaObj.items.items;
+
+  /** @type {string[]} */
   const setNames = [];
+  /** @type {(boolean|undefined)[]} */
   const presorts = [];
+
+  /** @type {import('./utils/Metadata.js').BrowseFields[]} */
   const browseFieldSets = [];
   getBrowseFieldData({
     metadataObj,
     schemaItems,
     getFieldAliasOrName,
     lang,
-    callback(_ref17) {
-      let {
-        setName,
-        browseFields,
-        presort
-      } = _ref17;
+    callback({
+      setName,
+      browseFields,
+      presort
+    }) {
       setNames.push(setName);
       presorts.push(presort);
       browseFieldSets.push(browseFields);
     }
   });
-  const fieldInfo = schemaItems.map(_ref18 => {
-    let {
-      title: field,
-      format
-    } = _ref18;
+
+  /** @type {FieldInfo} */
+  const fieldInfo = schemaItems.map(({
+    title: field,
+    format
+  }) => {
     return {
       field,
       fieldAliasOrName: getFieldAliasOrName(field) || field,
@@ -18844,30 +19597,40 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     const {
       lang
     } = this; // array with first item as preferred
-    pluginsForWork.iterateMappings(_ref19 => {
-      let {
-        // plugin,
-        pluginName,
-        pluginLang,
-        onByDefaultDefault,
-        placement,
-        applicableFields,
-        meta
-      } = _ref19;
+    pluginsForWork.iterateMappings(({
+      // plugin,
+      pluginName,
+      pluginLang,
+      onByDefaultDefault,
+      placement,
+      applicableFields,
+      meta
+    }) => {
       placement = placement === 'end' ? Number.POSITIVE_INFINITY // push
       : placement;
-      const processField = function () {
-        let {
-          applicableField,
-          targetLanguage,
-          onByDefault,
-          metaApplicableField
-        } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      /**
+       * @param {{
+       *   applicableField?: string,
+       *   targetLanguage?: string,
+       *   onByDefault?: boolean,
+       *   metaApplicableField?: {
+       *     [key: string]: string
+       *   },
+       * }} [cfg]
+       */
+      const processField = ({
+        applicableField,
+        targetLanguage,
+        onByDefault,
+        metaApplicableField
+      } = {}) => {
         const plugin = pluginsForWork.getPluginObject(pluginName) || {};
-        const applicableFieldLang = metadata.getFieldLang(applicableField);
+        const applicableFieldLang = metadata.getFieldLang(/** @type {string} */applicableField);
         if (plugin.getTargetLanguage) {
           targetLanguage = plugin.getTargetLanguage({
-            applicableField,
+            // eslint-disable-next-line object-shorthand -- TS
+            applicableField: (/** @type {string} */applicableField),
             targetLanguage,
             // Default lang for plug-in (from files.json)
             pluginLang,
@@ -18880,25 +19643,34 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
         if (targetLanguage === '{locale}') {
           targetLanguage = preferredLocale;
         }
-        const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', applicableField]);
+        const applicableFieldI18N = getMetaProp(lang, metadataObj, ['fieldnames', (/** @type {string} */
+        applicableField)]);
         const fieldAliasOrName = plugin.getFieldAliasOrName ? plugin.getFieldAliasOrName({
           locales: lang,
           workI18n,
-          targetLanguage,
-          applicableField,
+          // eslint-disable-next-line object-shorthand -- TS
+          targetLanguage: (/** @type {string} */targetLanguage),
+          // eslint-disable-next-line object-shorthand -- TS
+          applicableField: (/** @type {string} */applicableField),
           applicableFieldI18N,
           meta,
-          metaApplicableField,
-          targetLanguageI18N: languages.getLanguageFromCode(targetLanguage)
+          // eslint-disable-next-line object-shorthand -- TS
+          metaApplicableField: (/** @type {{[key: string]: string }} */
+          metaApplicableField),
+          targetLanguageI18N: languages.getLanguageFromCode(/** @type {string} */targetLanguage)
         }) : languages.getFieldNameFromPluginNameAndLocales({
           pluginName,
-          locales: lang,
+          // locales: lang,
           workI18n,
-          targetLanguage,
-          applicableFieldI18N,
+          // eslint-disable-next-line object-shorthand -- TS
+          targetLanguage: (/** @type {string} */targetLanguage),
+          // eslint-disable-next-line object-shorthand -- TS
+          applicableFieldI18N: (/** @type {string|string[]} */applicableFieldI18N),
           // Todo: Should have formal way to i18nize meta
           meta,
-          metaApplicableField
+          // eslint-disable-next-line object-shorthand -- TS
+          metaApplicableField: (/** @type {{[key: string]: string }} */
+          metaApplicableField)
         });
         fieldInfo.splice(
         // Todo: Allow default placement overriding for
@@ -18918,7 +19690,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
           //     not need here)
           applicableField,
           metaApplicableField,
-          fieldLang: targetLanguage
+          fieldLang: (/** @type {string} */targetLanguage)
         });
       };
       if (!pluginsForWork.processTargetLanguages(applicableFields, processField)) {
@@ -18928,10 +19700,9 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   }
   const localizedFieldNames = fieldInfo.map(fi => fi.fieldAliasOrName);
   const escapeColumnIndexes = fieldInfo.map(fi => fi.escapeColumn);
-  const fieldLangs = fieldInfo.map(_ref20 => {
-    let {
-      fieldLang
-    } = _ref20;
+  const fieldLangs = fieldInfo.map(({
+    fieldLang
+  }) => {
     return fieldLang !== preferredLocale ? fieldLang : null;
   });
   const fieldValueAliasMap = getFieldValueAliasMap({
@@ -18952,26 +19723,78 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   // Todo: Repeats some code in workDisplay; probably need to reuse
   //   these functions more in `Templates.resultsDisplayServerOrClient` too
   const localizeParamNames = $p.localizeParamNames = $p.has('i18n', true) ? $p.get('i18n', true) === '1' : prefI18n === 'true' || prefI18n !== 'false' && this.localizeParamNames;
-  const lParam = localizeParamNames ? key => l(['params', key]) : key => key;
-  const lIndexedParam = localizeParamNames ? key => l(['params', 'indexed', key]) : key => key;
-  const lParamRaw = localizeParamNames ? function (key) {
-    let suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-    return $p.get(lParam(key) + suffix, true);
-  } : function (key) {
-    let suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-    return $p.get(key + suffix, true);
-  };
-  const lIndexedParamRaw = localizeParamNames ? function (key) {
-    let suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-    return $p.get($p.get('work') + '-' + lIndexedParam(key) + suffix, true);
-  } : function (key) {
-    let suffix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-    return $p.get($p.get('work') + '-' + key + suffix, true);
-  };
+  const lParam = localizeParamNames
+  // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+  ?
+  /**
+   * @param {string} key
+   * @returns {string}
+   */
+  key => (/** @type {string} */l(['params', key]))
+  // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+  :
+  /**
+   * @param {string} key
+   * @returns {string}
+   */
+  key => key;
+  const lIndexedParam = localizeParamNames
+  // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+  ?
+  /**
+   * @param {string} key
+   * @returns {string}
+   */
+  key => (/** @type {string} */l(['params', 'indexed', key]))
+  // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+  :
+  /**
+   * @param {string} key
+   * @returns {string}
+   */
+  key => key;
+  const lParamRaw = localizeParamNames
+  // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+  ?
+  /**
+   * @param {string} key
+   * @param {string} [suffix]
+   * @returns {string}
+   */
+  (key, suffix = '') => (/** @type {string} */
+  $p.get(lParam(key) + suffix, true))
+  // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+  :
+  /**
+   * @param {string} key
+   * @param {string} [suffix]
+   * @returns {string}
+   */
+  (key, suffix = '') => (/** @type {string} */
+  $p.get(key + suffix, true));
+  const lIndexedParamRaw = localizeParamNames
+  // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+  ?
+  /**
+   * @param {string} key
+   * @param {string} [suffix]
+   * @returns {string}
+   */
+  (key, suffix = '') => (/** @type {string} */
+  $p.get($p.get('work') + '-' + lIndexedParam(key) + suffix, true))
+  // eslint-disable-next-line @stylistic/operator-linebreak -- Ok
+  :
+  /**
+   * @param {string} key
+   * @param {string} [suffix]
+   * @returns {string}
+   */
+  (key, suffix = '') => (/** @type {string} */
+  $p.get($p.get('work') + '-' + key + suffix, true));
 
   // Now that we know `browseFieldSets`, we can parse `startEnd`
   const browseFieldSetStartEndIdx = browseFieldSets.findIndex((item, i) => {
-    return lIndexedParamRaw('startEnd', i + 1);
+    return lIndexedParamRaw('startEnd', String(i + 1));
   });
   if (browseFieldSetStartEndIdx !== -1) {
     // Todo: i18nize (by work and/or by whole app?)
@@ -18984,7 +19807,7 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     // Todo: Change query beginning at 0 to 1 if none present?
     // Todo: Support i18nized or canonical aliases (but don't
     //         over-trim in such cases)
-    const rawSearch = (lIndexedParamRaw('startEnd', browseFieldSetStartEndIdx + 1) || '').trim();
+    const rawSearch = (lIndexedParamRaw('startEnd', String(browseFieldSetStartEndIdx + 1)) || '').trim();
     const [startFull, endFull] = rawSearch.split(rangeSep);
     if (endFull !== undefined) {
       const startPartVals = startFull.split(partSep);
@@ -19024,9 +19847,13 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     return abfs.fieldName;
   });
   const fieldSchemaTypes = applicableBrowseFieldSet.map(abfs => abfs.fieldSchema.type);
+
+  /**
+   * @param {"start"|"end"} startOrEnd
+   */
   const buildRangePoint = startOrEnd => {
     return applicableBrowseFieldNames.map((bfn, j) => {
-      return $p.get($p.get('work') + '-' + startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1), true);
+      return /** @type {string} */$p.get($p.get('work') + '-' + startOrEnd + (browseFieldSetIdx + 1) + '-' + (j + 1), true);
     });
   };
   const starts = buildRangePoint('start');
@@ -19039,6 +19866,12 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   });
   const showInterlinTitles = $pRaw('interlintitle') === '1';
   console.log('rand', lParamRaw('rand') === 'yes');
+
+  /**
+   * @param {string} v
+   * @param {Integer} i
+   * @returns {Integer|string}
+   */
   const stripToRawFieldValue = (v, i) => {
     let val;
     if (/^\d+$/.test(v) || fieldValueAliasRegex.test(v)) {
@@ -19052,17 +19885,15 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
         // Look to dealias
         const fvEntries = Object.entries(rawFieldValueAliasMap);
         if (Array.isArray(fvEntries[0][1])) {
-          fvEntries.some(_ref21 => {
-            let [key, arr] = _ref21;
-            if (arr.includes(v)) {
+          fvEntries.some(([key, arr]) => {
+            if (/** @type {(string | number)[]} */arr.includes(v)) {
               dealiased = key;
               return true;
             }
             return false;
           });
         } else {
-          fvEntries.some(_ref22 => {
-            let [key, obj] = _ref22;
+          fvEntries.some(([key, obj]) => {
             const arr = Object.values(obj);
             if (arr.includes(v)) {
               dealiased = key;
@@ -19079,8 +19910,10 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
   const unlocalizedWorkName = fileData.name;
   const startsRaw = starts.map(stripToRawFieldValue);
   const endsRaw = ends.map(stripToRawFieldValue);
-  let tableData,
-    usingServerData = false;
+
+  /** @type {(string|Integer)[][]} */
+  let tableData;
+  let usingServerData = false;
   // Site owner may have configured to skip (e.g., testing)
   if (!skipIndexedDB &&
   // User may have refused, not yet agreed, or are visiting the
@@ -19093,12 +19926,8 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
       // Todo: Fetch the work in code based on the non-localized `datafileName`
       const dbName = this.namespace + '-textbrowser-cache-data';
       const req = indexedDB.open(dbName);
-      req.onsuccess = _ref23 => {
-        let {
-          target: {
-            result: db
-          }
-        } = _ref23;
+      req.onsuccess = e => {
+        const db = /** @type {EventTarget & {result: IDBDatabase}} */e.target.result;
         const storeName = 'files-to-cache-' + unlocalizedWorkName;
         const trans = db.transaction(storeName);
         const store = trans.objectStore(storeName);
@@ -19110,15 +19939,17 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
         // console.log('applicableBrowseFieldSetName', 'browseFields-' + applicableBrowseFieldSetName);
 
         const r = index.getAll(IDBKeyRange.bound(startsRaw, endsRaw));
-        r.onsuccess = _ref24 => {
-          let {
-            target: {
-              result
-            }
-          } = _ref24;
+        r.addEventListener('success',
+        /**
+         * @param {Event} e
+         * @returns {void}
+         */
+        e => {
+          // eslint-disable-next-line prefer-destructuring -- TS
+          const result = /** @type {EventTarget & {result: {value: (string|Integer)[]}[]}} */e.target.result;
           const converted = result.map(r => r.value);
           resolve(converted);
-        };
+        });
       };
     });
   } else {
@@ -19130,11 +19961,10 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     //   needed
     // if (presort || this.noDynamic) {
     if (this.noDynamic) {
-      ({
-        resolved: {
-          data: tableData
-        }
-      } = await JsonRefs.resolveRefs(fileData.file));
+      const {
+        resolved
+      } = await JsonRefs.resolveRefs(fileData.file);
+      tableData = /** @type {{data: (string|Integer)[][]}} */resolved.data;
       runPresort({
         presort,
         tableData,
@@ -19143,47 +19973,46 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
       });
     } else {
       /*
-            const jsonURL = Object.entries({
-                prefI18n, unlocalizedWorkName, startsRaw, endsRaw
-            }).reduce((url, [arg, argVal]) => {
-                return url + '&' + arg + '=' + encodeURIComponent((argVal));
-            }, `${dynamicBasePath}textbrowser?`);
-            */
+        const jsonURL = Object.entries({
+            prefI18n, unlocalizedWorkName, startsRaw, endsRaw
+        }).reduce((url, [arg, argVal]) => {
+            return url + '&' + arg + '=' + encodeURIComponent((argVal));
+        }, `${dynamicBasePath}textbrowser?`);
+      */
       const jsonURL = `${dynamicBasePath}textbrowser?${$p.toString()}`;
       tableData = await (await fetch(jsonURL)).json();
       usingServerData = true;
     }
   }
   if (!usingServerData && pluginsForWork) {
-    fieldInfo.forEach(_ref25 => {
-      let {
-        plugin,
-        placement
-      } = _ref25;
+    fieldInfo.forEach(({
+      plugin,
+      placement
+    }) => {
       if (!plugin) {
         return;
       }
       tableData.forEach(tr => {
         // Todo: We should pass on other arguments (like `meta` but on `applicableFields`)
-        tr.splice(placement, 0, null // `${i}-${j}`);
+        tr.splice(placement ?? 0, 0,
+        // @ts-expect-error Only used for `plugin` type?
+        null // `${i}-${j}`);
         );
       });
     });
-    fieldInfo.forEach((_ref26, j) => {
-      let {
-        plugin,
-        applicableField,
-        fieldLang,
-        meta,
-        metaApplicableField
-      } = _ref26;
+    fieldInfo.forEach(({
+      plugin,
+      applicableField,
+      fieldLang,
+      meta,
+      metaApplicableField
+    }, j) => {
       if (!plugin) {
         return;
       }
-      const applicableFieldIdx = fieldInfo.findIndex(_ref27 => {
-        let {
-          field
-        } = _ref27;
+      const applicableFieldIdx = fieldInfo.findIndex(({
+        field
+      }) => {
         return field === applicableField;
       });
       // Now safe to pass (and set) `j` value as tr array expanded
@@ -19233,6 +20062,8 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     caption,
     hasCaption,
     showInterlinTitles,
+    showEmptyInterlinear: this.showEmptyInterlinear,
+    showTitleOnSingleInterlinear: this.showTitleOnSingleInterlinear,
     determineEnd: determineEnd({
       applicableBrowseFieldNames,
       fieldValueAliasMap,
@@ -19250,8 +20081,8 @@ const resultsDisplayServerOrClient = async function resultsDisplayServerOrClient
     }),
     getCellValue: getCellValue({
       fieldValueAliasMapPreferred,
-      escapeColumnIndexes,
-      escapeHTML
+      escapeColumnIndexes
+      // escapeHTML
     }),
     checkedAndInterlinearFieldInfo: getCheckedAndInterlinearFieldInfo({
       localizedFieldNames
@@ -19434,7 +20265,7 @@ class TextBrowser {
    *   requestPersistentStorage?: boolean,
    *   localizeParamNames?: boolean,
    *   hideFormattingSection?: boolean,
-   *   preferencesPlugin?: string,
+   *   preferencesPlugin?: import('./templates/workDisplay.js').PreferencesPlugin,
    *   interlinearSeparator?: string,
    *   showEmptyInterlinear?: boolean,
    *   showTitleOnSingleInterlinear?: boolean,
@@ -19447,7 +20278,7 @@ class TextBrowser {
     const stylesheets = options.stylesheets || ['@builtin'];
     const builtinIndex = stylesheets.indexOf('@builtin');
     if (builtinIndex !== -1) {
-      stylesheets.splice(builtinIndex, 1, new URL(new URL('assets/index-D_XVedS3.css', import.meta.url).href, import.meta.url).href);
+      stylesheets.splice(builtinIndex, 1, new URL(new URL('assets/index-D_XVedS3.css', import.meta.url).href).href);
     }
     this.stylesheets = stylesheets;
 
@@ -19504,7 +20335,7 @@ class TextBrowser {
       // INIT/ADD EVENTS
       // With `hashchange` more generic than `popstate`, we use it
       //  and just check `history.state`
-      window.addEventListener('hashchange', () => this.paramChange());
+      globalThis.addEventListener('hashchange', () => this.paramChange());
       return p;
     } catch (error) {
       const err = /** @type {Error} */error;
@@ -19514,7 +20345,16 @@ class TextBrowser {
   }
 
   /**
-   * @param {import('./utils/WorkInfo.js').GetWorkDataOptions} opts
+   * @template T
+   * @template {keyof T} K
+   * @typedef {Omit<T, K> & Partial<T>} PartialBy
+   */
+
+  /**
+   * @param {PartialBy<
+   *   import('./utils/WorkInfo.js').GetWorkDataOptions,
+   *   "files"|"basePath"|"allowPlugins"
+   * >} opts
    */
   getWorkData(opts) {
     try {
@@ -19557,7 +20397,7 @@ class TextBrowser {
   }
 
   /**
-   * @param {import('./utils/Metadata.js').GetBrowseFieldDataOptions} args
+   * @param {Omit<import('./utils/Metadata.js').GetBrowseFieldDataOptions, "lang">} args
    * @returns {void}
    */
   getBrowseFieldData(args) {
@@ -19611,11 +20451,10 @@ class TextBrowser {
       messageStyle: 'plainNested',
       locales: lang,
       defaultLocales: fallbackLanguages,
-      async localeStringFinder() {
-        let {
-          locales,
-          defaultLocales
-        } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      async localeStringFinder({
+        locales,
+        defaultLocales
+      } = {}) {
         const locale = [...(/** @type {string[]} */locales), ...(/** @type {string[]} */defaultLocales)].find(language => {
           return language in localizationStrings;
         });
@@ -19638,7 +20477,7 @@ class TextBrowser {
     //     want commital on notification
     // Notification.permission === 'default' ||
     // We always expect a controller, so is probably first visit
-    localStorage.getItem(this.namespace + '-refused');
+    localStorage.getItem(this.namespace + '-refused') === 'true';
 
     // This check goes further than `Notification.permission === 'granted'`
     //   to see whether the browser actually considers the notification
@@ -19794,7 +20633,7 @@ class TextBrowser {
            * @type {(
            *   this: ServiceWorkerContainer,
            *   ev: {data: string}
-           * ) => any}
+           * ) => void}
            */
           navigator.serviceWorker.onmessage({
             data: 'finishActivate'
@@ -19907,10 +20746,8 @@ class TextBrowser {
     };
     return await resultsDisplay();
   }
+  workDisplay = workDisplay;
+  resultsDisplayClient = resultsDisplayClient;
 }
-
-// Todo: Definable as public fields?
-TextBrowser.prototype.workDisplay = workDisplay;
-TextBrowser.prototype.resultsDisplayClient = resultsDisplayClient;
 
 export { TextBrowser as default };
