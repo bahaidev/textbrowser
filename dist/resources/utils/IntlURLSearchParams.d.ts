@@ -8,7 +8,7 @@ declare class IntlURLSearchParams {
     constructor({ l10n, params }?: {
         l10n?: import("intl-dom").I18NCallback<string | Text | DocumentFragment> | undefined;
         params?: string | URLSearchParams | undefined;
-    } | undefined);
+    });
     l10n: import("intl-dom").I18NCallback<string | Text | DocumentFragment> | undefined;
     localizeParamNames: boolean;
     /** @type {URLSearchParams} */
@@ -18,7 +18,7 @@ declare class IntlURLSearchParams {
      * @param {boolean} [skip]
      * @returns {string|null}
      */
-    get(param: string, skip?: boolean | undefined): string | null;
+    get(param: string, skip?: boolean): string | null;
     /**
      * @param {string} param
      * @param {boolean} skip
@@ -30,7 +30,7 @@ declare class IntlURLSearchParams {
      * @param {boolean} [skip]
      * @returns {boolean}
      */
-    has(param: string, skip?: boolean | undefined): boolean;
+    has(param: string, skip?: boolean): boolean;
     /**
      * @param {string} param
      * @param {boolean} skip
@@ -43,7 +43,7 @@ declare class IntlURLSearchParams {
      * @param {boolean} [skip]
      * @returns {void}
      */
-    set(param: string, value: string, skip?: boolean | undefined): void;
+    set(param: string, value: string, skip?: boolean): void;
     /**
      * @param {string} param
      * @param {string} value

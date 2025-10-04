@@ -16,7 +16,7 @@ export class Dialog {
     constructor({ locale, localeObject }?: {
         locale?: string;
         localeObject?: LocaleObject;
-    } | undefined);
+    });
     localeStrings: LocaleObject;
     /**
      * @param {{
@@ -116,7 +116,7 @@ export class Dialog {
         submitClass?: string;
     }, ok?: boolean | {
         ok: boolean;
-    } | undefined): Promise<void>;
+    }): Promise<void>;
     /**
      * @param {string|Partial<CancelDialogCfg> & {
      *   message: string

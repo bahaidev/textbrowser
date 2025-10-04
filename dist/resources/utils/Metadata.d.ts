@@ -1,5 +1,5 @@
-export function getMetaProp(lang: string[], metadataObj: MetadataObj, properties: string | string[], allowObjects?: boolean | undefined): string | string[] | import("../../server/main.js").LocalizationStrings;
-export function getMetadata(file: string, property: string, basePath?: string | undefined): Promise<MetadataObj | SchemaObj>;
+export function getMetaProp(lang: string[], metadataObj: MetadataObj, properties: string | string[], allowObjects?: boolean): string | string[] | import("../../server/main.js").LocalizationStrings;
+export function getMetadata(file: string, property: string, basePath?: string): Promise<MetadataObj | SchemaObj>;
 export function getFieldNameAndValueAliases({ field, schemaItems, metadataObj, getFieldAliasOrName, lang }: GetFieldNameAndValueAliasesOptions): {
     aliases: string[] | null;
     fieldValueAliasMap: FieldValueAliases | null;

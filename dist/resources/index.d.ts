@@ -119,7 +119,7 @@ declare class TextBrowser implements ServiceWorkerConfig {
     getBrowseFieldData(args: Omit<import("./utils/Metadata.js").GetBrowseFieldDataOptions, "lang">): void;
     paramChange(): Promise<void>;
     $p: IntlURLSearchParams | undefined;
-    l10n: import("../node_modules/intl-dom/dist/i18n.js").I18NCallback | undefined;
+    l10n: import("intl-dom").I18NCallback<string | Text | DocumentFragment> | undefined;
     workDisplay: typeof workDisplay;
     resultsDisplayClient: (this: TextBrowser, args: Omit<ResultsDisplayServerOrClientArg, "skipIndexedDB" | "prefI18n">) => Promise<void>;
 }

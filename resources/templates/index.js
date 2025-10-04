@@ -38,7 +38,6 @@ const Templates = {
         (installationDialog).showModal();
         const container = /** @type {HTMLElement} */ ($('#dialogContainer'));
         container.hidden = false;
-      // eslint-disable-next-line no-unused-vars -- Ok
       } catch (err) {
         // May already be open
       }

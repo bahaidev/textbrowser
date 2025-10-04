@@ -3,7 +3,7 @@ import {getPreferredLanguages} from './Languages.js';
 import JsonRefs from 'json-refs'; // // eslint-disable-line import/order
 
 const getCurrDir = () => {
-  return window.location.href.replace(/(index\.html)?#.*$/, '');
+  return globalThis.location.href.replace(/(index\.html)?#.*$/, '');
 };
 
 /**
@@ -105,6 +105,7 @@ export const getMetadata = async (file, property, basePath) => {
       url.toString(),
       {
         loaderOptions: {
+          /* eslint-disable jsdoc/reject-any-type -- How to resolve? */
           /**
            * @param {{
            *   text: string,
@@ -113,6 +114,7 @@ export const getMetadata = async (file, property, basePath) => {
            * @param {(err?: Error, cbValue: any) => void} callback
            */
           processContent (res, callback) {
+            /* eslint-enable jsdoc/reject-any-type -- How to resolve? */
             callback(undefined, JSON.parse(
               res.text ||
                             // `.metadata` not a recognized extension, so

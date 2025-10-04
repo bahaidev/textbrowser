@@ -1,3 +1,4 @@
+// eslint-disable-next-line sonarjs/no-internal-api-use -- Demo
 import TextBrowser from '../node_modules/textbrowser/dist/index-es.js';
 
 const tb = new TextBrowser({

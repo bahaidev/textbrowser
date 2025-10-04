@@ -1121,7 +1121,6 @@ export default {
                         const url = replaceHash(paramsCopy) + `&work=${work}&${work}-startEnd1=%s`; // %s will be escaped if set as param; also add changeable workName here
                         try {
                           await navigator.clipboard.writeText(url);
-                        // eslint-disable-next-line no-unused-vars -- Okay to ignore
                         } catch (err) {
                           // User rejected
                         }

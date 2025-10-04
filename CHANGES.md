@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## ?
+
+- chore: update babel/core, command-line-args, intl-locale-textinfo-polyfill, jsdom, and devDeps.
+
 ## 0.51.0
 
 - feat: TS support

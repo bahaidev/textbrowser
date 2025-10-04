@@ -93,13 +93,19 @@ const port = 'port' in userParams ? userParams.port : 8000;
 const domain = userParams.domain || `localhost`;
 const basePath = userParams.basePath || `http://${domain}${port ? ':' + port : ''}/`;
 
+/* eslint-disable jsdoc/reject-any-type -- Arbitrary */
+/**
+ * @typedef {any} AnyValue
+ */
+/* eslint-enable jsdoc/reject-any-type -- Arbitrary */
+
 /**
  * @typedef {import('../resources/utils/ServiceWorker.js').ServiceWorkerConfig &
  *   UserOptions & {
  *     lang: string[],
  *     langs: LanguageInfo[],
  *     fallbackLanguages: string[],
- *     log: (...args: any[]) => void,
+ *     log: (...args: AnyValue[]) => void,
  *     nodeActivate?: boolean,
  *     port?: number,
  *     skipIndexedDB: false,
@@ -117,7 +123,7 @@ const userParamsWithDefaults = {
   }),
   ...userParams,
   /**
-   * @param {...any} args
+   * @param {...AnyValue} args
    */
   log (...args) {
     console.log(...args);
@@ -272,7 +278,7 @@ const srv = http.createServer(async (req, res) => {
   const languages = (req.headers['accept-language']?.replace(/;q=.*$/, '') ?? 'en-US').split(',');
   // @ts-expect-error Polyglot reasons
   // eslint-disable-next-line n/no-unsupported-features/node-builtins -- Polyglot reasons
-  global.navigator = {
+  globalThis.navigator = {
     language: languages[0],
     languages
   };

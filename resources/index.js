@@ -272,7 +272,7 @@ class TextBrowser {
       // INIT/ADD EVENTS
       // With `hashchange` more generic than `popstate`, we use it
       //  and just check `history.state`
-      window.addEventListener('hashchange', () => this.paramChange());
+      globalThis.addEventListener('hashchange', () => this.paramChange());
 
       return p;
     } catch (error) {
@@ -406,11 +406,11 @@ class TextBrowser {
     document.title = /** @type {string} */ (siteI18n('browser-title'));
 
     const refusedIndexedDB =
-            // User may have persistence via bookmarks, etc. but just not
-            //     want commital on notification
-            // Notification.permission === 'default' ||
-            // We always expect a controller, so is probably first visit
-            localStorage.getItem(this.namespace + '-refused') === 'true';
+      // User may have persistence via bookmarks, etc. but just not
+      //     want commital on notification
+      // Notification.permission === 'default' ||
+      // We always expect a controller, so is probably first visit
+      localStorage.getItem(this.namespace + '-refused') === 'true';
 
     // This check goes further than `Notification.permission === 'granted'`
     //   to see whether the browser actually considers the notification
@@ -565,7 +565,7 @@ class TextBrowser {
          * @type {(
          *   this: ServiceWorkerContainer,
          *   ev: {data: string}
-         * ) => any}
+         * ) => void}
          */
         (navigator.serviceWorker.onmessage)({data: 'finishActivate'});
         // finishActivate({r, logger, namespace, files});
@@ -675,10 +675,9 @@ class TextBrowser {
     };
     return await resultsDisplay();
   }
-}
 
-// Todo: Definable as public fields?
-TextBrowser.prototype.workDisplay = workDisplay;
-TextBrowser.prototype.resultsDisplayClient = resultsDisplayClient;
+  workDisplay = workDisplay;
+  resultsDisplayClient = resultsDisplayClient;
+}
 
 export default TextBrowser;

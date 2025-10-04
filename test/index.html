@@ -21,13 +21,13 @@
     <script type="module">
     /* globals chai -- Browser */
     mocha.setup('bdd');
-    window.assert = chai.assert;
-    window.__dirname = '';
-    window.path = {
+    globalThis.assert = chai.assert;
+    globalThis.__dirname = '';
+    globalThis.path = {
       join: (...args) => args.join('')
     };
-    window.appBase = location.protocol + '//' + location.host + '/';
-    window.Ajv = window.ajv7;
+    globalThis.appBase = location.protocol + '//' + location.host + '/';
+    globalThis.Ajv = globalThis.ajv7;
     </script>
     <script type="module" src="textbrowserTests.js"></script>
     <script type="module">

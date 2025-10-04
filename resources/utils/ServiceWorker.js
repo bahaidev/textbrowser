@@ -125,7 +125,7 @@ export const respondToState = async ({
   // We use this promise for rejecting (inside a listener)
   //    to a common catch and to prevent continuation by
   //    failing to return
-  return new Promise(async () => { // eslint-disable-line no-async-promise-executor, sonarjs/no-misused-promises -- See above
+  return new Promise(async () => { // eslint-disable-line no-async-promise-executor -- See above
     navigator.serviceWorker.addEventListener('message', ({data}) => {
       const {message, type, name, errorType} = data;
       console.log('msg1', message, r);
@@ -292,7 +292,6 @@ export const registerServiceWorker = async ({
         type: 'module'
       }
     );
-  // eslint-disable-next-line no-unused-vars -- Ok
   } catch (err) {
     console.log('serviceWorkerPath', serviceWorkerPath);
     await dialogs.alert(`

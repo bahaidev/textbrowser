@@ -40,6 +40,12 @@ export const escapePlugin = ({pluginName, applicableField, targetLanguage}) => {
         (targetLanguage ? '-' + escapePluginComponent(targetLanguage) : '');
 };
 
+/* eslint-disable jsdoc/reject-any-type -- How to resolve? */
+/**
+ * @typedef {any} MetaValue
+ */
+/* eslint-enable jsdoc/reject-any-type -- Arbitrary */
+
 /**
  * @todo Complete
  * @typedef {{
@@ -87,7 +93,7 @@ export const escapePlugin = ({pluginName, applicableField, targetLanguage}) => {
  *     targetLanguage: string,
  *     applicableField: string,
  *     applicableFieldI18N: string|string[]|import("../../server/main.js").LocalizationStrings,
- *     meta: any,
+ *     meta: MetaValue,
  *     metaApplicableField: {
  *       [key: string]: string
  *     },
@@ -100,7 +106,7 @@ export const escapePlugin = ({pluginName, applicableField, targetLanguage}) => {
  * @typedef {{
  *   path: string,
  *   lang: string,
- *   meta: any,
+ *   meta: MetaValue,
  *   onByDefault: boolean
  * }} PluginInfo
  */
@@ -157,7 +163,7 @@ export class PluginsForWork {
    *     [applicableField: string]: {
    *       targetLanguage: string|string[],
    *       onByDefault: boolean,
-   *       meta: any
+   *       meta: MetaValue
    *     }
    *   },
    *   pluginName: string,
@@ -199,7 +205,7 @@ export class PluginsForWork {
    *   [applicableField: string]: {
    *     targetLanguage: string|string[],
    *     onByDefault: boolean,
-   *     meta: any
+   *     meta: MetaValue
    *   }
    * }} applicableFields
    * @param {(cfg: {

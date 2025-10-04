@@ -46,13 +46,19 @@ function validate (
   return valid;
 }
 
+/* eslint-disable jsdoc/reject-any-type -- Schema */
+/**
+ * @typedef {any} SchemaType
+ */
+/* eslint-enable jsdoc/reject-any-type -- Schema */
+
 describe('textbrowser tests', function () {
   it('locales tests', async () => {
     const [
       // jsonSchema,
       schema,
       ...locales
-    ] = /** @type {any[]} */ (await getJSON([
+    ] = /** @type {SchemaType[]} */ (await getJSON([
       '../node_modules/textbrowser-data-schemas/schemas/locale.jsonschema',
       'en-US.json',
       'ar.json',
@@ -127,8 +133,8 @@ describe('textbrowser tests', function () {
      *             patternProperties: {
      *               '.*': {
      *                 anyOf: [
-     *                   any,
-     *                   any,
+     *                   SchemaType,
+     *                   SchemaType,
      *                   {$ref: string}
      *                 ]
      *               }

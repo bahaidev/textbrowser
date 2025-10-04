@@ -6,6 +6,9 @@ export function escapePlugin({ pluginName, applicableField, targetLanguage }: {
     targetLanguage: string;
 }): string;
 /**
+ * @typedef {any} MetaValue
+ */
+/**
  * @todo Complete
  * @typedef {{
  *   path: string,
@@ -52,7 +55,7 @@ export function escapePlugin({ pluginName, applicableField, targetLanguage }: {
  *     targetLanguage: string,
  *     applicableField: string,
  *     applicableFieldI18N: string|string[]|import("../../server/main.js").LocalizationStrings,
- *     meta: any,
+ *     meta: MetaValue,
  *     metaApplicableField: {
  *       [key: string]: string
  *     },
@@ -64,7 +67,7 @@ export function escapePlugin({ pluginName, applicableField, targetLanguage }: {
  * @typedef {{
  *   path: string,
  *   lang: string,
- *   meta: any,
+ *   meta: MetaValue,
  *   onByDefault: boolean
  * }} PluginInfo
  */
@@ -114,7 +117,7 @@ export class PluginsForWork {
      *     [applicableField: string]: {
      *       targetLanguage: string|string[],
      *       onByDefault: boolean,
-     *       meta: any
+     *       meta: MetaValue
      *     }
      *   },
      *   pluginName: string,
@@ -131,7 +134,7 @@ export class PluginsForWork {
             [applicableField: string]: {
                 targetLanguage: string | string[];
                 onByDefault: boolean;
-                meta: any;
+                meta: MetaValue;
             };
         };
         pluginName: string;
@@ -144,7 +147,7 @@ export class PluginsForWork {
      *   [applicableField: string]: {
      *     targetLanguage: string|string[],
      *     onByDefault: boolean,
-     *     meta: any
+     *     meta: MetaValue
      *   }
      * }} applicableFields
      * @param {(cfg: {
@@ -161,7 +164,7 @@ export class PluginsForWork {
         [applicableField: string]: {
             targetLanguage: string | string[];
             onByDefault: boolean;
-            meta: any;
+            meta: MetaValue;
         };
     }, cb: (cfg: {
         applicableField: string;
@@ -195,6 +198,7 @@ export class PluginsForWork {
     }): [string, string | undefined, string | undefined];
 }
 export type Integer = number;
+export type MetaValue = any;
 export type PluginObject = {
     path: string;
     onByDefault?: boolean;
@@ -244,7 +248,7 @@ export type PluginObject = {
         targetLanguage: string;
         applicableField: string;
         applicableFieldI18N: string | string[] | import("../../server/main.js").LocalizationStrings;
-        meta: any;
+        meta: MetaValue;
         metaApplicableField: {
             [key: string]: string;
         };
@@ -254,7 +258,7 @@ export type PluginObject = {
 export type PluginInfo = {
     path: string;
     lang: string;
-    meta: any;
+    meta: MetaValue;
     onByDefault: boolean;
 };
 export type PluginFieldMappingForWork = {

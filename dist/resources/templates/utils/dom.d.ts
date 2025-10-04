@@ -1,4 +1,4 @@
-export const nbsp: " ";
+export const nbsp: "\u00A0";
 /**
  * @param {string} sel
  */

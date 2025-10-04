@@ -18,11 +18,12 @@ export type UserOptions = {
     httpServer: string;
     expressServer: string;
 };
+export type AnyValue = any;
 export type ResultsDisplayServerContext = import("../resources/utils/ServiceWorker.js").ServiceWorkerConfig & UserOptions & {
     lang: string[];
     langs: LanguageInfo[];
     fallbackLanguages: string[];
-    log: (...args: any[]) => void;
+    log: (...args: AnyValue[]) => void;
     nodeActivate?: boolean;
     port?: number;
     skipIndexedDB: false;

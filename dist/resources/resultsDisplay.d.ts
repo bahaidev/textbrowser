@@ -9,7 +9,7 @@ export function resultsDisplayServerOrClient(this: import("./index.js").default 
     fieldValueAliasMapPreferred: (import("./utils/Metadata.js").FieldValueAliases | null | undefined)[];
     workI18n: import("intl-dom").I18NCallback<string | Text | DocumentFragment>;
     lIndexedParam: (key: string) => string;
-    lParamRaw: (key: string, suffix?: string | undefined) => string;
+    lParamRaw: (key: string, suffix?: string) => string;
     browseFieldSets: import("./utils/Metadata.js").BrowseFields[];
     lang: string[];
     metadataObj: import("./utils/Metadata.js").MetadataObj;
@@ -17,7 +17,7 @@ export function resultsDisplayServerOrClient(this: import("./index.js").default 
     templateArgs: {
         tableData: (string | number)[][];
         $p: import("./utils/IntlURLSearchParams.js").default;
-        $pRaw: (param: string, avoidLog?: boolean | undefined) => string;
+        $pRaw: (param: string, avoidLog?: boolean) => string;
         $pRawEsc: (param: string) => string;
         $pEscArbitrary: (param: string) => string;
         escapeQuotedCSS: (s: string) => string;
@@ -94,8 +94,8 @@ export type ResultsDisplayServerOrClientArg = {
     lang: string[];
     fallbackLanguages: string[] | undefined;
     locales: {
-        head?: any;
-        body: any;
+        head?: AnyValue;
+        body: AnyValue;
     };
     $p: import("./utils/IntlURLSearchParams.js").default;
     skipIndexedDB: boolean;

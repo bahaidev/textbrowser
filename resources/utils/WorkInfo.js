@@ -93,7 +93,7 @@ export const getWorkFiles = async function getWorkFiles (files) {
   filesObj.groups.forEach((fileGroup) => {
     fileGroup.files.forEach((fileData) => {
       const {file, schemaFile, metadataFile} =
-                getFilePaths(filesObj, fileGroup, fileData);
+        getFilePaths(filesObj, fileGroup, fileData);
       dataFiles.push(file, schemaFile, metadataFile);
     });
   });

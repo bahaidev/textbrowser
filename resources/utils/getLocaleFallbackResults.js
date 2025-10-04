@@ -35,5 +35,7 @@ export default async function getLocaleFallbackResults ({
   if (!$p.l10n) {
     $p.l10n = l;
   }
-  return l;
+
+  // Not sure why cast needed here, but works...
+  return /** @type {import('intl-dom').I18NCallback} */ (l);
 }

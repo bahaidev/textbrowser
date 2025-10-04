@@ -15,5 +15,5 @@ export default function getLocaleFallbackResults({ $p, lang, langs, langData, fa
     langData: import("../../server/main.js").LanguagesData;
     fallbackLanguages?: string[];
     basePath?: string;
-}): Promise<import("../../node_modules/intl-dom/dist/i18n").I18NCallback>;
+}): Promise<import("intl-dom").I18NCallback<string | Text | DocumentFragment>>;
 //# sourceMappingURL=getLocaleFallbackResults.d.ts.map

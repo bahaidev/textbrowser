@@ -13,11 +13,13 @@
  */
 const {ceil} = Math;
 
+/* eslint-disable jsdoc/reject-any-type -- Generic */
 /**
  * @param {any[]} arr
  * @param {number} size
  */
 const arrayChunk = (arr, size) => {
+  /* eslint-enable jsdoc/reject-any-type -- Generic */
   return Array.from({length: ceil(arr.length / size)}, (_, i) => {
     const offset = i * size;
     return arr.slice(offset, offset + size);
@@ -30,11 +32,13 @@ const arrayChunk = (arr, size) => {
 //          files in cache?
 // Todo: Check `oldVersion` and run this first if still too old
 
+/* eslint-disable jsdoc/reject-any-type -- Generic */
 /**
 * @callback Logger
 * @param {...any} args
 * @returns {void}
 */
+/* eslint-enable jsdoc/reject-any-type -- Generic */
 
 /**
  * @param {object} cfg
@@ -57,11 +61,13 @@ export default async function activateCallback ({
     await r.json()
   );
 
+  /* eslint-disable jsdoc/reject-any-type -- Generic */
   /**
    * @param {any[]} arr
    * @param {string} path
    */
   const addJSONFetch = (arr, path) => {
+    /* eslint-enable jsdoc/reject-any-type -- Generic */
     arr.push(
       (async () => (await fetch(basePath + path)).json())()
     );

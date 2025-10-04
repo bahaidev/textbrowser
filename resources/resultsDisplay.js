@@ -54,9 +54,11 @@ import {getWorkData} from './utils/WorkInfo.js';
 /**
  * @typedef {import('./utils/Metadata.js').FieldValueAliases} FieldValueAliases
  */
+/* eslint-disable jsdoc/reject-any-type -- Arbitrary */
 /**
  * @typedef {any} AnyValue
  */
+/* eslint-enable jsdoc/reject-any-type -- Arbitrary */
 /**
  * @param {AnyValue} val
  * @returns {val is null | undefined}
@@ -72,7 +74,7 @@ const isNullish = (val) => {
  * @param {string} locale
  */
 const getLangDir = (locale) => {
-  const {direction} = new Locale(locale).textInfo;
+  const {direction} = new Locale(locale).getTextInfo();
   return direction;
 };
 
@@ -257,7 +259,7 @@ export const resultsDisplayServer = async function resultsDisplayServer (args) {
  *   l: import('intl-dom').I18NCallback,
  *   lang: string[],
  *   fallbackLanguages: string[]|undefined,
- *   locales: {head?: any, body: any},
+ *   locales: {head?: AnyValue, body: AnyValue},
  *   $p: import('./utils/IntlURLSearchParams.js').default,
  *   skipIndexedDB: boolean,
  *   noIndexedDB?: boolean,
