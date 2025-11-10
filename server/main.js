@@ -3,8 +3,7 @@
 /* eslint-env node -- Environment here */
 import http from 'node:http';
 
-// @ts-expect-error Todo: Needs Types
-import statik from '@brettz9/node-static';
+import * as statik from '@node-static/node-static';
 import fetch from 'node-fetch';
 // @ts-expect-error Todo: Needs Types
 import commandLineArgs from 'command-line-args';

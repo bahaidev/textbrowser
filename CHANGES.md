@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.52.1
+
+- fix: proper use of node-static fork
+
 ## 0.52.0
 
 - chore: switch to @node-static/node-static
