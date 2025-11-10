@@ -1,7 +1,8 @@
 # CHANGES to `textbrowser`
 
-## ?
+## 0.52.0
 
+- chore: switch to @node-static/node-static
 - chore: update babel/core, command-line-args, intl-locale-textinfo-polyfill, jsdom, and devDeps.
 
 ## 0.51.0
