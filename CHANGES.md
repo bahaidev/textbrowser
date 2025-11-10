@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.53.0
+
+- fix: switch to serve-static to avoid headers problem
+
 ## 0.52.1
 
 - fix: proper use of node-static fork

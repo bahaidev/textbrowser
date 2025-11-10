@@ -3,7 +3,7 @@
 /* eslint-env node -- Environment here */
 import http from 'node:http';
 
-import * as statik from '@node-static/node-static';
+import statik from 'serve-static';
 import fetch from 'node-fetch';
 // @ts-expect-error Todo: Needs Types
 import commandLineArgs from 'command-line-args';
@@ -153,7 +153,6 @@ setGlobalVars(null, {
 
 if (userParams.nodeActivate) {
   // @ts-expect-error Ok
-  // eslint-disable-next-line n/no-unsupported-features/node-builtins -- node-fetch
   globalThis.fetch = /** @type {fetch} */ (fetch);
   setTimeout(async () => {
     await activateCallback({...userParamsWithDefaults, basePath});
@@ -164,8 +163,6 @@ console.log('past activate check');
 
 // @ts-expect-error Ok
 globalThis.DOMParser = DOMParser; // potentially used within resultsDisplay.js
-
-const fileServer = new statik.Server(); // Pass path; otherwise uses current directory
 
 /**
  * @typedef {{
@@ -199,6 +196,8 @@ let langData;
 /** @type {Languages} */
 let languagesInstance;
 
+const fileServer = statik(import.meta.dirname);
+
 const srv = http.createServer(async (req, res) => {
   // console.log('URL::', new URL(req.url));
   const {pathname, search} = new URL(/** @type {string} */ (req.url), basePath);
@@ -207,7 +206,7 @@ const srv = http.createServer(async (req, res) => {
       if (pathname.includes('.git')) {
         req.url = '/index.html';
       }
-      fileServer.serve(req, res);
+      fileServer(req, res, next);
     };
 
     const next = function () {

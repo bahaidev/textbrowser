@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.52.1",
+  "version": "0.53.0",
   "description": "Multilinear text browser",
   "type": "module",
   "main": "dist/index-es.min.js",
@@ -39,7 +39,7 @@
     "url": "git+https://github.com/bahaidev/textbrowser.git"
   },
   "engines": {
-    "node": ">=14.19.1"
+    "node": ">=22.16.0"
   },
   "author": "Brett Zamir",
   "contributors": [],
@@ -49,7 +49,6 @@
   ],
   "dependencies": {
     "@babel/core": "^7.28.4",
-    "@node-static/node-static": "^0.8.0",
     "command-line-args": "^6.0.1",
     "dom-parser": "^1.1.5",
     "form-serialization": "^0.11.0",
@@ -61,6 +60,7 @@
     "json-refs": "^3.0.15",
     "load-stylesheets": "0.12.5",
     "node-fetch": "^3.3.2",
+    "serve-static": "^2.2.0",
     "simple-get-json": "^10.0.0"
   },
   "devDependencies": {
