@@ -4,6 +4,9 @@
 import http from 'node:http';
 
 import statik from 'serve-static';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+
 import fetch from 'node-fetch';
 // @ts-expect-error Todo: Needs Types
 import commandLineArgs from 'command-line-args';
@@ -196,7 +199,11 @@ let langData;
 /** @type {Languages} */
 let languagesInstance;
 
-const fileServer = statik(import.meta.dirname);
+// `import.meta.dirname` not working on server despite hosting high enough
+//   version of Node and being `type: "module"`
+const __filename = fileURLToPath(import.meta.url);
+const dir = dirname(__filename);
+const fileServer = statik(import.meta.dirname ?? dir);
 
 const srv = http.createServer(async (req, res) => {
   // console.log('URL::', new URL(req.url));
@@ -239,7 +246,7 @@ const srv = http.createServer(async (req, res) => {
         ({regexp}) => {
           // Hack to ignore middleware like jsonParser (and hopefully
           //   not get any other)
-          return regexp.source !== String.raw`^\/?(?=\\/|$)` &&
+          return regexp.source !== String.raw`^\/?(?=\/|$)` &&
             regexp.test(/** @type {string} */ (req.url));
         }
       ))) {

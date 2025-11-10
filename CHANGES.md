@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.53.1
+
+- fix: broken escaping of regex and dirname issue
+
 ## 0.53.0
 
 - fix: switch to serve-static to avoid headers problem
