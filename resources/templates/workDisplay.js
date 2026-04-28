@@ -1027,7 +1027,6 @@ export default {
             // workI18n,
             paramsSetter, replaceHash,
             getFieldAliasOrNames,
-            // eslint-disable-next-line object-shorthand -- TS
             work: /** @type {string} */ (work),
             langs,
             languageI18n,

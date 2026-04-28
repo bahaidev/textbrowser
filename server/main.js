@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-/* eslint-env node -- Environment here */
 import http from 'node:http';
 
 import statik from 'serve-static';
@@ -224,6 +223,7 @@ const srv = http.createServer(async (req, res) => {
      * @returns {Promise<void>}
      */
     const runHttpServer = async function () {
+      // eslint-disable-next-line no-unsanitized/method -- CLI
       const server = (await import(userParams.httpServer)).default();
       return await server(
         req,
@@ -239,6 +239,7 @@ const srv = http.createServer(async (req, res) => {
     };
     if (userParams.expressServer) {
       /** @type {import('express').Application} */
+      // eslint-disable-next-line no-unsanitized/method -- CLI
       const app = (await import(userParams.expressServer)).default();
 
       if (userParams.httpServer && (!app._router || !app._router.stack.some(

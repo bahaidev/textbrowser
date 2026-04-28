@@ -120,11 +120,8 @@ export const escapePlugin = ({pluginName, applicableField, targetLanguage}) => {
  *       onByDefault: boolean,
  *       meta: {
  *         [key: string]: string
- *       },
- *       [args: string]: {}
+ *       }
  *     }
- *   },
- *   [fieldArgs: string]: {
  *   }
  * }} PluginFieldMappingForWork
  */
@@ -169,7 +166,7 @@ export class PluginsForWork {
    *   pluginName: string,
    *   pluginLang: string,
    *   onByDefaultDefault: boolean,
-   *   meta: {}
+   *   meta: MetaValue
    * }) => void} cb
    * @returns {void}
    */

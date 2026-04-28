@@ -211,8 +211,8 @@ export const resultsDisplayClient = async function resultsDisplayClient (args) {
 };
 
 /**
- * @this {import('../server/main.js').ResultsDisplayServerContext}
  * This is server-only code, but kept here as the function is similar.
+ * @this {import('../server/main.js').ResultsDisplayServerContext}
  * @param {ResultsDisplayServerOrClientArg & {
  *   serverOutput?: "jamilih"|"html"|"json"|null
  * }} args
@@ -563,7 +563,6 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         return undefined;
       }
       const {preferAlias, fieldValueAliasMap} = getFieldNameAndValueAliases({
-        // eslint-disable-next-line object-shorthand -- TS
         field: /** @type {string} */ (field),
         schemaItems, metadataObj, getFieldAliasOrName, lang
       });
@@ -746,7 +745,6 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
         );
         if (plugin.getTargetLanguage) {
           targetLanguage = plugin.getTargetLanguage({
-            // eslint-disable-next-line object-shorthand -- TS
             applicableField: /** @type {string} */ (applicableField),
             targetLanguage,
             // Default lang for plug-in (from files.json)
@@ -773,13 +771,10 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
           ? plugin.getFieldAliasOrName({
             locales: lang,
             workI18n,
-            // eslint-disable-next-line object-shorthand -- TS
             targetLanguage: /** @type {string} */ (targetLanguage),
-            // eslint-disable-next-line object-shorthand -- TS
             applicableField: /** @type {string} */ (applicableField),
             applicableFieldI18N,
             meta,
-            // eslint-disable-next-line object-shorthand -- TS
             metaApplicableField: /** @type {{[key: string]: string }} */ (
               metaApplicableField
             ),
@@ -791,13 +786,10 @@ export const resultsDisplayServerOrClient = async function resultsDisplayServerO
             pluginName,
             // locales: lang,
             workI18n,
-            // eslint-disable-next-line object-shorthand -- TS
             targetLanguage: /** @type {string} */ (targetLanguage),
-            // eslint-disable-next-line object-shorthand -- TS
             applicableFieldI18N: /** @type {string|string[]} */ (applicableFieldI18N),
             // Todo: Should have formal way to i18nize meta
             meta,
-            // eslint-disable-next-line object-shorthand -- TS
             metaApplicableField: /** @type {{[key: string]: string }} */ (
               metaApplicableField
             )

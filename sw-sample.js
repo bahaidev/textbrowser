@@ -1,5 +1,3 @@
-/* eslint-env serviceworker -- Service worker */
-
 // eslint-disable-next-line sonarjs/no-internal-api-use -- Demo
 import swHelper from './node_modules/textbrowser/dist/sw-helper.js';
 

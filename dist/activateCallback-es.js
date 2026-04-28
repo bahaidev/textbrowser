@@ -2,7 +2,6 @@
  * @file Note that this should be kept as a polyglot client-server file
  *    (besides the server, it is to be invoked by the project service worker).
  */
-/* eslint-env worker -- Worker environment */
 
 /**
  * @typedef {import('./utils/Metadata.js')} MetadataFile

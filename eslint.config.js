@@ -1,6 +1,6 @@
 import ashNazg from 'eslint-config-ash-nazg';
 
-export default [
+export default /** @type {import('eslint').Linter.Config} */ ([
   {
     ignores: [
       'resources/vendor',
@@ -66,4 +66,4 @@ export default [
       'unicorn/no-array-callback-reference': 0
     }
   }
-];
+]);

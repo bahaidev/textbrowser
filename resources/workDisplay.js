@@ -170,7 +170,6 @@ export default async function workDisplay ({
     const fieldMatchesLocale = metadata.getFieldMatchesLocale({
       namespace: this.namespace,
       preferredLocale, schemaItems,
-      // eslint-disable-next-line object-shorthand -- TS
       pluginsForWork: /** @type {import('./utils/Plugin.js').PluginsForWork} */ (
         pluginsForWork
       )

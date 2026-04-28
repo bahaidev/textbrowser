@@ -52,7 +52,6 @@ export default async function workSelect ({
           return language in localizationStrings;
         });
         return {
-          // eslint-disable-next-line object-shorthand -- TS
           locale: /** @type {string} */ (locale),
           strings: {
             head: {},

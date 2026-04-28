@@ -3560,11 +3560,8 @@ const escapePlugin = ({pluginName, applicableField, targetLanguage}) => {
  *       onByDefault: boolean,
  *       meta: {
  *         [key: string]: string
- *       },
- *       [args: string]: {}
+ *       }
  *     }
- *   },
- *   [fieldArgs: string]: {
  *   }
  * }} PluginFieldMappingForWork
  */
@@ -3609,7 +3606,7 @@ class PluginsForWork {
    *   pluginName: string,
    *   pluginLang: string,
    *   onByDefaultDefault: boolean,
-   *   meta: {}
+   *   meta: MetaValue
    * }) => void} cb
    * @returns {void}
    */
@@ -3767,7 +3764,9 @@ class PluginsForWork {
  * INCOMPLETE typing.
  * @typedef {{
  *   "localization-strings": {
- *     [key: string]: {}
+ *     [key: string]: {
+ *       [key: string]: string
+ *     }
  *   }
  *   groups: FileGroup[],
  *   plugins: {[key: string]: import('./Plugin.js').PluginInfo},
@@ -3873,7 +3872,9 @@ const getWorkData = async function ({
     /**
      * @type {{
      *   "localization-strings": {
-     *     [key: string]: {}
+     *     [key: string]: {
+     *       [key: string]: string
+     *     }
      *   }
      * }}
      */ (
@@ -3895,7 +3896,6 @@ const getWorkData = async function ({
         return language in localizationStrings;
       });
       return {
-        // eslint-disable-next-line object-shorthand -- TS
         locale: /** @type {string} */ (locale),
         strings: {
           head: {},
@@ -4015,7 +4015,7 @@ const getWorkData = async function ({
     getPlugins
       ? Promise.all(
         pluginPaths.map(async (pluginPath) => {
-          // // eslint-disable-next-line no-unsanitized/method
+          // eslint-disable-next-line no-unsanitized/method -- Through trusted plugins
           return /** @type {import('./Plugin.js').PluginObject} */ await (import(
             cwd +
             pluginPath
@@ -4079,22 +4079,18 @@ const getWorkData = async function ({
         );
         if (plugin.getTargetLanguage) {
           targetLanguage = plugin.getTargetLanguage({
-            // eslint-disable-next-line object-shorthand -- TS
             applicableField: /** @type {string} */ (applicableField),
-            // eslint-disable-next-line object-shorthand -- TS
             targetLanguage: /** @type {string} */ (targetLanguage),
             // Default lang for plug-in (from files.json)
             pluginLang,
             // Default lang when no target language or
             //   plugin lang; using the lang of the applicable
             //   field
-            // eslint-disable-next-line object-shorthand -- TS
             applicableFieldLang: /** @type {string} */ (applicableFieldLang)
           });
         }
         const field = escapePlugin({
           pluginName,
-          // eslint-disable-next-line object-shorthand -- TS
           applicableField: /** @type {string} */ (applicableField),
           targetLanguage: /** @type {string} */ (targetLanguage || pluginLang ||
                         applicableFieldLang)
@@ -4109,13 +4105,10 @@ const getWorkData = async function ({
           ? plugin.getFieldAliasOrName({
             locales: lang,
             workI18n,
-            // eslint-disable-next-line object-shorthand -- TS
             targetLanguage: /** @type {string} */ (targetLanguage),
-            // eslint-disable-next-line object-shorthand -- TS
             applicableField: /** @type {string} */ (applicableField),
             applicableFieldI18N,
             meta,
-            // eslint-disable-next-line object-shorthand -- TS
             metaApplicableField:
             /**
              * @type {{
@@ -4131,13 +4124,10 @@ const getWorkData = async function ({
             pluginName,
             // locales: lang,
             workI18n,
-            // eslint-disable-next-line object-shorthand -- TS
             targetLanguage: /** @type {string} */ (targetLanguage),
-            // eslint-disable-next-line object-shorthand -- TS
             applicableFieldI18N: /** @type {string|string[]} */ (applicableFieldI18N),
             // Todo: Should have formal way to i18nize meta
             meta,
-            // eslint-disable-next-line object-shorthand -- TS
             metaApplicableField:
             /**
              * @type {{
@@ -4176,7 +4166,6 @@ const getWorkData = async function ({
   }
   return {
     // @ts-expect-error Ok
-    // eslint-disable-next-line object-shorthand -- TS
     fileData: /** @type {FileData} */ (fileData),
     workI18n, getFieldAliasOrName, metadataObj,
     schemaObj, schemaItems, fieldInfo,

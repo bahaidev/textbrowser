@@ -52,7 +52,9 @@ export type FileGroup = {
  */
 export type FilesObject = {
     "localization-strings": {
-        [key: string]: {};
+        [key: string]: {
+            [key: string]: string;
+        };
     };
     groups: FileGroup[];
     plugins: {
