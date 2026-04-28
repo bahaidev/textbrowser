@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.54.0
+
+- fix: avoid defining `navigator.languages` as reserved now by Node
+
 ## 0.53.1
 
 - fix: broken escaping of regex and dirname issue
