@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.54.6
+
+- fix: worker issues
+
 ## 0.54.5
 
 - fix: worker issues

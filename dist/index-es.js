@@ -20428,10 +20428,16 @@ class TextBrowser {
     } else {
       const worker = r.installing || r.waiting || r.active;
       if (!worker) {
-        // Todo: Why wouldn't there be a worker here?
-        console.error('Unexpected error: worker registration received without a worker.');
-        // If anything, would probably need to register though
-        await register();
+        console.warn('Worker registration returned with no worker; retrying registration.');
+        try {
+          await r.unregister();
+        } catch (err) {
+          console.warn('Unregister failed during retry', err);
+        }
+        Templates.permissions.main({
+          siteI18n
+        });
+        await prepareForServiceWorker.call(this);
         return;
       }
       Templates.permissions.main({
