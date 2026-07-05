@@ -184,7 +184,7 @@ function swHelper (self) {
    * @returns {Promise<void>}
    */
   async function install (time) {
-    post({type: 'beginInstall'});
+    await post({type: 'beginInstall'});
     log(`Install: Trying, attempt ${time}`);
     const now = Date.now();
     const json = await getJSON(/** @type {string} */ (pathToUserJSON));
@@ -300,7 +300,7 @@ function swHelper (self) {
 
     // Although we only need one client to which to send
     //   arguments, we want to signal phase complete to all
-    post({type: 'finishedInstall'});
+    await post({type: 'finishedInstall'});
   }
 
   /**
@@ -309,7 +309,12 @@ function swHelper (self) {
    * @returns {Promise<void>}
    */
   async function activate (time) {
-    post({type: 'beginActivate'});
+    console.log('Activate event worker callback entered', time);
+    await post({
+      type: 'log',
+      message: `Activate: Event callback entered (attempt ${time})`
+    });
+    await post({type: 'beginActivate'});
     log(`Activate: Trying, attempt ${time}`);
     const [json, cacheNames] = await Promise.all([
       getJSON(/** @type {string} */ (pathToUserJSON)),
@@ -329,9 +334,12 @@ function swHelper (self) {
     await activateCallback({namespace, files, basePath, log});
     log('Activate: Database changes completed');
 
+    await self.clients.claim();
+    log('Activate: Clients claimed');
+
     log(`Activate: Posting finished message to clients`);
     // Signal phase complete to all clients
-    post({type: 'finishedActivate'});
+    await post({type: 'finishedActivate'});
   }
 
   // @ts-expect-error Ok
@@ -348,6 +356,7 @@ function swHelper (self) {
   });
 
   self.addEventListener('activate', (e) => {
+    console.log('sw activate event fired');
     // Erring is of no present use here:
     //   https://github.com/w3c/ServiceWorker/issues/659#issuecomment-384919053
     e.waitUntil(tryAndRetry(activate, 5 * minutes, 'Error activating'));
