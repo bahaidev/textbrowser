@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.54.0",
+  "version": "0.54.1",
   "description": "Multilinear text browser",
   "type": "module",
   "main": "dist/index-es.min.js",
@@ -92,5 +92,11 @@
     "rollup-plugin-re": "^1.0.7",
     "textbrowser-data-schemas": "^0.2.0",
     "typescript": "^6.0.3"
+  },
+  "allowScripts": {
+    "fsevents@2.3.2": true,
+    "canvas@2.11.2": true,
+    "sqlite3@5.1.7": true,
+    "unrs-resolver@1.11.1": true
   }
 }

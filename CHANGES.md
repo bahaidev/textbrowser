@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.54.1
+
+- fix: redefine `navigator.languages`
+
 ## 0.54.0
 
 - fix: avoid defining `navigator.languages` as reserved now by Node
