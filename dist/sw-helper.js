@@ -249,7 +249,9 @@ function swHelper (self) {
     }, 10000);
     // .map((url) => url === 'index.html' ? new Request(url, {cache: 'reload'}) : url)
     try {
-      const cachePromises = urlsToPrefetch.map(async (urlToPrefetch, idx) => {
+      const maxConcurrentPrefetches = 8;
+      const prefetchTimeoutMs = 120000;
+      const fetchAndCacheAsset = async (urlToPrefetch, idx) => {
         // This constructs a new URL object using the service worker's script
         //   location as the base for relative URLs.
         pendingAssets.add(urlToPrefetch);
@@ -260,8 +262,14 @@ function swHelper (self) {
         const url = new URL(urlToPrefetch, location.href);
         url.search += (url.search ? '&' : '?') + 'cache-bust=' + now;
         const request = new Request(url, {mode: 'no-cors'});
+        const controller = new AbortController();
+        const timeout = setTimeout(() => {
+          controller.abort();
+        }, prefetchTimeoutMs);
         try {
-          const response = await fetch(request);
+          const response = await fetch(request, {
+            signal: controller.signal
+          });
           if (response.status >= 400) {
             throw new Error('request for ' + urlToPrefetch +
                         ' failed with status ' + response.statusText);
@@ -272,15 +280,36 @@ function swHelper (self) {
           return;
         } catch (error) {
           pendingAssets.delete(urlToPrefetch);
+          if (
+            error && typeof error === 'object' && 'name' in error &&
+            error.name === 'AbortError'
+          ) {
+            error = new Error(
+              `Timed out after ${prefetchTimeoutMs}ms while fetching ${urlToPrefetch}`
+            );
+          }
           logError(
             /** @type {Error} */
             (error),
             `Not caching ${urlToPrefetch} due to ${error}`
           );
           throw error;
+        } finally {
+          clearTimeout(timeout);
+        }
+      };
+
+      let nextAssetIndex = 0;
+      const workers = Array.from({
+        length: Math.min(maxConcurrentPrefetches, urlsToPrefetch.length)
+      }, async () => {
+        while (nextAssetIndex < urlsToPrefetch.length) {
+          const idx = nextAssetIndex;
+          nextAssetIndex++;
+          await fetchAndCacheAsset(urlsToPrefetch[idx], idx);
         }
       });
-      await Promise.all(cachePromises);
+      await Promise.all(workers);
       log('Install: Pre-fetching complete.');
     } catch (error) {
       logError(

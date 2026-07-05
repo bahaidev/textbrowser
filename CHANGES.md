@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.54.11
+
+- fix: max concurrent prefetches
+
 ## 0.54.10
 
 - fix: more logging
