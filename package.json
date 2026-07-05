@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.54.3",
+  "version": "0.54.4",
   "description": "Multilinear text browser",
   "type": "module",
   "main": "dist/index-es.min.js",
@@ -16,6 +16,7 @@
   },
   "scripts": {
     "tsc": "tsc",
+    "prepublishOnly": "npm run rollup",
     "server": "./server/main.js --allowPlugins --namespace=test",
     "start": "static -p 8081",
     "rollup": "rollup -c",

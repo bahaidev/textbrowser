@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.52.4
+
+- fix: build file
+
 ## 0.52.3
 
 - chore: update `simple-get-json`

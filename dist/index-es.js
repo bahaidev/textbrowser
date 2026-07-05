@@ -9,8 +9,8 @@ function requireDist$1 () {
 	hasRequiredDist$1 = 1;
 	(function (module, exports) {
 		(function (global, factory) {
-		  module.exports = factory() ;
-		})(dist$2, function () {
+		  factory(exports) ;
+		})(dist$2, function (exports) {
 
 		  function _arrayLikeToArray(r, a) {
 		    (null == a || a > r.length) && (a = r.length);
@@ -151,9 +151,9 @@ function requireDist$1 () {
 		    };
 		  }
 		  var getJSON = buildGetJSONWithFetch();
-		  return getJSON;
+		  exports.getJSON = getJSON;
 		}); 
-	} (dist$3));
+	} (dist$3, dist$3.exports));
 	return dist$3.exports;
 }
 
