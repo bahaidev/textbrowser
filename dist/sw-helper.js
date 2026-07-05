@@ -56,8 +56,8 @@ function swHelper (self) {
       */
 
     'node_modules/intl-locale-textinfo-polyfill/lib/Locale.js',
-    'node_modules/textbrowser/dist/assets/languages-1sAACTKG.json',
-    'node_modules/textbrowser/dist/assets/index-_11XnUty.css',
+    'node_modules/textbrowser/dist/assets/languages-DWwAAJMo.json',
+    'node_modules/textbrowser/dist/assets/index-D_XVedS3.css',
 
     'node_modules/textbrowser/dist/index-es.js'
   ];
