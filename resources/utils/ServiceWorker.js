@@ -125,7 +125,7 @@ export const respondToState = async ({
   // We use this promise for rejecting (inside a listener)
   //    to a common catch and to prevent continuation by
   //    failing to return
-  return new Promise(async () => { // eslint-disable-line no-async-promise-executor -- See above
+  return new Promise(async (resolve) => { // eslint-disable-line no-async-promise-executor -- See above
     navigator.serviceWorker.addEventListener('message', ({data}) => {
       const {message, type, name, errorType} = data;
       console.log('msg1', message, r);
@@ -170,7 +170,7 @@ export const respondToState = async ({
         // location.replace(location); // Avoids adding to browser history)
 
         // This will cause jankiness and unnecessarily show languages selection
-        // resolve();
+        resolve(undefined);
         return;
       case 'error':
         logger.addLogEntry({
@@ -235,6 +235,8 @@ any indication it is installing.
             }
             resolve();
             */
+    } else {
+      resolve(undefined);
     }
   });
 };
