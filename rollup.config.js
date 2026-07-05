@@ -89,8 +89,10 @@ function getRollupObject ({minifying, format = 'umd'} = {}) {
       importMetaAssets(),
       // nodeGlobals(),
       nodeResolve({
-        // exportConditions: ['module'],
-        mainFields: ['module']
+        browser: true,
+        preferBuiltins: false,
+        exportConditions: ['browser'],
+        mainFields: ['browser', 'module', 'main']
       }),
       commonjs(),
       postProcess([
@@ -129,7 +131,12 @@ export default [
           replace: "import JsonRefs from '../vendor/json-refs-min.js';"
         }]
       }),
-      nodeResolve(),
+      nodeResolve({
+        browser: true,
+        preferBuiltins: false,
+        exportConditions: ['browser'],
+        mainFields: ['browser', 'module', 'main']
+      }),
       commonjs(),
       postProcess([
         importerRevert

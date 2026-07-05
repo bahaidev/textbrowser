@@ -1,5 +1,9 @@
 # CHANGES to `textbrowser`
 
+## 0.52.2
+
+- chore: update simple-get-json, jsdom, devDeps., fix rollup, rebuild
+
 ## 0.54.1
 
 - fix: redefine `navigator.languages`
