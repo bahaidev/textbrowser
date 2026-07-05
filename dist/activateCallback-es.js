@@ -55,10 +55,12 @@ async function activateCallback ({
   //  anyways); also important to avoid conflicts with
   //  already-running versions upon future sw updates
   log('Activate: Callback called');
+  log('Activate: Fetching files manifest', files);
   const r = await fetch(files);
   const {groups} = /** @type {import('./utils/WorkInfo.js').FilesObject} */ (
     await r.json()
   );
+  log('Activate: Manifest loaded; groups:', groups.length);
 
   /* eslint-disable jsdoc/reject-any-type -- Generic */
   /**
@@ -67,6 +69,7 @@ async function activateCallback ({
    */
   const addJSONFetch = (arr, path) => {
     /* eslint-enable jsdoc/reject-any-type -- Generic */
+    log('Activate: Queueing JSON fetch', basePath + path);
     arr.push(
       (async () => (await fetch(basePath + path)).json())()
     );
@@ -89,6 +92,13 @@ async function activateCallback ({
   const metadataFiles = [];
   groups.forEach(
     ({files: fileObjs, metadataBaseDirectory, schemaBaseDirectory}) => {
+      log(
+        'Activate: Processing group',
+        metadataBaseDirectory,
+        schemaBaseDirectory,
+        'files:',
+        fileObjs.length
+      );
       fileObjs.forEach(({file: {$ref: filePath}, metadataFile, schemaFile, name}) => {
         // We don't i18nize the name here
         dataFileNames.push(name);
@@ -98,6 +108,7 @@ async function activateCallback ({
       });
     }
   );
+  log('Activate: Awaiting queued fetches; works:', dataFiles.length);
   const promises = await Promise.all([
     ...dataFiles, ...schemaFiles, ...metadataFiles
   ]);
@@ -109,11 +120,14 @@ async function activateCallback ({
 
   log('Activate: Files fetched');
   const dbName = namespace + '-textbrowser-cache-data';
+  log('Activate: Deleting existing database', dbName);
   indexedDB.deleteDatabase(dbName);
   return new Promise((resolve, reject) => {
+    log('Activate: Opening database', dbName);
     const req = indexedDB.open(dbName);
     // @ts-expect-error Ok
     req.addEventListener('upgradeneeded', ({target: {result: db}}) => {
+      log('Activate: Database upgrade needed', dbName);
       db.onversionchange = () => {
         db.close();
         const err = /** @type {Error & {type: string}} */ (new Error('versionchange'));
@@ -122,6 +136,7 @@ async function activateCallback ({
       };
       dataFileResponses.forEach(({data: tableRows}, i) => {
         const dataFileName = dataFileNames[i];
+        log('Activate: Creating object store', dataFileName, 'rows:', tableRows.length);
         const store = db.createObjectStore('files-to-cache-' + dataFileName);
 
         const schemaFileResponse = schemaFileResponses[i];
@@ -180,6 +195,12 @@ async function activateCallback ({
         });
 
         const uniqueColumnIndexes = [...new Set(columnIndexes)];
+        log(
+          'Activate: Preparing rows for store',
+          dataFileName,
+          'unique indexes:',
+          uniqueColumnIndexes.length
+        );
 
         tableRows.forEach((tableRow, j) => {
           // Todo: Optionally send notice when complete
@@ -203,6 +224,7 @@ async function activateCallback ({
           // log('objRow', objRow);
           store.put(objRow, j);
         });
+        log('Activate: Finished object store population', dataFileName);
       });
     });
 
@@ -218,6 +240,7 @@ async function activateCallback ({
      * @param {Event & {error?: Error}} ev
      */
     const onerr = (ev) => {
+      log('Activate: Database request error event fired');
       const error = /** @type {Error & {type: string}} */ (
         ev.error ?? new Error('dbError')
       );
