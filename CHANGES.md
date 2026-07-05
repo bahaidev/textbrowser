@@ -1,8 +1,12 @@
 # CHANGES to `textbrowser`
 
+## 0.52.3
+
+- chore: update `simple-get-json`
+
 ## 0.52.2
 
-- chore: update simple-get-json, jsdom, devDeps., fix rollup, rebuild
+- chore: update `simple-get-json`, `jsdom`, devDeps., fix rollup, rebuild
 
 ## 0.54.1
 

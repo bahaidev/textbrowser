@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.54.2",
+  "version": "0.54.3",
   "description": "Multilinear text browser",
   "type": "module",
   "main": "dist/index-es.min.js",
@@ -61,7 +61,7 @@
     "load-stylesheets": "0.13.0",
     "node-fetch": "^3.3.2",
     "serve-static": "^2.2.1",
-    "simple-get-json": "^11.0.0"
+    "simple-get-json": "^11.0.1"
   },
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
