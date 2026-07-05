@@ -1,6 +1,6 @@
 {
   "name": "textbrowser",
-  "version": "0.54.8",
+  "version": "0.54.9",
   "description": "Multilinear text browser",
   "type": "module",
   "main": "dist/index-es.min.js",

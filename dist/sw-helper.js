@@ -237,11 +237,26 @@ function swHelper (self) {
       ...userDataFiles,
       ...stylesheets
     ];
+    log(`Install: Pre-fetching ${urlsToPrefetch.length} assets`);
+    const pendingAssets = new Set();
+    const pendingLogTimer = setInterval(() => {
+      if (pendingAssets.size) {
+        log(
+          `Install: Still pending ${pendingAssets.size} assets: ` +
+            JSON.stringify([...pendingAssets])
+        );
+      }
+    }, 10000);
     // .map((url) => url === 'index.html' ? new Request(url, {cache: 'reload'}) : url)
     try {
-      const cachePromises = urlsToPrefetch.map(async (urlToPrefetch) => {
+      const cachePromises = urlsToPrefetch.map(async (urlToPrefetch, idx) => {
         // This constructs a new URL object using the service worker's script
         //   location as the base for relative URLs.
+        pendingAssets.add(urlToPrefetch);
+        log(
+          `Install: Fetching asset ${idx + 1}/` +
+            `${urlsToPrefetch.length}: ${urlToPrefetch}`
+        );
         const url = new URL(urlToPrefetch, location.href);
         url.search += (url.search ? '&' : '?') + 'cache-bust=' + now;
         const request = new Request(url, {mode: 'no-cors'});
@@ -251,8 +266,12 @@ function swHelper (self) {
             throw new Error('request for ' + urlToPrefetch +
                         ' failed with status ' + response.statusText);
           }
-          return cache.put(urlToPrefetch, response);
+          await cache.put(urlToPrefetch, response);
+          log(`Install: Cached asset ${idx + 1}/${urlsToPrefetch.length}: ${urlToPrefetch}`);
+          pendingAssets.delete(urlToPrefetch);
+          return;
         } catch (error) {
+          pendingAssets.delete(urlToPrefetch);
           logError(
             /** @type {Error} */
             (error),
@@ -271,6 +290,8 @@ function swHelper (self) {
       );
       // Failing gives chance for a new client to re-trigger install?
       throw error;
+    } finally {
+      clearInterval(pendingLogTimer);
     }
 
     // An install update event will not be reported until controlled,
